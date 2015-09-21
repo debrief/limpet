@@ -5,61 +5,67 @@ import java.util.Collection;
 
 import javax.measure.Quantity;
 
-abstract public class NonTemporal<T extends Object> extends CoreCollection{
+abstract public class NonTemporal<T extends Object> extends CoreCollection
+{
 
-	private ArrayList<T> _values= new ArrayList<T>();
+	private ArrayList<T> _values = new ArrayList<T>();
 
 	public NonTemporal(String name)
 	{
 		super(name);
 	}
-	
+
 	public void add(T observation)
 	{
 		_values.add(observation);
 	}
-	
 
 	public static class QuantityType extends NonTemporal<Quantity<?>>
 	{
-		public QuantityType(String name) {
+		public QuantityType(String name)
+		{
 			super(name);
 		}
 
 		@Override
-		public boolean isQuantity() {
+		public boolean isQuantity()
+		{
 			return true;
-		}		
+		}
 	}
 
 	public static class ObjectType extends NonTemporal<Object>
 	{
-		public ObjectType(String name) {
+		public ObjectType(String name)
+		{
 			super(name);
 		}
 
 		@Override
-		public boolean isQuantity() {
+		public boolean isQuantity()
+		{
 			return false;
-		}		
+		}
 	}
 
 	@Override
-	abstract public boolean isQuantity(); 
-		
+	abstract public boolean isQuantity();
+
 	public Collection<T> getObservations()
 	{
 		return _values;
 	}
 
 	@Override
-	public int size() {
+	public int size()
+	{
 		return _values.size();
 	}
 
 	@Override
-	public boolean isTemporal() {
+	public boolean isTemporal()
+	{
 		return false;
 	}
-	
+
 }

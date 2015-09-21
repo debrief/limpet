@@ -2,7 +2,8 @@ package limpet.prototype.ian_generics.temp_vs_non_temp;
 
 import limpet.prototype.ian_generics.ICollection;
 
-abstract public class CoreCollection implements ICollection {
+abstract public class CoreCollection implements ICollection
+{
 
 	private String _name;
 
@@ -10,9 +11,10 @@ abstract public class CoreCollection implements ICollection {
 	{
 		_name = name;
 	}
-	
+
 	@Override
-	final public String name() {
+	final public String name()
+	{
 		return _name;
 	}
 }

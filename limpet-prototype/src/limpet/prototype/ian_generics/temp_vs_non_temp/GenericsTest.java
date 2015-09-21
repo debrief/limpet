@@ -13,10 +13,11 @@ import tec.units.ri.quantity.DefaultQuantityFactory;
 import tec.units.ri.unit.MetricPrefix;
 import tec.units.ri.unit.Units;
 
-public class GenericsTest extends TestCase {
+public class GenericsTest extends TestCase
+{
 
-	
-	public void testTimeCollectionAPI() {
+	public void testTimeCollectionAPI()
+	{
 		// the units for this measurement
 		Unit<Speed> kmh = MetricPrefix.KILO(Units.METRE).divide(Units.HOUR)
 				.asType(Speed.class);
@@ -25,11 +26,12 @@ public class GenericsTest extends TestCase {
 		QuantityCollection<Speed> speedCollection = new Temporal.QuantityCollection<Speed>(
 				"Speed", kmh);
 
-		for (int i = 1; i <= 100; i++) {
+		for (int i = 1; i <= 100; i++)
+		{
 			// create a measurement
 			double thisSpeed = Math.sin(Math.toRadians(i));
-			Quantity<Speed> speedVal = DefaultQuantityFactory.getInstance(
-					Speed.class).create(thisSpeed, kmh);
+			Quantity<Speed> speedVal = DefaultQuantityFactory
+					.getInstance(Speed.class).create(thisSpeed, kmh);
 
 			// store the measurement
 			speedCollection.add(i, speedVal);
@@ -45,7 +47,8 @@ public class GenericsTest extends TestCase {
 		assertEquals("correct start", 1d, it.rate());
 	}
 
-	public void testTimeSingletonAPI() {
+	public void testTimeSingletonAPI()
+	{
 		// the units for this measurement
 		Unit<Speed> kmh = MetricPrefix.KILO(Units.METRE).divide(Units.HOUR)
 				.asType(Speed.class);
@@ -56,8 +59,8 @@ public class GenericsTest extends TestCase {
 
 		// create a measurement
 		double thisSpeed = Math.sin(Math.toRadians(10));
-		Quantity<Speed> speedVal = DefaultQuantityFactory.getInstance(
-				Speed.class).create(thisSpeed, kmh);
+		Quantity<Speed> speedVal = DefaultQuantityFactory.getInstance(Speed.class)
+				.create(thisSpeed, kmh);
 
 		// store the measurement
 		speedCollection.add(55, speedVal);
@@ -72,20 +75,20 @@ public class GenericsTest extends TestCase {
 		assertEquals("correct start", -1d, it.rate());
 	}
 
-	public void testSimpleAddition() {
+	public void testSimpleAddition()
+	{
 		// the units for this measurement
 		Unit<Speed> kmh = MetricPrefix.KILO(Units.METRE).divide(Units.HOUR)
 				.asType(Speed.class);
-		Unit<Speed> m_sec = Units.METRE.divide(Units.SECOND)
-				.asType(Speed.class);
+		Unit<Speed> m_sec = Units.METRE.divide(Units.SECOND).asType(Speed.class);
 
 		// the target collection
 		QuantityCollection<Speed> speedCollection = new Temporal.QuantityCollection<Speed>(
 				"Speed", kmh);
 
 		// create a measurement
-		Quantity<Speed> speedVal = DefaultQuantityFactory.getInstance(
-				Speed.class).create(5, kmh);
+		Quantity<Speed> speedVal = DefaultQuantityFactory.getInstance(Speed.class)
+				.create(5, kmh);
 
 		// store the measurement
 		speedCollection.add(12, speedVal);
@@ -101,14 +104,17 @@ public class GenericsTest extends TestCase {
 		assertEquals("correct speed units", kmh, theS.getUnit());
 
 		// ok, now add another
-		speedVal = DefaultQuantityFactory.getInstance(Speed.class).create(25,
-				m_sec);
+		speedVal = DefaultQuantityFactory.getInstance(Speed.class)
+				.create(25, m_sec);
 
 		// store the measurement
 		boolean errorThrown = false;
-		try {
+		try
+		{
 			speedCollection.add(14, speedVal);
-		} catch (Exception e) {
+		}
+		catch (Exception e)
+		{
 			errorThrown = true;
 		}
 
@@ -119,8 +125,7 @@ public class GenericsTest extends TestCase {
 		assertEquals("correct number of samples", 1, speedCollection.size());
 
 		// ok, now add another
-		speedVal = DefaultQuantityFactory.getInstance(Speed.class).create(12,
-				kmh);
+		speedVal = DefaultQuantityFactory.getInstance(Speed.class).create(12, kmh);
 
 		// store the measurement
 		speedCollection.add(14, speedVal);
@@ -129,9 +134,9 @@ public class GenericsTest extends TestCase {
 		assertEquals("correct number of samples", 2, speedCollection.size());
 
 	}
-	
 
-	public void testSimpleObjectAddition() {
+	public void testSimpleObjectAddition()
+	{
 
 		// the target collection
 		ObjectCollection<String> objCollection = new Temporal.ObjectCollection<String>(
@@ -143,8 +148,8 @@ public class GenericsTest extends TestCase {
 		// check it got stored
 		assertEquals("correct number of samples", 1, objCollection.size());
 
-		TemporalObservation<Object> thisMeasure = objCollection
-				.getMeasurements().iterator().next();
+		TemporalObservation<Object> thisMeasure = objCollection.getMeasurements()
+				.iterator().next();
 		assertEquals("correct time", 12, thisMeasure.getTime());
 		String theS = (String) thisMeasure.getObservation();
 		assertEquals("correct text", "some text", theS);
