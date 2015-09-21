@@ -12,12 +12,24 @@ public class TemporalQuantityCollection<T extends Quantity<T>> extends
 		QuantityCollection<Quantity<T>> implements ITemporalCollection
 {
 
+	private ArrayList<Long> _times = new ArrayList<Long>();
+
+	// helper class
+	TemporalSupport _temporalSupport;
+
 	public TemporalQuantityCollection(String name, Unit<?> units)
 	{
 		super(name, units);
+		_temporalSupport = new TemporalSupport(_times);
 	}
 
-	private ArrayList<Long> _times = new ArrayList<Long>();
+	
+	
+	@Override
+	public void add(Quantity<T> quantity)
+	{
+		throw new RuntimeException("This is a time series, data must be added with a timestamp");
+	}
 
 	public void add(long time, Quantity<T> quantity)
 	{
@@ -50,43 +62,24 @@ public class TemporalQuantityCollection<T extends Quantity<T>> extends
 	@Override
 	public long start()
 	{
-		if (size() > 0)
-		{
-			return _times.get(0);
-		}
-		return -1;
+		return _temporalSupport.start();
 	}
 
 	@Override
 	public long finish()
 	{
-		if (size() > 0)
-		{
-			return _times.get(size() - 1);
-		}
-		return -1;
+		return _temporalSupport.finish();
 	}
 
 	@Override
 	public long duration()
 	{
-		if (size() == 1)
-		{
-			return 0;
-		}
-		else if (size() > 1)
-		{
-			return _times.get(size() - 1) - _times.get(0);
-		}
-		return -1;
+		return _temporalSupport.duration();
 	}
 
 	@Override
 	public double rate()
 	{
-		if (size() > 1)
-			return size() / duration();
-		else
-			return -1;
+		return _temporalSupport.rate();
 	}
 }

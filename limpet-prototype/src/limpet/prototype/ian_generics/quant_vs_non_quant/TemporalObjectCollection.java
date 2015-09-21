@@ -8,13 +8,21 @@ import limpet.prototype.ian_generics.ITemporalCollection;
 public class TemporalObjectCollection<T extends Object> extends
 		ObjectCollection<T> implements ITemporalCollection
 {
+	private final ArrayList<Long> _times = new ArrayList<Long>();
+	TemporalSupport _temporalSupport;
+
 
 	public TemporalObjectCollection(String name)
 	{
 		super(name);
+		_temporalSupport = new TemporalSupport(_times);
 	}
 
-	private ArrayList<Long> _times = new ArrayList<Long>();
+	@Override
+	public void add(T observation)
+	{
+		throw new RuntimeException("This is a time series, data must be added with a timestamp");
+	}
 
 	public void add(long time, T observation)
 	{
@@ -47,43 +55,24 @@ public class TemporalObjectCollection<T extends Object> extends
 	@Override
 	public long start()
 	{
-		if (size() > 0)
-		{
-			return _times.get(0);
-		}
-		return -1;
+		return _temporalSupport.start();
 	}
 
 	@Override
 	public long finish()
 	{
-		if (size() > 0)
-		{
-			return _times.get(size() - 1);
-		}
-		return -1;
+		return _temporalSupport.finish();
 	}
 
 	@Override
 	public long duration()
 	{
-		if (size() == 1)
-		{
-			return 0;
-		}
-		else if (size() > 1)
-		{
-			return _times.get(size() - 1) - _times.get(0);
-		}
-		return -1;
+		return _temporalSupport.duration();
 	}
 
 	@Override
 	public double rate()
 	{
-		if (size() > 1)
-			return size() / duration();
-		else
-			return -1;
+		return _temporalSupport.rate();
 	}
 }
