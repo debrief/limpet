@@ -4,5 +4,6 @@
 	<classpathentry kind="lib" path="lib/unit-api-0.8-RC3.jar"/>
 	<classpathentry kind="lib" path="lib/unit-ri-0.8-RC3.jar" sourcepath="lib/unit-ri-src/main/java"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
