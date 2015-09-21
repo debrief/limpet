@@ -1,4 +1,6 @@
-package limpet.prototype.ian_generics;
+package limpet.prototype.ian_generics.temp_vs_non_temp;
+
+import limpet.prototype.ian_generics.ICollection;
 
 abstract public class CoreCollection implements ICollection {
 

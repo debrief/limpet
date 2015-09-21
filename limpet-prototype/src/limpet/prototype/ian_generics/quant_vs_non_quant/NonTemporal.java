@@ -1,4 +1,4 @@
-package limpet.prototype.ian_generics;
+package limpet.prototype.ian_generics.quant_vs_non_quant;
 
 import java.util.ArrayList;
 import java.util.Collection;

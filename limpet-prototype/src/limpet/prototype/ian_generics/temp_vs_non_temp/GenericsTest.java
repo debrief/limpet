@@ -1,13 +1,14 @@
-package limpet.prototype.ian_generics;
+package limpet.prototype.ian_generics.temp_vs_non_temp;
 
 import javax.measure.Quantity;
 import javax.measure.Unit;
 import javax.measure.quantity.Speed;
 
 import junit.framework.TestCase;
-import limpet.prototype.ian_generics.Temporal.ObjectCollection;
-import limpet.prototype.ian_generics.Temporal.QuantityCollection;
-import limpet.prototype.ian_generics.Temporal.TemporalObservation;
+import limpet.prototype.ian_generics.ITemporalCollection;
+import limpet.prototype.ian_generics.temp_vs_non_temp.Temporal.ObjectCollection;
+import limpet.prototype.ian_generics.temp_vs_non_temp.Temporal.QuantityCollection;
+import limpet.prototype.ian_generics.temp_vs_non_temp.Temporal.TemporalObservation;
 import tec.units.ri.quantity.DefaultQuantityFactory;
 import tec.units.ri.unit.MetricPrefix;
 import tec.units.ri.unit.Units;

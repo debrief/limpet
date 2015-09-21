@@ -1,10 +1,12 @@
-package limpet.prototype.ian_generics;
+package limpet.prototype.ian_generics.temp_vs_non_temp;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
 import javax.measure.Quantity;
 import javax.measure.Unit;
+
+import limpet.prototype.ian_generics.ITemporalCollection;
 
 abstract public class Temporal<T extends Object> extends CoreCollection
 		implements ITemporalCollection {
