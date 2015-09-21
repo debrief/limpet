@@ -8,16 +8,16 @@ import javax.measure.Unit;
 
 import limpet.prototype.ian_generics.ITemporalCollection;
 
-public class TemporalQuantitativeCollection<T extends Quantity<?>> extends
-		QuantitativeCollection<Quantity> implements ITemporalCollection {
+public class TemporalQuantityCollection<T extends Quantity<T>> extends
+		QuantityCollection<Quantity<T>> implements ITemporalCollection {
 	
-	public TemporalQuantitativeCollection(String name, Unit<?> units) {
+	public TemporalQuantityCollection(String name, Unit<?> units) {
 		super(name, units);
 	}
 
 	private ArrayList<Long> _times = new ArrayList<Long>();
 
-	public void add(long time, Quantity<?> quantity) {
+	public void add(long time, Quantity<T> quantity) {
 		// do some checking.
 		// 1. this time should be equal to or newer than the last item
 		if (size() > 0) {

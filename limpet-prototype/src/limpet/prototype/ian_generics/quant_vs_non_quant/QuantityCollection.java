@@ -6,12 +6,12 @@ import java.util.Collection;
 import javax.measure.Quantity;
 import javax.measure.Unit;
 
-public class QuantitativeCollection<T extends Quantity<?>> extends CoreCollection{
+public class QuantityCollection<T extends Quantity<?>> extends CoreCollection{
 
 	private final ArrayList<T> _values = new ArrayList<T>();
 	private final Unit<?> _myUnits;
 
-	public QuantitativeCollection(String name, Unit<?> units) {
+	public QuantityCollection(String name, Unit<?> units) {
 		super(name);
 		_myUnits = units;
 		

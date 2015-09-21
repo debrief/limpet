@@ -21,7 +21,7 @@ public class GenericsTest2 extends TestCase {
 				.asType(Speed.class);
 
 		// the target collection
-		TemporalQuantitativeCollection<Speed> sc = new TemporalQuantitativeCollection<Speed>(
+		TemporalQuantityCollection<Speed> sc = new TemporalQuantityCollection<Speed>(
 				"Speed", kmh);
 
 		// create a measurement
@@ -85,7 +85,7 @@ public class GenericsTest2 extends TestCase {
 		assertEquals("correct number of samples", 1, objCollection.size());
 
 		long thisTime = objCollection.getTimes().iterator().next();
-		String thisObs = (String) objCollection.getValues().iterator().next();
+		String thisObs = objCollection.getValues().iterator().next();
 		
 		assertEquals("correct time", 12L, thisTime);
 		assertEquals("correct text", "some text", thisObs);
@@ -105,7 +105,7 @@ public class GenericsTest2 extends TestCase {
 				.asType(Speed.class);
 
 		// the target collection
-		TemporalQuantitativeCollection<Speed> speedCollection = new TemporalQuantitativeCollection<Speed>(
+		TemporalQuantityCollection<Speed> speedCollection = new TemporalQuantityCollection<Speed>(
 				"Speed", kmh);
 
 		for (int i = 1; i <= 100; i++) {
@@ -134,7 +134,7 @@ public class GenericsTest2 extends TestCase {
 				.asType(Speed.class);
 
 		// the target collection
-		TemporalQuantitativeCollection<Speed> speedCollection = new TemporalQuantitativeCollection<Speed>(
+		TemporalQuantityCollection<Speed> speedCollection = new TemporalQuantityCollection<Speed>(
 				"Speed", kmh);
 
 		// create a measurement

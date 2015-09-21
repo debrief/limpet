@@ -6,7 +6,7 @@ import java.util.Collection;
 import limpet.prototype.ian_generics.ITemporalCollection;
 
 public class TemporalObjectCollection<T extends Object> extends
-		ObjectCollection implements ITemporalCollection{
+		ObjectCollection<T> implements ITemporalCollection{
 	
 	public TemporalObjectCollection(String name) {
 		super(name);
