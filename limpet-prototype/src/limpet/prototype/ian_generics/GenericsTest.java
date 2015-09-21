@@ -5,8 +5,8 @@ import javax.measure.Unit;
 import javax.measure.quantity.Speed;
 
 import junit.framework.TestCase;
-import limpet.prototype.ian_generics.Temporal.ObjectType;
-import limpet.prototype.ian_generics.Temporal.QuantityType;
+import limpet.prototype.ian_generics.Temporal.ObjectCollection;
+import limpet.prototype.ian_generics.Temporal.QuantityCollection;
 import limpet.prototype.ian_generics.Temporal.TemporalObservation;
 import tec.units.ri.quantity.DefaultQuantityFactory;
 import tec.units.ri.unit.MetricPrefix;
@@ -21,7 +21,7 @@ public class GenericsTest extends TestCase {
 				.asType(Speed.class);
 
 		// the target collection
-		QuantityType<Speed> speedCollection = new Temporal.QuantityType<Speed>(
+		QuantityCollection<Speed> speedCollection = new Temporal.QuantityCollection<Speed>(
 				"Speed", kmh);
 
 		for (int i = 1; i <= 100; i++) {
@@ -50,7 +50,7 @@ public class GenericsTest extends TestCase {
 				.asType(Speed.class);
 
 		// the target collection
-		QuantityType<Speed> speedCollection = new Temporal.QuantityType<Speed>(
+		QuantityCollection<Speed> speedCollection = new Temporal.QuantityCollection<Speed>(
 				"Speed", kmh);
 
 		// create a measurement
@@ -79,7 +79,7 @@ public class GenericsTest extends TestCase {
 				.asType(Speed.class);
 
 		// the target collection
-		QuantityType<Speed> speedCollection = new Temporal.QuantityType<Speed>(
+		QuantityCollection<Speed> speedCollection = new Temporal.QuantityCollection<Speed>(
 				"Speed", kmh);
 
 		// create a measurement
@@ -133,7 +133,7 @@ public class GenericsTest extends TestCase {
 	public void testSimpleObjectAddition() {
 
 		// the target collection
-		ObjectType objCollection = new Temporal.ObjectType(
+		ObjectCollection<String> objCollection = new Temporal.ObjectCollection<String>(
 				"Statements");
 
 		// store the measurement
@@ -145,7 +145,7 @@ public class GenericsTest extends TestCase {
 		TemporalObservation<Object> thisMeasure = objCollection
 				.getMeasurements().iterator().next();
 		assertEquals("correct time", 12, thisMeasure.getTime());
-		Object theS = thisMeasure.getObservation();
+		String theS = (String) thisMeasure.getObservation();
 		assertEquals("correct text", "some text", theS);
 
 		// store the measurement

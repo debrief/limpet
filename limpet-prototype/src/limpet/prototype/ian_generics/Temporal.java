@@ -15,6 +15,90 @@ abstract public class Temporal<T extends Object> extends CoreCollection
 		super(name);
 	}
 
+
+	public static class TemporalObservation<T> {
+		private long _time;
+		private T _observation;
+
+		public TemporalObservation(long time, T observation) {
+			_time = time;
+			_observation = observation;
+		}
+
+		public long getTime() {
+			return _time;
+		}
+
+		public T getObservation() {
+			return _observation;
+		}
+	}
+
+	public void add(long time, T observation) {
+		// do some checking.
+		// 1. this time should be equal to or newer than the last item
+		if (size() > 0) {
+			if (_values.get(_values.size() - 1)._time > time) {
+				throw new RuntimeException(
+						"Temporal quantities must arrive in time order");
+			}
+		}
+		_values.add(new TemporalObservation<T>(time, observation));
+	}
+
+	public static class QuantityCollection<Q extends Quantity<?>> extends
+			Temporal<Quantity<?>> {
+		private Unit<?> _myUnits;
+
+		public QuantityCollection(String name, Unit<?> units) {
+			super(name);
+			_myUnits = units;
+		}
+
+		@Override
+		public boolean isQuantity() {
+			return true;
+		}
+
+		@Override
+		public void add(long time, Quantity<?> observation) {
+			if (_myUnits != observation.getUnit()) {
+				throw new RuntimeException("New data value in wrong units");
+			}
+			super.add(time, observation);
+		}
+
+	}
+
+	public static class ObjectCollection<T extends Object> extends Temporal<Object> {
+		public ObjectCollection(String name) {
+			super(name);
+		}
+
+		@Override
+		public boolean isQuantity() {
+			return false;
+		}
+	}
+
+	@Override
+	abstract public boolean isQuantity();
+
+	public Collection<TemporalObservation<T>> getMeasurements() {
+		return _values;
+	}
+
+	@Override
+	public int size() {
+		return _values.size();
+	}
+
+	@Override
+	public boolean isTemporal() {
+		return true;
+	}
+
+
 	@Override
 	public long start() {
 		if (size() > 0) {
@@ -48,87 +132,4 @@ abstract public class Temporal<T extends Object> extends CoreCollection
 		else
 			return -1;
 	}
-
-	public static class TemporalObservation<T> {
-		private long _time;
-		private T _observation;
-
-		public TemporalObservation(long time, T observation) {
-			_time = time;
-			_observation = observation;
-		}
-
-		public long getTime() {
-			return _time;
-		}
-
-		public T getObservation() {
-			return _observation;
-		}
-	}
-
-	public void add(long time, T observation) {
-		// do some checking.
-		// 1. this time should be equal to or newer than the last item
-		if (size() > 0) {
-			if (_values.get(_values.size() - 1)._time > time) {
-				throw new RuntimeException(
-						"Temporal quantities must arrive in time order");
-			}
-		}
-		_values.add(new TemporalObservation<T>(time, observation));
-	}
-
-	public static class QuantityType<Q extends Quantity<?>> extends
-			Temporal<Quantity<?>> {
-		private Unit<?> _myUnits;
-
-		public QuantityType(String name, Unit<?> units) {
-			super(name);
-			_myUnits = units;
-		}
-
-		@Override
-		public boolean isQuantity() {
-			return true;
-		}
-
-		@Override
-		public void add(long time, Quantity<?> observation) {
-			if (_myUnits != observation.getUnit()) {
-				throw new RuntimeException("New data value in wrong units");
-			}
-			super.add(time, observation);
-		}
-
-	}
-
-	public static class ObjectType extends Temporal<Object> {
-		public ObjectType(String name) {
-			super(name);
-		}
-
-		@Override
-		public boolean isQuantity() {
-			return false;
-		}
-	}
-
-	@Override
-	abstract public boolean isQuantity();
-
-	public Collection<TemporalObservation<T>> getMeasurements() {
-		return _values;
-	}
-
-	@Override
-	public int size() {
-		return _values.size();
-	}
-
-	@Override
-	public boolean isTemporal() {
-		return true;
-	}
-
 }
