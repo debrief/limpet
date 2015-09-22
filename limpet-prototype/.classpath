@@ -8,5 +8,6 @@
 	<classpathentry kind="lib" path="lib/systems-common-0.2-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="lib/unit-ri-0.8-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="lib/si-units-0.4-SNAPSHOT.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
