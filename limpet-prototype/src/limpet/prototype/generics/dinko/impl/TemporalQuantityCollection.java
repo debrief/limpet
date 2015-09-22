@@ -3,11 +3,12 @@ package limpet.prototype.generics.dinko.impl;
 import javax.measure.Quantity;
 import javax.measure.Unit;
 
-import limpet.prototype.generics.dinko.interfaces.IBaseQuantityCollection;
+import limpet.prototype.generics.dinko.impl.hlpers.QuantityHelper;
 import limpet.prototype.generics.dinko.interfaces.ITemporalQuantityCollection;
 
-
-public class TemporalQuantityCollection<T extends Quantity<T>> extends TemporalObjectCollection<Quantity<T>> implements ITemporalQuantityCollection<T>, IBaseQuantityCollection<T>
+public class TemporalQuantityCollection<T extends Quantity<T>> extends
+		TemporalObjectCollection<Quantity<T>> implements
+		ITemporalQuantityCollection<T>
 {
 
 	private Unit<T> _myUnits;
@@ -27,10 +28,10 @@ public class TemporalQuantityCollection<T extends Quantity<T>> extends TemporalO
 		{
 			throw new RuntimeException("New data value in wrong units");
 		}
-		
+
 		super.add(time, object);
 	}
-	
+
 	@Override
 	public Quantity<T> min()
 	{
@@ -60,5 +61,18 @@ public class TemporalQuantityCollection<T extends Quantity<T>> extends TemporalO
 	{
 		return _qHelper.sd();
 	}
-	
+
+
+	@Override
+	public boolean isQuantity()
+	{
+		return true;
+	}
+
+	@Override
+	public boolean isTemporal()
+	{
+		return true;
+	}
+
 }

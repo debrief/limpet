@@ -3,16 +3,16 @@ package limpet.prototype.generics.dinko.impl;
 import javax.measure.Quantity;
 import javax.measure.Unit;
 
-import limpet.prototype.generics.dinko.interfaces.IBaseQuantityCollection;
+import limpet.prototype.generics.dinko.impl.hlpers.QuantityHelper;
 import limpet.prototype.generics.dinko.interfaces.IQuantityCollection;
 
-
-public class QuantityCollection<T extends Quantity<T>> extends ObjectCollection<Quantity<T>> implements IQuantityCollection<T>, IBaseQuantityCollection<T>
+public class QuantityCollection<T extends Quantity<T>> extends
+		ObjectCollection<Quantity<T>> implements IQuantityCollection<T>
 {
 
 	Unit<T> _units;
 	QuantityHelper<T> _qHelper;
-	
+
 	public QuantityCollection(String name, Unit<T> units)
 	{
 		super(name);
@@ -20,15 +20,11 @@ public class QuantityCollection<T extends Quantity<T>> extends ObjectCollection<
 		_qHelper = new QuantityHelper<>(_values, units);
 	}
 
-	
-	
 	@Override
 	public void add(Quantity<T> value)
 	{
 		_qHelper.add(value);
 	}
-
-
 
 	@Override
 	public Quantity<T> min()
@@ -59,4 +55,18 @@ public class QuantityCollection<T extends Quantity<T>> extends ObjectCollection<
 	{
 		return _qHelper.sd();
 	}
+	
+
+	@Override
+	public boolean isQuantity()
+	{
+		return true;
+	}
+
+	@Override
+	public boolean isTemporal()
+	{
+		return false;
+	}
+
 }

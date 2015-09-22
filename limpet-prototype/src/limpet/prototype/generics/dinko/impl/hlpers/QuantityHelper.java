@@ -1,4 +1,4 @@
-package limpet.prototype.generics.dinko.impl;
+package limpet.prototype.generics.dinko.impl.hlpers;
 
 import java.util.ArrayList;
 import java.util.Iterator;

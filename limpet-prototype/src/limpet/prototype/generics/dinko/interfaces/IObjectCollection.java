@@ -7,4 +7,6 @@ public interface IObjectCollection<T extends Object>
 	public Collection<T> getValues();
 	public void add(T value);
 	public String getName();
+	boolean isQuantity();
+	boolean isTemporal();
 }

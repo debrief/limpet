@@ -4,32 +4,33 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
+import limpet.prototype.generics.dinko.impl.hlpers.TimeHelper;
 import limpet.prototype.generics.dinko.interfaces.ITemporalObjectCollection;
 
-
-public class TemporalObjectCollection <T extends Object> extends ObjectCollection<T> implements ITemporalObjectCollection<T>
+public class TemporalObjectCollection<T extends Object> extends
+		ObjectCollection<T> implements ITemporalObjectCollection<T>
 {
 
 	ArrayList<Long> _times = new ArrayList<Long>();
 	TimeHelper _tSupport;
-	
+
 	public TemporalObjectCollection(String name)
 	{
 		super(name);
 		_tSupport = new TimeHelper(_times);
 	}
 
-	
 	@Override
 	public Collection<Long> getTimes()
 	{
 		return _times;
 	}
-	
+
 	@Override
 	public void add(T value)
 	{
-		throw new UnsupportedOperationException("Use add(time,object) for a time series");
+		throw new UnsupportedOperationException(
+				"Use add(time,object) for a time series");
 	}
 
 	@Override
@@ -38,7 +39,6 @@ public class TemporalObjectCollection <T extends Object> extends ObjectCollectio
 		_times.add(time);
 		super.add(object);
 	}
-
 
 	@Override
 	public long start()
@@ -69,12 +69,11 @@ public class TemporalObjectCollection <T extends Object> extends ObjectCollectio
 		return new MyIterator();
 	}
 
-
 	private class MyIterator implements Iterator<Doublet<T>>
 	{
 
 		int ctr = 0;
-		
+
 		@Override
 		public boolean hasNext()
 		{
@@ -84,10 +83,11 @@ public class TemporalObjectCollection <T extends Object> extends ObjectCollectio
 		@Override
 		public Doublet<T> next()
 		{
-			
+
 			final int thisCtr = ctr;
 			ctr++;
-			return new Doublet<T>(){
+			return new Doublet<T>()
+			{
 
 				@Override
 				public long getTime()
@@ -98,8 +98,8 @@ public class TemporalObjectCollection <T extends Object> extends ObjectCollectio
 				@Override
 				public T getObservation()
 				{
-					return  _values.get(thisCtr);
-				}				
+					return _values.get(thisCtr);
+				}
 			};
 		}
 
@@ -109,7 +109,20 @@ public class TemporalObjectCollection <T extends Object> extends ObjectCollectio
 			// TODO: make a decision. We probably don't want to implement this
 			throw new UnsupportedOperationException("Method not implemented");
 		}
-		
+
 	}
-	
+
+
+	@Override
+	public boolean isQuantity()
+	{
+		return false;
+	}
+
+	@Override
+	public boolean isTemporal()
+	{
+		return true;
+	}
+
 }

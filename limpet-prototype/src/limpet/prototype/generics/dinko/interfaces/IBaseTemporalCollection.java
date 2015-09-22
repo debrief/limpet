@@ -2,7 +2,7 @@ package limpet.prototype.generics.dinko.interfaces;
 
 import java.util.Collection;
 
-public interface ITemporalCollection
+public interface IBaseTemporalCollection
 {
 
 	/**

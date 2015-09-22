@@ -11,7 +11,7 @@ import limpet.prototype.generics.dinko.impl.ObjectCollection;
 import limpet.prototype.generics.dinko.impl.QuantityCollection;
 import limpet.prototype.generics.dinko.impl.TemporalObjectCollection;
 import limpet.prototype.generics.dinko.impl.TemporalQuantityCollection;
-import limpet.prototype.generics.dinko.interfaces.ITemporalCollection;
+import limpet.prototype.generics.dinko.interfaces.IBaseTemporalCollection;
 import limpet.prototype.generics.dinko.interfaces.ITemporalObjectCollection.Doublet;
 import si.uom.SI;
 import tec.units.ri.quantity.DefaultQuantityFactory;
@@ -49,7 +49,7 @@ public class TestDinko extends TestCase
 		// check it didn't get stored
 		assertEquals("correct number of samples", 12, stringCollection.size());
 		
-		ITemporalCollection it = stringCollection;
+		IBaseTemporalCollection it = stringCollection;
 		assertEquals("correct start", 1, it.start());
 		assertEquals("correct finish", 12, it.finish());
 		assertEquals("correct duration", 11, it.duration());
@@ -184,7 +184,7 @@ public class TestDinko extends TestCase
 		// check it didn't get stored
 		assertEquals("correct number of samples", 10, speedCollection.size());
 
-		ITemporalCollection it = speedCollection;
+		IBaseTemporalCollection it = speedCollection;
 		assertEquals("correct start", 1, it.start());
 		assertEquals("correct finish", 10, it.finish());
 		assertEquals("correct duration", 9, it.duration());

@@ -1,11 +1,11 @@
-package limpet.prototype.generics.dinko.impl;
+package limpet.prototype.generics.dinko.impl.hlpers;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
-import limpet.prototype.generics.dinko.interfaces.ITemporalCollection;
+import limpet.prototype.generics.dinko.interfaces.IBaseTemporalCollection;
 
-public class TimeHelper implements ITemporalCollection
+public class TimeHelper implements IBaseTemporalCollection
 {
 
 	private ArrayList<Long> _times;

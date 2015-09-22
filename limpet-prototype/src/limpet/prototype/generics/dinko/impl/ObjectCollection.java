@@ -39,6 +39,18 @@ public class ObjectCollection<T extends Object> implements IObjectCollection<T>
 	{
 		return _myName;
 	}
+
+	@Override
+	public boolean isQuantity()
+	{
+		return false;
+	}
+
+	@Override
+	public boolean isTemporal()
+	{
+		return false;
+	}
 	
 	
 }
