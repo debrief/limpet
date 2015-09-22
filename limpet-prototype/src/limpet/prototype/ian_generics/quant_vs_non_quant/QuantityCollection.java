@@ -155,7 +155,6 @@ public class QuantityCollection<T extends Quantity<T>> extends CoreCollection
 			{
 				Quantity<T> quantity = (Quantity<T>) iter.next();				
 				double a = quantity.getValue().doubleValue();
-				System.out.print(a + " , ");
 				runningSum += (mean - a) * (mean - a);
 			}
 

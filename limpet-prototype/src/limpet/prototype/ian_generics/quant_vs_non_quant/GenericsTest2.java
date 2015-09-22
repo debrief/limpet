@@ -9,6 +9,7 @@ import javax.measure.quantity.Speed;
 import junit.framework.TestCase;
 import limpet.prototype.ian_generics.ITemporalCollection;
 import limpet.prototype.ian_generics.ITemporalQuantityCollection.Doublet;
+import si.uom.SI;
 import tec.units.ri.quantity.DefaultQuantityFactory;
 import tec.units.ri.unit.MetricPrefix;
 import tec.units.ri.unit.Units;
@@ -21,7 +22,7 @@ public class GenericsTest2 extends TestCase
 		// the units for this measurement
 		Unit<Speed> kmh = MetricPrefix.KILO(Units.METRE).divide(Units.HOUR)
 				.asType(Speed.class);
-		Unit<Speed> m_sec = Units.METRE.divide(Units.SECOND).asType(Speed.class);
+		Unit<Speed> m_sec = SI.METRES_PER_SECOND;
 
 		// the target collection
 		TemporalQuantityCollection<Speed> sc = new TemporalQuantityCollection<Speed>(
