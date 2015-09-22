@@ -33,7 +33,5 @@ public class TestDinko extends TestCase
 
 		// check it didn't get stored
 		assertEquals("correct number of samples", 10, speedCollection.size());
-
-
 	}
 }
