@@ -10,10 +10,12 @@ public class TemporalObjectCollection <T extends Object> extends ObjectCollectio
 {
 
 	ArrayList<Long> _times = new ArrayList<Long>();
+	TimeHelper _tSupport;
 	
 	public TemporalObjectCollection(String name)
 	{
 		super(name);
+		_tSupport = new TimeHelper(_times);
 	}
 
 	@Override
@@ -34,5 +36,31 @@ public class TemporalObjectCollection <T extends Object> extends ObjectCollectio
 		_times.add(time);
 		super.add(object);
 	}
+
+
+	@Override
+	public long start()
+	{
+		return _tSupport.start();
+	}
+
+	@Override
+	public long finish()
+	{
+		return _tSupport.finish();
+	}
+
+	@Override
+	public long duration()
+	{
+		return _tSupport.duration();
+	}
+
+	@Override
+	public double rate()
+	{
+		return _tSupport.rate();
+	}
+
 
 }

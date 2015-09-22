@@ -3,52 +3,60 @@ package limpet.prototype.generics.dinko.impl;
 import javax.measure.Quantity;
 import javax.measure.Unit;
 
+import limpet.prototype.generics.dinko.interfaces.IBaseQuantityCollection;
 import limpet.prototype.generics.dinko.interfaces.IQuantityCollection;
 
 
-public class QuantityCollection<T extends Quantity<T>> extends ObjectCollection<Quantity<T>> implements IQuantityCollection<T>
+public class QuantityCollection<T extends Quantity<T>> extends ObjectCollection<Quantity<T>> implements IQuantityCollection<T>, IBaseQuantityCollection<T>
 {
 
-	Unit<?> _units;
+	Unit<T> _units;
+	QuantityHelper<T> _qHelper;
 	
-	public QuantityCollection(String name, Unit<?> units)
+	public QuantityCollection(String name, Unit<T> units)
 	{
 		super(name);
 		_units = units;
+		_qHelper = new QuantityHelper<>(_values, units);
 	}
+
+	
+	
+	@Override
+	public void add(Quantity<T> value)
+	{
+		_qHelper.add(value);
+	}
+
+
 
 	@Override
 	public Quantity<T> min()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return _qHelper.min();
 	}
 
 	@Override
 	public Quantity<T> max()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return _qHelper.max();
 	}
 
 	@Override
 	public Quantity<T> mean()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return _qHelper.mean();
 	}
 
 	@Override
 	public Quantity<T> variance()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return _qHelper.variance();
 	}
 
 	@Override
 	public Quantity<T> sd()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return _qHelper.sd();
 	}
 }

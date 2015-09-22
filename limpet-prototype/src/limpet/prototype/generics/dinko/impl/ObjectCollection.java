@@ -33,5 +33,12 @@ public class ObjectCollection<T extends Object> implements IObjectCollection<T>
 	{
 		return _values.size();
 	}
+
+	@Override
+	public String getName()
+	{
+		return _myName;
+	}
+	
 	
 }

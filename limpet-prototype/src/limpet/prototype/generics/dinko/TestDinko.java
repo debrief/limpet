@@ -1,5 +1,7 @@
 package limpet.prototype.generics.dinko;
 
+import java.util.Iterator;
+
 import javax.measure.Quantity;
 import javax.measure.Unit;
 import javax.measure.quantity.Speed;
@@ -8,6 +10,7 @@ import junit.framework.TestCase;
 import limpet.prototype.generics.dinko.impl.ObjectCollection;
 import limpet.prototype.generics.dinko.impl.QuantityCollection;
 import limpet.prototype.generics.dinko.impl.TemporalQuantityCollection;
+import limpet.prototype.generics.dinko.interfaces.ITemporalCollection;
 import si.uom.SI;
 import tec.units.ri.quantity.DefaultQuantityFactory;
 import tec.units.ri.unit.MetricPrefix;
@@ -53,6 +56,15 @@ public class TestDinko extends TestCase
 
 		// check it didn't get stored
 		assertEquals("correct number of samples", 10, speedCollection.size());
+		assertEquals("correct name", "Speed", speedCollection.getName());
+		
+		assertEquals("correct min",2d, speedCollection.min().getValue().doubleValue());
+		assertEquals("correct max",20d, speedCollection.max().getValue().doubleValue());
+		assertEquals("correct mean",11d, speedCollection.mean().getValue().doubleValue());
+		assertEquals("correct variance",33, speedCollection.variance().getValue().doubleValue(),0.1);
+		assertEquals("correct sd",5.744, speedCollection.sd().getValue().doubleValue(),0.001);
+
+		
 	}
 	
 
@@ -114,4 +126,100 @@ public class TestDinko extends TestCase
 		// check it got get stored
 		assertEquals("correct number of samples", 2, sc.size());
 	}
+	
+
+	public void testTimeQuantityCollectionIterator()
+	{
+		// the units for this measurement
+		Unit<Speed> kmh = MetricPrefix.KILO(Units.METRE).divide(Units.HOUR)
+				.asType(Speed.class);
+
+		// the target collection
+		TemporalQuantityCollection<Speed> speedCollection = new TemporalQuantityCollection<Speed>(
+				"Speed", kmh);
+
+		for (int i = 1; i <= 10; i++)
+		{
+			// create a measurement
+			double thisSpeed = i * 2;
+			Quantity<Speed> speedVal = DefaultQuantityFactory
+					.getInstance(Speed.class).create(thisSpeed, kmh);
+
+			// store the measurement
+			speedCollection.add(i, speedVal);
+		}
+
+		// check it didn't get stored
+		assertEquals("correct number of samples", 10, speedCollection.size());
+
+		ITemporalCollection it = speedCollection;
+		assertEquals("correct start", 1, it.start());
+		assertEquals("correct finish", 10, it.finish());
+		assertEquals("correct duration", 9, it.duration());
+		assertEquals("correct start", 1d, it.rate());
+		
+		// ok, now check the iterator
+		double runningValueSum = 0;
+		double runningTimeSum = 0;
+		Iterator<Long> tIter = speedCollection.getTimes().iterator();
+		Iterator<Quantity<Speed>> vIter = speedCollection.getValues().iterator();
+		while (vIter.hasNext())
+		{
+			Long time = tIter.next();
+			Quantity<Speed> value = vIter.next();
+			runningValueSum += value.getValue().doubleValue();
+			runningTimeSum += time;
+		}
+		assertEquals("values adds up", 110d, runningValueSum);
+		assertEquals("times adds up", 55d, runningTimeSum);
+		
+		assertEquals("correct mean",11d, speedCollection.mean().getValue().doubleValue());
+		assertEquals("correct variance",33, speedCollection.variance().getValue().doubleValue(),0.1);
+		assertEquals("correct sd",5.744, speedCollection.sd().getValue().doubleValue(),0.001);
+		
+	}
+	
+
+	public void testQuantityCollectionIterator()
+	{
+		// the units for this measurement
+		Unit<Speed> kmh = MetricPrefix.KILO(Units.METRE).divide(Units.HOUR)
+				.asType(Speed.class);
+
+		// the target collection
+		QuantityCollection<Speed> speedCollection = new QuantityCollection<Speed>(
+				"Speed", kmh);
+
+		for (int i = 1; i <= 10; i++)
+		{
+			// create a measurement
+			double thisSpeed = i * 2;
+			Quantity<Speed> speedVal = DefaultQuantityFactory
+					.getInstance(Speed.class).create(thisSpeed, kmh);
+
+			// store the measurement
+			speedCollection.add(speedVal);
+		}
+
+		// check it didn't get stored
+		assertEquals("correct number of samples", 10, speedCollection.size());
+
+		
+		// ok, now check the iterator
+		double runningValueSum = 0;
+		Iterator<Quantity<Speed>> vIter = speedCollection.getValues().iterator();
+		while (vIter.hasNext())
+		{
+			Quantity<Speed> value = vIter.next();
+			runningValueSum += value.getValue().doubleValue();
+		}
+		assertEquals("values adds up", 110d, runningValueSum);
+		
+		assertEquals("correct mean",11d, speedCollection.mean().getValue().doubleValue());
+		assertEquals("correct variance",33, speedCollection.variance().getValue().doubleValue(),0.1);
+		assertEquals("correct sd",5.744, speedCollection.sd().getValue().doubleValue(),0.001);
+		
+	}
+	
+	
 }

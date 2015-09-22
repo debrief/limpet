@@ -1,15 +1,8 @@
 package limpet.prototype.generics.dinko.interfaces;
 
-import java.util.Collection;
 
-public interface ITemporalObjectCollection<T extends Object> extends IObjectCollection<T>
+public interface ITemporalObjectCollection<T extends Object> extends IObjectCollection<T>, ITemporalCollection
 {
-
-	/** get the times of the observations
-	 * 
-	 * @return
-	 */
-	public Collection<Long> getTimes();
 
 	/** add this new item
 	 * 
