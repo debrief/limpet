@@ -117,22 +117,24 @@ public class TemporalQuantityCollection<T extends Quantity<T>> extends
 		@Override
 		public Doublet<T> next()
 		{
+			
+			final int thisCtr = ctr;
+			ctr++;
 			return new Doublet<T>(){
 
 				@Override
 				public long getTime()
 				{
 					// TODO Auto-generated method stub
-					return _times.get(ctr);
+					return _times.get(thisCtr);
 				}
 
 				@Override
-				public Quantity<T> getValue()
+				public Quantity<T> getObservation()
 				{
 					// TODO Auto-generated method stub
-					return  _values.get(ctr);
-				}
-				
+					return  _values.get(thisCtr);
+				}				
 			};
 		}
 
