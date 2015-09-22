@@ -7,7 +7,13 @@ public class ObjectCollection<T extends Object> implements IObjectCollection<T>
 {
 
 	ArrayList<T> _values = new ArrayList<T>();
+	private String _myName;
 	
+	public ObjectCollection(String name)
+	{
+		_myName = name;
+	}
+
 	@Override
 	public Collection<T> getValues()
 	{
