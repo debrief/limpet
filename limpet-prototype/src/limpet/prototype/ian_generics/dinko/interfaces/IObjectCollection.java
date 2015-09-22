@@ -1,4 +1,4 @@
-package limpet.prototype.ian_generics.dinko;
+package limpet.prototype.ian_generics.dinko.interfaces;
 
 import java.util.Collection;
 

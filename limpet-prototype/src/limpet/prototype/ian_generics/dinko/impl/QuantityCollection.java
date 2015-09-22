@@ -1,7 +1,10 @@
-package limpet.prototype.ian_generics.dinko;
+package limpet.prototype.ian_generics.dinko.impl;
 
 import javax.measure.Quantity;
 import javax.measure.Unit;
+
+import limpet.prototype.ian_generics.dinko.interfaces.IQuantityCollection;
+
 
 public class QuantityCollection<T extends Quantity<T>> extends ObjectCollection<Quantity<T>> implements IQuantityCollection<T>
 {

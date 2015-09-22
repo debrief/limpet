@@ -5,6 +5,9 @@ import javax.measure.Unit;
 import javax.measure.quantity.Speed;
 
 import junit.framework.TestCase;
+import limpet.prototype.ian_generics.dinko.impl.ObjectCollection;
+import limpet.prototype.ian_generics.dinko.impl.QuantityCollection;
+import limpet.prototype.ian_generics.dinko.impl.TemporalQuantityCollection;
 import si.uom.SI;
 import tec.units.ri.quantity.DefaultQuantityFactory;
 import tec.units.ri.unit.MetricPrefix;

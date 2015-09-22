@@ -1,7 +1,10 @@
-package limpet.prototype.ian_generics.dinko;
+package limpet.prototype.ian_generics.dinko.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+
+import limpet.prototype.ian_generics.dinko.interfaces.IObjectCollection;
+
 
 public class ObjectCollection<T extends Object> implements IObjectCollection<T>
 {
