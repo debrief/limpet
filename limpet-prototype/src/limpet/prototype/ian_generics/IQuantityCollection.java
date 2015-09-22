@@ -2,10 +2,8 @@ package limpet.prototype.ian_generics;
 
 import javax.measure.Quantity;
 
-public interface IQuantityCollection<Q extends Quantity<?>>
-{
-	public Q min();
-	public Q max();
-	public Q mean();
-	public Q sd();
+public interface IQuantityCollection<T extends Quantity<T>> extends ICoreQuantityCollection<T> {
+
+	public void add(Quantity<T> quantity);
+
 }

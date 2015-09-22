@@ -1,5 +1,7 @@
 package limpet.prototype.ian_generics;
 
+import java.util.Collection;
+
 public interface ITemporalCollection
 {
 
@@ -31,4 +33,10 @@ public interface ITemporalCollection
 	 * @return
 	 */
 	public double rate();
+
+	/** get the times of the observations
+	 * 
+	 * @return
+	 */
+	public Collection<Long> getTimes();
 }
