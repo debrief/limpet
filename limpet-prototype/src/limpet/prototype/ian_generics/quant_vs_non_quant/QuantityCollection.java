@@ -12,7 +12,7 @@ public class QuantityCollection<T extends Quantity<T>> extends CoreCollection
 		implements IQuantityCollection<T>
 {
 
-	private final ArrayList<Quantity<T>> _values = new ArrayList<Quantity<T>>();
+	protected final ArrayList<Quantity<T>> _values = new ArrayList<Quantity<T>>();
 	private final Unit<?> _myUnits;
 
 	private Quantity<T> _min = null;
@@ -26,6 +26,7 @@ public class QuantityCollection<T extends Quantity<T>> extends CoreCollection
 		_myUnits = units;
 	}
 
+	@Override
 	public Collection<Quantity<T>> getValues()
 	{
 		return _values;

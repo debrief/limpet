@@ -2,6 +2,7 @@ package limpet.prototype.ian_generics.quant_vs_non_quant;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 
 import javax.measure.Quantity;
 import javax.measure.Unit;
@@ -94,6 +95,59 @@ public class TemporalQuantityCollection<T extends Quantity<T>> extends
 	public Quantity<T> valueAt(long time, InterpolationMethod method)
 	{
 		// TODO: implement this
-		return null;
+		throw new UnsupportedOperationException("Method not implemented");
+	}
+	
+	private class MyIterator implements Iterator<Doublet<T>>
+	{
+
+		int ctr = 0;
+		
+		public MyIterator()
+		{
+			
+		}
+
+		@Override
+		public boolean hasNext()
+		{
+			return ctr < size();
+		}
+
+		@Override
+		public Doublet<T> next()
+		{
+			return new Doublet<T>(){
+
+				@Override
+				public long getTime()
+				{
+					// TODO Auto-generated method stub
+					return _times.get(ctr);
+				}
+
+				@Override
+				public Quantity<T> getValue()
+				{
+					// TODO Auto-generated method stub
+					return  _values.get(ctr);
+				}
+				
+			};
+		}
+
+		@Override
+		public void remove()
+		{
+			// TODO: make a decision. We probably don't want to implement this
+			throw new UnsupportedOperationException("Method not implemented");
+		}
+		
+	}
+
+	@Override
+	public Iterator<Doublet<T>> getObservations()
+	{
+		return new MyIterator() ;
 	}
 }
