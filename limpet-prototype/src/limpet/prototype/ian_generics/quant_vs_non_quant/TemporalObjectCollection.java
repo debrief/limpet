@@ -3,10 +3,10 @@ package limpet.prototype.ian_generics.quant_vs_non_quant;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import limpet.prototype.ian_generics.ITemporalCollection;
+import limpet.prototype.ian_generics.ITemporalObjectCollection;
 
 public class TemporalObjectCollection<T extends Object> extends
-		ObjectCollection<T> implements ITemporalCollection
+		ObjectCollection<T> implements ITemporalObjectCollection<T>
 {
 	private final ArrayList<Long> _times = new ArrayList<Long>();
 	TemporalSupport _temporalSupport;
@@ -24,6 +24,7 @@ public class TemporalObjectCollection<T extends Object> extends
 		throw new RuntimeException("This is a time series, data must be added with a timestamp");
 	}
 
+	@Override
 	public void add(long time, T observation)
 	{
 		// do some checking.

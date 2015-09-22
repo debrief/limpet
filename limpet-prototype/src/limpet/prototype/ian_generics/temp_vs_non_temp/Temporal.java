@@ -162,4 +162,9 @@ abstract public class Temporal<T extends Object> extends CoreCollection
 		else
 			return -1;
 	}
+
+	public Collection<Long> getTimes()
+	{
+		throw new UnsupportedOperationException("Method not implemented");
+	}
 }

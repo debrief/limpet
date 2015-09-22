@@ -1,6 +1,7 @@
 package limpet.prototype.ian_generics.quant_vs_non_quant;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 import limpet.prototype.ian_generics.ITemporalCollection;
 
@@ -66,5 +67,11 @@ public class TemporalSupport implements ITemporalCollection
 			return size() / duration();
 		else
 			return -1;
+	}
+
+
+	public Collection<Long> getTimes()
+	{
+		return _times;
 	}
 }

@@ -6,10 +6,10 @@ import java.util.Collection;
 import javax.measure.Quantity;
 import javax.measure.Unit;
 
-import limpet.prototype.ian_generics.ITemporalCollection;
+import limpet.prototype.ian_generics.ITemporalQuantityCollection;
 
 public class TemporalQuantityCollection<T extends Quantity<T>> extends
-		QuantityCollection<Quantity<T>> implements ITemporalCollection
+		QuantityCollection<T> implements ITemporalQuantityCollection<T>
 {
 
 	private ArrayList<Long> _times = new ArrayList<Long>();
@@ -23,14 +23,14 @@ public class TemporalQuantityCollection<T extends Quantity<T>> extends
 		_temporalSupport = new TemporalSupport(_times);
 	}
 
-	
-	
 	@Override
 	public void add(Quantity<T> quantity)
 	{
-		throw new RuntimeException("This is a time series, data must be added with a timestamp");
+		throw new RuntimeException(
+				"This is a time series, data must be added with a timestamp");
 	}
 
+	@Override
 	public void add(long time, Quantity<T> quantity)
 	{
 		// do some checking.
@@ -44,13 +44,20 @@ public class TemporalQuantityCollection<T extends Quantity<T>> extends
 			}
 		}
 
+		// time is positive
+		if (time < 0)
+		{
+			throw new RuntimeException("Cannot handle negative time");
+		}
+
 		_times.add(time);
 		super.add(quantity);
 	}
 
+	@Override
 	public Collection<Long> getTimes()
 	{
-		return _times;
+		return _temporalSupport.getTimes();
 	}
 
 	@Override
@@ -81,5 +88,12 @@ public class TemporalQuantityCollection<T extends Quantity<T>> extends
 	public double rate()
 	{
 		return _temporalSupport.rate();
+	}
+
+	@Override
+	public Quantity<T> valueAt(long time, InterpolationMethod method)
+	{
+		// TODO: implement this
+		return null;
 	}
 }

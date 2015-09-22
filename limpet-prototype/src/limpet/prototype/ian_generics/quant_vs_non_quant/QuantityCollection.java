@@ -8,16 +8,17 @@ import javax.measure.Unit;
 
 import limpet.prototype.ian_generics.IQuantityCollection;
 
-public class QuantityCollection<T extends Quantity<?>> extends CoreCollection implements IQuantityCollection<T>
+public class QuantityCollection<T extends Quantity<T>> extends CoreCollection
+		implements IQuantityCollection<T>
 {
 
-	private final ArrayList<T> _values = new ArrayList<T>();
+	private final ArrayList<Quantity<T>> _values = new ArrayList<Quantity<T>>();
 	private final Unit<?> _myUnits;
-	
-	private T _min = null;
-	private T _max = null;
-	private T _mean;
-	private T _sd;
+
+	private Quantity<T> _min = null;
+	private Quantity<T> _max = null;
+	private Quantity<T> _mean;
+	private Quantity<T> _sd;
 
 	public QuantityCollection(String name, Unit<?> units)
 	{
@@ -25,12 +26,13 @@ public class QuantityCollection<T extends Quantity<?>> extends CoreCollection im
 		_myUnits = units;
 	}
 
-	public Collection<T> getValues()
+	public Collection<Quantity<T>> getValues()
 	{
 		return _values;
 	}
 
-	public void add(T quantity)
+	@Override
+	public void add(Quantity<T> quantity)
 	{
 		if (_myUnits != quantity.getUnit())
 		{
@@ -38,8 +40,8 @@ public class QuantityCollection<T extends Quantity<?>> extends CoreCollection im
 		}
 
 		_values.add(quantity);
-		
-		if(_min == null)
+
+		if (_min == null)
 		{
 			// ok, store the first value
 			_min = _max = quantity;
@@ -47,11 +49,11 @@ public class QuantityCollection<T extends Quantity<?>> extends CoreCollection im
 		else
 		{
 			double doubleVal = quantity.getValue().doubleValue();
-			
-			_min = ( _min.getValue().doubleValue() < doubleVal ) ? _min : quantity;
-			_max = ( _max.getValue().doubleValue() > doubleVal ) ? _max : quantity;
+
+			_min = (_min.getValue().doubleValue() < doubleVal) ? _min : quantity;
+			_max = (_max.getValue().doubleValue() > doubleVal) ? _max : quantity;
 		}
-		
+
 		clearRunningTotal();
 	}
 
@@ -80,21 +82,21 @@ public class QuantityCollection<T extends Quantity<?>> extends CoreCollection im
 	}
 
 	@Override
-	public T min()
+	public Quantity<T> min()
 	{
 		return _min;
 	}
 
 	@Override
-	public T max()
+	public Quantity<T> max()
 	{
 		return _max;
 	}
 
 	@Override
-	public T mean()
+	public Quantity<T> mean()
 	{
-		if(_mean == null)
+		if (_mean == null)
 		{
 			calcStats();
 		}
@@ -102,9 +104,9 @@ public class QuantityCollection<T extends Quantity<?>> extends CoreCollection im
 	}
 
 	@Override
-	public T sd()
+	public Quantity<T> sd()
 	{
-		if(_sd == null)
+		if (_sd == null)
 		{
 			calcStats();
 		}
@@ -114,8 +116,8 @@ public class QuantityCollection<T extends Quantity<?>> extends CoreCollection im
 	private void calcStats()
 	{
 		// loop through the values, calc mean & SD
-		// TODO:  Somehow we need to produce a T. Should be ok, we know the doubleValue and the units for this dataset 
+		// TODO: Somehow we need to produce a T. Should be ok, we know the
+		// doubleValue and the units for this dataset
 	}
-
 
 }
