@@ -20,7 +20,7 @@ public interface ITemporalQuantityCollection<T extends Quantity<T>> extends
 	public interface Doublet<T extends Quantity<T>>
 	{
 		long getTime();
-		Quantity<T> getValue();
+		Quantity<T> getObservation();
 	}
 	
 	public Iterator<Doublet<T>> getObservations();

@@ -2,9 +2,13 @@ package limpet.prototype.ian_generics.quant_vs_non_quant;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 
 import javax.measure.Quantity;
 import javax.measure.Unit;
+import javax.measure.quantity.Speed;
+
+import tec.units.ri.quantity.DefaultQuantityFactory;
 
 import limpet.prototype.ian_generics.IQuantityCollection;
 
@@ -18,6 +22,7 @@ public class QuantityCollection<T extends Quantity<T>> extends CoreCollection
 	private Quantity<T> _min = null;
 	private Quantity<T> _max = null;
 	private Quantity<T> _mean;
+	private Quantity<T> _variance;
 	private Quantity<T> _sd;
 
 	public QuantityCollection(String name, Unit<?> units)
@@ -113,12 +118,60 @@ public class QuantityCollection<T extends Quantity<T>> extends CoreCollection
 		}
 		return _sd;
 	}
+	
+	@Override
+	public Quantity<T> variance()
+	{
+		if (_variance == null)
+		{
+			calcStats();
+		}
+		return _variance;
+	}
 
+
+	@SuppressWarnings("unchecked")
 	private void calcStats()
 	{
-		// loop through the values, calc mean & SD
-		// TODO: Somehow we need to produce a T. Should be ok, we know the
-		// doubleValue and the units for this dataset
+		if (size() > 0)
+		{
+			Iterator<Quantity<T>> iter = getValues().iterator();
+			double runningSum = 0;
+			while (iter.hasNext())
+			{
+				Quantity<T> quantity = (Quantity<T>) iter.next();
+				runningSum += quantity.getValue().doubleValue();
+			}
+
+			final double mean = runningSum / size();
+
+			_mean = (Quantity<T>) DefaultQuantityFactory.getInstance(Speed.class)
+					.create(mean, (Unit<Speed>) _myUnits);
+			// TODO: fix the previous horrible kludge!
+
+			iter = getValues().iterator();
+			runningSum = 0;
+			while (iter.hasNext())
+			{
+				Quantity<T> quantity = (Quantity<T>) iter.next();				
+				double a = quantity.getValue().doubleValue();
+				System.out.print(a + " , ");
+				runningSum += (mean - a) * (mean - a);
+			}
+
+			final double variance = runningSum / size();
+			_variance = (Quantity<T>) DefaultQuantityFactory.getInstance(Speed.class)
+					.create(variance, (Unit<Speed>) _myUnits);
+			// TODO: fix the previous horrible kludge!
+
+
+			final double sd = Math.sqrt(variance);
+			_sd = (Quantity<T>) DefaultQuantityFactory.getInstance(Speed.class)
+					.create(sd, (Unit<Speed>) _myUnits);
+			// TODO: fix the previous horrible kludge!
+
+		}
 	}
+
 
 }

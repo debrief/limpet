@@ -9,6 +9,7 @@ public interface ICoreQuantityCollection<T extends Quantity<T>>
 	public Quantity<T> min();
 	public Quantity<T> max();
 	public Quantity<T> mean();
+	public Quantity<T> variance();
 	public Quantity<T> sd();
 	Collection<Quantity<T>> getValues();
 }

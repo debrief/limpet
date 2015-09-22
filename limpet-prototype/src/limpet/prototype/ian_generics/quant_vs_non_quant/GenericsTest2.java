@@ -1,11 +1,14 @@
 package limpet.prototype.ian_generics.quant_vs_non_quant;
 
+import java.util.Iterator;
+
 import javax.measure.Quantity;
 import javax.measure.Unit;
 import javax.measure.quantity.Speed;
 
 import junit.framework.TestCase;
 import limpet.prototype.ian_generics.ITemporalCollection;
+import limpet.prototype.ian_generics.ITemporalQuantityCollection.Doublet;
 import tec.units.ri.quantity.DefaultQuantityFactory;
 import tec.units.ri.unit.MetricPrefix;
 import tec.units.ri.unit.Units;
@@ -99,6 +102,57 @@ public class GenericsTest2 extends TestCase
 
 	}
 
+
+	public void testTimeCollectionIterator()
+	{
+		// the units for this measurement
+		Unit<Speed> kmh = MetricPrefix.KILO(Units.METRE).divide(Units.HOUR)
+				.asType(Speed.class);
+
+		// the target collection
+		TemporalQuantityCollection<Speed> speedCollection = new TemporalQuantityCollection<Speed>(
+				"Speed", kmh);
+
+		for (int i = 1; i <= 10; i++)
+		{
+			// create a measurement
+			double thisSpeed = i * 2;
+			Quantity<Speed> speedVal = DefaultQuantityFactory
+					.getInstance(Speed.class).create(thisSpeed, kmh);
+
+			// store the measurement
+			speedCollection.add(i, speedVal);
+		}
+
+		// check it didn't get stored
+		assertEquals("correct number of samples", 10, speedCollection.size());
+
+		ITemporalCollection it = speedCollection;
+		assertEquals("correct start", 1, it.start());
+		assertEquals("correct finish", 10, it.finish());
+		assertEquals("correct duration", 9, it.duration());
+		assertEquals("correct start", 1d, it.rate());
+		
+		// ok, now check the iterator
+		double runningValueSum = 0;
+		double runningTimeSum = 0;
+		Iterator<Doublet<Speed>> iter = speedCollection.getObservations();
+		while (iter.hasNext())
+		{
+			Doublet<javax.measure.quantity.Speed> doublet = (Doublet<javax.measure.quantity.Speed>) iter
+					.next();
+			runningValueSum += doublet.getObservation().getValue().doubleValue();
+			runningTimeSum += doublet.getTime();
+		}
+		assertEquals("values adds up", 110d, runningValueSum);
+		assertEquals("times adds up", 55d, runningTimeSum);
+		
+		assertEquals("correct mean",11d, speedCollection.mean().getValue().doubleValue());
+		assertEquals("correct variance",33, speedCollection.variance().getValue().doubleValue(),0.1);
+		assertEquals("correct sd",5.744, speedCollection.sd().getValue().doubleValue(),0.001);
+		
+	}
+	
 	public void testTimeCollectionAPI()
 	{
 		// the units for this measurement
