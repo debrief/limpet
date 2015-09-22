@@ -1,14 +1,15 @@
-package limpet.prototype.ian_generics.quant_vs_non_quant;
+package limpet.prototype.ian_generics.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
-import limpet.prototype.ian_generics.IObjectCollection;
+import limpet.prototype.ian_generics.impl.support.CoreCollection;
+import limpet.prototype.ian_generics.interfaces.IObjectCollection;
 
 public class ObjectCollection<T extends Object> extends CoreCollection implements IObjectCollection<T>
 {
 
-	private final ArrayList<T> _values = new ArrayList<T>();
+	protected final ArrayList<T> _values = new ArrayList<T>();
 
 	public ObjectCollection(String name)
 	{

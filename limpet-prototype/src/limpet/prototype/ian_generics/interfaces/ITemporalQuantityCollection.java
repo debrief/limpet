@@ -1,4 +1,4 @@
-package limpet.prototype.ian_generics;
+package limpet.prototype.ian_generics.interfaces;
 
 import java.util.Iterator;
 
@@ -23,7 +23,7 @@ public interface ITemporalQuantityCollection<T extends Quantity<T>> extends
 		Quantity<T> getObservation();
 	}
 	
-	public Iterator<Doublet<T>> getObservations();
+	public Iterator<Doublet<T>> iterator();
 
 	/** choice of how to calculate an interpolated value
 	 * 

@@ -1,9 +1,9 @@
-package limpet.prototype.ian_generics.quant_vs_non_quant;
+package limpet.prototype.ian_generics.impl.support;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
-import limpet.prototype.ian_generics.ITemporalCollection;
+import limpet.prototype.ian_generics.interfaces.ITemporalCollection;
 
 /** utility class to provide support in temporal overview of data
  * 

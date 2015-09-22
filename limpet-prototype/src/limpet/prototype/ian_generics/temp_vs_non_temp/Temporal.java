@@ -6,7 +6,7 @@ import java.util.Collection;
 import javax.measure.Quantity;
 import javax.measure.Unit;
 
-import limpet.prototype.ian_generics.ITemporalCollection;
+import limpet.prototype.ian_generics.interfaces.ITemporalCollection;
 
 abstract public class Temporal<T extends Object> extends CoreCollection
 		implements ITemporalCollection

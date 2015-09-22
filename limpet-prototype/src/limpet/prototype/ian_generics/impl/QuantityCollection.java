@@ -1,4 +1,4 @@
-package limpet.prototype.ian_generics.quant_vs_non_quant;
+package limpet.prototype.ian_generics.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -10,7 +10,8 @@ import javax.measure.quantity.Speed;
 
 import tec.units.ri.quantity.DefaultQuantityFactory;
 
-import limpet.prototype.ian_generics.IQuantityCollection;
+import limpet.prototype.ian_generics.impl.support.CoreCollection;
+import limpet.prototype.ian_generics.interfaces.IQuantityCollection;
 
 public class QuantityCollection<T extends Quantity<T>> extends CoreCollection
 		implements IQuantityCollection<T>

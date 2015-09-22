@@ -1,4 +1,4 @@
-package limpet.prototype.ian_generics;
+package limpet.prototype.ian_generics.interfaces;
 
 import javax.measure.Quantity;
 

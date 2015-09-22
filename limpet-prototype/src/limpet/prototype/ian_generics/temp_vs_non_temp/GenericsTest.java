@@ -5,7 +5,7 @@ import javax.measure.Unit;
 import javax.measure.quantity.Speed;
 
 import junit.framework.TestCase;
-import limpet.prototype.ian_generics.ITemporalCollection;
+import limpet.prototype.ian_generics.interfaces.ITemporalCollection;
 import limpet.prototype.ian_generics.temp_vs_non_temp.Temporal.ObjectCollection;
 import limpet.prototype.ian_generics.temp_vs_non_temp.Temporal.QuantityCollection;
 import limpet.prototype.ian_generics.temp_vs_non_temp.Temporal.TemporalObservation;

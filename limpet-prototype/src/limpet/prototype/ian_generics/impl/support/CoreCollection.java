@@ -1,6 +1,6 @@
-package limpet.prototype.ian_generics.quant_vs_non_quant;
+package limpet.prototype.ian_generics.impl.support;
 
-import limpet.prototype.ian_generics.ICollection;
+import limpet.prototype.ian_generics.interfaces.ICollection;
 
 abstract public class CoreCollection implements ICollection
 {

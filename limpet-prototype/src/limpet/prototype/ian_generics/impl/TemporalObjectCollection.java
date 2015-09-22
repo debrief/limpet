@@ -1,9 +1,11 @@
-package limpet.prototype.ian_generics.quant_vs_non_quant;
+package limpet.prototype.ian_generics.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 
-import limpet.prototype.ian_generics.ITemporalObjectCollection;
+import limpet.prototype.ian_generics.impl.support.TemporalSupport;
+import limpet.prototype.ian_generics.interfaces.ITemporalObjectCollection;
 
 public class TemporalObjectCollection<T extends Object> extends
 		ObjectCollection<T> implements ITemporalObjectCollection<T>
@@ -76,4 +78,59 @@ public class TemporalObjectCollection<T extends Object> extends
 	{
 		return _temporalSupport.rate();
 	}
+	
+
+	private class MyIterator implements Iterator<Doublet<T>>
+	{
+
+		int ctr = 0;
+		
+		public MyIterator()
+		{
+			
+		}
+
+		@Override
+		public boolean hasNext()
+		{
+			return ctr < size();
+		}
+
+		@Override
+		public Doublet<T> next()
+		{
+			
+			final int thisCtr = ctr;
+			ctr++;
+			return new Doublet<T>(){
+
+				@Override
+				public long getTime()
+				{
+					return _times.get(thisCtr);
+				}
+
+				@Override
+				public T getObject()
+				{
+					return  _values.get(thisCtr);
+				}				
+			};
+		}
+
+		@Override
+		public void remove()
+		{
+			// TODO: make a decision. We probably don't want to implement this
+			throw new UnsupportedOperationException("Method not implemented");
+		}
+		
+	}
+
+	@Override
+	public Iterator<Doublet<T>> iterator()
+	{
+		return new MyIterator() ;
+	}
+	
 }

@@ -1,4 +1,4 @@
-package limpet.prototype.ian_generics.quant_vs_non_quant;
+package limpet.prototype.ian_generics.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -7,7 +7,8 @@ import java.util.Iterator;
 import javax.measure.Quantity;
 import javax.measure.Unit;
 
-import limpet.prototype.ian_generics.ITemporalQuantityCollection;
+import limpet.prototype.ian_generics.impl.support.TemporalSupport;
+import limpet.prototype.ian_generics.interfaces.ITemporalQuantityCollection;
 
 public class TemporalQuantityCollection<T extends Quantity<T>> extends
 		QuantityCollection<T> implements ITemporalQuantityCollection<T>
@@ -125,14 +126,12 @@ public class TemporalQuantityCollection<T extends Quantity<T>> extends
 				@Override
 				public long getTime()
 				{
-					// TODO Auto-generated method stub
 					return _times.get(thisCtr);
 				}
 
 				@Override
 				public Quantity<T> getObservation()
 				{
-					// TODO Auto-generated method stub
 					return  _values.get(thisCtr);
 				}				
 			};
@@ -148,7 +147,7 @@ public class TemporalQuantityCollection<T extends Quantity<T>> extends
 	}
 
 	@Override
-	public Iterator<Doublet<T>> getObservations()
+	public Iterator<Doublet<T>> iterator()
 	{
 		return new MyIterator() ;
 	}

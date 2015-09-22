@@ -1,4 +1,4 @@
-package limpet.prototype.ian_generics.quant_vs_non_quant;
+package limpet.prototype.ian_generics;
 
 import java.util.Iterator;
 
@@ -7,14 +7,16 @@ import javax.measure.Unit;
 import javax.measure.quantity.Speed;
 
 import junit.framework.TestCase;
-import limpet.prototype.ian_generics.ITemporalCollection;
-import limpet.prototype.ian_generics.ITemporalQuantityCollection.Doublet;
+import limpet.prototype.ian_generics.impl.TemporalObjectCollection;
+import limpet.prototype.ian_generics.impl.TemporalQuantityCollection;
+import limpet.prototype.ian_generics.interfaces.ITemporalCollection;
+import limpet.prototype.ian_generics.interfaces.ITemporalQuantityCollection.Doublet;
 import si.uom.SI;
 import tec.units.ri.quantity.DefaultQuantityFactory;
 import tec.units.ri.unit.MetricPrefix;
 import tec.units.ri.unit.Units;
 
-public class GenericsTest2 extends TestCase
+public class Test_QuantNonQuant extends TestCase
 {
 
 	public void testSimpleAddition()
@@ -137,7 +139,7 @@ public class GenericsTest2 extends TestCase
 		// ok, now check the iterator
 		double runningValueSum = 0;
 		double runningTimeSum = 0;
-		Iterator<Doublet<Speed>> iter = speedCollection.getObservations();
+		Iterator<Doublet<Speed>> iter = speedCollection.iterator();
 		while (iter.hasNext())
 		{
 			Doublet<javax.measure.quantity.Speed> doublet = (Doublet<javax.measure.quantity.Speed>) iter
