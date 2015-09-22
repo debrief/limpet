@@ -10,5 +10,18 @@ public interface ITemporalObjectCollection<T extends Object> extends IObjectColl
 	 * @param object
 	 */
 	public void add(long time, T object);
+	
+	/** combination of a timestamp with an observation
+	 * 
+	 * @author ian
+	 *
+	 * @param <T>
+	 */
+	public interface Doublet<T>
+	{
+		long getTime();
+		T getObservation();
+	}
+
 
 }

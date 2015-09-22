@@ -9,8 +9,10 @@ import javax.measure.quantity.Speed;
 import junit.framework.TestCase;
 import limpet.prototype.generics.dinko.impl.ObjectCollection;
 import limpet.prototype.generics.dinko.impl.QuantityCollection;
+import limpet.prototype.generics.dinko.impl.TemporalObjectCollection;
 import limpet.prototype.generics.dinko.impl.TemporalQuantityCollection;
 import limpet.prototype.generics.dinko.interfaces.ITemporalCollection;
+import limpet.prototype.generics.dinko.interfaces.ITemporalObjectCollection.Doublet;
 import si.uom.SI;
 import tec.units.ri.quantity.DefaultQuantityFactory;
 import tec.units.ri.unit.MetricPrefix;
@@ -33,6 +35,39 @@ public class TestDinko extends TestCase
 		assertEquals("correct number of samples", 10, stringCollection.size());
 	}
 
+	public void testCreateTemporalObject()
+	{
+		// the target collection
+		TemporalObjectCollection<String> stringCollection = new TemporalObjectCollection<String>("strings");
+
+		for (int i = 1; i <= 12; i++)
+		{
+			// store the measurement
+			stringCollection.add(i, i + "aaa");
+		}
+
+		// check it didn't get stored
+		assertEquals("correct number of samples", 12, stringCollection.size());
+		
+		ITemporalCollection it = stringCollection;
+		assertEquals("correct start", 1, it.start());
+		assertEquals("correct finish", 12, it.finish());
+		assertEquals("correct duration", 11, it.duration());
+		assertEquals("correct start", 1d, it.rate());
+		
+		// ok, now check the iterator
+		long runningValueSum = 0;
+		long runningTimeSum = 0;
+		Iterator<Doublet<String>> iter = stringCollection.iterator();
+		while (iter.hasNext())
+		{
+			Doublet<String> doublet = iter.next();
+			runningValueSum += doublet.getObservation().length();
+			runningTimeSum += doublet.getTime();
+		}
+		assertEquals("values adds up", 51, runningValueSum);
+		assertEquals("times adds up", 78, runningTimeSum);
+	}
 	
 	public void testCreateQuantity()
 	{
@@ -63,12 +98,9 @@ public class TestDinko extends TestCase
 		assertEquals("correct mean",11d, speedCollection.mean().getValue().doubleValue());
 		assertEquals("correct variance",33, speedCollection.variance().getValue().doubleValue(),0.1);
 		assertEquals("correct sd",5.744, speedCollection.sd().getValue().doubleValue(),0.001);
-
-		
 	}
 	
-
-	public void testSimpleAddition()
+	public void testTemporalQuantityAddition()
 	{
 		// the units for this measurement
 		Unit<Speed> kmh = MetricPrefix.KILO(Units.METRE).divide(Units.HOUR)
@@ -158,21 +190,20 @@ public class TestDinko extends TestCase
 		assertEquals("correct duration", 9, it.duration());
 		assertEquals("correct start", 1d, it.rate());
 		
+		
 		// ok, now check the iterator
 		double runningValueSum = 0;
 		double runningTimeSum = 0;
-		Iterator<Long> tIter = speedCollection.getTimes().iterator();
-		Iterator<Quantity<Speed>> vIter = speedCollection.getValues().iterator();
-		while (vIter.hasNext())
+		Iterator<Doublet<Quantity<Speed>>> iter = speedCollection.iterator();
+		while (iter.hasNext())
 		{
-			Long time = tIter.next();
-			Quantity<Speed> value = vIter.next();
-			runningValueSum += value.getValue().doubleValue();
-			runningTimeSum += time;
+			Doublet<Quantity<Speed>> doublet = iter.next();
+			runningValueSum += doublet.getObservation().getValue().doubleValue();
+			runningTimeSum += doublet.getTime();
 		}
 		assertEquals("values adds up", 110d, runningValueSum);
 		assertEquals("times adds up", 55d, runningTimeSum);
-		
+
 		assertEquals("correct mean",11d, speedCollection.mean().getValue().doubleValue());
 		assertEquals("correct variance",33, speedCollection.variance().getValue().doubleValue(),0.1);
 		assertEquals("correct sd",5.744, speedCollection.sd().getValue().doubleValue(),0.001);

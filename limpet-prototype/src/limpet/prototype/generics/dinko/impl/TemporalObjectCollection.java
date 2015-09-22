@@ -2,6 +2,9 @@ package limpet.prototype.generics.dinko.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
+
+import javax.measure.Quantity;
 
 import limpet.prototype.generics.dinko.interfaces.ITemporalObjectCollection;
 
@@ -18,6 +21,7 @@ public class TemporalObjectCollection <T extends Object> extends ObjectCollectio
 		_tSupport = new TimeHelper(_times);
 	}
 
+	
 	@Override
 	public Collection<Long> getTimes()
 	{
@@ -62,5 +66,52 @@ public class TemporalObjectCollection <T extends Object> extends ObjectCollectio
 		return _tSupport.rate();
 	}
 
+	public Iterator<Doublet<T>> iterator()
+	{
+		return new MyIterator();
+	}
 
+
+	private class MyIterator implements Iterator<Doublet<T>>
+	{
+
+		int ctr = 0;
+		
+		@Override
+		public boolean hasNext()
+		{
+			return ctr < size();
+		}
+
+		@Override
+		public Doublet<T> next()
+		{
+			
+			final int thisCtr = ctr;
+			ctr++;
+			return new Doublet<T>(){
+
+				@Override
+				public long getTime()
+				{
+					return _times.get(thisCtr);
+				}
+
+				@Override
+				public T getObservation()
+				{
+					return  _values.get(thisCtr);
+				}				
+			};
+		}
+
+		@Override
+		public void remove()
+		{
+			// TODO: make a decision. We probably don't want to implement this
+			throw new UnsupportedOperationException("Method not implemented");
+		}
+		
+	}
+	
 }
