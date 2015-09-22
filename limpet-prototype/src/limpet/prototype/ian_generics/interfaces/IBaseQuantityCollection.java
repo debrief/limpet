@@ -4,7 +4,7 @@ import java.util.Collection;
 
 import javax.measure.Quantity;
 
-public interface ICoreQuantityCollection<T extends Quantity<T>>
+public interface IBaseQuantityCollection<T extends Quantity<T>>
 {
 	public Quantity<T> min();
 	public Quantity<T> max();

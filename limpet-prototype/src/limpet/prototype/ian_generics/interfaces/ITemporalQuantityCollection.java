@@ -5,7 +5,7 @@ import java.util.Iterator;
 import javax.measure.Quantity;
 
 public interface ITemporalQuantityCollection<T extends Quantity<T>> extends
-		ICoreQuantityCollection<T>, ITemporalCollection
+		IBaseQuantityCollection<T>, ITemporalCollection
 {
 
 	public void add(long time, Quantity<T> quantity);
