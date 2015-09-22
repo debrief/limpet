@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
-import javax.measure.Quantity;
-
 import limpet.prototype.generics.dinko.interfaces.ITemporalObjectCollection;
 
 
