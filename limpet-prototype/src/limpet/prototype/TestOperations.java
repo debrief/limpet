@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.measure.Quantity;
 import javax.measure.Unit;
+import javax.measure.quantity.Length;
 import javax.measure.quantity.Speed;
 
 import junit.framework.TestCase;
@@ -71,7 +72,7 @@ public class TestOperations extends TestCase
 		
 	}
 	
-	public void testInvalidOperation()
+	public void testUnequalLengthSeries()
 	{
 		// the units for this measurement
 		Unit<Speed> kmh = MetricPrefix.KILO(Units.METRE).divide(Units.HOUR)
@@ -113,7 +114,6 @@ public class TestOperations extends TestCase
 
 		// store the measurement
 		speed3.add(speedVal3a);
-
 		
 		
 		InMemoryStore store = new InMemoryStore();
@@ -125,5 +125,98 @@ public class TestOperations extends TestCase
 			
 	}
 	
+
+	public void testUnequalDimensions()
+	{
+		// the units for this measurement
+		Unit<Speed> kmh = MetricPrefix.KILO(Units.METRE).divide(Units.HOUR)
+				.asType(Speed.class);
+		Unit<Length> m = (Units.METRE).asType(Length.class);
+
+		// the target collection
+		QuantityCollection<Speed> speed1 = new QuantityCollection<Speed>(
+				"Speed 1", kmh);
+		QuantityCollection<Speed> speed2 = new QuantityCollection<Speed>(
+				"Speed 2", kmh);
+		QuantityCollection<Length> len1 = new QuantityCollection<Length>(
+				"Length 1", m);
+
+		List<ICollection> selection = new ArrayList<ICollection>(3);
+		selection.add(speed1);
+		selection.add(speed2);
+		selection.add(len1);
+				
+
+		for (int i = 1; i <= 10; i++)
+		{
+			// create a measurement
+			double thisSpeed = i * 2;
+			Quantity<Speed> speedVal1 = DefaultQuantityFactory
+					.getInstance(Speed.class).create(thisSpeed, kmh);
+			Quantity<Speed> speedVal2 = DefaultQuantityFactory
+					.getInstance(Speed.class).create(thisSpeed*2, kmh);
+			Quantity<Length> lenVal1 = DefaultQuantityFactory
+					.getInstance(Length.class).create(thisSpeed/2, m);
+
+			// store the measurement
+			speed1.add( speedVal1);
+			speed2.add( speedVal2);
+			len1.add( lenVal1);
+		}
+		
+		InMemoryStore store = new InMemoryStore();
+		assertEquals("store empty", 0, store.rootSize());
+		
+		Collection<ICommand> actions = new AddQuantityOperation().actionsFor(selection, store );
+		
+		assertEquals("correct number of actions returned", 0, actions.size());
+	}
+
+	public void testUnequalUnits()
+	{
+		// the units for this measurement
+		Unit<Speed> kmh = MetricPrefix.KILO(Units.METRE).divide(Units.HOUR)
+				.asType(Speed.class);
+		Unit<Speed> kmm = MetricPrefix.KILO(Units.METRE).divide(Units.MINUTE)
+				.asType(Speed.class);
+	
+		// the target collection
+		QuantityCollection<Speed> speed1 = new QuantityCollection<Speed>(
+				"Speed 1", kmh);
+		QuantityCollection<Speed> speed2 = new QuantityCollection<Speed>(
+				"Speed 2", kmh);
+		QuantityCollection<Speed> speed3 = new QuantityCollection<Speed>(
+				"Speed 3", kmm);
+	
+		List<ICollection> selection = new ArrayList<ICollection>(3);
+		selection.add(speed1);
+		selection.add(speed2);
+		selection.add(speed3);
+				
+	
+		for (int i = 1; i <= 10; i++)
+		{
+			// create a measurement
+			double thisSpeed = i * 2;
+			Quantity<Speed> speedVal1 = DefaultQuantityFactory
+					.getInstance(Speed.class).create(thisSpeed, kmh);
+			Quantity<Speed> speedVal2 = DefaultQuantityFactory
+					.getInstance(Speed.class).create(thisSpeed*2, kmh);
+			Quantity<Speed> speedVal3 = DefaultQuantityFactory
+					.getInstance(Speed.class).create(thisSpeed/2, kmm);
+	
+			// store the measurement
+			speed1.add( speedVal1);
+			speed2.add( speedVal2);
+			speed3.add( speedVal3);
+		}
+		
+		InMemoryStore store = new InMemoryStore();
+		assertEquals("store empty", 0, store.rootSize());
+		
+		Collection<ICommand> actions = new AddQuantityOperation().actionsFor(selection, store );
+		
+		assertEquals("correct number of actions returned", 0, actions.size());
+	}
 	
 }

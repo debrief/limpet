@@ -21,7 +21,8 @@ import tec.units.ri.unit.Units;
 public class AddQuantityOperation extends BaseOperation
 {
 	@Override
-	public Collection<ICommand> actionsFor(List<ICollection> selection, IStore destination)
+	public Collection<ICommand> actionsFor(List<ICollection> selection,
+			IStore destination)
 	{
 		Collection<ICommand> res = new ArrayList<ICommand>();
 		if (appliesTo(selection))
@@ -32,44 +33,15 @@ public class AddQuantityOperation extends BaseOperation
 
 		return res;
 	}
+	
+	
 
-	protected boolean appliesTo(List<ICollection> selection)
+	private boolean appliesTo(List<ICollection> selection)
 	{
-		// are the all temporal?
-		boolean allValid = true;
-		int size = -1;
-
-		for (int i = 0; i < selection.size(); i++)
-		{
-			ICollection thisC = selection.get(i);
-			if (thisC.isQuantity())
-			{
-				// great, valid, check the size
-				if (size == -1)
-				{
-					size = thisC.size();
-				}
-				else
-				{
-					if (size != thisC.size())
-					{
-						// oops, no
-						allValid = false;
-						break;
-					}
-				}
-			}
-			else
-			{
-				// oops, no
-				allValid = false;
-				break;
-			}
-
-		}
-
-		return allValid;
+		return (allQuantity(selection) && allEqualLength(selection) && allEqualDimensions(selection) && allEqualUnits(selection));
 	}
+
+
 
 	public static class AddQuantityValues extends AbstractCommand
 	{
@@ -99,17 +71,18 @@ public class AddQuantityOperation extends BaseOperation
 				for (int i = 0; i < _series.size(); i++)
 				{
 					@SuppressWarnings("unchecked")
-					IQuantityCollection<Speed> thisC = (IQuantityCollection<Speed>) _series.get(0);
+					IQuantityCollection<Speed> thisC = (IQuantityCollection<Speed>) _series
+							.get(0);
 					double thisQ = thisC.getValues().get(j).getValue().doubleValue();
 					runningTotal += thisQ;
 				}
-				
-				Quantity<Speed> value = (Quantity<Speed>) DefaultQuantityFactory.getInstance(Speed.class)
-						.create(runningTotal, (Unit<Speed>) kmh);
+
+				Quantity<Speed> value = (Quantity<Speed>) DefaultQuantityFactory
+						.getInstance(Speed.class).create(runningTotal, (Unit<Speed>) kmh);
 
 				target.add(value);
 			}
-			
+
 			// ok, done
 			List<ICollection> res = new ArrayList<ICollection>();
 			res.add(target);

@@ -1,5 +1,6 @@
 package limpet.prototype.generics.dinko.impl;
 
+import javax.measure.Dimension;
 import javax.measure.Quantity;
 import javax.measure.Unit;
 
@@ -20,6 +21,18 @@ public class QuantityCollection<T extends Quantity<T>> extends
 		_qHelper = new QuantityHelper<>(_values, units);
 	}
 
+	@Override
+	public Dimension getDimension()
+	{
+		return _qHelper.getDimension();
+	}
+	
+	@Override
+	public Unit<T> getUnits()
+	{
+		return _qHelper.getUnits();
+	}
+	
 	@Override
 	public void add(Quantity<T> value)
 	{

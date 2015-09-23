@@ -3,6 +3,7 @@ package limpet.prototype.generics.dinko.impl.hlpers;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import javax.measure.Dimension;
 import javax.measure.Quantity;
 import javax.measure.Unit;
 import javax.measure.quantity.Speed;
@@ -142,5 +143,17 @@ public class QuantityHelper<T extends Quantity<T>> implements IBaseQuantityColle
 			// TODO: fix the previous horrible kludge!
 
 		}
+	}
+
+	@Override
+	public Dimension getDimension()
+	{
+		return _myUnits.getDimension();
+	}
+
+	@Override
+	public Unit<T> getUnits()
+	{
+		return _myUnits;
 	}
 }

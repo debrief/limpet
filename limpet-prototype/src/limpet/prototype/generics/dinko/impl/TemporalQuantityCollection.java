@@ -1,5 +1,6 @@
 package limpet.prototype.generics.dinko.impl;
 
+import javax.measure.Dimension;
 import javax.measure.Quantity;
 import javax.measure.Unit;
 
@@ -73,6 +74,18 @@ public class TemporalQuantityCollection<T extends Quantity<T>> extends
 	public boolean isTemporal()
 	{
 		return true;
+	}
+
+	@Override
+	public Dimension getDimension()
+	{
+		return _qHelper.getDimension();
+	}
+
+	@Override
+	public Unit<T> getUnits()
+	{
+		return _qHelper.getUnits();
 	}
 
 }
