@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            name="Limpet Data Analysis"
+            id="info.limpet.rcp">
+      </category>
+      <view
+            name="Analysis View"
+            icon="icons/sample.gif"
+            category="info.limpet.rcp"
+            class="info.limpet.rcp.analysis_view.AnalysisView"
+            id="info.limpet.rcp.AnalysisView">
+      </view>
+      <view
+            name="Data Provider"
+            icon="icons/sample.gif"
+            category="info.limpet.rcp"
+            class="info.limpet.rcp.data_provider.DataProvider"
+            id="info.limpet.rcp.DataProvider">
+      </view>
+   </extension>
+
+</plugin>
