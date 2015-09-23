@@ -11,13 +11,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javax.measure.Dimension;
 import javax.measure.Quantity;
 import javax.measure.Unit;
 import javax.measure.quantity.Speed;
 
 import tec.units.ri.quantity.DefaultQuantityFactory;
-import tec.units.ri.unit.MetricPrefix;
-import tec.units.ri.unit.Units;
 
 public class AddQuantityOperation extends BaseOperation
 {
@@ -59,11 +58,19 @@ public class AddQuantityOperation extends BaseOperation
 		@Override
 		public void execute()
 		{
+			// TODO: remove hard-coded Speed value. Use quantity from first series
+			// TODO: sort out dimension / units consistency for this implementation
+			
+			// get the dimensions & units
+			IQuantityCollection<?> first = (IQuantityCollection<?>) _series.get(0);
+			@SuppressWarnings("unused")
+			Dimension dim = first.getDimension();
+			@SuppressWarnings("unchecked")
+			Unit<Speed> units = (Unit<Speed>) first.getUnits();
+			
 			// ok, generate the new series
-			Unit<Speed> kmh = MetricPrefix.KILO(Units.METRE).divide(Units.HOUR)
-					.asType(Speed.class);
 			IQuantityCollection<Speed> target = new QuantityCollection<Speed>(
-					"Speed Total", kmh);
+					"Speed Total", units);
 
 			// start adding values.
 			for (int j = 0; j < _series.get(0).size(); j++)
@@ -79,7 +86,7 @@ public class AddQuantityOperation extends BaseOperation
 				}
 
 				Quantity<Speed> value = (Quantity<Speed>) DefaultQuantityFactory
-						.getInstance(Speed.class).create(runningTotal, (Unit<Speed>) kmh);
+						.getInstance(Speed.class).create(runningTotal, (Unit<Speed>) units);
 
 				target.add(value);
 			}
