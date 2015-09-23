@@ -17,6 +17,7 @@ import javax.measure.Unit;
 import javax.measure.quantity.Speed;
 
 import tec.units.ri.quantity.DefaultQuantityFactory;
+import tec.units.ri.quantity.Quantities;
 
 public class AddQuantityOperation extends BaseOperation
 {
@@ -85,8 +86,7 @@ public class AddQuantityOperation extends BaseOperation
 					runningTotal += thisQ;
 				}
 
-				Quantity<Speed> value = (Quantity<Speed>) DefaultQuantityFactory
-						.getInstance(Speed.class).create(runningTotal, (Unit<Speed>) units);
+				Quantity<Speed> value = Quantities.getQuantity(runningTotal, units);
 
 				target.add(value);
 			}

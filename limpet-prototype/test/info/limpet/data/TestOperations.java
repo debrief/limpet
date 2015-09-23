@@ -19,7 +19,7 @@ import javax.measure.quantity.Length;
 import javax.measure.quantity.Speed;
 
 import junit.framework.TestCase;
-import tec.units.ri.quantity.DefaultQuantityFactory;
+import tec.units.ri.quantity.Quantities;
 import tec.units.ri.unit.MetricPrefix;
 import tec.units.ri.unit.Units;
 
@@ -57,16 +57,11 @@ public class TestOperations extends TestCase
 		{
 			// create a measurement
 			double thisSpeed = i * 2;
-			Quantity<Speed> speedVal1 = DefaultQuantityFactory
-					.getInstance(Speed.class).create(thisSpeed, kmh);
-			Quantity<Speed> speedVal2 = DefaultQuantityFactory
-					.getInstance(Speed.class).create(thisSpeed*2, kmh);
-			Quantity<Speed> speedVal3 = DefaultQuantityFactory
-					.getInstance(Speed.class).create(thisSpeed/2, kmh);
-			Quantity<Speed> speedVal4 = DefaultQuantityFactory
-					.getInstance(Speed.class).create(thisSpeed/2, kmm);
-			Quantity<Length> lenVal1 = DefaultQuantityFactory
-					.getInstance(Length.class).create(thisSpeed/2, m);
+			Quantity<Speed> speedVal1 = Quantities.getQuantity(thisSpeed, kmh);
+			Quantity<Speed> speedVal2 = Quantities.getQuantity(thisSpeed*2, kmh);
+			Quantity<Speed> speedVal3 = Quantities.getQuantity(thisSpeed/2, kmh);
+			Quantity<Speed> speedVal4 = Quantities.getQuantity(thisSpeed/2, kmm);
+			Quantity<Length> lenVal1 = Quantities.getQuantity(thisSpeed/2, m);
 	
 			// store the measurements
 			speed_good_1.add( speedVal1);
@@ -78,8 +73,7 @@ public class TestOperations extends TestCase
 			len1.add(lenVal1);
 		}
 
-		Quantity<Speed> speedVal3a = DefaultQuantityFactory
-				.getInstance(Speed.class).create(2, kmh);
+		Quantity<Speed> speedVal3a = Quantities.getQuantity(2, kmh);
 		speed_longer.add( speedVal3a);
 
 

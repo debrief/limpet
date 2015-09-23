@@ -11,6 +11,7 @@ import javax.measure.Unit;
 import javax.measure.quantity.Speed;
 
 import tec.units.ri.quantity.DefaultQuantityFactory;
+import tec.units.ri.quantity.Quantities;
 
 public class QuantityHelper<T extends Quantity<T>> implements IBaseQuantityCollection<T>
 {
@@ -30,9 +31,15 @@ public class QuantityHelper<T extends Quantity<T>> implements IBaseQuantityColle
 		_myUnits = units;
 	}
 
+	public void add(Number value)
+	{
+		Quantity<T> newVal = Quantities.getQuantity(value, getUnits());
+		_values.add(newVal);
+	}
+
 	public void add(Quantity<T> quantity)
 	{
-		if (_myUnits != quantity.getUnit())
+		if (!_myUnits.isCompatible(quantity.getUnit()))
 		{
 			throw new RuntimeException("New data value in wrong units");
 		}
@@ -119,9 +126,7 @@ public class QuantityHelper<T extends Quantity<T>> implements IBaseQuantityColle
 
 			final double mean = runningSum / _values.size();
 
-			_mean = (Quantity<T>) DefaultQuantityFactory.getInstance(Speed.class)
-					.create(mean, (Unit<Speed>) _myUnits);
-			// TODO: DINKO - fix the previous horrible kludge!
+			_mean = Quantities.getQuantity(mean,  _myUnits);
 
 			iter = _values.iterator();
 			runningSum = 0;
@@ -133,16 +138,10 @@ public class QuantityHelper<T extends Quantity<T>> implements IBaseQuantityColle
 			}
 
 			final double variance = runningSum / _values.size();
-			_variance = (Quantity<T>) DefaultQuantityFactory.getInstance(Speed.class)
-					.create(variance, (Unit<Speed>) _myUnits);
-			// TODO: DINKO - fix the previous horrible kludge!
-
+			_variance = Quantities.getQuantity(variance, _myUnits);
 
 			final double sd = Math.sqrt(variance);
-			_sd = (Quantity<T>) DefaultQuantityFactory.getInstance(Speed.class)
-					.create(sd, (Unit<Speed>) _myUnits);
-			// TODO: DINKO - fix the previous horrible kludge!
-
+			_sd = Quantities.getQuantity(sd, _myUnits);
 		}
 	}
 

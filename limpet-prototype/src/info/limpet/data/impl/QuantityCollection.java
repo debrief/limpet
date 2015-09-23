@@ -23,6 +23,12 @@ public class QuantityCollection<T extends Quantity<T>> extends
 	}
 
 	@Override
+	public void add(Number value)
+	{
+		_qHelper.add(value);
+	}
+
+	@Override
 	public Dimension getDimension()
 	{
 		return _qHelper.getDimension();

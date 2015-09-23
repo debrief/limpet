@@ -6,6 +6,8 @@ import info.limpet.data.impl.ObjectCollection;
 import info.limpet.data.impl.QuantityCollection;
 import info.limpet.data.impl.TemporalObjectCollection;
 import info.limpet.data.impl.TemporalQuantityCollection;
+import info.limpet.data.impl.samples.StockTypes;
+import info.limpet.data.impl.samples.StockTypes.NonTemporal.Speed_MSec;
 
 import java.util.Iterator;
 
@@ -15,7 +17,7 @@ import javax.measure.quantity.Speed;
 
 import junit.framework.TestCase;
 import si.uom.SI;
-import tec.units.ri.quantity.DefaultQuantityFactory;
+import tec.units.ri.quantity.Quantities;
 import tec.units.ri.unit.MetricPrefix;
 import tec.units.ri.unit.Units;
 
@@ -87,6 +89,32 @@ public class TestCollections extends TestCase
 		
 	}
 
+	public void testUnitlessQuantity()
+	{
+		// the units for this measurement
+		Unit<Speed> kmh = MetricPrefix.KILO(Units.METRE).divide(Units.HOUR)
+				.asType(Speed.class);
+
+		// the target collection
+		Speed_MSec speedCollection = new StockTypes.NonTemporal.Speed_MSec("Speed");
+		
+		for (int i = 1; i <= 10; i++)
+		{
+			// create a measurement
+			double thisSpeed = i * 2;
+			Quantity<Speed> speedVal = Quantities.getQuantity(thisSpeed, kmh);
+
+			// store the measurement
+			speedCollection.add(speedVal);
+		}
+		
+		assertEquals("correct num of items", 10, speedCollection.size());
+		
+		speedCollection.add(12);
+		
+		assertEquals("correct num of items", 11, speedCollection.size());
+	}
+	
 	public void testCreateQuantity()
 	{
 		// the units for this measurement
@@ -94,15 +122,13 @@ public class TestCollections extends TestCase
 				.asType(Speed.class);
 
 		// the target collection
-		QuantityCollection<Speed> speedCollection = new QuantityCollection<Speed>(
-				"Speed", kmh);
+		Speed_MSec speedCollection = new StockTypes.NonTemporal.Speed_MSec("Speed");
 
 		for (int i = 1; i <= 10; i++)
 		{
 			// create a measurement
 			double thisSpeed = i * 2;
-			Quantity<Speed> speedVal = DefaultQuantityFactory
-					.getInstance(Speed.class).create(thisSpeed, kmh);
+			Quantity<Speed> speedVal = Quantities.getQuantity(thisSpeed, kmh);
 
 			// store the measurement
 			speedCollection.add(speedVal);
@@ -136,8 +162,7 @@ public class TestCollections extends TestCase
 				"Speed", kmh);
 
 		// create a measurement
-		Quantity<Speed> speedVal = DefaultQuantityFactory.getInstance(Speed.class)
-				.create(5, kmh);
+		Quantity<Speed> speedVal = Quantities.getQuantity(5, kmh);
 
 		// store the measurement
 		sc.add(12, speedVal);
@@ -153,8 +178,7 @@ public class TestCollections extends TestCase
 		assertEquals("correct speed units", kmh, theS.getUnit());
 
 		// ok, now add another
-		speedVal = DefaultQuantityFactory.getInstance(Speed.class)
-				.create(25, m_sec);
+		speedVal = Quantities.getQuantity(25, m_sec);
 
 		// store the measurement
 		boolean errorThrown = false;
@@ -174,7 +198,7 @@ public class TestCollections extends TestCase
 		assertEquals("correct number of samples", 1, sc.size());
 
 		// ok, now add another
-		speedVal = DefaultQuantityFactory.getInstance(Speed.class).create(12, kmh);
+		speedVal = Quantities.getQuantity(12, kmh);
 
 		// store the measurement
 		sc.add(14, speedVal);
@@ -185,7 +209,7 @@ public class TestCollections extends TestCase
 		boolean eThrown = false;
 		try
 		{
-			sc.add(DefaultQuantityFactory.getInstance(Speed.class).create(12, kmh));
+			sc.add(12);
 		}
 		catch (UnsupportedOperationException er)
 		{
@@ -212,8 +236,7 @@ public class TestCollections extends TestCase
 		{
 			// create a measurement
 			double thisSpeed = i * 2;
-			Quantity<Speed> speedVal = DefaultQuantityFactory
-					.getInstance(Speed.class).create(thisSpeed, kmh);
+			Quantity<Speed> speedVal = Quantities.getQuantity(thisSpeed, kmh);
 
 			// store the measurement
 			speedCollection.add(i, speedVal);
@@ -264,8 +287,7 @@ public class TestCollections extends TestCase
 		{
 			// create a measurement
 			double thisSpeed = i * 2;
-			Quantity<Speed> speedVal = DefaultQuantityFactory
-					.getInstance(Speed.class).create(thisSpeed, kmh);
+			Quantity<Speed> speedVal = Quantities.getQuantity(thisSpeed, kmh);
 
 			// store the measurement
 			speedCollection.add(speedVal);
