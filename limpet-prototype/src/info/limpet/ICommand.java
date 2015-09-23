@@ -1,5 +1,10 @@
 package info.limpet;
 
+/** encapsulation of some change to data
+ * 
+ * @author ian
+ *
+ */
 public interface ICommand
 {
 	public String getTitle();

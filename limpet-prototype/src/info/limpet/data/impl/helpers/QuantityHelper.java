@@ -121,7 +121,7 @@ public class QuantityHelper<T extends Quantity<T>> implements IBaseQuantityColle
 
 			_mean = (Quantity<T>) DefaultQuantityFactory.getInstance(Speed.class)
 					.create(mean, (Unit<Speed>) _myUnits);
-			// TODO: fix the previous horrible kludge!
+			// TODO: DINKO - fix the previous horrible kludge!
 
 			iter = _values.iterator();
 			runningSum = 0;
@@ -135,13 +135,13 @@ public class QuantityHelper<T extends Quantity<T>> implements IBaseQuantityColle
 			final double variance = runningSum / _values.size();
 			_variance = (Quantity<T>) DefaultQuantityFactory.getInstance(Speed.class)
 					.create(variance, (Unit<Speed>) _myUnits);
-			// TODO: fix the previous horrible kludge!
+			// TODO: DINKO - fix the previous horrible kludge!
 
 
 			final double sd = Math.sqrt(variance);
 			_sd = (Quantity<T>) DefaultQuantityFactory.getInstance(Speed.class)
 					.create(sd, (Unit<Speed>) _myUnits);
-			// TODO: fix the previous horrible kludge!
+			// TODO: DINKO - fix the previous horrible kludge!
 
 		}
 	}
