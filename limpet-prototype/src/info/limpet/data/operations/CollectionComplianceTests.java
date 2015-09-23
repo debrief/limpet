@@ -18,6 +18,33 @@ public class CollectionComplianceTests
 	 * @param selection
 	 * @return true/false
 	 */
+	public boolean allNonQuantity(List<ICollection> selection)
+	{
+		// are they all temporal?
+		boolean allValid = true;
+
+		for (int i = 0; i < selection.size(); i++)
+		{
+			ICollection thisC = selection.get(i);
+			if (thisC.isQuantity())
+			{
+				// oops, no
+				allValid = false;
+				break;
+			}
+			else
+			{
+			}
+		}
+		return allValid;
+	}
+	
+	/**
+	 * check if the series are all quantity datasets
+	 * 
+	 * @param selection
+	 * @return true/false
+	 */
 	public boolean allQuantity(List<ICollection> selection)
 	{
 		// are they all temporal?

@@ -2,6 +2,7 @@ package info.limpet.data;
 
 import info.limpet.ICollection;
 import info.limpet.ICommand;
+import info.limpet.data.impl.ObjectCollection;
 import info.limpet.data.impl.QuantityCollection;
 import info.limpet.data.impl.TemporalQuantityCollection;
 import info.limpet.data.operations.AddQuantityOperation;
@@ -50,6 +51,8 @@ public class TestOperations extends TestCase
 				"Speed 5", kmh);
 		TemporalQuantityCollection<Speed> temporal_speed_2 = new TemporalQuantityCollection<Speed>(
 				"Speed 6", kmh);
+		ObjectCollection<String> string_1 = new ObjectCollection<>("strings 1");
+		ObjectCollection<String> string_2 = new ObjectCollection<>("strings 2");
 				
 	
 		for (int i = 1; i <= 10; i++)
@@ -70,6 +73,9 @@ public class TestOperations extends TestCase
 			temporal_speed_1.add(i, speedVal2);
 			temporal_speed_2.add(i, speedVal3);
 			len1.add(lenVal1);
+			
+			string_1.add(i + " ");
+			string_2.add(i + "a ");
 		}
 
 		Quantity<Speed> speedVal3a = Quantities.getQuantity(2, kmh);
@@ -132,6 +138,27 @@ public class TestOperations extends TestCase
 		assertTrue("all quantities", testOp.allQuantity(selection));
 		assertTrue("all temporal", testOp.allTemporal(selection));
 
+
+		selection.clear();
+		selection.add(temporal_speed_1);
+		selection.add(string_1);
+
+		assertFalse("all same dim", testOp.allEqualDimensions(selection));
+		assertFalse("all same units", testOp.allEqualUnits(selection));
+		assertTrue("all same length", testOp.allEqualLength(selection));
+		assertFalse("all quantities", testOp.allQuantity(selection));
+		assertFalse("all temporal", testOp.allTemporal(selection));
+
+		selection.clear();
+		selection.add(string_1);
+		selection.add(string_1);
+
+		assertFalse("all same dim", testOp.allEqualDimensions(selection));
+		assertFalse("all same units", testOp.allEqualUnits(selection));
+		assertTrue("all same length", testOp.allEqualLength(selection));
+		assertTrue("all non quantities", testOp.allNonQuantity(selection));
+		assertFalse("all temporal", testOp.allTemporal(selection));
+		
 
 		// ok, let's try one that works
 		selection.clear();

@@ -11,4 +11,6 @@ public interface IAnalysis
 	 * @param selection
 	 */
 	public void analyse(List<ICollection> selection);
+
+	public String getName();
 }
