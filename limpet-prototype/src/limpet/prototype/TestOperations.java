@@ -12,8 +12,11 @@ import javax.measure.quantity.Speed;
 import junit.framework.TestCase;
 import limpet.prototype.commands.ICommand;
 import limpet.prototype.generics.dinko.impl.QuantityCollection;
+import limpet.prototype.generics.dinko.impl.TemporalQuantityCollection;
 import limpet.prototype.generics.dinko.interfaces.ICollection;
 import limpet.prototype.operations.AddQuantityOperation;
+import limpet.prototype.operations.BaseOperation;
+import limpet.prototype.store.IStore;
 import limpet.prototype.store.InMemoryStore;
 import tec.units.ri.quantity.DefaultQuantityFactory;
 import tec.units.ri.unit.MetricPrefix;
@@ -21,26 +24,34 @@ import tec.units.ri.unit.Units;
 
 public class TestOperations extends TestCase
 {
-	public void testValidOperation()
+
+	public void testAppliesTo()
 	{
 		// the units for this measurement
 		Unit<Speed> kmh = MetricPrefix.KILO(Units.METRE).divide(Units.HOUR)
 				.asType(Speed.class);
+		Unit<Speed> kmm = MetricPrefix.KILO(Units.METRE).divide(Units.MINUTE)
+				.asType(Speed.class);
+		Unit<Length> m = (Units.METRE).asType(Length.class);
 
+	
 		// the target collection
-		QuantityCollection<Speed> speed1 = new QuantityCollection<Speed>(
+		QuantityCollection<Speed> speed_good_1 = new QuantityCollection<Speed>(
 				"Speed 1", kmh);
-		QuantityCollection<Speed> speed2 = new QuantityCollection<Speed>(
+		QuantityCollection<Speed> speed_good_2 = new QuantityCollection<Speed>(
 				"Speed 2", kmh);
-		QuantityCollection<Speed> speed3 = new QuantityCollection<Speed>(
+		QuantityCollection<Speed> speed_longer = new QuantityCollection<Speed>(
 				"Speed 3", kmh);
-
-		List<ICollection> selection = new ArrayList<ICollection>(3);
-		selection.add(speed1);
-		selection.add(speed2);
-		selection.add(speed3);
+		QuantityCollection<Speed> speed_diff_units = new QuantityCollection<Speed>(
+				"Speed 4", kmm);
+		QuantityCollection<Length> len1 = new QuantityCollection<Length>(
+				"Length 1", m);
+		TemporalQuantityCollection<Speed> temporal_speed_1 = new TemporalQuantityCollection<Speed>(
+				"Speed 5", kmh);
+		TemporalQuantityCollection<Speed> temporal_speed_2 = new TemporalQuantityCollection<Speed>(
+				"Speed 6", kmh);
 				
-
+	
 		for (int i = 1; i <= 10; i++)
 		{
 			// create a measurement
@@ -51,13 +62,88 @@ public class TestOperations extends TestCase
 					.getInstance(Speed.class).create(thisSpeed*2, kmh);
 			Quantity<Speed> speedVal3 = DefaultQuantityFactory
 					.getInstance(Speed.class).create(thisSpeed/2, kmh);
-
-			// store the measurement
-			speed1.add( speedVal1);
-			speed2.add( speedVal2);
-			speed3.add( speedVal3);
+			Quantity<Speed> speedVal4 = DefaultQuantityFactory
+					.getInstance(Speed.class).create(thisSpeed/2, kmm);
+			Quantity<Length> lenVal1 = DefaultQuantityFactory
+					.getInstance(Length.class).create(thisSpeed/2, m);
+	
+			// store the measurements
+			speed_good_1.add( speedVal1);
+			speed_good_2.add( speedVal2);
+			speed_longer.add( speedVal3);
+			speed_diff_units.add( speedVal4);
+			temporal_speed_1.add(i, speedVal2);
+			temporal_speed_2.add(i, speedVal3);
+			len1.add(lenVal1);
 		}
+
+		Quantity<Speed> speedVal3a = DefaultQuantityFactory
+				.getInstance(Speed.class).create(2, kmh);
+		speed_longer.add( speedVal3a);
+
+
+		List<ICollection> selection = new ArrayList<ICollection>(3);
+		DummyOperation testOp = new DummyOperation();
 		
+		selection.clear();
+		selection.add(speed_good_1);
+		selection.add(speed_good_2);
+
+		assertTrue("all same dim", testOp.allEqualDimensions(selection));
+		assertTrue("all same units", testOp.allEqualUnits(selection));
+		assertTrue("all same length", testOp.allEqualLength(selection));
+		assertTrue("all quantities", testOp.allQuantity(selection));
+		assertFalse("all temporal", testOp.allTemporal(selection));
+		
+		selection.clear();
+		selection.add(speed_good_1);
+		selection.add(speed_good_2);
+		selection.add(speed_diff_units);
+
+		assertTrue("all same dim", testOp.allEqualDimensions(selection));
+		assertFalse("all same units", testOp.allEqualUnits(selection));
+		assertTrue("all same length", testOp.allEqualLength(selection));
+		assertTrue("all quantities", testOp.allQuantity(selection));
+		assertFalse("all temporal", testOp.allTemporal(selection));
+
+		selection.clear();
+		selection.add(speed_good_1);
+		selection.add(speed_good_2);
+		selection.add(len1);
+
+		assertFalse("all same dim", testOp.allEqualDimensions(selection));
+		assertFalse("all same units", testOp.allEqualUnits(selection));
+		assertTrue("all same length", testOp.allEqualLength(selection));
+		assertTrue("all quantities", testOp.allQuantity(selection));
+		assertFalse("all temporal", testOp.allTemporal(selection));
+		
+		selection.clear();
+		selection.add(speed_good_1);
+		selection.add(speed_good_2);
+		selection.add(speed_longer);
+
+		assertTrue("all same dim", testOp.allEqualDimensions(selection));
+		assertTrue("all same units", testOp.allEqualUnits(selection));
+		assertFalse("all same length", testOp.allEqualLength(selection));
+		assertTrue("all quantities", testOp.allQuantity(selection));
+		assertFalse("all temporal", testOp.allTemporal(selection));
+
+		selection.clear();
+		selection.add(temporal_speed_1);
+		selection.add(temporal_speed_2);
+
+		assertTrue("all same dim", testOp.allEqualDimensions(selection));
+		assertTrue("all same units", testOp.allEqualUnits(selection));
+		assertTrue("all same length", testOp.allEqualLength(selection));
+		assertTrue("all quantities", testOp.allQuantity(selection));
+		assertTrue("all temporal", testOp.allTemporal(selection));
+
+
+		// ok, let's try one that works
+		selection.clear();
+		selection.add(speed_good_1);
+		selection.add(speed_good_2);
+
 		InMemoryStore store = new InMemoryStore();
 		assertEquals("store empty", 0, store.rootSize());
 		
@@ -70,153 +156,19 @@ public class TestOperations extends TestCase
 		
 		assertEquals("new collection added to store", 1, store.rootSize());
 		
-	}
-	
-	public void testUnequalLengthSeries()
-	{
-		// the units for this measurement
-		Unit<Speed> kmh = MetricPrefix.KILO(Units.METRE).divide(Units.HOUR)
-				.asType(Speed.class);
-
-		// the target collection
-		QuantityCollection<Speed> speed1 = new QuantityCollection<Speed>(
-				"Speed 1", kmh);
-		QuantityCollection<Speed> speed2 = new QuantityCollection<Speed>(
-				"Speed 2", kmh);
-		QuantityCollection<Speed> speed3 = new QuantityCollection<Speed>(
-				"Speed 3", kmh);
-
-		List<ICollection> selection = new ArrayList<ICollection>(3);
-		selection.add(speed1);
-		selection.add(speed2);
-		selection.add(speed3);
-				
-
-		for (int i = 1; i <= 10; i++)
-		{
-			// create a measurement
-			double thisSpeed = i * 2;
-			Quantity<Speed> speedVal1 = DefaultQuantityFactory
-					.getInstance(Speed.class).create(thisSpeed, kmh);
-			Quantity<Speed> speedVal2 = DefaultQuantityFactory
-					.getInstance(Speed.class).create(thisSpeed*2, kmh);
-			Quantity<Speed> speedVal3 = DefaultQuantityFactory
-					.getInstance(Speed.class).create(thisSpeed/2, kmh);
-
-			// store the measurement
-			speed1.add( speedVal1);
-			speed2.add( speedVal2);
-			speed3.add( speedVal3);
-		}
 		
-		Quantity<Speed> speedVal3a = DefaultQuantityFactory
-				.getInstance(Speed.class).create(12, kmh);
-
-		// store the measurement
-		speed3.add(speedVal3a);
-		
-		
-		InMemoryStore store = new InMemoryStore();
-		assertEquals("store empty", 0, store.rootSize());
-		
-		Collection<ICommand> actions = new AddQuantityOperation().actionsFor(selection, store );
-		
-		assertEquals("correct number of actions returned", 0, actions.size());
-			
-	}
-	
-
-	public void testUnequalDimensions()
-	{
-		// the units for this measurement
-		Unit<Speed> kmh = MetricPrefix.KILO(Units.METRE).divide(Units.HOUR)
-				.asType(Speed.class);
-		Unit<Length> m = (Units.METRE).asType(Length.class);
-
-		// the target collection
-		QuantityCollection<Speed> speed1 = new QuantityCollection<Speed>(
-				"Speed 1", kmh);
-		QuantityCollection<Speed> speed2 = new QuantityCollection<Speed>(
-				"Speed 2", kmh);
-		QuantityCollection<Length> len1 = new QuantityCollection<Length>(
-				"Length 1", m);
-
-		List<ICollection> selection = new ArrayList<ICollection>(3);
-		selection.add(speed1);
-		selection.add(speed2);
-		selection.add(len1);
-				
-
-		for (int i = 1; i <= 10; i++)
-		{
-			// create a measurement
-			double thisSpeed = i * 2;
-			Quantity<Speed> speedVal1 = DefaultQuantityFactory
-					.getInstance(Speed.class).create(thisSpeed, kmh);
-			Quantity<Speed> speedVal2 = DefaultQuantityFactory
-					.getInstance(Speed.class).create(thisSpeed*2, kmh);
-			Quantity<Length> lenVal1 = DefaultQuantityFactory
-					.getInstance(Length.class).create(thisSpeed/2, m);
-
-			// store the measurement
-			speed1.add( speedVal1);
-			speed2.add( speedVal2);
-			len1.add( lenVal1);
-		}
-		
-		InMemoryStore store = new InMemoryStore();
-		assertEquals("store empty", 0, store.rootSize());
-		
-		Collection<ICommand> actions = new AddQuantityOperation().actionsFor(selection, store );
-		
-		assertEquals("correct number of actions returned", 0, actions.size());
 	}
 
-	public void testUnequalUnits()
+	public static class DummyOperation extends BaseOperation
 	{
-		// the units for this measurement
-		Unit<Speed> kmh = MetricPrefix.KILO(Units.METRE).divide(Units.HOUR)
-				.asType(Speed.class);
-		Unit<Speed> kmm = MetricPrefix.KILO(Units.METRE).divide(Units.MINUTE)
-				.asType(Speed.class);
 	
-		// the target collection
-		QuantityCollection<Speed> speed1 = new QuantityCollection<Speed>(
-				"Speed 1", kmh);
-		QuantityCollection<Speed> speed2 = new QuantityCollection<Speed>(
-				"Speed 2", kmh);
-		QuantityCollection<Speed> speed3 = new QuantityCollection<Speed>(
-				"Speed 3", kmm);
-	
-		List<ICollection> selection = new ArrayList<ICollection>(3);
-		selection.add(speed1);
-		selection.add(speed2);
-		selection.add(speed3);
-				
-	
-		for (int i = 1; i <= 10; i++)
+		@Override
+		public Collection<ICommand> actionsFor(List<ICollection> selection,
+				IStore destination)
 		{
-			// create a measurement
-			double thisSpeed = i * 2;
-			Quantity<Speed> speedVal1 = DefaultQuantityFactory
-					.getInstance(Speed.class).create(thisSpeed, kmh);
-			Quantity<Speed> speedVal2 = DefaultQuantityFactory
-					.getInstance(Speed.class).create(thisSpeed*2, kmh);
-			Quantity<Speed> speedVal3 = DefaultQuantityFactory
-					.getInstance(Speed.class).create(thisSpeed/2, kmm);
-	
-			// store the measurement
-			speed1.add( speedVal1);
-			speed2.add( speedVal2);
-			speed3.add( speedVal3);
+			throw new UnsupportedOperationException("not implemented, just for testing");
 		}
 		
-		InMemoryStore store = new InMemoryStore();
-		assertEquals("store empty", 0, store.rootSize());
-		
-		Collection<ICommand> actions = new AddQuantityOperation().actionsFor(selection, store );
-		
-		assertEquals("correct number of actions returned", 0, actions.size());
 	}
 	
 }
