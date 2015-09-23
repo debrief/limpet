@@ -1,5 +1,6 @@
 package limpet.prototype.generics.dinko;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Iterator;
 
 import javax.measure.Quantity;
@@ -12,6 +13,7 @@ import limpet.prototype.generics.dinko.impl.QuantityCollection;
 import limpet.prototype.generics.dinko.impl.TemporalObjectCollection;
 import limpet.prototype.generics.dinko.impl.TemporalQuantityCollection;
 import limpet.prototype.generics.dinko.interfaces.IBaseTemporalCollection;
+import limpet.prototype.generics.dinko.interfaces.ITemporalObjectCollection;
 import limpet.prototype.generics.dinko.interfaces.ITemporalObjectCollection.Doublet;
 import si.uom.SI;
 import tec.units.ri.quantity.DefaultQuantityFactory;
@@ -23,7 +25,8 @@ public class TestDinko extends TestCase
 	public void testCreateObject()
 	{
 		// the target collection
-		ObjectCollection<String> stringCollection = new ObjectCollection<String>("strings");
+		ObjectCollection<String> stringCollection = new ObjectCollection<String>(
+				"strings");
 
 		for (int i = 1; i <= 10; i++)
 		{
@@ -35,10 +38,12 @@ public class TestDinko extends TestCase
 		assertEquals("correct number of samples", 10, stringCollection.size());
 	}
 
+
 	public void testCreateTemporalObject()
 	{
 		// the target collection
-		TemporalObjectCollection<String> stringCollection = new TemporalObjectCollection<String>("strings");
+		TemporalObjectCollection<String> stringCollection = new TemporalObjectCollection<String>(
+				"strings");
 
 		for (int i = 1; i <= 12; i++)
 		{
@@ -48,13 +53,13 @@ public class TestDinko extends TestCase
 
 		// check it didn't get stored
 		assertEquals("correct number of samples", 12, stringCollection.size());
-		
+
 		IBaseTemporalCollection it = stringCollection;
 		assertEquals("correct start", 1, it.start());
 		assertEquals("correct finish", 12, it.finish());
 		assertEquals("correct duration", 11, it.duration());
 		assertEquals("correct start", 1d, it.rate());
-		
+
 		// ok, now check the iterator
 		long runningValueSum = 0;
 		long runningTimeSum = 0;
@@ -67,8 +72,22 @@ public class TestDinko extends TestCase
 		}
 		assertEquals("values adds up", 51, runningValueSum);
 		assertEquals("times adds up", 78, runningTimeSum);
+		
+		
+		boolean eThrown = false;
+		try
+		{
+			stringCollection.add("done");
+		}
+		catch (UnsupportedOperationException er)
+		{
+			eThrown = true;
+		}
+
+		assertTrue("exception thrown for invalid add operation", eThrown);
+		
 	}
-	
+
 	public void testCreateQuantity()
 	{
 		// the units for this measurement
@@ -76,7 +95,8 @@ public class TestDinko extends TestCase
 				.asType(Speed.class);
 
 		// the target collection
-		QuantityCollection<Speed> speedCollection = new QuantityCollection<Speed>("Speed", kmh);
+		QuantityCollection<Speed> speedCollection = new QuantityCollection<Speed>(
+				"Speed", kmh);
 
 		for (int i = 1; i <= 10; i++)
 		{
@@ -92,14 +112,19 @@ public class TestDinko extends TestCase
 		// check it didn't get stored
 		assertEquals("correct number of samples", 10, speedCollection.size());
 		assertEquals("correct name", "Speed", speedCollection.getName());
-		
-		assertEquals("correct min",2d, speedCollection.min().getValue().doubleValue());
-		assertEquals("correct max",20d, speedCollection.max().getValue().doubleValue());
-		assertEquals("correct mean",11d, speedCollection.mean().getValue().doubleValue());
-		assertEquals("correct variance",33, speedCollection.variance().getValue().doubleValue(),0.1);
-		assertEquals("correct sd",5.744, speedCollection.sd().getValue().doubleValue(),0.001);
+
+		assertEquals("correct min", 2d, speedCollection.min().getValue()
+				.doubleValue());
+		assertEquals("correct max", 20d, speedCollection.max().getValue()
+				.doubleValue());
+		assertEquals("correct mean", 11d, speedCollection.mean().getValue()
+				.doubleValue());
+		assertEquals("correct variance", 33, speedCollection.variance().getValue()
+				.doubleValue(), 0.1);
+		assertEquals("correct sd", 5.744, speedCollection.sd().getValue()
+				.doubleValue(), 0.001);
 	}
-	
+
 	public void testTemporalQuantityAddition()
 	{
 		// the units for this measurement
@@ -157,8 +182,22 @@ public class TestDinko extends TestCase
 
 		// check it got get stored
 		assertEquals("correct number of samples", 2, sc.size());
+		
+		boolean eThrown = false;
+		try
+		{
+			sc.add(DefaultQuantityFactory.getInstance(Speed.class).create(12, kmh));
+		}
+		catch (UnsupportedOperationException er)
+		{
+			eThrown = true;
+		}
+
+		assertTrue("exception thrown for invalid add operation", eThrown);
+				
+		
+		
 	}
-	
 
 	public void testTimeQuantityCollectionIterator()
 	{
@@ -189,8 +228,7 @@ public class TestDinko extends TestCase
 		assertEquals("correct finish", 10, it.finish());
 		assertEquals("correct duration", 9, it.duration());
 		assertEquals("correct start", 1d, it.rate());
-		
-		
+
 		// ok, now check the iterator
 		double runningValueSum = 0;
 		double runningTimeSum = 0;
@@ -204,12 +242,14 @@ public class TestDinko extends TestCase
 		assertEquals("values adds up", 110d, runningValueSum);
 		assertEquals("times adds up", 55d, runningTimeSum);
 
-		assertEquals("correct mean",11d, speedCollection.mean().getValue().doubleValue());
-		assertEquals("correct variance",33, speedCollection.variance().getValue().doubleValue(),0.1);
-		assertEquals("correct sd",5.744, speedCollection.sd().getValue().doubleValue(),0.001);
-		
+		assertEquals("correct mean", 11d, speedCollection.mean().getValue()
+				.doubleValue());
+		assertEquals("correct variance", 33, speedCollection.variance().getValue()
+				.doubleValue(), 0.1);
+		assertEquals("correct sd", 5.744, speedCollection.sd().getValue()
+				.doubleValue(), 0.001);
+
 	}
-	
 
 	public void testQuantityCollectionIterator()
 	{
@@ -235,7 +275,6 @@ public class TestDinko extends TestCase
 		// check it didn't get stored
 		assertEquals("correct number of samples", 10, speedCollection.size());
 
-		
 		// ok, now check the iterator
 		double runningValueSum = 0;
 		Iterator<Quantity<Speed>> vIter = speedCollection.getValues().iterator();
@@ -245,12 +284,15 @@ public class TestDinko extends TestCase
 			runningValueSum += value.getValue().doubleValue();
 		}
 		assertEquals("values adds up", 110d, runningValueSum);
-		
-		assertEquals("correct mean",11d, speedCollection.mean().getValue().doubleValue());
-		assertEquals("correct variance",33, speedCollection.variance().getValue().doubleValue(),0.1);
-		assertEquals("correct sd",5.744, speedCollection.sd().getValue().doubleValue(),0.001);
-		
+
+		assertEquals("correct mean", 11d, speedCollection.mean().getValue()
+				.doubleValue());
+		assertEquals("correct variance", 33, speedCollection.variance().getValue()
+				.doubleValue(), 0.1);
+		assertEquals("correct sd", 5.744, speedCollection.sd().getValue()
+				.doubleValue(), 0.001);
+
 	}
 	
-	
+
 }
