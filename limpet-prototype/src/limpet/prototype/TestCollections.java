@@ -1,6 +1,5 @@
-package limpet.prototype.generics.dinko;
+package limpet.prototype;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Iterator;
 
 import javax.measure.Quantity;
@@ -13,14 +12,13 @@ import limpet.prototype.generics.dinko.impl.QuantityCollection;
 import limpet.prototype.generics.dinko.impl.TemporalObjectCollection;
 import limpet.prototype.generics.dinko.impl.TemporalQuantityCollection;
 import limpet.prototype.generics.dinko.interfaces.IBaseTemporalCollection;
-import limpet.prototype.generics.dinko.interfaces.ITemporalObjectCollection;
 import limpet.prototype.generics.dinko.interfaces.ITemporalObjectCollection.Doublet;
 import si.uom.SI;
 import tec.units.ri.quantity.DefaultQuantityFactory;
 import tec.units.ri.unit.MetricPrefix;
 import tec.units.ri.unit.Units;
 
-public class TestDinko extends TestCase
+public class TestCollections extends TestCase
 {
 	public void testCreateObject()
 	{

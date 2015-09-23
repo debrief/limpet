@@ -1,7 +1,7 @@
 package limpet.prototype.generics.dinko.impl;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 import limpet.prototype.generics.dinko.interfaces.IObjectCollection;
 
@@ -18,7 +18,7 @@ public class ObjectCollection<T extends Object> implements IObjectCollection<T>
 	}
 
 	@Override
-	public Collection<T> getValues()
+	public List<T> getValues()
 	{
 		return _values;
 	}
@@ -29,6 +29,7 @@ public class ObjectCollection<T extends Object> implements IObjectCollection<T>
 		_values.add(value);
 	}
 
+	@Override
 	public int size()
 	{
 		return _values.size();

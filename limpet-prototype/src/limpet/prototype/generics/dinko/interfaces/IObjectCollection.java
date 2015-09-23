@@ -1,12 +1,9 @@
 package limpet.prototype.generics.dinko.interfaces;
 
-import java.util.Collection;
+import java.util.List;
 
-public interface IObjectCollection<T extends Object>
+public interface IObjectCollection<T extends Object> extends ICollection
 {
-	public Collection<T> getValues();
+	public List<T> getValues();
 	public void add(T value);
-	public String getName();
-	boolean isQuantity();
-	boolean isTemporal();
 }
