@@ -2,11 +2,10 @@ package info.limpet.data;
 
 import info.limpet.ICollection;
 import info.limpet.ICommand;
-import info.limpet.IStore;
 import info.limpet.data.impl.QuantityCollection;
 import info.limpet.data.impl.TemporalQuantityCollection;
 import info.limpet.data.operations.AddQuantityOperation;
-import info.limpet.data.operations.BaseOperation;
+import info.limpet.data.operations.CollectionComplianceTests;
 import info.limpet.data.store.InMemoryStore;
 
 import java.util.ArrayList;
@@ -78,7 +77,7 @@ public class TestOperations extends TestCase
 
 
 		List<ICollection> selection = new ArrayList<ICollection>(3);
-		DummyOperation testOp = new DummyOperation();
+		CollectionComplianceTests testOp = new CollectionComplianceTests();
 		
 		selection.clear();
 		selection.add(speed_good_1);
@@ -154,16 +153,4 @@ public class TestOperations extends TestCase
 		
 	}
 
-	public static class DummyOperation extends BaseOperation
-	{
-	
-		@Override
-		public Collection<ICommand> actionsFor(List<ICollection> selection,
-				IStore destination)
-		{
-			throw new UnsupportedOperationException("not implemented, just for testing");
-		}
-		
-	}
-	
 }

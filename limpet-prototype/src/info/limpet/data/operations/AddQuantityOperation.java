@@ -2,6 +2,7 @@ package info.limpet.data.operations;
 
 import info.limpet.ICollection;
 import info.limpet.ICommand;
+import info.limpet.IOperation;
 import info.limpet.IQuantityCollection;
 import info.limpet.IStore;
 import info.limpet.data.commands.AbstractCommand;
@@ -16,11 +17,12 @@ import javax.measure.Quantity;
 import javax.measure.Unit;
 import javax.measure.quantity.Speed;
 
-import tec.units.ri.quantity.DefaultQuantityFactory;
 import tec.units.ri.quantity.Quantities;
 
-public class AddQuantityOperation extends BaseOperation
+public class AddQuantityOperation implements IOperation
 {
+	CollectionComplianceTests aTests = new CollectionComplianceTests();
+	
 	@Override
 	public Collection<ICommand> actionsFor(List<ICollection> selection,
 			IStore destination)
@@ -39,7 +41,8 @@ public class AddQuantityOperation extends BaseOperation
 
 	private boolean appliesTo(List<ICollection> selection)
 	{
-		return (allQuantity(selection) && allEqualLength(selection) && allEqualDimensions(selection) && allEqualUnits(selection));
+		return (aTests.allQuantity(selection) && aTests.allEqualLength(selection) && 
+				 aTests.allEqualDimensions(selection) && aTests.allEqualUnits(selection));
 	}
 
 
@@ -86,7 +89,7 @@ public class AddQuantityOperation extends BaseOperation
 					runningTotal += thisQ;
 				}
 
-				Quantity<Speed> value = Quantities.getQuantity(runningTotal, units);
+				Quantity<Speed> value = Quantities.getQuantity(runningTotal, (Unit<Speed>) units);
 
 				target.add(value);
 			}

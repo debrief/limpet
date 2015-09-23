@@ -1,7 +1,6 @@
 package info.limpet.data.operations;
 
 import info.limpet.ICollection;
-import info.limpet.IOperation;
 import info.limpet.IQuantityCollection;
 
 import java.util.List;
@@ -10,7 +9,7 @@ import javax.measure.Dimension;
 import javax.measure.Unit;
 
 
-abstract public class BaseOperation implements IOperation
+public class CollectionComplianceTests 
 {
 
 	/**

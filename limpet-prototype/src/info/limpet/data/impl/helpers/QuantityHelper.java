@@ -8,9 +8,7 @@ import java.util.Iterator;
 import javax.measure.Dimension;
 import javax.measure.Quantity;
 import javax.measure.Unit;
-import javax.measure.quantity.Speed;
 
-import tec.units.ri.quantity.DefaultQuantityFactory;
 import tec.units.ri.quantity.Quantities;
 
 public class QuantityHelper<T extends Quantity<T>> implements IBaseQuantityCollection<T>
@@ -111,7 +109,6 @@ public class QuantityHelper<T extends Quantity<T>> implements IBaseQuantityColle
 	}
 
 
-	@SuppressWarnings("unchecked")
 	private void calcStats()
 	{
 		if (_values.size() > 0)
