@@ -1,5 +1,9 @@
 package limpet.prototype.operations;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import javax.measure.Quantity;
 import javax.measure.Unit;
 import javax.measure.quantity.Speed;
@@ -17,28 +21,27 @@ import tec.units.ri.unit.Units;
 public class AddQuantityOperation extends BaseOperation
 {
 	@Override
-	public ICommand[] actionsFor(ICollection[] selection, IStore destination)
+	public Collection<ICommand> actionsFor(List<ICollection> selection, IStore destination)
 	{
-		ICommand[] res = null;
+		Collection<ICommand> res = new ArrayList<ICommand>();
 		if (appliesTo(selection))
 		{
 			AddQuantityValues newC = new AddQuantityValues(selection, destination);
-			res = new ICommand[]
-			{ newC };
+			res.add(newC);
 		}
 
 		return res;
 	}
 
-	protected boolean appliesTo(ICollection[] selection)
+	protected boolean appliesTo(List<ICollection> selection)
 	{
 		// are the all temporal?
 		boolean allValid = true;
 		int size = -1;
 
-		for (int i = 0; i < selection.length; i++)
+		for (int i = 0; i < selection.size(); i++)
 		{
-			ICollection thisC = selection[i];
+			ICollection thisC = selection.get(i);
 			if (thisC.isQuantity())
 			{
 				// great, valid, check the size
@@ -71,13 +74,13 @@ public class AddQuantityOperation extends BaseOperation
 	public static class AddQuantityValues extends AbstractCommand
 	{
 
-		private ICollection[] _series;
+		private List<ICollection> _series;
 
-		public AddQuantityValues(ICollection[] series, IStore store)
+		public AddQuantityValues(List<ICollection> selection, IStore store)
 		{
 			super("Add series", "Add numeric values in provided series", store,
 					false, false);
-			_series = series;
+			_series = selection;
 		}
 
 		@Override
@@ -90,15 +93,15 @@ public class AddQuantityOperation extends BaseOperation
 					"Speed Total", kmh);
 
 			// start adding values.
-			for (int j = 0; j < _series[0].size(); j++)
+			for (int j = 0; j < _series.get(0).size(); j++)
 			{
 				double runningTotal = 0;
-				for (int i = 0; i < _series.length; i++)
+				for (int i = 0; i < _series.size(); i++)
 				{
 					@SuppressWarnings("unchecked")
-					IQuantityCollection<Speed> thisC = (IQuantityCollection<Speed>) _series[i];
-					Speed thisQ = (Speed) thisC.getValues().get(j);
-					runningTotal += thisQ.getValue().doubleValue();
+					IQuantityCollection<Speed> thisC = (IQuantityCollection<Speed>) _series.get(0);
+					double thisQ = thisC.getValues().get(j).getValue().doubleValue();
+					runningTotal += thisQ;
 				}
 				
 				Quantity<Speed> value = (Quantity<Speed>) DefaultQuantityFactory.getInstance(Speed.class)
@@ -108,7 +111,9 @@ public class AddQuantityOperation extends BaseOperation
 			}
 			
 			// ok, done
-			getStore().add(new ICollection[]{target});
+			List<ICollection> res = new ArrayList<ICollection>();
+			res.add(target);
+			getStore().add(res);
 
 		}
 	}
