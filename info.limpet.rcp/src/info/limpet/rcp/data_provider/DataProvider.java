@@ -1,6 +1,8 @@
 package info.limpet.rcp.data_provider;
 
 
+import info.limpet.rcp.data_provider.data.DataModel;
+
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.*;
 import org.eclipse.jface.viewers.*;
@@ -52,15 +54,7 @@ public class DataProvider extends ViewPart {
 	 * (like Task List, for example).
 	 */
 	 
-	class ViewContentProvider implements IStructuredContentProvider {
-		public void inputChanged(Viewer v, Object oldInput, Object newInput) {
-		}
-		public void dispose() {
-		}
-		public Object[] getElements(Object parent) {
-			return new String[] { "One", "Two", "Three" };
-		}
-	}
+
 	class ViewLabelProvider extends LabelProvider implements ITableLabelProvider {
 		public String getColumnText(Object obj, int index) {
 			return getText(obj);
@@ -88,7 +82,7 @@ public class DataProvider extends ViewPart {
 	 */
 	public void createPartControl(Composite parent) {
 		viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
-		viewer.setContentProvider(new ViewContentProvider());
+		viewer.setContentProvider(new DataModel());
 		viewer.setLabelProvider(new ViewLabelProvider());
 		viewer.setSorter(new NameSorter());
 		viewer.setInput(getViewSite());
