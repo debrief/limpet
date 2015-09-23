@@ -41,7 +41,7 @@ abstract public class BaseOperation implements IOperation
 	}
 
 	/**
-	 * check if the series are all time series datasets (temporal)
+	 * check if the series are all have equal dimensions
 	 * 
 	 * @param selection
 	 * @return true/false
@@ -88,7 +88,7 @@ abstract public class BaseOperation implements IOperation
 
 
 	/**
-	 * check if the series are all time series datasets (temporal)
+	 * check if the series all have equal units
 	 * 
 	 * @param selection
 	 * @return true/false
@@ -160,6 +160,12 @@ abstract public class BaseOperation implements IOperation
 		return allValid;
 	}
 
+	/**
+	 * check if the series are all of equal length
+	 * 
+	 * @param selection
+	 * @return true/false
+	 */
 	public boolean allEqualLength(List<ICollection> selection)
 	{
 		// are they all temporal?

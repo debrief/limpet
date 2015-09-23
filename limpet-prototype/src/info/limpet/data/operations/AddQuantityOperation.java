@@ -58,8 +58,8 @@ public class AddQuantityOperation extends BaseOperation
 		@Override
 		public void execute()
 		{
-			// TODO: remove hard-coded Speed value. Use quantity from first series
-			// TODO: sort out dimension / units consistency for this implementation
+			// TODO: DINKO - remove hard-coded Speed value. Use quantity from first series
+			// TODO: DINKO - sort out dimension / units consistency for this implementation
 			
 			// get the dimensions & units
 			IQuantityCollection<?> first = (IQuantityCollection<?>) _series.get(0);
