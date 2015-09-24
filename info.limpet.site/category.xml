@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/info.limpet.feature_0.0.0.jar" id="info.limpet.feature" version="0.0.0">
+      <category name="info.limpet.updatesite"/>
+   </feature>
+   <feature url="features/info.limpet.rcp.feature_0.0.0.jar" id="info.limpet.rcp.feature" version="0.0.0">
+      <category name="info.limpet.updatesite"/>
+   </feature>
+   <category-def name="info.limpet.updatesite" label="Lightweight InforMation ProcEssing Toolkit - Limpet"/>
+</site>

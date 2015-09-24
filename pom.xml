@@ -21,6 +21,7 @@
     <module>info.limpet.test</module>
     <module>info.limpet.feature</module>
     <module>info.limpet.rcp.feature</module>
+    <module>info.limpet.site</module>
   </modules>
 
   <build>
