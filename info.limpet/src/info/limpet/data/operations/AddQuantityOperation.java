@@ -64,6 +64,7 @@ public class AddQuantityOperation implements IOperation
 		{
 			// TODO: DINKO - remove hard-coded Speed value. Use quantity from first series
 			// TODO: DINKO - sort out dimension / units consistency for this implementation
+			// TODO: DINKO - use the Quantity class's own Add() method to do the addition.
 			
 			// get the dimensions & units
 			IQuantityCollection<?> first = (IQuantityCollection<?>) _series.get(0);
@@ -82,14 +83,13 @@ public class AddQuantityOperation implements IOperation
 				double runningTotal = 0;
 				for (int i = 0; i < _series.size(); i++)
 				{
-					@SuppressWarnings("unchecked")
-					IQuantityCollection<Speed> thisC = (IQuantityCollection<Speed>) _series
+					IQuantityCollection<?> thisC = (IQuantityCollection<?>) _series
 							.get(0);
 					double thisQ = thisC.getValues().get(j).getValue().doubleValue();
 					runningTotal += thisQ;
 				}
 
-				Quantity<Speed> value = Quantities.getQuantity(runningTotal, (Unit<Speed>) units);
+				Quantity<Speed> value =   Quantities.getQuantity(runningTotal, (Unit<Speed>) units);
 
 				target.add(value);
 			}
