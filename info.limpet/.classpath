@@ -5,7 +5,7 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
 	<classpathentry kind="lib" path="lib/si-quantity-0.4-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="lib/systems-quantity-0.2-SNAPSHOT.jar"/>
-	<classpathentry kind="lib" path="lib/unit-api-0.8-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="lib/unit-api-0.8-SNAPSHOT.jar" sourcepath="lib/unit-api-master.zip"/>
 	<classpathentry kind="lib" path="lib/systems-common-0.2-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="lib/unit-ri-0.8-SNAPSHOT.jar" sourcepath="lib/unit-ri-master.zip"/>
 	<classpathentry kind="lib" path="lib/si-units-0.4-SNAPSHOT.jar"/>
