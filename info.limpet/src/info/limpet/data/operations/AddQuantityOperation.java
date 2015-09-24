@@ -13,17 +13,15 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.measure.Dimension;
 import javax.measure.Quantity;
 import javax.measure.Unit;
-import javax.measure.quantity.Speed;
 
 import tec.units.ri.quantity.Quantities;
 
 public class AddQuantityOperation implements IOperation
 {
 	CollectionComplianceTests aTests = new CollectionComplianceTests();
-	
+
 	@Override
 	public Collection<ICommand> actionsFor(List<ICollection> selection,
 			IStore destination)
@@ -31,27 +29,23 @@ public class AddQuantityOperation implements IOperation
 		Collection<ICommand> res = new ArrayList<ICommand>();
 		if (appliesTo(selection))
 		{
-			ICommand newC = new AddQuantityValues(selection, destination);
+			ICommand newC = new AddQuantityValues<>(selection, destination);
 			res.add(newC);
 		}
 
 		return res;
 	}
-	
-	
 
 	private boolean appliesTo(List<ICollection> selection)
 	{
-		return (aTests.allQuantity(selection) && aTests.allEqualLength(selection) && 
-				 aTests.allEqualDimensions(selection) && aTests.allEqualUnits(selection));
+		return (aTests.allQuantity(selection) && aTests.allEqualLength(selection)
+				&& aTests.allEqualDimensions(selection) && aTests
+					.allEqualUnits(selection));
 	}
 
-
-
-	public static class AddQuantityValues extends AbstractCommand
+	public static class AddQuantityValues<T extends Quantity<T>> extends
+			AbstractCommand
 	{
-
-
 
 		public AddQuantityValues(List<ICollection> selection, IStore store)
 		{
@@ -59,43 +53,35 @@ public class AddQuantityOperation implements IOperation
 					false, false, selection);
 		}
 
-
 		@Override
 		public void execute()
 		{
-			// TODO: DINKO - remove hard-coded Speed value. Use quantity from first series
-			// TODO: DINKO - sort out dimension / units consistency for this implementation
-			// TODO: DINKO - use the Quantity class's own Add() method to do the addition.
-			
-			// get the dimensions & units
-			IQuantityCollection<?> first = (IQuantityCollection<?>) _inputs.get(0);
-			@SuppressWarnings("unused")
-			Dimension dim = first.getDimension();
+			// get the unit
 			@SuppressWarnings("unchecked")
-			Unit<Speed> units = (Unit<Speed>) first.getUnits();
-			
+			IQuantityCollection<T> first = (IQuantityCollection<T>) _inputs.get(0);
+			Unit<T> unit = (Unit<T>) first.getUnits();
+
 			// ok, generate the new series
-			IQuantityCollection<Speed> target = new QuantityCollection<Speed>(
-					"Speed Total", this, units);
-			
+			IQuantityCollection<T> target = new QuantityCollection<T>("Speed Total",
+					this, unit);
+
 			// store the output
 			addOutput(target);
 
 			// start adding values.
 			for (int j = 0; j < _inputs.get(0).size(); j++)
 			{
-				double runningTotal = 0;
+				Quantity<T> runningTotal = Quantities.getQuantity(0, unit);
+
 				for (int i = 0; i < _inputs.size(); i++)
 				{
-					IQuantityCollection<?> thisC = (IQuantityCollection<?>) _inputs
-							.get(0);
-					double thisQ = thisC.getValues().get(j).getValue().doubleValue();
-					runningTotal += thisQ;
+					@SuppressWarnings("unchecked")
+					IQuantityCollection<T> thisC = (IQuantityCollection<T>) _inputs
+							.get(i);
+					runningTotal = runningTotal.add((Quantity<T>) thisC.getValues().get(j));
 				}
 
-				Quantity<Speed> value =   Quantities.getQuantity(runningTotal, (Unit<Speed>) units);
-
-				target.add(value);
+				target.add(runningTotal);
 			}
 
 			// tell each series that we're a dependent
@@ -105,8 +91,7 @@ public class AddQuantityOperation implements IOperation
 				ICollection iCollection = (ICollection) iter.next();
 				iCollection.addDependent(this);
 			}
-			
-			
+
 			// ok, done
 			List<ICollection> res = new ArrayList<ICollection>();
 			res.add(target);
