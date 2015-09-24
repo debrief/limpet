@@ -35,4 +35,14 @@ public class InMemoryStore implements IStore
 		return rootStore.size() ;
 	}
 
+	public List<ICollection> getAlongside()
+	{
+		return alongsideStore;
+	}
+	
+	public List<ICollection> getRoot()
+	{
+		return rootStore;
+	}
+	
 }

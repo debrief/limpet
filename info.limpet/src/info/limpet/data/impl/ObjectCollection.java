@@ -1,5 +1,6 @@
 package info.limpet.data.impl;
 
+import info.limpet.ICommand;
 import info.limpet.IObjectCollection;
 
 import java.util.ArrayList;
@@ -12,10 +13,19 @@ public class ObjectCollection<T extends Object> implements IObjectCollection<T>
 
 	ArrayList<T> _values = new ArrayList<T>();
 	private String _myName;
+	private final ICommand _precedent;
+	private final List<ICommand> _dependents;
 	
 	public ObjectCollection(String name)
 	{
+		this(name, null);
+	}
+
+	public ObjectCollection(String name, ICommand precedent)
+	{
 		_myName = name;
+		_precedent = precedent;
+		_dependents = new ArrayList<ICommand>();
 	}
 
 	@Override
@@ -52,6 +62,24 @@ public class ObjectCollection<T extends Object> implements IObjectCollection<T>
 	public boolean isTemporal()
 	{
 		return false;
+	}
+
+	@Override
+	public ICommand getPrecedent()
+	{
+		return _precedent;
+	}
+
+	@Override
+	public List<ICommand> getDependents()
+	{
+		return _dependents;
+	}
+
+	@Override
+	public void addDependent(ICommand command)
+	{
+		_dependents.add(command);
 	}
 	
 	

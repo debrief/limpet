@@ -1,5 +1,6 @@
 package info.limpet.data.impl;
 
+import info.limpet.ICommand;
 import info.limpet.ITemporalQuantityCollection;
 import info.limpet.data.impl.helpers.QuantityHelper;
 
@@ -18,9 +19,14 @@ public class TemporalQuantityCollection<T extends Quantity<T>> extends
 	private Unit<T> _myUnits;
 	private QuantityHelper<T> _qHelper;
 
-	public TemporalQuantityCollection(String string, Unit<T> units)
+	public TemporalQuantityCollection(String name, Unit<T> units)
 	{
-		super(string);
+		this(name, null, units);
+	}
+	
+	public TemporalQuantityCollection(String name, ICommand precedent, Unit<T> units)
+	{
+		super(name);
 		_myUnits = units;
 		_qHelper = new QuantityHelper<>(_values, units);
 	}

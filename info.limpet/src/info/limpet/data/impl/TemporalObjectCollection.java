@@ -1,5 +1,6 @@
 package info.limpet.data.impl;
 
+import info.limpet.ICommand;
 import info.limpet.ITemporalObjectCollection;
 import info.limpet.data.impl.helpers.TimeHelper;
 
@@ -17,7 +18,12 @@ public class TemporalObjectCollection<T extends Object> extends
 
 	public TemporalObjectCollection(String name)
 	{
-		super(name);
+		this(name, null);
+	}
+
+	public TemporalObjectCollection(String name, ICommand precedent)
+	{
+		super(name, precedent);
 		_tSupport = new TimeHelper(_times);
 	}
 

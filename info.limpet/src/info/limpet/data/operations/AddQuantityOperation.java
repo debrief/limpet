@@ -10,6 +10,7 @@ import info.limpet.data.impl.QuantityCollection;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.measure.Dimension;
@@ -30,7 +31,7 @@ public class AddQuantityOperation implements IOperation
 		Collection<ICommand> res = new ArrayList<ICommand>();
 		if (appliesTo(selection))
 		{
-			AddQuantityValues newC = new AddQuantityValues(selection, destination);
+			ICommand newC = new AddQuantityValues(selection, destination);
 			res.add(newC);
 		}
 
@@ -50,14 +51,14 @@ public class AddQuantityOperation implements IOperation
 	public static class AddQuantityValues extends AbstractCommand
 	{
 
-		private List<ICollection> _series;
+
 
 		public AddQuantityValues(List<ICollection> selection, IStore store)
 		{
 			super("Add series", "Add numeric values in provided series", store,
-					false, false);
-			_series = selection;
+					false, false, selection);
 		}
+
 
 		@Override
 		public void execute()
@@ -67,7 +68,7 @@ public class AddQuantityOperation implements IOperation
 			// TODO: DINKO - use the Quantity class's own Add() method to do the addition.
 			
 			// get the dimensions & units
-			IQuantityCollection<?> first = (IQuantityCollection<?>) _series.get(0);
+			IQuantityCollection<?> first = (IQuantityCollection<?>) _inputs.get(0);
 			@SuppressWarnings("unused")
 			Dimension dim = first.getDimension();
 			@SuppressWarnings("unchecked")
@@ -75,15 +76,18 @@ public class AddQuantityOperation implements IOperation
 			
 			// ok, generate the new series
 			IQuantityCollection<Speed> target = new QuantityCollection<Speed>(
-					"Speed Total", units);
+					"Speed Total", this, units);
+			
+			// store the output
+			addOutput(target);
 
 			// start adding values.
-			for (int j = 0; j < _series.get(0).size(); j++)
+			for (int j = 0; j < _inputs.get(0).size(); j++)
 			{
 				double runningTotal = 0;
-				for (int i = 0; i < _series.size(); i++)
+				for (int i = 0; i < _inputs.size(); i++)
 				{
-					IQuantityCollection<?> thisC = (IQuantityCollection<?>) _series
+					IQuantityCollection<?> thisC = (IQuantityCollection<?>) _inputs
 							.get(0);
 					double thisQ = thisC.getValues().get(j).getValue().doubleValue();
 					runningTotal += thisQ;
@@ -94,6 +98,15 @@ public class AddQuantityOperation implements IOperation
 				target.add(value);
 			}
 
+			// tell each series that we're a dependent
+			Iterator<ICollection> iter = _inputs.iterator();
+			while (iter.hasNext())
+			{
+				ICollection iCollection = (ICollection) iter.next();
+				iCollection.addDependent(this);
+			}
+			
+			
 			// ok, done
 			List<ICollection> res = new ArrayList<ICollection>();
 			res.add(target);

@@ -1,5 +1,6 @@
 package info.limpet.data.impl;
 
+import info.limpet.ICommand;
 import info.limpet.IQuantityCollection;
 import info.limpet.data.impl.helpers.QuantityHelper;
 
@@ -17,7 +18,12 @@ public class QuantityCollection<T extends Quantity<T>> extends
 
 	public QuantityCollection(String name, Unit<T> units)
 	{
-		super(name);
+		this(name, null, units);
+	}
+
+	public QuantityCollection(String name, ICommand precedent, Unit<T> units)
+	{
+		super(name, precedent);
 		_units = units;
 		_qHelper = new QuantityHelper<>(_values, units);
 	}

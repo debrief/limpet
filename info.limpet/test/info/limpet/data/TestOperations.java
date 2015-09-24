@@ -11,6 +11,7 @@ import info.limpet.data.store.InMemoryStore;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.measure.Quantity;
@@ -177,7 +178,39 @@ public class TestOperations extends TestCase
 		
 		assertEquals("new collection added to store", 1, store.rootSize());
 		
+		ICollection firstItem = store.getRoot().get(0);
+		ICommand precedent = firstItem.getPrecedent();
+		assertNotNull("has precedent", precedent);
+		assertEquals("Correct name", "Add series", precedent.getTitle());
 		
+		List<ICollection> inputs = precedent.getInputs();
+		assertEquals("Has both precedents", 2, inputs.size());
+
+		Iterator<ICollection> iIter = inputs.iterator();
+		while (iIter.hasNext())
+		{
+			ICollection thisC = (ICollection) iIter.next();
+			List<ICommand> deps = thisC.getDependents();
+			assertEquals("has a depedent", 1, deps.size());
+			Iterator<ICommand> dIter = deps.iterator();
+			while (dIter.hasNext())
+			{
+				ICommand iCommand = (ICommand) dIter.next();
+				assertEquals("Correct dependent", precedent, iCommand);
+			}
+		}
+		
+		List<ICollection> outputs = precedent.getOutputs();
+		assertEquals("Has both dependents", 1, outputs.size());
+		
+		Iterator<ICollection> oIter = outputs.iterator();
+		while (oIter.hasNext())
+		{
+			ICollection thisC = (ICollection) oIter.next();
+			ICommand dep = thisC.getPrecedent();
+			assertNotNull("has a depedent", dep);
+			assertEquals("Correct dependent", precedent, dep);
+		}
 	}
 
 }
