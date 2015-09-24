@@ -6,8 +6,9 @@ Bundle-Version: 1.0.0
 Bundle-Activator: info.limpet.rcp.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- org.eclipse.ui.views
+ org.eclipse.ui.views,
+ info.limpet;bundle-version="1.0.0"
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: MWC
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 
