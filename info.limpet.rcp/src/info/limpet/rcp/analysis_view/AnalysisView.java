@@ -14,13 +14,9 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -28,8 +24,12 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISelectionListener;
@@ -53,10 +53,7 @@ public class AnalysisView extends ViewPart
 	public static final String ID = "info.limpet.rcp.AnalysisView";
 
 	private TableViewer viewer;
-	private Action action1;
-	private Action action2;
-	private Action doubleClickAction;
-
+	private Action copyToClipboard;
 	private ISelectionListener selListener;
 
 	class ViewLabelProvider extends LabelProvider implements ITableLabelProvider
@@ -233,56 +230,59 @@ public class AnalysisView extends ViewPart
 
 	private void fillLocalPullDown(IMenuManager manager)
 	{
-		manager.add(action1);
+		manager.add(copyToClipboard);
 		manager.add(new Separator());
-		manager.add(action2);
 	}
 
 	private void fillContextMenu(IMenuManager manager)
 	{
-		manager.add(action1);
-		manager.add(action2);
+		manager.add(copyToClipboard);
 		// Other plug-ins can contribute there actions here
 		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
 
 	private void fillLocalToolBar(IToolBarManager manager)
 	{
-		manager.add(action1);
-		manager.add(action2);
+		manager.add(copyToClipboard);
 	}
 
 	private void makeActions()
 	{
-		action1 = new Action()
+		copyToClipboard = new Action()
 		{
 			public void run()
 			{
-				showMessage("Action 1 executed");
+				copyToClipboard();
 			}
 		};
-		action1.setText("Action 1");
-		action1.setToolTipText("Action 1 tooltip");
-		action1.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
-				.getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
-
-		action2 = new Action()
-		{
-			public void run()
-			{
-				showMessage("Action 2 executed");
-			}
-		};
-		action2.setText("Action 2");
-		action2.setToolTipText("Action 2 tooltip");
-		action2.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
-				.getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
+		copyToClipboard.setText("Copy to clipboard");
+		copyToClipboard.setToolTipText("Copy analysis to clipboard");
+		copyToClipboard.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
+				.getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
 	}
-
-	private void showMessage(String message)
+	
+	private void copyToClipboard()
 	{
-		MessageDialog.openInformation(viewer.getControl().getShell(),
-				"Analysis View", message);
+		Display display = Display.getCurrent();
+    Clipboard clipboard = new Clipboard(display);
+    StringBuffer output = new StringBuffer(); 
+    @SuppressWarnings("unchecked")
+		ArrayList<ArrayList<String>> list = (ArrayList<ArrayList<String>>) viewer.getInput();
+    String separator = System.getProperty( "line.separator" );
+    Iterator<ArrayList<String>> iter = list.iterator();
+    while (iter.hasNext())
+		{
+			ArrayList<java.lang.String> arrayList = (ArrayList<java.lang.String>) iter
+					.next();
+    	output.append(arrayList.get(0));
+    	output.append(", ");
+    	output.append(arrayList.get(1));
+    	output.append(separator);
+		}
+    
+    clipboard.setContents(new Object[] { output.toString()},
+            new Transfer[] { TextTransfer.getInstance() });
+    clipboard.dispose();
 	}
 
 	/**
