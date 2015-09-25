@@ -18,25 +18,25 @@ import javax.measure.Unit;
 
 import tec.units.ri.quantity.Quantities;
 
-public class AddQuantityOperation implements IOperation
+public class AddQuantityOperation<Q extends Quantity<Q>> implements
+		IOperation<IQuantityCollection<Q>>
 {
 	CollectionComplianceTests aTests = new CollectionComplianceTests();
 
-	@Override
-	public Collection<ICommand> actionsFor(List<ICollection> selection,
+	public Collection<ICommand<IQuantityCollection<Q>>> actionsFor(List<IQuantityCollection<Q>> selection,
 			IStore destination)
 	{
-		Collection<ICommand> res = new ArrayList<ICommand>();
+		Collection<ICommand<IQuantityCollection<Q>>> res = new ArrayList<ICommand<IQuantityCollection<Q>>>();
 		if (appliesTo(selection))
 		{
-			ICommand newC = new AddQuantityValues<>(selection, destination);
+			ICommand<IQuantityCollection<Q>> newC = new AddQuantityValues<Q>(selection, destination);
 			res.add(newC);
 		}
 
 		return res;
 	}
 
-	private boolean appliesTo(List<ICollection> selection)
+	private boolean appliesTo(List<IQuantityCollection<Q>> selection)
 	{
 		return (aTests.allQuantity(selection) && aTests.allEqualLength(selection)
 				&& aTests.allEqualDimensions(selection) && aTests
@@ -44,10 +44,11 @@ public class AddQuantityOperation implements IOperation
 	}
 
 	public static class AddQuantityValues<T extends Quantity<T>> extends
-			AbstractCommand
+			AbstractCommand<IQuantityCollection<T>>
 	{
 
-		public AddQuantityValues(List<ICollection> selection, IStore store)
+		public AddQuantityValues(List<IQuantityCollection<T>> selection,
+				IStore store)
 		{
 			super("Add series", "Add numeric values in provided series", store,
 					false, false, selection);
@@ -57,9 +58,8 @@ public class AddQuantityOperation implements IOperation
 		public void execute()
 		{
 			// get the unit
-			@SuppressWarnings("unchecked")
-			IQuantityCollection<T> first = (IQuantityCollection<T>) _inputs.get(0);
-			Unit<T> unit = (Unit<T>) first.getUnits();
+			IQuantityCollection<T> first = _inputs.get(0);
+			Unit<T> unit = first.getUnits();
 
 			// ok, generate the new series
 			IQuantityCollection<T> target = new QuantityCollection<T>("Speed Total",
@@ -75,20 +75,19 @@ public class AddQuantityOperation implements IOperation
 
 				for (int i = 0; i < _inputs.size(); i++)
 				{
-					@SuppressWarnings("unchecked")
-					IQuantityCollection<T> thisC = (IQuantityCollection<T>) _inputs
-							.get(i);
-					runningTotal = runningTotal.add((Quantity<T>) thisC.getValues().get(j));
+					IQuantityCollection<T> thisC = _inputs.get(i);
+					runningTotal = runningTotal.add((Quantity<T>) thisC.getValues()
+							.get(j));
 				}
 
 				target.add(runningTotal);
 			}
 
 			// tell each series that we're a dependent
-			Iterator<ICollection> iter = _inputs.iterator();
+			Iterator<IQuantityCollection<T>> iter = _inputs.iterator();
 			while (iter.hasNext())
 			{
-				ICollection iCollection = (ICollection) iter.next();
+				ICollection iCollection = iter.next();
 				iCollection.addDependent(this);
 			}
 

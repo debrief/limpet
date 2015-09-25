@@ -7,7 +7,7 @@ import info.limpet.ICollection;
 import info.limpet.ICommand;
 import info.limpet.IStore;
 
-public abstract class AbstractCommand implements ICommand
+public abstract class AbstractCommand<T extends ICollection> implements ICommand<T>
 {
 
 	final private String _title;
@@ -16,10 +16,10 @@ public abstract class AbstractCommand implements ICommand
 	final private boolean _canRedo;
 	final private IStore _store;
 	
-	final protected List<ICollection> _inputs;		
-	final private List<ICollection> _outputs;
+	final protected List<T> _inputs;		
+	final private List<T> _outputs;
 
-	public AbstractCommand(String title, String description, IStore store, boolean canUndo, boolean canRedo, List<ICollection> inputs)
+	public AbstractCommand(String title, String description, IStore store, boolean canUndo, boolean canRedo, List<T> inputs)
 	{
 		_title = title;
 		_description = description;
@@ -28,7 +28,7 @@ public abstract class AbstractCommand implements ICommand
 		_canRedo = canRedo;
 		
 		_inputs = inputs;
-		_outputs = new ArrayList<ICollection>();
+		_outputs = new ArrayList<T>();
 	}
 	
 	public IStore getStore()
@@ -75,18 +75,18 @@ public abstract class AbstractCommand implements ICommand
 		return _canRedo;
 	}
 
-	public List<ICollection> getInputs()
+	public List<T> getInputs()
 	{
 		return _inputs;
 	}
 	
 	@Override
-	public List<ICollection> getOutputs()
+	public List<T> getOutputs()
 	{
 		return _outputs;
 	}
 	
-	public void addOutput(ICollection output)
+	public void addOutput(T output)
 	{
 		_outputs.add(output);
 	}

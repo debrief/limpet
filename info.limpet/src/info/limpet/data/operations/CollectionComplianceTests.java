@@ -45,7 +45,7 @@ public class CollectionComplianceTests
 	 * @param selection
 	 * @return true/false
 	 */
-	public boolean allQuantity(List<ICollection> selection)
+	public boolean allQuantity(List<? extends ICollection> selection)
 	{
 		// are they all temporal?
 		boolean allValid = true;
@@ -72,7 +72,7 @@ public class CollectionComplianceTests
 	 * @param selection
 	 * @return true/false
 	 */
-	public boolean allEqualDimensions(List<ICollection> selection)
+	public boolean allEqualDimensions(List<? extends ICollection> selection)
 	{
 		// are they all temporal?
 		boolean allValid = true;
@@ -119,7 +119,7 @@ public class CollectionComplianceTests
 	 * @param selection
 	 * @return true/false
 	 */
-	public boolean allEqualUnits(List<ICollection> selection)
+	public boolean allEqualUnits(List<? extends ICollection> selection)
 	{
 		// are they all temporal?
 		boolean allValid = true;
@@ -192,7 +192,7 @@ public class CollectionComplianceTests
 	 * @param selection
 	 * @return true/false
 	 */
-	public boolean allEqualLength(List<ICollection> selection)
+	public boolean allEqualLength(List<? extends ICollection> selection)
 	{
 		// are they all temporal?
 		boolean allValid = true;
