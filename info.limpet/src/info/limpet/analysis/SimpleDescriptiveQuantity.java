@@ -10,7 +10,9 @@ import java.util.List;
 
 import javax.measure.Quantity;
 
+import org.apache.commons.math3.random.EmpiricalDistribution;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
+import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
 public abstract class SimpleDescriptiveQuantity extends CoreAnalysis
 {
@@ -21,7 +23,7 @@ public abstract class SimpleDescriptiveQuantity extends CoreAnalysis
 	}
 
 	CollectionComplianceTests aTests = new CollectionComplianceTests();
-
+	
 	@Override
 	public void analyse(List<ICollection> selection)
 	{
@@ -39,29 +41,70 @@ public abstract class SimpleDescriptiveQuantity extends CoreAnalysis
 					ICollection thisC = (ICollection) iter.next();
 					QuantityCollection<?> o = (QuantityCollection<?>) thisC;
 
-					// Get a DescriptiveStatistics instance
-					DescriptiveStatistics stats = new DescriptiveStatistics();
+					// collate the values into an array
+					double[] data = new double[o.size()];
+					
 
 					// Add the data from the array
-					List<?> theseV = o.getValues();
-					Iterator<?> iterV = theseV.iterator();
+					int ctr = 0;
+					Iterator<?> iterV = o.getValues().iterator();
 					while (iterV.hasNext())
 					{
 						Quantity<?> object = (Quantity<?>) iterV.next();
-						stats.addValue(object.getValue().doubleValue());
+						data[ctr++] = object.getValue().doubleValue();
 					}
 					
-					// Compute some statistics
-					double mean = stats.getMean();
-					double std = stats.getStandardDeviation();
-					double median = stats.getPercentile(50);
-
+					// Get a DescriptiveStatistics instance
+					DescriptiveStatistics stats = new DescriptiveStatistics(data);
+					
+					// output some basic overview stats
+					titles.add("Min");
+					values.add("" + stats.getMin());
+					titles.add("Max");
+					values.add("" + stats.getMax());
 					titles.add("Mean");
-					values.add("" + mean);
+					values.add("" + stats.getMean());
 					titles.add("Std");
-					values.add("" + std);
+					values.add("" + stats.getStandardDeviation());
 					titles.add("Median");
-					values.add("" + median);
+					values.add("" + stats.getPercentile(50));
+					
+					// also do some frequency binning
+					double range = stats.getMax() - stats.getMin();
+					
+					final int BIN_COUNT;
+					if(range > 10)
+						BIN_COUNT = 10;
+					else
+						BIN_COUNT = (int) range;
+					
+					long[] histogram = new long[BIN_COUNT];
+					EmpiricalDistribution distribution = new EmpiricalDistribution(BIN_COUNT);
+					distribution.load(data);
+					int k = 0;
+					for(SummaryStatistics sStats: distribution.getBinStats())
+					{
+					    histogram[k++] = sStats.getN();
+					}
+					
+					// now output the bins
+					StringBuffer freqBins = new StringBuffer();					
+					double rangeSoFar = stats.getMin();
+					double rangeStep = range / BIN_COUNT;
+					for (int i = 0; i < histogram.length; i++)
+					{
+						long l = histogram[i];
+						freqBins.append((int)rangeSoFar);
+						freqBins.append("-");
+						freqBins.append((int)(rangeSoFar + rangeStep));
+						freqBins.append(": ");
+						freqBins.append(l);
+						freqBins.append(", ");
+						rangeSoFar += rangeStep;						
+					}
+					titles.add("Frequency bins");
+					values.add(freqBins.toString());
+					
 				}
 			}
 		}
