@@ -4,25 +4,15 @@ import info.limpet.rcp.data_provider.data.CollectionWrapper;
 import info.limpet.rcp.data_provider.data.CommandWrapper;
 import info.limpet.rcp.data_provider.data.NamedList;
 
-import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 
-public class LimpetLabelProvider extends LabelProvider implements
-		ITableLabelProvider
+public class LimpetLabelProvider extends LabelProvider
 {
-	public String getColumnText(Object obj, int index)
-	{
-		return getText(obj);
-	}
 
-	public Image getColumnImage(Object obj, int index)
-	{
-		return getImage(obj);
-	}
-
+	@Override
 	public Image getImage(Object obj)
 	{
 		Image res = null;
@@ -42,7 +32,6 @@ public class LimpetLabelProvider extends LabelProvider implements
 			res = PlatformUI.getWorkbench().getSharedImages()
 					.getImage(ISharedImages.IMG_OBJ_FOLDER);
 		}
-
 
 		return res;
 	}
