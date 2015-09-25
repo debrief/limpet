@@ -51,4 +51,11 @@ public class InMemoryStore implements IStore
 		rootStore.clear();
 	}
 	
+	public List<ICollection> getAll(){
+		List<ICollection> res = new ArrayList<ICollection>();
+		res.addAll(alongsideStore);
+		res.addAll(rootStore);
+		return res;
+	}
+	
 }
