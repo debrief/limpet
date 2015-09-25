@@ -36,36 +36,11 @@ public class DataProvider extends ViewPart
 	 */
 	public static final String ID = "info.limpet.rcp.DataProvider";
 
-	private TableViewer viewer;
+	private TreeViewer viewer;
 	private Action action1;
 	private Action action2;
 	private Action doubleClickAction;
 
-	/*
-	 * The content provider class is responsible for providing objects to the
-	 * view. It can wrap existing objects in adapters or simply return objects
-	 * as-is. These objects may be sensitive to the current input of the view, or
-	 * ignore it and always show the same content (like Task List, for example).
-	 */
-
-	class ViewLabelProvider extends LabelProvider implements ITableLabelProvider
-	{
-		public String getColumnText(Object obj, int index)
-		{
-			return getText(obj);
-		}
-
-		public Image getColumnImage(Object obj, int index)
-		{
-			return getImage(obj);
-		}
-
-		public Image getImage(Object obj)
-		{
-			return PlatformUI.getWorkbench().getSharedImages()
-					.getImage(ISharedImages.IMG_OBJ_ELEMENT);
-		}
-	}
 
 
 	/**
@@ -81,10 +56,10 @@ public class DataProvider extends ViewPart
 	 */
 	public void createPartControl(Composite parent)
 	{
-		viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
-		viewer.setContentProvider(new DataModel(new SampleData().getData()));
-		viewer.setLabelProvider(new ViewLabelProvider());
-		viewer.setInput(getViewSite());
+		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+		viewer.setContentProvider(new DataModel());
+		viewer.setLabelProvider(new LimpetLabelProvider());
+		viewer.setInput(new SampleData().getData());
 		getSite().setSelectionProvider(viewer);
 		makeActions();
 		hookContextMenu();

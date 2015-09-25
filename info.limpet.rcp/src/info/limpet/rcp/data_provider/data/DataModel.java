@@ -1,31 +1,34 @@
 package info.limpet.rcp.data_provider.data;
 
 import info.limpet.ICollection;
+import info.limpet.ICommand;
 import info.limpet.IStore;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.ui.views.properties.IPropertyDescriptor;
-import org.eclipse.ui.views.properties.IPropertySource;
-import org.eclipse.ui.views.properties.PropertyDescriptor;
-import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 
-public class DataModel implements IStructuredContentProvider
+public class DataModel implements ITreeContentProvider
 {
-	private final IStore _store;
+	private IStore _store;
 
-	public DataModel(IStore store)
+	public DataModel()
 	{
-		_store = store;
 	}
-	
+
 	public void inputChanged(Viewer v, Object oldInput, Object newInput)
 	{
+		if (newInput instanceof IStore)
+		{
+			_store = (IStore) newInput;
+		}
+		else
+		{
+			_store = null;
+		}
 	}
 
 	public void dispose()
@@ -36,141 +39,143 @@ public class DataModel implements IStructuredContentProvider
 	{
 
 		List<CollectionWrapper> list = new ArrayList<CollectionWrapper>();
-		
+
 		Iterator<ICollection> iter = _store.getAll().iterator();
 		while (iter.hasNext())
 		{
-			ICollection iCollection = (ICollection) iter.next();
+			ICollection iCollection = iter.next();
 			list.add(new CollectionWrapper(iCollection));
 		}
-		
+
 		return list.toArray();
 	}
 
-	public static class CollectionWrapper implements IAdaptable
+	@SuppressWarnings(
+	{ "rawtypes", "unchecked" })
+	public Object[] getChildren(Object parentElement)
 	{
-		private final ICollection _collection;
+		List<Object> res = new ArrayList<Object>();
 
-		public CollectionWrapper(ICollection collection)
+		if (parentElement instanceof CollectionWrapper)
 		{
-			_collection = collection;
-		}
+			// see if it has predecessors or successors
+			CollectionWrapper cw = (CollectionWrapper) parentElement;
+			ICollection coll = cw.getCollection();
 
-		public String toString()
-		{
-			return _collection.getName() + " (" + _collection.size() + " items)";
-		}
-
-		public ICollection getCollection()
-		{
-			return _collection;
-		}
-
-		public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter)
-		{
-			if (adapter == IPropertySource.class)
+			ICommand<?> prec = coll.getPrecedent();
+			if (prec != null)
 			{
-				return new CollectionPropertySource(this);
+				List dList = new NamedList<ICommand>("Precedents");
+				dList.add(new CommandWrapper(prec));
+				res.add(dList);
 			}
-			else if (adapter == ICollection.class)
+
+			List<ICommand> dep = coll.getDependents();
+			if (dep != null)
 			{
-				return _collection;
+				List dList = new NamedList<ICommand>("Dependents");
+				Iterator<ICommand> dIter = dep.iterator();
+				while (dIter.hasNext())
+				{
+					ICommand thisI = (ICommand) dIter.next();
+					dList.add(new CommandWrapper(thisI));
+				}
+
+				// did we find any?
+				if (dList.size() > 0)
+				{
+					res.add(dList);
+				}
 			}
-			return null;
 		}
+		else if (parentElement instanceof CommandWrapper)
+		{
+			// see if it has predecessors or successors
+			CommandWrapper cw = (CommandWrapper) parentElement;
+			ICommand coll = cw.getCommand();
+
+			List<ICollection> inp = coll.getInputs();
+			if (inp != null)
+			{
+				List dList = new NamedList<ICommand>("Inputs");
+				Iterator<ICollection> dIter = inp.iterator();
+				while (dIter.hasNext())
+				{
+					ICollection thisI = (ICollection) dIter.next();
+					dList.add(new CollectionWrapper(thisI));
+				}
+				// did we find any?
+				if (dList.size() > 0)
+				{
+					res.add(dList);
+				}
+			}
+
+			List<ICollection> outp = coll.getOutputs();
+			if (outp != null)
+			{
+				List dList = new NamedList<ICollection>("Outputs");
+				Iterator<ICollection> dIter = outp.iterator();
+				while (dIter.hasNext())
+				{
+					ICollection thisI = (ICollection) dIter.next();
+					dList.add(new CollectionWrapper(thisI));
+				}
+				// did we find any?
+				if (dList.size() > 0)
+				{
+					res.add(dList);
+				}
+			}
+		}
+		else if (parentElement instanceof List)
+		{
+			List list = (List) parentElement;
+			Iterator iter = list.iterator();
+			while (iter.hasNext())
+			{
+				res.add(iter.next());
+			}
+		}
+
+		Object[] resArray = res.toArray();
+		return resArray;
 	}
 
-	/**
-	 * This class provides property sheet properties for ButtonElement.
-	 */
-	public static class CollectionPropertySource implements IPropertySource
+	public Object getParent(Object element)
 	{
+		return null;
+	}
 
-		private static final String PROPERTY_NAME = "limpet.collection.name";
-		private static final String PROPERTY_SIZE = "limpet.collection.size";
-		private static final String PROPERTY_DESCRIPTION = "limpet.collection.description";
+	public boolean hasChildren(Object element)
+	{
+		boolean res = false;
 
-		private IPropertyDescriptor[] propertyDescriptors;
-		private final CollectionWrapper _collection;
-
-		/**
-		 * Creates a new ButtonElementPropertySource.
-		 * 
-		 * @param element
-		 *          the element whose properties this instance represents
-		 */
-		public CollectionPropertySource(CollectionWrapper element)
+		if (element instanceof CollectionWrapper)
 		{
-			_collection = element;
+			// see if it has predecessors or successors
+			CollectionWrapper cw = (CollectionWrapper) element;
+			ICollection coll = cw.getCollection();
+
+			boolean hasDependents = coll.getDependents().size()> 0;
+			boolean hasPrecedents = coll.getPrecedent() != null;
+			res = (hasDependents || hasPrecedents);
+		}
+		else if (element instanceof CommandWrapper)
+		{
+			// see if it has predecessors or successors
+			CommandWrapper cw = (CommandWrapper) element;
+			ICommand<?> comm = cw.getCommand();
+
+			res = ((comm.getInputs().size() > 0) || (comm.getOutputs().size() > 0));
+		}
+		else if (element instanceof ArrayList)
+		{
+			ArrayList<?> ar = (ArrayList<?>) element;
+			return ar.size() > 0;
 		}
 
-		/**
-		 * @see org.eclipse.ui.views.properties.IPropertySource#getPropertyDescriptors()
-		 */
-		public IPropertyDescriptor[] getPropertyDescriptors()
-		{
-			if (propertyDescriptors == null)
-			{
-				// Create a descriptor and set a category
-				PropertyDescriptor textDescriptor = new TextPropertyDescriptor(
-						PROPERTY_NAME, "Name");
-				textDescriptor.setCategory("Label");
-				PropertyDescriptor sizeDescriptor = new PropertyDescriptor(
-						PROPERTY_SIZE, "Size");
-				sizeDescriptor.setCategory("Metadata");
-				PropertyDescriptor descriptionDescriptor = new TextPropertyDescriptor(
-						PROPERTY_DESCRIPTION, "Description");
-				descriptionDescriptor.setCategory("Label");
-
-				propertyDescriptors = new IPropertyDescriptor[]
-				{ textDescriptor, sizeDescriptor, descriptionDescriptor };
-			}
-			return propertyDescriptors;
-		}
-
-		public Object getEditableValue()
-		{
-			return _collection;
-		}
-
-		public Object getPropertyValue(Object id)
-		{
-			String prop = (String) id;
-
-			if (prop.equals(PROPERTY_NAME))
-				return _collection.getCollection().getName();
-			else if (prop.equals(PROPERTY_SIZE))
-				return _collection.getCollection().size();
-			else if (prop.equals(PROPERTY_DESCRIPTION))
-				return _collection.getCollection().getDescription();
-
-			return null;
-		}
-
-		public boolean isPropertySet(Object id)
-		{
-			// TODO Auto-generated method stub
-			return false;
-		}
-
-		public void resetPropertyValue(Object id)
-		{
-			// TODO Auto-generated method stub
-
-		}
-
-		public void setPropertyValue(Object id, Object value)
-		{
-			String prop = (String) id;
-
-			if (prop.equals(PROPERTY_NAME))
-				_collection.getCollection().setName((String) value);
-			else if (prop.equals(PROPERTY_SIZE))
-				throw new RuntimeException("Can't set size, silly");
-			else if (prop.equals(PROPERTY_DESCRIPTION))
-				_collection.getCollection().setDescription((String) value);
-		}
-
+		return res;
 	}
 
 }
