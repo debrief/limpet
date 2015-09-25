@@ -8,7 +8,7 @@ import java.util.List;
  * @author ian
  *
  */
-public interface ICommand
+public interface ICommand<T extends ICollection>
 {
 	public String getTitle();
 	public String getDescription();
@@ -17,6 +17,6 @@ public interface ICommand
 	public void redo();
 	public boolean canUndo();
 	public boolean canRedo();
-	public List<ICollection> getOutputs();
-	public List<ICollection> getInputs();
+	public List<T> getOutputs();
+	public List<T> getInputs();
 }
