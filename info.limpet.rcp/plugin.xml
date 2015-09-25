@@ -22,6 +22,13 @@
             class="info.limpet.rcp.data_provider.DataProvider"
             id="info.limpet.rcp.DataProvider">
       </view>
+      <view
+            name="Data Frequency"
+            icon="icons/sample.gif"
+            category="info.limpet.rcp"
+            class="info.limpet.rcp.data_frequency.DataFrequencyView"
+            id="info.limpet.rcp.DataFrequencyView">
+      </view>
    </extension>
 
 </plugin>

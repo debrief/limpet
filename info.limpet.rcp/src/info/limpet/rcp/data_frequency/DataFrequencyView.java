@@ -1,4 +1,4 @@
-package info.limpet.rcp.analysis_view;
+package info.limpet.rcp.data_frequency;
 
 import info.limpet.ICollection;
 import info.limpet.analysis.AnalysisLibrary;
@@ -22,6 +22,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
+import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
@@ -37,48 +38,32 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
+import org.swtchart.Chart;
+import org.swtchart.ILineSeries;
+import org.swtchart.ISeries.SeriesType;
 
 /** display analysis overview of selection
  * 
  * @author ian
  *
  */
-public class AnalysisView extends ViewPart
+public class DataFrequencyView extends ViewPart
 {
 
 	/**
 	 * The ID of the view as specified by the extension.
 	 */
-	public static final String ID = "info.limpet.rcp.AnalysisView";
+	public static final String ID = "info.limpet.rcp.DataFrequencyView";
 
-	private TableViewer viewer;
 	private Action copyToClipboard;
 	private ISelectionListener selListener;
 
-	class ViewLabelProvider extends LabelProvider implements ITableLabelProvider
-	{
-		
-		public String getColumnText(Object obj, int index)
-		{
-			return getText(obj);
-		}
-
-		public Image getColumnImage(Object obj, int index)
-		{
-			return getImage(obj);
-		}
-
-		public Image getImage(Object obj)
-		{
-			return PlatformUI.getWorkbench().getSharedImages()
-					.getImage(ISharedImages.IMG_OBJ_ELEMENT);
-		}
-	}
+	private Chart chart;
 
 	/**
 	 * The constructor.
 	 */
-	public AnalysisView()
+	public DataFrequencyView()
 	{
 	}
 
@@ -88,39 +73,25 @@ public class AnalysisView extends ViewPart
 	 */
 	public void createPartControl(Composite parent)
 	{
-		viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
-		viewer.setContentProvider(ArrayContentProvider.getInstance());
-		viewer.setLabelProvider(new LabelProvider());
-		viewer.setInput(null);
-		viewer.getTable().setHeaderVisible(true);
 		makeActions();
 		hookContextMenu();
 		contributeToActionBars();
-		
-		// define the two columns
-		TableViewerColumn colTitle = new TableViewerColumn(viewer, SWT.NONE);
-		colTitle.getColumn().setWidth(150);
-		colTitle.getColumn().setText("Title");
-		colTitle.setLabelProvider(new ColumnLabelProvider() {
-		  @SuppressWarnings("unchecked")
-			@Override
-		  public String getText(Object element) {
-		  	ArrayList<String> p = (ArrayList<String>) element;
-		    return p.get(0);
-		  }
-		});
 
-		TableViewerColumn colValue = new TableViewerColumn(viewer, SWT.NONE);
-		colValue.getColumn().setWidth(200);
-		colValue.getColumn().setText("Value");
-		colValue.setLabelProvider(new ColumnLabelProvider() {
-		  @SuppressWarnings("unchecked")
-			@Override
-		  public String getText(Object element) {
-		  	ArrayList<String> p = (ArrayList<String>) element;
-		    return p.get(1);
-		  }
-		});
+		// create a chart
+		Chart chart = new Chart(parent, SWT.NONE);
+		    
+		// set titles
+		chart.getTitle().setText("Line Chart Example");
+		chart.getAxisSet().getXAxis(0).getTitle().setText("Data Points");
+		chart.getAxisSet().getYAxis(0).getTitle().setText("Amplitude");
+
+		// create line series
+		ILineSeries lineSeries = (ILineSeries) chart.getSeriesSet()
+		    .createSeries(SeriesType.LINE, "line series");
+		lineSeries.setYSeries(new double[]{12d, 33d, 12d, 9d});
+
+		// adjust the axis range
+		chart.getAxisSet().adjustRange();
 		
 		//	register as selection listener
 		selListener = new ISelectionListener()
@@ -197,23 +168,11 @@ public class AnalysisView extends ViewPart
 			}
 		};
 		ana.analyse(res);
-		viewer.setInput(resList);
+	//	viewer.setInput(resList);
 	}
 
 	private void hookContextMenu()
 	{
-		MenuManager menuMgr = new MenuManager("#PopupMenu");
-		menuMgr.setRemoveAllWhenShown(true);
-		menuMgr.addMenuListener(new IMenuListener()
-		{
-			public void menuAboutToShow(IMenuManager manager)
-			{
-				AnalysisView.this.fillContextMenu(manager);
-			}
-		});
-		Menu menu = menuMgr.createContextMenu(viewer.getControl());
-		viewer.getControl().setMenu(menu);
-		getSite().registerContextMenu(menuMgr, viewer);
 	}
 
 	private void contributeToActionBars()
@@ -258,26 +217,26 @@ public class AnalysisView extends ViewPart
 	
 	private void copyToClipboard()
 	{
-		Display display = Display.getCurrent();
-    Clipboard clipboard = new Clipboard(display);
-    StringBuffer output = new StringBuffer(); 
-    @SuppressWarnings("unchecked")
-		ArrayList<ArrayList<String>> list = (ArrayList<ArrayList<String>>) viewer.getInput();
-    String separator = System.getProperty( "line.separator" );
-    Iterator<ArrayList<String>> iter = list.iterator();
-    while (iter.hasNext())
-		{
-			ArrayList<java.lang.String> arrayList = (ArrayList<java.lang.String>) iter
-					.next();
-    	output.append(arrayList.get(0));
-    	output.append(", ");
-    	output.append(arrayList.get(1));
-    	output.append(separator);
-		}
-    
-    clipboard.setContents(new Object[] { output.toString()},
-            new Transfer[] { TextTransfer.getInstance() });
-    clipboard.dispose();
+//		Display display = Display.getCurrent();
+//    Clipboard clipboard = new Clipboard(display);
+//    StringBuffer output = new StringBuffer(); 
+//    @SuppressWarnings("unchecked")
+//		ArrayList<ArrayList<String>> list = (ArrayList<ArrayList<String>>) viewer.getInput();
+//    String separator = System.getProperty( "line.separator" );
+//    Iterator<ArrayList<String>> iter = list.iterator();
+//    while (iter.hasNext())
+//		{
+//			ArrayList<java.lang.String> arrayList = (ArrayList<java.lang.String>) iter
+//					.next();
+//    	output.append(arrayList.get(0));
+//    	output.append(", ");
+//    	output.append(arrayList.get(1));
+//    	output.append(separator);
+//		}
+//    
+//    clipboard.setContents(new Object[] { output.toString()},
+//            new Transfer[] { TextTransfer.getInstance() });
+//    clipboard.dispose();
 	}
 
 	/**
@@ -285,6 +244,5 @@ public class AnalysisView extends ViewPart
 	 */
 	public void setFocus()
 	{
-		viewer.getControl().setFocus();
 	}
 }
