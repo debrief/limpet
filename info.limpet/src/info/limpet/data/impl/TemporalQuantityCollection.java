@@ -1,6 +1,7 @@
 package info.limpet.data.impl;
 
 import info.limpet.ICommand;
+import info.limpet.IQuantityCollection;
 import info.limpet.ITemporalQuantityCollection;
 import info.limpet.data.impl.helpers.QuantityHelper;
 
@@ -13,7 +14,7 @@ import tec.units.ri.quantity.Quantities;
 
 public class TemporalQuantityCollection<T extends Quantity<T>> extends
 		TemporalObjectCollection<Quantity<T>> implements
-		ITemporalQuantityCollection<T>
+		ITemporalQuantityCollection<T>, IQuantityCollection<T>
 {
 
 	private Unit<T> _myUnits;

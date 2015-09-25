@@ -13,7 +13,7 @@ public class ObjectCollection<T extends Object> implements IObjectCollection<T>
 
 	ArrayList<T> _values = new ArrayList<T>();
 	private String _name;
-	private String _description;
+	private String _description = "";
 	private final ICommand _precedent;
 	private final List<ICommand> _dependents;
 	

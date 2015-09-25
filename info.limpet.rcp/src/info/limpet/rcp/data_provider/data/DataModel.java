@@ -111,6 +111,10 @@ public class DataModel implements IStructuredContentProvider
 			{
 				return new CollectionPropertySource(this);
 			}
+			else if (adapter == ICollection.class)
+			{
+				return _collection;
+			}
 			return null;
 		}
 	}
