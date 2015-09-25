@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Limpet
+Bundle-SymbolicName: info.limpet;singleton:=true
+Bundle-Version: 1.0.0
+Bundle-ActivationPolicy: lazy
+Export-Package: info.limpet,
+ info.limpet.analysis,
+ info.limpet.data.commands,
+ info.limpet.data.impl,
+ info.limpet.data.impl.helpers,
+ info.limpet.data.impl.samples,
+ info.limpet.data.operations,
+ info.limpet.data.store
+Require-Bundle: info.limpet.libs;bundle-version="1.0.0";visibility:=reexport
+Bundle-Vendor: MWC
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

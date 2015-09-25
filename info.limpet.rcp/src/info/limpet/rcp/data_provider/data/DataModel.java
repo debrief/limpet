@@ -1,7 +1,6 @@
 package info.limpet.rcp.data_provider.data;
 
 import java.util.ArrayList;
-import java.util.stream.Stream;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -110,18 +109,6 @@ public class DataModel implements IStructuredContentProvider
 			{
 				return new CollectionPropertySource(this);
 			}
-			return null;
-		}
-
-		public Stream<String> stream()
-		{
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		public Stream<String> parallelStream()
-		{
-			// TODO Auto-generated method stub
 			return null;
 		}
 
