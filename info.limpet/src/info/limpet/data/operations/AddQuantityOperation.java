@@ -71,7 +71,7 @@ public class AddQuantityOperation<Q extends Quantity<Q>> implements
 			// start adding values.
 			for (int j = 0; j < _inputs.get(0).size(); j++)
 			{
-				Quantity<T> runningTotal = Quantities.getQuantity(0, unit);
+				Quantity<T> runningTotal = Quantities.getQuantity(0d, unit);
 
 				for (int i = 0; i < _inputs.size(); i++)
 				{
