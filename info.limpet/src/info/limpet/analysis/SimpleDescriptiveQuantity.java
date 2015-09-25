@@ -1,7 +1,7 @@
 package info.limpet.analysis;
 
 import info.limpet.ICollection;
-import info.limpet.data.impl.QuantityCollection;
+import info.limpet.IQuantityCollection;
 import info.limpet.data.operations.CollectionComplianceTests;
 
 import java.util.ArrayList;
@@ -39,11 +39,16 @@ public abstract class SimpleDescriptiveQuantity extends CoreAnalysis
 				for (Iterator<ICollection> iter = selection.iterator(); iter.hasNext();)
 				{
 					ICollection thisC = (ICollection) iter.next();
-					QuantityCollection<?> o = (QuantityCollection<?>) thisC;
+					IQuantityCollection<?> o = (IQuantityCollection<?>) thisC;
+					
+					// output some high level data
+					titles.add("Dimension");
+					values.add(o.getDimension().toString());
+					titles.add("Units");
+					values.add(o.getUnits().toString());
 
 					// collate the values into an array
 					double[] data = new double[o.size()];
-					
 
 					// Add the data from the array
 					int ctr = 0;

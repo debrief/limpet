@@ -1,6 +1,11 @@
 package info.limpet.rcp.data_provider.data;
 
-import java.util.ArrayList;
+import java.util.Date;
+
+import info.limpet.ICollection;
+import info.limpet.IObjectCollection;
+import info.limpet.data.impl.ObjectCollection;
+import info.limpet.data.impl.samples.StockTypes;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -22,85 +27,82 @@ public class DataModel implements IStructuredContentProvider
 
 	public Object[] getElements(Object parent)
 	{
-
-		DummyCollection dummyOne = new DummyCollection("one", "first sample dataset");
+		IObjectCollection<String> dummyOne = new ObjectCollection<String>("one");
+		dummyOne.setDescription("description for " + dummyOne.getName());
 		dummyOne.add("aaa");
 		dummyOne.add("bbb");
 		dummyOne.add("ccc");
-		DummyCollection dummyTwo = new DummyCollection("two", "second sample dataset");
+		IObjectCollection<String> dummyTwo = new ObjectCollection<String>("two");
+		dummyTwo.setDescription("description for " + dummyTwo.getName());
 		dummyTwo.add("ddd");
 		dummyTwo.add("eee");
 		dummyTwo.add("fff");
-		DummyCollection dummyThree = new DummyCollection("three", "third sample dataset");
+		IObjectCollection<String> dummyThree = new ObjectCollection<String>("three");
+		dummyThree.setDescription("description for " + dummyThree.getName());
 		dummyThree.add("fff");
 		dummyThree.add("ggg");
 		dummyThree.add("hhh");
 		dummyThree.add("iii");
 		dummyThree.add("jjj");
 		dummyThree.add("kkk");
-		return new DummyCollection[]
-		{ dummyOne, dummyTwo, dummyThree  };
+		// return new CollectionWrapper[]
+		// { new CollectionWrapper(dummyOne), new CollectionWrapper(dummyTwo), new
+		// CollectionWrapper(dummyThree)};
 
 		// // collate our data series
-		// StockTypes.Temporal.Speed_MSec speedSeries1 = new
-		// StockTypes.Temporal.Speed_MSec("Speed One");
-		// StockTypes.Temporal.Speed_MSec speedSeries2 = new
-		// StockTypes.Temporal.Speed_MSec("Speed Two");
-		// StockTypes.Temporal.Speed_MSec speedSeries3 = new
-		// StockTypes.Temporal.Speed_MSec("Speed Three");
-		// StockTypes.Temporal.Length_M length1 = new
-		// StockTypes.Temporal.Length_M("Length One");
-		// StockTypes.Temporal.Length_M length2 = new
-		// StockTypes.Temporal.Length_M("Length Two");
-		// ObjectCollection<String> string1 = new
-		// ObjectCollection<String>("String one");
-		// ObjectCollection<String> string2 = new
-		// ObjectCollection<String>("String one");
-		//
-		//
-		// for (int i = 1; i <= 10; i++)
-		// {
-		// speedSeries1.add(i);
-		// speedSeries2.add(Math.sin(i));
-		// speedSeries3.add(3 * Math.cos(i));
-		// length1.add(i % 3);
-		// length2.add(i % 5);
-		// string1.add("" + i);
-		// string2.add("" + (i % 3));
-		// }
-		//
-		// return new Object[] {speedSeries1, speedSeries2, speedSeries3, length1,
-		// length2, string1, string2};
+		StockTypes.Temporal.Speed_MSec speedSeries1 = new StockTypes.Temporal.Speed_MSec(
+				"Speed One");
+		StockTypes.Temporal.Speed_MSec speedSeries2 = new StockTypes.Temporal.Speed_MSec(
+				"Speed Two");
+		StockTypes.Temporal.Speed_MSec speedSeries3 = new StockTypes.Temporal.Speed_MSec(
+				"Speed Three");
+		StockTypes.Temporal.Length_M length1 = new StockTypes.Temporal.Length_M(
+				"Length One");
+		StockTypes.Temporal.Length_M length2 = new StockTypes.Temporal.Length_M(
+				"Length Two");
+		ObjectCollection<String> string1 = new ObjectCollection<String>(
+				"String one");
+		ObjectCollection<String> string2 = new ObjectCollection<String>(
+				"String one");
+
+		for (int i = 1; i <= 10; i++)
+		{
+			long thisTime = new Date().getTime() + i * 500 * 60;
+			
+			speedSeries1.add(thisTime, i);
+			speedSeries2.add(thisTime, Math.sin(i));
+			speedSeries3.add(thisTime, 3 * Math.cos(i));
+			length1.add(thisTime, i % 3);
+			length2.add(thisTime, i % 5);
+			string1.add("" + i);
+			string2.add("" + (i % 3));
+		}
+
+
+		return new CollectionWrapper[]
+		{ new CollectionWrapper(speedSeries1), new CollectionWrapper(speedSeries2),
+				new CollectionWrapper(speedSeries3), new CollectionWrapper(length1),
+				new CollectionWrapper(length2), new CollectionWrapper(string1),
+				new CollectionWrapper(string2) };
 	}
 
-	public static class DummyCollection extends ArrayList<String> implements
-			IAdaptable
+	public static class CollectionWrapper implements IAdaptable
 	{
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID = 1L;
-		private String _name;
-		private String _description;
+		private final ICollection _collection;
 
-		public DummyCollection(String name)
+		public CollectionWrapper(ICollection collection)
 		{
-			_name = name;
+			_collection = collection;
 		}
 
-		public DummyCollection(String name, String description)
+		public String toString()
 		{
-			this(name);
-			_description = description;
+			return _collection.getName() + " (" + _collection.size() + " items)";
 		}
 
-		public String toString(){
-			return _name + " (" + size() + " items)";
-		}
-		
-		public String getName()
+		public ICollection getCollection()
 		{
-			return _name;
+			return _collection;
 		}
 
 		public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter)
@@ -109,24 +111,12 @@ public class DataModel implements IStructuredContentProvider
 			{
 				return new CollectionPropertySource(this);
 			}
+			else if (adapter == ICollection.class)
+			{
+				return _collection;
+			}
 			return null;
 		}
-
-		public String getDescription()
-		{
-			return _description;
-		}
-		
-		public void setDescription(String val)
-		{
-			_description = val;
-		}
-		
-		public void setName(String val)
-		{
-			_name = val;
-		}
-
 	}
 
 	/**
@@ -140,7 +130,7 @@ public class DataModel implements IStructuredContentProvider
 		private static final String PROPERTY_DESCRIPTION = "limpet.collection.description";
 
 		private IPropertyDescriptor[] propertyDescriptors;
-		private final DummyCollection _collection;
+		private final CollectionWrapper _collection;
 
 		/**
 		 * Creates a new ButtonElementPropertySource.
@@ -148,7 +138,7 @@ public class DataModel implements IStructuredContentProvider
 		 * @param element
 		 *          the element whose properties this instance represents
 		 */
-		public CollectionPropertySource(DummyCollection element)
+		public CollectionPropertySource(CollectionWrapper element)
 		{
 			_collection = element;
 		}
@@ -185,14 +175,14 @@ public class DataModel implements IStructuredContentProvider
 		public Object getPropertyValue(Object id)
 		{
 			String prop = (String) id;
-			
-			if(prop.equals(PROPERTY_NAME))
-				return _collection.getName();
-			else if(prop.equals(PROPERTY_SIZE))
-				return _collection.size();
-			else if(prop.equals(PROPERTY_DESCRIPTION))
-				return _collection.getDescription();
-			
+
+			if (prop.equals(PROPERTY_NAME))
+				return _collection.getCollection().getName();
+			else if (prop.equals(PROPERTY_SIZE))
+				return _collection.getCollection().size();
+			else if (prop.equals(PROPERTY_DESCRIPTION))
+				return _collection.getCollection().getDescription();
+
 			return null;
 		}
 
@@ -205,19 +195,19 @@ public class DataModel implements IStructuredContentProvider
 		public void resetPropertyValue(Object id)
 		{
 			// TODO Auto-generated method stub
-			
+
 		}
 
 		public void setPropertyValue(Object id, Object value)
 		{
 			String prop = (String) id;
-			
-			if(prop.equals(PROPERTY_NAME))
-				_collection.setName((String) value);
-			else if(prop.equals(PROPERTY_SIZE))
+
+			if (prop.equals(PROPERTY_NAME))
+				_collection.getCollection().setName((String) value);
+			else if (prop.equals(PROPERTY_SIZE))
 				throw new RuntimeException("Can't set size, silly");
-			else if(prop.equals(PROPERTY_DESCRIPTION))
-				_collection.setDescription((String) value);
+			else if (prop.equals(PROPERTY_DESCRIPTION))
+				_collection.getCollection().setDescription((String) value);
 		}
 
 	}
