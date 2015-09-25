@@ -63,7 +63,7 @@ public class DataModel implements IStructuredContentProvider
 		ObjectCollection<String> string1 = new ObjectCollection<String>(
 				"String one");
 		ObjectCollection<String> string2 = new ObjectCollection<String>(
-				"String one");
+				"String two");
 
 		for (int i = 1; i <= 10; i++)
 		{
@@ -74,8 +74,8 @@ public class DataModel implements IStructuredContentProvider
 			speedSeries3.add(thisTime, 3 * Math.cos(i));
 			length1.add(thisTime, i % 3);
 			length2.add(thisTime, i % 5);
-			string1.add("" + i);
-			string2.add("" + (i % 3));
+			string1.add("item " + i);
+			string2.add("item " + (i % 3));
 		}
 
 

@@ -39,6 +39,21 @@ abstract public class AnalysisLibrary extends CoreAnalysis
 				output(getName(), titles, values);
 			}
 		});
+		_library.add(new QuantityFrequencyBins()
+		{
+			protected void presentResults(List<String> titles, List<String> values)
+			{
+				output(getName(), titles, values);
+			}
+		});
+		_library.add(new ObjectFrequencyBins()
+		{
+			protected void presentResults(List<String> titles, List<String> values)
+			{
+				output(getName(), titles, values);
+			}
+		});
+
 	}
 
 	@Override

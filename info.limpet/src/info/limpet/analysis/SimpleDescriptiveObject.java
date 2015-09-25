@@ -8,17 +8,17 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.math3.stat.Frequency;
-
 public abstract class SimpleDescriptiveObject extends CoreAnalysis
 {
+
+	final CollectionComplianceTests aTests;
 
 	public SimpleDescriptiveObject()
 	{
 		super("Object Analysis");
+		aTests = new CollectionComplianceTests();
 	}
 
-	CollectionComplianceTests aTests = new CollectionComplianceTests();
 
 	@Override
 	public void analyse(List<ICollection> selection)
@@ -37,33 +37,8 @@ public abstract class SimpleDescriptiveObject extends CoreAnalysis
 					ICollection thisC = (ICollection) iter.next();
 					ObjectCollection<?> o = (ObjectCollection<?>) thisC;
 
-					// build up the histogram
-					Frequency freq = new Frequency();
-					Iterator<?> iter2 = o.getValues().iterator();
-					while (iter2.hasNext())
-					{
-						Object object = (Object) iter2.next();
-						freq.addValue(object.toString());
-					}
-
-					// ok, now output this one
-					int numItems = freq.getUniqueCount();
-
-					titles.add("Unique values");
-					values.add(numItems + "");
-
-					Iterator<Comparable<?>> vIter = freq.valuesIterator();
-					StringBuilder outBuffer = new StringBuilder();
-					while (vIter.hasNext())
-					{
-						Comparable<?> value = vIter.next();
-						outBuffer.append(value);
-						outBuffer.append(':');
-						outBuffer.append(freq.getCount(value));
-						outBuffer.append(", ");
-					}
-					titles.add("Frequency");
-					values.add(outBuffer.toString());
+					titles.add("Content Type");
+					values.add(typeFor(o.getValues().iterator().next()));
 				}
 			}
 		}
@@ -71,6 +46,18 @@ public abstract class SimpleDescriptiveObject extends CoreAnalysis
 		if (titles.size() > 0)
 			presentResults(titles, values);
 
+	}
+	
+	public String typeFor(Object oClass)
+	{
+		String res = "un-recognised";
+		
+		if(oClass.equals(String.class))
+		{
+			res = "String";
+		}
+		
+		return res;
 	}
 
 	private boolean appliesTo(List<ICollection> selection)
