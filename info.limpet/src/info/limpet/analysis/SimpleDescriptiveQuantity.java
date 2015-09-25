@@ -73,43 +73,6 @@ public abstract class SimpleDescriptiveQuantity extends CoreAnalysis
 					values.add("" + stats.getStandardDeviation());
 					titles.add("Median");
 					values.add("" + stats.getPercentile(50));
-					
-					// also do some frequency binning
-					double range = stats.getMax() - stats.getMin();
-					
-					final int BIN_COUNT;
-					if(range > 10)
-						BIN_COUNT = 10;
-					else
-						BIN_COUNT = (int) range;
-					
-					long[] histogram = new long[BIN_COUNT];
-					EmpiricalDistribution distribution = new EmpiricalDistribution(BIN_COUNT);
-					distribution.load(data);
-					int k = 0;
-					for(SummaryStatistics sStats: distribution.getBinStats())
-					{
-					    histogram[k++] = sStats.getN();
-					}
-					
-					// now output the bins
-					StringBuffer freqBins = new StringBuffer();					
-					double rangeSoFar = stats.getMin();
-					double rangeStep = range / BIN_COUNT;
-					for (int i = 0; i < histogram.length; i++)
-					{
-						long l = histogram[i];
-						freqBins.append((int)rangeSoFar);
-						freqBins.append("-");
-						freqBins.append((int)(rangeSoFar + rangeStep));
-						freqBins.append(": ");
-						freqBins.append(l);
-						freqBins.append(", ");
-						rangeSoFar += rangeStep;						
-					}
-					titles.add("Frequency bins");
-					values.add(freqBins.toString());
-					
 				}
 			}
 		}
