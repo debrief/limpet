@@ -1,5 +1,6 @@
 package info.limpet.rcp.data_provider;
 
+import info.limpet.data.impl.samples.SampleData;
 import info.limpet.rcp.data_provider.data.DataModel;
 
 import org.eclipse.swt.widgets.Composite;
@@ -66,9 +67,6 @@ public class DataProvider extends ViewPart
 		}
 	}
 
-	class NameSorter extends ViewerSorter
-	{
-	}
 
 	/**
 	 * The constructor.
@@ -84,9 +82,8 @@ public class DataProvider extends ViewPart
 	public void createPartControl(Composite parent)
 	{
 		viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
-		viewer.setContentProvider(new DataModel());
+		viewer.setContentProvider(new DataModel(new SampleData().getData()));
 		viewer.setLabelProvider(new ViewLabelProvider());
-		viewer.setSorter(new NameSorter());
 		viewer.setInput(getViewSite());
 		getSite().setSelectionProvider(viewer);
 		makeActions();

@@ -1,11 +1,11 @@
 package info.limpet.rcp.data_provider.data;
 
-import java.util.Date;
-
 import info.limpet.ICollection;
-import info.limpet.IObjectCollection;
-import info.limpet.data.impl.ObjectCollection;
-import info.limpet.data.impl.samples.StockTypes;
+import info.limpet.IStore;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -17,6 +17,13 @@ import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 
 public class DataModel implements IStructuredContentProvider
 {
+	private final IStore _store;
+
+	public DataModel(IStore store)
+	{
+		_store = store;
+	}
+	
 	public void inputChanged(Viewer v, Object oldInput, Object newInput)
 	{
 	}
@@ -27,63 +34,17 @@ public class DataModel implements IStructuredContentProvider
 
 	public Object[] getElements(Object parent)
 	{
-		IObjectCollection<String> dummyOne = new ObjectCollection<String>("one");
-		dummyOne.setDescription("description for " + dummyOne.getName());
-		dummyOne.add("aaa");
-		dummyOne.add("bbb");
-		dummyOne.add("ccc");
-		IObjectCollection<String> dummyTwo = new ObjectCollection<String>("two");
-		dummyTwo.setDescription("description for " + dummyTwo.getName());
-		dummyTwo.add("ddd");
-		dummyTwo.add("eee");
-		dummyTwo.add("fff");
-		IObjectCollection<String> dummyThree = new ObjectCollection<String>("three");
-		dummyThree.setDescription("description for " + dummyThree.getName());
-		dummyThree.add("fff");
-		dummyThree.add("ggg");
-		dummyThree.add("hhh");
-		dummyThree.add("iii");
-		dummyThree.add("jjj");
-		dummyThree.add("kkk");
-		// return new CollectionWrapper[]
-		// { new CollectionWrapper(dummyOne), new CollectionWrapper(dummyTwo), new
-		// CollectionWrapper(dummyThree)};
 
-		// // collate our data series
-		StockTypes.Temporal.Speed_MSec speedSeries1 = new StockTypes.Temporal.Speed_MSec(
-				"Speed One");
-		StockTypes.Temporal.Speed_MSec speedSeries2 = new StockTypes.Temporal.Speed_MSec(
-				"Speed Two");
-		StockTypes.Temporal.Speed_MSec speedSeries3 = new StockTypes.Temporal.Speed_MSec(
-				"Speed Three");
-		StockTypes.Temporal.Length_M length1 = new StockTypes.Temporal.Length_M(
-				"Length One");
-		StockTypes.Temporal.Length_M length2 = new StockTypes.Temporal.Length_M(
-				"Length Two");
-		ObjectCollection<String> string1 = new ObjectCollection<String>(
-				"String one");
-		ObjectCollection<String> string2 = new ObjectCollection<String>(
-				"String two");
-
-		for (int i = 1; i <= 10; i++)
+		List<CollectionWrapper> list = new ArrayList<CollectionWrapper>();
+		
+		Iterator<ICollection> iter = _store.getAll().iterator();
+		while (iter.hasNext())
 		{
-			long thisTime = new Date().getTime() + i * 500 * 60;
-			
-			speedSeries1.add(thisTime, i);
-			speedSeries2.add(thisTime, Math.sin(i));
-			speedSeries3.add(thisTime, 3 * Math.cos(i));
-			length1.add(thisTime, i % 3);
-			length2.add(thisTime, i % 5);
-			string1.add("item " + i);
-			string2.add("item " + (i % 3));
+			ICollection iCollection = (ICollection) iter.next();
+			list.add(new CollectionWrapper(iCollection));
 		}
-
-
-		return new CollectionWrapper[]
-		{ new CollectionWrapper(speedSeries1), new CollectionWrapper(speedSeries2),
-				new CollectionWrapper(speedSeries3), new CollectionWrapper(length1),
-				new CollectionWrapper(length2), new CollectionWrapper(string1),
-				new CollectionWrapper(string2) };
+		
+		return list.toArray();
 	}
 
 	public static class CollectionWrapper implements IAdaptable

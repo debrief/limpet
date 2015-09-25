@@ -44,5 +44,15 @@ public class InMemoryStore implements IStore
 	{
 		return rootStore;
 	}
+
+	@Override
+	public List<ICollection> getAll()
+	{
+		ArrayList<ICollection> res = new ArrayList<ICollection>();
+		res.addAll(rootStore);
+		res.addAll(alongsideStore);
+				
+		return res;
+	}
 	
 }
