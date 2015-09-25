@@ -7,6 +7,7 @@ import info.limpet.data.impl.QuantityCollection;
 import info.limpet.data.impl.TemporalQuantityCollection;
 import info.limpet.data.operations.AddQuantityOperation;
 import info.limpet.data.operations.CollectionComplianceTests;
+import info.limpet.data.operations.MultiplyQuantityOperation;
 import info.limpet.data.store.InMemoryStore;
 
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ import java.util.List;
 
 import javax.measure.Quantity;
 import javax.measure.Unit;
+import javax.measure.quantity.Dimensionless;
 import javax.measure.quantity.Length;
 import javax.measure.quantity.Speed;
 
@@ -195,7 +197,7 @@ public class TestOperations extends TestCase
 			Iterator<ICommand> dIter = deps.iterator();
 			while (dIter.hasNext())
 			{
-				ICommand iCommand = (ICommand) dIter.next();
+				ICommand iCommand = dIter.next();
 				assertEquals("Correct dependent", precedent, iCommand);
 			}
 		}
@@ -213,4 +215,123 @@ public class TestOperations extends TestCase
 		}
 	}
 
+	public void testDimensionlessMultiply()
+	{
+		QuantityCollection<Dimensionless> factor = new QuantityCollection<>("Factor 4", null);
+
+		// the units for this measurement
+		Unit<Speed> kmh = MetricPrefix.KILO(Units.METRE).divide(Units.HOUR)
+				.asType(Speed.class);
+		Unit<Speed> kmm = MetricPrefix.KILO(Units.METRE).divide(Units.MINUTE)
+				.asType(Speed.class);
+		Unit<Length> m = (Units.METRE).asType(Length.class);
+
+	
+		// the target collection
+		QuantityCollection<Speed> speed_good_1 = new QuantityCollection<Speed>(
+				"Speed 1", kmh);
+		QuantityCollection<Speed> speed_good_2 = new QuantityCollection<Speed>(
+				"Speed 2", kmh);
+		QuantityCollection<Speed> speed_longer = new QuantityCollection<Speed>(
+				"Speed 3", kmh);
+		QuantityCollection<Speed> speed_diff_units = new QuantityCollection<Speed>(
+				"Speed 4", kmm);
+		QuantityCollection<Length> len1 = new QuantityCollection<Length>(
+				"Length 1", m);
+		TemporalQuantityCollection<Speed> temporal_speed_1 = new TemporalQuantityCollection<Speed>(
+				"Speed 5", kmh);
+		TemporalQuantityCollection<Speed> temporal_speed_2 = new TemporalQuantityCollection<Speed>(
+				"Speed 6", kmh);
+		ObjectCollection<String> string_1 = new ObjectCollection<>("strings 1");
+				
+	
+		for (int i = 1; i <= 10; i++)
+		{
+			// create a measurement
+			double thisSpeed = i * 2;
+			Quantity<Speed> speedVal1 = Quantities.getQuantity(thisSpeed, kmh);
+			Quantity<Speed> speedVal2 = Quantities.getQuantity(thisSpeed*2, kmh);
+			Quantity<Speed> speedVal3 = Quantities.getQuantity(thisSpeed/2, kmh);
+			Quantity<Speed> speedVal4 = Quantities.getQuantity(thisSpeed/2, kmm);
+			Quantity<Length> lenVal1 = Quantities.getQuantity(thisSpeed/2, m);
+	
+			// store the measurements
+			speed_good_1.add( speedVal1);
+			speed_good_2.add( speedVal2);
+			speed_longer.add( speedVal3);
+			speed_diff_units.add( speedVal4);
+			temporal_speed_1.add(i, speedVal2);
+			temporal_speed_2.add(i, speedVal3);
+			len1.add(lenVal1);
+			
+			
+			string_1.add(i + " ");
+		}
+
+		// ok, let's try one that works
+		List<ICollection> selection = new ArrayList<ICollection>(3);
+		selection.clear();
+		selection.add(speed_good_1);
+		selection.add(factor);
+
+		InMemoryStore store = new InMemoryStore();
+		assertEquals("store empty", 0, store.rootSize());
+
+		Collection<ICommand> commands = new MultiplyQuantityOperation().actionsFor(selection, store );
+		
+		// TODO: test actions is non-null
+		
+		// TODO: test actions has single item: "Multiply series by constant"
+		
+		// TODO: apply action
+		
+		// TODO: test store has a new item in it		
+		
+		// TODO: test results is same length as thisSpeed
+
+		
+		/////////////////
+		// NOW TEST INVALID PERMUTATIONS		
+		/////////////////
+		
+		selection.clear();
+		selection.add(speed_good_1);
+		selection.add(string_1);
+		commands = new MultiplyQuantityOperation().actionsFor(selection, store );		
+		// TODO: we should get no series returned, since one is a string
+
+		selection.clear();
+		selection.add(speed_good_1);
+		selection.add(len1);
+		commands = new MultiplyQuantityOperation().actionsFor(selection, store );		
+		// TODO: we should get no series returned, since one is length (we may grow in the future to allow different dimensions to be multiplied)
+
+		selection.clear();
+		selection.add(speed_good_1);
+		selection.add(speed_good_2);
+		store.clear();
+		assertEquals("store empty", 0, store.rootSize());
+		commands = new MultiplyQuantityOperation().actionsFor(selection, store );		
+		// TODO: we should get a series returned - they're both speeds with the same dimensions
+
+		// TODO: run operation, check the new series is in the store
+		
+		// TODO: check the new series is of the correct length 
+		
+		selection.clear();
+		selection.add(speed_good_1);
+		selection.add(speed_diff_units);
+		store.clear();
+		assertEquals("store empty", 0, store.rootSize());
+		commands = new MultiplyQuantityOperation().actionsFor(selection, store );		
+		// TODO: we should get a series returned - they're both speeds
+
+		// TODO: run operation, check the new series is in the store
+		
+		// TODO: check the new series is of the correct length 
+		
+		// TODO: check the new series is of the correct units, and that the first item has been converted appropriately
+
+	}
+	
 }
