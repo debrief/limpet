@@ -22,4 +22,10 @@ public interface IStore
 	 * @param results
 	 */
 	void add(List<ICollection> results);
+	
+	/** get all the collections
+	 * 
+	 * @return
+	 */
+	List<ICollection> getAll();
 }
