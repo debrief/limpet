@@ -44,7 +44,7 @@ public class InMemoryStore implements IStore
 	{
 		return rootStore;
 	}
-
+	
 	public void clear()
 	{
 		alongsideStore.clear();
