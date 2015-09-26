@@ -10,9 +10,7 @@ import java.util.List;
 
 import javax.measure.Quantity;
 
-import org.apache.commons.math3.random.EmpiricalDistribution;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
-import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
 public abstract class SimpleDescriptiveQuantity extends CoreAnalysis
 {
