@@ -6,6 +6,7 @@ import info.limpet.IObjectCollection;
 import info.limpet.IStore;
 import info.limpet.ITemporalQuantityCollection;
 import info.limpet.data.impl.ObjectCollection;
+import info.limpet.data.impl.QuantityCollection;
 import info.limpet.data.operations.AddQuantityOperation;
 import info.limpet.data.store.InMemoryStore;
 
@@ -14,6 +15,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import javax.measure.quantity.Dimensionless;
 import javax.measure.quantity.Length;
 
 public class SampleData
@@ -38,6 +40,8 @@ public class SampleData
 				"String one");
 		IObjectCollection<String> string2 = new ObjectCollection<String>(
 				"String two");
+		QuantityCollection<Dimensionless> factor = new QuantityCollection<>("Factor 4", null);
+		factor.add(4);
 
 		long thisTime = 0; 
 		
@@ -66,6 +70,7 @@ public class SampleData
 		list.add(length2);
 		list.add(string1);
 		list.add(string2);
+		list.add(factor);
 
 		res.add(list);
 
