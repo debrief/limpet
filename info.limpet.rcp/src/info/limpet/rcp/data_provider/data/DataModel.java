@@ -34,14 +34,14 @@ public class DataModel implements ITreeContentProvider
 			res.add(dList);
 		}
 
-		final List<ICommand> dep = coll.getDependents();
+		final List<ICommand<?>> dep = coll.getDependents();
 		if (dep != null)
 		{
 			final NamedList dList = new NamedList(cw, "Dependents");
-			final Iterator<ICommand> dIter = dep.iterator();
+			final Iterator<ICommand<?>> dIter = dep.iterator();
 			while (dIter.hasNext())
 			{
-				final ICommand thisI = dIter.next();
+				final ICommand<?> thisI = dIter.next();
 				dList.add(new CommandWrapper(dList, thisI));
 			}
 
@@ -55,13 +55,13 @@ public class DataModel implements ITreeContentProvider
 
 	private void addCommandItems(final List<Object> res, final CommandWrapper cw)
 	{
-		final ICommand coll = cw.getCommand();
+		final ICommand<?> coll = cw.getCommand();
 
-		final List<ICollection> inp = coll.getInputs();
+		final List<? extends ICollection> inp = coll.getInputs();
 		if (inp != null)
 		{
 			final NamedList dList = new NamedList(cw, "Inputs");
-			final Iterator<ICollection> dIter = inp.iterator();
+			final Iterator<? extends ICollection> dIter = inp.iterator();
 			while (dIter.hasNext())
 			{
 				final ICollection thisI = dIter.next();
@@ -74,11 +74,11 @@ public class DataModel implements ITreeContentProvider
 			}
 		}
 
-		final List<ICollection> outp = coll.getOutputs();
+		final List<? extends ICollection> outp = coll.getOutputs();
 		if (outp != null)
 		{
 			final NamedList dList = new NamedList(cw, "Outputs");
-			final Iterator<ICollection> dIter = outp.iterator();
+			final Iterator<? extends ICollection> dIter = outp.iterator();
 			while (dIter.hasNext())
 			{
 				final ICollection thisI = dIter.next();

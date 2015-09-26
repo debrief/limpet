@@ -9,8 +9,7 @@ import java.util.ArrayList;
  * 
  * @param <Object>
  */
-@SuppressWarnings("hiding")
-public class NamedList<Object> extends ArrayList<Object> implements
+public class NamedList extends ArrayList<Object> implements
 		LimpetWrapper
 {
 
@@ -18,7 +17,7 @@ public class NamedList<Object> extends ArrayList<Object> implements
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	final private String _name;
+	private final String _name;
 	private final LimpetWrapper _parent;
 
 	public NamedList(final LimpetWrapper parent, final String name)
