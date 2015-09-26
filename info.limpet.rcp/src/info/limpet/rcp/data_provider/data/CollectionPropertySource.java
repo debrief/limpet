@@ -24,26 +24,33 @@ public class CollectionPropertySource implements IPropertySource
 	 * @param element
 	 *          the element whose properties this instance represents
 	 */
-	public CollectionPropertySource(CollectionWrapper element)
+	public CollectionPropertySource(final CollectionWrapper element)
 	{
 		_collection = element;
+	}
+
+	@Override
+	public Object getEditableValue()
+	{
+		return _collection;
 	}
 
 	/**
 	 * @see org.eclipse.ui.views.properties.IPropertySource#getPropertyDescriptors()
 	 */
+	@Override
 	public IPropertyDescriptor[] getPropertyDescriptors()
 	{
 		if (propertyDescriptors == null)
 		{
 			// Create a descriptor and set a category
-			PropertyDescriptor textDescriptor = new TextPropertyDescriptor(
+			final PropertyDescriptor textDescriptor = new TextPropertyDescriptor(
 					PROPERTY_NAME, "Name");
 			textDescriptor.setCategory("Label");
-			PropertyDescriptor sizeDescriptor = new PropertyDescriptor(
+			final PropertyDescriptor sizeDescriptor = new PropertyDescriptor(
 					PROPERTY_SIZE, "Size");
 			sizeDescriptor.setCategory("Metadata");
-			PropertyDescriptor descriptionDescriptor = new TextPropertyDescriptor(
+			final PropertyDescriptor descriptionDescriptor = new TextPropertyDescriptor(
 					PROPERTY_DESCRIPTION, "Description");
 			descriptionDescriptor.setCategory("Label");
 
@@ -53,14 +60,10 @@ public class CollectionPropertySource implements IPropertySource
 		return propertyDescriptors;
 	}
 
-	public Object getEditableValue()
+	@Override
+	public Object getPropertyValue(final Object id)
 	{
-		return _collection;
-	}
-
-	public Object getPropertyValue(Object id)
-	{
-		String prop = (String) id;
+		final String prop = (String) id;
 
 		if (prop.equals(PROPERTY_NAME))
 			return _collection.getCollection().getName();
@@ -72,21 +75,24 @@ public class CollectionPropertySource implements IPropertySource
 		return null;
 	}
 
-	public boolean isPropertySet(Object id)
+	@Override
+	public boolean isPropertySet(final Object id)
 	{
 		// TODO Auto-generated method stub
 		return false;
 	}
 
-	public void resetPropertyValue(Object id)
+	@Override
+	public void resetPropertyValue(final Object id)
 	{
 		// TODO Auto-generated method stub
 
 	}
 
-	public void setPropertyValue(Object id, Object value)
+	@Override
+	public void setPropertyValue(final Object id, final Object value)
 	{
-		String prop = (String) id;
+		final String prop = (String) id;
 
 		if (prop.equals(PROPERTY_NAME))
 			_collection.getCollection().setName((String) value);

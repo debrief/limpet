@@ -23,23 +23,30 @@ public class CommandPropertySource implements IPropertySource
 	 * @param operationWrapper
 	 *          the element whose properties this instance represents
 	 */
-	public CommandPropertySource(CommandWrapper operationWrapper)
+	public CommandPropertySource(final CommandWrapper operationWrapper)
 	{
 		_operation = operationWrapper;
+	}
+
+	@Override
+	public Object getEditableValue()
+	{
+		return _operation;
 	}
 
 	/**
 	 * @see org.eclipse.ui.views.properties.IPropertySource#getPropertyDescriptors()
 	 */
+	@Override
 	public IPropertyDescriptor[] getPropertyDescriptors()
 	{
 		if (propertyDescriptors == null)
 		{
 			// Create a descriptor and set a category
-			PropertyDescriptor textDescriptor = new PropertyDescriptor(
+			final PropertyDescriptor textDescriptor = new PropertyDescriptor(
 					PROPERTY_NAME, "Name");
 			textDescriptor.setCategory("Label");
-			PropertyDescriptor descriptionDescriptor = new TextPropertyDescriptor(
+			final PropertyDescriptor descriptionDescriptor = new TextPropertyDescriptor(
 					PROPERTY_DESCRIPTION, "Description");
 			descriptionDescriptor.setCategory("Label");
 
@@ -49,14 +56,10 @@ public class CommandPropertySource implements IPropertySource
 		return propertyDescriptors;
 	}
 
-	public Object getEditableValue()
+	@Override
+	public Object getPropertyValue(final Object id)
 	{
-		return _operation;
-	}
-
-	public Object getPropertyValue(Object id)
-	{
-		String prop = (String) id;
+		final String prop = (String) id;
 
 		if (prop.equals(PROPERTY_NAME))
 			return _operation.getCommand().getTitle();
@@ -66,19 +69,22 @@ public class CommandPropertySource implements IPropertySource
 		return null;
 	}
 
-	public boolean isPropertySet(Object id)
+	@Override
+	public boolean isPropertySet(final Object id)
 	{
 		// TODO Auto-generated method stub
 		return false;
 	}
 
-	public void resetPropertyValue(Object id)
+	@Override
+	public void resetPropertyValue(final Object id)
 	{
 		// TODO Auto-generated method stub
 
 	}
 
-	public void setPropertyValue(Object id, Object value)
+	@Override
+	public void setPropertyValue(final Object id, final Object value)
 	{
 		throw new RuntimeException("cannot set properties for operation source");
 	}

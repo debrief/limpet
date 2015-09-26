@@ -10,23 +10,15 @@ public class CollectionWrapper implements IAdaptable, LimpetWrapper
 	private final ICollection _collection;
 	private final LimpetWrapper _parent;
 
-	public CollectionWrapper(LimpetWrapper parent, ICollection collection)
+	public CollectionWrapper(final LimpetWrapper parent,
+			final ICollection collection)
 	{
 		_parent = parent;
 		_collection = collection;
 	}
 
-	public String toString()
-	{
-		return _collection.getName() + " (" + _collection.size() + " items)";
-	}
-
-	public ICollection getCollection()
-	{
-		return _collection;
-	}
-
-	public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter)
+	@Override
+	public Object getAdapter(@SuppressWarnings("rawtypes") final Class adapter)
 	{
 		if (adapter == IPropertySource.class)
 		{
@@ -39,6 +31,11 @@ public class CollectionWrapper implements IAdaptable, LimpetWrapper
 		return null;
 	}
 
+	public ICollection getCollection()
+	{
+		return _collection;
+	}
+
 	@Override
 	public LimpetWrapper getParent()
 	{
@@ -49,5 +46,11 @@ public class CollectionWrapper implements IAdaptable, LimpetWrapper
 	public Object getSubject()
 	{
 		return _collection;
+	}
+
+	@Override
+	public String toString()
+	{
+		return _collection.getName() + " (" + _collection.size() + " items)";
 	}
 }
