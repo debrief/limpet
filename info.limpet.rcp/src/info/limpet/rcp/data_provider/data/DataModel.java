@@ -165,13 +165,20 @@ public class DataModel implements ITreeContentProvider
 	{
 		final List<CollectionWrapper> list = new ArrayList<CollectionWrapper>();
 
-		final Iterator<ICollection> iter = _store.getAll().iterator();
-		while (iter.hasNext())
+		if (_store != null)
 		{
-			final ICollection iCollection = iter.next();
-			list.add(new CollectionWrapper(null, iCollection));
+			final Iterator<ICollection> iter = _store.getAll().iterator();
+			while (iter.hasNext())
+			{
+				final ICollection iCollection = iter.next();
+				list.add(new CollectionWrapper(null, iCollection));
+			}
 		}
-
+		else
+		{
+			throw new RuntimeException("We don't have a data store");
+		}
+		
 		return list.toArray();
 	}
 
