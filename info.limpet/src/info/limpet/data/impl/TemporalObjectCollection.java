@@ -21,7 +21,7 @@ public class TemporalObjectCollection<T extends Object> extends
 		this(name, null);
 	}
 
-	public TemporalObjectCollection(String name, ICommand precedent)
+	public TemporalObjectCollection(String name, ICommand<?> precedent)
 	{
 		super(name, precedent);
 		_tSupport = new TimeHelper(_times);

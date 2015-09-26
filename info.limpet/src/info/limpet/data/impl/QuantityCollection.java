@@ -21,7 +21,7 @@ public class QuantityCollection<T extends Quantity<T>> extends
 		this(name, null, units);
 	}
 
-	public QuantityCollection(String name, ICommand precedent, Unit<T> units)
+	public QuantityCollection(String name, ICommand<?> precedent, Unit<T> units)
 	{
 		super(name, precedent);
 		_units = units;

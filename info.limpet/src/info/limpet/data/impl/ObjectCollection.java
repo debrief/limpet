@@ -14,19 +14,19 @@ public class ObjectCollection<T extends Object> implements IObjectCollection<T>
 	ArrayList<T> _values = new ArrayList<T>();
 	private String _name;
 	private String _description = "";
-	private final ICommand _precedent;
-	private final List<ICommand> _dependents;
+	private final ICommand<?> _precedent;
+	private final List<ICommand<?>> _dependents;
 	
 	public ObjectCollection(String name)
 	{
 		this(name, null);
 	}
 
-	public ObjectCollection(String name, ICommand precedent)
+	public ObjectCollection(String name, ICommand<?> precedent)
 	{
 		_name = name;
 		_precedent = precedent;
-		_dependents = new ArrayList<ICommand>();
+		_dependents = new ArrayList<ICommand<?>>();
 	}	
 	
 	@Override
@@ -78,19 +78,19 @@ public class ObjectCollection<T extends Object> implements IObjectCollection<T>
 	}
 
 	@Override
-	public ICommand getPrecedent()
+	public ICommand<?> getPrecedent()
 	{
 		return _precedent;
 	}
 
 	@Override
-	public List<ICommand> getDependents()
+	public List<ICommand<?>> getDependents()
 	{
 		return _dependents;
 	}
 
 	@Override
-	public void addDependent(ICommand command)
+	public void addDependent(ICommand<?> command)
 	{
 		_dependents.add(command);
 	}

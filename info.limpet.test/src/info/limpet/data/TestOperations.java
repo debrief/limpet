@@ -169,45 +169,45 @@ public class TestOperations extends TestCase
 		InMemoryStore store = new InMemoryStore();
 		assertEquals("store empty", 0, store.rootSize());
 		
-		Collection<ICommand> actions = new AddQuantityOperation().actionsFor(selection, store );
+		Collection<ICommand<?>> actions = new AddQuantityOperation().actionsFor(selection, store );
 		
 		assertEquals("correct number of actions returned", 1, actions.size());
 		
-		ICommand addAction = actions.iterator().next();
+		ICommand<?> addAction = actions.iterator().next();
 		addAction.execute();
 		
 		assertEquals("new collection added to store", 1, store.rootSize());
 		
 		ICollection firstItem = store.getRoot().get(0);
-		ICommand precedent = firstItem.getPrecedent();
+		ICommand<?> precedent = firstItem.getPrecedent();
 		assertNotNull("has precedent", precedent);
 		assertEquals("Correct name", "Add series", precedent.getTitle());
 		
-		List<ICollection> inputs = precedent.getInputs();
+		List<? extends ICollection> inputs = precedent.getInputs();
 		assertEquals("Has both precedents", 2, inputs.size());
 
-		Iterator<ICollection> iIter = inputs.iterator();
+		Iterator<? extends ICollection> iIter = inputs.iterator();
 		while (iIter.hasNext())
 		{
 			ICollection thisC = (ICollection) iIter.next();
-			List<ICommand> deps = thisC.getDependents();
+			List<ICommand<?>> deps = thisC.getDependents();
 			assertEquals("has a depedent", 1, deps.size());
-			Iterator<ICommand> dIter = deps.iterator();
+			Iterator<ICommand<?>> dIter = deps.iterator();
 			while (dIter.hasNext())
 			{
-				ICommand iCommand = (ICommand) dIter.next();
+				ICommand<?> iCommand = (ICommand<?>) dIter.next();
 				assertEquals("Correct dependent", precedent, iCommand);
 			}
 		}
 		
-		List<ICollection> outputs = precedent.getOutputs();
+		List<? extends ICollection> outputs = precedent.getOutputs();
 		assertEquals("Has both dependents", 1, outputs.size());
 		
-		Iterator<ICollection> oIter = outputs.iterator();
+		Iterator<? extends ICollection> oIter = outputs.iterator();
 		while (oIter.hasNext())
 		{
 			ICollection thisC = (ICollection) oIter.next();
-			ICommand dep = thisC.getPrecedent();
+			ICommand<?> dep = thisC.getPrecedent();
 			assertNotNull("has a depedent", dep);
 			assertEquals("Correct dependent", precedent, dep);
 		}

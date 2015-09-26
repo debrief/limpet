@@ -5,26 +5,20 @@ import info.limpet.ICollection;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ui.views.properties.IPropertySource;
 
-public class CollectionWrapper implements IAdaptable
+public class CollectionWrapper implements IAdaptable, LimpetWrapper
 {
 	private final ICollection _collection;
+	private final LimpetWrapper _parent;
 
-	public CollectionWrapper(ICollection collection)
+	public CollectionWrapper(final LimpetWrapper parent,
+			final ICollection collection)
 	{
+		_parent = parent;
 		_collection = collection;
 	}
 
-	public String toString()
-	{
-		return _collection.getName() + " (" + _collection.size() + " items)";
-	}
-
-	public ICollection getCollection()
-	{
-		return _collection;
-	}
-
-	public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter)
+	@Override
+	public Object getAdapter(@SuppressWarnings("rawtypes") final Class adapter)
 	{
 		if (adapter == IPropertySource.class)
 		{
@@ -35,5 +29,28 @@ public class CollectionWrapper implements IAdaptable
 			return _collection;
 		}
 		return null;
+	}
+
+	public ICollection getCollection()
+	{
+		return _collection;
+	}
+
+	@Override
+	public LimpetWrapper getParent()
+	{
+		return _parent;
+	}
+
+	@Override
+	public Object getSubject()
+	{
+		return _collection;
+	}
+
+	@Override
+	public String toString()
+	{
+		return _collection.getName() + " (" + _collection.size() + " items)";
 	}
 }
