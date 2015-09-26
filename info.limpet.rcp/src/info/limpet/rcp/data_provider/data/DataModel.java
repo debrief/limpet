@@ -44,7 +44,7 @@ public class DataModel implements ITreeContentProvider
 		while (iter.hasNext())
 		{
 			ICollection iCollection = iter.next();
-			list.add(new CollectionWrapper(iCollection));
+			list.add(new CollectionWrapper(null, iCollection));
 		}
 
 		return list.toArray();
@@ -65,20 +65,20 @@ public class DataModel implements ITreeContentProvider
 			ICommand<?> prec = coll.getPrecedent();
 			if (prec != null)
 			{
-				List dList = new NamedList<ICommand>("Precedents");
-				dList.add(new CommandWrapper(prec));
+				NamedList dList = new NamedList(cw, "Precedents");
+				dList.add(new CommandWrapper(dList, prec));
 				res.add(dList);
 			}
 
 			List<ICommand> dep = coll.getDependents();
 			if (dep != null)
 			{
-				List dList = new NamedList<ICommand>("Dependents");
+				NamedList dList = new NamedList(cw, "Dependents");
 				Iterator<ICommand> dIter = dep.iterator();
 				while (dIter.hasNext())
 				{
 					ICommand thisI = (ICommand) dIter.next();
-					dList.add(new CommandWrapper(thisI));
+					dList.add(new CommandWrapper(dList, thisI));
 				}
 
 				// did we find any?
@@ -97,12 +97,12 @@ public class DataModel implements ITreeContentProvider
 			List<ICollection> inp = coll.getInputs();
 			if (inp != null)
 			{
-				List dList = new NamedList<ICommand>("Inputs");
+				NamedList dList = new NamedList(cw, "Inputs");
 				Iterator<ICollection> dIter = inp.iterator();
 				while (dIter.hasNext())
 				{
 					ICollection thisI = (ICollection) dIter.next();
-					dList.add(new CollectionWrapper(thisI));
+					dList.add(new CollectionWrapper(dList, thisI));
 				}
 				// did we find any?
 				if (dList.size() > 0)
@@ -114,12 +114,12 @@ public class DataModel implements ITreeContentProvider
 			List<ICollection> outp = coll.getOutputs();
 			if (outp != null)
 			{
-				List dList = new NamedList<ICollection>("Outputs");
+				NamedList dList = new NamedList(cw, "Outputs");
 				Iterator<ICollection> dIter = outp.iterator();
 				while (dIter.hasNext())
 				{
 					ICollection thisI = (ICollection) dIter.next();
-					dList.add(new CollectionWrapper(thisI));
+					dList.add(new CollectionWrapper(dList, thisI));
 				}
 				// did we find any?
 				if (dList.size() > 0)
@@ -147,32 +147,73 @@ public class DataModel implements ITreeContentProvider
 		return null;
 	}
 
+	/**
+	 * walk back up object tree, to see if the provided element is the top level
+	 * element (so it has null as parent)
+	 * 
+	 * @param element
+	 *          the object we're considering
+	 * @return yes/no for if it's at the top of the folder tree
+	 */
+	protected boolean alreadyShown(LimpetWrapper element)
+	{
+		final LimpetWrapper lookingFor = element;
+		LimpetWrapper current = element;
+		boolean found = false;
+		boolean walking = true;
+
+		while (walking)
+		{
+			current = current.getParent();
+			if (current == null)
+			{
+				walking = false;
+			}
+			else if (current.getSubject() == lookingFor.getSubject())
+			{
+				found = true;
+				walking = false;
+			}
+		}
+
+		return found;
+	}
+
 	public boolean hasChildren(Object element)
 	{
 		boolean res = false;
 
-		if (element instanceof CollectionWrapper)
+		if (element instanceof LimpetWrapper)
 		{
-			// see if it has predecessors or successors
-			CollectionWrapper cw = (CollectionWrapper) element;
-			ICollection coll = cw.getCollection();
+			LimpetWrapper core = (LimpetWrapper) element;
 
-			boolean hasDependents = coll.getDependents().size()> 0;
-			boolean hasPrecedents = coll.getPrecedent() != null;
-			res = (hasDependents || hasPrecedents);
-		}
-		else if (element instanceof CommandWrapper)
-		{
-			// see if it has predecessors or successors
-			CommandWrapper cw = (CommandWrapper) element;
-			ICommand<?> comm = cw.getCommand();
+			// has it already been shown?
+			if (!alreadyShown(core))
+			{
+				if (element instanceof CollectionWrapper)
+				{
+					// see if it has predecessors or successors
+					CollectionWrapper cw = (CollectionWrapper) element;
+					ICollection coll = cw.getCollection();
 
-			res = ((comm.getInputs().size() > 0) || (comm.getOutputs().size() > 0));
-		}
-		else if (element instanceof ArrayList)
-		{
-			ArrayList<?> ar = (ArrayList<?>) element;
-			return ar.size() > 0;
+					boolean hasDependents = coll.getDependents().size() > 0;
+					boolean hasPrecedents = coll.getPrecedent() != null;
+					res = (hasDependents || hasPrecedents);
+				}
+				else if (element instanceof CommandWrapper)
+				{
+					// see if it has predecessors or successors
+					CommandWrapper cw = (CommandWrapper) element;
+					ICommand<?> comm = cw.getCommand();
+
+					res = ((comm.getInputs().size() > 0) || (comm.getOutputs().size() > 0));
+				}
+				else if (element instanceof ArrayList)
+				{
+					ArrayList<?> ar = (ArrayList<?>) element;
+					return ar.size() > 0;
+				}
+			}
 		}
 
 		return res;

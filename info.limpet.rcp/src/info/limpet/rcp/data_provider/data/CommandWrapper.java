@@ -5,12 +5,14 @@ import info.limpet.ICommand;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ui.views.properties.IPropertySource;
 
-public class CommandWrapper implements IAdaptable
+public class CommandWrapper implements IAdaptable, LimpetWrapper
 {
 	private final ICommand _command;
+	private final LimpetWrapper _parent;
 
-	public CommandWrapper(ICommand prec)
+	public CommandWrapper(LimpetWrapper parent, ICommand prec)
 	{
+		_parent = parent;
 		_command = prec;
 	}
 
@@ -35,5 +37,17 @@ public class CommandWrapper implements IAdaptable
 			return _command;
 		}
 		return null;
+	}
+
+	@Override
+	public LimpetWrapper getParent()
+	{
+		return _parent;
+	}
+
+	@Override
+	public Object getSubject()
+	{
+		return _command;
 	}
 }

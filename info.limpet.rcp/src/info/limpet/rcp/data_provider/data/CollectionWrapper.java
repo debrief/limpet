@@ -5,12 +5,14 @@ import info.limpet.ICollection;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ui.views.properties.IPropertySource;
 
-public class CollectionWrapper implements IAdaptable
+public class CollectionWrapper implements IAdaptable, LimpetWrapper
 {
 	private final ICollection _collection;
+	private final LimpetWrapper _parent;
 
-	public CollectionWrapper(ICollection collection)
+	public CollectionWrapper(LimpetWrapper parent, ICollection collection)
 	{
+		_parent = parent;
 		_collection = collection;
 	}
 
@@ -35,5 +37,17 @@ public class CollectionWrapper implements IAdaptable
 			return _collection;
 		}
 		return null;
+	}
+
+	@Override
+	public LimpetWrapper getParent()
+	{
+		return _parent;
+	}
+
+	@Override
+	public Object getSubject()
+	{
+		return _collection;
 	}
 }

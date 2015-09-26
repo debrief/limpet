@@ -9,7 +9,7 @@ import java.util.ArrayList;
  * @param <Object>
  */
 @SuppressWarnings("hiding")
-public class NamedList<Object> extends ArrayList<Object>
+public class NamedList<Object> extends ArrayList<Object> implements LimpetWrapper
 {
 
 	/**
@@ -17,15 +17,29 @@ public class NamedList<Object> extends ArrayList<Object>
 	 */
 	private static final long serialVersionUID = 1L;
 	final private String _name;
+	private final LimpetWrapper _parent;
 	
-	public NamedList(String name)
+	public NamedList(LimpetWrapper parent, String name)
 	{
 		_name = name;
+		_parent = parent;
 	}
 	
 	public String toString()
 	{
 		return _name;
+	}
+
+	@Override
+	public LimpetWrapper getParent()
+	{
+		return _parent;
+	}
+
+	@Override
+	public java.lang.Object getSubject()
+	{
+		return this;
 	}
 	
 }
