@@ -2,7 +2,7 @@ package info.limpet.rcp.data_provider.data;
 
 import info.limpet.ICollection;
 import info.limpet.ICommand;
-import info.limpet.IStore;
+import info.limpet.data.store.InMemoryStore;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -19,7 +19,7 @@ import org.eclipse.jface.viewers.Viewer;
  */
 public class DataModel implements ITreeContentProvider
 {
-	private IStore _store;
+	private InMemoryStore _store;
 
 	private void addCollectionItems(final List<Object> res,
 			final CollectionWrapper cw)
@@ -233,9 +233,9 @@ public class DataModel implements ITreeContentProvider
 	public void inputChanged(final Viewer v, final Object oldInput,
 			final Object newInput)
 	{
-		if (newInput instanceof IStore)
+		if (newInput instanceof InMemoryStore)
 		{
-			_store = (IStore) newInput;
+			_store = (InMemoryStore) newInput;
 		}
 		else
 		{

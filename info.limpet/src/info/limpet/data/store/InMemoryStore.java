@@ -45,7 +45,6 @@ public class InMemoryStore implements IStore
 		return rootStore;
 	}
 
-	@Override
 	public List<ICollection> getAll()
 	{
 		ArrayList<ICollection> res = new ArrayList<ICollection>();
