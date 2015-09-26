@@ -22,6 +22,7 @@
     <module>info.limpet.feature</module>
     <module>info.limpet.rcp.feature</module>
     <module>info.limpet.site</module>
+    <module>info.limpet.product</module>
   </modules>
 
   <build>
