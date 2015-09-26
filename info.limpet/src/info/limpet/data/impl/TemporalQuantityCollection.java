@@ -25,7 +25,7 @@ public class TemporalQuantityCollection<T extends Quantity<T>> extends
 		this(name, null, units);
 	}
 	
-	public TemporalQuantityCollection(String name, ICommand precedent, Unit<T> units)
+	public TemporalQuantityCollection(String name, ICommand<?> precedent, Unit<T> units)
 	{
 		super(name);
 		_myUnits = units;

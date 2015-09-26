@@ -3,15 +3,26 @@ package info.limpet.rcp.data_provider;
 import info.limpet.data.impl.samples.SampleData;
 import info.limpet.rcp.data_provider.data.DataModel;
 
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.part.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.jface.action.*;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.ui.*;
-import org.eclipse.swt.widgets.Menu;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.part.ViewPart;
 
 /**
  * This sample class demonstrates how to plug-in a new workbench view. The view
@@ -36,36 +47,11 @@ public class DataProvider extends ViewPart
 	 */
 	public static final String ID = "info.limpet.rcp.DataProvider";
 
-	private TableViewer viewer;
+	private TreeViewer viewer;
 	private Action action1;
 	private Action action2;
 	private Action doubleClickAction;
 
-	/*
-	 * The content provider class is responsible for providing objects to the
-	 * view. It can wrap existing objects in adapters or simply return objects
-	 * as-is. These objects may be sensitive to the current input of the view, or
-	 * ignore it and always show the same content (like Task List, for example).
-	 */
-
-	class ViewLabelProvider extends LabelProvider implements ITableLabelProvider
-	{
-		public String getColumnText(Object obj, int index)
-		{
-			return getText(obj);
-		}
-
-		public Image getColumnImage(Object obj, int index)
-		{
-			return getImage(obj);
-		}
-
-		public Image getImage(Object obj)
-		{
-			return PlatformUI.getWorkbench().getSharedImages()
-					.getImage(ISharedImages.IMG_OBJ_ELEMENT);
-		}
-	}
 
 
 	/**
@@ -81,10 +67,10 @@ public class DataProvider extends ViewPart
 	 */
 	public void createPartControl(Composite parent)
 	{
-		viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
-		viewer.setContentProvider(new DataModel(new SampleData().getData()));
-		viewer.setLabelProvider(new ViewLabelProvider());
-		viewer.setInput(getViewSite());
+		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+		viewer.setContentProvider(new DataModel());
+		viewer.setLabelProvider(new LimpetLabelProvider());
+		viewer.setInput(new SampleData().getData());
 		getSite().setSelectionProvider(viewer);
 		makeActions();
 		hookContextMenu();
