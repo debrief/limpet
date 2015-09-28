@@ -5,6 +5,7 @@ import java.net.URL;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -79,6 +80,7 @@ import org.osgi.framework.Version;
  * 
  * @since 3.0
  */
+@SuppressWarnings("restriction")
 public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 
 	private static final String WORKBENCH_PREFERENCE_CATEGORY_ID = "org.eclipse.ui.preferencePages.Workbench"; //$NON-NLS-1$
@@ -102,7 +104,7 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 	 * session; <code>null</code> if uninitialized. Key type:
 	 * <code>String</code>, Value type: <code>AboutInfo</code>.
 	 */
-	private Map newlyAddedBundleGroups;
+	private Map<String, AboutInfo> newlyAddedBundleGroups;
 
 	/**
 	 * Array of <code>AboutInfo</code> for all new installed features that
@@ -267,6 +269,7 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 	/**
 	 * Activate the proxy service by obtaining it.
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void activateProxyService() {
 		Bundle bundle = Platform.getBundle("org.eclipse.ui.ide"); //$NON-NLS-1$
 		Object proxyService = null;
@@ -554,9 +557,9 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 	 *         <code>String</code>, value type: <code>AboutInfo</code>)
 	 * @since 3.0
 	 */
-	private Map computeBundleGroupMap() {
+	private Map<String, AboutInfo> computeBundleGroupMap() {
 		// use tree map to get predicable order
-		Map ids = new TreeMap();
+		Map<String, AboutInfo> ids = new TreeMap<String, AboutInfo>();
 
 		IBundleGroupProvider[] providers = Platform.getBundleGroupProviders();
 		for (int i = 0; i < providers.length; ++i) {
@@ -585,7 +588,7 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 	 *         <code>String</code>) -> infos (value type:
 	 *         <code>AboutInfo</code>).
 	 */
-	public Map getNewlyAddedBundleGroups() {
+	public Map<String, AboutInfo> getNewlyAddedBundleGroups() {
 		if (newlyAddedBundleGroups == null) {
 			newlyAddedBundleGroups = createNewBundleGroupsMap();
 		}
@@ -595,7 +598,7 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 	/**
 	 * Updates the old features setting and returns a map of new features.
 	 */
-	private Map createNewBundleGroupsMap() {
+	private Map<String, AboutInfo> createNewBundleGroupsMap() {
 		// retrieve list of installed bundle groups from last session
 		IDialogSettings settings = IDEWorkbenchPlugin.getDefault()
 				.getDialogSettings();
@@ -603,7 +606,7 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 
 		// get a map of currently installed bundle groups and store it for next
 		// session
-		Map bundleGroups = computeBundleGroupMap();
+		Map<String, AboutInfo> bundleGroups = computeBundleGroupMap();
 		String[] currentFeaturesArray = new String[bundleGroups.size()];
 		bundleGroups.keySet().toArray(currentFeaturesArray);
 		settings.put(INSTALLED_FEATURES, currentFeaturesArray);
@@ -863,9 +866,9 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 		if (welcomePerspectiveInfos == null) {
 			// support old welcome perspectives if intro plugin is not present
 			if (!hasIntro()) {
-				Map m = getNewlyAddedBundleGroups();
-				ArrayList list = new ArrayList(m.size());
-				for (Iterator i = m.values().iterator(); i.hasNext();) {
+				Map<String, AboutInfo> m = getNewlyAddedBundleGroups();
+				List<AboutInfo> list = new ArrayList<AboutInfo>(m.size());
+				for (Iterator<AboutInfo> i = m.values().iterator(); i.hasNext();) {
 					AboutInfo info = (AboutInfo) i.next();
 					if (info != null && info.getWelcomePerspectiveId() != null
 							&& info.getWelcomePageURL() != null) {

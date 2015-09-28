@@ -38,6 +38,7 @@ import org.eclipse.ui.menus.CommandContributionItem;
 import org.eclipse.ui.menus.CommandContributionItemParameter;
 import org.eclipse.ui.menus.IMenuService;
 
+@SuppressWarnings("restriction")
 public final class ApplicationActionBarAdvisor extends ActionBarAdvisor
 {
 	private final IWorkbenchWindow window;
@@ -633,6 +634,7 @@ public final class ApplicationActionBarAdvisor extends ActionBarAdvisor
 	/**
 	 * Creates the feature-dependent actions for the menu bar.
 	 */
+	@SuppressWarnings("deprecation")
 	private void makeFeatureDependentActions(IWorkbenchWindow window)
 	{
 		AboutInfo[] infos = null;
@@ -778,11 +780,6 @@ public final class ApplicationActionBarAdvisor extends ActionBarAdvisor
 		toolBarItem.update(ICoolBarManager.SIZE);
 	}
 
-	private IContributionItem getPinEditorItem()
-	{
-		return ContributionItemFactory.PIN_EDITOR.create(window);
-	}
-
 	private IContributionItem getCutItem()
 	{
 		return getItem(ActionFactory.CUT.getId(), ActionFactory.CUT.getCommandId(),
@@ -915,22 +912,6 @@ public final class ApplicationActionBarAdvisor extends ActionBarAdvisor
 				ActionFactory.RENAME.getCommandId(), null, null,
 				WorkbenchMessages.Workbench_rename,
 				WorkbenchMessages.Workbench_renameToolTip, null);
-	}
-
-	private IContributionItem getOpenProjectItem()
-	{
-		return getItem(IDEActionFactory.OPEN_PROJECT.getId(),
-				IDEActionFactory.OPEN_PROJECT.getCommandId(), null, null,
-				IDEWorkbenchMessages.OpenResourceAction_text,
-				IDEWorkbenchMessages.OpenResourceAction_toolTip, null);
-	}
-
-	private IContributionItem getCloseProjectItem()
-	{
-		return getItem(IDEActionFactory.CLOSE_PROJECT.getId(),
-				IDEActionFactory.CLOSE_PROJECT.getCommandId(), null, null,
-				IDEWorkbenchMessages.CloseResourceAction_text,
-				IDEWorkbenchMessages.CloseResourceAction_text, null);
 	}
 
 	private IContributionItem getItem(String actionId, String commandId,
