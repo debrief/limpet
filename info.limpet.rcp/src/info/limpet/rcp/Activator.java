@@ -1,6 +1,8 @@
 package info.limpet.rcp;
 
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -14,6 +16,8 @@ public class Activator extends AbstractUIPlugin {
 
 	// The shared instance
 	private static Activator plugin;
+
+	private ImageRegistry _imageRegistry;
 	
 	/**
 	 * The constructor
@@ -21,6 +25,35 @@ public class Activator extends AbstractUIPlugin {
 	public Activator() {
 	}
 
+
+	private static ImageRegistry getRegistry()
+	{
+		return plugin._imageRegistry;
+	}
+
+	public static Image getImageFromRegistry(final ImageDescriptor name)
+	{
+		Image res = null;
+
+		// do we already have an image
+		if (getRegistry() == null)
+		{
+			plugin._imageRegistry = new ImageRegistry();
+		}
+
+		// ok - do we have it already?
+		res = getRegistry().get(name.toString());
+
+		if (res == null)
+		{
+			getRegistry().put(name.toString(), name);
+			res = getRegistry().get(name.toString());
+		}
+
+		// and return it..
+		return res;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)

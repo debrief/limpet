@@ -1,5 +1,6 @@
 package info.limpet.rcp.data_provider;
 
+import info.limpet.rcp.Activator;
 import info.limpet.rcp.data_provider.data.CollectionWrapper;
 import info.limpet.rcp.data_provider.data.CommandWrapper;
 import info.limpet.rcp.data_provider.data.NamedList;
@@ -19,8 +20,17 @@ public class LimpetLabelProvider extends LabelProvider
 
 		if (obj instanceof CollectionWrapper)
 		{
-			res = PlatformUI.getWorkbench().getSharedImages()
-					.getImage(ISharedImages.IMG_OBJ_FILE);
+			// is it just one, or multiple?
+			CollectionWrapper cw = (CollectionWrapper) obj;
+			if(cw.getCollection().size()>1)
+			{
+				res = PlatformUI.getWorkbench().getSharedImages()
+						.getImage(ISharedImages.IMG_OBJ_FILE);
+			}
+			else
+			{
+				res = Activator.getImageFromRegistry(Activator.getImageDescriptor("icons/number_icon.png"));
+			}
 		}
 		else if (obj instanceof CommandWrapper)
 		{
