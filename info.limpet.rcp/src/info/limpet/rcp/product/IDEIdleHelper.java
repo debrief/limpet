@@ -28,6 +28,7 @@ import org.eclipse.ui.internal.ide.Policy;
  *    For example, if a GC takes 100ms and the multiplier is 60, don't gc for at least five seconds
  *  - Never gc again if any single gc takes longer than system property PROP_GC_MAX
  */
+@SuppressWarnings("restriction")
 class IDEIdleHelper {
 
 	/**

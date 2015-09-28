@@ -4,7 +4,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IAdaptable;
@@ -64,7 +64,6 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.WorkbenchActionBuilder;
 import org.eclipse.ui.internal.ide.application.IDEApplication;
-import org.eclipse.ui.internal.ide.application.IDEWorkbenchAdvisor;
 import org.eclipse.ui.internal.ide.dialogs.WelcomeEditorInput;
 import org.eclipse.ui.internal.tweaklets.TitlePathUpdater;
 import org.eclipse.ui.internal.tweaklets.Tweaklets;
@@ -75,6 +74,7 @@ import org.eclipse.ui.statushandlers.StatusManager;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleException;
 
+@SuppressWarnings("restriction")
 public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 
 	private static final String WELCOME_EDITOR_ID = "org.eclipse.ui.internal.ide.dialogs.WelcomeEditor"; //$NON-NLS-1$
@@ -169,6 +169,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 	 *         canceled
 	 * @since 3.6
 	 */
+	@SuppressWarnings("deprecation")
 	static boolean promptOnExit(Shell parentShell) {
 		IPreferenceStore store = IDEWorkbenchPlugin.getDefault()
 				.getPreferenceStore();
@@ -540,6 +541,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 	 * 
 	 * @see org.eclipse.ui.application.WorkbenchWindowAdvisor#openIntro()
 	 */
+	@SuppressWarnings("deprecation")
 	public void openIntro() {
 		if (editorsAndIntrosOpened) {
 			return;
@@ -582,10 +584,10 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 			openWelcomeEditor(window, new WelcomeEditorInput(productInfo), null);
 		} else {
 			// Show the welcome page for any newly installed features
-			List welcomeFeatures = new ArrayList();
-			for (Iterator it = wbAdvisor.getNewlyAddedBundleGroups().entrySet()
+			List<AboutInfo> welcomeFeatures = new ArrayList<AboutInfo>();
+			for (Iterator<Entry<String, AboutInfo>> it = wbAdvisor.getNewlyAddedBundleGroups().entrySet()
 					.iterator(); it.hasNext();) {
-				Map.Entry entry = (Map.Entry) it.next();
+				Entry<String, AboutInfo> entry = it.next();
 				AboutInfo info = (AboutInfo) entry.getValue();
 
 				if (info != null && info.getWelcomePageURL() != null) {
