@@ -1,7 +1,6 @@
 package info.limpet.data;
 
 import info.limpet.IBaseTemporalCollection;
-import info.limpet.ICollection;
 import info.limpet.IQuantityCollection;
 import info.limpet.IStore;
 import info.limpet.ITemporalObjectCollection.Doublet;
