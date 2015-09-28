@@ -10,4 +10,11 @@ public interface IQuantityCollection<T extends Quantity<T>> extends
 	 * @param value
 	 */
 	public void add(Number value);
+
+	/** if this collection just contains a single value, we allow
+	 * that value to be changed in-place
+	 * 
+	 * @param newValue
+	 */
+	public void replaceSingleton(double newValue);
 }

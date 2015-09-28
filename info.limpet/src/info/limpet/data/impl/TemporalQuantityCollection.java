@@ -112,4 +112,10 @@ public class TemporalQuantityCollection<T extends Quantity<T>> extends
 		return _qHelper.getUnits();
 	}
 
+
+	@Override
+	public void replaceSingleton(double newValue)
+	{
+		_qHelper.replace(newValue);
+	}
 }

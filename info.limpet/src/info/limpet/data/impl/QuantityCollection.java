@@ -95,4 +95,10 @@ public class QuantityCollection<T extends Quantity<T>> extends
 		return false;
 	}
 
+	@Override
+	public void replaceSingleton(double newValue)
+	{
+		_qHelper.replace(newValue);
+	}
+
 }

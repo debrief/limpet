@@ -153,4 +153,21 @@ public class QuantityHelper<T extends Quantity<T>> implements IBaseQuantityColle
 	{
 		return _myUnits;
 	}
+
+	public void replace(double newValue)
+	{
+		if(_values.size() != 1)
+		{
+			throw new RuntimeException("We only call this on singletons");
+		}
+
+		// create a new value
+		Quantity<T> newVal = Quantities.getQuantity(newValue, getUnits());
+		
+		// drop the existing value
+		_values.clear();
+		
+		// and insert the new value
+		_values.add(newVal);
+	}
 }
