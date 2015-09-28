@@ -73,6 +73,7 @@ public class SampleData
 		List<ICollection> selection = new ArrayList<ICollection>();
 		selection.add(speedSeries1);
 		selection.add(speedSeries2);
+		@SuppressWarnings({ "unchecked", "rawtypes" })
 		Collection<ICommand<?>> actions = new AddQuantityOperation().actionsFor(selection, res);
 		ICommand<?> addAction = actions.iterator().next();
 		addAction.execute();	
