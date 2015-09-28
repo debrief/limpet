@@ -12,6 +12,8 @@ import javax.measure.Quantity;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
+import tec.units.ri.quantity.QuantityRange;
+
 public abstract class SimpleDescriptiveQuantity extends CoreAnalysis
 {
 
@@ -44,6 +46,14 @@ public abstract class SimpleDescriptiveQuantity extends CoreAnalysis
 					values.add(o.getDimension().toString());
 					titles.add("Units");
 					values.add(o.getUnits().toString());
+					
+					QuantityRange<?> range = o.getRange();
+					if(range != null)
+					{
+						titles.add("Range");
+						values.add(range.getMinimum().getValue() + " - " + range.getMaximum().getValue() + " " + o.getUnits());
+						
+					}
 
 					// collate the values into an array
 					double[] data = new double[o.size()];
@@ -71,6 +81,8 @@ public abstract class SimpleDescriptiveQuantity extends CoreAnalysis
 					values.add("" + stats.getStandardDeviation());
 					titles.add("Median");
 					values.add("" + stats.getPercentile(50));
+					
+					
 				}
 			}
 		}

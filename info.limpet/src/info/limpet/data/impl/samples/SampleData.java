@@ -18,11 +18,18 @@ import java.util.List;
 
 import javax.measure.quantity.Dimensionless;
 import javax.measure.quantity.Length;
+import javax.measure.quantity.Speed;
 
+import tec.units.ri.quantity.Quantities;
+import tec.units.ri.quantity.QuantityRange;
 import tec.units.ri.unit.Units;
 
 public class SampleData
 {
+	public static final String SPEED_ONE = "Speed One";
+	public static final String RANGED_SPEED_SINGLETON = "Ranged Speed Singleton";
+	public static final String FLOATING_POINT_FACTOR = "Floating point factor";
+
 	public IStore getData()
 	{
 		InMemoryStore res = new InMemoryStore();
@@ -30,7 +37,7 @@ public class SampleData
 
 		// // collate our data series
 		StockTypes.Temporal.Speed_MSec speedSeries1 = new StockTypes.Temporal.Speed_MSec(
-				"Speed One");
+				SPEED_ONE);
 		StockTypes.Temporal.Speed_MSec speedSeries2 = new StockTypes.Temporal.Speed_MSec(
 				"Speed Two");
 		StockTypes.Temporal.Speed_MSec speedSeries3 = new StockTypes.Temporal.Speed_MSec(
@@ -44,7 +51,9 @@ public class SampleData
 		IObjectCollection<String> string2 = new ObjectCollection<String>(
 				"String two");
 		IQuantityCollection<Dimensionless> singleton1 = new QuantityCollection<Dimensionless>(
-				"Floating point factor", Units.ONE.asType(Dimensionless.class));
+				FLOATING_POINT_FACTOR, Units.ONE.asType(Dimensionless.class));
+		StockTypes.NonTemporal.Speed_MSec singletonRange1 = new StockTypes.NonTemporal.Speed_MSec(
+				RANGED_SPEED_SINGLETON);
 
 		long thisTime = 0; 
 		
@@ -66,6 +75,10 @@ public class SampleData
 		
 		// give the singleton a value		
 		singleton1.add(4d);
+		singletonRange1.add(998);
+		@SuppressWarnings("unchecked")
+		QuantityRange<Speed> speedRange = QuantityRange.of( Quantities.getQuantity(940d, singletonRange1.getUnits()),  Quantities.getQuantity(1050d, singletonRange1.getUnits()), null);
+		singletonRange1.setRange(speedRange);
 		
 		List<ICollection> list = new ArrayList<ICollection>();
 
@@ -77,6 +90,7 @@ public class SampleData
 		list.add(string1);
 		list.add(string2);
 		list.add(singleton1);
+		list.add(singletonRange1);
 
 		res.add(list);
 

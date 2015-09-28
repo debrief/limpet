@@ -1,11 +1,15 @@
 package info.limpet.data;
 
 import info.limpet.IBaseTemporalCollection;
+import info.limpet.ICollection;
+import info.limpet.IQuantityCollection;
+import info.limpet.IStore;
 import info.limpet.ITemporalObjectCollection.Doublet;
 import info.limpet.data.impl.ObjectCollection;
 import info.limpet.data.impl.QuantityCollection;
 import info.limpet.data.impl.TemporalObjectCollection;
 import info.limpet.data.impl.TemporalQuantityCollection;
+import info.limpet.data.impl.samples.SampleData;
 import info.limpet.data.impl.samples.StockTypes;
 import info.limpet.data.impl.samples.StockTypes.NonTemporal.Speed_MSec;
 
@@ -18,6 +22,7 @@ import javax.measure.quantity.Speed;
 import junit.framework.TestCase;
 import si.uom.SI;
 import tec.units.ri.quantity.Quantities;
+import tec.units.ri.quantity.QuantityRange;
 import tec.units.ri.unit.MetricPrefix;
 import tec.units.ri.unit.Units;
 
@@ -39,7 +44,20 @@ public class TestCollections extends TestCase
 		assertEquals("correct number of samples", 10, stringCollection.size());
 	}
 
-
+	public void testSampleData()
+	{
+		IStore data = new SampleData().getData();
+		IQuantityCollection<?> ranged = (IQuantityCollection<?>) data.get(SampleData.RANGED_SPEED_SINGLETON);
+		assertNotNull("found series", ranged);
+		
+		QuantityRange<?> range = ranged.getRange();		
+		assertNotNull("found range", range);
+		
+		// check the range has values
+		assertEquals("correct values", 940d, range.getMinimum().getValue().doubleValue(), 0.1);
+		assertEquals("correct values", 1050d, range.getMaximum().getValue().doubleValue(), 0.1);
+	}
+	
 	public void testCreateTemporalObject()
 	{
 		// the target collection
