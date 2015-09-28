@@ -169,6 +169,7 @@ public class TestOperations extends TestCase
 		InMemoryStore store = new InMemoryStore();
 		assertEquals("store empty", 0, store.rootSize());
 		
+		@SuppressWarnings({ "rawtypes", "unchecked" })
 		Collection<ICommand<?>> actions = new AddQuantityOperation().actionsFor(selection, store );
 		
 		assertEquals("correct number of actions returned", 1, actions.size());
