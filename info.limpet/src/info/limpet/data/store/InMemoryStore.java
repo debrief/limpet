@@ -4,54 +4,48 @@ import info.limpet.ICollection;
 import info.limpet.IStore;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 
 public class InMemoryStore implements IStore
 {
 
-	List<ICollection> alongsideStore = new ArrayList<ICollection>();
-	List<ICollection> rootStore = new ArrayList<ICollection>();
+	List<ICollection> _store = new ArrayList<ICollection>();
 	
-	@Override
-	public void addAlongside(ICollection target, List<ICollection> results)
-	{
-		alongsideStore.addAll(results);
-	}
 
 	@Override
 	public void add(List<ICollection> results)
 	{
-		rootStore.addAll(results);
+		_store.addAll(results);
 	}
 
-	public int alongsideSize()
+	public int size()
 	{
-		return alongsideStore.size() ;
+		return _store.size() ;
 	}
 
-	public int rootSize()
-	{
-		return rootStore.size() ;
-	}
 
-	public List<ICollection> getAlongside()
+	@Override
+	public ICollection get(String name)
 	{
-		return alongsideStore;
-	}
-	
-	public List<ICollection> getRoot()
-	{
-		return rootStore;
-	}
-
-	public List<ICollection> getAll()
-	{
-		ArrayList<ICollection> res = new ArrayList<ICollection>();
-		res.addAll(rootStore);
-		res.addAll(alongsideStore);
-				
+		ICollection res = null;
+		Iterator<ICollection> iter = _store.iterator();
+		while (iter.hasNext())
+		{
+			ICollection iCollection = (ICollection) iter.next();
+			if(name.equals(iCollection.getName()))
+			{
+				res = iCollection;
+				break;
+			}
+		}
 		return res;
+	}
+
+	public Iterator<ICollection> iterator()
+	{
+		return _store.iterator();
 	}
 	
 }

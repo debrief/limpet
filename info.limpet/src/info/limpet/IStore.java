@@ -10,16 +10,17 @@ import java.util.List;
  */
 public interface IStore
 {
-	/** place the new collections alongside the specified target
-	 * 
-	 * @param target
-	 * @param results
-	 */
-	void addAlongside(ICollection target, List<ICollection> results);
 	
 	/** add the new collections at the root level
 	 * 
 	 * @param results
 	 */
 	void add(List<ICollection> results);
+	
+	/** retrieve the named collection
+	 * 
+	 * @param name
+	 * @return
+	 */
+	ICollection get(String name);
 }
