@@ -10,6 +10,7 @@ import javax.measure.Quantity;
 import javax.measure.Unit;
 
 import tec.units.ri.quantity.Quantities;
+import tec.units.ri.quantity.QuantityRange;
 
 
 public class TemporalQuantityCollection<T extends Quantity<T>> extends
@@ -112,4 +113,22 @@ public class TemporalQuantityCollection<T extends Quantity<T>> extends
 		return _qHelper.getUnits();
 	}
 
+
+	@Override
+	public void replaceSingleton(double newValue)
+	{
+		_qHelper.replace(newValue);
+	}
+
+	@Override
+	public void setRange(QuantityRange<T> range)
+	{
+		_qHelper.setRange(range);
+	}
+
+	@Override
+	public QuantityRange<T> getRange()
+	{
+		return _qHelper.getRange();
+	}
 }

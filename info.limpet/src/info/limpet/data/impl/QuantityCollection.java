@@ -8,6 +8,8 @@ import javax.measure.Dimension;
 import javax.measure.Quantity;
 import javax.measure.Unit;
 
+import tec.units.ri.quantity.QuantityRange;
+
 
 public class QuantityCollection<T extends Quantity<T>> extends
 		ObjectCollection<Quantity<T>> implements IQuantityCollection<T>
@@ -26,6 +28,18 @@ public class QuantityCollection<T extends Quantity<T>> extends
 		super(name, precedent);
 		_units = units;
 		_qHelper = new QuantityHelper<>(_values, units);
+	}
+	
+	@Override
+	public void setRange(QuantityRange<T> range)
+	{
+		_qHelper.setRange(range);
+	}
+	
+	@Override
+	public QuantityRange<T> getRange()
+	{
+		return _qHelper.getRange();
 	}
 
 	@Override
@@ -93,6 +107,12 @@ public class QuantityCollection<T extends Quantity<T>> extends
 	public boolean isTemporal()
 	{
 		return false;
+	}
+
+	@Override
+	public void replaceSingleton(double newValue)
+	{
+		_qHelper.replace(newValue);
 	}
 
 }

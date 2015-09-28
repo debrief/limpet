@@ -10,6 +10,7 @@ import javax.measure.Quantity;
 import javax.measure.Unit;
 
 import tec.units.ri.quantity.Quantities;
+import tec.units.ri.quantity.QuantityRange;
 
 public class QuantityHelper<T extends Quantity<T>> implements IBaseQuantityCollection<T>
 {
@@ -22,6 +23,8 @@ public class QuantityHelper<T extends Quantity<T>> implements IBaseQuantityColle
 	private Quantity<T> _sd;
 
 	private Unit<T> _myUnits;
+
+	private QuantityRange<T> _range;
 
 	public QuantityHelper(ArrayList<Quantity<T>> values, Unit<T> units)
 	{		
@@ -152,5 +155,32 @@ public class QuantityHelper<T extends Quantity<T>> implements IBaseQuantityColle
 	public Unit<T> getUnits()
 	{
 		return _myUnits;
+	}
+
+	public void replace(double newValue)
+	{
+		if(_values.size() != 1)
+		{
+			throw new RuntimeException("We only call this on singletons");
+		}
+
+		// create a new value
+		Quantity<T> newVal = Quantities.getQuantity(newValue, getUnits());
+		
+		// drop the existing value
+		_values.clear();
+		
+		// and insert the new value
+		_values.add(newVal);
+	}
+
+	public void setRange(QuantityRange<T> range)
+	{
+		_range = range;
+	}
+	
+	public QuantityRange<T> getRange()
+	{
+		return _range;
 	}
 }

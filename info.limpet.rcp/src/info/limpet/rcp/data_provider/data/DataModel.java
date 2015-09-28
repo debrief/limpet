@@ -167,7 +167,7 @@ public class DataModel implements ITreeContentProvider
 
 		if (_store != null)
 		{
-			final Iterator<ICollection> iter = _store.getAll().iterator();
+			final Iterator<ICollection> iter = _store.iterator();
 			while (iter.hasNext())
 			{
 				final ICollection iCollection = iter.next();

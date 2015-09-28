@@ -79,31 +79,29 @@ public abstract class QuantityFrequencyBins extends CoreAnalysis
 			BIN_COUNT = (int) range;
 
 		long[] histogram = new long[BIN_COUNT];
-		EmpiricalDistribution distribution = new EmpiricalDistribution(
-				BIN_COUNT);
+		EmpiricalDistribution distribution = new EmpiricalDistribution(BIN_COUNT);
 		distribution.load(data);
-		
+
 		BinnedData res = new BinnedData(collection, BIN_COUNT);
 
-		
 		int k = 0;
 		for (SummaryStatistics sStats : distribution.getBinStats())
 		{
 			histogram[k++] = sStats.getN();
 		}
-		
+
 		double rangeSoFar = stats.getMin();
 		double rangeStep = range / BIN_COUNT;
 		for (int i = 0; i < histogram.length; i++)
 		{
 			long l = histogram[i];
-			res.add(new Bin(rangeSoFar, rangeSoFar+rangeStep, l));
+			res.add(new Bin(rangeSoFar, rangeSoFar + rangeStep, l));
 			rangeSoFar += rangeStep;
 		}
-		
+
 		return res;
 	}
-	
+
 	@Override
 	public void analyse(List<ICollection> selection)
 	{
@@ -120,29 +118,31 @@ public abstract class QuantityFrequencyBins extends CoreAnalysis
 				{
 					ICollection thisC = (ICollection) iter.next();
 					IQuantityCollection<?> o = (IQuantityCollection<?>) thisC;
-					
-					BinnedData res = doBins(o);
 
-					// now output the bins
-					StringBuffer freqBins = new StringBuffer();
-
-					Iterator<Bin> bIter = res.iterator();
-					while (bIter.hasNext())
+					if (thisC.size() > 1)
 					{
-						QuantityFrequencyBins.Bin bin = (QuantityFrequencyBins.Bin) bIter
-								.next();
-						freqBins.append((int) bin.lowerVal);
-						freqBins.append("-");
-						freqBins.append((int) bin.upperVal);
-						freqBins.append(": ");
-						freqBins.append(bin.freqVal);
-						freqBins.append(", ");
-						
-					}
-					
-					titles.add("Frequency bins");
-					values.add(freqBins.toString());
+						BinnedData res = doBins(o);
 
+						// now output the bins
+						StringBuffer freqBins = new StringBuffer();
+
+						Iterator<Bin> bIter = res.iterator();
+						while (bIter.hasNext())
+						{
+							QuantityFrequencyBins.Bin bin = (QuantityFrequencyBins.Bin) bIter
+									.next();
+							freqBins.append((int) bin.lowerVal);
+							freqBins.append("-");
+							freqBins.append((int) bin.upperVal);
+							freqBins.append(": ");
+							freqBins.append(bin.freqVal);
+							freqBins.append(", ");
+
+						}
+
+						titles.add("Frequency bins");
+						values.add(freqBins.toString());
+					}
 				}
 			}
 		}

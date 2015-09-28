@@ -167,7 +167,7 @@ public class TestOperations extends TestCase
 		selection.add(speed_good_2);
 
 		InMemoryStore store = new InMemoryStore();
-		assertEquals("store empty", 0, store.rootSize());
+		assertEquals("store empty", 0, store.size());
 		
 		@SuppressWarnings({ "rawtypes", "unchecked" })
 		Collection<ICommand<?>> actions = new AddQuantityOperation().actionsFor(selection, store );
@@ -177,9 +177,9 @@ public class TestOperations extends TestCase
 		ICommand<?> addAction = actions.iterator().next();
 		addAction.execute();
 		
-		assertEquals("new collection added to store", 1, store.rootSize());
+		assertEquals("new collection added to store", 1, store.size());
 		
-		ICollection firstItem = store.getRoot().get(0);
+		ICollection firstItem = store.iterator().next();
 		ICommand<?> precedent = firstItem.getPrecedent();
 		assertNotNull("has precedent", precedent);
 		assertEquals("Correct name", "Add series", precedent.getTitle());
