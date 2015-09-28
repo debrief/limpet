@@ -229,40 +229,43 @@ public class DataFrequencyView extends ViewPart
 			QuantityFrequencyBins.BinnedData bins = null;
 			if (iCollection.isQuantity())
 			{
-				IQuantityCollection<?> thisQ = (IQuantityCollection<?>) iCollection;
-				bins = QuantityFrequencyBins.doBins(thisQ);
-
-				String seriesName = iCollection.getName() + " (" + thisQ.getUnits()
-						+ ")";
-				ILineSeries newSeries = (ILineSeries) chart.getSeriesSet()
-						.createSeries(SeriesType.LINE, seriesName);
-				newSeries.setSymbolType(PlotSymbolType.NONE);
-				newSeries.enableArea(true);
-
-				double[] xData = new double[bins.size() * 2];
-				double[] yData = new double[bins.size() * 2];
-
-				// put the data into series
-				int ctr = 0;
-				Iterator<Bin> iter2 = bins.iterator();
-				while (iter2.hasNext())
+				if (iCollection.size() > 1)
 				{
-					Bin bin = (QuantityFrequencyBins.Bin) iter2.next();
-					xData[ctr] = bin.lowerVal;
-					yData[ctr++] = bin.freqVal;
-					xData[ctr] = bin.upperVal;
-					yData[ctr++] = bin.freqVal;
+					IQuantityCollection<?> thisQ = (IQuantityCollection<?>) iCollection;
+					bins = QuantityFrequencyBins.doBins(thisQ);
+
+					String seriesName = iCollection.getName() + " (" + thisQ.getUnits()
+							+ ")";
+					ILineSeries newSeries = (ILineSeries) chart.getSeriesSet()
+							.createSeries(SeriesType.LINE, seriesName);
+					newSeries.setSymbolType(PlotSymbolType.NONE);
+					newSeries.enableArea(true);
+
+					double[] xData = new double[bins.size() * 2];
+					double[] yData = new double[bins.size() * 2];
+
+					// put the data into series
+					int ctr = 0;
+					Iterator<Bin> iter2 = bins.iterator();
+					while (iter2.hasNext())
+					{
+						Bin bin = (QuantityFrequencyBins.Bin) iter2.next();
+						xData[ctr] = bin.lowerVal;
+						yData[ctr++] = bin.freqVal;
+						xData[ctr] = bin.upperVal;
+						yData[ctr++] = bin.freqVal;
+					}
+
+					newSeries.setXSeries(xData);
+					newSeries.setYSeries(yData);
+
+					// adjust the axis range
+					chart.getAxisSet().adjustRange();
+					IAxis xAxis = chart.getAxisSet().getXAxis(0);
+					xAxis.enableCategory(false);
+
+					chart.redraw();
 				}
-
-				newSeries.setXSeries(xData);
-				newSeries.setYSeries(yData);
-
-				// adjust the axis range
-				chart.getAxisSet().adjustRange();
-				IAxis xAxis = chart.getAxisSet().getXAxis(0);
-				xAxis.enableCategory(false);
-
-				chart.redraw();
 			}
 		}
 	}
