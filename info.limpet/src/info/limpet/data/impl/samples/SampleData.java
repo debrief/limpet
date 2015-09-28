@@ -4,7 +4,6 @@ import info.limpet.ICollection;
 import info.limpet.ICommand;
 import info.limpet.IObjectCollection;
 import info.limpet.IQuantityCollection;
-import info.limpet.IStore;
 import info.limpet.ITemporalQuantityCollection;
 import info.limpet.data.impl.ObjectCollection;
 import info.limpet.data.impl.QuantityCollection;
@@ -27,10 +26,11 @@ import tec.units.ri.unit.Units;
 public class SampleData
 {
 	public static final String SPEED_ONE = "Speed One";
+	public static final String SPEED_TWO = "Speed Two";
 	public static final String RANGED_SPEED_SINGLETON = "Ranged Speed Singleton";
 	public static final String FLOATING_POINT_FACTOR = "Floating point factor";
 
-	public IStore getData()
+	public InMemoryStore getData()
 	{
 		InMemoryStore res = new InMemoryStore();
 
@@ -39,7 +39,7 @@ public class SampleData
 		StockTypes.Temporal.Speed_MSec speedSeries1 = new StockTypes.Temporal.Speed_MSec(
 				SPEED_ONE);
 		StockTypes.Temporal.Speed_MSec speedSeries2 = new StockTypes.Temporal.Speed_MSec(
-				"Speed Two");
+				SPEED_TWO);
 		StockTypes.Temporal.Speed_MSec speedSeries3 = new StockTypes.Temporal.Speed_MSec(
 				"Speed Three (longer)");
 		StockTypes.Temporal.Length_M length1 = new StockTypes.Temporal.Length_M(

@@ -8,7 +8,7 @@ import java.util.List;
  * @author ian
  *
  */
-public interface ICommand<T extends ICollection>
+public interface ICommand<T extends ICollection> extends IChangeListener
 {
 	public String getTitle();
 	public String getDescription();

@@ -47,6 +47,8 @@ public class AddQuantityOperation<Q extends Quantity<Q>> implements
 			AbstractCommand<IQuantityCollection<T>>
 	{
 
+		public static final String SUM_OF_INPUT_SERIES = "Sum of input series";
+
 		public AddQuantityValues(List<IQuantityCollection<T>> selection,
 				IStore store)
 		{
@@ -62,26 +64,14 @@ public class AddQuantityOperation<Q extends Quantity<Q>> implements
 			Unit<T> unit = first.getUnits();
 
 			// ok, generate the new series
-			IQuantityCollection<T> target = new QuantityCollection<T>("Speed Total",
+			IQuantityCollection<T> target = new QuantityCollection<T>(SUM_OF_INPUT_SERIES,
 					this, unit);
 
 			// store the output
 			addOutput(target);
 
 			// start adding values.
-			for (int j = 0; j < _inputs.get(0).size(); j++)
-			{
-				Quantity<T> runningTotal = Quantities.getQuantity(0d, unit);
-
-				for (int i = 0; i < _inputs.size(); i++)
-				{
-					IQuantityCollection<T> thisC = _inputs.get(i);
-					runningTotal = runningTotal.add((Quantity<T>) thisC.getValues()
-							.get(j));
-				}
-
-				target.add(runningTotal);
-			}
+			performCalc(unit, target);
 
 			// tell each series that we're a dependent
 			Iterator<IQuantityCollection<T>> iter = _inputs.iterator();
@@ -95,7 +85,23 @@ public class AddQuantityOperation<Q extends Quantity<Q>> implements
 			List<ICollection> res = new ArrayList<ICollection>();
 			res.add(target);
 			getStore().add(res);
+		}
 
+		private void performCalc(Unit<T> unit, IQuantityCollection<T> target)
+		{
+			for (int j = 0; j < _inputs.get(0).size(); j++)
+			{
+				Quantity<T> runningTotal = Quantities.getQuantity(0d, unit);
+
+				for (int i = 0; i < _inputs.size(); i++)
+				{
+					IQuantityCollection<T> thisC = _inputs.get(i);
+					runningTotal = runningTotal.add((Quantity<T>) thisC.getValues()
+							.get(j));
+				}
+
+				target.add(runningTotal);
+			}
 		}
 	}
 

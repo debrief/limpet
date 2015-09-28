@@ -15,4 +15,7 @@ public interface ICollection
 	public abstract void setDescription(String description);
 	public abstract String getDescription();
 
+	public void addChangeListener(IChangeListener listener);
+	public void removeChangeListener(IChangeListener listener);
+	public void fireChanged();
 }
