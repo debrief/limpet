@@ -36,6 +36,7 @@ import org.eclipse.ui.internal.ide.StatusUtil;
 import org.eclipse.ui.internal.ide.application.DelayedEventsProcessor;
 import org.eclipse.ui.internal.ide.application.IDEWorkbenchAdvisor;
 
+@SuppressWarnings("restriction")
 public class Application implements IApplication, IExecutableExtension {
 
 	/**
@@ -78,7 +79,8 @@ public class Application implements IApplication, IExecutableExtension {
     /* (non-Javadoc)
      * @see org.eclipse.equinox.app.IApplication#start(org.eclipse.equinox.app.IApplicationContext context)
      */
-    public Object start(IApplicationContext appContext) throws Exception {
+		@SuppressWarnings("deprecation")
+		public Object start(IApplicationContext appContext) throws Exception {
         Display display = createDisplay();
         // processor must be created before we start event loop
         DelayedEventsProcessor processor = new DelayedEventsProcessor(display);
@@ -156,7 +158,8 @@ public class Application implements IApplication, IExecutableExtension {
      * @return <code>null</code> if a valid instance location has been set and an exit code
      *         otherwise
      */
-    private Object checkInstanceLocation(Shell shell, Map applicationArguments) {
+		@SuppressWarnings({ "deprecation", "rawtypes" })
+		private Object checkInstanceLocation(Shell shell, Map applicationArguments) {
         // -data @none was specified but an ide requires workspace
         Location instanceLoc = Platform.getInstanceLocation();
         if (instanceLoc == null) {
@@ -254,6 +257,7 @@ public class Application implements IApplication, IExecutableExtension {
         }
     }
 
+	@SuppressWarnings("rawtypes")
 	private static boolean isDevLaunchMode(Map args) {
 		// see org.eclipse.pde.internal.core.PluginPathFinder.isDevLaunchMode()
 		if (Boolean.getBoolean("eclipse.pde.launch")) //$NON-NLS-1$
@@ -275,7 +279,7 @@ public class Application implements IApplication, IExecutableExtension {
      * @return An URL storing the selected workspace or null if the user has
      *         canceled the launch operation.
      */
-    private URL promptForWorkspace(Shell shell, ChooseWorkspaceData launchData,
+		private URL promptForWorkspace(Shell shell, ChooseWorkspaceData launchData,
 			boolean force) {
         URL url = null;
         do {

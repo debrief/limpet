@@ -11,6 +11,7 @@ public class Perspective implements IPerspectiveFactory
 {
 	public static final String ID = "info.limpet.product.perspective";
 
+	@SuppressWarnings("deprecation")
 	public void createInitialLayout(IPageLayout layout)
 	{
 		final String editorArea = layout.getEditorArea();
