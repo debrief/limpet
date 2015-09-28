@@ -17,7 +17,7 @@ public abstract class AbstractCommand<T extends ICollection> implements ICommand
 	final private IStore _store;
 	
 	final protected List<T> _inputs;		
-	final private List<T> _outputs;
+	final protected List<T> _outputs;
 
 	public AbstractCommand(String title, String description, IStore store, boolean canUndo, boolean canRedo, List<T> inputs)
 	{
@@ -36,9 +36,8 @@ public abstract class AbstractCommand<T extends ICollection> implements ICommand
 	@Override
 	public void dataChanged()
 	{
-		// hmm, now we have to recalculate the data
-		
 		// do the recalc
+		recalculate();
 		
 		// now tell the outputs they have changed
 		Iterator<T> iter = _outputs.iterator();
@@ -49,6 +48,7 @@ public abstract class AbstractCommand<T extends ICollection> implements ICommand
 		}
 	}
 
+	abstract protected void recalculate();
 
 
 	@Override
@@ -126,4 +126,7 @@ public abstract class AbstractCommand<T extends ICollection> implements ICommand
 	{
 		_outputs.add(output);
 	}
+
+
+
 }

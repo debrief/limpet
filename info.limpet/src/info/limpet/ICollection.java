@@ -17,5 +17,9 @@ public interface ICollection
 
 	public void addChangeListener(IChangeListener listener);
 	public void removeChangeListener(IChangeListener listener);
+	
+	/** indicate that the collection has changed
+	 *  Note: both registeered listeners and dependents are informed of the change
+	 */
 	public void fireChanged();
 }

@@ -23,6 +23,20 @@ public class AddQuantityOperation<Q extends Quantity<Q>> implements
 {
 	CollectionComplianceTests aTests = new CollectionComplianceTests();
 
+	public static final String SUM_OF_INPUT_SERIES = "Sum of input series";
+
+	final protected String outputName;
+	
+	public AddQuantityOperation(String name)
+	{
+		outputName = name;
+	}
+
+	public AddQuantityOperation()
+	{
+		this(SUM_OF_INPUT_SERIES);
+	}
+
 	public Collection<ICommand<IQuantityCollection<Q>>> actionsFor(List<IQuantityCollection<Q>> selection,
 			IStore destination)
 	{
@@ -38,16 +52,18 @@ public class AddQuantityOperation<Q extends Quantity<Q>> implements
 
 	private boolean appliesTo(List<IQuantityCollection<Q>> selection)
 	{
-		return (aTests.allQuantity(selection) && aTests.allEqualLength(selection)
-				&& aTests.allEqualDimensions(selection) && aTests
-					.allEqualUnits(selection));
+		boolean allQuantity = aTests.allQuantity(selection);
+		boolean equalLength = aTests.allEqualLength(selection);
+		boolean equalDimensions = aTests.allEqualDimensions(selection);
+		boolean equalUnits = aTests.allEqualUnits(selection);
+		return (allQuantity && equalLength
+				&& equalDimensions && equalUnits);
 	}
 
-	public static class AddQuantityValues<T extends Quantity<T>> extends
+	public class AddQuantityValues<T extends Quantity<T>> extends
 			AbstractCommand<IQuantityCollection<T>>
 	{
 
-		public static final String SUM_OF_INPUT_SERIES = "Sum of input series";
 
 		public AddQuantityValues(List<IQuantityCollection<T>> selection,
 				IStore store)
@@ -63,15 +79,19 @@ public class AddQuantityOperation<Q extends Quantity<Q>> implements
 			IQuantityCollection<T> first = _inputs.get(0);
 			Unit<T> unit = first.getUnits();
 
+			List<IQuantityCollection<T>> outputs = new ArrayList<IQuantityCollection<T>>();
+			
 			// ok, generate the new series
-			IQuantityCollection<T> target = new QuantityCollection<T>(SUM_OF_INPUT_SERIES,
+			IQuantityCollection<T> target = new QuantityCollection<T>(outputName,
 					this, unit);
-
+			
+			outputs.add(target);
+			
 			// store the output
-			addOutput(target);
+			super.addOutput(target);
 
 			// start adding values.
-			performCalc(unit, target);
+			performCalc(unit, outputs);
 
 			// tell each series that we're a dependent
 			Iterator<IQuantityCollection<T>> iter = _inputs.iterator();
@@ -87,8 +107,36 @@ public class AddQuantityOperation<Q extends Quantity<Q>> implements
 			getStore().add(res);
 		}
 
-		private void performCalc(Unit<T> unit, IQuantityCollection<T> target)
+		@Override
+		protected void recalculate()
 		{
+			// get the unit
+			IQuantityCollection<T> first = _inputs.get(0);
+			Unit<T> unit = first.getUnits();
+
+			// update the results
+			performCalc(unit, _outputs);
+		}
+		
+		/** wrap the actual operation.  We're doing this since we need to separate it from the core "execute" 
+		 * operation in order to support dynamic updates
+		 * 
+		 * @param unit
+		 * @param outputs
+		 */
+		private void performCalc(Unit<T> unit, List<IQuantityCollection<T>> outputs)
+		{
+			IQuantityCollection<T> target = outputs.iterator().next();
+
+			// clear out the lists, first
+			Iterator<IQuantityCollection<T>> iter = _inputs.iterator();
+			while (iter.hasNext())
+			{
+				IQuantityCollection<T> qC = (IQuantityCollection<T>) iter
+						.next();
+				qC.getValues().clear();				
+			}
+			
 			for (int j = 0; j < _inputs.get(0).size(); j++)
 			{
 				Quantity<T> runningTotal = Quantities.getQuantity(0d, unit);
