@@ -24,6 +24,8 @@ import tec.units.ri.unit.Units;
 
 public class SampleData
 {
+	public static final String STRING_TWO = "String two";
+	public static final String STRING_ONE = "String one";
 	public static final String LENGTH_SINGLETON = "Length Singleton";
 	public static final String LENGTH_TWO = "Length Two";
 	public static final String LENGTH_ONE = "Length One";
@@ -49,9 +51,9 @@ public class SampleData
 		StockTypes.NonTemporal.Length_M length2 = new StockTypes.NonTemporal.Length_M(
 				LENGTH_TWO);
 		IObjectCollection<String> string1 = new ObjectCollection<String>(
-				"String one");
+				STRING_ONE);
 		IObjectCollection<String> string2 = new ObjectCollection<String>(
-				"String two");
+				STRING_TWO);
 		IQuantityCollection<Dimensionless> singleton1 = new QuantityCollection<Dimensionless>(
 				FLOATING_POINT_FACTOR, Units.ONE.asType(Dimensionless.class));
 		StockTypes.NonTemporal.Speed_MSec singletonRange1 = new StockTypes.NonTemporal.Speed_MSec(

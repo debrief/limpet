@@ -2,6 +2,7 @@ package info.limpet.data;
 
 import info.limpet.ICollection;
 import info.limpet.ICommand;
+import info.limpet.IQuantityCollection;
 import info.limpet.data.impl.CoreChangeListener;
 import info.limpet.data.impl.QuantityCollection;
 import info.limpet.data.impl.samples.SampleData;
@@ -48,6 +49,10 @@ public class TestDynamic extends TestCase
 		ICollection resSeries = store.get(AddQuantityOperation.SUM_OF_INPUT_SERIES);
 		assertNotNull(resSeries);
 
+		// remember the units
+		IQuantityCollection<?> iq = (IQuantityCollection<?>) resSeries;
+		final String resUnits = iq.getUnits().toString();
+		
 		// ok, play about with a change
 		final List<String> events = new ArrayList<String>();
 		CoreChangeListener listener = new CoreChangeListener()
@@ -64,6 +69,9 @@ public class TestDynamic extends TestCase
 		// ok, now make a change in one of hte input collections
 		speedOne.fireChanged();
 		assertEquals("change received", 1, events.size());
+		
+		// check the units haven't changed
+		assertEquals("units still valid", resUnits, iq.getUnits().toString());
 
 		// ok, now make another change in one of hte input collections
 		speedOne.fireChanged();
@@ -88,6 +96,9 @@ public class TestDynamic extends TestCase
 		assertNotNull("found new series");
 		newResSeries.addChangeListener(listener);
 
+		IQuantityCollection<?> iq2 = (IQuantityCollection<?>) newResSeries;
+		final String resUnits2 = iq2.getUnits().toString();
+
 		// ok, fire a change in speed one
 		speedOne.fireChanged();
 		assertEquals("change received", 2, events.size());
@@ -103,6 +114,12 @@ public class TestDynamic extends TestCase
 		assertEquals("correct elements", 10, newResQ.size());
 		assertEquals("correct elements", 10, speedTwo.size());
 		assertEquals("correct elements", 10, resSeries.size());
+		
+		// check the units haven't changed
+		assertEquals("units still valid", resUnits, iq.getUnits().toString());
+		assertEquals("units still valid", resUnits2, iq2.getUnits().toString());
+
+
 		
 	}
 }

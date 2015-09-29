@@ -6,7 +6,6 @@ import info.limpet.IStore;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.ArrayList;
 import java.util.List;
 
 public abstract class AbstractCommand<T extends ICollection> implements
