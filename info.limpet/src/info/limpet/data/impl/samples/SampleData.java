@@ -7,6 +7,7 @@ import info.limpet.IQuantityCollection;
 import info.limpet.data.impl.ObjectCollection;
 import info.limpet.data.impl.QuantityCollection;
 import info.limpet.data.operations.AddQuantityOperation;
+import info.limpet.data.operations.MultiplyQuantityOperation;
 import info.limpet.data.store.InMemoryStore;
 
 import java.util.ArrayList;
@@ -23,6 +24,8 @@ import tec.units.ri.unit.Units;
 
 public class SampleData
 {
+	public static final String STRING_TWO = "String two";
+	public static final String STRING_ONE = "String one";
 	public static final String LENGTH_SINGLETON = "Length Singleton";
 	public static final String LENGTH_TWO = "Length Two non-Time";
 	public static final String LENGTH_ONE = "Length One non-Time";
@@ -48,9 +51,9 @@ public class SampleData
 		StockTypes.NonTemporal.Length_M length2 = new StockTypes.NonTemporal.Length_M(
 				LENGTH_TWO);
 		IObjectCollection<String> string1 = new ObjectCollection<String>(
-				"String one");
+				STRING_ONE);
 		IObjectCollection<String> string2 = new ObjectCollection<String>(
-				"String two");
+				STRING_TWO);
 		IQuantityCollection<Dimensionless> singleton1 = new QuantityCollection<Dimensionless>(
 				FLOATING_POINT_FACTOR, Units.ONE.asType(Dimensionless.class));
 		StockTypes.NonTemporal.Speed_MSec singletonRange1 = new StockTypes.NonTemporal.Speed_MSec(
@@ -66,9 +69,9 @@ public class SampleData
 
 			speedSeries1.add(thisTime, 1 / Math.sin(i));
 			speedSeries2.add(thisTime, Math.sin(i));
-			speedSeries3.add(thisTime, 3 * Math.cos(i));
-			length1.add(i % 3);
-			length2.add(i % 5);
+			speedSeries3.add(thisTime, 3d * Math.cos(i));
+			length1.add((double)i % 3);
+			length2.add((double)i % 5);
 			string1.add("item " + i);
 			string2.add("item " + (i % 3));
 		}
@@ -109,6 +112,14 @@ public class SampleData
 		ICommand<?> addAction = actions.iterator().next();
 		addAction.execute();	
 		
+		// and an operation using our speed factor
+		selection.clear();
+		selection.add(speedSeries1);
+		selection.add(singleton1);
+		Collection<ICommand<ICollection>> actions2 = new MultiplyQuantityOperation().actionsFor(selection, res);
+		addAction = actions2.iterator().next();
+		addAction.execute();
+				
 		return res;
 	}
 }

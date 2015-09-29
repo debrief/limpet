@@ -178,6 +178,9 @@ public class CollectionPropertySource implements IPropertySource
 			{
 				IQuantityCollection<?> tt = (IQuantityCollection<?>) theColl;
 				tt.replaceSingleton(Double.parseDouble((String) value));
+				
+				// ok, fire changed!
+				tt.fireChanged();
 			}
 		}
 	}
