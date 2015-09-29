@@ -11,8 +11,9 @@ import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 public class CommandPropertySource implements IPropertySource
 {
 
-	private static final String PROPERTY_NAME = "limpet.operation.name";
-	private static final String PROPERTY_DESCRIPTION = "limpet.collection.description";
+	private static final String COMMAND_NAME = "limpet.operation.name";
+	private static final String COMMAND_DESCRIPTION = "limpet.operation.description";
+	private static final String COMMAND_DYNAMIC = "limpet.operation.dynamic";
 
 	private IPropertyDescriptor[] propertyDescriptors;
 	private final CommandWrapper _operation;
@@ -44,14 +45,17 @@ public class CommandPropertySource implements IPropertySource
 		{
 			// Create a descriptor and set a category
 			final PropertyDescriptor textDescriptor = new PropertyDescriptor(
-					PROPERTY_NAME, "Name");
+					COMMAND_NAME, "Name");
 			textDescriptor.setCategory("Label");
 			final PropertyDescriptor descriptionDescriptor = new TextPropertyDescriptor(
-					PROPERTY_DESCRIPTION, "Description");
+					COMMAND_DESCRIPTION, "Description");
+			descriptionDescriptor.setCategory("Label");
+			final PropertyDescriptor dynamicDescriptor = new CheckboxPropertyDescriptor(
+					COMMAND_DYNAMIC, "Dynamic updates");
 			descriptionDescriptor.setCategory("Label");
 
 			propertyDescriptors = new IPropertyDescriptor[]
-			{ textDescriptor, descriptionDescriptor };
+			{ textDescriptor, descriptionDescriptor, dynamicDescriptor };
 		}
 		return propertyDescriptors;
 	}
@@ -61,10 +65,12 @@ public class CommandPropertySource implements IPropertySource
 	{
 		final String prop = (String) id;
 
-		if (prop.equals(PROPERTY_NAME))
+		if (prop.equals(COMMAND_NAME))
 			return _operation.getCommand().getTitle();
-		else if (prop.equals(PROPERTY_DESCRIPTION))
+		else if (prop.equals(COMMAND_DESCRIPTION))
 			return _operation.getCommand().getDescription();
+		else if (prop.equals(COMMAND_DYNAMIC))
+			return _operation.getCommand().getDynamic();
 
 		return null;
 	}
@@ -86,7 +92,12 @@ public class CommandPropertySource implements IPropertySource
 	@Override
 	public void setPropertyValue(final Object id, final Object value)
 	{
-		throw new RuntimeException("cannot set properties for operation source");
+		final String prop = (String) id;
+		if(prop.equals(COMMAND_DYNAMIC))
+		{
+			boolean res = (boolean) value;
+			_operation.getCommand().setDynamic(res);
+		}
 	}
 
 }
