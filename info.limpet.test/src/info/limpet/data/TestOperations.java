@@ -318,19 +318,21 @@ public class TestOperations extends TestCase
 		assertEquals("valid collections - one is singleton", 1, commands.size());
 	
 		ICommand<ICollection> command = commands.iterator().next();
-		command.execute();
 		
-		// TODO: test actions is non-null
 		
 		// TODO: test actions has single item: "Multiply series by constant"
+		assertEquals("correct name", "Multiply Series", command.getTitle());
 		
 		// TODO: apply action
+		command.execute();
 		
 		// TODO: test store has a new item in it		
+		assertEquals("store not empty", 1, store.size());
+		
+		ICollection newS = store.get(MultiplyQuantityOperation.SERIES_NAME);
 		
 		// TODO: test results is same length as thisSpeed
-
-		
+		assertEquals("correct size", 10, newS.size());
 		
 		selection.clear();
 		selection.add(speed_good_1);
