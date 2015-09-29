@@ -173,7 +173,7 @@ public class MultiplyQuantityOperation implements
 			// start adding values.
 			for (int j = 0; j < length; j++)
 			{
-				Quantity<?> runningTotal = Quantities.getQuantity(1, unit);
+				Quantity<?> runningTotal = Quantities.getQuantity(1d, unit);
 
 				for (int i = 0; i < _inputs.size(); i++)
 				{
