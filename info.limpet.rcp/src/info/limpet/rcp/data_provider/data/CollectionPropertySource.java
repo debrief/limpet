@@ -116,7 +116,7 @@ public class CollectionPropertySource implements IPropertySource
 				Quantity<?> first = getSingleton();
 				if (first != null)
 				{
-					return first.getValue();
+					return "" + first.getValue();
 				}
 			}
 		}
@@ -178,6 +178,9 @@ public class CollectionPropertySource implements IPropertySource
 			{
 				IQuantityCollection<?> tt = (IQuantityCollection<?>) theColl;
 				tt.replaceSingleton(Double.parseDouble((String) value));
+				
+				// ok, fire changed!
+				tt.fireChanged();
 			}
 		}
 	}
