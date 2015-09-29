@@ -19,4 +19,6 @@ public interface ICommand<T extends ICollection> extends IChangeListener
 	public boolean canRedo();
 	public List<T> getOutputs();
 	public List<T> getInputs();
+	boolean getDynamic();
+	void setDynamic(boolean dynamic);
 }
