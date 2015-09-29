@@ -29,7 +29,6 @@ import tec.units.ri.unit.Units;
 public class TestOperations extends TestCase
 {
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void testAppliesTo()
 	{
 		// the units for this measurement
@@ -172,7 +171,8 @@ public class TestOperations extends TestCase
 		InMemoryStore store = new InMemoryStore();
 		assertEquals("store empty", 0, store.size());
 		
-		Collection<ICommand<?>> actions = new AddQuantityOperation().actionsFor(selection, store );
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		Collection<ICommand<ICollection>> actions = new AddQuantityOperation().actionsFor(selection, store );
 		
 		assertEquals("correct number of actions returned", 1, actions.size());
 		
@@ -216,7 +216,6 @@ public class TestOperations extends TestCase
 		}
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void testDimensionlessMultiply()
 	{	
 		QuantityCollection<Dimensionless> factor = new QuantityCollection<>("Factor 4", Units.ONE);
@@ -285,7 +284,7 @@ public class TestOperations extends TestCase
 		selection.clear();
 		selection.add(speed_good_1);
 		selection.add(string_1);
-		Collection<ICommand> commands = new MultiplyQuantityOperation().actionsFor(selection, store );
+		Collection<ICommand<ICollection>> commands = new MultiplyQuantityOperation().actionsFor(selection, store );
 		assertEquals("invalid collections - not both quantities", 0, commands.size());
 
 		selection.clear();
@@ -318,7 +317,7 @@ public class TestOperations extends TestCase
 		commands = new MultiplyQuantityOperation().actionsFor(selection, store );
 		assertEquals("valid collections - one is singleton", 1, commands.size());
 	
-		ICommand command = commands.iterator().next();
+		ICommand<ICollection> command = commands.iterator().next();
 		command.execute();
 		
 		// TODO: test actions is non-null
