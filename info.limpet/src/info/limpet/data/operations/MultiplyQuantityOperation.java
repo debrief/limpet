@@ -18,8 +18,7 @@ import javax.measure.Unit;
 
 import tec.units.ri.quantity.Quantities;
 
-public class MultiplyQuantityOperation implements
-		IOperation<ICollection>
+public class MultiplyQuantityOperation implements IOperation<ICollection>
 {
 	public static final String SERIES_NAME = "Multiplication product";
 
@@ -30,9 +29,9 @@ public class MultiplyQuantityOperation implements
 	{
 		Collection<ICommand<ICollection>> res = new ArrayList<ICommand<ICollection>>();
 		if (appliesTo(selection))
-		{		
-			ICommand<ICollection> newC = new MultiplyQuantityValues(
-					selection, destination);
+		{
+			ICommand<ICollection> newC = new MultiplyQuantityValues(selection,
+					destination);
 			res.add(newC);
 		}
 
@@ -42,15 +41,15 @@ public class MultiplyQuantityOperation implements
 	private boolean appliesTo(List<ICollection> selection)
 	{
 		// first check we have quantity data
-		if (!aTests.allQuantity(selection))
-		{
-			return false;
-		}
-		else
+		if (aTests.allQuantity(selection))
 		{
 			// ok, we have quantity data. See if we have series of the same length, or
 			// singletons
 			return aTests.allEqualLengthOrSingleton(selection);
+		}
+		else
+		{
+			return false;
 		}
 	}
 
@@ -58,8 +57,7 @@ public class MultiplyQuantityOperation implements
 			AbstractCommand<ICollection>
 	{
 
-		public MultiplyQuantityValues(List<ICollection> selection,
-				IStore store)
+		public MultiplyQuantityValues(List<ICollection> selection, IStore store)
 		{
 			super("Multiply Series", "Multiply series", store, false, false,
 					selection);
@@ -83,19 +81,18 @@ public class MultiplyQuantityOperation implements
 			return size;
 		}
 
-		
 		@Override
 		public void execute()
-		{			
+		{
 			Unit<?> unit = calculateOutputUnit();
 			List<ICollection> outputs = new ArrayList<ICollection>();
-			
+
 			// ok, generate the new series
 			IQuantityCollection<?> target = new QuantityCollection<>(SERIES_NAME,
 					this, unit);
-			
+
 			outputs.add(target);
-			
+
 			// store the output
 			super.addOutput(target);
 
@@ -119,16 +116,19 @@ public class MultiplyQuantityOperation implements
 		private Unit<?> calculateOutputUnit()
 		{
 			Iterator<ICollection> inputsIterator = _inputs.iterator();
-			IQuantityCollection<?> firstItem = (IQuantityCollection<?>) inputsIterator.next();
+			IQuantityCollection<?> firstItem = (IQuantityCollection<?>) inputsIterator
+					.next();
 			Unit<?> unit = firstItem.getUnits();
-			
-			while (inputsIterator.hasNext()) {
-				IQuantityCollection<?>  nextItem = (IQuantityCollection<?>) inputsIterator.next();
+
+			while (inputsIterator.hasNext())
+			{
+				IQuantityCollection<?> nextItem = (IQuantityCollection<?>) inputsIterator
+						.next();
 				unit = unit.multiply(nextItem.getUnits());
 			}
 			return unit;
 		}
-		
+
 		@Override
 		protected void recalculate()
 		{
@@ -137,35 +137,28 @@ public class MultiplyQuantityOperation implements
 			// update the results
 			performCalc(unit, _outputs);
 		}
-		
-		/** wrap the actual operation.  We're doing this since we need to separate it from the core "execute" 
-		 * operation in order to support dynamic updates
+
+		/**
+		 * wrap the actual operation. We're doing this since we need to separate it
+		 * from the core "execute" operation in order to support dynamic updates
 		 * 
 		 * @param unit
 		 * @param outputs
 		 */
 		private void performCalc(Unit<?> unit, List<ICollection> outputs)
 		{
-			// TODO: Dinko - we don't use a single set of units here, they results
-			// type has to change
-			// as the multiplications occur. Or, we may have to calculate the units
-			// first (in order
-			// to declare the "target" collection, then populate that collection
-
-			
-			IQuantityCollection<?> target = (IQuantityCollection<?>) outputs.iterator().next();
+			IQuantityCollection<?> target = (IQuantityCollection<?>) outputs
+					.iterator().next();
 
 			// clear out the lists, first
 			Iterator<ICollection> iter = _outputs.iterator();
 			while (iter.hasNext())
 			{
-				IQuantityCollection<?> qC = (IQuantityCollection<?>) iter
-						.next();
-				qC.getValues().clear();	
-				
+				IQuantityCollection<?> qC = (IQuantityCollection<?>) iter.next();
+				qC.getValues().clear();
+
 				// hey, if it's a time series we need to clear the times, too
 			}
-			
 
 			// find the (non-singleton) array length
 			int length = getNonSingletonArrayLength(_inputs);
@@ -177,7 +170,8 @@ public class MultiplyQuantityOperation implements
 
 				for (int i = 0; i < _inputs.size(); i++)
 				{
-					IQuantityCollection<?> thisC = (IQuantityCollection<?>) _inputs.get(i);
+					IQuantityCollection<?> thisC = (IQuantityCollection<?>) _inputs
+							.get(i);
 
 					final Quantity<?> thisValue;
 
@@ -191,15 +185,13 @@ public class MultiplyQuantityOperation implements
 						thisValue = (Quantity<?>) thisC.getValues().get(j);
 					}
 
-					// TODO: Dinko - here's the dodgy bit where we switch from addition
-					// to multiplication
 					runningTotal = runningTotal.multiply(thisValue);
 				}
 
 				target.add(runningTotal.getValue());
 			}
 		}
-		
-			}
+
+	}
 
 }
