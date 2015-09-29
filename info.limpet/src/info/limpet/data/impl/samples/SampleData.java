@@ -18,6 +18,8 @@ import java.util.List;
 import javax.measure.quantity.Dimensionless;
 import javax.measure.quantity.Length;
 
+import tec.units.ri.unit.Units;
+
 public class SampleData
 {
 	public IStore getData()
@@ -40,7 +42,7 @@ public class SampleData
 				"String one");
 		IObjectCollection<String> string2 = new ObjectCollection<String>(
 				"String two");
-		QuantityCollection<Dimensionless> factor = new QuantityCollection<>("Factor 4", null);
+		QuantityCollection<Dimensionless> factor = new QuantityCollection<>("Factor 4", Units.ONE);
 		factor.add(4);
 
 		long thisTime = 0; 
