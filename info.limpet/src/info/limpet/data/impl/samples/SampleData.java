@@ -27,10 +27,10 @@ public class SampleData
 	public static final String STRING_TWO = "String two";
 	public static final String STRING_ONE = "String one";
 	public static final String LENGTH_SINGLETON = "Length Singleton";
-	public static final String LENGTH_TWO = "Length Two";
-	public static final String LENGTH_ONE = "Length One";
-	public static final String SPEED_ONE = "Speed One";
-	public static final String SPEED_TWO = "Speed Two";
+	public static final String LENGTH_TWO = "Length Two non-Time";
+	public static final String LENGTH_ONE = "Length One non-Time";
+	public static final String SPEED_ONE = "Speed One Time";
+	public static final String SPEED_TWO = "Speed Two Time";
 	public static final String RANGED_SPEED_SINGLETON = "Ranged Speed Singleton";
 	public static final String FLOATING_POINT_FACTOR = "Floating point factor";
 
@@ -67,7 +67,7 @@ public class SampleData
 		{
 			thisTime = new Date().getTime() + i * 500 * 60;
 
-			speedSeries1.add(thisTime, (double)i);
+			speedSeries1.add(thisTime, 1 / Math.sin(i));
 			speedSeries2.add(thisTime, Math.sin(i));
 			speedSeries3.add(thisTime, 3d * Math.cos(i));
 			length1.add((double)i % 3);
@@ -77,7 +77,7 @@ public class SampleData
 		}
 
 		// add an extra item to speedSeries3
-		speedSeries3.add(thisTime + 12 * 500 * 60, 25);
+		speedSeries3.add(thisTime + 12 * 500 * 60, 12);
 		
 		// give the singleton a value		
 		singleton1.add(4d);
