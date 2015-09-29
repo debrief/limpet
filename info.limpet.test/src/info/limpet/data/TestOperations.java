@@ -320,18 +320,18 @@ public class TestOperations extends TestCase
 		ICommand<ICollection> command = commands.iterator().next();
 		
 		
-		// TODO: test actions has single item: "Multiply series by constant"
+		// test actions has single item: "Multiply series by constant"
 		assertEquals("correct name", "Multiply Series", command.getTitle());
 		
-		// TODO: apply action
+		// apply action
 		command.execute();
 		
-		// TODO: test store has a new item in it		
+		// test store has a new item in it		
 		assertEquals("store not empty", 1, store.size());
 		
 		ICollection newS = store.get(MultiplyQuantityOperation.SERIES_NAME);
 		
-		// TODO: test results is same length as thisSpeed
+		// test results is same length as thisSpeed
 		assertEquals("correct size", 10, newS.size());
 		
 		selection.clear();
