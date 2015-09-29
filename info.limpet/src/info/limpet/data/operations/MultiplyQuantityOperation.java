@@ -21,6 +21,8 @@ import tec.units.ri.quantity.Quantities;
 public class MultiplyQuantityOperation implements
 		IOperation<ICollection>
 {
+	public static final String SERIES_NAME = "Multiplication product";
+
 	CollectionComplianceTests aTests = new CollectionComplianceTests();
 
 	public Collection<ICommand<ICollection>> actionsFor(
@@ -89,7 +91,7 @@ public class MultiplyQuantityOperation implements
 			List<ICollection> outputs = new ArrayList<ICollection>();
 			
 			// ok, generate the new series
-			IQuantityCollection<?> target = new QuantityCollection<>("Multiplication product",
+			IQuantityCollection<?> target = new QuantityCollection<>(SERIES_NAME,
 					this, unit);
 			
 			outputs.add(target);
