@@ -5,7 +5,6 @@ import info.limpet.ICommand;
 import info.limpet.data.impl.ObjectCollection;
 import info.limpet.data.impl.QuantityCollection;
 import info.limpet.data.impl.TemporalQuantityCollection;
-import info.limpet.data.impl.samples.SampleData;
 import info.limpet.data.operations.AddQuantityOperation;
 import info.limpet.data.operations.CollectionComplianceTests;
 import info.limpet.data.operations.MultiplyQuantityOperation;
@@ -173,7 +172,6 @@ public class TestOperations extends TestCase
 		InMemoryStore store = new InMemoryStore();
 		assertEquals("store empty", 0, store.size());
 		
-		@SuppressWarnings({ "rawtypes", "unchecked" })
 		Collection<ICommand<?>> actions = new AddQuantityOperation().actionsFor(selection, store );
 		
 		assertEquals("correct number of actions returned", 1, actions.size());
