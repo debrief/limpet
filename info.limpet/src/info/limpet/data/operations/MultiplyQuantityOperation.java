@@ -17,19 +17,20 @@ import javax.measure.Quantity;
 import javax.measure.Unit;
 
 import tec.units.ri.quantity.Quantities;
+import tec.units.ri.unit.Units;
 
-public class MultiplyQuantityOperation<Q extends Quantity<Q>> implements
-		IOperation<IQuantityCollection<Q>>
+public class MultiplyQuantityOperation implements
+		IOperation<IQuantityCollection<?>>
 {
 	CollectionComplianceTests aTests = new CollectionComplianceTests();
 
-	public Collection<ICommand<IQuantityCollection<Q>>> actionsFor(
-			List<IQuantityCollection<Q>> selection, IStore destination)
+	public Collection<ICommand<IQuantityCollection<?>>> actionsFor(
+			List<IQuantityCollection<?>> selection, IStore destination)
 	{
-		Collection<ICommand<IQuantityCollection<Q>>> res = new ArrayList<ICommand<IQuantityCollection<Q>>>();
+		Collection<ICommand<IQuantityCollection<?>>> res = new ArrayList<ICommand<IQuantityCollection<?>>>();
 		if (appliesTo(selection))
 		{
-			ICommand<IQuantityCollection<Q>> newC = new AddQuantityValues<Q>(
+			ICommand<IQuantityCollection<?>> newC = new MultiplyQuantityValues(
 					selection, destination);
 			res.add(newC);
 		}
@@ -37,7 +38,7 @@ public class MultiplyQuantityOperation<Q extends Quantity<Q>> implements
 		return res;
 	}
 
-	private boolean appliesTo(List<IQuantityCollection<Q>> selection)
+	private boolean appliesTo(List<IQuantityCollection<?>> selection)
 	{
 		// first check we have quantity data
 		if (!aTests.allQuantity(selection))
@@ -52,25 +53,25 @@ public class MultiplyQuantityOperation<Q extends Quantity<Q>> implements
 		}
 	}
 
-	public static class AddQuantityValues<T extends Quantity<T>> extends
-			AbstractCommand<IQuantityCollection<T>>
+	public static class MultiplyQuantityValues extends
+			AbstractCommand<IQuantityCollection<?>>
 	{
 
-		public AddQuantityValues(List<IQuantityCollection<T>> selection,
+		public MultiplyQuantityValues(List<IQuantityCollection<?>> selection,
 				IStore store)
 		{
 			super("Multiply Series", "Multiply series", store, false, false,
 					selection);
 		}
 
-		private int getNonSingletonArrayLength(List<IQuantityCollection<T>> inputs)
+		private int getNonSingletonArrayLength(List<IQuantityCollection<?>> inputs)
 		{
 			int size = 0;
 
-			Iterator<IQuantityCollection<T>> iter = inputs.iterator();
+			Iterator<IQuantityCollection<?>> iter = inputs.iterator();
 			while (iter.hasNext())
 			{
-				IQuantityCollection<T> thisC = (IQuantityCollection<T>) iter.next();
+				IQuantityCollection<?> thisC = (IQuantityCollection<?>) iter.next();
 				if (thisC.size() > 1)
 				{
 					size = thisC.size();
@@ -84,15 +85,12 @@ public class MultiplyQuantityOperation<Q extends Quantity<Q>> implements
 		
 		@Override
 		public void execute()
-		{
-			// get the unit
-			IQuantityCollection<T> first = _inputs.get(0);
-			Unit<T> unit = first.getUnits();
-
-			List<IQuantityCollection<T>> outputs = new ArrayList<IQuantityCollection<T>>();
+		{			
+			Unit<?> unit = calculateOutputUnit();
+			List<IQuantityCollection<?>> outputs = new ArrayList<IQuantityCollection<?>>();
 			
 			// ok, generate the new series
-			IQuantityCollection<T> target = new QuantityCollection<T>("Multiplication product",
+			IQuantityCollection<?> target = new QuantityCollection<>("Multiplication product",
 					this, unit);
 			
 			outputs.add(target);
@@ -104,7 +102,7 @@ public class MultiplyQuantityOperation<Q extends Quantity<Q>> implements
 			performCalc(unit, outputs);
 
 			// tell each series that we're a dependent
-			Iterator<IQuantityCollection<T>> iter = _inputs.iterator();
+			Iterator<IQuantityCollection<?>> iter = _inputs.iterator();
 			while (iter.hasNext())
 			{
 				ICollection iCollection = iter.next();
@@ -116,13 +114,21 @@ public class MultiplyQuantityOperation<Q extends Quantity<Q>> implements
 			res.add(target);
 			getStore().add(res);
 		}
+
+		private Unit<?> calculateOutputUnit()
+		{
+			Iterator<IQuantityCollection<?>> inputsIterator = _inputs.iterator();
+			Unit<?> unit = inputsIterator.next().getUnits();
+			while (inputsIterator.hasNext()) {
+				unit = unit.multiply(inputsIterator.next().getUnits());
+			}
+			return unit;
+		}
 		
 		@Override
 		protected void recalculate()
 		{
-			// get the unit
-			IQuantityCollection<T> first = _inputs.get(0);
-			Unit<T> unit = first.getUnits();
+			Unit<?> unit = calculateOutputUnit();
 
 			// update the results
 			performCalc(unit, _outputs);
@@ -134,7 +140,7 @@ public class MultiplyQuantityOperation<Q extends Quantity<Q>> implements
 		 * @param unit
 		 * @param outputs
 		 */
-		private void performCalc(Unit<T> unit, List<IQuantityCollection<T>> outputs)
+		private void performCalc(Unit<?> unit, List<IQuantityCollection<?>> outputs)
 		{
 			// TODO: Dinko - we don't use a single set of units here, they results
 			// type has to change
@@ -143,13 +149,13 @@ public class MultiplyQuantityOperation<Q extends Quantity<Q>> implements
 			// to declare the "target" collection, then populate that collection
 
 			
-			IQuantityCollection<T> target = outputs.iterator().next();
+			IQuantityCollection<?> target = outputs.iterator().next();
 
 			// clear out the lists, first
-			Iterator<IQuantityCollection<T>> iter = _inputs.iterator();
+			Iterator<IQuantityCollection<?>> iter = _outputs.iterator();
 			while (iter.hasNext())
 			{
-				IQuantityCollection<T> qC = (IQuantityCollection<T>) iter
+				IQuantityCollection<?> qC = (IQuantityCollection<?>) iter
 						.next();
 				qC.getValues().clear();	
 				
@@ -163,13 +169,13 @@ public class MultiplyQuantityOperation<Q extends Quantity<Q>> implements
 			// start adding values.
 			for (int j = 0; j < length; j++)
 			{
-				Quantity<T> runningTotal = Quantities.getQuantity(0, unit);
+				Quantity<?> runningTotal = Quantities.getQuantity(0, unit);
 
 				for (int i = 0; i < _inputs.size(); i++)
 				{
-					IQuantityCollection<T> thisC = _inputs.get(i);
+					IQuantityCollection<?> thisC = _inputs.get(i);
 
-					final Quantity<T> thisValue;
+					final Quantity<?> thisValue;
 
 					// just check that this isn't a singleton
 					if (thisC.size() == 1)
@@ -178,12 +184,12 @@ public class MultiplyQuantityOperation<Q extends Quantity<Q>> implements
 					}
 					else
 					{
-						thisValue = (Quantity<T>) thisC.getValues().get(j);
+						thisValue = (Quantity<?>) thisC.getValues().get(j);
 					}
 
 					// TODO: Dinko - here's the dodgy bit where we switch from addition
 					// to multiplication
-					runningTotal = runningTotal.add(thisValue);
+					runningTotal = runningTotal.multiply(thisValue);
 				}
 
 				target.add(runningTotal);

@@ -317,6 +317,9 @@ public class TestOperations extends TestCase
 		assertEquals("store empty", 0, store.size());
 		commands = new MultiplyQuantityOperation().actionsFor(selection, store );
 		assertEquals("valid collections - one is singleton", 1, commands.size());
+	
+		ICommand command = commands.iterator().next();
+		command.execute();
 		
 		// TODO: test actions is non-null
 		
