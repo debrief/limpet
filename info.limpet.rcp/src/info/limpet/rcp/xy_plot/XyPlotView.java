@@ -1,14 +1,10 @@
 package info.limpet.rcp.xy_plot;
 
 import info.limpet.ICollection;
-import info.limpet.IObjectCollection;
 import info.limpet.IQuantityCollection;
 import info.limpet.ITemporalQuantityCollection;
-import info.limpet.analysis.ObjectFrequencyBins;
-import info.limpet.analysis.ObjectFrequencyBins.BinnedData;
-import info.limpet.analysis.QuantityFrequencyBins;
-import info.limpet.analysis.QuantityFrequencyBins.Bin;
 import info.limpet.data.operations.CollectionComplianceTests;
+import info.limpet.rcp.PlottingHelpers;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -34,7 +30,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 import org.swtchart.Chart;
 import org.swtchart.IAxis;
-import org.swtchart.IBarSeries;
 import org.swtchart.ILineSeries;
 import org.swtchart.ILineSeries.PlotSymbolType;
 import org.swtchart.ISeries;
@@ -82,7 +77,7 @@ public class XyPlotView extends ViewPart
 
 		// set titles
 		chart.getAxisSet().getXAxis(0).getTitle().setText("Value");
-		chart.getAxisSet().getYAxis(0).getTitle().setText("Pending");
+		chart.getAxisSet().getYAxis(0).getTitle().setText("Value");
 		chart.getTitle().setVisible(false);
 
 		// adjust the axis range
@@ -154,7 +149,7 @@ public class XyPlotView extends ViewPart
 		// sort out what type of data this is.
 		if (first.isQuantity())
 		{
-			if (first.isTemporal())
+			if (aTests.allTemporal(res))
 			{
 				showTemporalQuantity(res);
 			}
@@ -190,13 +185,12 @@ public class XyPlotView extends ViewPart
 				if (coll.size() > 1)
 				{
 					IQuantityCollection<?> thisQ = (IQuantityCollection<?>) coll;
-					
-					String seriesName = thisQ.getName() + " (" + thisQ.getUnits()
-							+ ")";
+
+					String seriesName = thisQ.getName() + " (" + thisQ.getUnits() + ")";
 					ILineSeries newSeries = (ILineSeries) chart.getSeriesSet()
 							.createSeries(SeriesType.LINE, seriesName);
 					newSeries.setSymbolType(PlotSymbolType.NONE);
-
+					newSeries.setLineColor(PlottingHelpers.colorFor(seriesName));
 
 					double[] yData = new double[thisQ.size()];
 
@@ -204,13 +198,14 @@ public class XyPlotView extends ViewPart
 					int ctr = 0;
 					while (values.hasNext())
 					{
-						Quantity tQ = (Quantity) values.next();
+						Quantity<?> tQ = (Quantity<?>) values.next();
 						yData[ctr++] = tQ.getValue().doubleValue();
 					}
-					
 
-//					newSeries.setXSeries(xData);
+					// newSeries.setXSeries(xData);
 					newSeries.setYSeries(yData);
+
+					chart.getAxisSet().getXAxis(0).getTitle().setText("Count");
 
 					// adjust the axis range
 					chart.getAxisSet().adjustRange();
@@ -242,38 +237,44 @@ public class XyPlotView extends ViewPart
 			{
 				if (coll.size() > 1)
 				{
-					ITemporalQuantityCollection<?> thisQ = (ITemporalQuantityCollection<?>) coll;
-					
-					String seriesName = thisQ.getName() + " (" + thisQ.getUnits()
-							+ ")";
-					ILineSeries newSeries = (ILineSeries) chart.getSeriesSet()
-							.createSeries(SeriesType.LINE, seriesName);
-					newSeries.setSymbolType(PlotSymbolType.NONE);
-
-
-					Date[] xData = new Date[thisQ.size()];
-					double[] yData = new double[thisQ.size()];
-
-					Iterator<?> values = thisQ.getValues().iterator();
-					Iterator<Long> times = thisQ.getTimes().iterator();
-					int ctr = 0;
-					while (values.hasNext())
+					if (coll.isTemporal())
 					{
-						Quantity tQ = (Quantity) values.next();
-						long t = times.next();
-						xData[ctr] = new Date(t);
-						yData[ctr++] = tQ.getValue().doubleValue();
-					}				
+						ITemporalQuantityCollection<?> thisQ = (ITemporalQuantityCollection<?>) coll;
 
-					newSeries.setXDateSeries(xData);
-					newSeries.setYSeries(yData);
+						String seriesName = thisQ.getName() + " (" + thisQ.getUnits() + ")";
+						ILineSeries newSeries = (ILineSeries) chart.getSeriesSet()
+								.createSeries(SeriesType.LINE, seriesName);
+						newSeries.setSymbolType(PlotSymbolType.NONE);
+						newSeries.setLineColor(PlottingHelpers.colorFor(seriesName));
 
-					// adjust the axis range
-					chart.getAxisSet().adjustRange();
-					IAxis xAxis = chart.getAxisSet().getXAxis(0);
-					xAxis.enableCategory(false);
+						Date[] xData = new Date[thisQ.size()];
+						double[] yData = new double[thisQ.size()];
 
-					chart.redraw();
+						Iterator<?> values = thisQ.getValues().iterator();
+						Iterator<Long> times = thisQ.getTimes().iterator();
+						int ctr = 0;
+						while (values.hasNext())
+						{
+							Quantity<?> tQ = (Quantity<?>) values.next();
+							long t = times.next();
+							xData[ctr] = new Date(t);
+							yData[ctr++] = tQ.getValue().doubleValue();
+						}
+
+						newSeries.setXDateSeries(xData);
+						newSeries.setYSeries(yData);
+
+						newSeries.setSymbolType(PlotSymbolType.CROSS);
+
+						chart.getAxisSet().getXAxis(0).getTitle().setText("Time");
+
+						// adjust the axis range
+						chart.getAxisSet().adjustRange();
+						IAxis xAxis = chart.getAxisSet().getXAxis(0);
+						xAxis.enableCategory(false);
+
+						chart.redraw();
+					}
 				}
 			}
 		}
