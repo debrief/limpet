@@ -7,6 +7,7 @@ import info.limpet.IQuantityCollection;
 import info.limpet.data.impl.ObjectCollection;
 import info.limpet.data.impl.QuantityCollection;
 import info.limpet.data.operations.AddQuantityOperation;
+import info.limpet.data.operations.MultiplyQuantityOperation;
 import info.limpet.data.store.InMemoryStore;
 
 import java.util.ArrayList;
@@ -64,11 +65,11 @@ public class SampleData
 		{
 			thisTime = new Date().getTime() + i * 500 * 60;
 
-			speedSeries1.add(thisTime, i);
+			speedSeries1.add(thisTime, (double)i);
 			speedSeries2.add(thisTime, Math.sin(i));
-			speedSeries3.add(thisTime, 3 * Math.cos(i));
-			length1.add(i % 3);
-			length2.add(i % 5);
+			speedSeries3.add(thisTime, 3d * Math.cos(i));
+			length1.add((double)i % 3);
+			length2.add((double)i % 5);
 			string1.add("item " + i);
 			string2.add("item " + (i % 3));
 		}
@@ -109,6 +110,14 @@ public class SampleData
 		ICommand<?> addAction = actions.iterator().next();
 		addAction.execute();	
 		
+		// and an operation using our speed factor
+		selection.clear();
+		selection.add(speedSeries1);
+		selection.add(singleton1);
+		Collection<ICommand<ICollection>> actions2 = new MultiplyQuantityOperation().actionsFor(selection, res);
+		addAction = actions2.iterator().next();
+		addAction.execute();
+				
 		return res;
 	}
 }
