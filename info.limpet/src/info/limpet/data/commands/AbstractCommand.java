@@ -1,15 +1,15 @@
 package info.limpet.data.commands;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import info.limpet.ICollection;
 import info.limpet.ICommand;
 import info.limpet.IStore;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 public abstract class AbstractCommand<T extends ICollection> implements ICommand<T>
 {
-
 	final private String _title;
 	final private String _description;
 	final private boolean _canUndo;
@@ -17,7 +17,7 @@ public abstract class AbstractCommand<T extends ICollection> implements ICommand
 	final private IStore _store;
 	
 	final protected List<T> _inputs;		
-	final private List<T> _outputs;
+	final protected List<T> _outputs;
 
 	public AbstractCommand(String title, String description, IStore store, boolean canUndo, boolean canRedo, List<T> inputs)
 	{
@@ -31,6 +31,33 @@ public abstract class AbstractCommand<T extends ICollection> implements ICommand
 		_outputs = new ArrayList<T>();
 	}
 	
+	
+	
+	@Override
+	public void dataChanged()
+	{
+		// do the recalc
+		recalculate();
+		
+		// now tell the outputs they have changed
+		Iterator<T> iter = _outputs.iterator();
+		while (iter.hasNext())
+		{
+			T t = (T) iter.next();
+			t.fireChanged();
+		}
+	}
+
+	abstract protected void recalculate();
+
+
+	@Override
+	public void collectionDeleted()
+	{
+	}
+
+
+
 	public IStore getStore()
 	{
 		return _store;
@@ -49,7 +76,16 @@ public abstract class AbstractCommand<T extends ICollection> implements ICommand
 	}
 
 	@Override
-	abstract public void execute();
+	public void execute()
+	{
+		// ok, register as a listener with the input files
+		Iterator<T> iter = _inputs.iterator();
+		while (iter.hasNext())
+		{
+			T t = (T) iter.next();
+			t.addChangeListener(this);			
+		}
+	}
 
 	@Override
 	public void undo()
@@ -90,4 +126,7 @@ public abstract class AbstractCommand<T extends ICollection> implements ICommand
 	{
 		_outputs.add(output);
 	}
+
+
+
 }

@@ -1,9 +1,11 @@
 package info.limpet.data.impl;
 
+import info.limpet.IChangeListener;
 import info.limpet.ICommand;
 import info.limpet.IObjectCollection;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 
@@ -16,6 +18,7 @@ public class ObjectCollection<T extends Object> implements IObjectCollection<T>
 	private String _description = "";
 	private final ICommand<?> _precedent;
 	private final List<ICommand<?>> _dependents;
+	private final ListenerHelper _changeSupport;
 	
 	public ObjectCollection(String name)
 	{
@@ -27,6 +30,7 @@ public class ObjectCollection<T extends Object> implements IObjectCollection<T>
 		_name = name;
 		_precedent = precedent;
 		_dependents = new ArrayList<ICommand<?>>();
+		_changeSupport = new ListenerHelper();
 	}	
 	
 	@Override
@@ -100,6 +104,34 @@ public class ObjectCollection<T extends Object> implements IObjectCollection<T>
 	{
 		_name = name;
 	}
+
+	@Override
+	public void addChangeListener(IChangeListener listener)
+	{
+		_changeSupport.add(listener);
+	}
 	
+	@Override
+	public void removeChangeListener(IChangeListener listener)
+	{
+		_changeSupport.remove(listener);
+	}
+	
+
+	@Override
+	public void fireChanged()
+	{
+		// tell any standard listeners
+		_changeSupport.fireChange();
+		
+		// now tell the dependents
+		Iterator<ICommand<?>> iter = _dependents.iterator();
+		while (iter.hasNext())
+		{
+			ICommand<?> iC = (ICommand<?>) iter.next();
+			iC.dataChanged();
+		}
+	}
+
 	
 }

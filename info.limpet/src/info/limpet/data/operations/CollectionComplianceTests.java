@@ -185,6 +185,42 @@ public class CollectionComplianceTests
 		}
 		return allValid;
 	}
+	
+	/**
+	 * check if the series are all of equal length, or singletons
+	 * 
+	 * @param selection
+	 * @return true/false
+	 */
+	public boolean allEqualLengthOrSingleton(List<? extends ICollection> selection)
+	{
+		// are they all temporal?
+		boolean allValid = true;
+		int size = -1;
+
+		for (int i = 0; i < selection.size(); i++)
+		{
+			ICollection thisC = selection.get(i);
+
+			// valid, check the size
+			if (size == -1)
+			{
+				size = thisC.size();
+			}
+			else
+			{
+				if ((thisC.size() != size) && (thisC.size() != 1))
+				{
+					// oops, no
+					allValid = false;
+					break;
+				}
+			}
+
+		}
+
+		return allValid;
+	}
 
 	/**
 	 * check if the series are all of equal length

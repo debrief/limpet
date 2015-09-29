@@ -47,5 +47,10 @@ public class InMemoryStore implements IStore
 	{
 		return _store.iterator();
 	}
+
+	public void clear()
+	{
+		_store.clear();
+	}
 	
 }
