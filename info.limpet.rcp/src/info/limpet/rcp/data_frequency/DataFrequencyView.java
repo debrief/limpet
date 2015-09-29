@@ -8,6 +8,7 @@ import info.limpet.analysis.ObjectFrequencyBins.BinnedData;
 import info.limpet.analysis.QuantityFrequencyBins;
 import info.limpet.analysis.QuantityFrequencyBins.Bin;
 import info.limpet.data.operations.CollectionComplianceTests;
+import info.limpet.rcp.PlottingHelpers;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -181,6 +182,8 @@ public class DataFrequencyView extends ViewPart
 			String seriesName = iCollection.getName();
 			IBarSeries newSeries = (IBarSeries) chart.getSeriesSet().createSeries(
 					SeriesType.BAR, seriesName);
+			newSeries.setBarColor(PlottingHelpers.colorFor(seriesName));
+
 
 			String[] xData = new String[bins.size()];
 			double[] yData = new double[bins.size()];
@@ -240,6 +243,7 @@ public class DataFrequencyView extends ViewPart
 							.createSeries(SeriesType.LINE, seriesName);
 					newSeries.setSymbolType(PlotSymbolType.NONE);
 					newSeries.enableArea(true);
+					newSeries.setLineColor(PlottingHelpers.colorFor(seriesName));
 
 					double[] xData = new double[bins.size() * 2];
 					double[] yData = new double[bins.size() * 2];
