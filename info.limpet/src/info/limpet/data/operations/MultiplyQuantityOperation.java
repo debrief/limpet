@@ -23,13 +23,14 @@ public class MultiplyQuantityOperation<Q extends Quantity<Q>> implements
 {
 	CollectionComplianceTests aTests = new CollectionComplianceTests();
 
-	public Collection<ICommand<IQuantityCollection<Q>>> actionsFor(List<IQuantityCollection<Q>> selection,
-			IStore destination)
+	public Collection<ICommand<IQuantityCollection<Q>>> actionsFor(
+			List<IQuantityCollection<Q>> selection, IStore destination)
 	{
 		Collection<ICommand<IQuantityCollection<Q>>> res = new ArrayList<ICommand<IQuantityCollection<Q>>>();
 		if (appliesTo(selection))
 		{
-			ICommand<IQuantityCollection<Q>> newC = new AddQuantityValues<Q>(selection, destination);
+			ICommand<IQuantityCollection<Q>> newC = new AddQuantityValues<Q>(
+					selection, destination);
 			res.add(newC);
 		}
 
@@ -38,13 +39,17 @@ public class MultiplyQuantityOperation<Q extends Quantity<Q>> implements
 
 	private boolean appliesTo(List<IQuantityCollection<Q>> selection)
 	{
-		// TODO: check that we have a two quantity collections, either of the same dimension or one as dimensionless
-		
-		// TODO: the dimensionless quantity must be of length 1.
-		// TODO: so, we may require some new aTests tests
-		return (aTests.allQuantity(selection) && aTests.allEqualLength(selection)
-				&& aTests.allEqualDimensions(selection) && aTests
-					.allEqualUnits(selection));
+		// first check we have quantity data
+		if (!aTests.allQuantity(selection))
+		{
+			return false;
+		}
+		else
+		{
+			// ok, we have quantity data. See if we have series of the same length, or
+			// singletons
+			return aTests.allEqualLengthOrSingleton(selection);
+		}
 	}
 
 	public static class AddQuantityValues<T extends Quantity<T>> extends
@@ -54,13 +59,37 @@ public class MultiplyQuantityOperation<Q extends Quantity<Q>> implements
 		public AddQuantityValues(List<IQuantityCollection<T>> selection,
 				IStore store)
 		{
-			super("Multiply Series", "Multiply series", store,
-					false, false, selection);
+			super("Multiply Series", "Multiply series", store, false, false,
+					selection);
+		}
+
+		private int getNonSingletonArrayLength(List<IQuantityCollection<T>> inputs)
+		{
+			int size = 0;
+
+			Iterator<IQuantityCollection<T>> iter = inputs.iterator();
+			while (iter.hasNext())
+			{
+				IQuantityCollection<T> thisC = (IQuantityCollection<T>) iter.next();
+				if (thisC.size() > 1)
+				{
+					size = thisC.size();
+					break;
+				}
+			}
+
+			return size;
 		}
 
 		@Override
 		public void execute()
 		{
+			// TODO: Dinko - we don't use a single set of units here, they results
+			// type has to change
+			// as the multiplications occur. Or, we may have to calculate the units
+			// first (in order
+			// to declare the "target" collection, then populate that collection
+
 			// get the unit
 			IQuantityCollection<T> first = _inputs.get(0);
 			Unit<T> unit = first.getUnits();
@@ -72,16 +101,33 @@ public class MultiplyQuantityOperation<Q extends Quantity<Q>> implements
 			// store the output
 			addOutput(target);
 
+			// find the (non-singleton) array length
+			int length = getNonSingletonArrayLength(_inputs);
+
 			// start adding values.
-			for (int j = 0; j < _inputs.get(0).size(); j++)
+			for (int j = 0; j < length; j++)
 			{
 				Quantity<T> runningTotal = Quantities.getQuantity(0, unit);
 
 				for (int i = 0; i < _inputs.size(); i++)
 				{
 					IQuantityCollection<T> thisC = _inputs.get(i);
-					runningTotal = runningTotal.add((Quantity<T>) thisC.getValues()
-							.get(j));
+
+					final Quantity<T> thisValue;
+
+					// just check that this isn't a singleton
+					if (thisC.size() == 1)
+					{
+						thisValue = thisC.getValues().get(0);
+					}
+					else
+					{
+						thisValue = (Quantity<T>) thisC.getValues().get(j);
+					}
+
+					// TODO: Dinko - here's the dodgy bit where we switch from addition
+					// to multiplication
+					runningTotal = runningTotal.add(thisValue);
 				}
 
 				target.add(runningTotal);
