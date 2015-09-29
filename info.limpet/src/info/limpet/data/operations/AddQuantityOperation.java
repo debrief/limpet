@@ -129,7 +129,7 @@ public class AddQuantityOperation<Q extends Quantity<Q>> implements
 			IQuantityCollection<T> target = outputs.iterator().next();
 
 			// clear out the lists, first
-			Iterator<IQuantityCollection<T>> iter = _inputs.iterator();
+			Iterator<IQuantityCollection<T>> iter = _outputs.iterator();
 			while (iter.hasNext())
 			{
 				IQuantityCollection<T> qC = (IQuantityCollection<T>) iter
