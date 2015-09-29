@@ -11,6 +11,7 @@ import info.limpet.data.store.InMemoryStore;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -108,7 +109,33 @@ public class TestDynamic extends TestCase
 
 		resSeries.fireChanged();
 		assertEquals("change received", 7, events.size());
+		
+		// switch off dynamic update
+		Iterator<ICommand<?>> cIter = resSeries.getDependents().iterator();
+		while (cIter.hasNext())
+		{
+			ICommand<?> comm = (ICommand<?>) cIter.next();
+			comm.setDynamic(false);
+		}
+		
+		// check that only the change listener event gets fired, not
+		// the depedendent operation event.
+		resSeries.fireChanged();
+		assertEquals("change received", 8, events.size());
 
+		// switch off dynamic update
+		cIter = resSeries.getDependents().iterator();
+		while (cIter.hasNext())
+		{
+			ICommand<?> comm = (ICommand<?>) cIter.next();
+			comm.setDynamic(true);
+		}
+
+		// check we get two updates
+		resSeries.fireChanged();
+		assertEquals("change received", 10, events.size());
+
+		
 		// check the data lengths
 		QuantityCollection<?> newResQ = (QuantityCollection<?>) newResSeries;
 		assertEquals("correct elements", 10, newResQ.size());

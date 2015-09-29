@@ -20,6 +20,11 @@ public abstract class AbstractCommand<T extends ICollection> implements
 	final protected List<T> _inputs;
 	final protected List<T> _outputs;
 
+	/** whether the command should recalculate if its children change
+	 * 
+	 */
+	private boolean _dynamic = true;
+
 	public AbstractCommand(String title, String description, IStore store,
 			boolean canUndo, boolean canRedo, List<T> inputs)
 	{
@@ -34,17 +39,33 @@ public abstract class AbstractCommand<T extends ICollection> implements
 	}
 
 	@Override
+	public boolean getDynamic()
+	{
+		return _dynamic;
+	}
+
+	@Override
+	public void setDynamic(boolean dynamic)
+	{
+		this._dynamic = dynamic;
+	}
+
+	@Override
 	public void dataChanged()
 	{
-		// do the recalc
-		recalculate();
-
-		// now tell the outputs they have changed
-		Iterator<T> iter = _outputs.iterator();
-		while (iter.hasNext())
+		// are we doing live updates?
+		if (_dynamic)
 		{
-			T t = (T) iter.next();
-			t.fireChanged();
+			// do the recalc
+			recalculate();
+
+			// now tell the outputs they have changed
+			Iterator<T> iter = _outputs.iterator();
+			while (iter.hasNext())
+			{
+				T t = (T) iter.next();
+				t.fireChanged();
+			}
 		}
 	}
 
