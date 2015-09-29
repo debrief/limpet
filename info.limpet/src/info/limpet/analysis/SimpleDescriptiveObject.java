@@ -38,7 +38,7 @@ public abstract class SimpleDescriptiveObject extends CoreAnalysis
 					ObjectCollection<?> o = (ObjectCollection<?>) thisC;
 
 					titles.add("Content Type");
-					values.add(typeFor(o.getValues().iterator().next()));
+					values.add(typeFor(o.getValues().iterator().next().getClass()));
 				}
 			}
 		}

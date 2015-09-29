@@ -81,7 +81,7 @@ abstract public class AnalysisLibrary extends CoreAnalysis
 	{
 		if (titles.size() > 0)
 		{
-			_titles.add(title);
+			_titles.add("= " + title + " =");
 			_values.add("");
 			_titles.addAll(titles);
 			_values.addAll(values);

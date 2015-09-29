@@ -116,7 +116,7 @@ public class CollectionPropertySource implements IPropertySource
 				Quantity<?> first = getSingleton();
 				if (first != null)
 				{
-					return first.getValue();
+					return "" + first.getValue();
 				}
 			}
 		}

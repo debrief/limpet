@@ -1,18 +1,17 @@
-package info.limpet.rcp.data_frequency;
+package info.limpet.rcp.xy_plot;
 
 import info.limpet.ICollection;
-import info.limpet.IObjectCollection;
 import info.limpet.IQuantityCollection;
-import info.limpet.analysis.ObjectFrequencyBins;
-import info.limpet.analysis.ObjectFrequencyBins.BinnedData;
-import info.limpet.analysis.QuantityFrequencyBins;
-import info.limpet.analysis.QuantityFrequencyBins.Bin;
+import info.limpet.ITemporalQuantityCollection;
 import info.limpet.data.operations.CollectionComplianceTests;
 import info.limpet.rcp.PlottingHelpers;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.measure.Quantity;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.Action;
@@ -31,7 +30,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 import org.swtchart.Chart;
 import org.swtchart.IAxis;
-import org.swtchart.IBarSeries;
 import org.swtchart.ILineSeries;
 import org.swtchart.ILineSeries.PlotSymbolType;
 import org.swtchart.ISeries;
@@ -43,13 +41,13 @@ import org.swtchart.ISeries.SeriesType;
  * @author ian
  * 
  */
-public class DataFrequencyView extends ViewPart
+public class XyPlotView extends ViewPart
 {
 
 	/**
 	 * The ID of the view as specified by the extension.
 	 */
-	public static final String ID = "info.limpet.rcp.DataFrequencyView";
+	public static final String ID = "info.limpet.rcp.XyPlotView";
 
 	private Action copyToClipboard;
 	private ISelectionListener selListener;
@@ -60,7 +58,7 @@ public class DataFrequencyView extends ViewPart
 	/**
 	 * The constructor.
 	 */
-	public DataFrequencyView()
+	public XyPlotView()
 	{
 		aTests = new CollectionComplianceTests();
 	}
@@ -79,7 +77,7 @@ public class DataFrequencyView extends ViewPart
 
 		// set titles
 		chart.getAxisSet().getXAxis(0).getTitle().setText("Value");
-		chart.getAxisSet().getYAxis(0).getTitle().setText("Frequency");
+		chart.getAxisSet().getYAxis(0).getTitle().setText("Value");
 		chart.getTitle().setVisible(false);
 
 		// adjust the axis range
@@ -143,7 +141,6 @@ public class DataFrequencyView extends ViewPart
 
 	private void reportCollection(List<ICollection> res)
 	{
-
 		// they're all the same type - check the first one
 		Iterator<ICollection> iter = res.iterator();
 
@@ -152,66 +149,20 @@ public class DataFrequencyView extends ViewPart
 		// sort out what type of data this is.
 		if (first.isQuantity())
 		{
-			showQuantity(res);
+			if (aTests.allTemporal(res))
+			{
+				showTemporalQuantity(res);
+			}
+			else
+			{
+				showQuantity(res);
+			}
+			chart.setVisible(true);
 		}
 		else
 		{
-			showObject(res);
+			chart.setVisible(false);
 		}
-	}
-
-	private void showObject(List<ICollection> res)
-	{
-		Iterator<ICollection> iter = res.iterator();
-
-		// clear the graph
-		ISeries[] coll = chart.getSeriesSet().getSeries();
-		for (int i = 0; i < coll.length; i++)
-		{
-			ISeries iSeries = coll[i];
-			chart.getSeriesSet().deleteSeries(iSeries.getId());
-		}
-
-		while (iter.hasNext())
-		{
-			ICollection iCollection = (ICollection) iter.next();
-			BinnedData bins = null;
-			IObjectCollection<?> thisQ = (IObjectCollection<?>) iCollection;
-			bins = ObjectFrequencyBins.doBins(thisQ);
-
-			String seriesName = iCollection.getName();
-			IBarSeries newSeries = (IBarSeries) chart.getSeriesSet().createSeries(
-					SeriesType.BAR, seriesName);
-			newSeries.setBarColor(PlottingHelpers.colorFor(seriesName));
-
-
-			String[] xData = new String[bins.size()];
-			double[] yData = new double[bins.size()];
-
-			// put the data into series
-			int ctr = 0;
-			Iterator<ObjectFrequencyBins.Bin> iter2 = bins.iterator();
-			while (iter2.hasNext())
-			{
-				ObjectFrequencyBins.Bin bin = (ObjectFrequencyBins.Bin) iter2.next();
-				xData[ctr] = (String) bin.indexVal;
-				yData[ctr++] = bin.freqVal;
-			}
-
-			IAxis xAxis = chart.getAxisSet().getXAxis(0);
-			xAxis.setCategorySeries(xData);
-			xAxis.enableCategory(true);
-
-			// newSeries.set(xData);
-			newSeries.setYSeries(yData);
-
-			// adjust the axis range
-			chart.getAxisSet().adjustRange();
-
-			chart.redraw();
-
-		}
-
 	}
 
 	private void showQuantity(List<ICollection> res)
@@ -219,49 +170,42 @@ public class DataFrequencyView extends ViewPart
 		Iterator<ICollection> iter = res.iterator();
 
 		// clear the graph
-		ISeries[] coll = chart.getSeriesSet().getSeries();
-		for (int i = 0; i < coll.length; i++)
+		ISeries[] series = chart.getSeriesSet().getSeries();
+		for (int i = 0; i < series.length; i++)
 		{
-			ISeries iSeries = coll[i];
+			ISeries iSeries = series[i];
 			chart.getSeriesSet().deleteSeries(iSeries.getId());
 		}
 
 		while (iter.hasNext())
 		{
-			ICollection iCollection = (ICollection) iter.next();
-			QuantityFrequencyBins.BinnedData bins = null;
-			if (iCollection.isQuantity())
+			ICollection coll = (ICollection) iter.next();
+			if (coll.isQuantity())
 			{
-				if (iCollection.size() > 1)
+				if (coll.size() > 1)
 				{
-					IQuantityCollection<?> thisQ = (IQuantityCollection<?>) iCollection;
-					bins = QuantityFrequencyBins.doBins(thisQ);
+					IQuantityCollection<?> thisQ = (IQuantityCollection<?>) coll;
 
-					String seriesName = iCollection.getName() + " (" + thisQ.getUnits()
-							+ ")";
+					String seriesName = thisQ.getName() + " (" + thisQ.getUnits() + ")";
 					ILineSeries newSeries = (ILineSeries) chart.getSeriesSet()
 							.createSeries(SeriesType.LINE, seriesName);
 					newSeries.setSymbolType(PlotSymbolType.NONE);
-					newSeries.enableArea(true);
 					newSeries.setLineColor(PlottingHelpers.colorFor(seriesName));
 
-					double[] xData = new double[bins.size() * 2];
-					double[] yData = new double[bins.size() * 2];
+					double[] yData = new double[thisQ.size()];
 
-					// put the data into series
+					Iterator<?> values = thisQ.getValues().iterator();
 					int ctr = 0;
-					Iterator<Bin> iter2 = bins.iterator();
-					while (iter2.hasNext())
+					while (values.hasNext())
 					{
-						Bin bin = (QuantityFrequencyBins.Bin) iter2.next();
-						xData[ctr] = bin.lowerVal;
-						yData[ctr++] = bin.freqVal;
-						xData[ctr] = bin.upperVal;
-						yData[ctr++] = bin.freqVal;
+						Quantity<?> tQ = (Quantity<?>) values.next();
+						yData[ctr++] = tQ.getValue().doubleValue();
 					}
 
-					newSeries.setXSeries(xData);
+					// newSeries.setXSeries(xData);
 					newSeries.setYSeries(yData);
+
+					chart.getAxisSet().getXAxis(0).getTitle().setText("Count");
 
 					// adjust the axis range
 					chart.getAxisSet().adjustRange();
@@ -269,6 +213,68 @@ public class DataFrequencyView extends ViewPart
 					xAxis.enableCategory(false);
 
 					chart.redraw();
+				}
+			}
+		}
+	}
+
+	private void showTemporalQuantity(List<ICollection> res)
+	{
+		Iterator<ICollection> iter = res.iterator();
+
+		// clear the graph
+		ISeries[] series = chart.getSeriesSet().getSeries();
+		for (int i = 0; i < series.length; i++)
+		{
+			ISeries iSeries = series[i];
+			chart.getSeriesSet().deleteSeries(iSeries.getId());
+		}
+
+		while (iter.hasNext())
+		{
+			ICollection coll = (ICollection) iter.next();
+			if (coll.isQuantity())
+			{
+				if (coll.size() > 1)
+				{
+					if (coll.isTemporal())
+					{
+						ITemporalQuantityCollection<?> thisQ = (ITemporalQuantityCollection<?>) coll;
+
+						String seriesName = thisQ.getName() + " (" + thisQ.getUnits() + ")";
+						ILineSeries newSeries = (ILineSeries) chart.getSeriesSet()
+								.createSeries(SeriesType.LINE, seriesName);
+						newSeries.setSymbolType(PlotSymbolType.NONE);
+						newSeries.setLineColor(PlottingHelpers.colorFor(seriesName));
+
+						Date[] xData = new Date[thisQ.size()];
+						double[] yData = new double[thisQ.size()];
+
+						Iterator<?> values = thisQ.getValues().iterator();
+						Iterator<Long> times = thisQ.getTimes().iterator();
+						int ctr = 0;
+						while (values.hasNext())
+						{
+							Quantity<?> tQ = (Quantity<?>) values.next();
+							long t = times.next();
+							xData[ctr] = new Date(t);
+							yData[ctr++] = tQ.getValue().doubleValue();
+						}
+
+						newSeries.setXDateSeries(xData);
+						newSeries.setYSeries(yData);
+
+						newSeries.setSymbolType(PlotSymbolType.CROSS);
+
+						chart.getAxisSet().getXAxis(0).getTitle().setText("Time");
+
+						// adjust the axis range
+						chart.getAxisSet().adjustRange();
+						IAxis xAxis = chart.getAxisSet().getXAxis(0);
+						xAxis.enableCategory(false);
+
+						chart.redraw();
+					}
 				}
 			}
 		}
