@@ -14,6 +14,7 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
@@ -30,62 +31,69 @@ public abstract class CoreAnalysisView extends ViewPart
 {
 
 	private Action copyToClipboard;
+	private Action followSelection;
 	private ISelectionListener selListener;
 	protected CollectionComplianceTests aTests;
 
 	public CoreAnalysisView()
 	{
 		super();
-		
+
 		aTests = new CollectionComplianceTests();
 
 	}
 
 	protected void newSelection(ISelection selection)
 	{
-		List<ICollection> res = new ArrayList<ICollection>();
-		if (selection instanceof StructuredSelection)
+		if (followSelection.isChecked())
 		{
-			StructuredSelection str = (StructuredSelection) selection;
-
-			// check if it/they are suitable
-			Iterator<?> iter = str.iterator();
-			while (iter.hasNext())
+			List<ICollection> res = new ArrayList<ICollection>();
+			if (selection instanceof StructuredSelection)
 			{
-				Object object = (Object) iter.next();
-				if (object instanceof IAdaptable)
+				StructuredSelection str = (StructuredSelection) selection;
+
+				// check if it/they are suitable
+				Iterator<?> iter = str.iterator();
+				while (iter.hasNext())
 				{
-					IAdaptable ad = (IAdaptable) object;
-					ICollection coll = (ICollection) ad.getAdapter(ICollection.class);
-					if (coll != null)
+					Object object = (Object) iter.next();
+					if (object instanceof IAdaptable)
 					{
-						res.add(coll);
+						IAdaptable ad = (IAdaptable) object;
+						ICollection coll = (ICollection) ad.getAdapter(ICollection.class);
+						if (coll != null)
+						{
+							res.add(coll);
+						}
 					}
 				}
 			}
-		}
 
-		// have we found any?
-		if (res.size() > 0)
-		{
-			// do they apply to me?
-			if (appliesToMe(res, aTests))
+			// have we found any?
+			if (res.size() > 0)
 			{
-				// ok, display them
-				display(res);
+				// do they apply to me?
+				if (appliesToMe(res, aTests))
+				{
+					// ok, display them
+					display(res);
+				}
 			}
 		}
 	}
 
-	/** determine if this set of collections are suitable for displaying
+	/**
+	 * determine if this set of collections are suitable for displaying
 	 * 
 	 * @param res
-	 * @param aTests2 
+	 * @param aTests2
 	 * @return
 	 */
-	abstract protected boolean appliesToMe(List<ICollection> res, CollectionComplianceTests aTests2);
+	abstract protected boolean appliesToMe(List<ICollection> res,
+			CollectionComplianceTests aTests2);
 
-	/** show this set of collections
+	/**
+	 * show this set of collections
 	 * 
 	 * @param res
 	 */
@@ -94,12 +102,14 @@ public abstract class CoreAnalysisView extends ViewPart
 	protected void fillLocalPullDown(IMenuManager manager)
 	{
 		manager.add(copyToClipboard);
+		manager.add(followSelection);
 		manager.add(new Separator());
 	}
 
 	protected void fillLocalToolBar(IToolBarManager manager)
 	{
 		manager.add(copyToClipboard);
+		manager.add(followSelection);
 	}
 
 	protected void copyToClipboard()
@@ -114,8 +124,6 @@ public abstract class CoreAnalysisView extends ViewPart
 		clipboard.dispose();
 	}
 
-	
-
 	protected void contributeToActionBars()
 	{
 		IActionBars bars = getViewSite().getActionBars();
@@ -123,10 +131,9 @@ public abstract class CoreAnalysisView extends ViewPart
 		fillLocalToolBar(bars.getToolBarManager());
 	}
 
-
 	protected void setupListener()
 	{
-		//	register as selection listener
+		// register as selection listener
 		selListener = new ISelectionListener()
 		{
 			public void selectionChanged(IWorkbenchPart part, ISelection selection)
@@ -134,16 +141,18 @@ public abstract class CoreAnalysisView extends ViewPart
 				newSelection(selection);
 			}
 		};
-		getSite().getWorkbenchWindow().getSelectionService().addSelectionListener(selListener);
+		getSite().getWorkbenchWindow().getSelectionService()
+				.addSelectionListener(selListener);
 	}
-	
+
 	public void dispose()
 	{
-		getSite().getWorkbenchWindow().getSelectionService().removeSelectionListener(selListener);
+		getSite().getWorkbenchWindow().getSelectionService()
+				.removeSelectionListener(selListener);
 
 		super.dispose();
 	}
-	
+
 	abstract protected String getTextForClipboard();
 
 	protected void makeActions()
@@ -157,8 +166,21 @@ public abstract class CoreAnalysisView extends ViewPart
 		};
 		copyToClipboard.setText("Copy to clipboard");
 		copyToClipboard.setToolTipText("Copy analysis to clipboard");
-		copyToClipboard.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
-				.getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
+		copyToClipboard.setImageDescriptor(PlatformUI.getWorkbench()
+				.getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
+
+		followSelection = new Action("Follow selection", SWT.TOGGLE)
+		{
+			public void run()
+			{
+				// don't worry, we can ignore the events
+			}
+		};
+		followSelection.setChecked(true);
+		followSelection.setToolTipText("Link with selection");
+		followSelection.setImageDescriptor(PlatformUI.getWorkbench()
+				.getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_SYNCED));
+
 	}
 
 	protected void fillContextMenu(IMenuManager manager)
