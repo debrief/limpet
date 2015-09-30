@@ -68,7 +68,7 @@ public class AddQuantityOperation<Q extends Quantity<Q>> implements
 		public AddQuantityValues(List<IQuantityCollection<T>> selection,
 				IStore store)
 		{
-			super("Add series", "Add numeric values in provided series", store,
+			super("Add series", "Add numeric values in provided series", SUM_OF_INPUT_SERIES, store,
 					false, false, selection);
 		}
 
@@ -82,7 +82,7 @@ public class AddQuantityOperation<Q extends Quantity<Q>> implements
 			List<IQuantityCollection<T>> outputs = new ArrayList<IQuantityCollection<T>>();
 			
 			// ok, generate the new series
-			IQuantityCollection<T> target = new QuantityCollection<T>(outputName,
+			IQuantityCollection<T> target = new QuantityCollection<T>(getOutputName(),
 					this, unit);
 			
 			outputs.add(target);
