@@ -16,8 +16,6 @@ import java.util.List;
 import javax.measure.Quantity;
 import javax.measure.Unit;
 
-import tec.units.ri.quantity.Quantities;
-
 public class MultiplyQuantityOperation implements IOperation<ICollection>
 {
 	public static final String SERIES_NAME = "Multiplication product";
@@ -25,12 +23,12 @@ public class MultiplyQuantityOperation implements IOperation<ICollection>
 	CollectionComplianceTests aTests = new CollectionComplianceTests();
 
 	final private String outputName;
-	
+
 	public MultiplyQuantityOperation()
 	{
 		this(SERIES_NAME);
 	}
-	
+
 	public MultiplyQuantityOperation(final String seriesName)
 	{
 		outputName = seriesName;
@@ -42,8 +40,8 @@ public class MultiplyQuantityOperation implements IOperation<ICollection>
 		Collection<ICommand<ICollection>> res = new ArrayList<ICommand<ICollection>>();
 		if (appliesTo(selection))
 		{
-			ICommand<ICollection> newC = new MultiplyQuantityValues(outputName, selection,
-					destination);
+			ICommand<ICollection> newC = new MultiplyQuantityValues(outputName,
+					selection, destination);
 			res.add(newC);
 		}
 
@@ -69,28 +67,11 @@ public class MultiplyQuantityOperation implements IOperation<ICollection>
 			AbstractCommand<ICollection>
 	{
 
-		public MultiplyQuantityValues(String outputName, List<ICollection> selection, IStore store)
+		public MultiplyQuantityValues(String outputName,
+				List<ICollection> selection, IStore store)
 		{
-			super("Multiply series", "Multiply series", outputName, store, false, false,
-					selection);
-		}
-
-		private int getNonSingletonArrayLength(List<ICollection> inputs)
-		{
-			int size = 0;
-
-			Iterator<ICollection> iter = inputs.iterator();
-			while (iter.hasNext())
-			{
-				IQuantityCollection<?> thisC = (IQuantityCollection<?>) iter.next();
-				if (thisC.size() > 1)
-				{
-					size = thisC.size();
-					break;
-				}
-			}
-
-			return size;
+			super("Multiply series", "Multiply series", outputName, store, false,
+					false, selection);
 		}
 
 		@Override
@@ -178,7 +159,7 @@ public class MultiplyQuantityOperation implements IOperation<ICollection>
 			// start adding values.
 			for (int j = 0; j < length; j++)
 			{
-				Quantity<?> runningTotal = Quantities.getQuantity(1d, unit);
+				Quantity<?> runningTotal = null;
 
 				for (int i = 0; i < _inputs.size(); i++)
 				{
@@ -197,7 +178,15 @@ public class MultiplyQuantityOperation implements IOperation<ICollection>
 						thisValue = (Quantity<?>) thisC.getValues().get(j);
 					}
 
-					runningTotal = runningTotal.multiply(thisValue);
+					// first value?
+					if (runningTotal == null)
+					{
+						runningTotal = thisValue;
+					}
+					else
+					{
+						runningTotal = runningTotal.multiply(thisValue);
+					}
 				}
 
 				target.add(runningTotal.getValue());
