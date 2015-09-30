@@ -6,6 +6,7 @@ import info.limpet.IObjectCollection;
 import info.limpet.IQuantityCollection;
 import info.limpet.data.impl.ObjectCollection;
 import info.limpet.data.impl.QuantityCollection;
+import info.limpet.data.impl.samples.StockTypes.Temporal.ElapsedTime_Sec;
 import info.limpet.data.operations.AddQuantityOperation;
 import info.limpet.data.operations.MultiplyQuantityOperation;
 import info.limpet.data.store.InMemoryStore;
@@ -24,6 +25,7 @@ import tec.units.ri.unit.Units;
 
 public class SampleData
 {
+	public static final String TIME_INTERVALS = "Time intervals";
 	public static final String STRING_TWO = "String two";
 	public static final String STRING_ONE = "String one";
 	public static final String LENGTH_SINGLETON = "Length Singleton";
@@ -60,7 +62,9 @@ public class SampleData
 				RANGED_SPEED_SINGLETON);
 		StockTypes.NonTemporal.Length_M singletonLength = new StockTypes.NonTemporal.Length_M(
 				LENGTH_SINGLETON);
-
+		ElapsedTime_Sec timeIntervals = new StockTypes.Temporal.ElapsedTime_Sec(TIME_INTERVALS);
+		
+		
 		long thisTime = 0; 
 		
 		for (int i = 1; i <= 10; i++)
@@ -74,6 +78,7 @@ public class SampleData
 			length2.add((double)i % 5);
 			string1.add("item " + i);
 			string2.add("item " + (i % 3));
+			timeIntervals.add(thisTime, 3 + Math.sin(i) * Math.random() * 4);
 		}
 
 		// add an extra item to speedSeries3
@@ -100,6 +105,7 @@ public class SampleData
 		list.add(singleton1);
 		list.add(singletonRange1);
 		list.add(singletonLength);
+		list.add(timeIntervals);
 
 		res.add(list);
 
@@ -119,7 +125,16 @@ public class SampleData
 		Collection<ICommand<ICollection>> actions2 = new MultiplyQuantityOperation().actionsFor(selection, res);
 		addAction = actions2.iterator().next();
 		addAction.execute();
-				
+
+		// calculate the distance travelled
+		selection.clear();
+		selection.add(timeIntervals);
+		selection.add(singletonRange1);
+		Collection<ICommand<ICollection>> actions3 = new MultiplyQuantityOperation("Calculated distance").actionsFor(selection, res);
+		addAction = actions3.iterator().next();
+		addAction.execute();
+
+		
 		return res;
 	}
 }
