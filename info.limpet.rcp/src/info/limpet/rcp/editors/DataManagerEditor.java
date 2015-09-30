@@ -5,14 +5,13 @@ import info.limpet.ICommand;
 import info.limpet.IOperation;
 import info.limpet.IStore;
 import info.limpet.data.impl.samples.SampleData;
-import info.limpet.data.operations.AddQuantityOperation;
-import info.limpet.data.operations.MultiplyQuantityOperation;
 import info.limpet.data.store.InMemoryStore;
 import info.limpet.data.store.InMemoryStore.StoreChangeListener;
 import info.limpet.rcp.data_provider.data.DataModel;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -40,7 +39,8 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.EditorPart;
 
-public class DataManagerEditor extends EditorPart implements StoreChangeListener
+public class DataManagerEditor extends EditorPart implements
+		StoreChangeListener
 {
 
 	private DataProviderEditorInput _dataProviderEditorInput;
@@ -66,7 +66,7 @@ public class DataManagerEditor extends EditorPart implements StoreChangeListener
 		}
 
 		_dataProviderEditorInput = (DataProviderEditorInput) input;
-		
+
 		setSite(site);
 		setInput(input);
 	}
@@ -92,26 +92,25 @@ public class DataManagerEditor extends EditorPart implements StoreChangeListener
 		viewer.setContentProvider(_dataProviderEditorInput.getModel());
 		viewer.setLabelProvider(new LimpetLabelProvider());
 		viewer.setInput(new SampleData().getData());
-		
+
 		getSite().setSelectionProvider(viewer);
 		makeActions();
 		hookContextMenu();
-		
+
 		IActionBars bars = getEditorSite().getActionBars();
 		fillLocalToolBar(bars.getToolBarManager());
 
-		
 		// ok, setup as listener
 		InMemoryStore store = (InMemoryStore) viewer.getInput();
-		
-		if(store instanceof InMemoryStore)
+
+		if (store instanceof InMemoryStore)
 		{
 			InMemoryStore ms = (InMemoryStore) store;
 			ms.addChangeListener(this);
 		}
 
 	}
-	
+
 	protected void fillLocalToolBar(IToolBarManager manager)
 	{
 		manager.add(refreshView);
@@ -163,40 +162,61 @@ public class DataManagerEditor extends EditorPart implements StoreChangeListener
 			}
 		};
 	}
-	
+
 	protected void editorContextMenuAboutToShow(IMenuManager menu)
 	{
 		// get any suitable objects from selection
 		List<ICollection> selection = getSuitableObjects();
-		
+
 		// get the list of operations
-		List<IOperation<?>> ops = OperationsLibrary.getOperations();
+		HashMap<String, List<IOperation<?>>> ops = OperationsLibrary
+				.getOperations();
 
 		// did we find anything?
 		if (selection.size() > 0)
 		{
-			Iterator<IOperation<?>> oIter = ops.iterator();
-			while (oIter.hasNext())
-			{
-				@SuppressWarnings("unchecked")
-				final IOperation<ICollection> op = (IOperation<ICollection>) oIter.next();
-				final IStore theStore = _dataProviderEditorInput.getModel().getStore();
-				Collection<ICommand<ICollection>> matches = op.actionsFor(selection, theStore);
-				 
-				Iterator<ICommand<ICollection>> mIter = matches.iterator();
-				while (mIter.hasNext())
-				{
-					final ICommand<info.limpet.ICollection> thisC = (ICommand<info.limpet.ICollection>) mIter
-							.next();
-					menu.add(new Action(thisC.getTitle()){
+			Iterator<String> hIter = ops.keySet().iterator();
 
-						@Override
-						public void run()
+			while (hIter.hasNext())
+			{
+				// ok, we're in a menu grouping
+				String name = (String) hIter.next();
+
+				// create a new menu tier
+				MenuManager newM = new MenuManager(name);
+				menu.add(newM);
+
+				// now loop through this set of operations
+				List<IOperation<?>> values = ops.get(name);
+
+				Iterator<IOperation<?>> oIter = values.iterator();
+				while (oIter.hasNext())
+				{
+					@SuppressWarnings("unchecked")
+					final IOperation<ICollection> op = (IOperation<ICollection>) oIter
+							.next();
+					final IStore theStore = _dataProviderEditorInput.getModel()
+							.getStore();
+					Collection<ICommand<ICollection>> matches = op.actionsFor(selection,
+							theStore);
+
+					Iterator<ICommand<ICollection>> mIter = matches.iterator();
+					while (mIter.hasNext())
+					{
+						final ICommand<info.limpet.ICollection> thisC = (ICommand<info.limpet.ICollection>) mIter
+								.next();
+						newM.add(new Action(thisC.getTitle())
 						{
-							thisC.execute();
-						}});					
+							@Override
+							public void run()
+							{
+								thisC.execute();
+							}
+						});
+					}
 				}
 			}
+
 		}
 
 		menu.add(new Separator());
@@ -206,7 +226,7 @@ public class DataManagerEditor extends EditorPart implements StoreChangeListener
 	private List<ICollection> getSuitableObjects()
 	{
 		ArrayList<ICollection> matches = new ArrayList<ICollection>();
-		
+
 		// ok, find the applicable operations
 		ISelection sel = viewer.getSelection();
 		IStructuredSelection str = (IStructuredSelection) sel;
@@ -228,7 +248,7 @@ public class DataManagerEditor extends EditorPart implements StoreChangeListener
 				}
 			}
 		}
-		
+
 		return matches;
 	}
 
