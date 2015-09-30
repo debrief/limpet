@@ -9,6 +9,7 @@
             id="info.limpet.rcp">
       </category>
       <view
+            allowMultiple="true"
             name="Analysis View"
             icon="icons/sample.gif"
             category="info.limpet.rcp"
@@ -16,6 +17,7 @@
             id="info.limpet.rcp.AnalysisView">
       </view>
       <view
+            allowMultiple="true"
             name="Data Frequency"
             icon="icons/sample.gif"
             category="info.limpet.rcp"
@@ -23,11 +25,12 @@
             id="info.limpet.rcp.DataFrequencyView">
       </view>
       <view
-            name="XY Plot"
-            icon="icons/sample.gif"
+            allowMultiple="true"
             category="info.limpet.rcp"
             class="info.limpet.rcp.xy_plot.XyPlotView"
-            id="info.limpet.rcp.XyPlotView">
+            icon="icons/sample.gif"
+            id="info.limpet.rcp.XyPlotView"
+            name="XY Plot">
       </view>
    </extension>
    
