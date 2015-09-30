@@ -63,7 +63,7 @@ public class XyPlotView extends CoreAnalysisView
 	}
 
 	@Override
-	protected void display(List<ICollection> res)
+	public void display(List<ICollection> res)
 	{
 		// they're all the same type - check the first one
 		Iterator<ICollection> iter = res.iterator();

@@ -63,6 +63,18 @@ public abstract class CoreAnalysisView extends ViewPart
 			}
 		};
 	}
+	
+	
+	/** external accessor, since we switch off following when
+	 * a view has been created specifically to view a particular
+	 * selection
+	 * 
+	 * @param val
+	 */
+	public void setFollow(boolean val)
+	{
+		followSelection.setChecked(val);
+	}
 
 	protected void newSelection(ISelection selection)
 	{
@@ -146,7 +158,7 @@ public abstract class CoreAnalysisView extends ViewPart
 	 * 
 	 * @param res
 	 */
-	abstract protected void display(List<ICollection> res);
+	abstract public void display(List<ICollection> res);
 
 	protected void fillLocalPullDown(IMenuManager manager)
 	{
