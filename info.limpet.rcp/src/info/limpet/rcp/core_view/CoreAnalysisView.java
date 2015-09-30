@@ -3,6 +3,7 @@ package info.limpet.rcp.core_view;
 import info.limpet.IChangeListener;
 import info.limpet.ICollection;
 import info.limpet.data.operations.CollectionComplianceTests;
+import info.limpet.rcp.Activator;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -24,23 +25,30 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
 public abstract class CoreAnalysisView extends ViewPart
 {
 
+	private Action newView;
 	private Action copyToClipboard;
 	private Action followSelection;
 	private ISelectionListener selListener;
 	protected CollectionComplianceTests aTests;
 	final private List<ICollection> curList = new ArrayList<ICollection>();
 	private IChangeListener changeListener;
+	final private String _myId;
 
-	public CoreAnalysisView()
+	public CoreAnalysisView(String myId)
 	{
 		super();
+
+		_myId = myId;
 
 		aTests = new CollectionComplianceTests();
 		changeListener = new IChangeListener()
@@ -57,17 +65,16 @@ public abstract class CoreAnalysisView extends ViewPart
 			{
 				// hmm, we should probably stop listening to that collection
 				curList.remove(subject);
-				
+
 				// and update the UI
 				display(curList);
 			}
 		};
 	}
-	
-	
-	/** external accessor, since we switch off following when
-	 * a view has been created specifically to view a particular
-	 * selection
+
+	/**
+	 * external accessor, since we switch off following when a view has been
+	 * created specifically to view a particular selection
 	 * 
 	 * @param val
 	 */
@@ -162,6 +169,7 @@ public abstract class CoreAnalysisView extends ViewPart
 
 	protected void fillLocalPullDown(IMenuManager manager)
 	{
+		manager.add(newView);
 		manager.add(copyToClipboard);
 		manager.add(followSelection);
 		manager.add(new Separator());
@@ -226,6 +234,17 @@ public abstract class CoreAnalysisView extends ViewPart
 
 	protected void makeActions()
 	{
+		newView = new Action()
+		{
+			public void run()
+			{
+				createNewView();
+			}
+		};
+		newView.setText("New instance of this view");
+		newView.setToolTipText("Create a fresh instance of this view");
+		newView.setImageDescriptor(Activator.getImageDescriptor("icons/newView.png"));
+
 		copyToClipboard = new Action()
 		{
 			public void run()
@@ -250,6 +269,25 @@ public abstract class CoreAnalysisView extends ViewPart
 		followSelection.setImageDescriptor(PlatformUI.getWorkbench()
 				.getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_SYNCED));
 
+	}
+
+	protected void createNewView()
+	{
+		// create a new instance of the specified view
+		IWorkbenchWindow window = PlatformUI.getWorkbench()
+				.getActiveWorkbenchWindow();
+		IWorkbenchPage page = window.getActivePage();
+
+		try
+		{
+			String millis = "" + System.currentTimeMillis();
+			page.showView(_myId, millis, IWorkbenchPage.VIEW_ACTIVATE);
+		}
+		catch (PartInitException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	protected void fillContextMenu(IMenuManager manager)

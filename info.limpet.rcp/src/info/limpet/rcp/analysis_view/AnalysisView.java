@@ -37,6 +37,12 @@ public class AnalysisView extends CoreAnalysisView
 
 	TableViewer viewer;
 
+	public AnalysisView()
+	{
+		super(ID);
+	}
+
+
 	class ViewLabelProvider extends LabelProvider implements ITableLabelProvider
 	{
 

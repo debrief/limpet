@@ -45,6 +45,7 @@ public class DataFrequencyView extends CoreAnalysisView
 	 */
 	public DataFrequencyView()
 	{
+		super(ID);
 	}
 
 	/**
