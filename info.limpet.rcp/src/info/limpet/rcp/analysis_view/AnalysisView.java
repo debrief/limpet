@@ -2,14 +2,13 @@ package info.limpet.rcp.analysis_view;
 
 import info.limpet.ICollection;
 import info.limpet.analysis.AnalysisLibrary;
+import info.limpet.data.operations.CollectionComplianceTests;
+import info.limpet.rcp.core_view.CoreAnalysisView;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.jface.action.IMenuListener;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
@@ -19,7 +18,6 @@ import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 
@@ -122,7 +120,6 @@ public class AnalysisView extends CoreAnalysisView
 		viewer.getTable().setHeaderVisible(true);
 
 		makeActions();
-		hookContextMenu();
 		contributeToActionBars();
 
 		// define the two columns
@@ -157,22 +154,6 @@ public class AnalysisView extends CoreAnalysisView
 		setupListener();
 	}
 
-	private void hookContextMenu()
-	{
-		MenuManager menuMgr = new MenuManager("#PopupMenu");
-		menuMgr.setRemoveAllWhenShown(true);
-		menuMgr.addMenuListener(new IMenuListener()
-		{
-			public void menuAboutToShow(IMenuManager manager)
-			{
-				AnalysisView.this.fillContextMenu(manager);
-			}
-		});
-		Menu menu = menuMgr.createContextMenu(viewer.getControl());
-		viewer.getControl().setMenu(menu);
-		getSite().registerContextMenu(menuMgr, viewer);
-	}
-
 	/**
 	 * Passing the focus request to the viewer's control.
 	 */
@@ -182,7 +163,8 @@ public class AnalysisView extends CoreAnalysisView
 	}
 
 	@Override
-	protected boolean appliesToMe(List<ICollection> res)
+	protected boolean appliesToMe(List<ICollection> res,
+			CollectionComplianceTests tests)
 	{
 		return true;
 	}

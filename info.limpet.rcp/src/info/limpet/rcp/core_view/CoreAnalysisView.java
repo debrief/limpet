@@ -1,6 +1,7 @@
-package info.limpet.rcp.analysis_view;
+package info.limpet.rcp.core_view;
 
 import info.limpet.ICollection;
+import info.limpet.data.operations.CollectionComplianceTests;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -30,10 +31,14 @@ public abstract class CoreAnalysisView extends ViewPart
 
 	private Action copyToClipboard;
 	private ISelectionListener selListener;
+	protected CollectionComplianceTests aTests;
 
 	public CoreAnalysisView()
 	{
 		super();
+		
+		aTests = new CollectionComplianceTests();
+
 	}
 
 	protected void newSelection(ISelection selection)
@@ -64,7 +69,7 @@ public abstract class CoreAnalysisView extends ViewPart
 		if (res.size() > 0)
 		{
 			// do they apply to me?
-			if (appliesToMe(res))
+			if (appliesToMe(res, aTests))
 			{
 				// ok, display them
 				display(res);
@@ -75,9 +80,10 @@ public abstract class CoreAnalysisView extends ViewPart
 	/** determine if this set of collections are suitable for displaying
 	 * 
 	 * @param res
+	 * @param aTests2 
 	 * @return
 	 */
-	abstract protected boolean appliesToMe(List<ICollection> res);
+	abstract protected boolean appliesToMe(List<ICollection> res, CollectionComplianceTests aTests2);
 
 	/** show this set of collections
 	 * 
