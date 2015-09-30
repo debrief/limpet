@@ -16,32 +16,42 @@ import java.util.List;
 import javax.measure.Quantity;
 import javax.measure.Unit;
 
-public class MultiplyQuantityOperation implements IOperation<ICollection>
+public class DivideQuantityOperation implements IOperation<ICollection>
 {
-	public static final String SERIES_NAME = "Multiplication product";
-
 	CollectionComplianceTests aTests = new CollectionComplianceTests();
 
-	final private String outputName;
+	public static final String SUM_OF_DIVISION_SERIES = "Product of division of series";
 
-	public MultiplyQuantityOperation()
+	final protected String outputName;
+
+	public DivideQuantityOperation(String name)
 	{
-		this(SERIES_NAME);
+		outputName = name;
 	}
 
-	public MultiplyQuantityOperation(final String seriesName)
+	public DivideQuantityOperation()
 	{
-		outputName = seriesName;
+		this(SUM_OF_DIVISION_SERIES);
 	}
 
 	public Collection<ICommand<ICollection>> actionsFor(
 			List<ICollection> selection, IStore destination)
 	{
 		Collection<ICommand<ICollection>> res = new ArrayList<ICommand<ICollection>>();
+
+		ICollection item1 = selection.get(0);
+		ICollection item2 = selection.get(1);
+
 		if (appliesTo(selection))
 		{
-			ICommand<ICollection> newC = new MultiplyQuantityValues(outputName,
-					selection, destination);
+			String oName = item2.getName() + " from " + item1.getName();
+			ICommand<ICollection> newC = new DivideQuantityValues("Divide "
+					+ item2.getName() + " by " + item1.getName(), oName, selection,
+					item1, item2, destination);
+			res.add(newC);
+			oName = item1.getName() + " from " + item2.getName();
+			newC = new DivideQuantityValues("Divide " + item1.getName() + " by "
+					+ item2.getName(), oName, selection, item2, item1, destination);
 			res.add(newC);
 		}
 
@@ -50,38 +60,49 @@ public class MultiplyQuantityOperation implements IOperation<ICollection>
 
 	private boolean appliesTo(List<ICollection> selection)
 	{
+		boolean res = false;
 		// first check we have quantity data
-		if (aTests.allQuantity(selection))
+		if (aTests.exactNumber(selection, 2))
 		{
-			// ok, we have quantity data. See if we have series of the same length, or
-			// singletons
-			return aTests.allEqualLengthOrSingleton(selection);
+			if (aTests.allQuantity(selection))
+			{
+				// ok, we have quantity data. See if we have series of the same length,
+				// or
+				// singletons
+				res = aTests.allEqualLengthOrSingleton(selection);
+			}
 		}
-		else
-		{
-			return false;
-		}
+
+		return res;
 	}
 
-	public static class MultiplyQuantityValues extends
-			AbstractCommand<ICollection>
+	public class DivideQuantityValues extends AbstractCommand<ICollection>
 	{
+		IQuantityCollection<?> _item1;
+		IQuantityCollection<?> _item2;
 
-		public MultiplyQuantityValues(String outputName,
-				List<ICollection> selection, IStore store)
+		public DivideQuantityValues(String title, String outputName,
+				List<ICollection> selection, ICollection item1, ICollection item2,
+				IStore store)
 		{
-			super("Multiply series", "Multiply series", outputName, store, false,
-					false, selection);
+			super(title, "Divide provided series", outputName, store, false, false,
+					selection);
+			_item1 = (IQuantityCollection<?>) item1;
+			_item2 = (IQuantityCollection<?>) item2;
 		}
 
+		@SuppressWarnings(
+		{ "unchecked", "rawtypes" })
 		@Override
 		public void execute()
 		{
-			Unit<?> unit = calculateOutputUnit();
+			// get the unit
+			Unit<?> unit = _item1.getUnits();
+
 			List<ICollection> outputs = new ArrayList<ICollection>();
 
 			// ok, generate the new series
-			IQuantityCollection<?> target = new QuantityCollection<>(getOutputName(),
+			IQuantityCollection<?> target = new QuantityCollection(getOutputName(),
 					this, unit);
 
 			outputs.add(target);
@@ -90,7 +111,7 @@ public class MultiplyQuantityOperation implements IOperation<ICollection>
 			super.addOutput(target);
 
 			// start adding values.
-			performCalc(unit, outputs);
+			performCalc(unit, outputs, _item1, _item2);
 
 			// tell each series that we're a dependent
 			Iterator<ICollection> iter = _inputs.iterator();
@@ -117,7 +138,7 @@ public class MultiplyQuantityOperation implements IOperation<ICollection>
 			{
 				IQuantityCollection<?> nextItem = (IQuantityCollection<?>) inputsIterator
 						.next();
-				unit = unit.multiply(nextItem.getUnits());
+				unit = unit.divide(nextItem.getUnits());
 			}
 			return unit;
 		}
@@ -128,7 +149,7 @@ public class MultiplyQuantityOperation implements IOperation<ICollection>
 			Unit<?> unit = calculateOutputUnit();
 
 			// update the results
-			performCalc(unit, _outputs);
+			performCalc(unit, _outputs, _item1, _item2);
 		}
 
 		/**
@@ -138,7 +159,8 @@ public class MultiplyQuantityOperation implements IOperation<ICollection>
 		 * @param unit
 		 * @param outputs
 		 */
-		private void performCalc(Unit<?> unit, List<ICollection> outputs)
+		private void performCalc(Unit<?> unit, List<ICollection> outputs,
+				ICollection item1, ICollection item2)
 		{
 			IQuantityCollection<?> target = (IQuantityCollection<?>) outputs
 					.iterator().next();
@@ -149,50 +171,38 @@ public class MultiplyQuantityOperation implements IOperation<ICollection>
 			{
 				IQuantityCollection<?> qC = (IQuantityCollection<?>) iter.next();
 				qC.getValues().clear();
-
-				// hey, if it's a time series we need to clear the times, too
 			}
 
 			// find the (non-singleton) array length
-			int length = getNonSingletonArrayLength(_inputs);
+			final int length = getNonSingletonArrayLength(_inputs);
 
-			// start adding values.
 			for (int j = 0; j < length; j++)
 			{
-				Quantity<?> runningTotal = null;
-
-				for (int i = 0; i < _inputs.size(); i++)
+				final Quantity<?> thisValue;
+				if(_item1.size() == 1)
 				{
-					IQuantityCollection<?> thisC = (IQuantityCollection<?>) _inputs
-							.get(i);
-
-					final Quantity<?> thisValue;
-
-					// just check that this isn't a singleton
-					if (thisC.size() == 1)
-					{
-						thisValue = thisC.getValues().get(0);
-					}
-					else
-					{
-						thisValue = (Quantity<?>) thisC.getValues().get(j);
-					}
-
-					// first value?
-					if (runningTotal == null)
-					{
-						runningTotal = thisValue;
-					}
-					else
-					{
-						runningTotal = runningTotal.multiply(thisValue);
-					}
+					thisValue = _item1.getValues().get(0);
 				}
+				else
+				{
+					thisValue =_item1.getValues().get(j); 
+				}
+				
+				final Quantity<?> otherValue;
+				if(_item2.size() == 1)
+				{
+					otherValue = _item2.getValues().get(0);
+				}
+				else
+				{
+					otherValue = _item2.getValues().get(j); 
+				}
+				
+				Quantity<?> runningTotal = thisValue.divide(otherValue);
 
 				target.add(runningTotal.getValue());
 			}
 		}
-
 	}
 
 }

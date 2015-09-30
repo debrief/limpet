@@ -16,8 +16,6 @@ import java.util.List;
 import javax.measure.Quantity;
 import javax.measure.Unit;
 
-import tec.units.ri.quantity.Quantities;
-
 public class AddQuantityOperation<Q extends Quantity<Q>> implements
 		IOperation<IQuantityCollection<Q>>
 {
@@ -26,7 +24,7 @@ public class AddQuantityOperation<Q extends Quantity<Q>> implements
 	public static final String SUM_OF_INPUT_SERIES = "Sum of input series";
 
 	final protected String outputName;
-	
+
 	public AddQuantityOperation(String name)
 	{
 		outputName = name;
@@ -37,13 +35,14 @@ public class AddQuantityOperation<Q extends Quantity<Q>> implements
 		this(SUM_OF_INPUT_SERIES);
 	}
 
-	public Collection<ICommand<IQuantityCollection<Q>>> actionsFor(List<IQuantityCollection<Q>> selection,
-			IStore destination)
+	public Collection<ICommand<IQuantityCollection<Q>>> actionsFor(
+			List<IQuantityCollection<Q>> selection, IStore destination)
 	{
 		Collection<ICommand<IQuantityCollection<Q>>> res = new ArrayList<ICommand<IQuantityCollection<Q>>>();
 		if (appliesTo(selection))
 		{
-			ICommand<IQuantityCollection<Q>> newC = new AddQuantityValues<Q>(outputName, selection, destination);
+			ICommand<IQuantityCollection<Q>> newC = new AddQuantityValues<Q>(
+					outputName, selection, destination);
 			res.add(newC);
 		}
 
@@ -56,20 +55,18 @@ public class AddQuantityOperation<Q extends Quantity<Q>> implements
 		boolean equalLength = aTests.allEqualLength(selection);
 		boolean equalDimensions = aTests.allEqualDimensions(selection);
 		boolean equalUnits = aTests.allEqualUnits(selection);
-		return (allQuantity && equalLength
-				&& equalDimensions && equalUnits);
+		return (allQuantity && equalLength && equalDimensions && equalUnits);
 	}
 
 	public class AddQuantityValues<T extends Quantity<T>> extends
 			AbstractCommand<IQuantityCollection<T>>
 	{
 
-
-		public AddQuantityValues(String outputName, List<IQuantityCollection<T>> selection,
-				IStore store)
+		public AddQuantityValues(String outputName,
+				List<IQuantityCollection<T>> selection, IStore store)
 		{
-			super("Add series", "Add numeric values in provided series", outputName, store,
-					false, false, selection);
+			super("Add series", "Add numeric values in provided series", outputName,
+					store, false, false, selection);
 		}
 
 		@Override
@@ -80,13 +77,13 @@ public class AddQuantityOperation<Q extends Quantity<Q>> implements
 			Unit<T> unit = first.getUnits();
 
 			List<IQuantityCollection<T>> outputs = new ArrayList<IQuantityCollection<T>>();
-			
+
 			// ok, generate the new series
-			IQuantityCollection<T> target = new QuantityCollection<T>(getOutputName(),
-					this, unit);
-			
+			IQuantityCollection<T> target = new QuantityCollection<T>(
+					getOutputName(), this, unit);
+
 			outputs.add(target);
-			
+
 			// store the output
 			super.addOutput(target);
 
@@ -117,9 +114,10 @@ public class AddQuantityOperation<Q extends Quantity<Q>> implements
 			// update the results
 			performCalc(unit, _outputs);
 		}
-		
-		/** wrap the actual operation.  We're doing this since we need to separate it from the core "execute" 
-		 * operation in order to support dynamic updates
+
+		/**
+		 * wrap the actual operation. We're doing this since we need to separate it
+		 * from the core "execute" operation in order to support dynamic updates
 		 * 
 		 * @param unit
 		 * @param outputs
@@ -132,20 +130,28 @@ public class AddQuantityOperation<Q extends Quantity<Q>> implements
 			Iterator<IQuantityCollection<T>> iter = _outputs.iterator();
 			while (iter.hasNext())
 			{
-				IQuantityCollection<T> qC = (IQuantityCollection<T>) iter
-						.next();
-				qC.getValues().clear();				
+				IQuantityCollection<T> qC = (IQuantityCollection<T>) iter.next();
+				qC.getValues().clear();
 			}
-			
+
 			for (int j = 0; j < _inputs.get(0).size(); j++)
 			{
-				Quantity<T> runningTotal = Quantities.getQuantity(0d, unit);
+				Quantity<T> runningTotal = null;
 
 				for (int i = 0; i < _inputs.size(); i++)
 				{
 					IQuantityCollection<T> thisC = _inputs.get(i);
-					runningTotal = runningTotal.add((Quantity<T>) thisC.getValues()
-							.get(j));
+					Quantity<T> thisV = (Quantity<T>) thisC.getValues().get(j);
+
+					// is this the first field?
+					if (runningTotal == null)
+					{
+						runningTotal = thisV;
+					}
+					else
+					{
+						runningTotal = runningTotal.add(thisV);
+					}
 				}
 
 				target.add(runningTotal);

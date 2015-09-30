@@ -163,36 +163,14 @@ public class DataManagerEditor extends EditorPart implements StoreChangeListener
 			}
 		};
 	}
-
+	
 	protected void editorContextMenuAboutToShow(IMenuManager menu)
 	{
-		List<ICollection> selection = new ArrayList<ICollection>();
-
-		// ok, find the applicable operations
-		ISelection sel = viewer.getSelection();
-		IStructuredSelection str = (IStructuredSelection) sel;
-		Iterator<?> iter = str.iterator();
-		while (iter.hasNext())
-		{
-			Object object = (Object) iter.next();
-			if (object instanceof ICollection)
-			{
-				selection.add((ICollection) object);
-			}
-			else if (object instanceof IAdaptable)
-			{
-				IAdaptable ada = (IAdaptable) object;
-				Object match = ada.getAdapter(ICollection.class);
-				if (match != null)
-				{
-					selection.add((ICollection) match);
-				}
-			}
-		}
-
-		List<IOperation<?>> ops = new ArrayList<IOperation<?>>();
-		ops.add(new MultiplyQuantityOperation());
-		ops.add(new AddQuantityOperation<>());
+		// get any suitable objects from selection
+		List<ICollection> selection = getSuitableObjects();
+		
+		// get the list of operations
+		List<IOperation<?>> ops = OperationsLibrary.getOperations();
 
 		// did we find anything?
 		if (selection.size() > 0)
@@ -223,6 +201,35 @@ public class DataManagerEditor extends EditorPart implements StoreChangeListener
 
 		menu.add(new Separator());
 		menu.add(refreshView);
+	}
+
+	private List<ICollection> getSuitableObjects()
+	{
+		ArrayList<ICollection> matches = new ArrayList<ICollection>();
+		
+		// ok, find the applicable operations
+		ISelection sel = viewer.getSelection();
+		IStructuredSelection str = (IStructuredSelection) sel;
+		Iterator<?> iter = str.iterator();
+		while (iter.hasNext())
+		{
+			Object object = (Object) iter.next();
+			if (object instanceof ICollection)
+			{
+				matches.add((ICollection) object);
+			}
+			else if (object instanceof IAdaptable)
+			{
+				IAdaptable ada = (IAdaptable) object;
+				Object match = ada.getAdapter(ICollection.class);
+				if (match != null)
+				{
+					matches.add((ICollection) match);
+				}
+			}
+		}
+		
+		return matches;
 	}
 
 	protected final IMenuListener getContextMenuListener()

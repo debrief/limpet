@@ -12,6 +12,17 @@ import javax.measure.Unit;
 public class CollectionComplianceTests 
 {
 
+	/** check if the specific number of arguments are supplied
+	 * 
+	 * @param selection
+	 * @param num
+	 * @return
+	 */
+	public boolean exactNumber(final List<ICollection> selection, final int num)
+	{
+		return selection.size() == num;
+	}
+	
 	/**
 	 * check if the series are all quantity datasets
 	 * 
@@ -202,14 +213,21 @@ public class CollectionComplianceTests
 		{
 			ICollection thisC = selection.get(i);
 
+			int thisSize = thisC.size();
+
 			// valid, check the size
 			if (size == -1)
 			{
-				size = thisC.size();
+				// ok, is this a singleton?
+				if(thisSize != 1)
+				{
+					// nope, it's a real array store it.
+					size = thisSize;
+				}
 			}
 			else
 			{
-				if ((thisC.size() != size) && (thisC.size() != 1))
+				if ((thisSize != size) && (thisSize != 1))
 				{
 					// oops, no
 					allValid = false;
