@@ -40,7 +40,6 @@ public class SampleData
 	{
 		InMemoryStore res = new InMemoryStore();
 
-
 		// // collate our data series
 		StockTypes.Temporal.Speed_MSec speedSeries1 = new StockTypes.Temporal.Speed_MSec(
 				SPEED_ONE);
