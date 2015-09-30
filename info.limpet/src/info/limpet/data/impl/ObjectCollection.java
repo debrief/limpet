@@ -122,14 +122,14 @@ public class ObjectCollection<T extends Object> implements IObjectCollection<T>
 	public void fireChanged()
 	{
 		// tell any standard listeners
-		_changeSupport.fireChange();
+		_changeSupport.fireChange(this);
 		
 		// now tell the dependents
 		Iterator<ICommand<?>> iter = _dependents.iterator();
 		while (iter.hasNext())
 		{
 			ICommand<?> iC = (ICommand<?>) iter.next();
-			iC.dataChanged();
+			iC.dataChanged(this);
 		}
 	}
 

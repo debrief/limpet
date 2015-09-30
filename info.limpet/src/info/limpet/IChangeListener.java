@@ -2,7 +2,7 @@ package info.limpet;
 
 public interface IChangeListener
 {
-	public void dataChanged();
+	public void dataChanged(ICollection subject);
 	
-	public void collectionDeleted();
+	public void collectionDeleted(ICollection subject);
 }
