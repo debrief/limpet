@@ -38,6 +38,12 @@ public class XyPlotView extends CoreAnalysisView
 
 	private Chart chart;
 
+	public XyPlotView()
+	{
+		super(ID);
+	}
+
+
 	/**
 	 * This is a callback that will allow us to create the viewer and initialize
 	 * it.
@@ -63,7 +69,7 @@ public class XyPlotView extends CoreAnalysisView
 	}
 
 	@Override
-	protected void display(List<ICollection> res)
+	public void display(List<ICollection> res)
 	{
 		// they're all the same type - check the first one
 		Iterator<ICollection> iter = res.iterator();

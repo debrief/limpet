@@ -45,6 +45,7 @@ public class DataFrequencyView extends CoreAnalysisView
 	 */
 	public DataFrequencyView()
 	{
+		super(ID);
 	}
 
 	/**
@@ -71,7 +72,8 @@ public class DataFrequencyView extends CoreAnalysisView
 		setupListener();
 	}
 
-	protected void display(List<ICollection> res)
+	@Override
+	public void display(List<ICollection> res)
 	{
 
 		// they're all the same type - check the first one

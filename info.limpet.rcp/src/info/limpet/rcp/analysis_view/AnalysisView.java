@@ -37,6 +37,12 @@ public class AnalysisView extends CoreAnalysisView
 
 	TableViewer viewer;
 
+	public AnalysisView()
+	{
+		super(ID);
+	}
+
+
 	class ViewLabelProvider extends LabelProvider implements ITableLabelProvider
 	{
 
@@ -79,7 +85,7 @@ public class AnalysisView extends CoreAnalysisView
 	}
 
 	@Override
-	protected void display(List<ICollection> res)
+	public void display(List<ICollection> res)
 	{
 		// clear the output
 		final ArrayList<ArrayList<String>> resList = new ArrayList<ArrayList<String>>();
