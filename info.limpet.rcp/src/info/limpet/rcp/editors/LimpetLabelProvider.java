@@ -1,4 +1,4 @@
-package info.limpet.rcp.data_provider;
+package info.limpet.rcp.editors;
 
 import info.limpet.rcp.Activator;
 import info.limpet.rcp.data_provider.data.CollectionWrapper;

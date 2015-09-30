@@ -24,7 +24,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.EditorPart;
 
 import info.limpet.data.impl.samples.SampleData;
-import info.limpet.rcp.data_provider.LimpetLabelProvider;
 import info.limpet.rcp.data_provider.data.DataModel;
 
 public class DataManagerEditor extends EditorPart
