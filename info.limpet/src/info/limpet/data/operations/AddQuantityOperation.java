@@ -43,7 +43,7 @@ public class AddQuantityOperation<Q extends Quantity<Q>> implements
 		Collection<ICommand<IQuantityCollection<Q>>> res = new ArrayList<ICommand<IQuantityCollection<Q>>>();
 		if (appliesTo(selection))
 		{
-			ICommand<IQuantityCollection<Q>> newC = new AddQuantityValues<Q>(selection, destination);
+			ICommand<IQuantityCollection<Q>> newC = new AddQuantityValues<Q>(outputName, selection, destination);
 			res.add(newC);
 		}
 
@@ -65,10 +65,10 @@ public class AddQuantityOperation<Q extends Quantity<Q>> implements
 	{
 
 
-		public AddQuantityValues(List<IQuantityCollection<T>> selection,
+		public AddQuantityValues(String outputName, List<IQuantityCollection<T>> selection,
 				IStore store)
 		{
-			super("Add series", "Add numeric values in provided series", SUM_OF_INPUT_SERIES, store,
+			super("Add series", "Add numeric values in provided series", outputName, store,
 					false, false, selection);
 		}
 

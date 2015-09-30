@@ -273,7 +273,7 @@ public class TestOperations extends TestCase
 		
 		
 		// test actions has single item: "Multiply series by constant"
-		assertEquals("correct name", "Multiply Series", command.getTitle());
+		assertEquals("correct name", "Multiply series", command.getTitle());
 		
 		// apply action
 		command.execute();
