@@ -59,7 +59,7 @@ public class TestDynamic extends TestCase
 		CoreChangeListener listener = new CoreChangeListener()
 		{
 			@Override
-			public void dataChanged()
+			public void dataChanged(ICollection subject)
 			{
 				events.add("changed!");
 			}
