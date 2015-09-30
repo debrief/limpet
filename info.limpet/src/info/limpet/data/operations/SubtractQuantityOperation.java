@@ -42,11 +42,11 @@ public class SubtractQuantityOperation<Q extends Quantity<Q>> implements
 	{
 		Collection<ICommand<ICollection>> res = new ArrayList<ICommand<ICollection>>();
 
-		ICollection item1 = selection.get(0);
-		ICollection item2 = selection.get(1);
-
 		if (appliesTo(selection))
 		{
+			ICollection item1 = selection.get(0);
+			ICollection item2 = selection.get(1);
+
 			String oName = item2.getName() + " from " + item1.getName();
 			ICommand<ICollection> newC = new SubtractQuantityValues("Subtract "
 					+ item2.getName() + " from " + item1.getName(), oName, selection,

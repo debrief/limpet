@@ -39,19 +39,19 @@ public class DivideQuantityOperation implements IOperation<ICollection>
 	{
 		Collection<ICommand<ICollection>> res = new ArrayList<ICommand<ICollection>>();
 
-		ICollection item1 = selection.get(0);
-		ICollection item2 = selection.get(1);
-
 		if (appliesTo(selection))
 		{
-			String oName = item2.getName() + " from " + item1.getName();
+			ICollection item1 = selection.get(0);
+			ICollection item2 = selection.get(1);
+
+			String oName = item1.getName() + " / " + item2.getName();
 			ICommand<ICollection> newC = new DivideQuantityValues("Divide "
-					+ item2.getName() + " by " + item1.getName(), oName, selection,
+					+ item1.getName() + " by " + item2.getName(), oName, selection,
 					item1, item2, destination);
 			res.add(newC);
-			oName = item1.getName() + " from " + item2.getName();
-			newC = new DivideQuantityValues("Divide " + item1.getName() + " by "
-					+ item2.getName(), oName, selection, item2, item1, destination);
+			oName = item2.getName() + " / " + item1.getName();
+			newC = new DivideQuantityValues("Divide " + item2.getName() + " by "
+					+ item1.getName(), oName, selection, item2, item1, destination);
 			res.add(newC);
 		}
 
@@ -78,8 +78,8 @@ public class DivideQuantityOperation implements IOperation<ICollection>
 
 	public class DivideQuantityValues extends AbstractCommand<ICollection>
 	{
-		IQuantityCollection<?> _item1;
-		IQuantityCollection<?> _item2;
+		final IQuantityCollection<?> _item1;
+		final IQuantityCollection<?> _item2;
 
 		public DivideQuantityValues(String title, String outputName,
 				List<ICollection> selection, ICollection item1, ICollection item2,
@@ -97,7 +97,7 @@ public class DivideQuantityOperation implements IOperation<ICollection>
 		public void execute()
 		{
 			// get the unit
-			Unit<?> unit = _item1.getUnits();
+			Unit<?> unit = calculateOutputUnit();
 
 			List<ICollection> outputs = new ArrayList<ICollection>();
 
@@ -164,7 +164,7 @@ public class DivideQuantityOperation implements IOperation<ICollection>
 		{
 			IQuantityCollection<?> target = (IQuantityCollection<?>) outputs
 					.iterator().next();
-
+			
 			// clear out the lists, first
 			Iterator<ICollection> iter = _outputs.iterator();
 			while (iter.hasNext())
@@ -199,7 +199,7 @@ public class DivideQuantityOperation implements IOperation<ICollection>
 				}
 				
 				Quantity<?> runningTotal = thisValue.divide(otherValue);
-
+				
 				target.add(runningTotal.getValue());
 			}
 		}
