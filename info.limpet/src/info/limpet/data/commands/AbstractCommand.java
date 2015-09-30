@@ -24,8 +24,9 @@ public abstract class AbstractCommand<T extends ICollection> implements
 	 * 
 	 */
 	private boolean _dynamic = true;
+	final private String _outputName;
 
-	public AbstractCommand(String title, String description, IStore store,
+	public AbstractCommand(String title, String description, String outputName, IStore store,
 			boolean canUndo, boolean canRedo, List<T> inputs)
 	{
 		_title = title;
@@ -33,9 +34,15 @@ public abstract class AbstractCommand<T extends ICollection> implements
 		_store = store;
 		_canUndo = canUndo;
 		_canRedo = canRedo;
+		_outputName = outputName;
 
 		_inputs = new ArrayList<T>(inputs);
 		_outputs = new ArrayList<T>();
+	}
+	
+	protected String getOutputName()
+	{
+		return _outputName;
 	}
 
 	@Override

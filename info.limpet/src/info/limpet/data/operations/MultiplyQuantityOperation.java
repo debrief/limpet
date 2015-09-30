@@ -24,13 +24,25 @@ public class MultiplyQuantityOperation implements IOperation<ICollection>
 
 	CollectionComplianceTests aTests = new CollectionComplianceTests();
 
+	final private String outputName;
+	
+	public MultiplyQuantityOperation()
+	{
+		this(SERIES_NAME);
+	}
+	
+	public MultiplyQuantityOperation(final String seriesName)
+	{
+		outputName = seriesName;
+	}
+
 	public Collection<ICommand<ICollection>> actionsFor(
 			List<ICollection> selection, IStore destination)
 	{
 		Collection<ICommand<ICollection>> res = new ArrayList<ICommand<ICollection>>();
 		if (appliesTo(selection))
 		{
-			ICommand<ICollection> newC = new MultiplyQuantityValues(selection,
+			ICommand<ICollection> newC = new MultiplyQuantityValues(outputName, selection,
 					destination);
 			res.add(newC);
 		}
@@ -57,9 +69,9 @@ public class MultiplyQuantityOperation implements IOperation<ICollection>
 			AbstractCommand<ICollection>
 	{
 
-		public MultiplyQuantityValues(List<ICollection> selection, IStore store)
+		public MultiplyQuantityValues(String outputName, List<ICollection> selection, IStore store)
 		{
-			super("Multiply Series", "Multiply series", store, false, false,
+			super("Multiply series", "Multiply series", outputName, store, false, false,
 					selection);
 		}
 
@@ -88,7 +100,7 @@ public class MultiplyQuantityOperation implements IOperation<ICollection>
 			List<ICollection> outputs = new ArrayList<ICollection>();
 
 			// ok, generate the new series
-			IQuantityCollection<?> target = new QuantityCollection<>(SERIES_NAME,
+			IQuantityCollection<?> target = new QuantityCollection<>(getOutputName(),
 					this, unit);
 
 			outputs.add(target);
