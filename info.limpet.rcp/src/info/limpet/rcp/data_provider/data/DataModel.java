@@ -2,6 +2,7 @@ package info.limpet.rcp.data_provider.data;
 
 import info.limpet.ICollection;
 import info.limpet.ICommand;
+import info.limpet.IStore;
 import info.limpet.data.store.InMemoryStore;
 
 import java.util.ArrayList;
@@ -178,7 +179,7 @@ public class DataModel implements ITreeContentProvider
 		{
 			throw new RuntimeException("We don't have a data store");
 		}
-		
+
 		return list.toArray();
 	}
 
@@ -229,6 +230,11 @@ public class DataModel implements ITreeContentProvider
 		return res;
 	}
 
+	public IStore getStore()
+	{
+		return _store;
+	}
+	
 	@Override
 	public void inputChanged(final Viewer v, final Object oldInput,
 			final Object newInput)
