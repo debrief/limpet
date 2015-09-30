@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -30,6 +31,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IFileEditorInput;
@@ -45,7 +47,7 @@ public class DataManagerEditor extends EditorPart implements StoreChangeListener
 	private TreeViewer viewer;
 	private IMenuListener _menuListener;
 	private Action action1;
-	private Action action2;
+	private Action refreshView;
 
 	@Override
 	public void init(IEditorSite site, IEditorInput input)
@@ -95,6 +97,10 @@ public class DataManagerEditor extends EditorPart implements StoreChangeListener
 		makeActions();
 		hookContextMenu();
 		
+		IActionBars bars = getEditorSite().getActionBars();
+		fillLocalToolBar(bars.getToolBarManager());
+
+		
 		// ok, setup as listener
 		InMemoryStore store = (InMemoryStore) viewer.getInput();
 		
@@ -104,6 +110,11 @@ public class DataManagerEditor extends EditorPart implements StoreChangeListener
 			ms.addChangeListener(this);
 		}
 
+	}
+	
+	protected void fillLocalToolBar(IToolBarManager manager)
+	{
+		manager.add(refreshView);
 	}
 
 	private void makeActions()
@@ -123,17 +134,16 @@ public class DataManagerEditor extends EditorPart implements StoreChangeListener
 		action1.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
 				.getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
 
-		action2 = new Action()
+		refreshView = new Action()
 		{
 			public void run()
 			{
-				showMessage("Action 2 executed");
+				viewer.refresh();
 			}
 		};
-		action2.setText("Action 2");
-		action2.setToolTipText("Action 2 tooltip");
-		action2.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
-				.getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
+		refreshView.setText("Refresh");
+		refreshView.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
+				.getImageDescriptor(ISharedImages.IMG_TOOL_REDO));
 	}
 
 	public void showMessage(String message)
@@ -212,7 +222,7 @@ public class DataManagerEditor extends EditorPart implements StoreChangeListener
 		}
 
 		menu.add(new Separator());
-		menu.add(action2);
+		menu.add(refreshView);
 	}
 
 	protected final IMenuListener getContextMenuListener()
