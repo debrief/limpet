@@ -16,6 +16,7 @@ import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
 public abstract class QuantityFrequencyBins extends CoreAnalysis
 {
+	private static final double THRESHOLD_VALUE = 0.001;
 	final CollectionComplianceTests aTests;
 
 	public QuantityFrequencyBins()
@@ -72,33 +73,37 @@ public abstract class QuantityFrequencyBins extends CoreAnalysis
 		// also do some frequency binning
 		double range = stats.getMax() - stats.getMin();
 
+		// aah, double-check we don't have zero range
 		final int BIN_COUNT;
 		if (range > 10)
 			BIN_COUNT = 10;
 		else
 			BIN_COUNT = (int) range;
 
-		long[] histogram = new long[BIN_COUNT];
-		EmpiricalDistribution distribution = new EmpiricalDistribution(BIN_COUNT);
-		distribution.load(data);
-
 		BinnedData res = new BinnedData(collection, BIN_COUNT);
 
-		int k = 0;
-		for (SummaryStatistics sStats : distribution.getBinStats())
+		if (range > THRESHOLD_VALUE)
 		{
-			histogram[k++] = sStats.getN();
-		}
 
-		double rangeSoFar = stats.getMin();
-		double rangeStep = range / BIN_COUNT;
-		for (int i = 0; i < histogram.length; i++)
-		{
-			long l = histogram[i];
-			res.add(new Bin(rangeSoFar, rangeSoFar + rangeStep, l));
-			rangeSoFar += rangeStep;
-		}
+			long[] histogram = new long[BIN_COUNT];
+			EmpiricalDistribution distribution = new EmpiricalDistribution(BIN_COUNT);
+			distribution.load(data);
 
+			int k = 0;
+			for (SummaryStatistics sStats : distribution.getBinStats())
+			{
+				histogram[k++] = sStats.getN();
+			}
+
+			double rangeSoFar = stats.getMin();
+			double rangeStep = range / BIN_COUNT;
+			for (int i = 0; i < histogram.length; i++)
+			{
+				long l = histogram[i];
+				res.add(new Bin(rangeSoFar, rangeSoFar + rangeStep, l));
+				rangeSoFar += rangeStep;
+			}
+		}
 		return res;
 	}
 
