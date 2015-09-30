@@ -1,6 +1,7 @@
 package info.limpet.data.impl;
 
 import info.limpet.IChangeListener;
+import info.limpet.ICollection;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -21,13 +22,13 @@ public class ListenerHelper
 		_listeners.add(listener);
 	}
 
-	public void fireChange()
+	public void fireChange(ICollection subject)
 	{
 		Iterator<IChangeListener> iter = _listeners.iterator();
 		while (iter.hasNext())
 		{
 			IChangeListener iL = (IChangeListener) iter.next();
-			iL.dataChanged();
+			iL.dataChanged(subject);
 		}
 	}
 

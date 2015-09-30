@@ -51,7 +51,7 @@ public abstract class AbstractCommand<T extends ICollection> implements
 	}
 
 	@Override
-	public void dataChanged()
+	public void dataChanged(ICollection subject)
 	{
 		// are we doing live updates?
 		if (_dynamic)
@@ -72,7 +72,7 @@ public abstract class AbstractCommand<T extends ICollection> implements
 	abstract protected void recalculate();
 
 	@Override
-	public void collectionDeleted()
+	public void collectionDeleted(ICollection subject)
 	{
 	}
 

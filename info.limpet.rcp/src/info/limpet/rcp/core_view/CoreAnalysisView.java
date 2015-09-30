@@ -1,5 +1,6 @@
 package info.limpet.rcp.core_view;
 
+import info.limpet.IChangeListener;
 import info.limpet.ICollection;
 import info.limpet.data.operations.CollectionComplianceTests;
 
@@ -34,51 +35,99 @@ public abstract class CoreAnalysisView extends ViewPart
 	private Action followSelection;
 	private ISelectionListener selListener;
 	protected CollectionComplianceTests aTests;
+	final private List<ICollection> curList = new ArrayList<ICollection>();
+	private IChangeListener changeListener;
 
 	public CoreAnalysisView()
 	{
 		super();
 
 		aTests = new CollectionComplianceTests();
+		changeListener = new IChangeListener()
+		{
 
+			@Override
+			public void dataChanged(ICollection subject)
+			{
+				display(curList);
+			}
+
+			@Override
+			public void collectionDeleted(ICollection subject)
+			{
+				// hmm, we should probably stop listening to that collection
+				curList.remove(subject);
+				
+				// and update the UI
+				display(curList);
+			}
+		};
 	}
 
 	protected void newSelection(ISelection selection)
 	{
-		if (followSelection.isChecked())
+		List<ICollection> res = new ArrayList<ICollection>();
+		if (selection instanceof StructuredSelection)
 		{
-			List<ICollection> res = new ArrayList<ICollection>();
-			if (selection instanceof StructuredSelection)
-			{
-				StructuredSelection str = (StructuredSelection) selection;
+			StructuredSelection str = (StructuredSelection) selection;
 
-				// check if it/they are suitable
-				Iterator<?> iter = str.iterator();
-				while (iter.hasNext())
+			// check if it/they are suitable
+			Iterator<?> iter = str.iterator();
+			while (iter.hasNext())
+			{
+				Object object = (Object) iter.next();
+				if (object instanceof IAdaptable)
 				{
-					Object object = (Object) iter.next();
-					if (object instanceof IAdaptable)
+					IAdaptable ad = (IAdaptable) object;
+					ICollection coll = (ICollection) ad.getAdapter(ICollection.class);
+					if (coll != null)
 					{
-						IAdaptable ad = (IAdaptable) object;
-						ICollection coll = (ICollection) ad.getAdapter(ICollection.class);
-						if (coll != null)
-						{
-							res.add(coll);
-						}
+						res.add(coll);
 					}
 				}
 			}
+		}
 
-			// have we found any?
-			if (res.size() > 0)
+		// have we found any?
+		if (res.size() > 0)
+		{
+			// do they apply to me?
+			if (appliesToMe(res, aTests))
 			{
-				// do they apply to me?
-				if (appliesToMe(res, aTests))
+				// ok, stop listening to the old list
+				clearChangeListeners();
+
+				// store the new list
+				curList.addAll(res);
+
+				// now listen to the new list
+				Iterator<ICollection> iter = curList.iterator();
+				while (iter.hasNext())
 				{
-					// ok, display them
-					display(res);
+					ICollection iC = (ICollection) iter.next();
+					iC.addChangeListener(changeListener);
 				}
+
+				// ok, display them
+				display(res);
 			}
+		}
+
+	}
+
+	private void clearChangeListeners()
+	{
+		if (curList.size() > 0)
+		{
+			Iterator<ICollection> iter = curList.iterator();
+			while (iter.hasNext())
+			{
+				ICollection iC = (ICollection) iter.next();
+				iC.removeChangeListener(changeListener);
+			}
+
+			// and forget about them all
+			curList.clear();
 		}
 	}
 
@@ -138,7 +187,11 @@ public abstract class CoreAnalysisView extends ViewPart
 		{
 			public void selectionChanged(IWorkbenchPart part, ISelection selection)
 			{
-				newSelection(selection);
+				// are we following the selection?
+				if (followSelection.isChecked())
+				{
+					newSelection(selection);
+				}
 			}
 		};
 		getSite().getWorkbenchWindow().getSelectionService()
@@ -147,6 +200,10 @@ public abstract class CoreAnalysisView extends ViewPart
 
 	public void dispose()
 	{
+		// stop listening for data changes
+		clearChangeListeners();
+
+		// and stop listening for selection changes
 		getSite().getWorkbenchWindow().getSelectionService()
 				.removeSelectionListener(selListener);
 
