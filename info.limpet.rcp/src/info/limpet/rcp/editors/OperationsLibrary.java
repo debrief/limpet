@@ -2,6 +2,7 @@ package info.limpet.rcp.editors;
 
 import info.limpet.IOperation;
 import info.limpet.data.operations.AddQuantityOperation;
+import info.limpet.data.operations.DeleteCollectionOperation;
 import info.limpet.data.operations.DivideQuantityOperation;
 import info.limpet.data.operations.MultiplyQuantityOperation;
 import info.limpet.data.operations.SubtractQuantityOperation;
@@ -18,6 +19,7 @@ public class OperationsLibrary
 		ops.add(new AddQuantityOperation<>());
 		ops.add(new SubtractQuantityOperation<>());
 		ops.add(new DivideQuantityOperation());
+		ops.add(new DeleteCollectionOperation());
 
 		return ops;
 
