@@ -80,4 +80,11 @@ public class InMemoryStore implements IStore
 		_store.clear();
 	}
 
+	public void remove(ICollection collection)
+	{
+		_store.remove(collection);
+		
+		fireModified();
+	}
+
 }
