@@ -74,8 +74,9 @@ public abstract class TimeFrequencyBins extends CoreAnalysis
 
 		// aah, double-check we don't have zero range
 		final int BIN_COUNT;
-		if (range > 10)
-			BIN_COUNT = 10;
+		final int maxRange = 30;
+		if (range > maxRange)
+			BIN_COUNT = maxRange;
 		else
 			BIN_COUNT = (int) Math.max(2, range);
 
