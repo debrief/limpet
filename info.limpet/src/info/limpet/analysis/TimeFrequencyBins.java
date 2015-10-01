@@ -8,8 +8,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.measure.Quantity;
-
 import org.apache.commons.math3.random.EmpiricalDistribution;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
@@ -61,11 +59,11 @@ public abstract class TimeFrequencyBins extends CoreAnalysis
 
 		// Add the data from the array
 		int ctr = 0;
-		Iterator<?> iterV = o.getTimes().iterator();
+		Iterator<Long> iterV = o.getTimes().iterator();
 		while (iterV.hasNext())
 		{
-			Quantity<?> object = (Quantity<?>) iterV.next();
-			data[ctr++] = object.getValue().doubleValue();
+			long time = iterV.next();
+			data[ctr++] = time;
 		}
 
 		// Get a DescriptiveStatistics instance
@@ -162,7 +160,7 @@ public abstract class TimeFrequencyBins extends CoreAnalysis
 
 	private boolean appliesTo(List<ICollection> selection)
 	{
-		return aTests.allQuantity(selection) && aTests.allEqualUnits(selection);
+		return aTests.allTemporal(selection);
 	}
 
 	abstract protected void presentResults(List<String> titles,

@@ -3,10 +3,13 @@ package info.limpet.data;
 import info.limpet.ICollection;
 import info.limpet.analysis.AnalysisLibrary;
 import info.limpet.analysis.IAnalysis;
+import info.limpet.analysis.TimeFrequencyBins;
 import info.limpet.data.impl.ObjectCollection;
+import info.limpet.data.impl.TemporalObjectCollection;
 import info.limpet.data.impl.samples.StockTypes;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -80,6 +83,45 @@ public class TestAnalysis extends TestCase
 		
 		// run the analysis
 		ia.analyse(selection);
+		
+		// check the results
+//		assertEquals("enough titles", 1, tList.size());
+//		assertEquals("enough values", 1, vList.size());
+		
+		outList("Object descriptive", tList, vList);
+	}
+	
+	public void testTimeFrequencyStats()
+	{
+		final List<String> tList = new ArrayList<String>();
+		final List<String> vList = new ArrayList<String>();
+
+		TimeFrequencyBins tBins = new TimeFrequencyBins()
+		{
+			@Override
+			protected void presentResults(List<String> titles, List<String> values)
+			{
+				tList.addAll(titles);
+				vList.addAll(values);
+			}
+		};
+		
+		// collate the data
+		List<ICollection> selection = new ArrayList<ICollection>();
+		TemporalObjectCollection<String> len_1 = new TemporalObjectCollection<String>("some strings"); 
+		selection.add(len_1);
+		
+		long t = new Date().getTime();
+		
+		len_1.add(t + 10000, "a");
+		len_1.add(t + 20000, "b");
+		len_1.add(t + 60000, "c");
+		len_1.add(t + 120000, "a");
+		len_1.add(t + 130000, "b");
+		len_1.add(t + 180000, "a");
+		
+		// run the analysis
+		tBins.analyse(selection);
 		
 		// check the results
 //		assertEquals("enough titles", 1, tList.size());
