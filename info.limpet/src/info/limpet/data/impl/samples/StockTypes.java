@@ -20,7 +20,7 @@ public class StockTypes
 {
 
 	public static Unit<?> DEGREE_ANGLE = Units.RADIAN.multiply(2 * Math.PI);
-	
+
 	/**
 	 * time series (temporal) collections
 	 * 
@@ -100,20 +100,19 @@ public class StockTypes
 		{
 			public Angle_Degrees(String name)
 			{
-				// TODO: use units.mulitply - something like this:
-				// Units.RADIAN.multiply(2 * Math.PI);
-				super(name, Units.RADIAN.asType(Angle.class));
+				super(name, DEGREE_ANGLE.asType(Angle.class));
 			}
 		}
 
-		public static class Locations extends TemporalObjectCollection<TmpLocationItem>
+		public static class Locations extends
+				TemporalObjectCollection<TmpLocationItem>
 		{
 			public Locations(String name)
 			{
 				super(name);
 			}
 		}
-		
+
 	}
 
 	/**
@@ -129,6 +128,14 @@ public class StockTypes
 			public Speed_MSec(String name)
 			{
 				super(name, Units.METRE.divide(Units.SECOND).asType(Speed.class));
+			}
+		}
+
+		public static class Angle_Degrees extends QuantityCollection<Angle>
+		{
+			public Angle_Degrees(String name)
+			{
+				super(name, DEGREE_ANGLE.asType(Angle.class));
 			}
 		}
 
@@ -149,7 +156,6 @@ public class StockTypes
 						.asType(Acceleration.class));
 			}
 		}
-		
 
 		public static class Locations extends ObjectCollection<TmpLocationItem>
 		{
@@ -164,6 +170,7 @@ public class StockTypes
 	public static class TmpLocationItem
 	{
 		public double latVal, longVal, depthVal;
+
 		public TmpLocationItem(double latV, double longV, double depthV)
 		{
 			latVal = latV;

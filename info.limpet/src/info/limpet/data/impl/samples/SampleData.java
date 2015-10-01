@@ -31,6 +31,7 @@ public class SampleData
 	public static final String LENGTH_SINGLETON = "Length Singleton";
 	public static final String LENGTH_TWO = "Length Two non-Time";
 	public static final String LENGTH_ONE = "Length One non-Time";
+	public static final String ANGLE_ONE = "Angle One Time";
 	public static final String SPEED_ONE = "Speed One Time";
 	public static final String SPEED_TWO = "Speed Two Time";
 	public static final String RANGED_SPEED_SINGLETON = "Ranged Speed Singleton";
@@ -41,6 +42,8 @@ public class SampleData
 		InMemoryStore res = new InMemoryStore();
 
 		// // collate our data series
+		StockTypes.Temporal.Angle_Degrees angle1 = new StockTypes.Temporal.Angle_Degrees(
+				ANGLE_ONE);
 		StockTypes.Temporal.Speed_MSec speedSeries1 = new StockTypes.Temporal.Speed_MSec(
 				SPEED_ONE);
 		StockTypes.Temporal.Speed_MSec speedSeries2 = new StockTypes.Temporal.Speed_MSec(
@@ -70,6 +73,7 @@ public class SampleData
 		{
 			thisTime = new Date().getTime() + i * 500 * 60;
 
+			angle1.add(thisTime, 60 + 3 * Math.sin(Math.toRadians(i*42.5)));
 			speedSeries1.add(thisTime, 1 / Math.sin(i));
 			speedSeries2.add(thisTime, Math.sin(i));
 			speedSeries3.add(thisTime, 3d * Math.cos(i));
@@ -94,6 +98,7 @@ public class SampleData
 
 		List<ICollection> list = new ArrayList<ICollection>();
 
+		list.add(angle1);
 		list.add(speedSeries1);
 		list.add(speedSeries2);
 		list.add(speedSeries3);

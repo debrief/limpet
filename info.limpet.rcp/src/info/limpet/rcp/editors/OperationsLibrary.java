@@ -26,28 +26,17 @@ public class OperationsLibrary
 	{
 		HashMap<String, List<IOperation<?>>> res = new HashMap<String, List<IOperation<?>>>();
 
-		List<IOperation<?>> arithmetic = new ArrayList<IOperation<?>>();
-		arithmetic.add(new MultiplyQuantityOperation());
-		arithmetic.add(new AddQuantityOperation<>());
-		arithmetic.add(new SubtractQuantityOperation<>());
-		arithmetic.add(new DivideQuantityOperation());
+		res.put("Arithmetic", getArithmetic());
+		res.put("Conversions", getConversions());
+		res.put("Administration", getAdmin());
+		res.put("Analysis", getAnalysis());
+		return res;
 
-		List<IOperation<?>> conversions = new ArrayList<IOperation<?>>();
-		conversions.add(new UnitConversionOperation(Units.METRE));
-		conversions.add(new UnitConversionOperation(Units.SECOND));
-		conversions.add(new UnitConversionOperation(Units.MINUTE));
-		conversions.add(new UnitConversionOperation(Units.METRES_PER_SECOND));
-		conversions
-				.add(new UnitConversionOperation(Units.METRES_PER_SQUARE_SECOND));
-		conversions.add(new UnitConversionOperation(Units.CELSIUS));
-		conversions.add(new UnitConversionOperation(Units.RADIAN));
-		conversions.add(new UnitConversionOperation(StockTypes.DEGREE_ANGLE));
+	}
 
-		List<IOperation<?>> admin = new ArrayList<IOperation<?>>();
-		admin.add(new DeleteCollectionOperation());
-
+	private static List<IOperation<?>> getAnalysis()
+	{
 		List<IOperation<?>> analysis = new ArrayList<IOperation<?>>();
-
 		analysis.add(new ShowInNamedView("Show in XY Plot View", XyPlotView.ID)
 		{
 			protected boolean appliesTo(List<ICollection> selection)
@@ -58,12 +47,50 @@ public class OperationsLibrary
 		analysis.add(new ShowInNamedView("Show in Data Frequency View",
 				DataFrequencyView.ID));
 		analysis.add(new ShowInNamedView("Show in Analysis View", AnalysisView.ID));
+		return analysis;
+	}
 
-		res.put("Arithmetic", arithmetic);
-		res.put("Conversions", conversions);
-		res.put("Administration", admin);
-		res.put("Analysis", analysis);
-		return res;
+	private static List<IOperation<?>> getAdmin()
+	{
+		List<IOperation<?>> admin = new ArrayList<IOperation<?>>();
+		admin.add(new DeleteCollectionOperation());
+		return admin;
+	}
 
+	private static List<IOperation<?>> getArithmetic()
+	{
+		List<IOperation<?>> arithmetic = new ArrayList<IOperation<?>>();
+		arithmetic.add(new MultiplyQuantityOperation());
+		arithmetic.add(new AddQuantityOperation<>());
+		arithmetic.add(new SubtractQuantityOperation<>());
+		arithmetic.add(new DivideQuantityOperation());
+		return arithmetic;
+	}
+
+	private static List<IOperation<?>> getConversions()
+	{
+		List<IOperation<?>> conversions = new ArrayList<IOperation<?>>();
+		
+		// Length
+		conversions.add(new UnitConversionOperation(Units.METRE));
+		
+		// Time
+		conversions.add(new UnitConversionOperation(Units.SECOND));
+		conversions.add(new UnitConversionOperation(Units.MINUTE));
+		
+		// Speed
+		conversions.add(new UnitConversionOperation(Units.METRES_PER_SECOND));
+		
+		// Acceleration
+		conversions
+				.add(new UnitConversionOperation(Units.METRES_PER_SQUARE_SECOND));
+		
+		// Temperature
+		conversions.add(new UnitConversionOperation(Units.CELSIUS));
+		
+		// Angle
+		conversions.add(new UnitConversionOperation(Units.RADIAN));
+		conversions.add(new UnitConversionOperation(StockTypes.DEGREE_ANGLE));
+		return conversions;
 	}
 }
