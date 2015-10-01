@@ -1,5 +1,11 @@
 package info.limpet.rcp.data_provider.data;
 
+import info.limpet.data.operations.SimpleMovingAverageOperation.SimpleMovingAverageCommand;
+import info.limpet.rcp.propertyeditors.SliderPropertyDescriptor;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
@@ -14,6 +20,7 @@ public class CommandPropertySource implements IPropertySource
 	private static final String COMMAND_NAME = "limpet.operation.name";
 	private static final String COMMAND_DESCRIPTION = "limpet.operation.description";
 	private static final String COMMAND_DYNAMIC = "limpet.operation.dynamic";
+	private static final String AVERAGE_WINDOW = "limpet.operation.movingaverage.window";
 
 	private IPropertyDescriptor[] propertyDescriptors;
 	private final CommandWrapper _operation;
@@ -43,19 +50,32 @@ public class CommandPropertySource implements IPropertySource
 	{
 		if (propertyDescriptors == null)
 		{
+			List<IPropertyDescriptor> list = new ArrayList<IPropertyDescriptor>();
+
 			// Create a descriptor and set a category
 			final PropertyDescriptor textDescriptor = new PropertyDescriptor(
 					COMMAND_NAME, "Name");
 			textDescriptor.setCategory("Label");
+			list.add(textDescriptor);
 			final PropertyDescriptor descriptionDescriptor = new TextPropertyDescriptor(
 					COMMAND_DESCRIPTION, "Description");
 			descriptionDescriptor.setCategory("Label");
+			list.add(descriptionDescriptor);
 			final PropertyDescriptor dynamicDescriptor = new CheckboxPropertyDescriptor(
 					COMMAND_DYNAMIC, "Dynamic updates");
-			descriptionDescriptor.setCategory("Label");
+			dynamicDescriptor.setCategory("Label");
+			list.add(dynamicDescriptor);
 
-			propertyDescriptors = new IPropertyDescriptor[]
-			{ textDescriptor, descriptionDescriptor, dynamicDescriptor };
+			// hmm, is it our moving average?
+			if (_operation.getCommand() instanceof SimpleMovingAverageCommand)
+			{
+				final SliderPropertyDescriptor windowDescriptor = new SliderPropertyDescriptor(
+						AVERAGE_WINDOW, "Window", 1, 20);
+				windowDescriptor.setCategory("Calculation");
+				list.add(windowDescriptor);
+			}
+
+			propertyDescriptors = (IPropertyDescriptor[]) list.toArray(new IPropertyDescriptor[]{});
 		}
 		return propertyDescriptors;
 	}
@@ -71,6 +91,9 @@ public class CommandPropertySource implements IPropertySource
 			return _operation.getCommand().getDescription();
 		else if (prop.equals(COMMAND_DYNAMIC))
 			return _operation.getCommand().getDynamic();
+		else if (prop.equals(AVERAGE_WINDOW))
+			return "" + ((SimpleMovingAverageCommand) _operation.getCommand())
+					.getWindowSize();
 
 		return null;
 	}
@@ -93,10 +116,15 @@ public class CommandPropertySource implements IPropertySource
 	public void setPropertyValue(final Object id, final Object value)
 	{
 		final String prop = (String) id;
-		if(prop.equals(COMMAND_DYNAMIC))
+		if (prop.equals(COMMAND_DYNAMIC))
 		{
 			boolean res = (boolean) value;
 			_operation.getCommand().setDynamic(res);
+		}
+		else if (prop.equals(AVERAGE_WINDOW))
+		{
+			((SimpleMovingAverageCommand) _operation.getCommand())
+					.setWindowSize(Integer.parseInt((String) value));
 		}
 	}
 
