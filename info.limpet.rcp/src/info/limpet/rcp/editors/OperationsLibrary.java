@@ -20,8 +20,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.measure.quantity.Speed;
-
 import tec.units.ri.unit.Units;
 
 public class OperationsLibrary
@@ -79,7 +77,7 @@ public class OperationsLibrary
 		arithmetic.add(new AddQuantityOperation<>());
 		arithmetic.add(new SubtractQuantityOperation<>());
 		arithmetic.add(new DivideQuantityOperation());
-		arithmetic.add(new SimpleMovingAverageOperation<Speed>(3));
+		arithmetic.add(new SimpleMovingAverageOperation(3));
 		return arithmetic;
 	}
 

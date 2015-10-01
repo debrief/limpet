@@ -356,7 +356,7 @@ public class TestOperations extends TestCase
 		// place to store results data
 		InMemoryStore store = new SampleData().getData(10);
 
-		List<IQuantityCollection<Speed>> selection = new ArrayList<>();
+		List<ICollection> selection = new ArrayList<>();
 
 		@SuppressWarnings("unchecked")
 		IQuantityCollection<Speed> speed_good_1 = (IQuantityCollection<Speed>) store
@@ -365,11 +365,11 @@ public class TestOperations extends TestCase
 
 		int windowSize = 3;
 
-		Collection<ICommand<IQuantityCollection<Speed>>> commands = new SimpleMovingAverageOperation<Speed>(
+		Collection<ICommand<ICollection>> commands = new SimpleMovingAverageOperation(
 				windowSize).actionsFor(selection, store);
 		assertEquals(1, commands.size());
 
-		ICommand<IQuantityCollection<Speed>> command = commands.iterator().next();
+		ICommand<ICollection> command = commands.iterator().next();
 
 		// apply action
 		command.execute();
@@ -398,21 +398,5 @@ public class TestOperations extends TestCase
 
 		assertEquals(average, simpleMovingAverage.getValue().doubleValue(), 0);
 		
-		showValues("original", speed_good_1);
-		showValues("new", newS);
-
 	}
-	
-	protected static void showValues(String title, IQuantityCollection<?> coll)
-	{
-		System.out.println(title);
-		Iterator<?> iter = coll.getValues().iterator();
-		while (iter.hasNext())
-		{
-			Quantity<?> quant = (Quantity<?>) iter.next();
-			System.out.println(quant.getValue());
-			
-		}
-	}
-	
 }

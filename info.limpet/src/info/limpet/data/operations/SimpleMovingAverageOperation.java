@@ -17,8 +17,7 @@ import java.util.List;
 
 import javax.measure.Quantity;
 
-public class SimpleMovingAverageOperation<Q extends Quantity<Q>> implements
-		IOperation<IQuantityCollection<Q>>
+public class SimpleMovingAverageOperation implements IOperation<ICollection>
 {
 	public static final String SERIES_NAME_TEMPLATE = "Simple Moving Average ({0})";
 
@@ -31,14 +30,14 @@ public class SimpleMovingAverageOperation<Q extends Quantity<Q>> implements
 		this.windowSize = windowSize;
 	}
 
-	public Collection<ICommand<IQuantityCollection<Q>>> actionsFor(
-			List<IQuantityCollection<Q>> selection, IStore destination)
-	{
-		Collection<ICommand<IQuantityCollection<Q>>> res = new ArrayList<ICommand<IQuantityCollection<Q>>>();
+	public Collection<ICommand<ICollection>> actionsFor(
+			List<ICollection> selection, IStore destination)
+			{
+		Collection<ICommand<ICollection>> res = new ArrayList<ICommand<ICollection>>();
 		if (appliesTo(selection))
 		{
 			String name = MessageFormat.format(SERIES_NAME_TEMPLATE, windowSize);
-			ICommand<IQuantityCollection<Q>> newC = new SimpleMovingAverageCommand<Q>(
+			ICommand<ICollection> newC = new SimpleMovingAverageCommand(
 					name, name, selection, destination);
 			res.add(newC);
 		}
@@ -46,19 +45,19 @@ public class SimpleMovingAverageOperation<Q extends Quantity<Q>> implements
 		return res;
 	}
 
-	private boolean appliesTo(List<IQuantityCollection<Q>> selection)
+	private boolean appliesTo(List<ICollection> selection)
 	{
 		boolean singleSeries = selection.size() == 1;
 		boolean allQuantity = aTests.allQuantity(selection);
 		return (singleSeries && allQuantity);
 	}
 
-	public class SimpleMovingAverageCommand<T extends Quantity<T>> extends
-			AbstractCommand<IQuantityCollection<T>>
+	public class SimpleMovingAverageCommand extends
+			AbstractCommand<ICollection>
 	{
 
 		public SimpleMovingAverageCommand(String operationName, String outputName,
-				List<IQuantityCollection<T>> selection, IStore store)
+				List<ICollection> selection, IStore store)
 		{
 			super(operationName, "Calculates a Simple Moving Average", outputName,
 					store, false, false, selection);
@@ -67,12 +66,12 @@ public class SimpleMovingAverageOperation<Q extends Quantity<Q>> implements
 		@Override
 		public void execute()
 		{
-			IQuantityCollection<T> input = _inputs.get(0);
+			IQuantityCollection<?> input = (IQuantityCollection<?>) _inputs.get(0);
 
-			List<IQuantityCollection<T>> outputs = new ArrayList<IQuantityCollection<T>>();
+			List<ICollection> outputs = new ArrayList<ICollection>();
 
 			// ok, generate the new series
-			IQuantityCollection<T> target = new QuantityCollection<>(input.getName()
+			IQuantityCollection<?> target = new QuantityCollection<>(input.getName()
 					+ getOutputName(), this, input.getUnits());
 
 			outputs.add(target);
@@ -84,7 +83,7 @@ public class SimpleMovingAverageOperation<Q extends Quantity<Q>> implements
 			performCalc(outputs);
 
 			// tell each series that we're a dependent
-			Iterator<IQuantityCollection<T>> iter = _inputs.iterator();
+			Iterator<ICollection> iter = _inputs.iterator();
 			while (iter.hasNext())
 			{
 				ICollection iCollection = iter.next();
@@ -111,22 +110,22 @@ public class SimpleMovingAverageOperation<Q extends Quantity<Q>> implements
 		 * @param unit
 		 * @param outputs
 		 */
-		private void performCalc(List<IQuantityCollection<T>> outputs)
+		private void performCalc(List<ICollection> outputs)
 		{
-			IQuantityCollection<T> target = outputs.iterator().next();
+			IQuantityCollection<?> target = (IQuantityCollection<?>) outputs.iterator().next();
 
 			// clear out the lists, first
-			Iterator<IQuantityCollection<T>> iter = _outputs.iterator();
+			Iterator<ICollection> iter = _outputs.iterator();
 			while (iter.hasNext())
 			{
-				IQuantityCollection<T> qC = (IQuantityCollection<T>) iter.next();
+				IQuantityCollection<?> qC = (IQuantityCollection<?>) iter.next();
 				qC.getValues().clear();
 			}
 
 			SimpleMovingAverage sma = new SimpleMovingAverage(windowSize);
-			IQuantityCollection<T> input = _inputs.get(0);
+			IQuantityCollection<?> input = (IQuantityCollection<?>) _inputs.get(0);
 
-			for (Quantity<T> quantity : input.getValues())
+			for (Quantity<?> quantity : input.getValues())
 			{
 				sma.newNum(quantity.getValue().doubleValue());
 				target.add(sma.getAvg());
