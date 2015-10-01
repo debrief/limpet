@@ -10,9 +10,11 @@ import info.limpet.data.impl.samples.SampleData;
 import info.limpet.data.operations.AddQuantityOperation;
 import info.limpet.data.operations.CollectionComplianceTests;
 import info.limpet.data.operations.MultiplyQuantityOperation;
+import info.limpet.data.operations.SimpleMovingAverageOperation;
 import info.limpet.data.operations.UnitConversionOperation;
 import info.limpet.data.store.InMemoryStore;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -302,7 +304,7 @@ public class TestOperations extends TestCase
 		ICollection speed_good_1 = store.get(SampleData.SPEED_ONE);
 		selection.add(speed_good_1);
 
-		// test incompatible target unit 
+		// test incompatible target unit
 		Collection<ICommand<ICollection>> commands = new UnitConversionOperation(
 				Units.METRE).actionsFor(selection, store);
 		assertEquals("target unit not same dimension as input", 0, commands.size());
@@ -317,27 +319,28 @@ public class TestOperations extends TestCase
 		// apply action
 		command.execute();
 
-		ICollection newS = store
-				.get(speed_good_1.getName() + UnitConversionOperation.CONVERTED_TO + Units.KILOMETRES_PER_HOUR);
+		ICollection newS = store.get(speed_good_1.getName()
+				+ UnitConversionOperation.CONVERTED_TO + Units.KILOMETRES_PER_HOUR);
 		assertNotNull(newS);
 
 		// test results is same length as thisSpeed
 		assertEquals("correct size", 10, newS.size());
 
-		// TODO: check that operation isn't offered if the dataset is already in that type
-		commands = new UnitConversionOperation(Units.METRES_PER_SECOND)
-		.actionsFor(selection, store);
-		assertEquals("already in destination units", 0 , commands.size());
-		
+		// TODO: check that operation isn't offered if the dataset is already in
+		// that type
+		commands = new UnitConversionOperation(Units.METRES_PER_SECOND).actionsFor(
+				selection, store);
+		assertEquals("already in destination units", 0, commands.size());
+
 		IQuantityCollection<?> inputSpeed = (IQuantityCollection<?>) speed_good_1;
-		
+
 		// TODO: avoid suppressing these warnings
 		@SuppressWarnings("unchecked")
 		Quantity<Speed> firstInputSpeed = (Quantity<Speed>) inputSpeed.getValues()
 				.get(0);
 
 		IQuantityCollection<?> outputSpeed = (IQuantityCollection<?>) newS;
-		
+
 		// TODO: avoid suppressing these warnings
 		@SuppressWarnings("unchecked")
 		Quantity<Speed> firstOutputSpeed = (Quantity<Speed>) outputSpeed
@@ -345,6 +348,55 @@ public class TestOperations extends TestCase
 
 		assertEquals(firstInputSpeed.to(Units.KILOMETRES_PER_HOUR),
 				firstOutputSpeed);
+
+	}
+
+	public void testSimpleMovingAverage()
+	{
+		// place to store results data
+		InMemoryStore store = new SampleData().getData(10);
+
+		List<ICollection> selection = new ArrayList<>();
+
+		@SuppressWarnings("unchecked")
+		IQuantityCollection<Speed> speed_good_1 = (IQuantityCollection<Speed>) store
+				.get(SampleData.SPEED_ONE);
+		selection.add(speed_good_1);
+
+		int windowSize = 3;
+
+		Collection<ICommand<ICollection>> commands = new SimpleMovingAverageOperation(
+				windowSize).actionsFor(selection, store);
+		assertEquals(1, commands.size());
+
+		ICommand<ICollection> command = commands.iterator().next();
+
+		// apply action
+		command.execute();
+
+		@SuppressWarnings("unchecked")
+		IQuantityCollection<Speed> newS = (IQuantityCollection<Speed>) store
+				.get(speed_good_1.getName()
+						+ MessageFormat.format(
+								SimpleMovingAverageOperation.SERIES_NAME_TEMPLATE, windowSize));
+		assertNotNull(newS);
+
+		// test results is same length as thisSpeed
+		assertEquals("correct size", 10, newS.size());
+
+		// calculate sum of input values [0..windowSize-1]
+		double sum = 0;
+		for (int i = 0; i < windowSize; i++)
+		{
+			Quantity<Speed> inputQuantity = speed_good_1.getValues().get(i);
+			sum += inputQuantity.getValue().doubleValue();
+		}
+		double average = sum / windowSize;
+
+		// compare to output value [windowSize-1]
+		Quantity<Speed> simpleMovingAverage = newS.getValues().get(windowSize - 1);
+
+		assertEquals(average, simpleMovingAverage.getValue().doubleValue(), 0);
 		
 	}
 }
