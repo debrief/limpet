@@ -376,9 +376,7 @@ public class TestOperations extends TestCase
 
 		@SuppressWarnings("unchecked")
 		IQuantityCollection<Speed> newS = (IQuantityCollection<Speed>) store
-				.get(speed_good_1.getName()
-						+ MessageFormat.format(
-								SimpleMovingAverageOperation.SERIES_NAME_TEMPLATE, windowSize));
+				.get(speed_good_1.getName()+ " " + SimpleMovingAverageOperation.SERIES_NAME_TEMPLATE);
 		assertNotNull(newS);
 
 		// test results is same length as thisSpeed
