@@ -21,6 +21,7 @@ import org.swtchart.ILineSeries;
 import org.swtchart.ILineSeries.PlotSymbolType;
 import org.swtchart.ISeries;
 import org.swtchart.ISeries.SeriesType;
+import org.swtchart.ext.InteractiveChart;
 
 /**
  * display analysis overview of selection
@@ -37,12 +38,13 @@ public class XyPlotView extends CoreAnalysisView
 	 * The ID of the view as specified by the extension.
 	 */
 	public static final String ID = "info.limpet.rcp.XyPlotView";
+	protected CollectionComplianceTests aTests = new CollectionComplianceTests();
 
 	private Chart chart;
 
 	public XyPlotView()
 	{
-		super(ID);
+		super(ID, "XY plot view");
 	}
 
 	/**
@@ -55,7 +57,7 @@ public class XyPlotView extends CoreAnalysisView
 		contributeToActionBars();
 
 		// create a chart
-		chart = new Chart(parent, SWT.NONE);
+		chart = new InteractiveChart(parent, SWT.NONE);
 
 		// set titles
 		chart.getAxisSet().getXAxis(0).getTitle().setText("Value");

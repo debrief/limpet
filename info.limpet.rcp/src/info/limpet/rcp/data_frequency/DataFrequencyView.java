@@ -20,9 +20,11 @@ import org.swtchart.Chart;
 import org.swtchart.IAxis;
 import org.swtchart.IBarSeries;
 import org.swtchart.ILineSeries;
+import org.swtchart.Range;
 import org.swtchart.ILineSeries.PlotSymbolType;
 import org.swtchart.ISeries;
 import org.swtchart.ISeries.SeriesType;
+import org.swtchart.ext.InteractiveChart;
 
 /**
  * display analysis overview of selection
@@ -34,6 +36,7 @@ public class DataFrequencyView extends CoreAnalysisView
 {
 
 	private static final int MAX_SIZE = 1000;
+	protected CollectionComplianceTests aTests = new CollectionComplianceTests();
 
 	/**
 	 * The ID of the view as specified by the extension.
@@ -47,7 +50,7 @@ public class DataFrequencyView extends CoreAnalysisView
 	 */
 	public DataFrequencyView()
 	{
-		super(ID);
+		super(ID, "Data frequency");
 	}
 
 	/**
@@ -60,7 +63,7 @@ public class DataFrequencyView extends CoreAnalysisView
 		contributeToActionBars();
 
 		// create a chart
-		chart = new Chart(parent, SWT.NONE);
+		chart = new InteractiveChart(parent, SWT.NONE);
 
 		// set titles
 		chart.getAxisSet().getXAxis(0).getTitle().setText("Value");
@@ -203,6 +206,10 @@ public class DataFrequencyView extends CoreAnalysisView
 						chart.getAxisSet().adjustRange();
 						IAxis xAxis = chart.getAxisSet().getXAxis(0);
 						xAxis.enableCategory(false);
+
+						// set the y axis min to be zero
+						Range yRange = chart.getAxisSet().getYAxis(0).getRange(); 
+						chart.getAxisSet().getYAxis(0).setRange(new Range(0, yRange.upper));
 
 						chart.redraw();
 					}

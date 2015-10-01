@@ -43,12 +43,14 @@ public abstract class CoreAnalysisView extends ViewPart
 	final private List<ICollection> curList = new ArrayList<ICollection>();
 	private IChangeListener changeListener;
 	final private String _myId;
+	final private String _myTitle;
 
-	public CoreAnalysisView(String myId)
+	public CoreAnalysisView(String myId, String myTitle)
 	{
 		super();
 
 		_myId = myId;
+		_myTitle = myTitle;
 
 		aTests = new CollectionComplianceTests();
 		changeListener = new IChangeListener()
@@ -78,9 +80,25 @@ public abstract class CoreAnalysisView extends ViewPart
 	 * 
 	 * @param val
 	 */
-	public void setFollow(boolean val)
+	public void follow(List<ICollection> data)
 	{
-		followSelection.setChecked(val);
+		followSelection.setChecked(false);
+		followSelection.setEnabled(false);
+		followSelection
+				.setDescription("Disabled - view focussed on particular dataset");
+
+		display(data);
+
+		// also set the title
+		if (data.size() == 1)
+		{
+			this.setPartName(_myTitle + " - " + data.get(0).getName());
+		}
+		else
+		{
+			this.setPartName(_myTitle + " - multiple datasets");
+		}
+
 	}
 
 	protected void newSelection(ISelection selection)
@@ -241,9 +259,10 @@ public abstract class CoreAnalysisView extends ViewPart
 				createNewView();
 			}
 		};
-		newView.setText("New instance of this view");
+		newView.setText("New instance of " + _myTitle);
 		newView.setToolTipText("Create a fresh instance of this view");
-		newView.setImageDescriptor(Activator.getImageDescriptor("icons/newView.png"));
+		newView.setImageDescriptor(Activator
+				.getImageDescriptor("icons/newView.png"));
 
 		copyToClipboard = new Action()
 		{
