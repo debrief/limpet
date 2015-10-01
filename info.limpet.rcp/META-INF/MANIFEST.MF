@@ -7,6 +7,7 @@ Bundle-Activator: info.limpet.rcp.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.ui.views,
+ org.eclipse.jface,
  org.eclipse.ui.workbench,
  info.limpet;bundle-version="1.0.0",
  org.eclipse.ui.editors;bundle-version="3.8.0",

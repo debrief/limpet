@@ -4,6 +4,7 @@ import info.limpet.ICollection;
 import info.limpet.IObjectCollection;
 import info.limpet.IQuantityCollection;
 import info.limpet.data.impl.QuantityCollection;
+import info.limpet.rcp.propertyeditors.SliderPropertyDescriptor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -90,8 +91,10 @@ public class CollectionPropertySource implements IPropertySource
 						// that uses a slider between a range of values
 						
 						// temporarily - just use a text descriptor
-						final PropertyDescriptor valueDescriptor = new TextPropertyDescriptor(
-								PROPERTY_VALUE_SLIDER, "Value");
+						Number max = range.getMaximum().getValue();
+						Number min = range.getMinimum().getValue();
+						final PropertyDescriptor valueDescriptor = new SliderPropertyDescriptor(
+								PROPERTY_VALUE_SLIDER, "Value", min.intValue(), max.intValue());
 						valueDescriptor.setCategory("Value");
 						dList.add(valueDescriptor);
 					}
