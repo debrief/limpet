@@ -325,10 +325,16 @@ public class TestOperations extends TestCase
 		assertEquals("correct size", 10, newS.size());
 
 		IQuantityCollection<?> inputSpeed = (IQuantityCollection<?>) speed_good_1;
+		
+		// TODO: avoid suppressing these warnings
+		@SuppressWarnings("unchecked")
 		Quantity<Speed> firstInputSpeed = (Quantity<Speed>) inputSpeed.getValues()
 				.get(0);
 
 		IQuantityCollection<?> outputSpeed = (IQuantityCollection<?>) newS;
+		
+		// TODO: avoid suppressing these warnings
+		@SuppressWarnings("unchecked")
 		Quantity<Speed> firstOutputSpeed = (Quantity<Speed>) outputSpeed
 				.getValues().get(0);
 

@@ -139,7 +139,9 @@ public class UnitConversionOperation implements
 			{
 				
 				// TODO: figure out how to avoid the compiler warnings
+				@SuppressWarnings("rawtypes")
 				Quantity thisValue = singleInputSeries.getValues().get(j);				
+				@SuppressWarnings("unchecked")
 				Quantity<?> converted = thisValue.to(targetUnit);
 				
 				target.add(converted.getValue());
