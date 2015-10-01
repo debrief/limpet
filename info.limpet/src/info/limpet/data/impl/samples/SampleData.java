@@ -25,6 +25,7 @@ import tec.units.ri.unit.Units;
 
 public class SampleData
 {
+	public static final String SPEED_IRREGULAR2 = "Speed two irregular time";
 	public static final String TIME_INTERVALS = "Time intervals";
 	public static final String STRING_TWO = "String two";
 	public static final String STRING_ONE = "String one";
@@ -53,6 +54,8 @@ public class SampleData
 				"Speed Three (longer)");
 		StockTypes.Temporal.Speed_MSec speed_early_1 = new StockTypes.Temporal.Speed_MSec(
 				SPEED_EARLY);
+		StockTypes.Temporal.Speed_MSec speed_irregular = new StockTypes.Temporal.Speed_MSec(
+				SPEED_IRREGULAR2);
 		StockTypes.NonTemporal.Length_M length1 = new StockTypes.NonTemporal.Length_M(
 				LENGTH_ONE);
 		StockTypes.NonTemporal.Length_M length2 = new StockTypes.NonTemporal.Length_M(
@@ -79,7 +82,21 @@ public class SampleData
 			angle1.add(thisTime,
 					90 + 1.1 * Math.toDegrees(Math.sin(Math.toRadians(i * 52.5))));
 			speedSeries1.add(thisTime, 1 / Math.sin(i));
-			speedSeries2.add(thisTime, Math.sin(i));
+			speedSeries2.add(thisTime, 7 + 2 * Math.sin(i));
+
+			// we want the irregular series to only have occasional
+			if (i % 5 == 0)
+			{
+				speed_irregular.add(thisTime + 500 * 45, 7 + 2 * Math.sin(i + 1));
+			}
+			else
+			{
+				if (Math.random() > 0.6)
+				{
+					speed_irregular.add(thisTime + 500 * 25 * 2, 7 + 2 * Math.sin(i - 1));
+				}
+			}
+
 			speedSeries3.add(thisTime, 3d * Math.cos(i));
 			speed_early_1.add(earlyTime, Math.sin(i));
 			length1.add((double) i % 3);
@@ -108,6 +125,7 @@ public class SampleData
 		list.add(angle1);
 		list.add(speedSeries1);
 		list.add(speedSeries2);
+		list.add(speed_irregular);
 		list.add(speed_early_1);
 		list.add(speedSeries3);
 		list.add(length1);
