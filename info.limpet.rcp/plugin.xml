@@ -26,6 +26,14 @@
       </view>
       <view
             allowMultiple="true"
+            name="Time Frequency"
+            icon="icons/sample.gif"
+            category="info.limpet.rcp"
+            class="info.limpet.rcp.time_frequency.TimeFrequencyView"
+            id="info.limpet.rcp.TimeFrequencyView">
+      </view>
+      <view
+            allowMultiple="true"
             category="info.limpet.rcp"
             class="info.limpet.rcp.xy_plot.XyPlotView"
             icon="icons/sample.gif"
