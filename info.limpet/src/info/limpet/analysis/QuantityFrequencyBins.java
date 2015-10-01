@@ -78,7 +78,7 @@ public abstract class QuantityFrequencyBins extends CoreAnalysis
 		if (range > 10)
 			BIN_COUNT = 10;
 		else
-			BIN_COUNT = (int) range;
+			BIN_COUNT = (int) Math.max(2, range);
 
 		BinnedData res = new BinnedData(collection, BIN_COUNT);
 
