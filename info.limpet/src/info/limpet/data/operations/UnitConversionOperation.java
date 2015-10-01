@@ -38,8 +38,8 @@ public class UnitConversionOperation implements IOperation<ICollection>
 			String unitsName = targetUnit.toString();
 			String name = "Convert to " + unitsName;
 			String outputName = CONVERTED_TO + unitsName;
-			ICommand<ICollection> newC = new ConvertQuanityValues(name, outputName, selection,
-					destination);
+			ICommand<ICollection> newC = new ConvertQuanityValues(name, outputName,
+					selection, destination);
 			res.add(newC);
 		}
 
@@ -52,14 +52,18 @@ public class UnitConversionOperation implements IOperation<ICollection>
 		boolean allQuantity = aTests.allQuantity(selection);
 		boolean sameDimension = false;
 		boolean sameUnits = true;
-		if (allQuantity)
+		if (selection.size() > 0)
 		{
-			Unit<?> units = ((IQuantityCollection<?>) selection.get(0)).getUnits();
-			sameDimension = units.getDimension().equals(targetUnit.getDimension());
+			if (allQuantity)
+			{
+				Unit<?> units = ((IQuantityCollection<?>) selection.get(0)).getUnits();
+				sameDimension = units.getDimension().equals(targetUnit.getDimension());
 
-			// check they're different units. It's not worth offering the operation if
-			// they're already in the same units
-			sameUnits = units.equals(targetUnit);
+				// check they're different units. It's not worth offering the operation
+				// if
+				// they're already in the same units
+				sameUnits = units.equals(targetUnit);
+			}
 		}
 		return (singleSeries && allQuantity && sameDimension && !sameUnits);
 	}
@@ -67,11 +71,11 @@ public class UnitConversionOperation implements IOperation<ICollection>
 	public class ConvertQuanityValues extends AbstractCommand<ICollection>
 	{
 
-		public ConvertQuanityValues(String operationName, String outputName, List<ICollection> selection,
-				IStore store)
+		public ConvertQuanityValues(String operationName, String outputName,
+				List<ICollection> selection, IStore store)
 		{
-			super(operationName, "Convert units of the provided series",
-					outputName, store, false, false, selection);
+			super(operationName, "Convert units of the provided series", outputName,
+					store, false, false, selection);
 		}
 
 		@Override
@@ -80,10 +84,10 @@ public class UnitConversionOperation implements IOperation<ICollection>
 			List<ICollection> outputs = new ArrayList<ICollection>();
 
 			String seriesName = _inputs.iterator().next().getName();
-			
+
 			// ok, generate the new series
-			IQuantityCollection<?> target = new QuantityCollection<>(seriesName + getOutputName(),
-					this, targetUnit);
+			IQuantityCollection<?> target = new QuantityCollection<>(seriesName
+					+ getOutputName(), this, targetUnit);
 
 			outputs.add(target);
 
@@ -104,7 +108,7 @@ public class UnitConversionOperation implements IOperation<ICollection>
 			// ok, done
 			List<ICollection> res = new ArrayList<ICollection>();
 			res.add(target);
-			getStore().add(res);
+			getStore().addAll(res);
 		}
 
 		@Override

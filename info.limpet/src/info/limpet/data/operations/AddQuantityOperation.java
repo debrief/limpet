@@ -51,11 +51,12 @@ public class AddQuantityOperation<Q extends Quantity<Q>> implements
 
 	private boolean appliesTo(List<IQuantityCollection<Q>> selection)
 	{
+		boolean nonEmpty = aTests.nonEmpty(selection);
 		boolean allQuantity = aTests.allQuantity(selection);
 		boolean equalLength = aTests.allEqualLength(selection);
 		boolean equalDimensions = aTests.allEqualDimensions(selection);
 		boolean equalUnits = aTests.allEqualUnits(selection);
-		return (allQuantity && equalLength && equalDimensions && equalUnits);
+		return (nonEmpty && allQuantity && equalLength && equalDimensions && equalUnits);
 	}
 
 	public class AddQuantityValues<T extends Quantity<T>> extends
@@ -101,7 +102,7 @@ public class AddQuantityOperation<Q extends Quantity<Q>> implements
 			// ok, done
 			List<ICollection> res = new ArrayList<ICollection>();
 			res.add(target);
-			getStore().add(res);
+			getStore().addAll(res);
 		}
 
 		@Override

@@ -124,7 +124,7 @@ public class DivideQuantityOperation implements IOperation<ICollection>
 			// ok, done
 			List<ICollection> res = new ArrayList<ICollection>();
 			res.add(target);
-			getStore().add(res);
+			getStore().addAll(res);
 		}
 
 		private Unit<?> calculateOutputUnit()
