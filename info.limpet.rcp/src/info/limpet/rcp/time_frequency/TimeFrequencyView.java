@@ -1,13 +1,14 @@
 package info.limpet.rcp.time_frequency;
 
+import info.limpet.IBaseTemporalCollection;
 import info.limpet.ICollection;
-import info.limpet.IQuantityCollection;
-import info.limpet.analysis.QuantityFrequencyBins;
-import info.limpet.analysis.QuantityFrequencyBins.Bin;
+import info.limpet.analysis.TimeFrequencyBins;
+import info.limpet.analysis.TimeFrequencyBins.Bin;
 import info.limpet.data.operations.CollectionComplianceTests;
 import info.limpet.rcp.PlottingHelpers;
 import info.limpet.rcp.core_view.CoreAnalysisView;
 
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -19,6 +20,8 @@ import org.swtchart.ILineSeries;
 import org.swtchart.ILineSeries.PlotSymbolType;
 import org.swtchart.ISeries;
 import org.swtchart.ISeries.SeriesType;
+import org.swtchart.ext.InteractiveChart;
+import org.swtchart.Range;
 
 /**
  * display analysis overview of selection
@@ -29,7 +32,7 @@ import org.swtchart.ISeries.SeriesType;
 public class TimeFrequencyView extends CoreAnalysisView
 {
 
-	private static final int MAX_SIZE = 1000;
+	private static final int MAX_SIZE = 1005;
 
 	/**
 	 * The ID of the view as specified by the extension.
@@ -43,7 +46,7 @@ public class TimeFrequencyView extends CoreAnalysisView
 	 */
 	public TimeFrequencyView()
 	{
-		super(ID);
+		super(ID, "Time frequency");
 	}
 
 	/**
@@ -56,11 +59,11 @@ public class TimeFrequencyView extends CoreAnalysisView
 		contributeToActionBars();
 
 		// create a chart
-		chart = new Chart(parent, SWT.NONE);
+		chart = new InteractiveChart(parent, SWT.NONE);
 
 		// set titles
 		chart.getAxisSet().getXAxis(0).getTitle().setText("Time");
-		chart.getAxisSet().getYAxis(0).getTitle().setText("# of Measurements");
+		chart.getAxisSet().getYAxis(0).getTitle().setText("Frequency");
 		chart.getTitle().setVisible(false);
 
 		// adjust the axis range
@@ -73,8 +76,16 @@ public class TimeFrequencyView extends CoreAnalysisView
 	@Override
 	public void display(List<ICollection> res)
 	{
-		// sort out what type of data this is.
-		showData(res);
+		if (aTests.allTemporal(res))
+		{
+			// sort out what type of data this is.
+			showData(res);
+			chart.setVisible(true);
+		}
+		else
+		{
+			chart.setVisible(false);
+		}
 	}
 
 	private void showData(List<ICollection> res)
@@ -92,25 +103,24 @@ public class TimeFrequencyView extends CoreAnalysisView
 		while (iter.hasNext())
 		{
 			ICollection iCollection = (ICollection) iter.next();
-			QuantityFrequencyBins.BinnedData bins = null;
+			TimeFrequencyBins.BinnedData bins = null;
 			if (iCollection.isQuantity())
 			{
 				if (iCollection.size() > 1)
 				{
 					if (iCollection.size() <= MAX_SIZE)
 					{
-						IQuantityCollection<?> thisQ = (IQuantityCollection<?>) iCollection;
-						bins = QuantityFrequencyBins.doBins(thisQ);
+						IBaseTemporalCollection thisQ = (IBaseTemporalCollection) iCollection;
+						bins = TimeFrequencyBins.doBins(iCollection, thisQ);
 
-						String seriesName = iCollection.getName() + " (" + thisQ.getUnits()
-								+ ")";
+						String seriesName = iCollection.getName();
 						ILineSeries newSeries = (ILineSeries) chart.getSeriesSet()
 								.createSeries(SeriesType.LINE, seriesName);
 						newSeries.setSymbolType(PlotSymbolType.NONE);
 						newSeries.enableArea(true);
 						newSeries.setLineColor(PlottingHelpers.colorFor(seriesName));
 
-						double[] xData = new double[bins.size() * 2];
+						Date[] xData = new Date[bins.size() * 2];
 						double[] yData = new double[bins.size() * 2];
 
 						// put the data into series
@@ -118,21 +128,28 @@ public class TimeFrequencyView extends CoreAnalysisView
 						Iterator<Bin> iter2 = bins.iterator();
 						while (iter2.hasNext())
 						{
-							Bin bin = (QuantityFrequencyBins.Bin) iter2.next();
-							xData[ctr] = bin.lowerVal;
+							Bin bin = (TimeFrequencyBins.Bin) iter2.next();
+							xData[ctr] = new Date(bin.lowerVal);
 							yData[ctr++] = bin.freqVal;
-							xData[ctr] = bin.upperVal;
+							xData[ctr] = new Date(bin.upperVal);
 							yData[ctr++] = bin.freqVal;
 						}
 
-						newSeries.setXSeries(xData);
+						newSeries.setXDateSeries(xData);
 						newSeries.setYSeries(yData);
+						
+						newSeries.enableStack(true);
+						newSeries.enableArea(true);
 
 						// adjust the axis range
 						chart.getAxisSet().adjustRange();
 						IAxis xAxis = chart.getAxisSet().getXAxis(0);
 						xAxis.enableCategory(false);
 
+						// set the y axis min to be zero
+						Range yRange = chart.getAxisSet().getYAxis(0).getRange(); 
+						chart.getAxisSet().getYAxis(0).setRange(new Range(0, yRange.upper));
+						
 						chart.redraw();
 					}
 				}
