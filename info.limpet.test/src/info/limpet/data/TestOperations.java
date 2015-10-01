@@ -1,5 +1,15 @@
 package info.limpet.data;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.measure.Quantity;
+import javax.measure.Unit;
+import javax.measure.quantity.Length;
+import javax.measure.quantity.Speed;
+
 import info.limpet.ICollection;
 import info.limpet.ICommand;
 import info.limpet.IQuantityCollection;
@@ -13,18 +23,6 @@ import info.limpet.data.operations.MultiplyQuantityOperation;
 import info.limpet.data.operations.SimpleMovingAverageOperation;
 import info.limpet.data.operations.UnitConversionOperation;
 import info.limpet.data.store.InMemoryStore;
-
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.measure.Quantity;
-import javax.measure.Unit;
-import javax.measure.quantity.Length;
-import javax.measure.quantity.Speed;
-
 import junit.framework.TestCase;
 import tec.units.ri.quantity.Quantities;
 import tec.units.ri.unit.MetricPrefix;

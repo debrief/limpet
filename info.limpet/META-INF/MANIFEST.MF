@@ -12,6 +12,7 @@ Export-Package: info.limpet,
  info.limpet.data.impl.samples,
  info.limpet.data.operations,
  info.limpet.data.store
-Require-Bundle: info.limpet.libs;bundle-version="1.0.0";visibility:=reexport
+Require-Bundle: info.limpet.libs;bundle-version="1.0.0";visibility:=reexport,
+ info.limpet.geotools;bundle-version="1.0.0";visibility:=reexport
 Bundle-Vendor: MWC
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
