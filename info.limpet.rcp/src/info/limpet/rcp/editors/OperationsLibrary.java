@@ -6,6 +6,7 @@ import info.limpet.data.impl.samples.StockTypes;
 import info.limpet.data.operations.AddQuantityOperation;
 import info.limpet.data.operations.DeleteCollectionOperation;
 import info.limpet.data.operations.DivideQuantityOperation;
+import info.limpet.data.operations.GenerateDummyDataOperation;
 import info.limpet.data.operations.MultiplyQuantityOperation;
 import info.limpet.data.operations.SubtractQuantityOperation;
 import info.limpet.data.operations.UnitConversionOperation;
@@ -50,10 +51,20 @@ public class OperationsLibrary
 		return analysis;
 	}
 
+	public static List<IOperation<?>> getTopLevel()
+	{
+		List<IOperation<?>> topLevel = new ArrayList<IOperation<?>>();
+		topLevel.add(new DeleteCollectionOperation());
+		return topLevel;
+	}
+
 	private static List<IOperation<?>> getAdmin()
 	{
 		List<IOperation<?>> admin = new ArrayList<IOperation<?>>();
-		admin.add(new DeleteCollectionOperation());
+		admin.add(new GenerateDummyDataOperation("small", 10));
+		admin.add(new GenerateDummyDataOperation("large", 1000));
+		admin.add(new GenerateDummyDataOperation("monster", 1000000));
+
 		return admin;
 	}
 
@@ -70,24 +81,24 @@ public class OperationsLibrary
 	private static List<IOperation<?>> getConversions()
 	{
 		List<IOperation<?>> conversions = new ArrayList<IOperation<?>>();
-		
+
 		// Length
 		conversions.add(new UnitConversionOperation(Units.METRE));
-		
+
 		// Time
 		conversions.add(new UnitConversionOperation(Units.SECOND));
 		conversions.add(new UnitConversionOperation(Units.MINUTE));
-		
+
 		// Speed
 		conversions.add(new UnitConversionOperation(Units.METRES_PER_SECOND));
-		
+
 		// Acceleration
 		conversions
 				.add(new UnitConversionOperation(Units.METRES_PER_SQUARE_SECOND));
-		
+
 		// Temperature
 		conversions.add(new UnitConversionOperation(Units.CELSIUS));
-		
+
 		// Angle
 		conversions.add(new UnitConversionOperation(Units.RADIAN));
 		conversions.add(new UnitConversionOperation(StockTypes.DEGREE_ANGLE));
