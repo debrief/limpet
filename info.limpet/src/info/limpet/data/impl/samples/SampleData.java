@@ -86,7 +86,7 @@ public class SampleData
 			length2.add((double) i % 5);
 			string1.add("item " + i);
 			string2.add("item " + (i % 3));
-			timeIntervals.add(thisTime, 3 + Math.sin(i) * Math.random() * 4);
+			timeIntervals.add(thisTime, (4 + Math.sin(Math.toRadians(i) + 3.4 * Math.random())));
 		}
 
 		// add an extra item to speedSeries3
