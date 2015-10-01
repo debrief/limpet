@@ -6,6 +6,7 @@ import org.eclipse.ui.IPerspectiveFactory;
 
 import info.limpet.rcp.analysis_view.AnalysisView;
 import info.limpet.rcp.data_frequency.DataFrequencyView;
+import info.limpet.rcp.time_frequency.TimeFrequencyView;
 import info.limpet.rcp.xy_plot.XyPlotView;
 
 public class Perspective implements IPerspectiveFactory
@@ -26,8 +27,9 @@ public class Perspective implements IPerspectiveFactory
 		final IFolderLayout bottom = layout.createFolder("bottom", IPageLayout.BOTTOM, 0.5f, editorArea);
 		bottom.addView(DataFrequencyView.ID);
 
-		final IFolderLayout bottomRight = layout.createFolder("bottomRight", IPageLayout.RIGHT, 0.5f, "bottom");
+		final IFolderLayout bottomRight = layout.createFolder("bottomRight", IPageLayout.BOTTOM, 0.5f, "bottom");
 		bottomRight.addView(XyPlotView.ID);
+		bottomRight.addView(TimeFrequencyView.ID);
 
 		final IFolderLayout topRight = layout.createFolder("topRight", IPageLayout.RIGHT, 0.6f, editorArea);
 		topRight.addView(AnalysisView.ID);
