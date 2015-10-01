@@ -9,7 +9,6 @@ import info.limpet.data.commands.AbstractCommand;
 import info.limpet.data.impl.QuantityCollection;
 import info.limpet.data.math.SimpleMovingAverage;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -19,26 +18,26 @@ import javax.measure.Quantity;
 
 public class SimpleMovingAverageOperation implements IOperation<ICollection>
 {
-	public static final String SERIES_NAME_TEMPLATE = "Simple Moving Average ({0})";
+	public static final String SERIES_NAME_TEMPLATE = "Simple Moving Average";
 
 	CollectionComplianceTests aTests = new CollectionComplianceTests();
 
-	final protected int windowSize;
+	final protected int _windowSize;
 
 	public SimpleMovingAverageOperation(int windowSize)
 	{
-		this.windowSize = windowSize;
+		this._windowSize = windowSize;
 	}
 
 	public Collection<ICommand<ICollection>> actionsFor(
 			List<ICollection> selection, IStore destination)
-			{
+	{
 		Collection<ICommand<ICollection>> res = new ArrayList<ICommand<ICollection>>();
 		if (appliesTo(selection))
 		{
-			String name = MessageFormat.format(SERIES_NAME_TEMPLATE, windowSize);
 			ICommand<ICollection> newC = new SimpleMovingAverageCommand(
-					name, name, selection, destination);
+					SERIES_NAME_TEMPLATE, SERIES_NAME_TEMPLATE, selection, destination,
+					_windowSize);
 			res.add(newC);
 		}
 
@@ -52,15 +51,30 @@ public class SimpleMovingAverageOperation implements IOperation<ICollection>
 		return (singleSeries && allQuantity);
 	}
 
-	public class SimpleMovingAverageCommand extends
-			AbstractCommand<ICollection>
+	public class SimpleMovingAverageCommand extends AbstractCommand<ICollection>
 	{
 
+		private int winSize;
+
 		public SimpleMovingAverageCommand(String operationName, String outputName,
-				List<ICollection> selection, IStore store)
+				List<ICollection> selection, IStore store, int windowSize)
 		{
 			super(operationName, "Calculates a Simple Moving Average", outputName,
 					store, false, false, selection);
+			winSize = windowSize;
+		}
+
+		public int getWindowSize()
+		{
+			return winSize;
+		}
+
+		public void setWindowSize(int winSize)
+		{
+			this.winSize = winSize;
+
+			// ok, we now need to update!
+			super.dataChanged(null);
 		}
 
 		@Override
@@ -72,7 +86,7 @@ public class SimpleMovingAverageOperation implements IOperation<ICollection>
 
 			// ok, generate the new series
 			IQuantityCollection<?> target = new QuantityCollection<>(input.getName()
-					+ getOutputName(), this, input.getUnits());
+					+ " " +  getOutputName(), this, input.getUnits());
 
 			outputs.add(target);
 
@@ -112,7 +126,8 @@ public class SimpleMovingAverageOperation implements IOperation<ICollection>
 		 */
 		private void performCalc(List<ICollection> outputs)
 		{
-			IQuantityCollection<?> target = (IQuantityCollection<?>) outputs.iterator().next();
+			IQuantityCollection<?> target = (IQuantityCollection<?>) outputs
+					.iterator().next();
 
 			// clear out the lists, first
 			Iterator<ICollection> iter = _outputs.iterator();
@@ -122,7 +137,7 @@ public class SimpleMovingAverageOperation implements IOperation<ICollection>
 				qC.getValues().clear();
 			}
 
-			SimpleMovingAverage sma = new SimpleMovingAverage(windowSize);
+			SimpleMovingAverage sma = new SimpleMovingAverage(winSize);
 			IQuantityCollection<?> input = (IQuantityCollection<?>) _inputs.get(0);
 
 			for (Quantity<?> quantity : input.getValues())
