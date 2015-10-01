@@ -34,6 +34,7 @@ public class SampleData
 	public static final String ANGLE_ONE = "Angle One Time";
 	public static final String SPEED_ONE = "Speed One Time";
 	public static final String SPEED_TWO = "Speed Two Time";
+	public static final String SPEED_EARLY = "Speed Two Time (earlier)";
 	public static final String RANGED_SPEED_SINGLETON = "Ranged Speed Singleton";
 	public static final String FLOATING_POINT_FACTOR = "Floating point factor";
 
@@ -50,6 +51,8 @@ public class SampleData
 				SPEED_TWO);
 		StockTypes.Temporal.Speed_MSec speedSeries3 = new StockTypes.Temporal.Speed_MSec(
 				"Speed Three (longer)");
+		StockTypes.Temporal.Speed_MSec speed_early_1 = new StockTypes.Temporal.Speed_MSec(
+				SPEED_EARLY);
 		StockTypes.NonTemporal.Length_M length1 = new StockTypes.NonTemporal.Length_M(
 				LENGTH_ONE);
 		StockTypes.NonTemporal.Length_M length2 = new StockTypes.NonTemporal.Length_M(
@@ -71,11 +74,14 @@ public class SampleData
 		{
 			thisTime = new Date().getTime() + i * 500 * 60;
 
+			final long earlyTime = thisTime - (1000 * 60 * 60 * 24 * 365 * 20);
+
 			angle1.add(thisTime,
 					90 + 1.1 * Math.toDegrees(Math.sin(Math.toRadians(i * 52.5))));
 			speedSeries1.add(thisTime, 1 / Math.sin(i));
 			speedSeries2.add(thisTime, Math.sin(i));
 			speedSeries3.add(thisTime, 3d * Math.cos(i));
+			speed_early_1.add(earlyTime, Math.sin(i));
 			length1.add((double) i % 3);
 			length2.add((double) i % 5);
 			string1.add("item " + i);
@@ -102,6 +108,7 @@ public class SampleData
 		list.add(angle1);
 		list.add(speedSeries1);
 		list.add(speedSeries2);
+		list.add(speed_early_1);
 		list.add(speedSeries3);
 		list.add(length1);
 		list.add(length2);
