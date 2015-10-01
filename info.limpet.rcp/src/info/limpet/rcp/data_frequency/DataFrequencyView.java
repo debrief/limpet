@@ -33,6 +33,8 @@ import org.swtchart.ISeries.SeriesType;
 public class DataFrequencyView extends CoreAnalysisView
 {
 
+	private static final int MAX_SIZE = 1000;
+
 	/**
 	 * The ID of the view as specified by the extension.
 	 */
@@ -107,42 +109,43 @@ public class DataFrequencyView extends CoreAnalysisView
 		while (iter.hasNext())
 		{
 			ICollection iCollection = (ICollection) iter.next();
-			BinnedData bins = null;
-			IObjectCollection<?> thisQ = (IObjectCollection<?>) iCollection;
-			bins = ObjectFrequencyBins.doBins(thisQ);
-
-			String seriesName = iCollection.getName();
-			IBarSeries newSeries = (IBarSeries) chart.getSeriesSet().createSeries(
-					SeriesType.BAR, seriesName);
-			newSeries.setBarColor(PlottingHelpers.colorFor(seriesName));
-
-			String[] xData = new String[bins.size()];
-			double[] yData = new double[bins.size()];
-
-			// put the data into series
-			int ctr = 0;
-			Iterator<ObjectFrequencyBins.Bin> iter2 = bins.iterator();
-			while (iter2.hasNext())
+			if (iCollection.size() <= MAX_SIZE)
 			{
-				ObjectFrequencyBins.Bin bin = (ObjectFrequencyBins.Bin) iter2.next();
-				xData[ctr] = (String) bin.indexVal;
-				yData[ctr++] = bin.freqVal;
+				BinnedData bins = null;
+				IObjectCollection<?> thisQ = (IObjectCollection<?>) iCollection;
+				bins = ObjectFrequencyBins.doBins(thisQ);
+
+				String seriesName = iCollection.getName();
+				IBarSeries newSeries = (IBarSeries) chart.getSeriesSet().createSeries(
+						SeriesType.BAR, seriesName);
+				newSeries.setBarColor(PlottingHelpers.colorFor(seriesName));
+
+				String[] xData = new String[bins.size()];
+				double[] yData = new double[bins.size()];
+
+				// put the data into series
+				int ctr = 0;
+				Iterator<ObjectFrequencyBins.Bin> iter2 = bins.iterator();
+				while (iter2.hasNext())
+				{
+					ObjectFrequencyBins.Bin bin = (ObjectFrequencyBins.Bin) iter2.next();
+					xData[ctr] = (String) bin.indexVal;
+					yData[ctr++] = bin.freqVal;
+				}
+
+				IAxis xAxis = chart.getAxisSet().getXAxis(0);
+				xAxis.setCategorySeries(xData);
+				xAxis.enableCategory(true);
+
+				// newSeries.set(xData);
+				newSeries.setYSeries(yData);
+
+				// adjust the axis range
+				chart.getAxisSet().adjustRange();
+
+				chart.redraw();
 			}
-
-			IAxis xAxis = chart.getAxisSet().getXAxis(0);
-			xAxis.setCategorySeries(xData);
-			xAxis.enableCategory(true);
-
-			// newSeries.set(xData);
-			newSeries.setYSeries(yData);
-
-			// adjust the axis range
-			chart.getAxisSet().adjustRange();
-
-			chart.redraw();
-
 		}
-
 	}
 
 	private void showQuantity(List<ICollection> res)
@@ -165,41 +168,44 @@ public class DataFrequencyView extends CoreAnalysisView
 			{
 				if (iCollection.size() > 1)
 				{
-					IQuantityCollection<?> thisQ = (IQuantityCollection<?>) iCollection;
-					bins = QuantityFrequencyBins.doBins(thisQ);
-
-					String seriesName = iCollection.getName() + " (" + thisQ.getUnits()
-							+ ")";
-					ILineSeries newSeries = (ILineSeries) chart.getSeriesSet()
-							.createSeries(SeriesType.LINE, seriesName);
-					newSeries.setSymbolType(PlotSymbolType.NONE);
-					newSeries.enableArea(true);
-					newSeries.setLineColor(PlottingHelpers.colorFor(seriesName));
-
-					double[] xData = new double[bins.size() * 2];
-					double[] yData = new double[bins.size() * 2];
-
-					// put the data into series
-					int ctr = 0;
-					Iterator<Bin> iter2 = bins.iterator();
-					while (iter2.hasNext())
+					if (iCollection.size() <= MAX_SIZE)
 					{
-						Bin bin = (QuantityFrequencyBins.Bin) iter2.next();
-						xData[ctr] = bin.lowerVal;
-						yData[ctr++] = bin.freqVal;
-						xData[ctr] = bin.upperVal;
-						yData[ctr++] = bin.freqVal;
+						IQuantityCollection<?> thisQ = (IQuantityCollection<?>) iCollection;
+						bins = QuantityFrequencyBins.doBins(thisQ);
+
+						String seriesName = iCollection.getName() + " (" + thisQ.getUnits()
+								+ ")";
+						ILineSeries newSeries = (ILineSeries) chart.getSeriesSet()
+								.createSeries(SeriesType.LINE, seriesName);
+						newSeries.setSymbolType(PlotSymbolType.NONE);
+						newSeries.enableArea(true);
+						newSeries.setLineColor(PlottingHelpers.colorFor(seriesName));
+
+						double[] xData = new double[bins.size() * 2];
+						double[] yData = new double[bins.size() * 2];
+
+						// put the data into series
+						int ctr = 0;
+						Iterator<Bin> iter2 = bins.iterator();
+						while (iter2.hasNext())
+						{
+							Bin bin = (QuantityFrequencyBins.Bin) iter2.next();
+							xData[ctr] = bin.lowerVal;
+							yData[ctr++] = bin.freqVal;
+							xData[ctr] = bin.upperVal;
+							yData[ctr++] = bin.freqVal;
+						}
+
+						newSeries.setXSeries(xData);
+						newSeries.setYSeries(yData);
+
+						// adjust the axis range
+						chart.getAxisSet().adjustRange();
+						IAxis xAxis = chart.getAxisSet().getXAxis(0);
+						xAxis.enableCategory(false);
+
+						chart.redraw();
 					}
-
-					newSeries.setXSeries(xData);
-					newSeries.setYSeries(yData);
-
-					// adjust the axis range
-					chart.getAxisSet().adjustRange();
-					IAxis xAxis = chart.getAxisSet().getXAxis(0);
-					xAxis.enableCategory(false);
-
-					chart.redraw();
 				}
 			}
 		}

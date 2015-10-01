@@ -12,6 +12,7 @@ import org.apache.commons.math3.stat.Frequency;
 
 public abstract class ObjectFrequencyBins extends CoreAnalysis
 {
+	private static final int MAX_SIZE = 1000;
 	final CollectionComplianceTests aTests;
 
 	public ObjectFrequencyBins()
@@ -60,7 +61,7 @@ public abstract class ObjectFrequencyBins extends CoreAnalysis
 
 		// ok, now output this one
 		int numItems = freq.getUniqueCount();
-		
+
 		BinnedData res = new BinnedData(collection, numItems);
 
 		Iterator<Comparable<?>> vIter = freq.valuesIterator();
@@ -69,10 +70,10 @@ public abstract class ObjectFrequencyBins extends CoreAnalysis
 			Comparable<?> value = vIter.next();
 			res.add(new Bin(value, freq.getCount(value)));
 		}
-		
+
 		return res;
 	}
-	
+
 	@Override
 	public void analyse(List<ICollection> selection)
 	{
@@ -88,27 +89,31 @@ public abstract class ObjectFrequencyBins extends CoreAnalysis
 				for (Iterator<ICollection> iter = selection.iterator(); iter.hasNext();)
 				{
 					ICollection thisC = (ICollection) iter.next();
-					IObjectCollection<?> o = (IObjectCollection<?>) thisC;
-					
-					BinnedData res = doBins(o);
-			
-					titles.add("Unique values");
-					values.add(res.size() + "");
 
-					StringBuffer freqBins = new StringBuffer();
-
-					Iterator<Bin> bIter = res.iterator();
-					while (bIter.hasNext())
+					if (thisC.size() <= MAX_SIZE)
 					{
-						ObjectFrequencyBins.Bin bin = (ObjectFrequencyBins.Bin) bIter
-								.next();
-						freqBins.append(bin.indexVal);
-						freqBins.append(':');
-						freqBins.append(bin.freqVal);
-						freqBins.append(", ");
+						IObjectCollection<?> o = (IObjectCollection<?>) thisC;
+
+						BinnedData res = doBins(o);
+
+						titles.add("Unique values");
+						values.add(res.size() + "");
+
+						StringBuffer freqBins = new StringBuffer();
+
+						Iterator<Bin> bIter = res.iterator();
+						while (bIter.hasNext())
+						{
+							ObjectFrequencyBins.Bin bin = (ObjectFrequencyBins.Bin) bIter
+									.next();
+							freqBins.append(bin.indexVal);
+							freqBins.append(':');
+							freqBins.append(bin.freqVal);
+							freqBins.append(", ");
+						}
+						titles.add("Frequency");
+						values.add(freqBins.toString());
 					}
-					titles.add("Frequency");
-					values.add(freqBins.toString());					
 				}
 			}
 		}

@@ -42,7 +42,7 @@ public class OperationsLibrary
 		{
 			protected boolean appliesTo(List<ICollection> selection)
 			{
-				return getTests().allQuantity(selection);
+				return getTests().nonEmpty(selection) && getTests().allQuantity(selection);
 			}
 		});
 		analysis.add(new ShowInNamedView("Show in Data Frequency View",

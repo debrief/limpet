@@ -52,7 +52,7 @@ public class ShowInNamedView implements IOperation<ICollection>
 
 	protected boolean appliesTo(List<ICollection> selection)
 	{
-		return true;
+		return aTests.nonEmpty(selection);
 	}
 
 	public static class ShowInViewOperation extends AbstractCommand<ICollection>
