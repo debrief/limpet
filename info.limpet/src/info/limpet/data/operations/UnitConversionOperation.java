@@ -18,23 +18,15 @@ import javax.measure.Unit;
 
 public class UnitConversionOperation implements IOperation<ICollection>
 {
+	public static final String CONVERTED_TO = " converted to ";
+
 	CollectionComplianceTests aTests = new CollectionComplianceTests();
-
-	public static final String UNIT_CONVERSION_OF_INPUT_SERIES = "Unit conversion of input series";
-
-	final protected String outputName;
 
 	final protected Unit<?> targetUnit;
 
-	public UnitConversionOperation(String name, Unit<?> targetUnit)
-	{
-		this.outputName = name;
-		this.targetUnit = targetUnit;
-	}
-
 	public UnitConversionOperation(Unit<?> targetUnit)
 	{
-		this(UNIT_CONVERSION_OF_INPUT_SERIES, targetUnit);
+		this.targetUnit = targetUnit;
 	}
 
 	public Collection<ICommand<ICollection>> actionsFor(
@@ -43,8 +35,11 @@ public class UnitConversionOperation implements IOperation<ICollection>
 		Collection<ICommand<ICollection>> res = new ArrayList<ICommand<ICollection>>();
 		if (appliesTo(selection))
 		{
-			ICommand<ICollection> newC = new ConvertQuanityValues(outputName,
-					selection, destination);
+			String unitsName = targetUnit.toString();
+			String name = "Convert to " + unitsName;
+			String outputName = CONVERTED_TO + unitsName;
+			ICommand<ICollection> newC = new ConvertQuanityValues(name, outputName, selection,
+					destination);
 			res.add(newC);
 		}
 
@@ -72,10 +67,10 @@ public class UnitConversionOperation implements IOperation<ICollection>
 	public class ConvertQuanityValues extends AbstractCommand<ICollection>
 	{
 
-		public ConvertQuanityValues(String outputName, List<ICollection> selection,
+		public ConvertQuanityValues(String operationName, String outputName, List<ICollection> selection,
 				IStore store)
 		{
-			super("Convert series units", "Convert units of the provided series",
+			super(operationName, "Convert units of the provided series",
 					outputName, store, false, false, selection);
 		}
 
@@ -84,8 +79,10 @@ public class UnitConversionOperation implements IOperation<ICollection>
 		{
 			List<ICollection> outputs = new ArrayList<ICollection>();
 
+			String seriesName = _inputs.iterator().next().getName();
+			
 			// ok, generate the new series
-			IQuantityCollection<?> target = new QuantityCollection<>(getOutputName(),
+			IQuantityCollection<?> target = new QuantityCollection<>(seriesName + getOutputName(),
 					this, targetUnit);
 
 			outputs.add(target);
