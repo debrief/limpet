@@ -4,7 +4,6 @@ import info.limpet.ICollection;
 import info.limpet.ICommand;
 import info.limpet.IOperation;
 import info.limpet.IStore;
-import info.limpet.data.impl.samples.SampleData;
 import info.limpet.data.store.InMemoryStore;
 import info.limpet.data.store.InMemoryStore.StoreChangeListener;
 import info.limpet.rcp.data_provider.data.DataModel;
@@ -91,7 +90,7 @@ public class DataManagerEditor extends EditorPart implements
 		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		viewer.setContentProvider(_dataProviderEditorInput.getModel());
 		viewer.setLabelProvider(new LimpetLabelProvider());
-		viewer.setInput(new SampleData().getData());
+		viewer.setInput(new InMemoryStore());
 
 		getSite().setSelectionProvider(viewer);
 		makeActions();
@@ -168,59 +167,65 @@ public class DataManagerEditor extends EditorPart implements
 		// get any suitable objects from selection
 		List<ICollection> selection = getSuitableObjects();
 
+		// include some top level items
+		showThisList(selection, menu, OperationsLibrary.getTopLevel());
+
+		// now the tree of operations
+		menu.add(new Separator());
+
 		// get the list of operations
 		HashMap<String, List<IOperation<?>>> ops = OperationsLibrary
 				.getOperations();
 
 		// did we find anything?
-		if (selection.size() > 0)
+		Iterator<String> hIter = ops.keySet().iterator();
+
+		while (hIter.hasNext())
 		{
-			Iterator<String> hIter = ops.keySet().iterator();
+			// ok, we're in a menu grouping
+			String name = (String) hIter.next();
 
-			while (hIter.hasNext())
-			{
-				// ok, we're in a menu grouping
-				String name = (String) hIter.next();
+			// create a new menu tier
+			MenuManager newM = new MenuManager(name);
+			menu.add(newM);
 
-				// create a new menu tier
-				MenuManager newM = new MenuManager(name);
-				menu.add(newM);
+			// now loop through this set of operations
+			List<IOperation<?>> values = ops.get(name);
 
-				// now loop through this set of operations
-				List<IOperation<?>> values = ops.get(name);
-
-				Iterator<IOperation<?>> oIter = values.iterator();
-				while (oIter.hasNext())
-				{
-					@SuppressWarnings("unchecked")
-					final IOperation<ICollection> op = (IOperation<ICollection>) oIter
-							.next();
-					final IStore theStore = _dataProviderEditorInput.getModel()
-							.getStore();
-					Collection<ICommand<ICollection>> matches = op.actionsFor(selection,
-							theStore);
-
-					Iterator<ICommand<ICollection>> mIter = matches.iterator();
-					while (mIter.hasNext())
-					{
-						final ICommand<info.limpet.ICollection> thisC = (ICommand<info.limpet.ICollection>) mIter
-								.next();
-						newM.add(new Action(thisC.getTitle())
-						{
-							@Override
-							public void run()
-							{
-								thisC.execute();
-							}
-						});
-					}
-				}
-			}
-
+			showThisList(selection, newM, values);
 		}
 
 		menu.add(new Separator());
 		menu.add(refreshView);
+	}
+
+	private void showThisList(List<ICollection> selection, IMenuManager newM,
+			List<IOperation<?>> values)
+	{
+		Iterator<IOperation<?>> oIter = values.iterator();
+		while (oIter.hasNext())
+		{
+			@SuppressWarnings("unchecked")
+			final IOperation<ICollection> op = (IOperation<ICollection>) oIter.next();
+			final IStore theStore = _dataProviderEditorInput.getModel().getStore();
+			Collection<ICommand<ICollection>> matches = op.actionsFor(selection,
+					theStore);
+
+			Iterator<ICommand<ICollection>> mIter = matches.iterator();
+			while (mIter.hasNext())
+			{
+				final ICommand<info.limpet.ICollection> thisC = (ICommand<info.limpet.ICollection>) mIter
+						.next();
+				newM.add(new Action(thisC.getTitle())
+				{
+					@Override
+					public void run()
+					{
+						thisC.execute();
+					}
+				});
+			}
+		}
 	}
 
 	private List<ICollection> getSuitableObjects()

@@ -51,7 +51,7 @@ public class MultiplyQuantityOperation implements IOperation<ICollection>
 	private boolean appliesTo(List<ICollection> selection)
 	{
 		// first check we have quantity data
-		if (aTests.allQuantity(selection))
+		if (aTests.nonEmpty(selection) && aTests.allQuantity(selection))
 		{
 			// ok, we have quantity data. See if we have series of the same length, or
 			// singletons
@@ -103,7 +103,7 @@ public class MultiplyQuantityOperation implements IOperation<ICollection>
 			// ok, done
 			List<ICollection> res = new ArrayList<ICollection>();
 			res.add(target);
-			getStore().add(res);
+			getStore().addAll(res);
 		}
 
 		private Unit<?> calculateOutputUnit()

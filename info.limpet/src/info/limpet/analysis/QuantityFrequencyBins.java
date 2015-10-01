@@ -16,6 +16,7 @@ import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
 public abstract class QuantityFrequencyBins extends CoreAnalysis
 {
+	private static final int MAX_SIZE = 10000;
 	private static final double THRESHOLD_VALUE = 0.001;
 	final CollectionComplianceTests aTests;
 
@@ -126,27 +127,30 @@ public abstract class QuantityFrequencyBins extends CoreAnalysis
 
 					if (thisC.size() > 1)
 					{
-						BinnedData res = doBins(o);
-
-						// now output the bins
-						StringBuffer freqBins = new StringBuffer();
-
-						Iterator<Bin> bIter = res.iterator();
-						while (bIter.hasNext())
+						if (thisC.size() < MAX_SIZE)
 						{
-							QuantityFrequencyBins.Bin bin = (QuantityFrequencyBins.Bin) bIter
-									.next();
-							freqBins.append((int) bin.lowerVal);
-							freqBins.append("-");
-							freqBins.append((int) bin.upperVal);
-							freqBins.append(": ");
-							freqBins.append(bin.freqVal);
-							freqBins.append(", ");
+							BinnedData res = doBins(o);
 
+							// now output the bins
+							StringBuffer freqBins = new StringBuffer();
+
+							Iterator<Bin> bIter = res.iterator();
+							while (bIter.hasNext())
+							{
+								QuantityFrequencyBins.Bin bin = (QuantityFrequencyBins.Bin) bIter
+										.next();
+								freqBins.append((int) bin.lowerVal);
+								freqBins.append("-");
+								freqBins.append((int) bin.upperVal);
+								freqBins.append(": ");
+								freqBins.append(bin.freqVal);
+								freqBins.append(", ");
+
+							}
+
+							titles.add("Frequency bins");
+							values.add(freqBins.toString());
 						}
-
-						titles.add("Frequency bins");
-						values.add(freqBins.toString());
 					}
 				}
 			}

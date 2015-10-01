@@ -31,6 +31,8 @@ import org.swtchart.ISeries.SeriesType;
 public class XyPlotView extends CoreAnalysisView
 {
 
+	private final int maxSize = 10000;
+
 	/**
 	 * The ID of the view as specified by the extension.
 	 */
@@ -42,7 +44,6 @@ public class XyPlotView extends CoreAnalysisView
 	{
 		super(ID);
 	}
-
 
 	/**
 	 * This is a callback that will allow us to create the viewer and initialize
@@ -114,35 +115,39 @@ public class XyPlotView extends CoreAnalysisView
 			{
 				if (coll.size() > 1)
 				{
-					IQuantityCollection<?> thisQ = (IQuantityCollection<?>) coll;
-
-					String seriesName = thisQ.getName() + " (" + thisQ.getUnits() + ")";
-					ILineSeries newSeries = (ILineSeries) chart.getSeriesSet()
-							.createSeries(SeriesType.LINE, seriesName);
-					newSeries.setSymbolType(PlotSymbolType.NONE);
-					newSeries.setLineColor(PlottingHelpers.colorFor(seriesName));
-
-					double[] yData = new double[thisQ.size()];
-
-					Iterator<?> values = thisQ.getValues().iterator();
-					int ctr = 0;
-					while (values.hasNext())
+					if (coll.size() < maxSize)
 					{
-						Quantity<?> tQ = (Quantity<?>) values.next();
-						yData[ctr++] = tQ.getValue().doubleValue();
+
+						IQuantityCollection<?> thisQ = (IQuantityCollection<?>) coll;
+
+						String seriesName = thisQ.getName() + " (" + thisQ.getUnits() + ")";
+						ILineSeries newSeries = (ILineSeries) chart.getSeriesSet()
+								.createSeries(SeriesType.LINE, seriesName);
+						newSeries.setSymbolType(PlotSymbolType.NONE);
+						newSeries.setLineColor(PlottingHelpers.colorFor(seriesName));
+
+						double[] yData = new double[thisQ.size()];
+
+						Iterator<?> values = thisQ.getValues().iterator();
+						int ctr = 0;
+						while (values.hasNext())
+						{
+							Quantity<?> tQ = (Quantity<?>) values.next();
+							yData[ctr++] = tQ.getValue().doubleValue();
+						}
+
+						// newSeries.setXSeries(xData);
+						newSeries.setYSeries(yData);
+
+						chart.getAxisSet().getXAxis(0).getTitle().setText("Count");
+
+						// adjust the axis range
+						chart.getAxisSet().adjustRange();
+						IAxis xAxis = chart.getAxisSet().getXAxis(0);
+						xAxis.enableCategory(false);
+
+						chart.redraw();
 					}
-
-					// newSeries.setXSeries(xData);
-					newSeries.setYSeries(yData);
-
-					chart.getAxisSet().getXAxis(0).getTitle().setText("Count");
-
-					// adjust the axis range
-					chart.getAxisSet().adjustRange();
-					IAxis xAxis = chart.getAxisSet().getXAxis(0);
-					xAxis.enableCategory(false);
-
-					chart.redraw();
 				}
 			}
 		}
@@ -167,43 +172,47 @@ public class XyPlotView extends CoreAnalysisView
 			{
 				if (coll.size() > 1)
 				{
-					if (coll.isTemporal())
+					if (coll.size() < maxSize)
 					{
-						ITemporalQuantityCollection<?> thisQ = (ITemporalQuantityCollection<?>) coll;
-
-						String seriesName = thisQ.getName() + " (" + thisQ.getUnits() + ")";
-						ILineSeries newSeries = (ILineSeries) chart.getSeriesSet()
-								.createSeries(SeriesType.LINE, seriesName);
-						newSeries.setSymbolType(PlotSymbolType.NONE);
-						newSeries.setLineColor(PlottingHelpers.colorFor(seriesName));
-
-						Date[] xData = new Date[thisQ.size()];
-						double[] yData = new double[thisQ.size()];
-
-						Iterator<?> values = thisQ.getValues().iterator();
-						Iterator<Long> times = thisQ.getTimes().iterator();
-						int ctr = 0;
-						while (values.hasNext())
+						if (coll.isTemporal())
 						{
-							Quantity<?> tQ = (Quantity<?>) values.next();
-							long t = times.next();
-							xData[ctr] = new Date(t);
-							yData[ctr++] = tQ.getValue().doubleValue();
+							ITemporalQuantityCollection<?> thisQ = (ITemporalQuantityCollection<?>) coll;
+
+							String seriesName = thisQ.getName() + " (" + thisQ.getUnits()
+									+ ")";
+							ILineSeries newSeries = (ILineSeries) chart.getSeriesSet()
+									.createSeries(SeriesType.LINE, seriesName);
+							newSeries.setSymbolType(PlotSymbolType.NONE);
+							newSeries.setLineColor(PlottingHelpers.colorFor(seriesName));
+
+							Date[] xData = new Date[thisQ.size()];
+							double[] yData = new double[thisQ.size()];
+
+							Iterator<?> values = thisQ.getValues().iterator();
+							Iterator<Long> times = thisQ.getTimes().iterator();
+							int ctr = 0;
+							while (values.hasNext())
+							{
+								Quantity<?> tQ = (Quantity<?>) values.next();
+								long t = times.next();
+								xData[ctr] = new Date(t);
+								yData[ctr++] = tQ.getValue().doubleValue();
+							}
+
+							newSeries.setXDateSeries(xData);
+							newSeries.setYSeries(yData);
+
+							newSeries.setSymbolType(PlotSymbolType.CROSS);
+
+							chart.getAxisSet().getXAxis(0).getTitle().setText("Time");
+
+							// adjust the axis range
+							chart.getAxisSet().adjustRange();
+							IAxis xAxis = chart.getAxisSet().getXAxis(0);
+							xAxis.enableCategory(false);
+
+							chart.redraw();
 						}
-
-						newSeries.setXDateSeries(xData);
-						newSeries.setYSeries(yData);
-
-						newSeries.setSymbolType(PlotSymbolType.CROSS);
-
-						chart.getAxisSet().getXAxis(0).getTitle().setText("Time");
-
-						// adjust the axis range
-						chart.getAxisSet().adjustRange();
-						IAxis xAxis = chart.getAxisSet().getXAxis(0);
-						xAxis.enableCategory(false);
-
-						chart.redraw();
 					}
 				}
 			}

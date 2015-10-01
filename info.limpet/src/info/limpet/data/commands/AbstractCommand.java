@@ -21,14 +21,15 @@ public abstract class AbstractCommand<T extends ICollection> implements
 	final protected List<T> _inputs;
 	final protected List<T> _outputs;
 
-	/** whether the command should recalculate if its children change
+	/**
+	 * whether the command should recalculate if its children change
 	 * 
 	 */
 	private boolean _dynamic = true;
 	final private String _outputName;
 
-	public AbstractCommand(String title, String description, String outputName, IStore store,
-			boolean canUndo, boolean canRedo, List<T> inputs)
+	public AbstractCommand(String title, String description, String outputName,
+			IStore store, boolean canUndo, boolean canRedo, List<T> inputs)
 	{
 		_title = title;
 		_description = description;
@@ -37,15 +38,22 @@ public abstract class AbstractCommand<T extends ICollection> implements
 		_canRedo = canRedo;
 		_outputName = outputName;
 
-		_inputs = new ArrayList<T>(inputs);
+		if (inputs != null)
+		{
+			_inputs = new ArrayList<T>(inputs);
+		}
+		else
+		{
+			_inputs = null;
+		}
 		_outputs = new ArrayList<T>();
 	}
-	
+
 	protected String getOutputName()
 	{
 		return _outputName;
 	}
-	
+
 	protected int getNonSingletonArrayLength(List<ICollection> inputs)
 	{
 		int size = 0;
@@ -63,8 +71,6 @@ public abstract class AbstractCommand<T extends ICollection> implements
 
 		return size;
 	}
-
-
 
 	@Override
 	public boolean getDynamic()

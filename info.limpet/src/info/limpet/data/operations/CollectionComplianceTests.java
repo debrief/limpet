@@ -8,11 +8,11 @@ import java.util.List;
 import javax.measure.Dimension;
 import javax.measure.Unit;
 
-
-public class CollectionComplianceTests 
+public class CollectionComplianceTests
 {
 
-	/** check if the specific number of arguments are supplied
+	/**
+	 * check if the specific number of arguments are supplied
 	 * 
 	 * @param selection
 	 * @param num
@@ -22,7 +22,7 @@ public class CollectionComplianceTests
 	{
 		return selection.size() == num;
 	}
-	
+
 	/**
 	 * check if the series are all quantity datasets
 	 * 
@@ -49,7 +49,7 @@ public class CollectionComplianceTests
 		}
 		return allValid;
 	}
-	
+
 	/**
 	 * check if the series are all quantity datasets
 	 * 
@@ -78,6 +78,17 @@ public class CollectionComplianceTests
 	}
 
 	/**
+	 * check if the series are all quantity datasets
+	 * 
+	 * @param selection
+	 * @return true/false
+	 */
+	public boolean nonEmpty(List<? extends ICollection> selection)
+	{
+		return selection.size() > 0;
+	}
+
+	/**
 	 * check if the series are all have equal dimensions
 	 * 
 	 * @param selection
@@ -102,7 +113,7 @@ public class CollectionComplianceTests
 				}
 				else
 				{
-					if(thisD.equals(theD))
+					if (thisD.equals(theD))
 					{
 						// all fine.
 					}
@@ -122,7 +133,6 @@ public class CollectionComplianceTests
 		}
 		return allValid;
 	}
-
 
 	/**
 	 * check if the series all have equal units
@@ -149,7 +159,7 @@ public class CollectionComplianceTests
 				}
 				else
 				{
-					if(thisD.equals(theD))
+					if (thisD.equals(theD))
 					{
 						// all fine.
 					}
@@ -169,7 +179,7 @@ public class CollectionComplianceTests
 		}
 		return allValid;
 	}
-	
+
 	/**
 	 * check if the series are all time series datasets (temporal)
 	 * 
@@ -196,7 +206,7 @@ public class CollectionComplianceTests
 		}
 		return allValid;
 	}
-	
+
 	/**
 	 * check if the series are all of equal length, or singletons
 	 * 
@@ -219,7 +229,7 @@ public class CollectionComplianceTests
 			if (size == -1)
 			{
 				// ok, is this a singleton?
-				if(thisSize != 1)
+				if (thisSize != 1)
 				{
 					// nope, it's a real array store it.
 					size = thisSize;

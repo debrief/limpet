@@ -64,11 +64,17 @@ public class SubtractQuantityOperation<Q extends Quantity<Q>> implements
 
 	private boolean appliesTo(List<ICollection> selection)
 	{
-		boolean allQuantity = aTests.allQuantity(selection);
-		boolean onlyTwoCollections = aTests.exactNumber(selection, 2);
-		boolean equalLength = aTests.allEqualLength(selection);
-		boolean equalDimensions = aTests.allEqualDimensions(selection);
-		return (allQuantity && equalLength && equalDimensions && onlyTwoCollections);
+		if (aTests.exactNumber(selection, 2))
+		{
+			boolean allQuantity = aTests.allQuantity(selection);
+			boolean equalLength = aTests.allEqualLength(selection);
+			boolean equalDimensions = aTests.allEqualDimensions(selection);
+			return (allQuantity && equalLength && equalDimensions);
+		}
+		else
+		{
+			return false;
+		}
 	}
 
 	public class SubtractQuantityValues<T extends Quantity<T>> extends
@@ -119,7 +125,7 @@ public class SubtractQuantityOperation<Q extends Quantity<Q>> implements
 			// ok, done
 			List<ICollection> res = new ArrayList<ICollection>();
 			res.add(target);
-			getStore().add(res);
+			getStore().addAll(res);
 		}
 
 		@SuppressWarnings(

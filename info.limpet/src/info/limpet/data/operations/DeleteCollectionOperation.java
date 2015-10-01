@@ -23,7 +23,7 @@ public class DeleteCollectionOperation implements IOperation<ICollection>
 		if (appliesTo(selection))
 		{
 			final String commandTitle;
-			if(selection.size() == 1)
+			if (selection.size() == 1)
 			{
 				commandTitle = "Delete collection";
 			}
@@ -31,8 +31,8 @@ public class DeleteCollectionOperation implements IOperation<ICollection>
 			{
 				commandTitle = "Delete collections";
 			}
-			ICommand<ICollection> newC = new DeleteCollection(commandTitle, selection,
-					destination);
+			ICommand<ICollection> newC = new DeleteCollection(commandTitle,
+					selection, destination);
 			res.add(newC);
 		}
 
@@ -41,7 +41,7 @@ public class DeleteCollectionOperation implements IOperation<ICollection>
 
 	private boolean appliesTo(List<ICollection> selection)
 	{
-		return true;
+		return (selection.size() > 0);
 	}
 
 	public static class DeleteCollection extends AbstractCommand<ICollection>
@@ -50,8 +50,8 @@ public class DeleteCollectionOperation implements IOperation<ICollection>
 		public DeleteCollection(String title, List<ICollection> selection,
 				IStore store)
 		{
-			super(title, "Delete specific collections", null, store, false,
-					false, selection);
+			super(title, "Delete specific collections", null, store, false, false,
+					selection);
 		}
 
 		@Override
@@ -63,7 +63,7 @@ public class DeleteCollectionOperation implements IOperation<ICollection>
 			{
 				ICollection iCollection = iter.next();
 				IStore store = getStore();
-				if(store instanceof InMemoryStore)
+				if (store instanceof InMemoryStore)
 				{
 					InMemoryStore mem = (InMemoryStore) store;
 					mem.remove(iCollection);
@@ -76,7 +76,6 @@ public class DeleteCollectionOperation implements IOperation<ICollection>
 		{
 			// don't worry
 		}
-
 
 	}
 
