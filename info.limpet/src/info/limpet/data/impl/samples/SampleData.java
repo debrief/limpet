@@ -37,7 +37,7 @@ public class SampleData
 	public static final String RANGED_SPEED_SINGLETON = "Ranged Speed Singleton";
 	public static final String FLOATING_POINT_FACTOR = "Floating point factor";
 
-	public InMemoryStore getData()
+	public InMemoryStore getData(long count)
 	{
 		InMemoryStore res = new InMemoryStore();
 
@@ -54,31 +54,30 @@ public class SampleData
 				LENGTH_ONE);
 		StockTypes.NonTemporal.Length_M length2 = new StockTypes.NonTemporal.Length_M(
 				LENGTH_TWO);
-		IObjectCollection<String> string1 = new ObjectCollection<String>(
-				STRING_ONE);
-		IObjectCollection<String> string2 = new ObjectCollection<String>(
-				STRING_TWO);
+		IObjectCollection<String> string1 = new ObjectCollection<String>(STRING_ONE);
+		IObjectCollection<String> string2 = new ObjectCollection<String>(STRING_TWO);
 		IQuantityCollection<Dimensionless> singleton1 = new QuantityCollection<Dimensionless>(
 				FLOATING_POINT_FACTOR, Units.ONE.asType(Dimensionless.class));
 		StockTypes.NonTemporal.Speed_MSec singletonRange1 = new StockTypes.NonTemporal.Speed_MSec(
 				RANGED_SPEED_SINGLETON);
 		StockTypes.NonTemporal.Length_M singletonLength = new StockTypes.NonTemporal.Length_M(
 				LENGTH_SINGLETON);
-		ElapsedTime_Sec timeIntervals = new StockTypes.Temporal.ElapsedTime_Sec(TIME_INTERVALS);
-		
-		
-		long thisTime = 0; 
-		
-		for (int i = 1; i <= 10; i++)
+		ElapsedTime_Sec timeIntervals = new StockTypes.Temporal.ElapsedTime_Sec(
+				TIME_INTERVALS);
+
+		long thisTime = 0;
+
+		for (int i = 1; i <= count; i++)
 		{
 			thisTime = new Date().getTime() + i * 500 * 60;
 
-			angle1.add(thisTime, 90 + 1.1 * Math.toDegrees(Math.sin(Math.toRadians(i*52.5))));
+			angle1.add(thisTime,
+					90 + 1.1 * Math.toDegrees(Math.sin(Math.toRadians(i * 52.5))));
 			speedSeries1.add(thisTime, 1 / Math.sin(i));
 			speedSeries2.add(thisTime, Math.sin(i));
 			speedSeries3.add(thisTime, 3d * Math.cos(i));
-			length1.add((double)i % 3);
-			length2.add((double)i % 5);
+			length1.add((double) i % 3);
+			length2.add((double) i % 5);
 			string1.add("item " + i);
 			string2.add("item " + (i % 3));
 			timeIntervals.add(thisTime, 3 + Math.sin(i) * Math.random() * 4);
@@ -86,12 +85,14 @@ public class SampleData
 
 		// add an extra item to speedSeries3
 		speedSeries3.add(thisTime + 12 * 500 * 60, 12);
-		
-		// give the singleton a value		
+
+		// give the singleton a value
 		singleton1.add(4d);
 		singletonRange1.add(998);
 		@SuppressWarnings("unchecked")
-		QuantityRange<Speed> speedRange = QuantityRange.of( Quantities.getQuantity(940d, singletonRange1.getUnits()),  Quantities.getQuantity(1050d, singletonRange1.getUnits()), null);
+		QuantityRange<Speed> speedRange = QuantityRange.of(
+				Quantities.getQuantity(940d, singletonRange1.getUnits()),
+				Quantities.getQuantity(1050d, singletonRange1.getUnits()), null);
 		singletonRange1.setRange(speedRange);
 
 		singletonLength.add(12d);
@@ -111,22 +112,25 @@ public class SampleData
 		list.add(singletonLength);
 		list.add(timeIntervals);
 
-		res.add(list);
+		res.addAll(list);
 
 		// perform an operation, so we have some audit trail
 		List<ICollection> selection = new ArrayList<ICollection>();
 		selection.add(speedSeries1);
 		selection.add(speedSeries2);
-		@SuppressWarnings({ "unchecked", "rawtypes" })
-		Collection<ICommand<?>> actions = new AddQuantityOperation().actionsFor(selection, res);
+		@SuppressWarnings(
+		{ "unchecked", "rawtypes" })
+		Collection<ICommand<?>> actions = new AddQuantityOperation().actionsFor(
+				selection, res);
 		ICommand<?> addAction = actions.iterator().next();
-		addAction.execute();	
-		
+		addAction.execute();
+
 		// and an operation using our speed factor
 		selection.clear();
 		selection.add(speedSeries1);
 		selection.add(singleton1);
-		Collection<ICommand<ICollection>> actions2 = new MultiplyQuantityOperation().actionsFor(selection, res);
+		Collection<ICommand<ICollection>> actions2 = new MultiplyQuantityOperation()
+				.actionsFor(selection, res);
 		addAction = actions2.iterator().next();
 		addAction.execute();
 
@@ -134,11 +138,11 @@ public class SampleData
 		selection.clear();
 		selection.add(timeIntervals);
 		selection.add(singletonRange1);
-		Collection<ICommand<ICollection>> actions3 = new MultiplyQuantityOperation("Calculated distance").actionsFor(selection, res);
+		Collection<ICommand<ICollection>> actions3 = new MultiplyQuantityOperation(
+				"Calculated distance").actionsFor(selection, res);
 		addAction = actions3.iterator().next();
 		addAction.execute();
 
-		
 		return res;
 	}
 }

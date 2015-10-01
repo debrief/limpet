@@ -24,7 +24,7 @@ public class TestDynamic extends TestCase
 	public void testSingleQuantityStats()
 	{
 		// get some data
-		InMemoryStore store = new SampleData().getData();
+		InMemoryStore store = new SampleData().getData(10);
 
 		// ok, let's try one that works
 		List<ICollection> selection = new ArrayList<ICollection>();

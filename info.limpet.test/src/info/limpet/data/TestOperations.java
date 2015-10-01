@@ -218,7 +218,7 @@ public class TestOperations extends TestCase
 	public void testDimensionlessMultiply()
 	{
 		// place to store results data
-		InMemoryStore store = new SampleData().getData();
+		InMemoryStore store = new SampleData().getData(10);
 
 		// ok, let's try one that works
 		List<ICollection> selection = new ArrayList<ICollection>(3);
@@ -295,7 +295,7 @@ public class TestOperations extends TestCase
 	public void testUnitConversion()
 	{
 		// place to store results data
-		InMemoryStore store = new SampleData().getData();
+		InMemoryStore store = new SampleData().getData(10);
 
 		List<ICollection> selection = new ArrayList<ICollection>(3);
 		// speed one defined in m/s

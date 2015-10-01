@@ -45,7 +45,7 @@ public class TestCollections extends TestCase
 
 	public void testSampleData()
 	{
-		IStore data = new SampleData().getData();
+		IStore data = new SampleData().getData(10);
 		IQuantityCollection<?> ranged = (IQuantityCollection<?>) data.get(SampleData.RANGED_SPEED_SINGLETON);
 		assertNotNull("found series", ranged);
 		
