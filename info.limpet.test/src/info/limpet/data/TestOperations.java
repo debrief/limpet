@@ -397,6 +397,22 @@ public class TestOperations extends TestCase
 		Quantity<Speed> simpleMovingAverage = newS.getValues().get(windowSize - 1);
 
 		assertEquals(average, simpleMovingAverage.getValue().doubleValue(), 0);
+		
+		showValues("original", speed_good_1);
+		showValues("new", newS);
 
 	}
+	
+	protected static void showValues(String title, IQuantityCollection<?> coll)
+	{
+		System.out.println(title);
+		Iterator<?> iter = coll.getValues().iterator();
+		while (iter.hasNext())
+		{
+			Quantity<?> quant = (Quantity<?>) iter.next();
+			System.out.println(quant.getValue());
+			
+		}
+	}
+	
 }

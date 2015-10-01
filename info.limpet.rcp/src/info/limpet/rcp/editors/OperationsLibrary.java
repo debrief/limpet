@@ -8,6 +8,7 @@ import info.limpet.data.operations.DeleteCollectionOperation;
 import info.limpet.data.operations.DivideQuantityOperation;
 import info.limpet.data.operations.GenerateDummyDataOperation;
 import info.limpet.data.operations.MultiplyQuantityOperation;
+import info.limpet.data.operations.SimpleMovingAverageOperation;
 import info.limpet.data.operations.SubtractQuantityOperation;
 import info.limpet.data.operations.UnitConversionOperation;
 import info.limpet.rcp.analysis_view.AnalysisView;
@@ -18,6 +19,8 @@ import info.limpet.rcp.xy_plot.XyPlotView;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import javax.measure.quantity.Speed;
 
 import tec.units.ri.unit.Units;
 
@@ -42,7 +45,8 @@ public class OperationsLibrary
 		{
 			protected boolean appliesTo(List<ICollection> selection)
 			{
-				return getTests().nonEmpty(selection) && getTests().allQuantity(selection);
+				return getTests().nonEmpty(selection)
+						&& getTests().allQuantity(selection);
 			}
 		});
 		analysis.add(new ShowInNamedView("Show in Data Frequency View",
@@ -61,7 +65,7 @@ public class OperationsLibrary
 	private static List<IOperation<?>> getAdmin()
 	{
 		List<IOperation<?>> admin = new ArrayList<IOperation<?>>();
-		admin.add(new GenerateDummyDataOperation("small", 10));
+		admin.add(new GenerateDummyDataOperation("small", 20));
 		admin.add(new GenerateDummyDataOperation("large", 1000));
 		admin.add(new GenerateDummyDataOperation("monster", 1000000));
 
@@ -75,6 +79,7 @@ public class OperationsLibrary
 		arithmetic.add(new AddQuantityOperation<>());
 		arithmetic.add(new SubtractQuantityOperation<>());
 		arithmetic.add(new DivideQuantityOperation());
+		arithmetic.add(new SimpleMovingAverageOperation<Speed>(3));
 		return arithmetic;
 	}
 
