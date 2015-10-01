@@ -39,7 +39,7 @@ public class AnalysisView extends CoreAnalysisView
 
 	public AnalysisView()
 	{
-		super(ID);
+		super(ID, "Analysis");
 	}
 
 

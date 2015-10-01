@@ -99,10 +99,7 @@ public class ShowInNamedView implements IOperation<ICollection>
 				CoreAnalysisView cv = (CoreAnalysisView) theView;
 
 				// set follow selection to off
-				cv.setFollow(false);
-
-				// fire in the current selection
-				cv.display(_inputs);
+				cv.follow(_inputs);
 
 			}
 		}
