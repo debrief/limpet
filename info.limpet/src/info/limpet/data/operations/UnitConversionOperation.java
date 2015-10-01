@@ -16,15 +16,14 @@ import java.util.List;
 import javax.measure.Quantity;
 import javax.measure.Unit;
 
-public class UnitConversionOperation implements
-		IOperation<ICollection>
+public class UnitConversionOperation implements IOperation<ICollection>
 {
 	CollectionComplianceTests aTests = new CollectionComplianceTests();
 
 	public static final String UNIT_CONVERSION_OF_INPUT_SERIES = "Unit conversion of input series";
 
 	final protected String outputName;
-	
+
 	final protected Unit<?> targetUnit;
 
 	public UnitConversionOperation(String name, Unit<?> targetUnit)
@@ -44,8 +43,8 @@ public class UnitConversionOperation implements
 		Collection<ICommand<ICollection>> res = new ArrayList<ICommand<ICollection>>();
 		if (appliesTo(selection))
 		{
-			ICommand<ICollection> newC = new ConvertQuanityValues(
-					outputName, selection, destination);
+			ICommand<ICollection> newC = new ConvertQuanityValues(outputName,
+					selection, destination);
 			res.add(newC);
 		}
 
@@ -57,22 +56,27 @@ public class UnitConversionOperation implements
 		boolean singleSeries = selection.size() == 1;
 		boolean allQuantity = aTests.allQuantity(selection);
 		boolean sameDimension = false;
-		if (allQuantity) {
-			Unit<?> units = ((IQuantityCollection<?>)selection.get(0)).getUnits();		
+		boolean sameUnits = true;
+		if (allQuantity)
+		{
+			Unit<?> units = ((IQuantityCollection<?>) selection.get(0)).getUnits();
 			sameDimension = units.getDimension().equals(targetUnit.getDimension());
+
+			// check they're different units. It's not worth offering the operation if
+			// they're already in the same units
+			sameUnits = units.equals(targetUnit);
 		}
-		return (singleSeries && allQuantity && sameDimension);
+		return (singleSeries && allQuantity && sameDimension && !sameUnits);
 	}
 
-	public class ConvertQuanityValues extends
-			AbstractCommand<ICollection>
+	public class ConvertQuanityValues extends AbstractCommand<ICollection>
 	{
 
-		public ConvertQuanityValues(String outputName,
-				List<ICollection> selection, IStore store)
+		public ConvertQuanityValues(String outputName, List<ICollection> selection,
+				IStore store)
 		{
-			super("Convert series units", "Convert units of the provided series", outputName,
-					store, false, false, selection);
+			super("Convert series units", "Convert units of the provided series",
+					outputName, store, false, false, selection);
 		}
 
 		@Override
@@ -81,8 +85,8 @@ public class UnitConversionOperation implements
 			List<ICollection> outputs = new ArrayList<ICollection>();
 
 			// ok, generate the new series
-			IQuantityCollection<?> target = new QuantityCollection<>(
-					getOutputName(), this, targetUnit);
+			IQuantityCollection<?> target = new QuantityCollection<>(getOutputName(),
+					this, targetUnit);
 
 			outputs.add(target);
 
@@ -122,7 +126,8 @@ public class UnitConversionOperation implements
 		 */
 		private void performCalc(List<ICollection> outputs)
 		{
-			IQuantityCollection<?> target = (IQuantityCollection<?>) outputs.iterator().next();
+			IQuantityCollection<?> target = (IQuantityCollection<?>) outputs
+					.iterator().next();
 
 			// clear out the lists, first
 			Iterator<ICollection> iter = _outputs.iterator();
@@ -134,16 +139,16 @@ public class UnitConversionOperation implements
 
 			IQuantityCollection<?> singleInputSeries = (IQuantityCollection<?>) _inputs
 					.get(0);
-			
+
 			for (int j = 0; j < singleInputSeries.getValues().size(); j++)
 			{
-				
+
 				// TODO: figure out how to avoid the compiler warnings
 				@SuppressWarnings("rawtypes")
-				Quantity thisValue = singleInputSeries.getValues().get(j);				
+				Quantity thisValue = singleInputSeries.getValues().get(j);
 				@SuppressWarnings("unchecked")
 				Quantity<?> converted = thisValue.to(targetUnit);
-				
+
 				target.add(converted.getValue());
 			}
 		}

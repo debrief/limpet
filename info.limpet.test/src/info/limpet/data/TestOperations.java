@@ -324,6 +324,11 @@ public class TestOperations extends TestCase
 		// test results is same length as thisSpeed
 		assertEquals("correct size", 10, newS.size());
 
+		// TODO: check that operation isn't offered if the dataset is already in that type
+		commands = new UnitConversionOperation(Units.METRES_PER_SECOND)
+		.actionsFor(selection, store);
+		assertEquals("already in destination units", 0 , commands.size());
+		
 		IQuantityCollection<?> inputSpeed = (IQuantityCollection<?>) speed_good_1;
 		
 		// TODO: avoid suppressing these warnings
@@ -340,6 +345,6 @@ public class TestOperations extends TestCase
 
 		assertEquals(firstInputSpeed.to(Units.KILOMETRES_PER_HOUR),
 				firstOutputSpeed);
-
+		
 	}
 }
