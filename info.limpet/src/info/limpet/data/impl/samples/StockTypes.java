@@ -5,6 +5,7 @@ import info.limpet.data.impl.TemporalQuantityCollection;
 import info.limpet.data.impl.ObjectCollection;
 import info.limpet.data.impl.TemporalObjectCollection;
 
+import javax.measure.Unit;
 import javax.measure.quantity.Acceleration;
 import javax.measure.quantity.Angle;
 import javax.measure.quantity.Dimensionless;
@@ -18,6 +19,8 @@ import tec.units.ri.unit.Units;
 public class StockTypes
 {
 
+	public static Unit<?> DEGREE_ANGLE = Units.RADIAN.multiply(2 * Math.PI);
+	
 	/**
 	 * time series (temporal) collections
 	 * 
