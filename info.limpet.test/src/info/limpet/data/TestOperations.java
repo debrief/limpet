@@ -318,7 +318,7 @@ public class TestOperations extends TestCase
 		command.execute();
 
 		ICollection newS = store
-				.get(speed_good_1.getName() + UnitConversionOperation.CONVERTED_TO + Units.KILOMETRES_PER_HOUR.getName());
+				.get(speed_good_1.getName() + UnitConversionOperation.CONVERTED_TO + Units.KILOMETRES_PER_HOUR);
 		assertNotNull(newS);
 
 		// test results is same length as thisSpeed

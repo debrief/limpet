@@ -73,7 +73,7 @@ public class SampleData
 		{
 			thisTime = new Date().getTime() + i * 500 * 60;
 
-			angle1.add(thisTime, 60 + 3 * Math.sin(Math.toRadians(i*42.5)));
+			angle1.add(thisTime, 90 + 1.1 * Math.toDegrees(Math.sin(Math.toRadians(i*52.5))));
 			speedSeries1.add(thisTime, 1 / Math.sin(i));
 			speedSeries2.add(thisTime, Math.sin(i));
 			speedSeries3.add(thisTime, 3d * Math.cos(i));
