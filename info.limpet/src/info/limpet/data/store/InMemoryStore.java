@@ -39,12 +39,20 @@ public class InMemoryStore implements IStore
 			listener.changed();
 		}
 	}
-	
+
 	@Override
-	public void add(List<ICollection> results)
+	public void addAll(List<ICollection> results)
 	{
 		_store.addAll(results);
-		
+
+		fireModified();
+	}
+
+	@Override
+	public void add(ICollection results)
+	{
+		_store.add(results);
+
 		fireModified();
 	}
 
@@ -83,7 +91,7 @@ public class InMemoryStore implements IStore
 	public void remove(ICollection collection)
 	{
 		_store.remove(collection);
-		
+
 		fireModified();
 	}
 
