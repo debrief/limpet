@@ -45,5 +45,6 @@ public class Perspective implements IPerspectiveFactory
 		layout.addShowViewShortcut(AnalysisView.ID);
 		layout.addShowViewShortcut(DataFrequencyView.ID);
 		layout.addShowViewShortcut(XyPlotView.ID);
+		layout.addShowViewShortcut(RangeSliderView.ID);
 	}
 }

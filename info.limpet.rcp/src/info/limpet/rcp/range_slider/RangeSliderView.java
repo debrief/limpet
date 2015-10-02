@@ -1,24 +1,25 @@
 package info.limpet.rcp.range_slider;
 
-import info.limpet.IChangeListener;
-import info.limpet.ICollection;
-import info.limpet.IQuantityCollection;
-import info.limpet.data.operations.CollectionComplianceTests;
-import info.limpet.rcp.core_view.CoreAnalysisView;
-
 import java.util.List;
 
 import javax.measure.Quantity;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.RowLayout;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ControlListener;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Slider;
 
+import info.limpet.IChangeListener;
+import info.limpet.ICollection;
+import info.limpet.IQuantityCollection;
+import info.limpet.data.operations.CollectionComplianceTests;
+import info.limpet.rcp.core_view.CoreAnalysisView;
 import tec.units.ri.quantity.QuantityRange;
 
 /**
@@ -67,26 +68,21 @@ public class RangeSliderView extends CoreAnalysisView implements
 
 		// ok, do the layout
 		Composite holder = new Composite(parent, SWT.NONE);
-		FillLayout gl = new FillLayout();
+		GridLayout gl = new GridLayout(3, false);
+		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, false);
+		holder.setLayoutData(gd);
 		holder.setLayout(gl);
 
-		Composite theG = new Composite(holder, SWT.NONE);
-		RowLayout gr = new RowLayout(SWT.VERTICAL);
-		theG.setLayout(gr);
-
-		// top row
-		Composite headerRow = new Composite(theG, SWT.NONE);
-		FillLayout headerL = new FillLayout();
-		headerRow.setLayout(headerL);
-		label = new Label(headerRow, SWT.NONE);
+		label = new Label(holder, SWT.NONE);
+		gd = new GridData(SWT.CENTER, SWT.FILL, true, false);
+		gd.horizontalSpan = 3;
+		label.setLayoutData(gd);
 		label.setText("     ====== pending  ====== ");
-		label.setSize(300, 45);
 
-		Composite sliderRow = new Composite(theG, SWT.NONE);
-		RowLayout brL = new RowLayout(SWT.VERTICAL);
-		brL.pack = true;
-		sliderRow.setLayout(brL);
-		slider = new Slider(sliderRow, SWT.NONE);
+		slider = new Slider(holder, SWT.NONE);
+		gd = new GridData(SWT.FILL, SWT.FILL, true, false);
+		gd.horizontalSpan = 3;
+		slider.setLayoutData(gd);
 		slider.addListener(SWT.Selection, new Listener()
 		{
 
@@ -98,17 +94,19 @@ public class RangeSliderView extends CoreAnalysisView implements
 				setValue(curVal);
 			}
 		});
-		slider.setSize(300, 46);
-
-		Composite labelRow = new Composite(theG, SWT.NONE);
-		RowLayout trL = new RowLayout(SWT.HORIZONTAL);
-		trL.pack = false;
-		labelRow.setLayout(trL);
-		minL = new Label(labelRow, SWT.NONE);
+		minL = new Label(holder, SWT.NONE);
+		gd = new GridData(SWT.BEGINNING, SWT.FILL, true, false);
+		minL.setLayoutData(gd);
 		minL.setText("   ==   ");
-		val = new Label(labelRow, SWT.NONE);
+
+		val = new Label(holder, SWT.NONE);
+		gd = new GridData(SWT.CENTER, SWT.FILL, true, false);
+		val.setLayoutData(gd);
 		val.setText("   ==   ");
-		maxL = new Label(labelRow, SWT.NONE);
+
+		maxL = new Label(holder, SWT.NONE);
+		gd = new GridData(SWT.END, SWT.FILL, true, false);
+		maxL.setLayoutData(gd);
 		maxL.setText("   ==   ");
 
 		// register as selection listener
@@ -174,7 +172,8 @@ public class RangeSliderView extends CoreAnalysisView implements
 		maxL.setText("" + maxVal);
 		val.setText("" + curVal);
 
-		this.getViewSite().getShell().redraw();
+		label.getParent().getParent().layout(true, true);
+		label.getParent().getParent().redraw();
 	}
 
 	@Override
