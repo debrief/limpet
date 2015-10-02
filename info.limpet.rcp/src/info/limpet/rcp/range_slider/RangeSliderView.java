@@ -1,5 +1,6 @@
 package info.limpet.rcp.range_slider;
 
+import info.limpet.IChangeListener;
 import info.limpet.ICollection;
 import info.limpet.IQuantityCollection;
 import info.limpet.data.operations.CollectionComplianceTests;
@@ -26,7 +27,7 @@ import tec.units.ri.quantity.QuantityRange;
  * @author ian
  * 
  */
-public class RangeSliderView extends CoreAnalysisView
+public class RangeSliderView extends CoreAnalysisView implements IChangeListener
 {
 
 	/**
@@ -45,6 +46,8 @@ public class RangeSliderView extends CoreAnalysisView
 	private Label label;
 
 	private Label units;
+
+	private IQuantityCollection<?> _current;
 
 	/**
 	 * The constructor.
@@ -133,13 +136,29 @@ public class RangeSliderView extends CoreAnalysisView
 	@Override
 	public void display(List<ICollection> res)
 	{
-		showData(res);
+		ICollection newColl = res.get(0);
+		
+		// is this different?
+		if(_current != newColl)
+		{
+			// are we showing anything?
+			if(_current != null)
+			{
+				// ok, stop listening
+				_current.removeChangeListener(this);
+				
+				_current = null;
+			}
+		}
+		
+		_current = (IQuantityCollection<?>) newColl;
+		
+		showData(_current);
 	}
 
-	private void showData(List<ICollection> res)
+	private void showData(IQuantityCollection <?>qc)
 	{
 
-		IQuantityCollection<?> qc = (IQuantityCollection<?>) getData().get(0);
 		QuantityRange<?> rng = qc.getRange();
 		int curVal = qc.getValues().iterator().next().getValue().intValue();
 
@@ -195,6 +214,20 @@ public class RangeSliderView extends CoreAnalysisView
 	protected String getTextForClipboard()
 	{
 		return "Pending";
+	}
+
+	@Override
+	public void dataChanged(ICollection subject)
+	{
+		// ok, re=do the update
+		showData(_current);
+	}
+
+	@Override
+	public void collectionDeleted(ICollection subject)
+	{
+		// TODO Auto-generated method stub
+		
 	}
 
 }
