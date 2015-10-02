@@ -45,7 +45,7 @@
             category="info.limpet.rcp"
             class="info.limpet.rcp.range_slider.RangeSliderView"
             icon="icons/sample.gif"
-            id="info.limpet.rcp.RangeSlider"
+            id="info.limpet.rcp.RangeSliderView"
             name="Range Slider">
       </view>
    </extension>
