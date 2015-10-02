@@ -27,7 +27,8 @@ import tec.units.ri.quantity.QuantityRange;
  * @author ian
  * 
  */
-public class RangeSliderView extends CoreAnalysisView implements IChangeListener
+public class RangeSliderView extends CoreAnalysisView implements
+		IChangeListener
 {
 
 	/**
@@ -44,8 +45,6 @@ public class RangeSliderView extends CoreAnalysisView implements IChangeListener
 	private Label maxL;
 
 	private Label label;
-
-	private Label units;
 
 	private IQuantityCollection<?> _current;
 
@@ -100,7 +99,7 @@ public class RangeSliderView extends CoreAnalysisView implements IChangeListener
 			}
 		});
 		slider.setSize(300, 46);
-		
+
 		Composite labelRow = new Composite(theG, SWT.NONE);
 		RowLayout trL = new RowLayout(SWT.HORIZONTAL);
 		trL.pack = false;
@@ -111,10 +110,6 @@ public class RangeSliderView extends CoreAnalysisView implements IChangeListener
 		val.setText("   ==   ");
 		maxL = new Label(labelRow, SWT.NONE);
 		maxL.setText("   ==   ");
-		units = new Label(labelRow, SWT.NONE);
-		units.setText("   ==   ");
-
-
 
 		// register as selection listener
 		setupListener();
@@ -137,32 +132,33 @@ public class RangeSliderView extends CoreAnalysisView implements IChangeListener
 	public void display(List<ICollection> res)
 	{
 		ICollection newColl = res.get(0);
-		
+
 		// is this different?
-		if(_current != newColl)
+		if (_current != newColl)
 		{
 			// are we showing anything?
-			if(_current != null)
+			if (_current != null)
 			{
 				// ok, stop listening
 				_current.removeChangeListener(this);
-				
+
 				_current = null;
 			}
 		}
-		
+
 		_current = (IQuantityCollection<?>) newColl;
-		
+
 		showData(_current);
 	}
 
-	private void showData(IQuantityCollection <?>qc)
+	private void showData(IQuantityCollection<?> qc)
 	{
 
 		QuantityRange<?> rng = qc.getRange();
 		int curVal = qc.getValues().iterator().next().getValue().intValue();
 
-		label.setText(getData().get(0).getName());
+		label.setText(getData().get(0).getName() + " (" + qc.getUnits().toString()
+				+ ")");
 
 		Object min = rng.getMinimum();
 		Object max = rng.getMaximum();
@@ -170,14 +166,13 @@ public class RangeSliderView extends CoreAnalysisView implements IChangeListener
 		int minVal = ((Quantity<?>) min).getValue().intValue();
 		int maxVal = ((Quantity<?>) max).getValue().intValue();
 		slider.setMinimum(minVal);
-		slider.setMaximum(maxVal);
+		slider.setMaximum(maxVal + slider.getThumb());
+		// note: add the width of the thumb object to get the true max value
 		slider.setSelection(curVal);
 
 		minL.setText("" + minVal);
 		maxL.setText("" + maxVal);
 		val.setText("" + curVal);
-		
-		units.setText(qc.getUnits().toString());
 
 		this.getViewSite().getShell().redraw();
 	}
@@ -227,7 +222,7 @@ public class RangeSliderView extends CoreAnalysisView implements IChangeListener
 	public void collectionDeleted(ICollection subject)
 	{
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }
