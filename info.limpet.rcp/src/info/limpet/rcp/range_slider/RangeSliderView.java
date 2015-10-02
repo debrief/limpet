@@ -10,6 +10,10 @@ import java.util.List;
 import javax.measure.Quantity;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
@@ -59,37 +63,40 @@ public class RangeSliderView extends CoreAnalysisView
 	{
 		makeActions();
 		contributeToActionBars();
-		
+
 		// ok, do the layout
 		Composite holder = new Composite(parent, SWT.NONE);
-		RowLayout gl = new RowLayout(SWT.VERTICAL);
-		gl.pack = false;
+		FillLayout gl = new FillLayout();
 		holder.setLayout(gl);
 
+		Composite theG = new Composite(holder, SWT.NONE);
+		GridLayout gr = new GridLayout(1, true);
+		theG.setLayout(gr);
+
 		// top row
-		Composite headerRow = new Composite(holder, SWT.NONE);
+		Composite headerRow = new Composite(theG, SWT.NONE);
 		RowLayout headerL = new RowLayout(SWT.HORIZONTAL);
 		headerL.pack = false;
 		headerRow.setLayout(headerL);
 		label = new Label(headerRow, SWT.NONE);
 		label.setText(" == pending  == ");
 
-		Composite topRow = new Composite(holder, SWT.NONE);
+		Composite topRow = new Composite(theG, SWT.NONE);
 		RowLayout trL = new RowLayout(SWT.HORIZONTAL);
 		trL.pack = false;
 		topRow.setLayout(trL);
 		minL = new Label(topRow, SWT.NONE);
 		minL.setText("   ==   ");
 		val = new Label(topRow, SWT.NONE);
-		val.setText("   ==   ");
+		val.setText("   ='=   ");
 		maxL = new Label(topRow, SWT.NONE);
 		maxL.setText("   ==   ");
 
-		Composite bottomRow = new Composite(holder, SWT.NONE);
+		Composite bottomRow = new Composite(theG, SWT.NONE);
 		RowLayout brL = new RowLayout(SWT.HORIZONTAL);
 		brL.pack = false;
 		bottomRow.setLayout(brL);
-		
+
 		slider = new Slider(bottomRow, SWT.NONE);
 		slider.addListener(SWT.Selection, new Listener()
 		{
@@ -111,9 +118,12 @@ public class RangeSliderView extends CoreAnalysisView
 	{
 		if (getData() != null)
 		{
-			IQuantityCollection<?> qc = (IQuantityCollection<?>) getData().get(0);
-			qc.replaceSingleton(val);
-			qc.fireChanged();
+			if (getData().size() > 0)
+			{
+				IQuantityCollection<?> qc = (IQuantityCollection<?>) getData().get(0);
+				qc.replaceSingleton(val);
+				qc.fireChanged();
+			}
 		}
 	}
 
@@ -127,31 +137,25 @@ public class RangeSliderView extends CoreAnalysisView
 	{
 
 		IQuantityCollection<?> qc = (IQuantityCollection<?>) getData().get(0);
-		QuantityRange rng = qc.getRange();
+		QuantityRange<?> rng = qc.getRange();
 		int curVal = qc.getValues().iterator().next().getValue().intValue();
 
 		label.setText(getData().get(0).getName());
-		
+
 		Object min = rng.getMinimum();
 		Object max = rng.getMaximum();
 
-		// if(min instanceof DoubleQuantity)
-		// {
-		//
-		// slider.setMinimum(0);
 		int minVal = ((Quantity<?>) min).getValue().intValue();
 		int maxVal = ((Quantity<?>) max).getValue().intValue();
 		slider.setMinimum(minVal);
 		slider.setMaximum(maxVal);
 		slider.setSelection(curVal);
-		
+
 		minL.setText("" + minVal);
 		maxL.setText("" + maxVal);
-		
+		val.setText("" + curVal);
+
 		this.getViewSite().getShell().redraw();
-		//
-		// }
-		//
 	}
 
 	@Override
