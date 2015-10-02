@@ -4,6 +4,7 @@ import info.limpet.ICollection;
 import info.limpet.ICommand;
 import info.limpet.IOperation;
 import info.limpet.IStore;
+import info.limpet.data.operations.GenerateDummyDataOperation;
 import info.limpet.data.store.InMemoryStore;
 import info.limpet.data.store.InMemoryStore.StoreChangeListener;
 import info.limpet.rcp.data_provider.data.DataModel;
@@ -47,6 +48,7 @@ public class DataManagerEditor extends EditorPart implements
 	private IMenuListener _menuListener;
 	private Action action1;
 	private Action refreshView;
+	private Action generateData;
 
 	@Override
 	public void init(IEditorSite site, IEditorInput input)
@@ -113,6 +115,7 @@ public class DataManagerEditor extends EditorPart implements
 	protected void fillLocalToolBar(IToolBarManager manager)
 	{
 		manager.add(refreshView);
+		manager.add(generateData);
 	}
 
 	private void makeActions()
@@ -132,6 +135,19 @@ public class DataManagerEditor extends EditorPart implements
 		action1.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
 				.getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
 
+
+		
+		generateData = new Action()
+		{
+			public void run()
+			{
+				generateData();
+			}
+		};
+		generateData.setText("Generate data");
+		generateData.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
+				.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD));
+
 		refreshView = new Action()
 		{
 			public void run()
@@ -142,6 +158,15 @@ public class DataManagerEditor extends EditorPart implements
 		refreshView.setText("Refresh");
 		refreshView.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
 				.getImageDescriptor(ISharedImages.IMG_TOOL_REDO));
+	}
+
+	protected void generateData()
+	{
+		GenerateDummyDataOperation operation = new GenerateDummyDataOperation("small", 20);
+		
+		Object input = viewer.getInput();
+		Collection<ICommand<ICollection>> commands = operation.actionsFor(getSuitableObjects(), (IStore) input);
+		commands.iterator().next().execute();
 	}
 
 	public void showMessage(String message)
