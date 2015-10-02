@@ -157,9 +157,6 @@ public class CollectionPropertySource implements IPropertySource
 			ICollection theColl = _collection.getCollection();
 			if (theColl instanceof IQuantityCollection<?>)
 			{
-				IQuantityCollection<?> qC = (IQuantityCollection<?>) theColl;
-				QuantityRange<?> range = qC.getRange();
-				
 				// ok - we have to create a composite object that includes both the 
 				// range and the current value - so it can be passed to the slider
 				

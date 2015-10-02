@@ -168,6 +168,11 @@ public abstract class CoreAnalysisView extends ViewPart
 		}
 	}
 
+	public List<ICollection> getData()
+	{
+		return curList;
+	}
+	
 	/**
 	 * determine if this set of collections are suitable for displaying
 	 * 

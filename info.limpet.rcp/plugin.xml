@@ -40,6 +40,14 @@
             id="info.limpet.rcp.XyPlotView"
             name="XY Plot">
       </view>
+      <view
+            allowMultiple="true"
+            category="info.limpet.rcp"
+            class="info.limpet.rcp.range_slider.RangeSliderView"
+            icon="icons/sample.gif"
+            id="info.limpet.rcp.RangeSliderView"
+            name="Range Slider">
+      </view>
    </extension>
    
    <extension
