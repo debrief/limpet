@@ -11,9 +11,6 @@ import javax.measure.Quantity;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.FormData;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
@@ -47,6 +44,8 @@ public class RangeSliderView extends CoreAnalysisView
 
 	private Label label;
 
+	private Label units;
+
 	/**
 	 * The constructor.
 	 */
@@ -70,34 +69,22 @@ public class RangeSliderView extends CoreAnalysisView
 		holder.setLayout(gl);
 
 		Composite theG = new Composite(holder, SWT.NONE);
-		GridLayout gr = new GridLayout(1, true);
+		RowLayout gr = new RowLayout(SWT.VERTICAL);
 		theG.setLayout(gr);
 
 		// top row
 		Composite headerRow = new Composite(theG, SWT.NONE);
-		RowLayout headerL = new RowLayout(SWT.HORIZONTAL);
-		headerL.pack = false;
+		FillLayout headerL = new FillLayout();
 		headerRow.setLayout(headerL);
 		label = new Label(headerRow, SWT.NONE);
-		label.setText(" == pending  == ");
+		label.setText("     ====== pending  ====== ");
+		label.setSize(300, 45);
 
-		Composite topRow = new Composite(theG, SWT.NONE);
-		RowLayout trL = new RowLayout(SWT.HORIZONTAL);
-		trL.pack = false;
-		topRow.setLayout(trL);
-		minL = new Label(topRow, SWT.NONE);
-		minL.setText("   ==   ");
-		val = new Label(topRow, SWT.NONE);
-		val.setText("   ='=   ");
-		maxL = new Label(topRow, SWT.NONE);
-		maxL.setText("   ==   ");
-
-		Composite bottomRow = new Composite(theG, SWT.NONE);
-		RowLayout brL = new RowLayout(SWT.HORIZONTAL);
-		brL.pack = false;
-		bottomRow.setLayout(brL);
-
-		slider = new Slider(bottomRow, SWT.NONE);
+		Composite sliderRow = new Composite(theG, SWT.NONE);
+		RowLayout brL = new RowLayout(SWT.VERTICAL);
+		brL.pack = true;
+		sliderRow.setLayout(brL);
+		slider = new Slider(sliderRow, SWT.NONE);
 		slider.addListener(SWT.Selection, new Listener()
 		{
 
@@ -109,6 +96,22 @@ public class RangeSliderView extends CoreAnalysisView
 				setValue(curVal);
 			}
 		});
+		slider.setSize(300, 46);
+		
+		Composite labelRow = new Composite(theG, SWT.NONE);
+		RowLayout trL = new RowLayout(SWT.HORIZONTAL);
+		trL.pack = false;
+		labelRow.setLayout(trL);
+		minL = new Label(labelRow, SWT.NONE);
+		minL.setText("   ==   ");
+		val = new Label(labelRow, SWT.NONE);
+		val.setText("   ==   ");
+		maxL = new Label(labelRow, SWT.NONE);
+		maxL.setText("   ==   ");
+		units = new Label(labelRow, SWT.NONE);
+		units.setText("   ==   ");
+
+
 
 		// register as selection listener
 		setupListener();
@@ -154,6 +157,8 @@ public class RangeSliderView extends CoreAnalysisView
 		minL.setText("" + minVal);
 		maxL.setText("" + maxVal);
 		val.setText("" + curVal);
+		
+		units.setText(qc.getUnits().toString());
 
 		this.getViewSite().getShell().redraw();
 	}
