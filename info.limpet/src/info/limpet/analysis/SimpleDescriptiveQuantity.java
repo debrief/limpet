@@ -52,6 +52,13 @@ public abstract class SimpleDescriptiveQuantity extends CoreAnalysis
 						titles.add("Units");
 						values.add(o.getUnits().toString());
 					}
+					
+					// if it's a singleton, show the value
+					if(o.size() == 1)
+					{
+						titles.add("Value");
+						values.add("" + o.getValues().iterator().next().getValue().doubleValue());
+					}
 
 					QuantityRange<?> range = o.getRange();
 					if (range != null)
