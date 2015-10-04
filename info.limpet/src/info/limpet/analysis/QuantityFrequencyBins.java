@@ -8,7 +8,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.measure.Quantity;
+import javax.measure.Measurable;
+import javax.measure.quantity.Quantity;
+import javax.measure.unit.Unit;
 
 import org.apache.commons.math3.random.EmpiricalDistribution;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
@@ -64,8 +66,8 @@ public abstract class QuantityFrequencyBins extends CoreAnalysis
 		Iterator<?> iterV = collection.getValues().iterator();
 		while (iterV.hasNext())
 		{
-			Quantity<?> object = (Quantity<?>) iterV.next();
-			data[ctr++] = object.getValue().doubleValue();
+			Measurable<?> object = (Measurable<?>) iterV.next();
+			data[ctr++] = object.doubleValue((Unit<?>) collection.getUnits());
 		}
 
 		// Get a DescriptiveStatistics instance

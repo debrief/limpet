@@ -2,17 +2,16 @@ package info.limpet.analysis;
 
 import info.limpet.ICollection;
 import info.limpet.IQuantityCollection;
+import info.limpet.QuantityRange;
 import info.limpet.data.operations.CollectionComplianceTests;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.measure.Quantity;
+import javax.measure.quantity.Quantity;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
-
-import tec.units.ri.quantity.QuantityRange;
 
 public abstract class SimpleDescriptiveQuantity extends CoreAnalysis
 {
@@ -57,7 +56,7 @@ public abstract class SimpleDescriptiveQuantity extends CoreAnalysis
 					if(o.size() == 1)
 					{
 						titles.add("Value");
-						values.add("" + o.getValues().iterator().next().getValue().doubleValue());
+						values.add("" + o.getValues().iterator().next().doubleValue(o.getUnits()));
 					}
 
 					QuantityRange<?> range = o.getRange();
