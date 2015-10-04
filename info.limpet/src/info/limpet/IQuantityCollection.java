@@ -1,11 +1,17 @@
 package info.limpet;
 
-import javax.measure.Quantity;
+import javax.measure.Measurable;
+import javax.measure.quantity.Quantity;
 
-import tec.units.ri.quantity.QuantityRange;
 
-public interface IQuantityCollection<T extends Quantity<T>> extends 
-			IObjectCollection<Quantity<T>>, IBaseQuantityCollection<T>
+//public static interface IQuantityCollection<Q extends Quantity>
+//{
+//	void add(Measurable<Q> item);
+//	void add(double newVal);
+//}
+
+public interface IQuantityCollection<Q extends Quantity> extends 
+			IObjectCollection<Measurable<Q>>, IBaseQuantityCollection<Q>
 {
 	/** add a quantity, using the default units for this collection
 	 * 
@@ -24,11 +30,11 @@ public interface IQuantityCollection<T extends Quantity<T>> extends
 	 * 
 	 * @param range
 	 */
-	void setRange(QuantityRange<T> range);
+	void setRange(QuantityRange<Q> range);
 
 	/** allow the range of this collection to be retrieved
 	 * 
 	 * @return range
 	 */
-	QuantityRange<T> getRange();
+	QuantityRange<Q> getRange();
 }

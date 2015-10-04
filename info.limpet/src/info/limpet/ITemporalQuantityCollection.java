@@ -1,9 +1,10 @@
 package info.limpet;
 
-import javax.measure.Quantity;
+import javax.measure.quantity.Quantity;
 
-public interface ITemporalQuantityCollection<T extends Quantity<T>> extends
-		ITemporalObjectCollection<Quantity<T>>,IBaseQuantityCollection<T>, IQuantityCollection<T>
+
+public interface ITemporalQuantityCollection<T extends Quantity> extends
+		ITemporalObjectCollection<T>,IBaseQuantityCollection<T>, IQuantityCollection<T>
 {
 
 	/** allow values to be added without explicitly specifying units

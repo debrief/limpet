@@ -1,21 +1,25 @@
 package info.limpet.data.impl;
 
+import java.util.ArrayList;
+
+import javax.measure.Measurable;
+import javax.measure.Measure;
+import javax.measure.quantity.Quantity;
+import javax.measure.unit.Dimension;
+import javax.measure.unit.Unit;
+
 import info.limpet.ICommand;
 import info.limpet.IQuantityCollection;
 import info.limpet.ITemporalQuantityCollection;
+import info.limpet.QuantityRange;
 import info.limpet.data.impl.helpers.QuantityHelper;
 
-import javax.measure.Dimension;
-import javax.measure.Quantity;
-import javax.measure.Unit;
+//public class QuantityCollection<T extends Quantity> extends
+//ObjectCollection<T> implements IQuantityCollection<T>
 
-import tec.units.ri.quantity.Quantities;
-import tec.units.ri.quantity.QuantityRange;
-
-
-public class TemporalQuantityCollection<T extends Quantity<T>> extends
-		TemporalObjectCollection<Quantity<T>> implements
-		ITemporalQuantityCollection<T>, IQuantityCollection<T>
+public class TemporalQuantityCollection<T extends Quantity> extends
+		TemporalObjectCollection<Measurable<T>> implements
+		ITemporalQuantityCollection<Measurable<T>>, IQuantityCollection<T>
 {
 
 	private Unit<T> _myUnits;
@@ -30,25 +34,25 @@ public class TemporalQuantityCollection<T extends Quantity<T>> extends
 	{
 		super(name);
 		_myUnits = units;
-		_qHelper = new QuantityHelper<>(_values, units);
+		_qHelper = new QuantityHelper<T>((ArrayList<Measurable<T>>) _values, units);
 	}
 
 	@Override
-	public void add(long time, Quantity<T> object)
+	public void add(long time, Measurable<T> object)
 	{
 		if (_myUnits != object.getUnit())
 		{
 			throw new RuntimeException("New data value in wrong units");
 		}
 
-		super.add(time, object);
+		super.add(time, object.doubleValue(getUnits()));
 	}
 
 	
 	@Override
 	public void add(long time, Number value)
 	{
-		super.add(time, Quantities.getQuantity(value, getUnits()));
+		super.add(time, Measure.valueOf(value.doubleValue(), getUnits()));
 	}
 
 	
@@ -59,31 +63,31 @@ public class TemporalQuantityCollection<T extends Quantity<T>> extends
 	}
 
 	@Override
-	public Quantity<T> min()
+	public Measurable<T> min()
 	{
 		return _qHelper.min();
 	}
 
 	@Override
-	public Quantity<T> max()
+	public Measurable<T> max()
 	{
 		return _qHelper.max();
 	}
 
 	@Override
-	public Quantity<T> mean()
+	public Measurable<T> mean()
 	{
 		return _qHelper.mean();
 	}
 
 	@Override
-	public Quantity<T> variance()
+	public Measurable<T> variance()
 	{
 		return _qHelper.variance();
 	}
 
 	@Override
-	public Quantity<T> sd()
+	public Measurable<T> sd()
 	{
 		return _qHelper.sd();
 	}
