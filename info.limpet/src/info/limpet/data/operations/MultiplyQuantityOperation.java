@@ -13,8 +13,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.measure.Quantity;
-import javax.measure.Unit;
+import javax.measure.Measurable;
+import javax.measure.unit.Unit;
 
 public class MultiplyQuantityOperation implements IOperation<ICollection>
 {
@@ -117,7 +117,7 @@ public class MultiplyQuantityOperation implements IOperation<ICollection>
 			{
 				IQuantityCollection<?> nextItem = (IQuantityCollection<?>) inputsIterator
 						.next();
-				unit = unit.multiply(nextItem.getUnits());
+				unit = unit.times(nextItem.getUnits());
 			}
 			return unit;
 		}
@@ -159,23 +159,23 @@ public class MultiplyQuantityOperation implements IOperation<ICollection>
 			// start adding values.
 			for (int j = 0; j < length; j++)
 			{
-				Quantity<?> runningTotal = null;
+				Double runningTotal = null;
 
 				for (int i = 0; i < _inputs.size(); i++)
 				{
 					IQuantityCollection<?> thisC = (IQuantityCollection<?>) _inputs
 							.get(i);
 
-					final Quantity<?> thisValue;
+					final double thisValue;
 
 					// just check that this isn't a singleton
 					if (thisC.size() == 1)
 					{
-						thisValue = thisC.getValues().get(0);
+						thisValue = thisC.getValues().get(0).doubleValue(thisC.getUnits());
 					}
 					else
 					{
-						thisValue = (Quantity<?>) thisC.getValues().get(j);
+						thisValue = thisC.getValues().get(j).doubleValue(thisC.getUnits());
 					}
 
 					// first value?
@@ -185,11 +185,11 @@ public class MultiplyQuantityOperation implements IOperation<ICollection>
 					}
 					else
 					{
-						runningTotal = runningTotal.multiply(thisValue);
+						runningTotal = runningTotal * thisValue;
 					}
 				}
 
-				target.add(runningTotal.getValue());
+				target.add(runningTotal);
 			}
 		}
 

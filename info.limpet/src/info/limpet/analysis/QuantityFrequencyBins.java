@@ -67,7 +67,9 @@ public abstract class QuantityFrequencyBins extends CoreAnalysis
 		while (iterV.hasNext())
 		{
 			Measurable<?> object = (Measurable<?>) iterV.next();
-			data[ctr++] = object.doubleValue((Unit<?>) collection.getUnits());
+			
+			Unit<?> theseUnits = collection.getUnits();
+			data[ctr++] = object.doubleValue(theseUnits);
 		}
 
 		// Get a DescriptiveStatistics instance

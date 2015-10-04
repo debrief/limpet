@@ -66,7 +66,7 @@ public class QuantityCollection<T extends Quantity> extends
 	@Override
 	public void add(Measurable<T> value)
 	{
-		_qHelper.add((Number) value);
+		_qHelper.add(value);
 	}
 
 	@Override

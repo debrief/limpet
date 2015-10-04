@@ -13,8 +13,9 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.measure.Quantity;
-import javax.measure.Unit;
+import javax.measure.Measurable;
+import javax.measure.Measure;
+import javax.measure.unit.Unit;
 
 public class DivideQuantityOperation implements IOperation<ICollection>
 {
@@ -178,29 +179,29 @@ public class DivideQuantityOperation implements IOperation<ICollection>
 
 			for (int j = 0; j < length; j++)
 			{
-				final Quantity<?> thisValue;
+				final double thisValue;
 				if(_item1.size() == 1)
 				{
-					thisValue = _item1.getValues().get(0);
+					thisValue = _item1.getValues().get(0).doubleValue((Unit<?>) _item1.getUnits());
 				}
 				else
 				{
-					thisValue =_item1.getValues().get(j); 
+					thisValue =_item1.getValues().get(j).doubleValue((Unit<?>) _item1.getUnits());
 				}
 				
-				final Quantity<?> otherValue;
+				final double otherValue;
 				if(_item2.size() == 1)
 				{
-					otherValue = _item2.getValues().get(0);
+					otherValue = _item2.getValues().get(0).doubleValue((Unit<?>) _item2.getUnits());
 				}
 				else
 				{
-					otherValue = _item2.getValues().get(j); 
+					otherValue = _item2.getValues().get(j).doubleValue((Unit<?>) _item2.getUnits()); 
 				}
 				
-				Quantity<?> runningTotal = thisValue.divide(otherValue);
+				double res = thisValue / otherValue;
 				
-				target.add(runningTotal.getValue());
+				target.add(res);
 			}
 		}
 	}

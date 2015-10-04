@@ -13,10 +13,11 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.measure.Quantity;
-import javax.measure.Unit;
+import javax.measure.Measurable;
+import javax.measure.quantity.Quantity;
+import javax.measure.unit.Unit;
 
-public class SubtractQuantityOperation<Q extends Quantity<Q>> implements
+public class SubtractQuantityOperation<Q extends Quantity> implements
 		IOperation<ICollection>
 {
 	CollectionComplianceTests aTests = new CollectionComplianceTests();
@@ -77,7 +78,7 @@ public class SubtractQuantityOperation<Q extends Quantity<Q>> implements
 		}
 	}
 
-	public class SubtractQuantityValues<T extends Quantity<T>> extends
+	public class SubtractQuantityValues<T extends Quantity> extends
 			AbstractCommand<ICollection>
 	{
 		IQuantityCollection<T> _item1;
@@ -165,9 +166,9 @@ public class SubtractQuantityOperation<Q extends Quantity<Q>> implements
 
 			for (int j = 0; j < _inputs.get(0).size(); j++)
 			{
-				final Quantity<T> thisValue = _item1.getValues().get(j);
-				final Quantity<T> otherValue = _item2.getValues().get(j);
-				Quantity<T> runningTotal = thisValue.subtract(otherValue);
+				final Measurable<?> thisValue = _item1.getValues().get(j);
+				final Measurable<?> otherValue = _item2.getValues().get(j);
+				double runningTotal = thisValue.doubleValue(_item1.getUnits()) - otherValue.doubleValue(_item2.getUnits());
 
 				target.add(runningTotal);
 			}

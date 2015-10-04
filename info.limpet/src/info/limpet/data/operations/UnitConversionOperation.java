@@ -13,8 +13,9 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.measure.Quantity;
-import javax.measure.Unit;
+import javax.measure.Measurable;
+import javax.measure.converter.UnitConverter;
+import javax.measure.unit.Unit;
 
 public class UnitConversionOperation implements IOperation<ICollection>
 {
@@ -141,16 +142,16 @@ public class UnitConversionOperation implements IOperation<ICollection>
 			IQuantityCollection<?> singleInputSeries = (IQuantityCollection<?>) _inputs
 					.get(0);
 
+			UnitConverter converter = singleInputSeries.getUnits().getConverterTo(target.getUnits());
+			
 			for (int j = 0; j < singleInputSeries.getValues().size(); j++)
 			{
 
 				// TODO: figure out how to avoid the compiler warnings
-				@SuppressWarnings("rawtypes")
-				Quantity thisValue = singleInputSeries.getValues().get(j);
-				@SuppressWarnings("unchecked")
-				Quantity<?> converted = thisValue.to(targetUnit);
+				Measurable<?> thisValue = singleInputSeries.getValues().get(j);
+				Measurable<?> converted = converter.convert(thisValue.doubleValue(singleInputSeries.getUnits()));
 
-				target.add(converted.getValue());
+				target.add(converted.doubleValue(target.getUnits()));
 			}
 		}
 	}

@@ -5,10 +5,12 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.measure.Quantity;
-import javax.measure.Unit;
+import javax.measure.Measurable;
+import javax.measure.Measure;
+import javax.measure.converter.UnitConverter;
 import javax.measure.quantity.Length;
-import javax.measure.quantity.Speed;
+import javax.measure.quantity.Velocity;
+import javax.measure.unit.Unit;
 
 import info.limpet.ICollection;
 import info.limpet.ICommand;
@@ -24,9 +26,10 @@ import info.limpet.data.operations.SimpleMovingAverageOperation;
 import info.limpet.data.operations.UnitConversionOperation;
 import info.limpet.data.store.InMemoryStore;
 import junit.framework.TestCase;
-import tec.units.ri.quantity.Quantities;
-import tec.units.ri.unit.MetricPrefix;
-import tec.units.ri.unit.Units;
+
+import static javax.measure.unit.SI.*;
+import static javax.measure.unit.NonSI.*;
+
 
 public class TestOperations extends TestCase
 {
@@ -34,26 +37,26 @@ public class TestOperations extends TestCase
 	public void testAppliesTo()
 	{
 		// the units for this measurement
-		Unit<Speed> kmh = MetricPrefix.KILO(Units.METRE).divide(Units.HOUR)
-				.asType(Speed.class);
-		Unit<Speed> kmm = MetricPrefix.KILO(Units.METRE).divide(Units.MINUTE)
-				.asType(Speed.class);
-		Unit<Length> m = (Units.METRE).asType(Length.class);
+		Unit<Velocity> kmh = KILO(METRE).divide(HOUR)
+				.asType(Velocity.class);
+		Unit<Velocity> kmm = KILO(METRE).divide(MINUTE)
+				.asType(Velocity.class);
+		Unit<Length> m = (METRE).asType(Length.class);
 
 		// the target collection
-		QuantityCollection<Speed> speed_good_1 = new QuantityCollection<Speed>(
+		QuantityCollection<Velocity> speed_good_1 = new QuantityCollection<Velocity>(
 				"Speed 1", kmh);
-		QuantityCollection<Speed> speed_good_2 = new QuantityCollection<Speed>(
+		QuantityCollection<Velocity> speed_good_2 = new QuantityCollection<Velocity>(
 				"Speed 2", kmh);
-		QuantityCollection<Speed> speed_longer = new QuantityCollection<Speed>(
+		QuantityCollection<Velocity> speed_longer = new QuantityCollection<Velocity>(
 				"Speed 3", kmh);
-		QuantityCollection<Speed> speed_diff_units = new QuantityCollection<Speed>(
+		QuantityCollection<Velocity> speed_diff_units = new QuantityCollection<Velocity>(
 				"Speed 4", kmm);
 		QuantityCollection<Length> len1 = new QuantityCollection<Length>(
 				"Length 1", m);
-		TemporalQuantityCollection<Speed> temporal_speed_1 = new TemporalQuantityCollection<Speed>(
+		TemporalQuantityCollection<Velocity> temporal_speed_1 = new TemporalQuantityCollection<Velocity>(
 				"Speed 5", kmh);
-		TemporalQuantityCollection<Speed> temporal_speed_2 = new TemporalQuantityCollection<Speed>(
+		TemporalQuantityCollection<Velocity> temporal_speed_2 = new TemporalQuantityCollection<Velocity>(
 				"Speed 6", kmh);
 		ObjectCollection<String> string_1 = new ObjectCollection<>("strings 1");
 		ObjectCollection<String> string_2 = new ObjectCollection<>("strings 2");
@@ -62,11 +65,11 @@ public class TestOperations extends TestCase
 		{
 			// create a measurement
 			double thisSpeed = i * 2;
-			Quantity<Speed> speedVal1 = Quantities.getQuantity(thisSpeed, kmh);
-			Quantity<Speed> speedVal2 = Quantities.getQuantity(thisSpeed * 2, kmh);
-			Quantity<Speed> speedVal3 = Quantities.getQuantity(thisSpeed / 2, kmh);
-			Quantity<Speed> speedVal4 = Quantities.getQuantity(thisSpeed / 2, kmm);
-			Quantity<Length> lenVal1 = Quantities.getQuantity(thisSpeed / 2, m);
+			Measurable<Velocity> speedVal1 = Measure.valueOf(thisSpeed, kmh);
+			Measurable<Velocity> speedVal2 = Measure.valueOf(thisSpeed * 2, kmh);
+			Measurable<Velocity> speedVal3 = Measure.valueOf(thisSpeed / 2, kmh);
+			Measurable<Velocity> speedVal4 = Measure.valueOf(thisSpeed / 2, kmm);
+			Measurable<Length> lenVal1 = Measure.valueOf(thisSpeed / 2, m);
 
 			// store the measurements
 			speed_good_1.add(speedVal1);
@@ -81,7 +84,7 @@ public class TestOperations extends TestCase
 			string_2.add(i + "a ");
 		}
 
-		Quantity<Speed> speedVal3a = Quantities.getQuantity(2, kmh);
+		Measurable<Velocity> speedVal3a = Measure.valueOf(2, kmh);
 		speed_longer.add(speedVal3a);
 
 		List<ICollection> selection = new ArrayList<ICollection>(3);
@@ -304,11 +307,11 @@ public class TestOperations extends TestCase
 
 		// test incompatible target unit
 		Collection<ICommand<ICollection>> commands = new UnitConversionOperation(
-				Units.METRE).actionsFor(selection, store);
+				METRE).actionsFor(selection, store);
 		assertEquals("target unit not same dimension as input", 0, commands.size());
 
 		// test valid target unit
-		commands = new UnitConversionOperation(Units.KILOMETRES_PER_HOUR)
+		commands = new UnitConversionOperation(KILOMETRES_PER_HOUR)
 				.actionsFor(selection, store);
 		assertEquals("valid unit dimensions", 1, commands.size());
 
@@ -318,7 +321,7 @@ public class TestOperations extends TestCase
 		command.execute();
 
 		ICollection newS = store.get(speed_good_1.getName()
-				+ UnitConversionOperation.CONVERTED_TO + Units.KILOMETRES_PER_HOUR);
+				+ UnitConversionOperation.CONVERTED_TO + KILOMETRES_PER_HOUR);
 		assertNotNull(newS);
 
 		// test results is same length as thisSpeed
@@ -326,7 +329,7 @@ public class TestOperations extends TestCase
 
 		// TODO: check that operation isn't offered if the dataset is already in
 		// that type
-		commands = new UnitConversionOperation(Units.METRES_PER_SECOND).actionsFor(
+		commands = new UnitConversionOperation(METRES_PER_SECOND).actionsFor(
 				selection, store);
 		assertEquals("already in destination units", 0, commands.size());
 
@@ -334,17 +337,19 @@ public class TestOperations extends TestCase
 
 		// TODO: avoid suppressing these warnings
 		@SuppressWarnings("unchecked")
-		Quantity<Speed> firstInputSpeed = (Quantity<Speed>) inputSpeed.getValues()
+		Measurable<Velocity> firstInputSpeed = (Measurable<Velocity>) inputSpeed.getValues()
 				.get(0);
 
 		IQuantityCollection<?> outputSpeed = (IQuantityCollection<?>) newS;
 
 		// TODO: avoid suppressing these warnings
 		@SuppressWarnings("unchecked")
-		Quantity<Speed> firstOutputSpeed = (Quantity<Speed>) outputSpeed
+		Measurable<Velocity> firstOutputSpeed = (Measurable<Velocity>) outputSpeed
 				.getValues().get(0);
+		
+		UnitConverter oc = inputSpeed.getUnits().getConverterTo(KILOMETERS_PER_HOUR);
 
-		assertEquals(firstInputSpeed.to(Units.KILOMETRES_PER_HOUR),
+		assertEquals(oc.convert(firstInputSpeed.doubleValue((Unit<Velocity>) inputSpeed.getUnits())),
 				firstOutputSpeed);
 
 	}
@@ -357,7 +362,7 @@ public class TestOperations extends TestCase
 		List<ICollection> selection = new ArrayList<>();
 
 		@SuppressWarnings("unchecked")
-		IQuantityCollection<Speed> speed_good_1 = (IQuantityCollection<Speed>) store
+		IQuantityCollection<Velocity> speed_good_1 = (IQuantityCollection<Velocity>) store
 				.get(SampleData.SPEED_ONE);
 		selection.add(speed_good_1);
 
@@ -373,7 +378,7 @@ public class TestOperations extends TestCase
 		command.execute();
 
 		@SuppressWarnings("unchecked")
-		IQuantityCollection<Speed> newS = (IQuantityCollection<Speed>) store
+		IQuantityCollection<Velocity> newS = (IQuantityCollection<Velocity>) store
 				.get(speed_good_1.getName()+ " " + SimpleMovingAverageOperation.SERIES_NAME_TEMPLATE);
 		assertNotNull(newS);
 
@@ -384,15 +389,15 @@ public class TestOperations extends TestCase
 		double sum = 0;
 		for (int i = 0; i < windowSize; i++)
 		{
-			Quantity<Speed> inputQuantity = speed_good_1.getValues().get(i);
-			sum += inputQuantity.getValue().doubleValue();
+			Measurable<Velocity> inputQuantity = speed_good_1.getValues().get(i);
+			sum += inputQuantity.doubleValue(speed_good_1.getUnits());
 		}
 		double average = sum / windowSize;
 
 		// compare to output value [windowSize-1]
-		Quantity<Speed> simpleMovingAverage = newS.getValues().get(windowSize - 1);
+		Measurable<Velocity> simpleMovingAverage = newS.getValues().get(windowSize - 1);
 
-		assertEquals(average, simpleMovingAverage.getValue().doubleValue(), 0);
+		assertEquals(average, simpleMovingAverage.doubleValue(newS.getUnits()), 0);
 		
 	}
 }

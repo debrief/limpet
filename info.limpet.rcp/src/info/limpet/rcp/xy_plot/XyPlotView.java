@@ -11,7 +11,8 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.measure.Quantity;
+import javax.measure.Measurable;
+
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -134,8 +135,8 @@ public class XyPlotView extends CoreAnalysisView
 						int ctr = 0;
 						while (values.hasNext())
 						{
-							Quantity<?> tQ = (Quantity<?>) values.next();
-							yData[ctr++] = tQ.getValue().doubleValue();
+							Measurable<?> tQ = (Measurable<?>) values.next();
+							yData[ctr++] = tQ.doubleValue(thisQ.getUnits());
 						}
 
 						// newSeries.setXSeries(xData);
@@ -195,10 +196,10 @@ public class XyPlotView extends CoreAnalysisView
 							int ctr = 0;
 							while (values.hasNext())
 							{
-								Quantity<?> tQ = (Quantity<?>) values.next();
+								Measurable<?> tQ = (Measurable<?>) values.next();
 								long t = times.next();
 								xData[ctr] = new Date(t);
-								yData[ctr++] = tQ.getValue().doubleValue();
+								yData[ctr++] = tQ.doubleValue(thisQ.getUnits());
 							}
 
 							newSeries.setXDateSeries(xData);

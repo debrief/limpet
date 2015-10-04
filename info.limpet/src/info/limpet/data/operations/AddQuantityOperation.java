@@ -13,10 +13,12 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.measure.Quantity;
-import javax.measure.Unit;
+import javax.measure.Measurable;
+import javax.measure.Measure;
+import javax.measure.quantity.Quantity;
+import javax.measure.unit.Unit;
 
-public class AddQuantityOperation<Q extends Quantity<Q>> implements
+public class AddQuantityOperation<Q extends Quantity> implements
 		IOperation<IQuantityCollection<Q>>
 {
 	CollectionComplianceTests aTests = new CollectionComplianceTests();
@@ -59,7 +61,7 @@ public class AddQuantityOperation<Q extends Quantity<Q>> implements
 		return (nonEmpty && allQuantity && equalLength && equalDimensions && equalUnits);
 	}
 
-	public class AddQuantityValues<T extends Quantity<T>> extends
+	public class AddQuantityValues<T extends Quantity> extends
 			AbstractCommand<IQuantityCollection<T>>
 	{
 
@@ -137,25 +139,25 @@ public class AddQuantityOperation<Q extends Quantity<Q>> implements
 
 			for (int j = 0; j < _inputs.get(0).size(); j++)
 			{
-				Quantity<T> runningTotal = null;
+				Double runningTotal = null;
 
 				for (int i = 0; i < _inputs.size(); i++)
 				{
 					IQuantityCollection<T> thisC = _inputs.get(i);
-					Quantity<T> thisV = (Quantity<T>) thisC.getValues().get(j);
+					Measurable<T> thisV = (Measurable<T>) thisC.getValues().get(j);
 
 					// is this the first field?
 					if (runningTotal == null)
 					{
-						runningTotal = thisV;
+						runningTotal = thisV.doubleValue(thisC.getUnits());
 					}
 					else
 					{
-						runningTotal = runningTotal.add(thisV);
+						runningTotal += thisV.doubleValue(thisC.getUnits());
 					}
 				}
 
-				target.add(runningTotal);
+				target.add(Measure.valueOf(runningTotal, target.getUnits()));
 			}
 		}
 	}

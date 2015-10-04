@@ -5,8 +5,8 @@ import info.limpet.IQuantityCollection;
 
 import java.util.List;
 
-import javax.measure.Dimension;
-import javax.measure.Unit;
+import javax.measure.unit.Dimension;
+import javax.measure.unit.Unit;
 
 public class CollectionComplianceTests
 {

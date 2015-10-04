@@ -5,21 +5,20 @@ import info.limpet.data.impl.TemporalQuantityCollection;
 import info.limpet.data.impl.ObjectCollection;
 import info.limpet.data.impl.TemporalObjectCollection;
 
-import javax.measure.Unit;
 import javax.measure.quantity.Acceleration;
 import javax.measure.quantity.Angle;
 import javax.measure.quantity.Dimensionless;
 import javax.measure.quantity.Frequency;
 import javax.measure.quantity.Length;
-import javax.measure.quantity.Speed;
-import javax.measure.quantity.Time;
-
-import tec.units.ri.unit.Units;
+import javax.measure.quantity.Duration;
+import javax.measure.quantity.Velocity;
+import static javax.measure.unit.SI.*;
+import javax.measure.unit.Unit;
 
 public class StockTypes
 {
 
-	public static Unit<?> DEGREE_ANGLE = Units.RADIAN.multiply(2 * Math.PI);
+	public static Unit<?> DEGREE_ANGLE = RADIAN.times(2 * Math.PI);
 
 	/**
 	 * time series (temporal) collections
@@ -29,11 +28,11 @@ public class StockTypes
 	 */
 	public static class Temporal
 	{
-		public static class Speed_MSec extends TemporalQuantityCollection<Speed>
+		public static class Speed_MSec extends TemporalQuantityCollection<Velocity>
 		{
 			public Speed_MSec(String name)
 			{
-				super(name, Units.METRE.divide(Units.SECOND).asType(Speed.class));
+				super(name, METRE.divide(SECOND).asType(Velocity.class));
 			}
 
 			// Note: here is how to create the speed series with specific units
@@ -47,7 +46,7 @@ public class StockTypes
 		{
 			public Length_M(String name)
 			{
-				super(name, Units.METRE.asType(Length.class));
+				super(name, METRE.asType(Length.class));
 			}
 		}
 
@@ -56,17 +55,17 @@ public class StockTypes
 		{
 			public Acceleration_MSecSec(String name)
 			{
-				super(name, Units.METRE.divide(Units.SECOND).divide(Units.SECOND)
+				super(name, METRE.divide(SECOND).divide(SECOND)
 						.asType(Acceleration.class));
 			}
 		}
 
 		public static class ElapsedTime_Sec extends
-				TemporalQuantityCollection<Time>
+				TemporalQuantityCollection<Duration>
 		{
 			public ElapsedTime_Sec(String name)
 			{
-				super(name, Units.SECOND.asType(Time.class));
+				super(name, SECOND.asType(Duration.class));
 			}
 		}
 
@@ -75,7 +74,7 @@ public class StockTypes
 		{
 			public Frequency_Hz(String name)
 			{
-				super(name, Units.HERTZ.asType(Frequency.class));
+				super(name, HERTZ.asType(Frequency.class));
 			}
 		}
 
@@ -84,7 +83,7 @@ public class StockTypes
 		{
 			public AcousticStrength(String name)
 			{
-				super(name, Units.ONE.asType(Dimensionless.class));
+				super(name, Dimensionless.UNIT);
 			}
 		}
 
@@ -92,7 +91,7 @@ public class StockTypes
 		{
 			public Angle_Radians(String name)
 			{
-				super(name, Units.RADIAN.asType(Angle.class));
+				super(name, RADIAN.asType(Angle.class));
 			}
 		}
 
@@ -123,11 +122,11 @@ public class StockTypes
 	 */
 	public static class NonTemporal
 	{
-		public static class Speed_MSec extends QuantityCollection<Speed>
+		public static class Speed_MSec extends QuantityCollection<Velocity>
 		{
 			public Speed_MSec(String name)
 			{
-				super(name, Units.METRE.divide(Units.SECOND).asType(Speed.class));
+				super(name, METRE.divide(SECOND).asType(Velocity.class));
 			}
 		}
 
@@ -143,7 +142,7 @@ public class StockTypes
 		{
 			public Length_M(String name)
 			{
-				super(name, Units.METRE.asType(Length.class));
+				super(name, METRE.asType(Length.class));
 			}
 		}
 
@@ -152,7 +151,7 @@ public class StockTypes
 		{
 			public Acceleration_MSecSec(String name)
 			{
-				super(name, Units.METRE.divide(Units.SECOND).divide(Units.SECOND)
+				super(name, METRE.divide(SECOND).divide(SECOND)
 						.asType(Acceleration.class));
 			}
 		}

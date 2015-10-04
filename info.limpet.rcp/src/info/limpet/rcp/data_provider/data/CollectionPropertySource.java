@@ -3,20 +3,20 @@ package info.limpet.rcp.data_provider.data;
 import info.limpet.ICollection;
 import info.limpet.IObjectCollection;
 import info.limpet.IQuantityCollection;
+import info.limpet.QuantityRange;
 import info.limpet.data.impl.QuantityCollection;
 import info.limpet.rcp.propertyeditors.SliderPropertyDescriptor;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.measure.Quantity;
+import javax.measure.Measurable;
 
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
 import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 
-import tec.units.ri.quantity.QuantityRange;
 
 /**
  * This class provides property sheet properties for ButtonElement.
@@ -75,7 +75,7 @@ public class CollectionPropertySource implements IPropertySource
 			if (_collection.getCollection().size() == 1)
 			{
 				// get the first item
-				final Quantity<?> first = getSingleton();
+				final Measurable<?> first = getSingleton();
 				boolean found = false;
 
 				// does this have a range?
@@ -145,7 +145,7 @@ public class CollectionPropertySource implements IPropertySource
 			ICollection theColl = _collection.getCollection();
 			if (theColl instanceof IQuantityCollection<?>)
 			{
-				Quantity<?> first = getSingleton();
+				Measurable<?> first = getSingleton();
 				if (first != null)
 				{
 					return "" + first.getValue();
@@ -159,29 +159,34 @@ public class CollectionPropertySource implements IPropertySource
 			{
 				// ok - we have to create a composite object that includes both the 
 				// range and the current value - so it can be passed to the slider
+				IQuantityCollection<?> qc = (IQuantityCollection<?>) theColl;
 				
-				Quantity<?> first = getSingleton();
+				Measurable<?> first = getSingleton();
 				if (first != null)
 				{
-					return "" + first.getValue();
+					
+					return "" + first.doubleValue(qc.getUnits());
 				}
 			}
 		}
 		else if (prop.equals(PROPERTY_UNITS))
 		{
-			Quantity<?> first = getSingleton();
-			if (first != null)
+			ICollection theColl = _collection.getCollection();
+			if (theColl instanceof IQuantityCollection<?>)
 			{
-				return "" + first.getUnit().toString();
+				// ok - we have to create a composite object that includes both the 
+				// range and the current value - so it can be passed to the slider
+				IQuantityCollection<?> qc = (IQuantityCollection<?>) theColl;
+				return "" + qc.getUnits();
 			}
 		}
 
 		return null;
 	}
 
-	private Quantity<?> getSingleton()
+	private Measurable<?> getSingleton()
 	{
-		Quantity<?> res = null;
+		Measurable<?> res = null;
 		final IObjectCollection<?> tt = (IObjectCollection<?>) _collection
 				.getCollection();
 		if (tt instanceof IQuantityCollection<?>)
