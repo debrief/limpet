@@ -56,7 +56,7 @@ public abstract class QuantityFrequencyBins extends CoreAnalysis
 		}
 	}
 
-	public static BinnedData doBins(IQuantityCollection<?> collection)
+	public static BinnedData doBins(IQuantityCollection<Quantity> collection)
 	{
 		// collate the values into an array
 		double[] data = new double[collection.size()];
@@ -66,9 +66,9 @@ public abstract class QuantityFrequencyBins extends CoreAnalysis
 		Iterator<?> iterV = collection.getValues().iterator();
 		while (iterV.hasNext())
 		{
-			Measurable<?> object = (Measurable<?>) iterV.next();
+			Measurable<Quantity> object = (Measurable<Quantity>) iterV.next();
 			
-			Unit<?> theseUnits = collection.getUnits();
+			Unit<Quantity> theseUnits = collection.getUnits();
 			data[ctr++] = object.doubleValue(theseUnits);
 		}
 
@@ -127,7 +127,7 @@ public abstract class QuantityFrequencyBins extends CoreAnalysis
 				for (Iterator<ICollection> iter = selection.iterator(); iter.hasNext();)
 				{
 					ICollection thisC = (ICollection) iter.next();
-					IQuantityCollection<?> o = (IQuantityCollection<?>) thisC;
+					IQuantityCollection<Quantity> o = (IQuantityCollection<Quantity>) thisC;
 
 					if (thisC.size() > 1)
 					{

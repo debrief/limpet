@@ -166,8 +166,8 @@ public class SubtractQuantityOperation<Q extends Quantity> implements
 
 			for (int j = 0; j < _inputs.get(0).size(); j++)
 			{
-				final Measurable<?> thisValue = _item1.getValues().get(j);
-				final Measurable<?> otherValue = _item2.getValues().get(j);
+				final Measurable<T> thisValue = _item1.getValues().get(j);
+				final Measurable<T> otherValue = _item2.getValues().get(j);
 				double runningTotal = thisValue.doubleValue(_item1.getUnits()) - otherValue.doubleValue(_item2.getUnits());
 
 				target.add(runningTotal);

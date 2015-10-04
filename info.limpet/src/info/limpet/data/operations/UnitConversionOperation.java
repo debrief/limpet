@@ -15,6 +15,7 @@ import java.util.List;
 
 import javax.measure.Measurable;
 import javax.measure.converter.UnitConverter;
+import javax.measure.quantity.Quantity;
 import javax.measure.unit.Unit;
 
 public class UnitConversionOperation implements IOperation<ICollection>
@@ -128,18 +129,18 @@ public class UnitConversionOperation implements IOperation<ICollection>
 		 */
 		private void performCalc(List<ICollection> outputs)
 		{
-			IQuantityCollection<?> target = (IQuantityCollection<?>) outputs
+			IQuantityCollection<Quantity> target = (IQuantityCollection<Quantity>) outputs
 					.iterator().next();
 
 			// clear out the lists, first
 			Iterator<ICollection> iter = _outputs.iterator();
 			while (iter.hasNext())
 			{
-				IQuantityCollection<?> qC = (IQuantityCollection<?>) iter.next();
+				IQuantityCollection<Quantity> qC = (IQuantityCollection<Quantity>) iter.next();
 				qC.getValues().clear();
 			}
 
-			IQuantityCollection<?> singleInputSeries = (IQuantityCollection<?>) _inputs
+			IQuantityCollection<Quantity> singleInputSeries = (IQuantityCollection<Quantity>) _inputs
 					.get(0);
 
 			UnitConverter converter = singleInputSeries.getUnits().getConverterTo(target.getUnits());
@@ -148,10 +149,11 @@ public class UnitConversionOperation implements IOperation<ICollection>
 			{
 
 				// TODO: figure out how to avoid the compiler warnings
-				Measurable<?> thisValue = singleInputSeries.getValues().get(j);
-				Measurable<?> converted = converter.convert(thisValue.doubleValue(singleInputSeries.getUnits()));
-
-				target.add(converted.doubleValue(target.getUnits()));
+				Measurable<Quantity> thisValue = singleInputSeries.getValues().get(j);
+				// FIXME
+				//Measurable<Quantity> converted = converter.convert(thisValue.doubleValue(singleInputSeries.getUnits()));
+				double converted = converter.convert(thisValue.doubleValue(singleInputSeries.getUnits()));
+				target.add(converted);
 			}
 		}
 	}

@@ -15,6 +15,7 @@ import java.util.List;
 
 import javax.measure.Measurable;
 import javax.measure.Measure;
+import javax.measure.quantity.Quantity;
 import javax.measure.unit.Unit;
 
 public class DivideQuantityOperation implements IOperation<ICollection>
@@ -79,8 +80,8 @@ public class DivideQuantityOperation implements IOperation<ICollection>
 
 	public class DivideQuantityValues extends AbstractCommand<ICollection>
 	{
-		final IQuantityCollection<?> _item1;
-		final IQuantityCollection<?> _item2;
+		final IQuantityCollection<Quantity> _item1;
+		final IQuantityCollection<Quantity> _item2;
 
 		public DivideQuantityValues(String title, String outputName,
 				List<ICollection> selection, ICollection item1, ICollection item2,
@@ -88,8 +89,8 @@ public class DivideQuantityOperation implements IOperation<ICollection>
 		{
 			super(title, "Divide provided series", outputName, store, false, false,
 					selection);
-			_item1 = (IQuantityCollection<?>) item1;
-			_item2 = (IQuantityCollection<?>) item2;
+			_item1 = (IQuantityCollection<Quantity>) item1;
+			_item2 = (IQuantityCollection<Quantity>) item2;
 		}
 
 		@SuppressWarnings(
@@ -98,12 +99,12 @@ public class DivideQuantityOperation implements IOperation<ICollection>
 		public void execute()
 		{
 			// get the unit
-			Unit<?> unit = calculateOutputUnit();
+			Unit<Quantity> unit = calculateOutputUnit();
 
 			List<ICollection> outputs = new ArrayList<ICollection>();
 
 			// ok, generate the new series
-			IQuantityCollection<?> target = new QuantityCollection(getOutputName(),
+			IQuantityCollection<Quantity> target = new QuantityCollection(getOutputName(),
 					this, unit);
 
 			outputs.add(target);
@@ -128,18 +129,18 @@ public class DivideQuantityOperation implements IOperation<ICollection>
 			getStore().addAll(res);
 		}
 
-		private Unit<?> calculateOutputUnit()
+		private Unit<Quantity> calculateOutputUnit()
 		{
 			Iterator<ICollection> inputsIterator = _inputs.iterator();
-			IQuantityCollection<?> firstItem = (IQuantityCollection<?>) inputsIterator
+			IQuantityCollection<Quantity> firstItem = (IQuantityCollection<Quantity>) inputsIterator
 					.next();
-			Unit<?> unit = firstItem.getUnits();
+			Unit<Quantity> unit = firstItem.getUnits();
 
 			while (inputsIterator.hasNext())
 			{
 				IQuantityCollection<?> nextItem = (IQuantityCollection<?>) inputsIterator
 						.next();
-				unit = unit.divide(nextItem.getUnits());
+				unit = (Unit<Quantity>) unit.divide(nextItem.getUnits());
 			}
 			return unit;
 		}
@@ -147,7 +148,7 @@ public class DivideQuantityOperation implements IOperation<ICollection>
 		@Override
 		protected void recalculate()
 		{
-			Unit<?> unit = calculateOutputUnit();
+			Unit<Quantity> unit = calculateOutputUnit();
 
 			// update the results
 			performCalc(unit, _outputs, _item1, _item2);
@@ -160,17 +161,17 @@ public class DivideQuantityOperation implements IOperation<ICollection>
 		 * @param unit
 		 * @param outputs
 		 */
-		private void performCalc(Unit<?> unit, List<ICollection> outputs,
+		private void performCalc(Unit<Quantity> unit, List<ICollection> outputs,
 				ICollection item1, ICollection item2)
 		{
-			IQuantityCollection<?> target = (IQuantityCollection<?>) outputs
+			IQuantityCollection<Quantity> target = (IQuantityCollection<Quantity>) outputs
 					.iterator().next();
 			
 			// clear out the lists, first
 			Iterator<ICollection> iter = _outputs.iterator();
 			while (iter.hasNext())
 			{
-				IQuantityCollection<?> qC = (IQuantityCollection<?>) iter.next();
+				IQuantityCollection<Quantity> qC = (IQuantityCollection<Quantity>) iter.next();
 				qC.getValues().clear();
 			}
 
@@ -182,21 +183,21 @@ public class DivideQuantityOperation implements IOperation<ICollection>
 				final double thisValue;
 				if(_item1.size() == 1)
 				{
-					thisValue = _item1.getValues().get(0).doubleValue((Unit<?>) _item1.getUnits());
+					thisValue = _item1.getValues().get(0).doubleValue((Unit<Quantity>) _item1.getUnits());
 				}
 				else
 				{
-					thisValue =_item1.getValues().get(j).doubleValue((Unit<?>) _item1.getUnits());
+					thisValue =_item1.getValues().get(j).doubleValue((Unit<Quantity>) _item1.getUnits());
 				}
 				
 				final double otherValue;
 				if(_item2.size() == 1)
 				{
-					otherValue = _item2.getValues().get(0).doubleValue((Unit<?>) _item2.getUnits());
+					otherValue = _item2.getValues().get(0).doubleValue((Unit<Quantity>) _item2.getUnits());
 				}
 				else
 				{
-					otherValue = _item2.getValues().get(j).doubleValue((Unit<?>) _item2.getUnits()); 
+					otherValue = _item2.getValues().get(j).doubleValue((Unit<Quantity>) _item2.getUnits()); 
 				}
 				
 				double res = thisValue / otherValue;

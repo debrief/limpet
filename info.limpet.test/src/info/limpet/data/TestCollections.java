@@ -17,6 +17,7 @@ import java.util.Iterator;
 
 import javax.measure.Measurable;
 import javax.measure.Measure;
+import javax.measure.quantity.Quantity;
 import javax.measure.quantity.Velocity;
 import javax.measure.unit.Unit;
 
@@ -45,10 +46,10 @@ public class TestCollections extends TestCase
 	public void testSampleData()
 	{
 		IStore data = new SampleData().getData(10);
-		IQuantityCollection<?> ranged = (IQuantityCollection<?>) data.get(SampleData.RANGED_SPEED_SINGLETON);
+		IQuantityCollection<Quantity> ranged = (IQuantityCollection<Quantity>) data.get(SampleData.RANGED_SPEED_SINGLETON);
 		assertNotNull("found series", ranged);
 		
-		QuantityRange<?> range = ranged.getRange();		
+		QuantityRange<Quantity> range = ranged.getRange();		
 		assertNotNull("found range", range);
 		
 		// check the range has values

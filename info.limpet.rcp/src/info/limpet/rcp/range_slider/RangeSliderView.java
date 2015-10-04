@@ -3,7 +3,7 @@ package info.limpet.rcp.range_slider;
 import java.util.List;
 
 import javax.measure.Measurable;
-
+import javax.measure.quantity.Quantity;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -46,7 +46,7 @@ public class RangeSliderView extends CoreAnalysisView implements
 
 	private Label label;
 
-	private IQuantityCollection<?> _current;
+	private IQuantityCollection<Quantity> _current;
 
 	/**
 	 * The constructor.
@@ -143,16 +143,16 @@ public class RangeSliderView extends CoreAnalysisView implements
 			}
 		}
 
-		_current = (IQuantityCollection<?>) newColl;
+		_current = (IQuantityCollection<Quantity>) newColl;
 
 		showData(_current);
 	}
 
-	private void showData(IQuantityCollection<?> qc)
+	private void showData(IQuantityCollection<Quantity> qc)
 	{
 
-		QuantityRange<?> rng = qc.getRange();
-		int curVal = qc.getValues().iterator().next().doubleValue(qc.getUnits());
+		QuantityRange<Quantity> rng = qc.getRange();
+		int curVal = (int) qc.getValues().iterator().next().doubleValue(qc.getUnits());
 
 		label.setText(getData().get(0).getName() + " (" + qc.getUnits().toString()
 				+ ")");
@@ -160,10 +160,10 @@ public class RangeSliderView extends CoreAnalysisView implements
 		Object min = rng.getMinimum();
 		Object max = rng.getMaximum();
 
-		int minVal = ((Measurable<?>) min).longValue(qc.getUnits());
-		int maxVal = ((Measurable<?>) max).longValue(qc.getUnits());
-		slider.setMinimum(minVal);
-		slider.setMaximum(maxVal + slider.getThumb());
+		long minVal = ((Measurable<Quantity>) min).longValue(qc.getUnits());
+		long maxVal = ((Measurable<Quantity>) max).longValue(qc.getUnits());
+		slider.setMinimum((int) minVal);
+		slider.setMaximum((int) (maxVal + slider.getThumb()));
 		// note: add the width of the thumb object to get the true max value
 		slider.setSelection(curVal);
 

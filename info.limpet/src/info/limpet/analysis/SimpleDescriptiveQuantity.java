@@ -1,10 +1,5 @@
 package info.limpet.analysis;
 
-import info.limpet.ICollection;
-import info.limpet.IQuantityCollection;
-import info.limpet.QuantityRange;
-import info.limpet.data.operations.CollectionComplianceTests;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -13,6 +8,11 @@ import javax.measure.Measurable;
 import javax.measure.quantity.Quantity;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
+
+import info.limpet.ICollection;
+import info.limpet.IQuantityCollection;
+import info.limpet.QuantityRange;
+import info.limpet.data.operations.CollectionComplianceTests;
 
 public abstract class SimpleDescriptiveQuantity extends CoreAnalysis
 {
@@ -39,7 +39,7 @@ public abstract class SimpleDescriptiveQuantity extends CoreAnalysis
 				for (Iterator<ICollection> iter = selection.iterator(); iter.hasNext();)
 				{
 					ICollection thisC = (ICollection) iter.next();
-					IQuantityCollection<?> o = (IQuantityCollection<?>) thisC;
+					IQuantityCollection<Quantity> o = (IQuantityCollection<Quantity>) thisC;
 
 					// output some high level data
 					if (o.getDimension() != null)
@@ -60,7 +60,7 @@ public abstract class SimpleDescriptiveQuantity extends CoreAnalysis
 						values.add("" + o.getValues().iterator().next().doubleValue(o.getUnits()));
 					}
 
-					QuantityRange<?> range = o.getRange();
+					QuantityRange<Quantity> range = o.getRange();
 					if (range != null)
 					{
 						titles.add("Range");
@@ -80,7 +80,7 @@ public abstract class SimpleDescriptiveQuantity extends CoreAnalysis
 						Iterator<?> iterV = o.getValues().iterator();
 						while (iterV.hasNext())
 						{
-							Measurable<?> object = (Measurable<?>) iterV.next();
+							Measurable<Quantity> object = (Measurable<Quantity>) iterV.next();
 							data[ctr++] = object.doubleValue(o.getUnits());
 						}
 

@@ -12,7 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.measure.Measurable;
-
+import javax.measure.quantity.Quantity;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -121,7 +121,7 @@ public class XyPlotView extends CoreAnalysisView
 					if (coll.size() < maxSize)
 					{
 
-						IQuantityCollection<?> thisQ = (IQuantityCollection<?>) coll;
+						IQuantityCollection<Quantity> thisQ = (IQuantityCollection<Quantity>) coll;
 
 						String seriesName = thisQ.getName() + " (" + thisQ.getUnits() + ")";
 						ILineSeries newSeries = (ILineSeries) chart.getSeriesSet()
@@ -135,7 +135,7 @@ public class XyPlotView extends CoreAnalysisView
 						int ctr = 0;
 						while (values.hasNext())
 						{
-							Measurable<?> tQ = (Measurable<?>) values.next();
+							Measurable<Quantity> tQ = (Measurable<Quantity>) values.next();
 							yData[ctr++] = tQ.doubleValue(thisQ.getUnits());
 						}
 
@@ -179,7 +179,7 @@ public class XyPlotView extends CoreAnalysisView
 					{
 						if (coll.isTemporal())
 						{
-							ITemporalQuantityCollection<?> thisQ = (ITemporalQuantityCollection<?>) coll;
+							ITemporalQuantityCollection<Quantity> thisQ = (ITemporalQuantityCollection<Quantity>) coll;
 
 							String seriesName = thisQ.getName() + " (" + thisQ.getUnits()
 									+ ")";
@@ -196,7 +196,7 @@ public class XyPlotView extends CoreAnalysisView
 							int ctr = 0;
 							while (values.hasNext())
 							{
-								Measurable<?> tQ = (Measurable<?>) values.next();
+								Measurable<Quantity> tQ = (Measurable<Quantity>) values.next();
 								long t = times.next();
 								xData[ctr] = new Date(t);
 								yData[ctr++] = tQ.doubleValue(thisQ.getUnits());

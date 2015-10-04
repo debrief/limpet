@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.measure.Measurable;
+import javax.measure.quantity.Quantity;
 
 
 public class SimpleMovingAverageOperation implements IOperation<ICollection>
@@ -139,9 +140,9 @@ public class SimpleMovingAverageOperation implements IOperation<ICollection>
 			}
 
 			SimpleMovingAverage sma = new SimpleMovingAverage(winSize);
-			IQuantityCollection<?> input = (IQuantityCollection<?>) _inputs.get(0);
+			IQuantityCollection<Quantity> input = (IQuantityCollection<Quantity>) _inputs.get(0);
 
-			for (Measurable<?> quantity : input.getValues())
+			for (Measurable<Quantity> quantity : input.getValues())
 			{
 				sma.newNum(quantity.doubleValue(input.getUnits()));
 				target.add(sma.getAvg());

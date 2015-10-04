@@ -14,6 +14,8 @@ import info.limpet.rcp.core_view.CoreAnalysisView;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.measure.quantity.Quantity;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.swtchart.Chart;
@@ -173,7 +175,7 @@ public class DataFrequencyView extends CoreAnalysisView
 				{
 					if (iCollection.size() <= MAX_SIZE)
 					{
-						IQuantityCollection<?> thisQ = (IQuantityCollection<?>) iCollection;
+						IQuantityCollection<Quantity> thisQ = (IQuantityCollection<Quantity>) iCollection;
 						bins = QuantityFrequencyBins.doBins(thisQ);
 
 						String seriesName = iCollection.getName() + " (" + thisQ.getUnits()

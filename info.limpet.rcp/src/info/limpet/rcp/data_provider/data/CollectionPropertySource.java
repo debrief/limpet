@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.measure.Measurable;
+import javax.measure.quantity.Quantity;
+import javax.measure.unit.Unit;
 
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
@@ -74,14 +76,14 @@ public class CollectionPropertySource implements IPropertySource
 			if (_collection.getCollection().size() == 1)
 			{
 				// get the first item
-				final Measurable<?> first = getSingleton();
+				final Measurable<Quantity> first = getSingleton();
 				boolean found = false;
 
 				// does this have a range?
 				if(_collection.getCollection().isQuantity())
 				{
-					QuantityCollection<?> qC = (QuantityCollection<?>) _collection.getCollection();
-					QuantityRange<?> range = qC.getRange();
+					QuantityCollection<Quantity> qC = (QuantityCollection<Quantity>) _collection.getCollection();
+					QuantityRange<Quantity> range = qC.getRange();
 					if(range != null)
 					{
 						found = true;
@@ -90,8 +92,11 @@ public class CollectionPropertySource implements IPropertySource
 						// that uses a slider between a range of values
 						
 						// temporarily - just use a text descriptor
-						Number max = range.getMaximum().doubleValue();
-						Number min = range.getMinimum().doubleValue();
+						// FIXME
+						//Number max = range.getMaximum().doubleValue();
+						//Number min = range.getMinimum().doubleValue();
+						Integer max = new Integer("100");
+						Integer min = new Integer("100");
 						final PropertyDescriptor valueDescriptor = new SliderPropertyDescriptor(
 								PROPERTY_VALUE_SLIDER, "Value", min.intValue(), max.intValue());
 						valueDescriptor.setCategory("Value");
@@ -148,8 +153,8 @@ public class CollectionPropertySource implements IPropertySource
 			ICollection theColl = _collection.getCollection();
 			if (theColl instanceof IQuantityCollection<?>)
 			{
-				IQuantityCollection<?> qc = (IQuantityCollection<?>)theColl;
-				Measurable<?> first = getSingleton();
+				IQuantityCollection<Quantity> qc = (IQuantityCollection<Quantity>)theColl;
+				Measurable<Quantity> first = getSingleton();
 				if (first != null)
 				{
 					return "" + first.doubleValue(qc.getUnits());
@@ -163,9 +168,9 @@ public class CollectionPropertySource implements IPropertySource
 			{
 				// ok - we have to create a composite object that includes both the
 				// range and the current value - so it can be passed to the slider
-				IQuantityCollection<?> qc = (IQuantityCollection<?>) theColl;
+				IQuantityCollection<Quantity> qc = (IQuantityCollection<Quantity>) theColl;
 
-				Measurable<?> first = getSingleton();
+				Measurable<Quantity> first = getSingleton();
 				if (first != null)
 				{
 
@@ -188,14 +193,15 @@ public class CollectionPropertySource implements IPropertySource
 		return null;
 	}
 
-	private Measurable<?> getSingleton()
+	private Measurable<Quantity> getSingleton()
 	{
-		Measurable<?> res = null;
-		final IObjectCollection<?> tt = (IObjectCollection<?>) _collection
+		Measurable<Quantity> res = null;
+		// FIXME
+		final IQuantityCollection<Quantity> tt = (IQuantityCollection<Quantity>) _collection
 				.getCollection();
-		if (tt instanceof IQuantityCollection<?>)
+		if (tt instanceof IQuantityCollection)
 		{
-			IQuantityCollection<?> iq = (IQuantityCollection<?>) tt;
+			IQuantityCollection<Quantity> iq = (IQuantityCollection<Quantity>) tt;
 			res = iq.getValues().iterator().next();
 		}
 

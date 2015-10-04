@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.measure.Measurable;
+import javax.measure.quantity.Quantity;
 import javax.measure.unit.Unit;
 
 public class MultiplyQuantityOperation implements IOperation<ICollection>
@@ -163,7 +164,7 @@ public class MultiplyQuantityOperation implements IOperation<ICollection>
 
 				for (int i = 0; i < _inputs.size(); i++)
 				{
-					IQuantityCollection<?> thisC = (IQuantityCollection<?>) _inputs
+					IQuantityCollection<Quantity> thisC = (IQuantityCollection<Quantity>) _inputs
 							.get(i);
 
 					final double thisValue;
