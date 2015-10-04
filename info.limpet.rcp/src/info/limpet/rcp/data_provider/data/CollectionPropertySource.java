@@ -17,7 +17,6 @@ import org.eclipse.ui.views.properties.IPropertySource;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
 import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 
-
 /**
  * This class provides property sheet properties for ButtonElement.
  */
@@ -91,8 +90,8 @@ public class CollectionPropertySource implements IPropertySource
 						// that uses a slider between a range of values
 						
 						// temporarily - just use a text descriptor
-						Number max = range.getMaximum().getValue();
-						Number min = range.getMinimum().getValue();
+						Number max = range.getMaximum().doubleValue();
+						Number min = range.getMinimum().doubleValue();
 						final PropertyDescriptor valueDescriptor = new SliderPropertyDescriptor(
 								PROPERTY_VALUE_SLIDER, "Value", min.intValue(), max.intValue());
 						valueDescriptor.setCategory("Value");
@@ -110,12 +109,16 @@ public class CollectionPropertySource implements IPropertySource
 				}
 				
 				// see if the type has any units
-				if (first.getUnit() != null)
+				if(_collection.getCollection() instanceof IQuantityCollection)
+				{
+					IQuantityCollection<?> qc = (IQuantityCollection<?>) _collection.getCollection();
+				if (qc.getUnits() != null)
 				{
 					final PropertyDescriptor unitsDescriptor = new PropertyDescriptor(
 							PROPERTY_UNITS, "Units");
 					unitsDescriptor.setCategory("Value");
 					dList.add(unitsDescriptor);
+				}
 				}
 			}
 
@@ -145,10 +148,11 @@ public class CollectionPropertySource implements IPropertySource
 			ICollection theColl = _collection.getCollection();
 			if (theColl instanceof IQuantityCollection<?>)
 			{
+				IQuantityCollection<?> qc = (IQuantityCollection<?>)theColl;
 				Measurable<?> first = getSingleton();
 				if (first != null)
 				{
-					return "" + first.getValue();
+					return "" + first.doubleValue(qc.getUnits());
 				}
 			}
 		}
@@ -157,14 +161,14 @@ public class CollectionPropertySource implements IPropertySource
 			ICollection theColl = _collection.getCollection();
 			if (theColl instanceof IQuantityCollection<?>)
 			{
-				// ok - we have to create a composite object that includes both the 
+				// ok - we have to create a composite object that includes both the
 				// range and the current value - so it can be passed to the slider
 				IQuantityCollection<?> qc = (IQuantityCollection<?>) theColl;
-				
+
 				Measurable<?> first = getSingleton();
 				if (first != null)
 				{
-					
+
 					return "" + first.doubleValue(qc.getUnits());
 				}
 			}
@@ -174,7 +178,7 @@ public class CollectionPropertySource implements IPropertySource
 			ICollection theColl = _collection.getCollection();
 			if (theColl instanceof IQuantityCollection<?>)
 			{
-				// ok - we have to create a composite object that includes both the 
+				// ok - we have to create a composite object that includes both the
 				// range and the current value - so it can be passed to the slider
 				IQuantityCollection<?> qc = (IQuantityCollection<?>) theColl;
 				return "" + qc.getUnits();
@@ -230,7 +234,7 @@ public class CollectionPropertySource implements IPropertySource
 			{
 				IQuantityCollection<?> tt = (IQuantityCollection<?>) theColl;
 				tt.replaceSingleton(Double.parseDouble((String) value));
-				
+
 				// ok, fire changed!
 				tt.fireChanged();
 			}
@@ -241,12 +245,12 @@ public class CollectionPropertySource implements IPropertySource
 			if (theColl instanceof IQuantityCollection<?>)
 			{
 				IQuantityCollection<?> tt = (IQuantityCollection<?>) theColl;
-				
-				// ok, extract the new value from the input object. It's probably 
+
+				// ok, extract the new value from the input object. It's probably
 				// going to be a composite object that combines both range and value
-				
+
 				tt.replaceSingleton(Double.parseDouble((String) value));
-				
+
 				// ok, fire changed!
 				tt.fireChanged();
 			}

@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.measure.Measurable;
 import javax.measure.quantity.Quantity;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
@@ -63,8 +64,8 @@ public abstract class SimpleDescriptiveQuantity extends CoreAnalysis
 					if (range != null)
 					{
 						titles.add("Range");
-						values.add(range.getMinimum().getValue() + " - "
-								+ range.getMaximum().getValue() + " " + o.getUnits());
+						values.add(range.getMinimum().doubleValue(o.getUnits()) + " - "
+								+ range.getMaximum().doubleValue(o.getUnits()) + " " + o.getUnits());
 
 					}
 
@@ -79,8 +80,8 @@ public abstract class SimpleDescriptiveQuantity extends CoreAnalysis
 						Iterator<?> iterV = o.getValues().iterator();
 						while (iterV.hasNext())
 						{
-							Quantity<?> object = (Quantity<?>) iterV.next();
-							data[ctr++] = object.getValue().doubleValue();
+							Measurable<?> object = (Measurable<?>) iterV.next();
+							data[ctr++] = object.doubleValue(o.getUnits());
 						}
 
 						// Get a DescriptiveStatistics instance

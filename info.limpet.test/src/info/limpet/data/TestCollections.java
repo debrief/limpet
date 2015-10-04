@@ -4,6 +4,7 @@ import info.limpet.IBaseTemporalCollection;
 import info.limpet.IQuantityCollection;
 import info.limpet.IStore;
 import info.limpet.ITemporalObjectCollection.Doublet;
+import info.limpet.QuantityRange;
 import info.limpet.data.impl.ObjectCollection;
 import info.limpet.data.impl.QuantityCollection;
 import info.limpet.data.impl.TemporalObjectCollection;
@@ -14,16 +15,14 @@ import info.limpet.data.impl.samples.StockTypes.NonTemporal.Speed_MSec;
 
 import java.util.Iterator;
 
-import javax.measure.Quantity;
-import javax.measure.Unit;
-import javax.measure.quantity.Speed;
+import javax.measure.Measurable;
+import javax.measure.Measure;
+import javax.measure.quantity.Velocity;
+import javax.measure.unit.Unit;
 
 import junit.framework.TestCase;
-import si.uom.SI;
-import tec.units.ri.quantity.Quantities;
-import tec.units.ri.quantity.QuantityRange;
-import tec.units.ri.unit.MetricPrefix;
-import tec.units.ri.unit.Units;
+import static javax.measure.unit.SI.*;
+import static javax.measure.unit.NonSI.*;
 
 public class TestCollections extends TestCase
 {
@@ -53,8 +52,8 @@ public class TestCollections extends TestCase
 		assertNotNull("found range", range);
 		
 		// check the range has values
-		assertEquals("correct values", 940d, range.getMinimum().getValue().doubleValue(), 0.1);
-		assertEquals("correct values", 1050d, range.getMaximum().getValue().doubleValue(), 0.1);
+		assertEquals("correct values", 940d, range.getMinimum().doubleValue(ranged.getUnits()), 0.1);
+		assertEquals("correct values", 1050d, range.getMaximum().doubleValue(ranged.getUnits()), 0.1);
 	}
 	
 	public void testCreateTemporalObject()
@@ -109,8 +108,8 @@ public class TestCollections extends TestCase
 	public void testUnitlessQuantity()
 	{
 		// the units for this measurement
-		Unit<Speed> kmh = MetricPrefix.KILO(Units.METRE).divide(Units.HOUR)
-				.asType(Speed.class);
+		Unit<Velocity> kmh = KILO(METRE).divide(HOUR)
+				.asType(Velocity.class);
 
 		// the target collection
 		Speed_MSec speedCollection = new StockTypes.NonTemporal.Speed_MSec("Speed");
@@ -119,7 +118,7 @@ public class TestCollections extends TestCase
 		{
 			// create a measurement
 			double thisSpeed = i * 2;
-			Quantity<Speed> speedVal = Quantities.getQuantity(thisSpeed, kmh);
+			Measurable<Velocity> speedVal = Measure.valueOf(thisSpeed, kmh);
 
 			// store the measurement
 			speedCollection.add(speedVal);
@@ -135,8 +134,8 @@ public class TestCollections extends TestCase
 	public void testCreateQuantity()
 	{
 		// the units for this measurement
-		Unit<Speed> kmh = MetricPrefix.KILO(Units.METRE).divide(Units.HOUR)
-				.asType(Speed.class);
+		Unit<Velocity> kmh = KILO(METRE).divide(HOUR)
+				.asType(Velocity.class);
 
 		// the target collection
 		Speed_MSec speedCollection = new StockTypes.NonTemporal.Speed_MSec("Speed");
@@ -145,7 +144,7 @@ public class TestCollections extends TestCase
 		{
 			// create a measurement
 			double thisSpeed = i * 2;
-			Quantity<Speed> speedVal = Quantities.getQuantity(thisSpeed, kmh);
+			Measurable<Velocity> speedVal = Measure.valueOf(thisSpeed, kmh);
 
 			// store the measurement
 			speedCollection.add(speedVal);
@@ -155,31 +154,26 @@ public class TestCollections extends TestCase
 		assertEquals("correct number of samples", 10, speedCollection.size());
 		assertEquals("correct name", "Speed", speedCollection.getName());
 
-		assertEquals("correct min", 2d, speedCollection.min().getValue()
-				.doubleValue());
-		assertEquals("correct max", 20d, speedCollection.max().getValue()
-				.doubleValue());
-		assertEquals("correct mean", 11d, speedCollection.mean().getValue()
-				.doubleValue());
-		assertEquals("correct variance", 33, speedCollection.variance().getValue()
-				.doubleValue(), 0.1);
-		assertEquals("correct sd", 5.744, speedCollection.sd().getValue()
-				.doubleValue(), 0.001);
+		assertEquals("correct min", 2d, speedCollection.min());
+		assertEquals("correct max", 20d, speedCollection.max());
+		assertEquals("correct mean", 11d, speedCollection.mean());
+		assertEquals("correct variance", 33, speedCollection.variance().doubleValue(speedCollection.getUnits()), 0.1);
+		assertEquals("correct sd", 5.744, speedCollection.sd().doubleValue(speedCollection.getUnits()), 0.001);
 	}
 
 	public void testTemporalQuantityAddition()
 	{
 		// the units for this measurement
-		Unit<Speed> kmh = MetricPrefix.KILO(Units.METRE).divide(Units.HOUR)
-				.asType(Speed.class);
-		Unit<Speed> m_sec = SI.METRES_PER_SECOND;
+		Unit<Velocity> kmh = KILO(METRE).divide(HOUR)
+				.asType(Velocity.class);
+		Unit<Velocity> m_sec = METRES_PER_SECOND;
 
 		// the target collection
-		TemporalQuantityCollection<Speed> sc = new TemporalQuantityCollection<Speed>(
+		TemporalQuantityCollection<Velocity> sc = new TemporalQuantityCollection<Velocity>(
 				"Speed", kmh);
 
 		// create a measurement
-		Quantity<Speed> speedVal = Quantities.getQuantity(5, kmh);
+		Measurable<Velocity> speedVal = Measure.valueOf(5, kmh);
 
 		// store the measurement
 		sc.add(12, speedVal);
@@ -188,14 +182,14 @@ public class TestCollections extends TestCase
 		assertEquals("correct number of samples", 1, sc.size());
 
 		long time = sc.getTimes().iterator().next();
-		Quantity<Speed> theS = sc.getValues().iterator().next();
+		Measurable<Velocity> theS = sc.getValues().iterator().next();
 
 		assertEquals("correct time", 12, time);
-		assertEquals("correct speed value", 5, theS.getValue());
-		assertEquals("correct speed units", kmh, theS.getUnit());
+		assertEquals("correct speed value", 5, theS.doubleValue(sc.getUnits()));
+		assertEquals("correct speed units", kmh, sc.getUnits());
 
 		// ok, now add another
-		speedVal = Quantities.getQuantity(25, m_sec);
+		speedVal = Measure.valueOf(25, m_sec);
 
 		// store the measurement
 		boolean errorThrown = false;
@@ -215,7 +209,7 @@ public class TestCollections extends TestCase
 		assertEquals("correct number of samples", 1, sc.size());
 
 		// ok, now add another
-		speedVal = Quantities.getQuantity(12, kmh);
+		speedVal = Measure.valueOf(12, kmh);
 
 		// store the measurement
 		sc.add(14, speedVal);
@@ -242,18 +236,18 @@ public class TestCollections extends TestCase
 	public void testTimeQuantityCollectionIterator()
 	{
 		// the units for this measurement
-		Unit<Speed> kmh = MetricPrefix.KILO(Units.METRE).divide(Units.HOUR)
-				.asType(Speed.class);
+		Unit<Velocity> kmh = KILO(METRE).divide(HOUR)
+				.asType(Velocity.class);
 
 		// the target collection
-		TemporalQuantityCollection<Speed> speedCollection = new TemporalQuantityCollection<Speed>(
+		TemporalQuantityCollection<Velocity> speedCollection = new TemporalQuantityCollection<Velocity>(
 				"Speed", kmh);
 
 		for (int i = 1; i <= 10; i++)
 		{
 			// create a measurement
 			double thisSpeed = i * 2;
-			Quantity<Speed> speedVal = Quantities.getQuantity(thisSpeed, kmh);
+			Measurable<Velocity> speedVal = Measure.valueOf(thisSpeed, kmh);
 
 			// store the measurement
 			speedCollection.add(i, speedVal);
@@ -271,40 +265,40 @@ public class TestCollections extends TestCase
 		// ok, now check the iterator
 		double runningValueSum = 0;
 		double runningTimeSum = 0;
-		Iterator<Doublet<Quantity<Speed>>> iter = speedCollection.iterator();
+		Iterator<Doublet<Measurable<Velocity>>> iter = speedCollection.iterator();
 		while (iter.hasNext())
 		{
-			Doublet<Quantity<Speed>> doublet = iter.next();
-			runningValueSum += doublet.getObservation().getValue().doubleValue();
+			Doublet<Measurable<Velocity>> doublet = iter.next();
+			runningValueSum += doublet.getObservation().doubleValue(speedCollection.getUnits());
 			runningTimeSum += doublet.getTime();
 		}
 		assertEquals("values adds up", 110d, runningValueSum);
 		assertEquals("times adds up", 55d, runningTimeSum);
 
-		assertEquals("correct mean", 11d, speedCollection.mean().getValue()
-				.doubleValue());
-		assertEquals("correct variance", 33, speedCollection.variance().getValue()
-				.doubleValue(), 0.1);
-		assertEquals("correct sd", 5.744, speedCollection.sd().getValue()
-				.doubleValue(), 0.001);
+		assertEquals("correct mean", 11d, speedCollection.mean().doubleValue(speedCollection.getUnits())
+				);
+		assertEquals("correct variance", 33, speedCollection.variance().doubleValue(speedCollection.getUnits())
+				, 0.1);
+		assertEquals("correct sd", 5.744, speedCollection.sd().doubleValue(speedCollection.getUnits())
+				, 0.001);
 
 	}
 
 	public void testQuantityCollectionIterator()
 	{
 		// the units for this measurement
-		Unit<Speed> kmh = MetricPrefix.KILO(Units.METRE).divide(Units.HOUR)
-				.asType(Speed.class);
+		Unit<Velocity> kmh = KILO(METRE).divide(HOUR)
+				.asType(Velocity.class);
 
 		// the target collection
-		QuantityCollection<Speed> speedCollection = new QuantityCollection<Speed>(
+		QuantityCollection<Velocity> speedCollection = new QuantityCollection<Velocity>(
 				"Speed", kmh);
 
 		for (int i = 1; i <= 10; i++)
 		{
 			// create a measurement
 			double thisSpeed = i * 2;
-			Quantity<Speed> speedVal = Quantities.getQuantity(thisSpeed, kmh);
+			Measurable<Velocity> speedVal = Measure.valueOf(thisSpeed, kmh);
 
 			// store the measurement
 			speedCollection.add(speedVal);
@@ -315,20 +309,20 @@ public class TestCollections extends TestCase
 
 		// ok, now check the iterator
 		double runningValueSum = 0;
-		Iterator<Quantity<Speed>> vIter = speedCollection.getValues().iterator();
+		Iterator<Measurable<Velocity>> vIter = speedCollection.getValues().iterator();
 		while (vIter.hasNext())
 		{
-			Quantity<Speed> value = vIter.next();
-			runningValueSum += value.getValue().doubleValue();
+			Measurable<Velocity> value = vIter.next();
+			runningValueSum += value.doubleValue(speedCollection.getUnits());
 		}
 		assertEquals("values adds up", 110d, runningValueSum);
 
-		assertEquals("correct mean", 11d, speedCollection.mean().getValue()
-				.doubleValue());
-		assertEquals("correct variance", 33, speedCollection.variance().getValue()
-				.doubleValue(), 0.1);
-		assertEquals("correct sd", 5.744, speedCollection.sd().getValue()
-				.doubleValue(), 0.001);
+		assertEquals("correct mean", 11d, speedCollection.mean().doubleValue(speedCollection.getUnits())
+				);
+		assertEquals("correct variance", 33, speedCollection.variance().doubleValue(speedCollection.getUnits())
+				, 0.1);
+		assertEquals("correct sd", 5.744, speedCollection.sd().doubleValue(speedCollection.getUnits())
+				, 0.001);
 
 	}
 	
