@@ -108,10 +108,9 @@ public class StockTypes
 			}
 		}
 
-		public static class Locations extends
-				TemporalObjectCollection<TmpLocationItem>
+		public static class Location extends TemporalObjectCollection<Geometry>
 		{
-			public Locations(String name)
+			public Location(String name)
 			{
 				super(name);
 			}
@@ -161,9 +160,9 @@ public class StockTypes
 			}
 		}
 
-		public static class Locations extends ObjectCollection<Geometry>
+		public static class Location extends ObjectCollection<Geometry>
 		{
-			public Locations(String name)
+			public Location(String name)
 			{
 				super(name);
 			}

@@ -15,7 +15,7 @@ import org.opengis.referencing.operation.TransformException;
 
 import info.limpet.data.impl.TemporalObjectCollection;
 import info.limpet.data.impl.samples.StockTypes;
-import info.limpet.data.impl.samples.StockTypes.NonTemporal.Locations;
+import info.limpet.data.impl.samples.StockTypes.NonTemporal.Location;
 import junit.framework.TestCase;
 
 public class TestGeotoolsGeometry extends TestCase
@@ -30,7 +30,7 @@ public class TestGeotoolsGeometry extends TestCase
 	
 	public void testBuilder() throws TransformException
 	{
-		final Locations track_1 = new StockTypes.NonTemporal.Locations("some location data");
+		final Location track_1 = new StockTypes.NonTemporal.Location("some location data");
 		
 		GeometryBuilder builder = new GeometryBuilder( DefaultGeographicCRS.WGS84 );
 		GeodeticCalculator geoCalc = new GeodeticCalculator(DefaultGeographicCRS.WGS84);
