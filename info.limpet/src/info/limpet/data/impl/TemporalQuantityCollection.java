@@ -3,91 +3,104 @@ package info.limpet.data.impl;
 import info.limpet.ICommand;
 import info.limpet.IQuantityCollection;
 import info.limpet.ITemporalQuantityCollection;
+import info.limpet.QuantityRange;
 import info.limpet.data.impl.helpers.QuantityHelper;
 
-import javax.measure.Dimension;
-import javax.measure.Quantity;
-import javax.measure.Unit;
+import java.util.ArrayList;
 
-import tec.units.ri.quantity.Quantities;
-import tec.units.ri.quantity.QuantityRange;
+import javax.measure.Measurable;
+import javax.measure.Measure;
+import javax.measure.quantity.Quantity;
+import javax.measure.unit.Dimension;
+import javax.measure.unit.Unit;
 
+//public class QuantityCollection<T extends Quantity> extends
+//ObjectCollection<T> implements IQuantityCollection<T>
 
-public class TemporalQuantityCollection<T extends Quantity<T>> extends
-		TemporalObjectCollection<Quantity<T>> implements
+//public interface ITemporalQuantityCollection<Q extends Quantity> extends
+//ITemporalObjectCollection<Measurable<Q>>,IBaseQuantityCollection<Q>, IQuantityCollection<Q>
+
+public class TemporalQuantityCollection<T extends Quantity> extends
+		TemporalObjectCollection<Measurable<T>> implements
 		ITemporalQuantityCollection<T>, IQuantityCollection<T>
 {
-
-	private Unit<T> _myUnits;
 	private QuantityHelper<T> _qHelper;
 
 	public TemporalQuantityCollection(String name, Unit<T> units)
 	{
 		this(name, null, units);
 	}
-	
-	public TemporalQuantityCollection(String name, ICommand<?> precedent, Unit<T> units)
+
+	public TemporalQuantityCollection(String name, ICommand<?> precedent,
+			Unit<T> units)
 	{
 		super(name);
-		_myUnits = units;
-		_qHelper = new QuantityHelper<>(_values, units);
+		_qHelper = new QuantityHelper<T>((ArrayList<Measurable<T>>) _values, units);
 	}
+	
+	
 
 	@Override
-	public void add(long time, Quantity<T> object)
+	public void add(long time, Measurable<T> object)
 	{
-		if (_myUnits != object.getUnit())
+		if(object instanceof Measure)
 		{
-			throw new RuntimeException("New data value in wrong units");
+			Measure<?, ?> oM = (Measure<?, ?>) object;
+			Unit<?> hisUnits = oM.getUnit();
+			if(getUnits() != null)
+			{
+				if(!getUnits().equals(hisUnits))
+				{
+					throw new RuntimeException("Measurement is in wrong units");
+				}
+			}
 		}
-
+		// double-check the units
 		super.add(time, object);
 	}
 
-	
 	@Override
 	public void add(long time, Number value)
 	{
-		super.add(time, Quantities.getQuantity(value, getUnits()));
+		super.add(time, Measure.valueOf(value.doubleValue(), getUnits()));
 	}
 
-	
 	@Override
 	public void add(Number value)
 	{
-		throw new UnsupportedOperationException("Please use add(time, value) for time series datasets");
+		throw new UnsupportedOperationException(
+				"Please use add(time, value) for time series datasets");
 	}
 
 	@Override
-	public Quantity<T> min()
+	public Measurable<T> min()
 	{
 		return _qHelper.min();
 	}
 
 	@Override
-	public Quantity<T> max()
+	public Measurable<T> max()
 	{
 		return _qHelper.max();
 	}
 
 	@Override
-	public Quantity<T> mean()
+	public Measurable<T> mean()
 	{
 		return _qHelper.mean();
 	}
 
 	@Override
-	public Quantity<T> variance()
+	public Measurable<T> variance()
 	{
 		return _qHelper.variance();
 	}
 
 	@Override
-	public Quantity<T> sd()
+	public Measurable<T> sd()
 	{
 		return _qHelper.sd();
 	}
-
 
 	@Override
 	public boolean isQuantity()
@@ -112,7 +125,6 @@ public class TemporalQuantityCollection<T extends Quantity<T>> extends
 	{
 		return _qHelper.getUnits();
 	}
-
 
 	@Override
 	public void replaceSingleton(double newValue)

@@ -1,49 +1,45 @@
 package info.limpet.data.impl.helpers;
 
 import info.limpet.IBaseQuantityCollection;
+import info.limpet.QuantityRange;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import javax.measure.Dimension;
-import javax.measure.Quantity;
-import javax.measure.Unit;
+import javax.measure.Measurable;
+import javax.measure.Measure;
+import javax.measure.quantity.Quantity;
+import javax.measure.unit.Dimension;
+import javax.measure.unit.Unit;
 
-import tec.units.ri.quantity.Quantities;
-import tec.units.ri.quantity.QuantityRange;
-
-public class QuantityHelper<T extends Quantity<T>> implements IBaseQuantityCollection<T>
+public class QuantityHelper<T extends Quantity> implements IBaseQuantityCollection<T>
 {
-	private ArrayList<Quantity<T>> _values;
+	private ArrayList<Measurable<T>> _values;
 	
-	private Quantity<T> _min = null;
-	private Quantity<T> _max = null;
-	private Quantity<T> _mean;
-	private Quantity<T> _variance;
-	private Quantity<T> _sd;
+	private Measurable<T> _min = null;
+	private Measurable<T> _max = null;
+	private Measurable<T> _mean;
+	private Measurable<T> _variance;
+	private Measurable<T> _sd;
 
 	private Unit<T> _myUnits;
 
 	private QuantityRange<T> _range;
 
-	public QuantityHelper(ArrayList<Quantity<T>> values, Unit<T> units)
+	public QuantityHelper(ArrayList<Measurable<T>> values, Unit<T> units)
 	{		
 		_values = values;
 		_myUnits = units;
 	}
-
+	
 	public void add(Number value)
 	{
-		Quantity<T> newVal = Quantities.getQuantity(value, getUnits());
+		Measurable<T> newVal = Measure.valueOf(value.doubleValue(), getUnits());
 		_values.add(newVal);
 	}
 
-	public void add(Quantity<T> quantity)
+	public void add(Measurable<T> quantity)
 	{
-		if (!_myUnits.isCompatible(quantity.getUnit()))
-		{
-			throw new RuntimeException("New data value in wrong units");
-		}
 
 		_values.add(quantity);
 
@@ -54,10 +50,10 @@ public class QuantityHelper<T extends Quantity<T>> implements IBaseQuantityColle
 		}
 		else
 		{
-			double doubleVal = quantity.getValue().doubleValue();
+			double doubleVal = quantity.doubleValue(getUnits());
 
-			_min = (_min.getValue().doubleValue() < doubleVal) ? _min : quantity;
-			_max = (_max.getValue().doubleValue() > doubleVal) ? _max : quantity;
+			_min = (_min.doubleValue(getUnits()) < doubleVal) ? _min : quantity;
+			_max = (_max.doubleValue(getUnits()) > doubleVal) ? _max : quantity;
 		}
 
 		clearRunningTotal();
@@ -70,19 +66,19 @@ public class QuantityHelper<T extends Quantity<T>> implements IBaseQuantityColle
 	}
 
 	@Override
-	public Quantity<T> min()
+	public Measurable<T> min()
 	{
 		return _min;
 	}
 
 	@Override
-	public Quantity<T> max()
+	public Measurable<T> max()
 	{
 		return _max;
 	}
 
 	@Override
-	public Quantity<T> mean()
+	public Measurable<T> mean()
 	{
 		if (_mean == null)
 		{
@@ -92,7 +88,7 @@ public class QuantityHelper<T extends Quantity<T>> implements IBaseQuantityColle
 	}
 
 	@Override
-	public Quantity<T> sd()
+	public Measurable<T> sd()
 	{
 		if (_sd == null)
 		{
@@ -102,7 +98,7 @@ public class QuantityHelper<T extends Quantity<T>> implements IBaseQuantityColle
 	}
 	
 	@Override
-	public Quantity<T> variance()
+	public Measurable<T> variance()
 	{
 		if (_variance == null)
 		{
@@ -116,32 +112,32 @@ public class QuantityHelper<T extends Quantity<T>> implements IBaseQuantityColle
 	{
 		if (_values.size() > 0)
 		{
-			Iterator<Quantity<T>> iter = _values.iterator();
+			Iterator<Measurable<T>> iter = _values.iterator();
 			double runningSum = 0;
 			while (iter.hasNext())
 			{
-				Quantity<T> quantity = (Quantity<T>) iter.next();
-				runningSum += quantity.getValue().doubleValue();
+				Measurable<T> quantity = (Measurable<T>) iter.next();
+				runningSum += quantity.doubleValue(getUnits());
 			}
 
 			final double mean = runningSum / _values.size();
 
-			_mean = Quantities.getQuantity(mean,  _myUnits);
+			_mean =  Measure.valueOf(mean,  _myUnits);
 
 			iter = _values.iterator();
 			runningSum = 0;
 			while (iter.hasNext())
 			{
-				Quantity<T> quantity = (Quantity<T>) iter.next();				
-				double a = quantity.getValue().doubleValue();
+				Measurable<T> quantity = iter.next();				
+				double a = quantity.doubleValue(_myUnits);
 				runningSum += (mean - a) * (mean - a);
 			}
 
 			final double variance = runningSum / _values.size();
-			_variance = Quantities.getQuantity(variance, _myUnits);
+			_variance = Measure.valueOf(variance, _myUnits);
 
 			final double sd = Math.sqrt(variance);
-			_sd = Quantities.getQuantity(sd, _myUnits);
+			_sd = Measure.valueOf(sd, _myUnits);
 		}
 	}
 
@@ -165,7 +161,7 @@ public class QuantityHelper<T extends Quantity<T>> implements IBaseQuantityColle
 		}
 
 		// create a new value
-		Quantity<T> newVal = Quantities.getQuantity(newValue, getUnits());
+		Measurable<T> newVal = Measure.valueOf(newValue, getUnits());
 		
 		// drop the existing value
 		_values.clear();

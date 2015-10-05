@@ -1,16 +1,18 @@
 package info.limpet;
 
-import javax.measure.Dimension;
-import javax.measure.Quantity;
-import javax.measure.Unit;
+import javax.measure.Measurable;
+import javax.measure.quantity.Quantity;
+import javax.measure.unit.Dimension;
+import javax.measure.unit.Unit;
 
-public interface IBaseQuantityCollection<T extends Quantity<T>>
+
+public interface IBaseQuantityCollection<T extends Quantity>
 {
-	public Quantity<T> min();
-	public Quantity<T> max();
-	public Quantity<T> mean();
-	public Quantity<T> variance();
-	public Quantity<T> sd();
+	public Measurable<T> min();
+	public Measurable<T> max();
+	public Measurable<T> mean();
+	public Measurable<T> variance();
+	public Measurable<T> sd();
 	Dimension getDimension();
 	Unit<T> getUnits();
 }

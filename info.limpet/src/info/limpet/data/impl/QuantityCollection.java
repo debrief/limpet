@@ -1,18 +1,21 @@
 package info.limpet.data.impl;
 
+import java.util.ArrayList;
+
+import javax.measure.Measurable;
+import javax.measure.quantity.Quantity;
+import javax.measure.unit.Dimension;
+import javax.measure.unit.Unit;
+
 import info.limpet.ICommand;
 import info.limpet.IQuantityCollection;
+import info.limpet.QuantityRange;
 import info.limpet.data.impl.helpers.QuantityHelper;
 
-import javax.measure.Dimension;
-import javax.measure.Quantity;
-import javax.measure.Unit;
-
-import tec.units.ri.quantity.QuantityRange;
 
 
-public class QuantityCollection<T extends Quantity<T>> extends
-		ObjectCollection<Quantity<T>> implements IQuantityCollection<T>
+public class QuantityCollection<T extends Quantity> extends
+		ObjectCollection<Measurable<T>> implements IQuantityCollection<T>
 {
 
 	Unit<T> _units;
@@ -27,7 +30,7 @@ public class QuantityCollection<T extends Quantity<T>> extends
 	{
 		super(name, precedent);
 		_units = units;
-		_qHelper = new QuantityHelper<>(_values, units);
+		_qHelper = new QuantityHelper<T>((ArrayList<Measurable<T>>) _values, units);
 	}
 	
 	@Override
@@ -61,37 +64,37 @@ public class QuantityCollection<T extends Quantity<T>> extends
 	}
 	
 	@Override
-	public void add(Quantity<T> value)
+	public void add(Measurable<T> value)
 	{
 		_qHelper.add(value);
 	}
 
 	@Override
-	public Quantity<T> min()
+	public Measurable<T> min()
 	{
 		return _qHelper.min();
 	}
 
 	@Override
-	public Quantity<T> max()
+	public Measurable<T> max()
 	{
 		return _qHelper.max();
 	}
 
 	@Override
-	public Quantity<T> mean()
+	public Measurable<T> mean()
 	{
 		return _qHelper.mean();
 	}
 
 	@Override
-	public Quantity<T> variance()
+	public Measurable<T> variance()
 	{
 		return _qHelper.variance();
 	}
 
 	@Override
-	public Quantity<T> sd()
+	public Measurable<T> sd()
 	{
 		return _qHelper.sd();
 	}

@@ -80,7 +80,6 @@ public class ShowInNamedView implements IOperation<ICollection>
 
 			try
 			{
-
 				page.showView(_id, secId, IWorkbenchPage.VIEW_ACTIVATE);
 			}
 			catch (PartInitException e)

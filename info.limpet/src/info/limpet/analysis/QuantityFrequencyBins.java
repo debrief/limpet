@@ -8,7 +8,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.measure.Quantity;
+import javax.measure.Measurable;
+import javax.measure.quantity.Quantity;
+import javax.measure.unit.Unit;
 
 import org.apache.commons.math3.random.EmpiricalDistribution;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
@@ -54,7 +56,8 @@ public abstract class QuantityFrequencyBins extends CoreAnalysis
 		}
 	}
 
-	public static BinnedData doBins(IQuantityCollection<?> collection)
+	@SuppressWarnings("unchecked")
+	public static BinnedData doBins(IQuantityCollection<Quantity> collection)
 	{
 		// collate the values into an array
 		double[] data = new double[collection.size()];
@@ -64,8 +67,10 @@ public abstract class QuantityFrequencyBins extends CoreAnalysis
 		Iterator<?> iterV = collection.getValues().iterator();
 		while (iterV.hasNext())
 		{
-			Quantity<?> object = (Quantity<?>) iterV.next();
-			data[ctr++] = object.getValue().doubleValue();
+			Measurable<Quantity> object = (Measurable<Quantity>) iterV.next();
+			
+			Unit<Quantity> theseUnits = collection.getUnits();
+			data[ctr++] = object.doubleValue(theseUnits);
 		}
 
 		// Get a DescriptiveStatistics instance
@@ -123,7 +128,8 @@ public abstract class QuantityFrequencyBins extends CoreAnalysis
 				for (Iterator<ICollection> iter = selection.iterator(); iter.hasNext();)
 				{
 					ICollection thisC = (ICollection) iter.next();
-					IQuantityCollection<?> o = (IQuantityCollection<?>) thisC;
+					@SuppressWarnings("unchecked")
+					IQuantityCollection<Quantity> o = (IQuantityCollection<Quantity>) thisC;
 
 					if (thisC.size() > 1)
 					{

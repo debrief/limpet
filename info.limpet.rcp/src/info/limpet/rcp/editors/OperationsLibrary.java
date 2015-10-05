@@ -21,7 +21,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import tec.units.ri.unit.Units;
+import static javax.measure.unit.SI.*;
+import static javax.measure.unit.NonSI.*;
 
 public class OperationsLibrary
 {
@@ -89,24 +90,24 @@ public class OperationsLibrary
 		List<IOperation<?>> conversions = new ArrayList<IOperation<?>>();
 
 		// Length
-		conversions.add(new UnitConversionOperation(Units.METRE));
+		conversions.add(new UnitConversionOperation(METRE));
 
 		// Time
-		conversions.add(new UnitConversionOperation(Units.SECOND));
-		conversions.add(new UnitConversionOperation(Units.MINUTE));
+		conversions.add(new UnitConversionOperation(SECOND));
+		conversions.add(new UnitConversionOperation(MINUTE));
 
 		// Speed
-		conversions.add(new UnitConversionOperation(Units.METRES_PER_SECOND));
+		conversions.add(new UnitConversionOperation(METRES_PER_SECOND));
 
 		// Acceleration
 		conversions
-				.add(new UnitConversionOperation(Units.METRES_PER_SQUARE_SECOND));
+				.add(new UnitConversionOperation(METRES_PER_SQUARE_SECOND));
 
 		// Temperature
-		conversions.add(new UnitConversionOperation(Units.CELSIUS));
+		conversions.add(new UnitConversionOperation(CELSIUS));
 
 		// Angle
-		conversions.add(new UnitConversionOperation(Units.RADIAN));
+		conversions.add(new UnitConversionOperation(RADIAN));
 		conversions.add(new UnitConversionOperation(StockTypes.DEGREE_ANGLE));
 		return conversions;
 	}

@@ -4,6 +4,7 @@ import info.limpet.ICollection;
 import info.limpet.ICommand;
 import info.limpet.IObjectCollection;
 import info.limpet.IQuantityCollection;
+import info.limpet.QuantityRange;
 import info.limpet.data.impl.ObjectCollection;
 import info.limpet.data.impl.QuantityCollection;
 import info.limpet.data.impl.samples.StockTypes.Temporal.ElapsedTime_Sec;
@@ -16,12 +17,9 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import javax.measure.Measure;
 import javax.measure.quantity.Dimensionless;
-import javax.measure.quantity.Speed;
-
-import tec.units.ri.quantity.Quantities;
-import tec.units.ri.quantity.QuantityRange;
-import tec.units.ri.unit.Units;
+import javax.measure.quantity.Velocity;
 
 public class SampleData
 {
@@ -63,7 +61,7 @@ public class SampleData
 		IObjectCollection<String> string1 = new ObjectCollection<String>(STRING_ONE);
 		IObjectCollection<String> string2 = new ObjectCollection<String>(STRING_TWO);
 		IQuantityCollection<Dimensionless> singleton1 = new QuantityCollection<Dimensionless>(
-				FLOATING_POINT_FACTOR, Units.ONE.asType(Dimensionless.class));
+				FLOATING_POINT_FACTOR, Dimensionless.UNIT);
 		StockTypes.NonTemporal.Speed_MSec singletonRange1 = new StockTypes.NonTemporal.Speed_MSec(
 				RANGED_SPEED_SINGLETON);
 		StockTypes.NonTemporal.Length_M singletonLength = new StockTypes.NonTemporal.Length_M(
@@ -112,10 +110,10 @@ public class SampleData
 		// give the singleton a value
 		singleton1.add(4d);
 		singletonRange1.add(998);
-		@SuppressWarnings("unchecked")
-		QuantityRange<Speed> speedRange = QuantityRange.of(
-				Quantities.getQuantity(940d, singletonRange1.getUnits()),
-				Quantities.getQuantity(1050d, singletonRange1.getUnits()), null);
+		Measure<Double, Velocity> minR = Measure.valueOf(940d, singletonRange1.getUnits());
+		Measure<Double, Velocity> maxR = Measure.valueOf(1050d, singletonRange1.getUnits()); 
+		QuantityRange<Velocity> speedRange = new QuantityRange<Velocity>(
+				minR, maxR);
 		singletonRange1.setRange(speedRange);
 
 		singletonLength.add(12d);
