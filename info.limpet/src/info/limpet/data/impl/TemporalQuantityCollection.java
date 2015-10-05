@@ -37,6 +37,27 @@ public class TemporalQuantityCollection<T extends Quantity> extends
 		super(name);
 		_qHelper = new QuantityHelper<T>((ArrayList<Measurable<T>>) _values, units);
 	}
+	
+	
+
+	@Override
+	public void add(long time, Measurable<T> object)
+	{
+		if(object instanceof Measure)
+		{
+			Measure<?, ?> oM = (Measure<?, ?>) object;
+			Unit<?> hisUnits = oM.getUnit();
+			if(getUnits() != null)
+			{
+				if(!getUnits().equals(hisUnits))
+				{
+					throw new RuntimeException("Measurement is in wrong units");
+				}
+			}
+		}
+		// double-check the units
+		super.add(time, object);
+	}
 
 	@Override
 	public void add(long time, Number value)
