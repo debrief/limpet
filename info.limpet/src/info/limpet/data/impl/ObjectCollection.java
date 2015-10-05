@@ -4,11 +4,10 @@ import info.limpet.IChangeListener;
 import info.limpet.ICommand;
 import info.limpet.IObjectCollection;
 
+import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-
 
 public class ObjectCollection<T extends Object> implements IObjectCollection<T>
 {
@@ -19,7 +18,7 @@ public class ObjectCollection<T extends Object> implements IObjectCollection<T>
 	private final ICommand<?> _precedent;
 	private final List<ICommand<?>> _dependents;
 	private final ListenerHelper _changeSupport;
-	
+
 	public ObjectCollection(String name)
 	{
 		this(name, null);
@@ -31,8 +30,8 @@ public class ObjectCollection<T extends Object> implements IObjectCollection<T>
 		_precedent = precedent;
 		_dependents = new ArrayList<ICommand<?>>();
 		_changeSupport = new ListenerHelper();
-	}	
-	
+	}
+
 	@Override
 	public String getDescription()
 	{
@@ -110,20 +109,19 @@ public class ObjectCollection<T extends Object> implements IObjectCollection<T>
 	{
 		_changeSupport.add(listener);
 	}
-	
+
 	@Override
 	public void removeChangeListener(IChangeListener listener)
 	{
 		_changeSupport.remove(listener);
 	}
-	
 
 	@Override
 	public void fireChanged()
 	{
 		// tell any standard listeners
 		_changeSupport.fireChange(this);
-		
+
 		// now tell the dependents
 		Iterator<ICommand<?>> iter = _dependents.iterator();
 		while (iter.hasNext())
@@ -133,5 +131,12 @@ public class ObjectCollection<T extends Object> implements IObjectCollection<T>
 		}
 	}
 
-	
+	@Override
+	public Class<?> returnedClass()
+	{
+		ParameterizedType parameterizedType = (ParameterizedType) getClass()
+				.getGenericSuperclass();
+		return (Class<?>) parameterizedType.getActualTypeArguments()[0];
+	}
+
 }
