@@ -22,4 +22,10 @@ public interface ICollection
 	 *  Note: both registeered listeners and dependents are informed of the change
 	 */
 	public void fireChanged();
+	
+	/** what type is stored in collection
+	 * 
+	 * @return
+	 */
+	Class<?> storedClass();
 }

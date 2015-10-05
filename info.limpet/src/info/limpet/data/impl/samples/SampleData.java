@@ -8,6 +8,7 @@ import info.limpet.QuantityRange;
 import info.limpet.data.impl.ObjectCollection;
 import info.limpet.data.impl.QuantityCollection;
 import info.limpet.data.impl.samples.StockTypes.Temporal.ElapsedTime_Sec;
+import info.limpet.data.impl.samples.StockTypes.Temporal.Location;
 import info.limpet.data.operations.AddQuantityOperation;
 import info.limpet.data.operations.MultiplyQuantityOperation;
 import info.limpet.data.store.InMemoryStore;
@@ -21,6 +22,14 @@ import javax.measure.Measure;
 import javax.measure.quantity.Dimensionless;
 import javax.measure.quantity.Velocity;
 
+import org.geotools.geometry.DirectPosition2D;
+import org.geotools.geometry.GeometryBuilder;
+import org.geotools.referencing.GeodeticCalculator;
+import org.geotools.referencing.crs.DefaultGeographicCRS;
+import org.opengis.geometry.DirectPosition;
+import org.opengis.geometry.primitive.Point;
+import org.opengis.referencing.operation.TransformException;
+
 public class SampleData
 {
 	public static final String SPEED_IRREGULAR2 = "Speed two irregular time";
@@ -33,6 +42,8 @@ public class SampleData
 	public static final String ANGLE_ONE = "Angle One Time";
 	public static final String SPEED_ONE = "Speed One Time";
 	public static final String SPEED_TWO = "Speed Two Time";
+	public static final String TRACK_ONE = "Track One Time";
+	public static final String TRACK_TWO = "Track Two Time";
 	public static final String SPEED_EARLY = "Speed Two Time (earlier)";
 	public static final String RANGED_SPEED_SINGLETON = "Ranged Speed Singleton";
 	public static final String FLOATING_POINT_FACTOR = "Floating point factor";
@@ -68,8 +79,18 @@ public class SampleData
 				LENGTH_SINGLETON);
 		ElapsedTime_Sec timeIntervals = new StockTypes.Temporal.ElapsedTime_Sec(
 				TIME_INTERVALS);
+		Location track_1 = new StockTypes.Temporal.Location(TRACK_ONE);
+		Location track_2 = new StockTypes.Temporal.Location(TRACK_TWO);
 
 		long thisTime = 0;
+		
+		// get ready for the track generation
+		GeometryBuilder builder = new GeometryBuilder( DefaultGeographicCRS.WGS84 );
+		GeodeticCalculator geoCalc = new GeodeticCalculator(DefaultGeographicCRS.WGS84);
+		DirectPosition pos_1 = new DirectPosition2D(-4,  55.8);
+		DirectPosition pos_2 = new DirectPosition2D(-4.2,  54.9);
+		
+		
 
 		for (int i = 1; i <= count; i++)
 		{
@@ -102,6 +123,32 @@ public class SampleData
 			string1.add("item " + i);
 			string2.add("item " + (i % 3));
 			timeIntervals.add(thisTime, (4 + Math.sin(Math.toRadians(i) + 3.4 * Math.random())));
+			
+			// sort out the tracks
+			try
+			{
+				geoCalc.setStartingGeographicPoint(pos_1.getOrdinate(0), pos_1.getOrdinate(1));
+				geoCalc.setDirection(Math.toRadians(77 - (i * 4)), 554);
+				pos_1 = geoCalc.getDestinationPosition();				
+				Point p1 = builder.createPoint(pos_1.getOrdinate(0), pos_1.getOrdinate(1));
+
+				
+				geoCalc.setStartingGeographicPoint(pos_2.getOrdinate(0), pos_2.getOrdinate(1));
+				geoCalc.setDirection(Math.toRadians(54 + (i * 5)), 133);
+				pos_2 = geoCalc.getDestinationPosition();
+				Point p2 = builder.createPoint(pos_2.getOrdinate(0), pos_2.getOrdinate(1));
+
+				track_1.add(thisTime, p1);
+				track_2.add(thisTime, p2);
+				
+			}
+			catch (TransformException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		
 		}
 
 		// add an extra item to speedSeries3
@@ -134,6 +181,8 @@ public class SampleData
 		list.add(singletonRange1);
 		list.add(singletonLength);
 		list.add(timeIntervals);
+		list.add(track_1);
+		list.add(track_2);
 
 		res.addAll(list);
 

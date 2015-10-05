@@ -1,19 +1,24 @@
 package info.limpet.data.impl.samples;
 
-import info.limpet.data.impl.QuantityCollection;
-import info.limpet.data.impl.TemporalQuantityCollection;
+import static javax.measure.unit.SI.HERTZ;
+import static javax.measure.unit.SI.METRE;
+import static javax.measure.unit.SI.RADIAN;
+import static javax.measure.unit.SI.SECOND;
 import info.limpet.data.impl.ObjectCollection;
+import info.limpet.data.impl.QuantityCollection;
 import info.limpet.data.impl.TemporalObjectCollection;
+import info.limpet.data.impl.TemporalQuantityCollection;
 
 import javax.measure.quantity.Acceleration;
 import javax.measure.quantity.Angle;
 import javax.measure.quantity.Dimensionless;
+import javax.measure.quantity.Duration;
 import javax.measure.quantity.Frequency;
 import javax.measure.quantity.Length;
-import javax.measure.quantity.Duration;
 import javax.measure.quantity.Velocity;
-import static javax.measure.unit.SI.*;
 import javax.measure.unit.Unit;
+
+import org.opengis.geometry.Geometry;
 
 public class StockTypes
 {
@@ -103,10 +108,9 @@ public class StockTypes
 			}
 		}
 
-		public static class Locations extends
-				TemporalObjectCollection<TmpLocationItem>
+		public static class Location extends TemporalObjectCollection<Geometry>
 		{
-			public Locations(String name)
+			public Location(String name)
 			{
 				super(name);
 			}
@@ -156,13 +160,15 @@ public class StockTypes
 			}
 		}
 
-		public static class Locations extends ObjectCollection<TmpLocationItem>
+		public static class Location extends ObjectCollection<Geometry>
 		{
-			public Locations(String name)
+			public Location(String name)
 			{
 				super(name);
 			}
 		}
+		
+
 
 	}
 

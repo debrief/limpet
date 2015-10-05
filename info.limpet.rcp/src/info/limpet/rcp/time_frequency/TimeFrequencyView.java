@@ -104,7 +104,7 @@ public class TimeFrequencyView extends CoreAnalysisView
 		{
 			ICollection iCollection = (ICollection) iter.next();
 			TimeFrequencyBins.BinnedData bins = null;
-			if (iCollection.isQuantity())
+			if (iCollection.isTemporal())
 			{
 				if (iCollection.size() > 1)
 				{
@@ -168,7 +168,9 @@ public class TimeFrequencyView extends CoreAnalysisView
 			CollectionComplianceTests tests)
 	{
 		// are all the items of the same type?
-		return (tests.nonEmpty(res) && tests.allTemporal(res));
+		boolean isValid = tests.nonEmpty(res) && tests.allTemporal(res);
+		chart.setVisible(isValid);
+		return isValid;
 	}
 
 	@Override

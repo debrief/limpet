@@ -125,7 +125,7 @@ public abstract class ObjectFrequencyBins extends CoreAnalysis
 
 	private boolean appliesTo(List<ICollection> selection)
 	{
-		return aTests.allNonQuantity(selection);
+		return aTests.allNonQuantity(selection)  && aTests.allNonLocation(selection);
 	}
 
 	abstract protected void presentResults(List<String> titles,
