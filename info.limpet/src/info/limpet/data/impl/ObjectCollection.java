@@ -5,6 +5,7 @@ import info.limpet.ICommand;
 import info.limpet.IObjectCollection;
 
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -134,9 +135,18 @@ public class ObjectCollection<T extends Object> implements IObjectCollection<T>
 	@Override
 	public Class<?> storedClass()
 	{
-		ParameterizedType parameterizedType = (ParameterizedType) getClass()
-				.getGenericSuperclass();
-		return (Class<?>) parameterizedType.getActualTypeArguments()[0];
+		@SuppressWarnings("unchecked")
+		final Class<? extends ObjectCollection<?>> thisClass = (Class<? extends ObjectCollection<?>>) getClass();
+		final Type superType = thisClass.getGenericSuperclass();
+		if (superType instanceof ParameterizedType)
+		{
+			final ParameterizedType parameterizedType = (ParameterizedType) superType;
+			return (Class<?>) parameterizedType.getActualTypeArguments()[0];
+		}
+		else
+		{
+			return null;
+		}
 	}
 
 }

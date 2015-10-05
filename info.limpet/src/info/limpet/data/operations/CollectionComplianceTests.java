@@ -36,11 +36,11 @@ public class CollectionComplianceTests
 		// are they all non location?
 		boolean allValid = true;
 
-		for (int i = 0; i < selection.size(); i++)
+		for (int i = 0; i < selection.size();)
 		{
 			ICollection thisC = selection.get(i);
 			Class<?> theClass = thisC.storedClass();
-			if (theClass.equals(Geometry.class))
+			if (Geometry.class.equals(theClass));
 			{
 				allValid = false;
 				break;
@@ -64,7 +64,7 @@ public class CollectionComplianceTests
 		{
 			ICollection thisC = selection.get(i);
 			Class<?> theClass = thisC.storedClass();
-			if (!theClass.equals(Geometry.class))
+			if (!Geometry.class.equals(theClass))
 			{
 				allValid = false;
 				break;
