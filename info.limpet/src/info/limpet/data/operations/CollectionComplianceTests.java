@@ -8,6 +8,8 @@ import java.util.List;
 import javax.measure.unit.Dimension;
 import javax.measure.unit.Unit;
 
+import org.opengis.geometry.Geometry;
+
 public class CollectionComplianceTests
 {
 
@@ -23,6 +25,56 @@ public class CollectionComplianceTests
 		return selection.size() == num;
 	}
 
+	/**
+	 * check if the series are all non locations
+	 * 
+	 * @param selection
+	 * @return true/false
+	 */
+	public boolean allNonLocation(List<ICollection> selection)
+	{
+		// are they all non location?
+		boolean allValid = true;
+
+		for (int i = 0; i < selection.size(); i++)
+		{
+			ICollection thisC = selection.get(i);
+			Class<?> theClass = thisC.returnedClass();
+			if (theClass.equals(Geometry.class))
+			{
+				allValid = false;
+				break;
+			}
+		}
+		return allValid;
+	}
+	
+	/**
+	 * check if the series are all non locations
+	 * 
+	 * @param selection
+	 * @return true/false
+	 */
+	public boolean allLocation(List<ICollection> selection)
+	{
+		// are they all non location?
+		boolean allValid = true;
+
+		for (int i = 0; i < selection.size(); i++)
+		{
+			ICollection thisC = selection.get(i);
+			Class<?> theClass = thisC.returnedClass();
+			if (!theClass.equals(Geometry.class))
+			{
+				allValid = false;
+				break;
+			}
+		}
+		return allValid;
+	}
+
+
+	
 	/**
 	 * check if the series are all quantity datasets
 	 * 
