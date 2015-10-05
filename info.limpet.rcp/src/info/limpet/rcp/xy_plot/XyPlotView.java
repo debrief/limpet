@@ -3,6 +3,7 @@ package info.limpet.rcp.xy_plot;
 import info.limpet.ICollection;
 import info.limpet.IQuantityCollection;
 import info.limpet.ITemporalQuantityCollection;
+import info.limpet.data.impl.samples.StockTypes.Temporal.Location;
 import info.limpet.data.operations.CollectionComplianceTests;
 import info.limpet.rcp.PlottingHelpers;
 import info.limpet.rcp.core_view.CoreAnalysisView;
@@ -16,6 +17,7 @@ import javax.measure.quantity.Quantity;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.opengis.geometry.Geometry;
 import org.swtchart.Chart;
 import org.swtchart.IAxis;
 import org.swtchart.ILineSeries;
@@ -95,7 +97,14 @@ public class XyPlotView extends CoreAnalysisView
 		}
 		else
 		{
-			chart.setVisible(false);
+			// exception - show locations
+			if (aTests.allLocation(res))
+			{
+				showLocations(res);
+				chart.setVisible(true);
+			}
+			else
+				chart.setVisible(false);
 		}
 	}
 
@@ -187,7 +196,6 @@ public class XyPlotView extends CoreAnalysisView
 									+ ")";
 							ILineSeries newSeries = (ILineSeries) chart.getSeriesSet()
 									.createSeries(SeriesType.LINE, seriesName);
-							newSeries.setSymbolType(PlotSymbolType.NONE);
 							newSeries.setLineColor(PlottingHelpers.colorFor(seriesName));
 
 							Date[] xData = new Date[thisQ.size()];
@@ -218,6 +226,75 @@ public class XyPlotView extends CoreAnalysisView
 
 							chart.redraw();
 						}
+					}
+				}
+			}
+		}
+	}
+
+	private void showLocations(List<ICollection> res)
+	{
+		Iterator<ICollection> iter = res.iterator();
+
+		// clear the graph
+		ISeries[] series = chart.getSeriesSet().getSeries();
+		for (int i = 0; i < series.length; i++)
+		{
+			ISeries iSeries = series[i];
+			chart.getSeriesSet().deleteSeries(iSeries.getId());
+		}
+
+		while (iter.hasNext())
+		{
+			ICollection coll = (ICollection) iter.next();
+			if (!coll.isQuantity())
+			{
+				if (coll.size() > 1)
+				{
+					if (coll.size() < maxSize)
+					{
+						final List<Geometry> values;
+
+						if (coll.isTemporal())
+						{
+							info.limpet.data.impl.samples.StockTypes.Temporal.Location loc = (Location) coll;
+							values = loc.getValues();
+						}
+						else
+						{
+							info.limpet.data.impl.samples.StockTypes.NonTemporal.Location loc = (info.limpet.data.impl.samples.StockTypes.NonTemporal.Location) coll;
+							values = loc.getValues();
+						}
+
+						String seriesName = coll.getName();
+						ILineSeries newSeries = (ILineSeries) chart.getSeriesSet()
+								.createSeries(SeriesType.LINE, seriesName);
+						newSeries.setSymbolType(PlotSymbolType.NONE);
+						newSeries.setLineColor(PlottingHelpers.colorFor(seriesName));
+
+						double[] xData = new double[values.size()];
+						double[] yData = new double[values.size()];
+
+						Iterator<Geometry> vIter = values.iterator();
+
+						int ctr = 0;
+						while (vIter.hasNext())
+						{
+							Geometry geom = vIter.next();
+							xData[ctr] = geom.getRepresentativePoint().getOrdinate(0);
+							yData[ctr++] = geom.getRepresentativePoint().getOrdinate(1);
+						}
+
+						newSeries.setXSeries(xData);
+						newSeries.setYSeries(yData);
+
+						newSeries.setSymbolType(PlotSymbolType.CROSS);
+
+						// adjust the axis range
+						chart.getAxisSet().adjustRange();
+
+						chart.redraw();
+
 					}
 				}
 			}

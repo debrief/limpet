@@ -128,13 +128,13 @@ public class SampleData
 			try
 			{
 				geoCalc.setStartingGeographicPoint(pos_1.getOrdinate(0), pos_1.getOrdinate(1));
-				geoCalc.setDirection(Math.toRadians(77 - (i % 4)), 0.004);
+				geoCalc.setDirection(Math.toRadians(77 - (i * 4)), 554);
 				pos_1 = geoCalc.getDestinationPosition();				
 				Point p1 = builder.createPoint(pos_1.getOrdinate(0), pos_1.getOrdinate(1));
 
 				
 				geoCalc.setStartingGeographicPoint(pos_2.getOrdinate(0), pos_2.getOrdinate(1));
-				geoCalc.setDirection(Math.toRadians(54 + (i % 10)), 0.003);
+				geoCalc.setDirection(Math.toRadians(54 + (i * 5)), 133);
 				pos_2 = geoCalc.getDestinationPosition();
 				Point p2 = builder.createPoint(pos_2.getOrdinate(0), pos_2.getOrdinate(1));
 
