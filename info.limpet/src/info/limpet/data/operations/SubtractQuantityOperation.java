@@ -22,7 +22,7 @@ public class SubtractQuantityOperation<Q extends Quantity> implements
 {
 	CollectionComplianceTests aTests = new CollectionComplianceTests();
 
-	public static final String SUM_OF_INPUT_SERIES = "Sum of input series";
+	public static final String DIFFERENCE_OF_INPUT_SERIES = "Difference of input series";
 
 	final protected String outputName;
 
@@ -33,7 +33,7 @@ public class SubtractQuantityOperation<Q extends Quantity> implements
 
 	public SubtractQuantityOperation()
 	{
-		this(SUM_OF_INPUT_SERIES);
+		this(DIFFERENCE_OF_INPUT_SERIES);
 	}
 
 	@SuppressWarnings(

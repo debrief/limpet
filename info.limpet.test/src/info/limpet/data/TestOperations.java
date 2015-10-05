@@ -7,6 +7,20 @@ import static javax.measure.unit.NonSI.MINUTE;
 import static javax.measure.unit.SI.KILO;
 import static javax.measure.unit.SI.METRE;
 import static javax.measure.unit.SI.METRES_PER_SECOND;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.measure.Measurable;
+import javax.measure.Measure;
+import javax.measure.converter.UnitConverter;
+import javax.measure.quantity.Angle;
+import javax.measure.quantity.Length;
+import javax.measure.quantity.Velocity;
+import javax.measure.unit.Unit;
+
 import info.limpet.ICollection;
 import info.limpet.ICommand;
 import info.limpet.IQuantityCollection;
@@ -18,21 +32,9 @@ import info.limpet.data.operations.AddQuantityOperation;
 import info.limpet.data.operations.CollectionComplianceTests;
 import info.limpet.data.operations.MultiplyQuantityOperation;
 import info.limpet.data.operations.SimpleMovingAverageOperation;
+import info.limpet.data.operations.SubtractQuantityOperation;
 import info.limpet.data.operations.UnitConversionOperation;
 import info.limpet.data.store.InMemoryStore;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.measure.Measurable;
-import javax.measure.Measure;
-import javax.measure.converter.UnitConverter;
-import javax.measure.quantity.Length;
-import javax.measure.quantity.Velocity;
-import javax.measure.unit.Unit;
-
 import junit.framework.TestCase;
 
 
@@ -401,5 +403,64 @@ public class TestOperations extends TestCase
 
 		assertEquals(average, simpleMovingAverage.doubleValue(newS.getUnits()), 0);
 		
+	}
+	
+	@SuppressWarnings(
+	{ "rawtypes", "unchecked" })
+	public void testSubtraction()
+	{
+		InMemoryStore store = new SampleData().getData(10);
+		int storeSize = store.size();
+		List<ICollection> selection = new ArrayList<ICollection>(3);
+		
+		// test invalid dimensions
+		IQuantityCollection<Velocity> speed_good_1 = (IQuantityCollection<Velocity>) store.get(SampleData.SPEED_ONE);
+		IQuantityCollection<Angle> angle_1 = (IQuantityCollection<Angle>) store.get(SampleData.ANGLE_ONE);
+		selection.add(speed_good_1);
+		selection.add(angle_1);
+		Collection<ICommand<ICollection>> commands = new SubtractQuantityOperation()
+			.actionsFor(selection, store);
+		assertEquals("invalid collections - not same dimensions", 0, commands.size());
+		
+		selection.clear();
+		
+		// test not all quantities
+		ICollection string_1 = store.get(SampleData.STRING_ONE);
+		selection.add(speed_good_1);
+		selection.add(string_1);
+		commands = new SubtractQuantityOperation()
+			.actionsFor(selection, store);
+		assertEquals("invalid collections - not all quantities", 0, commands.size());
+		
+		selection.clear();
+			
+		// test valid command
+		IQuantityCollection<Velocity> speed_good_2 = (IQuantityCollection<Velocity>) store.get(SampleData.SPEED_TWO);
+		selection.add(speed_good_1);
+		selection.add(speed_good_2);
+		
+		commands = new SubtractQuantityOperation()
+				.actionsFor(selection, store);
+			assertEquals("valid command", 2, commands.size());
+
+		ICommand<ICollection> command = commands.iterator().next();
+		command.execute();
+	
+		// test store has a new item in it
+		assertEquals("store not empty", storeSize + 1, store.size());
+	
+		IQuantityCollection<Velocity> newS = (IQuantityCollection<Velocity>) store.get(speed_good_2.getName() + " from " + speed_good_1.getName());
+	
+		assertNotNull(newS);
+		assertEquals("correct size", 10, newS.size());
+		
+		// assert same unit
+		assertEquals(newS.getUnits(), speed_good_1.getUnits());
+
+		double firstDifference = newS.getValues().get(0).doubleValue(newS.getUnits());
+		double speed1firstValue = speed_good_1.getValues().get(0).doubleValue(speed_good_1.getUnits());
+		double speed2firstValue = speed_good_2.getValues().get(0).doubleValue(speed_good_2.getUnits());
+		
+		assertEquals(firstDifference, speed1firstValue - speed2firstValue);
 	}
 }
