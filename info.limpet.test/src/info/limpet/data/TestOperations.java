@@ -9,6 +9,7 @@ import javax.measure.Measurable;
 import javax.measure.Measure;
 import javax.measure.converter.UnitConverter;
 import javax.measure.quantity.Length;
+import javax.measure.quantity.Quantity;
 import javax.measure.quantity.Velocity;
 import javax.measure.unit.Unit;
 
@@ -295,6 +296,7 @@ public class TestOperations extends TestCase
 		assertEquals("valid collections - one is singleton", 1, commands.size());
 	}
 
+	@SuppressWarnings("unchecked")
 	public void testUnitConversion()
 	{
 		// place to store results data
@@ -343,9 +345,8 @@ public class TestOperations extends TestCase
 		IQuantityCollection<?> outputSpeed = (IQuantityCollection<?>) newS;
 
 		// TODO: avoid suppressing these warnings
-		@SuppressWarnings("unchecked")
-		Measurable<Velocity> firstOutputSpeed = (Measurable<Velocity>) outputSpeed
-				.getValues().get(0);
+		Measurable<Velocity> outputMEas = (Measurable<Velocity>) outputSpeed.getValues().get(0);
+		double firstOutputSpeed = outputMEas.doubleValue((Unit<Velocity>)outputSpeed.getUnits());
 		
 		UnitConverter oc = inputSpeed.getUnits().getConverterTo(KILOMETERS_PER_HOUR);
 
