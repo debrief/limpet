@@ -39,6 +39,7 @@ public abstract class SimpleDescriptiveQuantity extends CoreAnalysis
 				for (Iterator<ICollection> iter = selection.iterator(); iter.hasNext();)
 				{
 					ICollection thisC = (ICollection) iter.next();
+					@SuppressWarnings("unchecked")
 					IQuantityCollection<Quantity> o = (IQuantityCollection<Quantity>) thisC;
 
 					// output some high level data
@@ -80,6 +81,7 @@ public abstract class SimpleDescriptiveQuantity extends CoreAnalysis
 						Iterator<?> iterV = o.getValues().iterator();
 						while (iterV.hasNext())
 						{
+							@SuppressWarnings("unchecked")
 							Measurable<Quantity> object = (Measurable<Quantity>) iterV.next();
 							data[ctr++] = object.doubleValue(o.getUnits());
 						}

@@ -153,6 +153,7 @@ public class DataFrequencyView extends CoreAnalysisView
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private void showQuantity(List<ICollection> res)
 	{
 		Iterator<ICollection> iter = res.iterator();

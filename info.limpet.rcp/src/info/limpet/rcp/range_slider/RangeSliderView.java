@@ -125,6 +125,7 @@ public class RangeSliderView extends CoreAnalysisView implements
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void display(List<ICollection> res)
 	{
@@ -148,6 +149,7 @@ public class RangeSliderView extends CoreAnalysisView implements
 		showData(_current);
 	}
 
+	@SuppressWarnings("unchecked")
 	private void showData(IQuantityCollection<Quantity> qc)
 	{
 

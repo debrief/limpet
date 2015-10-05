@@ -127,6 +127,7 @@ public class UnitConversionOperation implements IOperation<ICollection>
 		 * @param unit
 		 * @param outputs
 		 */
+		@SuppressWarnings("unchecked")
 		private void performCalc(List<ICollection> outputs)
 		{
 			IQuantityCollection<Quantity> target = (IQuantityCollection<Quantity>) outputs
@@ -148,10 +149,7 @@ public class UnitConversionOperation implements IOperation<ICollection>
 			for (int j = 0; j < singleInputSeries.getValues().size(); j++)
 			{
 
-				// TODO: figure out how to avoid the compiler warnings
 				Measurable<Quantity> thisValue = singleInputSeries.getValues().get(j);
-				// FIXME
-				//Measurable<Quantity> converted = converter.convert(thisValue.doubleValue(singleInputSeries.getUnits()));
 				double converted = converter.convert(thisValue.doubleValue(singleInputSeries.getUnits()));
 				target.add(converted);
 			}

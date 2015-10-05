@@ -56,6 +56,7 @@ public abstract class QuantityFrequencyBins extends CoreAnalysis
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public static BinnedData doBins(IQuantityCollection<Quantity> collection)
 	{
 		// collate the values into an array
@@ -127,6 +128,7 @@ public abstract class QuantityFrequencyBins extends CoreAnalysis
 				for (Iterator<ICollection> iter = selection.iterator(); iter.hasNext();)
 				{
 					ICollection thisC = (ICollection) iter.next();
+					@SuppressWarnings("unchecked")
 					IQuantityCollection<Quantity> o = (IQuantityCollection<Quantity>) thisC;
 
 					if (thisC.size() > 1)

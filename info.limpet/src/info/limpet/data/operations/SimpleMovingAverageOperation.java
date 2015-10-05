@@ -140,6 +140,7 @@ public class SimpleMovingAverageOperation implements IOperation<ICollection>
 			}
 
 			SimpleMovingAverage sma = new SimpleMovingAverage(winSize);
+			@SuppressWarnings("unchecked")
 			IQuantityCollection<Quantity> input = (IQuantityCollection<Quantity>) _inputs.get(0);
 
 			for (Measurable<Quantity> quantity : input.getValues())

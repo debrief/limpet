@@ -1,18 +1,13 @@
 package info.limpet.rcp.data_provider.data;
 
 import info.limpet.ICollection;
-import info.limpet.IObjectCollection;
 import info.limpet.IQuantityCollection;
-import info.limpet.QuantityRange;
-import info.limpet.data.impl.QuantityCollection;
-import info.limpet.rcp.propertyeditors.SliderPropertyDescriptor;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.measure.Measurable;
 import javax.measure.quantity.Quantity;
-import javax.measure.unit.Unit;
 
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
@@ -71,59 +66,28 @@ public class CollectionPropertySource implements IPropertySource
 			final PropertyDescriptor descriptionDescriptor = new TextPropertyDescriptor(
 					PROPERTY_DESCRIPTION, "Description");
 			descriptionDescriptor.setCategory("Label");
-			
+
 			// see if we want to add a value editor
 			if (_collection.getCollection().size() == 1)
 			{
-				// get the first item
-				final Measurable<Quantity> first = getSingleton();
-				boolean found = false;
+				// ok, just use a text editor
+				final PropertyDescriptor valueDescriptor = new TextPropertyDescriptor(
+						PROPERTY_VALUE, "Value");
+				valueDescriptor.setCategory("Value");
+				dList.add(valueDescriptor);
 
-				// does this have a range?
-				if(_collection.getCollection().isQuantity())
-				{
-					QuantityCollection<Quantity> qC = (QuantityCollection<Quantity>) _collection.getCollection();
-					QuantityRange<Quantity> range = qC.getRange();
-					if(range != null)
-					{
-						found = true;
-						
-						// ok - here we should create a descriptor for a control
-						// that uses a slider between a range of values
-						
-						// temporarily - just use a text descriptor
-						// FIXME
-						//Number max = range.getMaximum().doubleValue();
-						//Number min = range.getMinimum().doubleValue();
-						Integer max = new Integer("100");
-						Integer min = new Integer("100");
-						final PropertyDescriptor valueDescriptor = new SliderPropertyDescriptor(
-								PROPERTY_VALUE_SLIDER, "Value", min.intValue(), max.intValue());
-						valueDescriptor.setCategory("Value");
-						dList.add(valueDescriptor);
-					}
-				}
-				
-				if(!found)
-				{
-					// ok, just use a text editor
-					final PropertyDescriptor valueDescriptor = new TextPropertyDescriptor(
-							PROPERTY_VALUE, "Value");
-					valueDescriptor.setCategory("Value");
-					dList.add(valueDescriptor);
-				}
-				
 				// see if the type has any units
-				if(_collection.getCollection() instanceof IQuantityCollection)
+				if (_collection.getCollection() instanceof IQuantityCollection)
 				{
-					IQuantityCollection<?> qc = (IQuantityCollection<?>) _collection.getCollection();
-				if (qc.getUnits() != null)
-				{
-					final PropertyDescriptor unitsDescriptor = new PropertyDescriptor(
-							PROPERTY_UNITS, "Units");
-					unitsDescriptor.setCategory("Value");
-					dList.add(unitsDescriptor);
-				}
+					IQuantityCollection<?> qc = (IQuantityCollection<?>) _collection
+							.getCollection();
+					if (qc.getUnits() != null)
+					{
+						final PropertyDescriptor unitsDescriptor = new PropertyDescriptor(
+								PROPERTY_UNITS, "Units");
+						unitsDescriptor.setCategory("Value");
+						dList.add(unitsDescriptor);
+					}
 				}
 			}
 
@@ -137,6 +101,7 @@ public class CollectionPropertySource implements IPropertySource
 		return propertyDescriptors;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Object getPropertyValue(final Object id)
 	{
@@ -153,7 +118,7 @@ public class CollectionPropertySource implements IPropertySource
 			ICollection theColl = _collection.getCollection();
 			if (theColl instanceof IQuantityCollection<?>)
 			{
-				IQuantityCollection<Quantity> qc = (IQuantityCollection<Quantity>)theColl;
+				IQuantityCollection<Quantity> qc = (IQuantityCollection<Quantity>) theColl;
 				Measurable<Quantity> first = getSingleton();
 				if (first != null)
 				{
@@ -196,7 +161,7 @@ public class CollectionPropertySource implements IPropertySource
 	private Measurable<Quantity> getSingleton()
 	{
 		Measurable<Quantity> res = null;
-		// FIXME
+		@SuppressWarnings("unchecked")
 		final IQuantityCollection<Quantity> tt = (IQuantityCollection<Quantity>) _collection
 				.getCollection();
 		if (tt instanceof IQuantityCollection)

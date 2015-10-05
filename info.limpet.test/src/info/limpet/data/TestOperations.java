@@ -1,18 +1,12 @@
 package info.limpet.data;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.measure.Measurable;
-import javax.measure.Measure;
-import javax.measure.converter.UnitConverter;
-import javax.measure.quantity.Length;
-import javax.measure.quantity.Quantity;
-import javax.measure.quantity.Velocity;
-import javax.measure.unit.Unit;
-
+import static javax.measure.unit.NonSI.HOUR;
+import static javax.measure.unit.NonSI.KILOMETERS_PER_HOUR;
+import static javax.measure.unit.NonSI.KILOMETRES_PER_HOUR;
+import static javax.measure.unit.NonSI.MINUTE;
+import static javax.measure.unit.SI.KILO;
+import static javax.measure.unit.SI.METRE;
+import static javax.measure.unit.SI.METRES_PER_SECOND;
 import info.limpet.ICollection;
 import info.limpet.ICommand;
 import info.limpet.IQuantityCollection;
@@ -26,10 +20,20 @@ import info.limpet.data.operations.MultiplyQuantityOperation;
 import info.limpet.data.operations.SimpleMovingAverageOperation;
 import info.limpet.data.operations.UnitConversionOperation;
 import info.limpet.data.store.InMemoryStore;
-import junit.framework.TestCase;
 
-import static javax.measure.unit.SI.*;
-import static javax.measure.unit.NonSI.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.measure.Measurable;
+import javax.measure.Measure;
+import javax.measure.converter.UnitConverter;
+import javax.measure.quantity.Length;
+import javax.measure.quantity.Velocity;
+import javax.measure.unit.Unit;
+
+import junit.framework.TestCase;
 
 
 public class TestOperations extends TestCase
@@ -329,7 +333,7 @@ public class TestOperations extends TestCase
 		// test results is same length as thisSpeed
 		assertEquals("correct size", 10, newS.size());
 
-		// TODO: check that operation isn't offered if the dataset is already in
+		// check that operation isn't offered if the dataset is already in
 		// that type
 		commands = new UnitConversionOperation(METRES_PER_SECOND).actionsFor(
 				selection, store);
@@ -337,14 +341,11 @@ public class TestOperations extends TestCase
 
 		IQuantityCollection<?> inputSpeed = (IQuantityCollection<?>) speed_good_1;
 
-		// TODO: avoid suppressing these warnings
-		@SuppressWarnings("unchecked")
 		Measurable<Velocity> firstInputSpeed = (Measurable<Velocity>) inputSpeed.getValues()
 				.get(0);
 
 		IQuantityCollection<?> outputSpeed = (IQuantityCollection<?>) newS;
 
-		// TODO: avoid suppressing these warnings
 		Measurable<Velocity> outputMEas = (Measurable<Velocity>) outputSpeed.getValues().get(0);
 		double firstOutputSpeed = outputMEas.doubleValue((Unit<Velocity>)outputSpeed.getUnits());
 		

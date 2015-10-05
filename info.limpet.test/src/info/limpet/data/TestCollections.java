@@ -1,5 +1,10 @@
 package info.limpet.data;
 
+import static javax.measure.unit.NonSI.HOUR;
+import static javax.measure.unit.SI.KILO;
+import static javax.measure.unit.SI.METRE;
+import static javax.measure.unit.SI.METRES_PER_SECOND;
+import static javax.measure.unit.SI.SECOND;
 import info.limpet.IBaseTemporalCollection;
 import info.limpet.IQuantityCollection;
 import info.limpet.IStore;
@@ -22,8 +27,6 @@ import javax.measure.quantity.Velocity;
 import javax.measure.unit.Unit;
 
 import junit.framework.TestCase;
-import static javax.measure.unit.SI.*;
-import static javax.measure.unit.NonSI.*;
 
 public class TestCollections extends TestCase
 {
@@ -46,6 +49,7 @@ public class TestCollections extends TestCase
 	public void testSampleData()
 	{
 		IStore data = new SampleData().getData(10);
+		@SuppressWarnings("unchecked")
 		IQuantityCollection<Quantity> ranged = (IQuantityCollection<Quantity>) data.get(SampleData.RANGED_SPEED_SINGLETON);
 		assertNotNull("found series", ranged);
 		
@@ -135,7 +139,7 @@ public class TestCollections extends TestCase
 	public void testCreateQuantity()
 	{
 		// the units for this measurement
-		Unit<Velocity> kmh = KILO(METRE).divide(HOUR)
+		Unit<Velocity> ms = METRE.divide(SECOND)
 				.asType(Velocity.class);
 
 		// the target collection
@@ -145,7 +149,7 @@ public class TestCollections extends TestCase
 		{
 			// create a measurement
 			double thisSpeed = i * 2;
-			Measurable<Velocity> speedVal = Measure.valueOf(thisSpeed, speedCollection.getUnits());
+			Measurable<Velocity> speedVal = Measure.valueOf(thisSpeed, ms);
 
 			// store the measurement
 			speedCollection.add(speedVal);

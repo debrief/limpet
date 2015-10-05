@@ -113,7 +113,6 @@ public class TemporalObjectCollection<T extends Object> extends
 		@Override
 		public void remove()
 		{
-			// TODO: make a decision. We probably don't want to implement this
 			throw new UnsupportedOperationException("Method not implemented");
 		}
 

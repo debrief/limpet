@@ -13,8 +13,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.measure.Measurable;
-import javax.measure.Measure;
 import javax.measure.quantity.Quantity;
 import javax.measure.unit.Unit;
 
@@ -83,6 +81,7 @@ public class DivideQuantityOperation implements IOperation<ICollection>
 		final IQuantityCollection<Quantity> _item1;
 		final IQuantityCollection<Quantity> _item2;
 
+		@SuppressWarnings("unchecked")
 		public DivideQuantityValues(String title, String outputName,
 				List<ICollection> selection, ICollection item1, ICollection item2,
 				IStore store)
@@ -129,6 +128,7 @@ public class DivideQuantityOperation implements IOperation<ICollection>
 			getStore().addAll(res);
 		}
 
+		@SuppressWarnings("unchecked")
 		private Unit<Quantity> calculateOutputUnit()
 		{
 			Iterator<ICollection> inputsIterator = _inputs.iterator();
@@ -161,6 +161,7 @@ public class DivideQuantityOperation implements IOperation<ICollection>
 		 * @param unit
 		 * @param outputs
 		 */
+		@SuppressWarnings("unchecked")
 		private void performCalc(Unit<Quantity> unit, List<ICollection> outputs,
 				ICollection item1, ICollection item2)
 		{
