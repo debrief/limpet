@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry exported="true" kind="lib" path="libs/GeographicLib-Java-1.45.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/gt-geometry-14.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/gt-metadata-14.0.jar" sourcepath="/home/snpe/.m2/repository/org/geotools/gt-metadata/14.0/gt-metadata-14.0-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/gt-referencing-14.0.jar" sourcepath="/home/snpe/.m2/repository/org/geotools/gt-referencing/14.0/gt-referencing-14.0-sources.jar"/>
