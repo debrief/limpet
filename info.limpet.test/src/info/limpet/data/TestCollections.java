@@ -145,7 +145,7 @@ public class TestCollections extends TestCase
 		{
 			// create a measurement
 			double thisSpeed = i * 2;
-			Measurable<Velocity> speedVal = Measure.valueOf(thisSpeed, kmh);
+			Measurable<Velocity> speedVal = Measure.valueOf(thisSpeed, speedCollection.getUnits());
 
 			// store the measurement
 			speedCollection.add(speedVal);
@@ -155,9 +155,9 @@ public class TestCollections extends TestCase
 		assertEquals("correct number of samples", 10, speedCollection.size());
 		assertEquals("correct name", "Speed", speedCollection.getName());
 
-		assertEquals("correct min", 2d, speedCollection.min());
-		assertEquals("correct max", 20d, speedCollection.max());
-		assertEquals("correct mean", 11d, speedCollection.mean());
+		assertEquals("correct min", 2d, speedCollection.min().doubleValue(speedCollection.getUnits()));
+		assertEquals("correct max", 20d, speedCollection.max().doubleValue(speedCollection.getUnits()));
+		assertEquals("correct mean", 11d, speedCollection.mean().doubleValue(speedCollection.getUnits()));
 		assertEquals("correct variance", 33, speedCollection.variance().doubleValue(speedCollection.getUnits()), 0.1);
 		assertEquals("correct sd", 5.744, speedCollection.sd().doubleValue(speedCollection.getUnits()), 0.001);
 	}
@@ -186,25 +186,25 @@ public class TestCollections extends TestCase
 		Measurable<Velocity> theS = sc.getValues().iterator().next();
 
 		assertEquals("correct time", 12, time);
-		assertEquals("correct speed value", 5, theS.doubleValue(sc.getUnits()));
+		assertEquals("correct speed value", 5d, theS.doubleValue(sc.getUnits()));
 		assertEquals("correct speed units", kmh, sc.getUnits());
 
 		// ok, now add another
 		speedVal = Measure.valueOf(25, m_sec);
 
 		// store the measurement
-		boolean errorThrown = false;
+		Exception errorThrown = null;
 		try
 		{
 			sc.add(14, speedVal);
 		}
 		catch (Exception e)
 		{
-			errorThrown = true;
+			errorThrown = e;
 		}
 
 		// check the error got thrown
-		assertTrue("runtime got thrown", errorThrown);
+		assertNotNull("runtime got thrown", errorThrown);
 
 		// check it didn't get stored
 		assertEquals("correct number of samples", 1, sc.size());
