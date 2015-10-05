@@ -132,7 +132,7 @@ public class ObjectCollection<T extends Object> implements IObjectCollection<T>
 	}
 
 	@Override
-	public Class<?> returnedClass()
+	public Class<?> storedClass()
 	{
 		ParameterizedType parameterizedType = (ParameterizedType) getClass()
 				.getGenericSuperclass();

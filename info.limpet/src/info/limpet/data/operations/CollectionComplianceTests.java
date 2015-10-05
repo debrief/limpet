@@ -39,7 +39,7 @@ public class CollectionComplianceTests
 		for (int i = 0; i < selection.size(); i++)
 		{
 			ICollection thisC = selection.get(i);
-			Class<?> theClass = thisC.returnedClass();
+			Class<?> theClass = thisC.storedClass();
 			if (theClass.equals(Geometry.class))
 			{
 				allValid = false;
@@ -63,7 +63,7 @@ public class CollectionComplianceTests
 		for (int i = 0; i < selection.size(); i++)
 		{
 			ICollection thisC = selection.get(i);
-			Class<?> theClass = thisC.returnedClass();
+			Class<?> theClass = thisC.storedClass();
 			if (!theClass.equals(Geometry.class))
 			{
 				allValid = false;
