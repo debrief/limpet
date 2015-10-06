@@ -11,6 +11,7 @@ import info.limpet.data.operations.MultiplyQuantityOperation;
 import info.limpet.data.operations.SimpleMovingAverageOperation;
 import info.limpet.data.operations.SubtractQuantityOperation;
 import info.limpet.data.operations.UnitConversionOperation;
+import info.limpet.data.operations.location.BearingBetweenTracksOperation;
 import info.limpet.data.operations.location.DistanceBetweenTracksOperation;
 import info.limpet.rcp.analysis_view.AnalysisView;
 import info.limpet.rcp.data_frequency.DataFrequencyView;
@@ -91,6 +92,7 @@ public class OperationsLibrary
 	{
 		List<IOperation<?>> spatial = new ArrayList<IOperation<?>>();
 		spatial.add(new DistanceBetweenTracksOperation());
+		spatial.add(new BearingBetweenTracksOperation());
 		return spatial;
 	}
 

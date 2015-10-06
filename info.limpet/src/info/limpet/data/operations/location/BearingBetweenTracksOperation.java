@@ -5,6 +5,7 @@ import info.limpet.ICommand;
 import info.limpet.IQuantityCollection;
 import info.limpet.IStore;
 import info.limpet.data.impl.samples.StockTypes;
+import info.limpet.data.impl.samples.StockTypes.NonTemporal.Angle_Degrees;
 import info.limpet.data.impl.samples.StockTypes.NonTemporal.Length_M;
 
 import java.util.ArrayList;
@@ -16,11 +17,11 @@ import javax.measure.Measure;
 import org.geotools.referencing.GeodeticCalculator;
 import org.opengis.geometry.primitive.Point;
 
-public class DistanceBetweenTracksOperation extends TwoTrackOperation
+public class BearingBetweenTracksOperation extends TwoTrackOperation
 {
 	public static final String OUTPUT_NAME = "Sum of input series";
 
-	public DistanceBetweenTracksOperation()
+	public BearingBetweenTracksOperation()
 	{
 		super(OUTPUT_NAME);
 	}
@@ -32,26 +33,28 @@ public class DistanceBetweenTracksOperation extends TwoTrackOperation
 		if (appliesTo(selection))
 		{
 			ICommand<ICollection> newC = new DistanceOperation(outputName, selection,
-					destination, "Distance between tracks", "Calculate distance between two tracks")
+					destination, "Bearing between tracks",
+					"Calculate bearing between two tracks")
 			{
 
 				protected IQuantityCollection<?> getOutputCollection(String title)
 				{
-					return new StockTypes.NonTemporal.Length_M("Distance between " + title);
+					return new StockTypes.NonTemporal.Angle_Degrees("Bearing between "
+							+ title);
 				}
 
-				protected void calcAndStore(final GeodeticCalculator calc, final Point locA,
-						final Point locB)
+				protected void calcAndStore(final GeodeticCalculator calc,
+						final Point locA, final Point locB)
 				{
 					// get the output dataset
-					Length_M target = (Length_M) _outputs.get(0);
+					Angle_Degrees target = (Angle_Degrees) _outputs.get(0);
 
 					// now find the range between them
-					calc.setStartingGeographicPoint(locA.getCentroid().getOrdinate(0), locA
-							.getCentroid().getOrdinate(1));
+					calc.setStartingGeographicPoint(locA.getCentroid().getOrdinate(0),
+							locA.getCentroid().getOrdinate(1));
 					calc.setDestinationGeographicPoint(locB.getCentroid().getOrdinate(0),
 							locB.getCentroid().getOrdinate(1));
-					double thisDist = calc.getOrthodromicDistance();
+					double thisDist = calc.getAzimuth();
 					target.add(Measure.valueOf(thisDist, target.getUnits()));
 				}
 			};
