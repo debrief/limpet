@@ -5,16 +5,20 @@ import info.limpet.ICommand;
 import info.limpet.IOperation;
 import info.limpet.IStore;
 import info.limpet.data.operations.GenerateDummyDataOperation;
+import info.limpet.data.persistence.xml.XStreamHandler;
 import info.limpet.data.store.InMemoryStore;
 import info.limpet.data.store.InMemoryStore.StoreChangeListener;
 import info.limpet.rcp.data_provider.data.DataModel;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
@@ -43,12 +47,24 @@ public class DataManagerEditor extends EditorPart implements
 		StoreChangeListener
 {
 
-	private DataProviderEditorInput _dataProviderEditorInput;
+	private IStore _store;
 	private TreeViewer viewer;
 	private IMenuListener _menuListener;
 	private Action action1;
 	private Action refreshView;
 	private Action generateData;
+	private boolean _dirty = false;
+	private DataModel _model;
+	private StoreChangeListener _changeListener = new StoreChangeListener()
+	{
+		
+		@Override
+		public void changed()
+		{
+			_dirty = true;
+			firePropertyChange(PROP_DIRTY);
+		}
+	};
 
 	@Override
 	public void init(IEditorSite site, IEditorInput input)
@@ -56,27 +72,28 @@ public class DataManagerEditor extends EditorPart implements
 	{
 		// FIXME we will support FileEditorInput, FileStoreEditorInput and
 		// FileRevisionEditorInput
-		if (!(input instanceof DataProviderEditorInput))
+		if (input instanceof IFileEditorInput)
 		{
-			// throw new RuntimeException("Invalid input");
-			// FIXME temporary workaround
-			if (input instanceof IFileEditorInput)
+			try
 			{
-				input = new DataProviderEditorInput(new DataModel());
+				_store = new XStreamHandler().load(((IFileEditorInput)input).getFile());
+			}
+			catch (Exception e)
+			{
+				// FIXME temporary workaround
+				_store = new InMemoryStore();
 			}
 		}
-
-		_dataProviderEditorInput = (DataProviderEditorInput) input;
-
+		_store.addChangeListener(_changeListener);
 		setSite(site);
 		setInput(input);
+		setPartName(input.getName());
 	}
 
 	@Override
 	public boolean isDirty()
 	{
-		// TODO will be implemented
-		return false;
+		return _dirty ;
 	}
 
 	@Override
@@ -90,9 +107,10 @@ public class DataManagerEditor extends EditorPart implements
 	public void createPartControl(Composite parent)
 	{
 		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
-		viewer.setContentProvider(_dataProviderEditorInput.getModel());
+		_model = new DataModel();
+		viewer.setContentProvider(_model);
 		viewer.setLabelProvider(new LimpetLabelProvider());
-		viewer.setInput(new InMemoryStore());
+		viewer.setInput(_store);
 
 		getSite().setSelectionProvider(viewer);
 		makeActions();
@@ -102,11 +120,11 @@ public class DataManagerEditor extends EditorPart implements
 		fillLocalToolBar(bars.getToolBarManager());
 
 		// ok, setup as listener
-		InMemoryStore store = (InMemoryStore) viewer.getInput();
+		IStore store = (IStore) viewer.getInput();
 
 		if (store instanceof InMemoryStore)
 		{
-			InMemoryStore ms = (InMemoryStore) store;
+			IStore ms = (IStore) store;
 			ms.addChangeListener(this);
 		}
 
@@ -232,7 +250,7 @@ public class DataManagerEditor extends EditorPart implements
 		{
 			@SuppressWarnings("unchecked")
 			final IOperation<ICollection> op = (IOperation<ICollection>) oIter.next();
-			final IStore theStore = _dataProviderEditorInput.getModel().getStore();
+			final IStore theStore = _store;
 			Collection<ICommand<ICollection>> matches = op.actionsFor(selection,
 					theStore);
 
@@ -309,7 +327,23 @@ public class DataManagerEditor extends EditorPart implements
 	@Override
 	public void doSave(IProgressMonitor monitor)
 	{
-		// TODO
+		final IEditorInput input = getEditorInput();
+		// FIXME we will support FileEditorInput, FileStoreEditorInput and
+		// FileRevisionEditorInput
+		if (input instanceof IFileEditorInput) {
+			IFile file = ((IFileEditorInput)input).getFile();
+			try
+			{
+				new XStreamHandler().save(_store, file);
+				_dirty = false;
+				firePropertyChange(PROP_DIRTY);
+			}
+			catch (CoreException | IOException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 
 	@Override
@@ -322,6 +356,13 @@ public class DataManagerEditor extends EditorPart implements
 	public void changed()
 	{
 		viewer.refresh();
+	}
+
+	@Override
+	public void dispose()
+	{
+		super.dispose();
+		_store.removeChangeListener(_changeListener);
 	}
 
 }

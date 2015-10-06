@@ -12,8 +12,13 @@ public class InMemoryStore implements IStore
 
 	List<ICollection> _store = new ArrayList<ICollection>();
 
-	private List<StoreChangeListener> _listeners = new ArrayList<StoreChangeListener>();
+	private transient List<StoreChangeListener> _listeners = new ArrayList<StoreChangeListener>();
 
+	private Object readResolve() {
+    _listeners = new ArrayList<StoreChangeListener>();
+    return this;
+  }
+	
 	public static interface StoreChangeListener
 	{
 		public void changed();
