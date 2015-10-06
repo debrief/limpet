@@ -1,9 +1,19 @@
 package info.limpet.data;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import info.limpet.ICollection;
+import info.limpet.ICommand;
+import info.limpet.IStore;
 import info.limpet.data.impl.TemporalObjectCollection;
 import info.limpet.data.impl.samples.StockTypes;
 import info.limpet.data.impl.samples.StockTypes.NonTemporal.Location;
+import info.limpet.data.impl.samples.StockTypes.Temporal;
+import info.limpet.data.operations.location.DistanceBetweenTracksOperation;
 import info.limpet.data.operations.location.GeoSupport;
+import info.limpet.data.store.InMemoryStore;
 import junit.framework.TestCase;
 
 import org.geotools.factory.Hints;
@@ -78,6 +88,39 @@ public class TestGeotoolsGeometry extends TestCase
 		
 		assertEquals("range 1 right", 111663, dest1, 10);
 		assertEquals("range 2 right", 19393, dest2, 10);
+		
+	}
+	
+	public void testLocationCalc()
+	{
+		Temporal.Location loc1 = new Temporal.Location("loc1");
+		Temporal.Location loc2 = new Temporal.Location("loc2");
+		Temporal.Length_M len1 = new Temporal.Length_M("dummy2");
+		
+		List<ICollection> selection = new ArrayList<ICollection>();
+		selection.add(loc1);
+				
+		IStore store = new InMemoryStore();;
+		Collection<ICommand<ICollection>> ops = new DistanceBetweenTracksOperation().actionsFor(selection, store );
+		assertEquals("empty collection", 0, ops.size());
+		
+		selection.add(len1);
+		ops = new DistanceBetweenTracksOperation().actionsFor(selection, store );
+		assertEquals("empty collection", 0, ops.size());
+		
+		selection.remove(len1);
+		selection.add(loc2);
+		ops = new DistanceBetweenTracksOperation().actionsFor(selection, store );
+		assertEquals("empty collection", 1, ops.size());
+		
+		// ok, try adding some data
+		GeometryBuilder builder = GeoSupport.getBuilder();
+		loc1.add(builder.createPoint(4, 3));
+		loc2.add(builder.createPoint(3, 4));
+
+		ops = new DistanceBetweenTracksOperation().actionsFor(selection, store );
+		assertEquals("empty collection", 1, ops.size());
+		
 		
 	}
 }

@@ -25,8 +25,7 @@ abstract public class TwoTrackOperation implements IOperation<ICollection>
 		public DistanceOperation(String outputName, List<ICollection> selection,
 				IStore store, String title, String description)
 		{
-			super(title, description,
-					outputName, store, false, false, selection);
+			super(title, description, outputName, store, false, false, selection);
 		}
 
 		@Override
@@ -64,7 +63,8 @@ abstract public class TwoTrackOperation implements IOperation<ICollection>
 			getStore().addAll(res);
 		}
 
-		abstract protected IQuantityCollection<?> getOutputCollection(String trackList);
+		abstract protected IQuantityCollection<?> getOutputCollection(
+				String trackList);
 
 		@Override
 		protected void recalculate()
@@ -129,17 +129,11 @@ abstract public class TwoTrackOperation implements IOperation<ICollection>
 			}
 		}
 
-		abstract protected void calcAndStore(final GeodeticCalculator calc, final Point locA,
-				final Point locB);
+		abstract protected void calcAndStore(final GeodeticCalculator calc,
+				final Point locA, final Point locB);
 	}
 
 	CollectionComplianceTests aTests = new CollectionComplianceTests();
-	protected final String outputName;
-
-	public TwoTrackOperation(String name)
-	{
-		outputName = name;
-	}
 
 	protected boolean appliesTo(List<ICollection> selection)
 	{

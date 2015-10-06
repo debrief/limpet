@@ -18,11 +18,36 @@ import org.opengis.geometry.primitive.Point;
 
 public class DistanceBetweenTracksOperation extends TwoTrackOperation
 {
-	public static final String OUTPUT_NAME = "Sum of input series";
-
-	public DistanceBetweenTracksOperation()
+	
+	
+	private final class DistanceBetweenOperation extends DistanceOperation
 	{
-		super(OUTPUT_NAME);
+		private DistanceBetweenOperation(String outputName,
+				List<ICollection> selection, IStore store, String title,
+				String description)
+		{
+			super(outputName, selection, store, title, description);
+		}
+
+		protected IQuantityCollection<?> getOutputCollection(String title)
+		{
+			return new StockTypes.NonTemporal.Length_M("Distance between " + title);
+		}
+
+		protected void calcAndStore(final GeodeticCalculator calc, final Point locA, 
+				final Point locB)
+		{
+			// get the output dataset
+			Length_M target = (Length_M) _outputs.get(0);
+
+			// now find the range between them
+			calc.setStartingGeographicPoint(locA.getCentroid().getOrdinate(0), locA
+					.getCentroid().getOrdinate(1));
+			calc.setDestinationGeographicPoint(locB.getCentroid().getOrdinate(0),
+					locB.getCentroid().getOrdinate(1));
+			double thisDist = calc.getOrthodromicDistance();
+			target.add(Measure.valueOf(thisDist, target.getUnits()));
+		}
 	}
 
 	public Collection<ICommand<ICollection>> actionsFor(
@@ -31,35 +56,11 @@ public class DistanceBetweenTracksOperation extends TwoTrackOperation
 		Collection<ICommand<ICollection>> res = new ArrayList<ICommand<ICollection>>();
 		if (appliesTo(selection))
 		{
-			ICommand<ICollection> newC = new DistanceOperation(outputName, selection,
-					destination, "Distance between tracks", "Calculate distance between two tracks")
-			{
-
-				protected IQuantityCollection<?> getOutputCollection(String title)
-				{
-					return new StockTypes.NonTemporal.Length_M("Distance between " + title);
-				}
-
-				protected void calcAndStore(final GeodeticCalculator calc, final Point locA,
-						final Point locB)
-				{
-					// get the output dataset
-					Length_M target = (Length_M) _outputs.get(0);
-
-					// now find the range between them
-					calc.setStartingGeographicPoint(locA.getCentroid().getOrdinate(0), locA
-							.getCentroid().getOrdinate(1));
-					calc.setDestinationGeographicPoint(locB.getCentroid().getOrdinate(0),
-							locB.getCentroid().getOrdinate(1));
-					double thisDist = calc.getOrthodromicDistance();
-					target.add(Measure.valueOf(thisDist, target.getUnits()));
-				}
-			};
+			ICommand<ICollection> newC = new DistanceBetweenOperation(null, selection, destination, "Distance between tracks", "Calculate distance between two tracks");
 
 			res.add(newC);
 		}
 
 		return res;
 	}
-
 }

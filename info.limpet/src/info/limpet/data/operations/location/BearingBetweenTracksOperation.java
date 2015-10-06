@@ -6,7 +6,6 @@ import info.limpet.IQuantityCollection;
 import info.limpet.IStore;
 import info.limpet.data.impl.samples.StockTypes;
 import info.limpet.data.impl.samples.StockTypes.NonTemporal.Angle_Degrees;
-import info.limpet.data.impl.samples.StockTypes.NonTemporal.Length_M;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -19,12 +18,6 @@ import org.opengis.geometry.primitive.Point;
 
 public class BearingBetweenTracksOperation extends TwoTrackOperation
 {
-	public static final String OUTPUT_NAME = "Sum of input series";
-
-	public BearingBetweenTracksOperation()
-	{
-		super(OUTPUT_NAME);
-	}
 
 	public Collection<ICommand<ICollection>> actionsFor(
 			List<ICollection> selection, IStore destination)
@@ -32,7 +25,7 @@ public class BearingBetweenTracksOperation extends TwoTrackOperation
 		Collection<ICommand<ICollection>> res = new ArrayList<ICommand<ICollection>>();
 		if (appliesTo(selection))
 		{
-			ICommand<ICollection> newC = new DistanceOperation(outputName, selection,
+			ICommand<ICollection> newC = new DistanceOperation(null, selection,
 					destination, "Bearing between tracks",
 					"Calculate bearing between two tracks")
 			{
