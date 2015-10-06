@@ -78,9 +78,12 @@ public class DistanceBetweenTracksOperation implements
 		{
 			// get the unit
 			List<ICollection> outputs = new ArrayList<ICollection>();
+			
+			// put the names into a string
+			String title = _inputs.get(0).getName() + " and " + _inputs.get(1).getName();
 
 			// ok, generate the new series
-			ICollection target = new StockTypes.NonTemporal.Length_M("Distance between two tracks");
+			ICollection target = new StockTypes.NonTemporal.Length_M("Distance between " + title);
 
 			outputs.add(target);
 

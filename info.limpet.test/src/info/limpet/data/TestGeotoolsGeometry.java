@@ -1,6 +1,10 @@
 package info.limpet.data;
 
-import javax.measure.Measure;
+import info.limpet.data.impl.TemporalObjectCollection;
+import info.limpet.data.impl.samples.StockTypes;
+import info.limpet.data.impl.samples.StockTypes.NonTemporal.Location;
+import info.limpet.data.operations.location.GeoSupport;
+import junit.framework.TestCase;
 
 import org.geotools.factory.Hints;
 import org.geotools.geometry.DirectPosition2D;
@@ -14,12 +18,6 @@ import org.opengis.geometry.Geometry;
 import org.opengis.geometry.primitive.Point;
 import org.opengis.geometry.primitive.PrimitiveFactory;
 import org.opengis.referencing.operation.TransformException;
-
-import info.limpet.data.impl.TemporalObjectCollection;
-import info.limpet.data.impl.samples.StockTypes;
-import info.limpet.data.impl.samples.StockTypes.NonTemporal.Location;
-import info.limpet.data.operations.location.GeoSupport;
-import junit.framework.TestCase;
 
 public class TestGeotoolsGeometry extends TestCase
 {
