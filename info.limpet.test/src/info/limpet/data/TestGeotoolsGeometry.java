@@ -1,5 +1,7 @@
 package info.limpet.data;
 
+import javax.measure.Measure;
+
 import org.geotools.factory.Hints;
 import org.geotools.geometry.DirectPosition2D;
 import org.geotools.geometry.GeometryBuilder;
@@ -16,6 +18,7 @@ import org.opengis.referencing.operation.TransformException;
 import info.limpet.data.impl.TemporalObjectCollection;
 import info.limpet.data.impl.samples.StockTypes;
 import info.limpet.data.impl.samples.StockTypes.NonTemporal.Location;
+import info.limpet.data.operations.location.GeoSupport;
 import junit.framework.TestCase;
 
 public class TestGeotoolsGeometry extends TestCase
@@ -58,4 +61,25 @@ public class TestGeotoolsGeometry extends TestCase
 		Assert.assertNotNull(point2);
 	}
 
+	public void testRangeCalc()
+	{
+
+		GeodeticCalculator calc= GeoSupport.getCalculator();
+
+		Point p1 = GeoSupport.getBuilder().createPoint(0, 80);
+		Point p2 = GeoSupport.getBuilder().createPoint(0, 81);
+		Point p3 = GeoSupport.getBuilder().createPoint(1, 80);
+		
+		calc.setStartingGeographicPoint(p1.getCentroid().getOrdinate(0), p1.getCentroid().getOrdinate(1));
+		calc.setDestinationGeographicPoint(p2.getCentroid().getOrdinate(0), p2.getCentroid().getOrdinate(1));
+		
+		final double dest1 = calc.getOrthodromicDistance();
+		
+		calc.setDestinationGeographicPoint(p3.getCentroid().getOrdinate(0), p3.getCentroid().getOrdinate(1));
+		final double dest2 = calc.getOrthodromicDistance();
+		
+		assertEquals("range 1 right", 111663, dest1, 10);
+		assertEquals("range 2 right", 19393, dest2, 10);
+		
+	}
 }

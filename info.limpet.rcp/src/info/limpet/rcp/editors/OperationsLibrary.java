@@ -11,6 +11,7 @@ import info.limpet.data.operations.MultiplyQuantityOperation;
 import info.limpet.data.operations.SimpleMovingAverageOperation;
 import info.limpet.data.operations.SubtractQuantityOperation;
 import info.limpet.data.operations.UnitConversionOperation;
+import info.limpet.data.operations.location.DistanceBetweenTracksOperation;
 import info.limpet.rcp.analysis_view.AnalysisView;
 import info.limpet.rcp.data_frequency.DataFrequencyView;
 import info.limpet.rcp.operations.ShowInNamedView;
@@ -34,6 +35,7 @@ public class OperationsLibrary
 		res.put("Conversions", getConversions());
 		res.put("Administration", getAdmin());
 		res.put("Analysis", getAnalysis());
+		res.put("Spatial", getSpatial());
 		return res;
 
 	}
@@ -84,6 +86,14 @@ public class OperationsLibrary
 		arithmetic.add(new SimpleMovingAverageOperation(3));
 		return arithmetic;
 	}
+
+	private static List<IOperation<?>> getSpatial()
+	{
+		List<IOperation<?>> spatial = new ArrayList<IOperation<?>>();
+		spatial.add(new DistanceBetweenTracksOperation());
+		return spatial;
+	}
+
 
 	private static List<IOperation<?>> getConversions()
 	{

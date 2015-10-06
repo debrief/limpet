@@ -10,7 +10,9 @@ Export-Package: info.limpet,
  info.limpet.data.impl,
  info.limpet.data.impl.helpers,
  info.limpet.data.impl.samples,
+ info.limpet.data.math,
  info.limpet.data.operations,
+ info.limpet.data.operations.location,
  info.limpet.data.store
 Require-Bundle: info.limpet.libs;bundle-version="1.0.0";visibility:=reexport,
  info.limpet.geotools;bundle-version="1.0.0";visibility:=reexport
