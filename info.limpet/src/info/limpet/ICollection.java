@@ -9,11 +9,15 @@ public interface ICollection
 	public int size();
 	public boolean isQuantity();
 	public boolean isTemporal();
+	public abstract void setDescription(String description);
+	public abstract String getDescription();
+
+	// note: dependents and precedents are intended to be persistent,
+	// change listeners aren't
+	
 	public abstract List<ICommand<?>> getDependents();
 	public abstract ICommand<?> getPrecedent();
 	public void addDependent(ICommand<?> addQuantityValues);
-	public abstract void setDescription(String description);
-	public abstract String getDescription();
 
 	public void addChangeListener(IChangeListener listener);
 	public void removeChangeListener(IChangeListener listener);
