@@ -18,7 +18,10 @@ public class ObjectCollection<T extends Object> implements IObjectCollection<T>
 	private String _description = "";
 	private final ICommand<?> _precedent;
 	private final List<ICommand<?>> _dependents;
-	private final ListenerHelper _changeSupport;
+
+	// note: we make the change support listeners transient, since
+	// they refer to UI elements that we don't persist
+	private transient ListenerHelper _changeSupport;
 
 	public ObjectCollection(String name)
 	{
@@ -30,7 +33,9 @@ public class ObjectCollection<T extends Object> implements IObjectCollection<T>
 		_name = name;
 		_precedent = precedent;
 		_dependents = new ArrayList<ICommand<?>>();
-		_changeSupport = new ListenerHelper();
+
+		// setup helpers
+		initListeners();
 	}
 
 	@Override
@@ -105,23 +110,39 @@ public class ObjectCollection<T extends Object> implements IObjectCollection<T>
 		_name = name;
 	}
 
+	protected void initListeners()
+	{
+		if (_changeSupport == null)
+			;
+		{
+			_changeSupport = new ListenerHelper();
+		}
+	}
+
 	@Override
 	public void addChangeListener(IChangeListener listener)
 	{
+		initListeners();
+
 		_changeSupport.add(listener);
 	}
 
 	@Override
 	public void removeChangeListener(IChangeListener listener)
 	{
+		initListeners();
+
 		_changeSupport.remove(listener);
 	}
 
 	@Override
 	public void fireChanged()
 	{
-		// tell any standard listeners
-		_changeSupport.fireChange(this);
+		if (_changeSupport != null)
+		{
+			// tell any standard listeners
+			_changeSupport.fireChange(this);
+		}
 
 		// now tell the dependents
 		Iterator<ICommand<?>> iter = _dependents.iterator();
