@@ -100,14 +100,18 @@ public class InMemoryStore implements IStore, IChangeListener
 
 	public void clear()
 	{
-		// remove the collections individually, so we can stop listening to them.
-		
+		// stop listening to the collections individually
+		// - defer the clear until the end,
+		// so we don't get concurrent modification
 		Iterator<ICollection> iter = _store.iterator();
 		while (iter.hasNext())
 		{
 			ICollection iC = (ICollection) iter.next();
-			remove(iC);
+			iC.removeChangeListener(this);
 		}
+		
+		_store.clear();
+		fireModified();
 	}
 
 	public void remove(ICollection collection)
