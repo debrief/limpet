@@ -1,5 +1,8 @@
 package info.limpet.data.persistence.xml;
 
+import info.limpet.IStore;
+import info.limpet.data.store.InMemoryStore;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -14,9 +17,6 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 
 import com.thoughtworks.xstream.XStream;
 
-import info.limpet.IStore;
-import info.limpet.data.store.InMemoryStore;
-
 public class XStreamHandler
 {
 
@@ -26,7 +26,7 @@ public class XStreamHandler
 	{
 		xstream = new XStream();
 		xstream.alias("store", InMemoryStore.class);
-		xstream.omitField(InMemoryStore.class, "_listeners");
+		xstream.setMode(XStream.ID_REFERENCES);
 	}
 
 	public IStore load(String fileName)
