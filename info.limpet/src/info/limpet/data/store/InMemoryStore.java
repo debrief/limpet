@@ -1,5 +1,6 @@
 package info.limpet.data.store;
 
+import info.limpet.IChangeListener;
 import info.limpet.ICollection;
 import info.limpet.IStore;
 
@@ -7,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class InMemoryStore implements IStore
+public class InMemoryStore implements IStore, IChangeListener
 {
 
 	List<ICollection> _store = new ArrayList<ICollection>();
@@ -48,7 +49,13 @@ public class InMemoryStore implements IStore
 	@Override
 	public void addAll(List<ICollection> results)
 	{
-		_store.addAll(results);
+		// add the items individually, so we can register as a listener
+		Iterator<ICollection> iter = results.iterator();
+		while (iter.hasNext())
+		{
+			ICollection iCollection = (ICollection) iter.next();
+			add(iCollection);
+		}
 
 		fireModified();
 	}
@@ -57,6 +64,9 @@ public class InMemoryStore implements IStore
 	public void add(ICollection results)
 	{
 		_store.add(results);
+		
+		// register as a listener with the results object
+		results.addChangeListener(this);
 
 		fireModified();
 	}
@@ -90,14 +100,35 @@ public class InMemoryStore implements IStore
 
 	public void clear()
 	{
-		_store.clear();
+		// remove the collections individually, so we can stop listening to them.
+		
+		Iterator<ICollection> iter = _store.iterator();
+		while (iter.hasNext())
+		{
+			ICollection iC = (ICollection) iter.next();
+			remove(iC);
+		}
 	}
 
 	public void remove(ICollection collection)
 	{
 		_store.remove(collection);
+		
+		// stop listening to this one
+		collection.removeChangeListener(this);
 
 		fireModified();
+	}
+
+	@Override
+	public void dataChanged(ICollection subject)
+	{
+		fireModified();
+	}
+
+	@Override
+	public void collectionDeleted(ICollection subject)
+	{
 	}
 
 }
