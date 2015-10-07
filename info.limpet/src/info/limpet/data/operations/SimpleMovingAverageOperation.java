@@ -82,7 +82,7 @@ public class SimpleMovingAverageOperation implements IOperation<ICollection>
 		@Override
 		public void execute()
 		{
-			IQuantityCollection<?> input = (IQuantityCollection<?>) _inputs.get(0);
+			IQuantityCollection<?> input = (IQuantityCollection<?>) inputs.get(0);
 
 			List<ICollection> outputs = new ArrayList<ICollection>();
 
@@ -99,7 +99,7 @@ public class SimpleMovingAverageOperation implements IOperation<ICollection>
 			performCalc(outputs);
 
 			// tell each series that we're a dependent
-			Iterator<ICollection> iter = _inputs.iterator();
+			Iterator<ICollection> iter = inputs.iterator();
 			while (iter.hasNext())
 			{
 				ICollection iCollection = iter.next();
@@ -116,7 +116,7 @@ public class SimpleMovingAverageOperation implements IOperation<ICollection>
 		protected void recalculate()
 		{
 			// update the results
-			performCalc(_outputs);
+			performCalc(outputs);
 		}
 
 		/**
@@ -132,7 +132,7 @@ public class SimpleMovingAverageOperation implements IOperation<ICollection>
 					.iterator().next();
 
 			// clear out the lists, first
-			Iterator<ICollection> iter = _outputs.iterator();
+			Iterator<ICollection> iter = outputs.iterator();
 			while (iter.hasNext())
 			{
 				IQuantityCollection<?> qC = (IQuantityCollection<?>) iter.next();
@@ -141,7 +141,7 @@ public class SimpleMovingAverageOperation implements IOperation<ICollection>
 
 			SimpleMovingAverage sma = new SimpleMovingAverage(winSize);
 			@SuppressWarnings("unchecked")
-			IQuantityCollection<Quantity> input = (IQuantityCollection<Quantity>) _inputs.get(0);
+			IQuantityCollection<Quantity> input = (IQuantityCollection<Quantity>) inputs.get(0);
 
 			for (Measurable<Quantity> quantity : input.getValues())
 			{

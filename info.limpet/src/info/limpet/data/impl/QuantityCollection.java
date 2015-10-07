@@ -18,8 +18,9 @@ public class QuantityCollection<T extends Quantity> extends
 		ObjectCollection<Measurable<T>> implements IQuantityCollection<T>
 {
 
-	Unit<T> _units;
-	QuantityHelper<T> _qHelper;
+	Unit<T> units;
+	
+	transient QuantityHelper<T> _qHelper;
 
 	public QuantityCollection(String name, Unit<T> units)
 	{
@@ -29,73 +30,92 @@ public class QuantityCollection<T extends Quantity> extends
 	public QuantityCollection(String name, ICommand<?> precedent, Unit<T> units)
 	{
 		super(name, precedent);
-		_units = units;
-		_qHelper = new QuantityHelper<T>((ArrayList<Measurable<T>>) _values, units);
+		this.units = units;
+		initQHelper();
+	}
+	
+	protected void initQHelper()
+	{
+		if(_qHelper == null)
+		{
+			_qHelper = new QuantityHelper<T>((ArrayList<Measurable<T>>) values, units);
+		}
 	}
 	
 	@Override
 	public void setRange(QuantityRange<T> range)
 	{
+		initQHelper();
 		_qHelper.setRange(range);
 	}
 	
 	@Override
 	public QuantityRange<T> getRange()
 	{
+		initQHelper();
 		return _qHelper.getRange();
 	}
 
 	@Override
 	public void add(Number value)
 	{
+		initQHelper();
 		_qHelper.add(value);
 	}
 
 	@Override
 	public Dimension getDimension()
 	{
+		initQHelper();
 		return _qHelper.getDimension();
 	}
 	
 	@Override
 	public Unit<T> getUnits()
 	{
+		initQHelper();
 		return _qHelper.getUnits();
 	}
 	
 	@Override
 	public void add(Measurable<T> value)
 	{
+		initQHelper();
 		_qHelper.add(value);
 	}
 
 	@Override
 	public Measurable<T> min()
 	{
+		initQHelper();
 		return _qHelper.min();
 	}
 
 	@Override
 	public Measurable<T> max()
 	{
+		initQHelper();
 		return _qHelper.max();
 	}
 
 	@Override
 	public Measurable<T> mean()
 	{
+		initQHelper();
 		return _qHelper.mean();
 	}
 
 	@Override
 	public Measurable<T> variance()
 	{
+		initQHelper();
 		return _qHelper.variance();
 	}
 
 	@Override
 	public Measurable<T> sd()
 	{
+		initQHelper();
 		return _qHelper.sd();
 	}
 	

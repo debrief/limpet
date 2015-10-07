@@ -13,11 +13,11 @@ import java.util.List;
 public class ObjectCollection<T extends Object> implements IObjectCollection<T>
 {
 
-	ArrayList<T> _values = new ArrayList<T>();
-	private String _name;
-	private String _description = "";
-	private final ICommand<?> _precedent;
-	private final List<ICommand<?>> _dependents;
+	ArrayList<T> values = new ArrayList<T>();
+	private String name;
+	private String description = "";
+	private final ICommand<?> precedent;
+	private final List<ICommand<?>> dependents;
 
 	// note: we make the change support listeners transient, since
 	// they refer to UI elements that we don't persist
@@ -30,9 +30,9 @@ public class ObjectCollection<T extends Object> implements IObjectCollection<T>
 
 	public ObjectCollection(String name, ICommand<?> precedent)
 	{
-		_name = name;
-		_precedent = precedent;
-		_dependents = new ArrayList<ICommand<?>>();
+		this.name = name;
+		this.precedent = precedent;
+		dependents = new ArrayList<ICommand<?>>();
 
 		// setup helpers
 		initListeners();
@@ -41,37 +41,37 @@ public class ObjectCollection<T extends Object> implements IObjectCollection<T>
 	@Override
 	public String getDescription()
 	{
-		return _description;
+		return description;
 	}
 
 	@Override
 	public void setDescription(String description)
 	{
-		this._description = description;
+		this.description = description;
 	}
 
 	@Override
 	public List<T> getValues()
 	{
-		return _values;
+		return values;
 	}
 
 	@Override
 	public void add(T value)
 	{
-		_values.add(value);
+		values.add(value);
 	}
 
 	@Override
 	public int size()
 	{
-		return _values.size();
+		return values.size();
 	}
 
 	@Override
 	public String getName()
 	{
-		return _name;
+		return name;
 	}
 
 	@Override
@@ -89,25 +89,25 @@ public class ObjectCollection<T extends Object> implements IObjectCollection<T>
 	@Override
 	public ICommand<?> getPrecedent()
 	{
-		return _precedent;
+		return precedent;
 	}
 
 	@Override
 	public List<ICommand<?>> getDependents()
 	{
-		return _dependents;
+		return dependents;
 	}
 
 	@Override
 	public void addDependent(ICommand<?> command)
 	{
-		_dependents.add(command);
+		dependents.add(command);
 	}
 
 	@Override
 	public void setName(String name)
 	{
-		_name = name;
+		this.name = name;
 	}
 
 	protected void initListeners()
@@ -145,7 +145,7 @@ public class ObjectCollection<T extends Object> implements IObjectCollection<T>
 		}
 
 		// now tell the dependents
-		Iterator<ICommand<?>> iter = _dependents.iterator();
+		Iterator<ICommand<?>> iter = dependents.iterator();
 		while (iter.hasNext())
 		{
 			ICommand<?> iC = (ICommand<?>) iter.next();

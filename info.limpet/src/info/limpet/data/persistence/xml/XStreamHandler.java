@@ -1,6 +1,11 @@
 package info.limpet.data.persistence.xml;
 
 import info.limpet.IStore;
+import info.limpet.data.commands.AbstractCommand;
+import info.limpet.data.impl.ObjectCollection;
+import info.limpet.data.impl.QuantityCollection;
+import info.limpet.data.impl.TemporalObjectCollection;
+import info.limpet.data.impl.TemporalQuantityCollection;
 import info.limpet.data.store.InMemoryStore;
 
 import java.io.File;
@@ -9,6 +14,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
+
+import javax.measure.converter.MultiplyConverter;
+import javax.measure.unit.AlternateUnit;
+import javax.measure.unit.BaseUnit;
+import javax.measure.unit.ProductUnit;
+import javax.measure.unit.TransformedUnit;
 
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.resources.IFile;
@@ -26,6 +37,33 @@ public class XStreamHandler
 	{
 		xstream = new XStream();
 		xstream.alias("store", InMemoryStore.class);
+		xstream.alias("TransformedUnit", TransformedUnit.class);
+		xstream.alias("ProductUnit", ProductUnit.class);
+		xstream.alias("AlternateUnit", AlternateUnit.class);
+		xstream.alias("MultiplyConverter", MultiplyConverter.class);
+		xstream.alias("BaseUnit", BaseUnit.class);
+		xstream.alias("Temporal.Speed_MSec", info.limpet.data.impl.samples.StockTypes.Temporal.Speed_MSec.class);
+		xstream.alias("Temporal.Angle_Degs", info.limpet.data.impl.samples.StockTypes.Temporal.Angle_Degrees.class);
+		xstream.alias("Temporal.Angle_Rads", info.limpet.data.impl.samples.StockTypes.Temporal.Angle_Radians.class);
+		xstream.alias("Temporal.Elapsed_Time", info.limpet.data.impl.samples.StockTypes.Temporal.ElapsedTime_Sec.class);
+		xstream.alias("Temporal.Location", info.limpet.data.impl.samples.StockTypes.Temporal.Location.class);
+
+		xstream.alias("NonTemporal.Length_m", info.limpet.data.impl.samples.StockTypes.NonTemporal.Length_M.class);
+		xstream.alias("NonTemporal.Speed_msec", info.limpet.data.impl.samples.StockTypes.NonTemporal.Speed_MSec.class);
+		xstream.alias("ObjectCollection", ObjectCollection.class);
+		xstream.alias("TemporalObjectCollection", TemporalObjectCollection.class);
+		xstream.alias("QuantityCollection", QuantityCollection.class);
+		xstream.alias("TemporalQuantityCollection", TemporalQuantityCollection.class);
+
+		
+		xstream.useAttributeFor(ObjectCollection.class, "name");
+		xstream.useAttributeFor(AbstractCommand.class, "title");
+		xstream.useAttributeFor(AbstractCommand.class, "canUndo");
+		xstream.useAttributeFor(AbstractCommand.class, "canRedo");
+		xstream.useAttributeFor(AbstractCommand.class, "dynamic");
+		xstream.useAttributeFor(AbstractCommand.class, "outputName");
+
+		xstream.addImplicitCollection(InMemoryStore.class, "_store");
 		xstream.setMode(XStream.ID_REFERENCES);
 	}
 

@@ -116,7 +116,7 @@ public class SubtractQuantityOperation<Q extends Quantity> implements
 			performCalc(unit, outputs, _item1, _item2);
 
 			// tell each series that we're a dependent
-			Iterator<ICollection> iter = _inputs.iterator();
+			Iterator<ICollection> iter = inputs.iterator();
 			while (iter.hasNext())
 			{
 				ICollection iCollection = iter.next();
@@ -135,11 +135,11 @@ public class SubtractQuantityOperation<Q extends Quantity> implements
 		protected void recalculate()
 		{
 			// get the unit
-			IQuantityCollection first = (IQuantityCollection) _inputs.get(0);
+			IQuantityCollection first = (IQuantityCollection) inputs.get(0);
 			Unit<T> unit = first.getUnits();
 
 			// update the results
-			performCalc(unit, _outputs, _item1, _item2);
+			performCalc(unit, outputs, _item1, _item2);
 		}
 
 		/**
@@ -157,14 +157,14 @@ public class SubtractQuantityOperation<Q extends Quantity> implements
 					.iterator().next();
 
 			// clear out the lists, first
-			Iterator<ICollection> iter = _outputs.iterator();
+			Iterator<ICollection> iter = outputs.iterator();
 			while (iter.hasNext())
 			{
 				IQuantityCollection<T> qC = (IQuantityCollection<T>) iter.next();
 				qC.getValues().clear();
 			}
 
-			for (int j = 0; j < _inputs.get(0).size(); j++)
+			for (int j = 0; j < inputs.get(0).size(); j++)
 			{
 				final Measurable<T> thisValue = _item1.getValues().get(j);
 				final Measurable<T> otherValue = _item2.getValues().get(j);
