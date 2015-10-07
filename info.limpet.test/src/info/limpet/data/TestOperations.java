@@ -17,7 +17,10 @@ import javax.measure.Measurable;
 import javax.measure.Measure;
 import javax.measure.converter.UnitConverter;
 import javax.measure.quantity.Angle;
+import javax.measure.quantity.Dimensionless;
+import javax.measure.quantity.Duration;
 import javax.measure.quantity.Length;
+import javax.measure.quantity.Quantity;
 import javax.measure.quantity.Velocity;
 import javax.measure.unit.Unit;
 
@@ -30,6 +33,7 @@ import info.limpet.data.impl.TemporalQuantityCollection;
 import info.limpet.data.impl.samples.SampleData;
 import info.limpet.data.operations.AddQuantityOperation;
 import info.limpet.data.operations.CollectionComplianceTests;
+import info.limpet.data.operations.DivideQuantityOperation;
 import info.limpet.data.operations.MultiplyQuantityOperation;
 import info.limpet.data.operations.SimpleMovingAverageOperation;
 import info.limpet.data.operations.SubtractQuantityOperation;
@@ -462,5 +466,106 @@ public class TestOperations extends TestCase
 		double speed2firstValue = speed_good_2.getValues().get(0).doubleValue(speed_good_2.getUnits());
 		
 		assertEquals(firstDifference, speed1firstValue - speed2firstValue);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void testDivision()
+	{
+		// place to store results data
+		InMemoryStore store = new SampleData().getData(10);
+
+		List<ICollection> selection = new ArrayList<ICollection>(3);
+
+		IQuantityCollection<Velocity> speed_good_1 = (IQuantityCollection<Velocity>) store.get(SampleData.SPEED_ONE);
+		ICollection speed_good_2 = store.get(SampleData.SPEED_TWO);
+		IQuantityCollection<Length> length_1 = (IQuantityCollection<Length>) store.get(SampleData.LENGTH_ONE);
+		ICollection string_1 = store.get(SampleData.STRING_ONE);
+		IQuantityCollection<Dimensionless>  factor = (IQuantityCollection<Dimensionless>) store.get(SampleData.FLOATING_POINT_FACTOR);
+		ICollection speed_good_1_bigger = new SampleData().getData(20).get(SampleData.SPEED_ONE);
+		
+		///
+		/// TEST NOT APPLICABLE INPUT
+		///
+		
+		// test invalid number of inputs
+		selection.add(speed_good_1);
+		selection.add(speed_good_2);
+		selection.add(length_1);
+		Collection<ICommand<ICollection>> commands = new DivideQuantityOperation()
+				.actionsFor(selection, store);
+		assertEquals("invalid number of inputs", 0, commands.size());
+
+		// test not all quantities
+		selection.clear();
+		selection.add(speed_good_1);
+		selection.add(string_1);
+		commands = new DivideQuantityOperation().actionsFor(selection, store);
+		assertEquals("not all quantities", 0, commands.size());
+		
+		// test different size
+		selection.clear();
+		selection.add(speed_good_1);
+		selection.add(speed_good_1_bigger);
+		commands = new DivideQuantityOperation().actionsFor(selection, store);
+		assertEquals("collection not same size", 0, commands.size());
+
+		///
+		/// TEST APPLICABLE INPUT
+		///
+		
+		// test length over speed
+		selection.clear();
+		selection.add(length_1);
+		selection.add(speed_good_1);
+		commands = new DivideQuantityOperation().actionsFor(selection, store);
+		assertEquals("valid input", 2, commands.size());
+		
+		ICommand<ICollection> command = commands.iterator().next();
+		
+		store.clear();
+		command.execute();
+		
+		assertEquals(1, store.size());
+		IQuantityCollection<Duration> duration = (IQuantityCollection<Duration>) store.iterator().next();
+		assertEquals(speed_good_1.size(), duration.size());
+		
+		double firstDuration = duration.getValues().get(0).doubleValue(duration.getUnits());
+		double firstLength = length_1.getValues().get(0).doubleValue(length_1.getUnits());
+		double firstSpeed = speed_good_1.getValues().get(0).doubleValue(speed_good_1.getUnits());
+		
+		assertEquals(firstLength/firstSpeed, firstDuration);
+		
+		// test length over factor
+		selection.clear();
+		selection.add(length_1);
+		selection.add(factor);
+		commands = new DivideQuantityOperation().actionsFor(selection, store);
+		assertEquals("valid input", 2, commands.size());
+
+		Iterator<ICommand<ICollection>> iterator = commands.iterator();
+		command = iterator.next();
+		
+		store.clear();
+		command.execute();
+		
+		assertEquals(1, store.size());
+		IQuantityCollection<Length> resultLength = (IQuantityCollection<Length>) store.iterator().next();
+		assertEquals(length_1.size(), resultLength.size());
+		
+		double firstResultLength = resultLength.getValues().get(0).doubleValue(resultLength.getUnits());
+		double factorValue = factor.getValues().get(0).doubleValue(factor.getUnits());
+		assertEquals(firstLength/factorValue, firstResultLength);
+		
+		// test command #2: factor over length 
+		command = iterator.next();
+		store.clear();
+		command.execute();
+		IQuantityCollection<Quantity> resultQuantity = (IQuantityCollection<Quantity>) store.iterator().next();		
+		// assert expected unit (1/m)
+		assertEquals("1/" + length_1.getUnits().toString(), resultQuantity.getUnits().toString());
+		assertEquals(length_1.size(), resultQuantity.size());
+		
+		double firstResultQuantity = resultQuantity.getValues().get(0).doubleValue(resultQuantity.getUnits());
+		assertEquals(factorValue/firstLength, firstResultQuantity);				
 	}
 }
