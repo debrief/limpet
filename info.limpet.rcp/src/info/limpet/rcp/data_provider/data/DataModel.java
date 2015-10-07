@@ -207,7 +207,7 @@ public class DataModel implements ITreeContentProvider
 					final CollectionWrapper cw = (CollectionWrapper) element;
 					final ICollection coll = cw.getCollection();
 
-					final boolean hasDependents = coll.getDependents().size() > 0;
+					final boolean hasDependents = ((coll.getDependents() != null) && (coll.getDependents().size() > 0));
 					final boolean hasPrecedents = coll.getPrecedent() != null;
 					res = (hasDependents || hasPrecedents);
 				}
