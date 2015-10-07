@@ -55,6 +55,14 @@ public class StockTypes
 			}
 		}
 
+		public static class Strings extends TemporalObjectCollection<String>
+		{
+			public Strings(String name)
+			{
+				super(name);
+			}
+		}
+
 		public static class Acceleration_MSecSec extends
 				TemporalQuantityCollection<Acceleration>
 		{
@@ -168,6 +176,13 @@ public class StockTypes
 			}
 		}
 		
+		public static class Strings extends ObjectCollection<String>
+		{
+			public Strings(String name)
+			{
+				super(name);
+			}
+		}
 
 
 	}

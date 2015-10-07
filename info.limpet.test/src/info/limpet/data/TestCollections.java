@@ -16,6 +16,8 @@ import info.limpet.data.impl.TemporalObjectCollection;
 import info.limpet.data.impl.TemporalQuantityCollection;
 import info.limpet.data.impl.samples.SampleData;
 import info.limpet.data.impl.samples.StockTypes;
+import info.limpet.data.impl.samples.StockTypes.NonTemporal;
+import info.limpet.data.impl.samples.StockTypes.Temporal;
 import info.limpet.data.impl.samples.StockTypes.NonTemporal.Speed_MSec;
 
 import java.util.Iterator;
@@ -46,6 +48,21 @@ public class TestCollections extends TestCase
 		assertEquals("correct number of samples", 10, stringCollection.size());
 	}
 
+	public void testStringCollections()
+	{
+		Temporal.Strings tStr = new Temporal.Strings("t strings");
+		tStr.add(1000, "aaa");
+		tStr.add(1002, "bbb");
+		assertEquals("correct size", 2, tStr.size());
+		
+		NonTemporal.Strings str = new NonTemporal.Strings("non t strings");
+		str.add("aaa");
+		str.add("bbb");
+		str.add("ccc");
+		assertEquals("correct size", 3, str.size());
+
+	}
+	
 	public void testSampleData()
 	{
 		IStore data = new SampleData().getData(10);
