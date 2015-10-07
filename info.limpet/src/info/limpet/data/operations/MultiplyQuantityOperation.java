@@ -93,7 +93,7 @@ public class MultiplyQuantityOperation implements IOperation<ICollection>
 			performCalc(unit, outputs);
 
 			// tell each series that we're a dependent
-			Iterator<ICollection> iter = _inputs.iterator();
+			Iterator<ICollection> iter = inputs.iterator();
 			while (iter.hasNext())
 			{
 				ICollection iCollection = iter.next();
@@ -108,7 +108,7 @@ public class MultiplyQuantityOperation implements IOperation<ICollection>
 
 		private Unit<?> calculateOutputUnit()
 		{
-			Iterator<ICollection> inputsIterator = _inputs.iterator();
+			Iterator<ICollection> inputsIterator = inputs.iterator();
 			IQuantityCollection<?> firstItem = (IQuantityCollection<?>) inputsIterator
 					.next();
 			Unit<?> unit = firstItem.getUnits();
@@ -128,7 +128,7 @@ public class MultiplyQuantityOperation implements IOperation<ICollection>
 			Unit<?> unit = calculateOutputUnit();
 
 			// update the results
-			performCalc(unit, _outputs);
+			performCalc(unit, outputs);
 		}
 
 		/**
@@ -144,7 +144,7 @@ public class MultiplyQuantityOperation implements IOperation<ICollection>
 					.iterator().next();
 
 			// clear out the lists, first
-			Iterator<ICollection> iter = _outputs.iterator();
+			Iterator<ICollection> iter = outputs.iterator();
 			while (iter.hasNext())
 			{
 				IQuantityCollection<?> qC = (IQuantityCollection<?>) iter.next();
@@ -154,17 +154,17 @@ public class MultiplyQuantityOperation implements IOperation<ICollection>
 			}
 
 			// find the (non-singleton) array length
-			int length = getNonSingletonArrayLength(_inputs);
+			int length = getNonSingletonArrayLength(inputs);
 
 			// start adding values.
 			for (int j = 0; j < length; j++)
 			{
 				Double runningTotal = null;
 
-				for (int i = 0; i < _inputs.size(); i++)
+				for (int i = 0; i < inputs.size(); i++)
 				{
 					@SuppressWarnings("unchecked")
-					IQuantityCollection<Quantity> thisC = (IQuantityCollection<Quantity>) _inputs
+					IQuantityCollection<Quantity> thisC = (IQuantityCollection<Quantity>) inputs
 							.get(i);
 
 					final double thisValue;

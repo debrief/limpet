@@ -24,7 +24,7 @@ public class TemporalQuantityCollection<T extends Quantity> extends
 		TemporalObjectCollection<Measurable<T>> implements
 		ITemporalQuantityCollection<T>, IQuantityCollection<T>
 {
-	private QuantityHelper<T> _qHelper;
+	private QuantityHelper<T> qHelper;
 
 	public TemporalQuantityCollection(String name, Unit<T> units)
 	{
@@ -35,7 +35,7 @@ public class TemporalQuantityCollection<T extends Quantity> extends
 			Unit<T> units)
 	{
 		super(name);
-		_qHelper = new QuantityHelper<T>((ArrayList<Measurable<T>>) _values, units);
+		qHelper = new QuantityHelper<T>((ArrayList<Measurable<T>>) values, units);
 	}
 	
 	
@@ -75,31 +75,31 @@ public class TemporalQuantityCollection<T extends Quantity> extends
 	@Override
 	public Measurable<T> min()
 	{
-		return _qHelper.min();
+		return qHelper.min();
 	}
 
 	@Override
 	public Measurable<T> max()
 	{
-		return _qHelper.max();
+		return qHelper.max();
 	}
 
 	@Override
 	public Measurable<T> mean()
 	{
-		return _qHelper.mean();
+		return qHelper.mean();
 	}
 
 	@Override
 	public Measurable<T> variance()
 	{
-		return _qHelper.variance();
+		return qHelper.variance();
 	}
 
 	@Override
 	public Measurable<T> sd()
 	{
-		return _qHelper.sd();
+		return qHelper.sd();
 	}
 
 	@Override
@@ -117,30 +117,30 @@ public class TemporalQuantityCollection<T extends Quantity> extends
 	@Override
 	public Dimension getDimension()
 	{
-		return _qHelper.getDimension();
+		return qHelper.getDimension();
 	}
 
 	@Override
 	public Unit<T> getUnits()
 	{
-		return _qHelper.getUnits();
+		return qHelper.getUnits();
 	}
 
 	@Override
 	public void replaceSingleton(double newValue)
 	{
-		_qHelper.replace(newValue);
+		qHelper.replace(newValue);
 	}
 
 	@Override
 	public void setRange(QuantityRange<T> range)
 	{
-		_qHelper.setRange(range);
+		qHelper.setRange(range);
 	}
 
 	@Override
 	public QuantityRange<T> getRange()
 	{
-		return _qHelper.getRange();
+		return qHelper.getRange();
 	}
 }

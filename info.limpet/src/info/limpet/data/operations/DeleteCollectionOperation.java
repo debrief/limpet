@@ -58,7 +58,7 @@ public class DeleteCollectionOperation implements IOperation<ICollection>
 		public void execute()
 		{
 			// tell each series that we're a dependent
-			Iterator<ICollection> iter = _inputs.iterator();
+			Iterator<ICollection> iter = inputs.iterator();
 			while (iter.hasNext())
 			{
 				ICollection iCollection = iter.next();

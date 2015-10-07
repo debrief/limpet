@@ -13,8 +13,8 @@ public class TemporalObjectCollection<T extends Object> extends
 		ObjectCollection<T> implements ITemporalObjectCollection<T>
 {
 
-	ArrayList<Long> _times = new ArrayList<Long>();
-	TimeHelper _tSupport;
+	ArrayList<Long> times = new ArrayList<Long>();
+	transient TimeHelper tSupport;
 
 	public TemporalObjectCollection(String name)
 	{
@@ -24,13 +24,22 @@ public class TemporalObjectCollection<T extends Object> extends
 	public TemporalObjectCollection(String name, ICommand<?> precedent)
 	{
 		super(name, precedent);
-		_tSupport = new TimeHelper(_times);
+		
+		initTime();
+	}
+	
+	protected void initTime()
+	{
+		if(tSupport == null)
+		{
+			tSupport = new TimeHelper(times);
+		}
 	}
 
 	@Override
 	public Collection<Long> getTimes()
 	{
-		return _times;
+		return times;
 	}
 
 	@Override
@@ -43,32 +52,36 @@ public class TemporalObjectCollection<T extends Object> extends
 	@Override
 	public void add(long time, T object)
 	{
-		_times.add(time);
+		times.add(time);
 		super.add(object);
 	}
 
 	@Override
 	public long start()
 	{
-		return _tSupport.start();
+		initTime();
+		return tSupport.start();
 	}
 
 	@Override
 	public long finish()
 	{
-		return _tSupport.finish();
+		initTime();
+		return tSupport.finish();
 	}
 
 	@Override
 	public long duration()
 	{
-		return _tSupport.duration();
+		initTime();
+		return tSupport.duration();
 	}
 
 	@Override
 	public double rate()
 	{
-		return _tSupport.rate();
+		initTime();
+		return tSupport.rate();
 	}
 
 	public Iterator<Doublet<T>> iterator()
@@ -99,13 +112,13 @@ public class TemporalObjectCollection<T extends Object> extends
 				@Override
 				public long getTime()
 				{
-					return _times.get(thisCtr);
+					return times.get(thisCtr);
 				}
 
 				@Override
 				public T getObservation()
 				{
-					return _values.get(thisCtr);
+					return values.get(thisCtr);
 				}
 			};
 		}

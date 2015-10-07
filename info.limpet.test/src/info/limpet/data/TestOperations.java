@@ -10,6 +10,7 @@ import static javax.measure.unit.SI.METRES_PER_SECOND;
 import info.limpet.ICollection;
 import info.limpet.ICommand;
 import info.limpet.IQuantityCollection;
+import info.limpet.IStore;
 import info.limpet.data.impl.ObjectCollection;
 import info.limpet.data.impl.QuantityCollection;
 import info.limpet.data.impl.TemporalQuantityCollection;
@@ -304,7 +305,7 @@ public class TestOperations extends TestCase
 	public void testUnitConversion()
 	{
 		// place to store results data
-		InMemoryStore store = new SampleData().getData(10);
+		IStore store = new SampleData().getData(10);
 
 		List<ICollection> selection = new ArrayList<ICollection>(3);
 		// speed one defined in m/s
@@ -359,7 +360,7 @@ public class TestOperations extends TestCase
 	public void testSimpleMovingAverage()
 	{
 		// place to store results data
-		InMemoryStore store = new SampleData().getData(10);
+		IStore store = new SampleData().getData(10);
 
 		List<ICollection> selection = new ArrayList<>();
 

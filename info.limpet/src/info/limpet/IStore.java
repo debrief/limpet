@@ -2,6 +2,8 @@ package info.limpet;
 
 import java.util.List;
 
+import info.limpet.data.store.InMemoryStore.StoreChangeListener;
+
 /**
  * a storage container for collections, stored in a tree structure.
  * 
@@ -32,4 +34,8 @@ public interface IStore
 	 * @return
 	 */
 	ICollection get(String name);
+
+	void addChangeListener(StoreChangeListener listener);
+
+	void removeChangeListener(StoreChangeListener listener);
 }

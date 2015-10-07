@@ -115,7 +115,7 @@ public class DivideQuantityOperation implements IOperation<ICollection>
 			performCalc(unit, outputs, _item1, _item2);
 
 			// tell each series that we're a dependent
-			Iterator<ICollection> iter = _inputs.iterator();
+			Iterator<ICollection> iter = inputs.iterator();
 			while (iter.hasNext())
 			{
 				ICollection iCollection = iter.next();
@@ -131,7 +131,7 @@ public class DivideQuantityOperation implements IOperation<ICollection>
 		@SuppressWarnings("unchecked")
 		private Unit<Quantity> calculateOutputUnit()
 		{
-			Iterator<ICollection> inputsIterator = _inputs.iterator();
+			Iterator<ICollection> inputsIterator = inputs.iterator();
 			IQuantityCollection<Quantity> firstItem = (IQuantityCollection<Quantity>) inputsIterator
 					.next();
 			Unit<Quantity> unit = firstItem.getUnits();
@@ -151,7 +151,7 @@ public class DivideQuantityOperation implements IOperation<ICollection>
 			Unit<Quantity> unit = calculateOutputUnit();
 
 			// update the results
-			performCalc(unit, _outputs, _item1, _item2);
+			performCalc(unit, outputs, _item1, _item2);
 		}
 
 		/**
@@ -169,7 +169,7 @@ public class DivideQuantityOperation implements IOperation<ICollection>
 					.iterator().next();
 			
 			// clear out the lists, first
-			Iterator<ICollection> iter = _outputs.iterator();
+			Iterator<ICollection> iter = outputs.iterator();
 			while (iter.hasNext())
 			{
 				IQuantityCollection<Quantity> qC = (IQuantityCollection<Quantity>) iter.next();
@@ -177,7 +177,7 @@ public class DivideQuantityOperation implements IOperation<ICollection>
 			}
 
 			// find the (non-singleton) array length
-			final int length = getNonSingletonArrayLength(_inputs);
+			final int length = getNonSingletonArrayLength(inputs);
 
 			for (int j = 0; j < length; j++)
 			{
