@@ -30,6 +30,7 @@ import org.eclipse.swt.dnd.FileTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
@@ -49,6 +50,7 @@ import info.limpet.data.operations.GenerateDummyDataOperation;
 import info.limpet.data.persistence.xml.XStreamHandler;
 import info.limpet.data.store.InMemoryStore;
 import info.limpet.data.store.InMemoryStore.StoreChangeListener;
+import info.limpet.rcp.Activator;
 import info.limpet.rcp.data_provider.data.DataModel;
 
 public class DataManagerEditor extends EditorPart implements
@@ -203,13 +205,26 @@ public class DataManagerEditor extends EditorPart implements
 				String fileName = fileNames[i];
 				if (fileName != null && fileName.endsWith(".csv"))
 				{
-					parseCsv(fileName);
+					try
+					{
+						parseCsv(fileName);
+					}
+					catch (IOException e)
+					{
+						MessageDialog.openWarning(getShell(), "Warning", "Cannot drop '" + fileName + "'. See log for more details");
+						Activator.log(e);
+					}
 				}
 			}
 		}
 	}
 
-	private void parseCsv(String fileName)
+	private Shell getShell()
+	{
+		return PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+	}
+
+	private void parseCsv(String fileName) throws IOException
 	{
 		List<IStoreItem> collections = new CsvParser().parse(fileName);
 		_store.addAll(collections);
