@@ -76,7 +76,7 @@ public class AddQuantityOperation<Q extends Quantity> implements
 		public void execute()
 		{
 			// get the unit
-			IQuantityCollection<T> first = _inputs.get(0);
+			IQuantityCollection<T> first = inputs.get(0);
 			Unit<T> unit = first.getUnits();
 
 			List<IQuantityCollection<T>> outputs = new ArrayList<IQuantityCollection<T>>();
@@ -94,7 +94,7 @@ public class AddQuantityOperation<Q extends Quantity> implements
 			performCalc(unit, outputs);
 
 			// tell each series that we're a dependent
-			Iterator<IQuantityCollection<T>> iter = _inputs.iterator();
+			Iterator<IQuantityCollection<T>> iter = inputs.iterator();
 			while (iter.hasNext())
 			{
 				ICollection iCollection = iter.next();
@@ -111,11 +111,11 @@ public class AddQuantityOperation<Q extends Quantity> implements
 		protected void recalculate()
 		{
 			// get the unit
-			IQuantityCollection<T> first = _inputs.get(0);
+			IQuantityCollection<T> first = inputs.get(0);
 			Unit<T> unit = first.getUnits();
 
 			// update the results
-			performCalc(unit, _outputs);
+			performCalc(unit, outputs);
 		}
 
 		/**
@@ -130,20 +130,20 @@ public class AddQuantityOperation<Q extends Quantity> implements
 			IQuantityCollection<T> target = outputs.iterator().next();
 
 			// clear out the lists, first
-			Iterator<IQuantityCollection<T>> iter = _outputs.iterator();
+			Iterator<IQuantityCollection<T>> iter = outputs.iterator();
 			while (iter.hasNext())
 			{
 				IQuantityCollection<T> qC = (IQuantityCollection<T>) iter.next();
 				qC.getValues().clear();
 			}
 
-			for (int j = 0; j < _inputs.get(0).size(); j++)
+			for (int j = 0; j < inputs.get(0).size(); j++)
 			{
 				Double runningTotal = null;
 
-				for (int i = 0; i < _inputs.size(); i++)
+				for (int i = 0; i < inputs.size(); i++)
 				{
-					IQuantityCollection<T> thisC = _inputs.get(i);
+					IQuantityCollection<T> thisC = inputs.get(i);
 					Measurable<T> thisV = (Measurable<T>) thisC.getValues().get(j);
 
 					// is this the first field?

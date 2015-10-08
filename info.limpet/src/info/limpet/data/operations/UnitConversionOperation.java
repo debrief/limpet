@@ -85,7 +85,7 @@ public class UnitConversionOperation implements IOperation<ICollection>
 		{
 			List<ICollection> outputs = new ArrayList<ICollection>();
 
-			String seriesName = _inputs.iterator().next().getName();
+			String seriesName = inputs.iterator().next().getName();
 
 			// ok, generate the new series
 			IQuantityCollection<?> target = new QuantityCollection<>(seriesName
@@ -100,7 +100,7 @@ public class UnitConversionOperation implements IOperation<ICollection>
 			performCalc(outputs);
 
 			// tell each series that we're a dependent
-			Iterator<ICollection> iter = _inputs.iterator();
+			Iterator<ICollection> iter = inputs.iterator();
 			while (iter.hasNext())
 			{
 				ICollection iCollection = iter.next();
@@ -117,7 +117,7 @@ public class UnitConversionOperation implements IOperation<ICollection>
 		protected void recalculate()
 		{
 			// update the results
-			performCalc(_outputs);
+			performCalc(outputs);
 		}
 
 		/**
@@ -134,14 +134,14 @@ public class UnitConversionOperation implements IOperation<ICollection>
 					.iterator().next();
 
 			// clear out the lists, first
-			Iterator<ICollection> iter = _outputs.iterator();
+			Iterator<ICollection> iter = outputs.iterator();
 			while (iter.hasNext())
 			{
 				IQuantityCollection<Quantity> qC = (IQuantityCollection<Quantity>) iter.next();
 				qC.getValues().clear();
 			}
 
-			IQuantityCollection<Quantity> singleInputSeries = (IQuantityCollection<Quantity>) _inputs
+			IQuantityCollection<Quantity> singleInputSeries = (IQuantityCollection<Quantity>) inputs
 					.get(0);
 
 			UnitConverter converter = singleInputSeries.getUnits().getConverterTo(target.getUnits());
