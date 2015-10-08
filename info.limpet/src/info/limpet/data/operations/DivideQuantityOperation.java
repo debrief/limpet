@@ -130,19 +130,8 @@ public class DivideQuantityOperation implements IOperation<ICollection>
 
 		@SuppressWarnings("unchecked")
 		private Unit<Quantity> calculateOutputUnit()
-		{
-			Iterator<ICollection> inputsIterator = inputs.iterator();
-			IQuantityCollection<Quantity> firstItem = (IQuantityCollection<Quantity>) inputsIterator
-					.next();
-			Unit<Quantity> unit = firstItem.getUnits();
-
-			while (inputsIterator.hasNext())
-			{
-				IQuantityCollection<?> nextItem = (IQuantityCollection<?>) inputsIterator
-						.next();
-				unit = (Unit<Quantity>) unit.divide(nextItem.getUnits());
-			}
-			return unit;
+		{			
+			return (Unit<Quantity>) _item1.getUnits().divide(_item2.getUnits());
 		}
 
 		@Override
