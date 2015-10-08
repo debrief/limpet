@@ -1,15 +1,13 @@
 package info.limpet.data.store;
 
-import info.limpet.IChangeListener;
-import info.limpet.ICollection;
-import info.limpet.ICommand;
-import info.limpet.IStore;
-import info.limpet.data.impl.ListenerHelper;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.stream.Stream;
+
+import info.limpet.IChangeListener;
+import info.limpet.ICollection;
+import info.limpet.IStore;
+import info.limpet.data.impl.ListenerHelper;
 
 public class InMemoryStore implements IStore, IChangeListener
 {
