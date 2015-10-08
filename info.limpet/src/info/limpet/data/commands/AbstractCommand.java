@@ -1,6 +1,5 @@
 package info.limpet.data.commands;
 
-import info.limpet.ICollection;
 import info.limpet.ICommand;
 import info.limpet.IQuantityCollection;
 import info.limpet.IStore;
@@ -10,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public abstract class AbstractCommand<T extends ICollection> implements
+public abstract class AbstractCommand<T extends IStoreItem> implements
 		ICommand<T>
 {
 	final private String title;
@@ -55,11 +54,11 @@ public abstract class AbstractCommand<T extends ICollection> implements
 		return outputName;
 	}
 
-	protected int getNonSingletonArrayLength(List<ICollection> inputs)
+	protected int getNonSingletonArrayLength(List<IStoreItem> inputs)
 	{
 		int size = 0;
 
-		Iterator<ICollection> iter = inputs.iterator();
+		Iterator<IStoreItem> iter = inputs.iterator();
 		while (iter.hasNext())
 		{
 			IQuantityCollection<?> thisC = (IQuantityCollection<?>) iter.next();

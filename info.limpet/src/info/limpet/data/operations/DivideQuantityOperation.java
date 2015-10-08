@@ -17,7 +17,7 @@ import java.util.List;
 import javax.measure.quantity.Quantity;
 import javax.measure.unit.Unit;
 
-public class DivideQuantityOperation implements IOperation<ICollection>
+public class DivideQuantityOperation implements IOperation<IStoreItem>
 {
 	CollectionComplianceTests aTests = new CollectionComplianceTests();
 
@@ -35,18 +35,18 @@ public class DivideQuantityOperation implements IOperation<ICollection>
 		this(SUM_OF_DIVISION_SERIES);
 	}
 
-	public Collection<ICommand<ICollection>> actionsFor(
-			List<ICollection> selection, IStore destination)
+	public Collection<ICommand<IStoreItem>> actionsFor(
+			List<IStoreItem> selection, IStore destination)
 	{
-		Collection<ICommand<ICollection>> res = new ArrayList<ICommand<ICollection>>();
+		Collection<ICommand<IStoreItem>> res = new ArrayList<ICommand<IStoreItem>>();
 
 		if (appliesTo(selection))
 		{
-			ICollection item1 = selection.get(0);
-			ICollection item2 = selection.get(1);
+			ICollection item1 = (ICollection) selection.get(0);
+			ICollection item2 = (ICollection) selection.get(1);
 
 			String oName = item1.getName() + " / " + item2.getName();
-			ICommand<ICollection> newC = new DivideQuantityValues("Divide "
+			ICommand<IStoreItem> newC = new DivideQuantityValues("Divide "
 					+ item1.getName() + " by " + item2.getName(), oName, selection,
 					item1, item2, destination);
 			res.add(newC);
@@ -59,7 +59,7 @@ public class DivideQuantityOperation implements IOperation<ICollection>
 		return res;
 	}
 
-	private boolean appliesTo(List<ICollection> selection)
+	private boolean appliesTo(List<IStoreItem> selection)
 	{
 		boolean res = false;
 		// first check we have quantity data
@@ -77,14 +77,14 @@ public class DivideQuantityOperation implements IOperation<ICollection>
 		return res;
 	}
 
-	public class DivideQuantityValues extends AbstractCommand<ICollection>
+	public class DivideQuantityValues extends AbstractCommand<IStoreItem>
 	{
 		final IQuantityCollection<Quantity> _item1;
 		final IQuantityCollection<Quantity> _item2;
 
 		@SuppressWarnings("unchecked")
 		public DivideQuantityValues(String title, String outputName,
-				List<ICollection> selection, ICollection item1, ICollection item2,
+				List<IStoreItem> selection, ICollection item1, ICollection item2,
 				IStore store)
 		{
 			super(title, "Divide provided series", outputName, store, false, false,
@@ -101,7 +101,7 @@ public class DivideQuantityOperation implements IOperation<ICollection>
 			// get the unit
 			Unit<Quantity> unit = calculateOutputUnit();
 
-			List<ICollection> outputs = new ArrayList<ICollection>();
+			List<IStoreItem> outputs = new ArrayList<IStoreItem>();
 
 			// ok, generate the new series
 			IQuantityCollection<Quantity> target = new QuantityCollection(getOutputName(),
@@ -116,10 +116,10 @@ public class DivideQuantityOperation implements IOperation<ICollection>
 			performCalc(unit, outputs, _item1, _item2);
 
 			// tell each series that we're a dependent
-			Iterator<ICollection> iter = inputs.iterator();
+			Iterator<IStoreItem> iter = inputs.iterator();
 			while (iter.hasNext())
 			{
-				ICollection iCollection = iter.next();
+				ICollection iCollection = (ICollection) iter.next();
 				iCollection.addDependent(this);
 			}
 
@@ -152,14 +152,14 @@ public class DivideQuantityOperation implements IOperation<ICollection>
 		 * @param outputs
 		 */
 		@SuppressWarnings("unchecked")
-		private void performCalc(Unit<Quantity> unit, List<ICollection> outputs,
+		private void performCalc(Unit<Quantity> unit, List<IStoreItem> outputs,
 				ICollection item1, ICollection item2)
 		{
 			IQuantityCollection<Quantity> target = (IQuantityCollection<Quantity>) outputs
 					.iterator().next();
 			
 			// clear out the lists, first
-			Iterator<ICollection> iter = outputs.iterator();
+			Iterator<IStoreItem> iter = outputs.iterator();
 			while (iter.hasNext())
 			{
 				IQuantityCollection<Quantity> qC = (IQuantityCollection<Quantity>) iter.next();

@@ -1,5 +1,7 @@
 package info.limpet;
 
+import info.limpet.IStore.IStoreItem;
+
 import java.util.List;
 
 
@@ -8,7 +10,7 @@ import java.util.List;
  * @author ian
  *
  */
-public interface ICommand<T extends ICollection> extends IChangeListener
+public interface ICommand<T extends IStoreItem> extends IChangeListener
 {
 	public String getTitle();
 	public String getDescription();

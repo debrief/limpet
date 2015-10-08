@@ -14,7 +14,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-public class GenerateDummyDataOperation implements IOperation<ICollection>
+public class GenerateDummyDataOperation implements IOperation<IStoreItem>
 {
 	CollectionComplianceTests aTests = new CollectionComplianceTests();
 
@@ -28,14 +28,14 @@ public class GenerateDummyDataOperation implements IOperation<ICollection>
 		_count = count;
 	}
 
-	public Collection<ICommand<ICollection>> actionsFor(
-			List<ICollection> selection, IStore destination)
+	public Collection<ICommand<IStoreItem>> actionsFor(
+			List<IStoreItem> selection, IStore destination)
 	{
-		Collection<ICommand<ICollection>> res = new ArrayList<ICommand<ICollection>>();
+		Collection<ICommand<IStoreItem>> res = new ArrayList<ICommand<IStoreItem>>();
 		if (appliesTo(selection))
 		{
 			String thisTitle = "Generate " + _title + " dataset (" + _count + ")";
-			ICommand<ICollection> newC = new GenerateDummyDataCommand(thisTitle,
+			ICommand<IStoreItem> newC = new GenerateDummyDataCommand(thisTitle,
 					destination, _count);
 			res.add(newC);
 		}
@@ -43,14 +43,14 @@ public class GenerateDummyDataOperation implements IOperation<ICollection>
 		return res;
 	}
 
-	private boolean appliesTo(List<ICollection> selection)
+	private boolean appliesTo(List<IStoreItem> selection)
 	{
 		boolean emptySelection = aTests.exactNumber(selection, 0);
 		return emptySelection;
 	}
 
 	public static class GenerateDummyDataCommand extends
-			AbstractCommand<ICollection>
+			AbstractCommand<IStoreItem>
 	{
 		final long _count;
 

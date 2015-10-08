@@ -4,6 +4,7 @@ import info.limpet.ICollection;
 import info.limpet.ICommand;
 import info.limpet.IOperation;
 import info.limpet.IStore;
+import info.limpet.IStore.IStoreItem;
 import info.limpet.data.operations.GenerateDummyDataOperation;
 import info.limpet.data.persistence.xml.XStreamHandler;
 import info.limpet.data.store.InMemoryStore;
@@ -183,7 +184,7 @@ public class DataManagerEditor extends EditorPart implements
 		GenerateDummyDataOperation operation = new GenerateDummyDataOperation("small", 20);
 		
 		Object input = viewer.getInput();
-		Collection<ICommand<ICollection>> commands = operation.actionsFor(getSuitableObjects(), (IStore) input);
+		Collection<ICommand<IStoreItem>> commands = operation.actionsFor(getSuitableObjects(), (IStore) input);
 		commands.iterator().next().execute();
 	}
 
@@ -208,7 +209,7 @@ public class DataManagerEditor extends EditorPart implements
 	protected void editorContextMenuAboutToShow(IMenuManager menu)
 	{
 		// get any suitable objects from selection
-		List<ICollection> selection = getSuitableObjects();
+		List<IStoreItem> selection = getSuitableObjects();
 
 		// include some top level items
 		showThisList(selection, menu, OperationsLibrary.getTopLevel());
@@ -242,22 +243,22 @@ public class DataManagerEditor extends EditorPart implements
 		menu.add(refreshView);
 	}
 
-	private void showThisList(List<ICollection> selection, IMenuManager newM,
+	private void showThisList(List<IStoreItem> selection, IMenuManager newM,
 			List<IOperation<?>> values)
 	{
 		Iterator<IOperation<?>> oIter = values.iterator();
 		while (oIter.hasNext())
 		{
 			@SuppressWarnings("unchecked")
-			final IOperation<ICollection> op = (IOperation<ICollection>) oIter.next();
+			final IOperation<IStoreItem> op = (IOperation<IStoreItem>) oIter.next();
 			final IStore theStore = _store;
-			Collection<ICommand<ICollection>> matches = op.actionsFor(selection,
+			Collection<ICommand<IStoreItem>> matches = op.actionsFor(selection,
 					theStore);
 
-			Iterator<ICommand<ICollection>> mIter = matches.iterator();
+			Iterator<ICommand<IStoreItem>> mIter = matches.iterator();
 			while (mIter.hasNext())
 			{
-				final ICommand<info.limpet.ICollection> thisC = (ICommand<info.limpet.ICollection>) mIter
+				final ICommand<IStoreItem> thisC = (ICommand<IStoreItem>) mIter
 						.next();
 				newM.add(new Action(thisC.getTitle())
 				{
@@ -271,9 +272,9 @@ public class DataManagerEditor extends EditorPart implements
 		}
 	}
 
-	private List<ICollection> getSuitableObjects()
+	private List<IStoreItem> getSuitableObjects()
 	{
-		ArrayList<ICollection> matches = new ArrayList<ICollection>();
+		ArrayList<IStoreItem> matches = new ArrayList<IStoreItem>();
 
 		// ok, find the applicable operations
 		ISelection sel = viewer.getSelection();
@@ -282,9 +283,9 @@ public class DataManagerEditor extends EditorPart implements
 		while (iter.hasNext())
 		{
 			Object object = (Object) iter.next();
-			if (object instanceof ICollection)
+			if (object instanceof IStoreItem)
 			{
-				matches.add((ICollection) object);
+				matches.add((IStoreItem) object);
 			}
 			else if (object instanceof IAdaptable)
 			{
