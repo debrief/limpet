@@ -4,6 +4,7 @@ import info.limpet.ICollection;
 import info.limpet.ICommand;
 import info.limpet.IObjectCollection;
 import info.limpet.IQuantityCollection;
+import info.limpet.IStore.IStoreItem;
 import info.limpet.QuantityRange;
 import info.limpet.data.impl.ObjectCollection;
 import info.limpet.data.impl.QuantityCollection;
@@ -12,6 +13,7 @@ import info.limpet.data.impl.samples.StockTypes.Temporal.Location;
 import info.limpet.data.operations.AddQuantityOperation;
 import info.limpet.data.operations.MultiplyQuantityOperation;
 import info.limpet.data.store.InMemoryStore;
+import info.limpet.data.store.InMemoryStore.StoreGroup;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -165,14 +167,18 @@ public class SampleData
 
 		singletonLength.add(12d);
 
-		List<ICollection> list = new ArrayList<ICollection>();
+		List<IStoreItem> list = new ArrayList<IStoreItem>();
+		
+		StoreGroup group1 = new StoreGroup("Speed data");
+		group1.add(speedSeries1);
+		group1.add(speedSeries2);
+		group1.add(speed_irregular);
+		group1.add(speed_early_1);
+		group1.add(speedSeries3);
+		
+		list.add(group1);
 
 		list.add(angle1);
-		list.add(speedSeries1);
-		list.add(speedSeries2);
-		list.add(speed_irregular);
-		list.add(speed_early_1);
-		list.add(speedSeries3);
 		list.add(length1);
 		list.add(length2);
 		list.add(string1);

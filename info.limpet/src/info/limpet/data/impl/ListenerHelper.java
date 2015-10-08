@@ -2,6 +2,7 @@ package info.limpet.data.impl;
 
 import info.limpet.IChangeListener;
 import info.limpet.ICollection;
+import info.limpet.IStore.IStoreItem;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -22,7 +23,7 @@ public class ListenerHelper
 		_listeners.add(listener);
 	}
 
-	public void fireChange(ICollection subject)
+	public void fireChange(IStoreItem subject)
 	{
 		Iterator<IChangeListener> iter = _listeners.iterator();
 		while (iter.hasNext())

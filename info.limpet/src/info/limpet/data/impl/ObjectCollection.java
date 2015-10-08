@@ -113,7 +113,6 @@ public class ObjectCollection<T extends Object> implements IObjectCollection<T>
 	protected void initListeners()
 	{
 		if (_changeSupport == null)
-			;
 		{
 			_changeSupport = new ListenerHelper();
 		}
@@ -168,6 +167,12 @@ public class ObjectCollection<T extends Object> implements IObjectCollection<T>
 		{
 			return null;
 		}
+	}
+
+	@Override
+	public boolean hasChildren()
+	{
+		return size() > 0;
 	}
 
 }

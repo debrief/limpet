@@ -12,20 +12,34 @@ import info.limpet.data.store.InMemoryStore.StoreChangeListener;
  */
 public interface IStore
 {
+	
+	public static interface IStoreItem
+	{
+		public String getName();
+		public boolean hasChildren();
+		
+		public void addChangeListener(IChangeListener listener);
+		public void removeChangeListener(IChangeListener listener);
+		
+		/** indicate that the collection has changed
+		 *  Note: both registeered listeners and dependents are informed of the change
+		 */
+		public void fireChanged();
+	}
 
 	/**
 	 * add the new collections at the root level
 	 * 
 	 * @param results
 	 */
-	void addAll(List<ICollection> items);
+	void addAll(List<IStoreItem> items);
 
 	/**
 	 * add the new collections at the root level
 	 * 
 	 * @param results
 	 */
-	void add(ICollection items);
+	void add(IStoreItem items);
 
 	/**
 	 * retrieve the named collection
@@ -33,7 +47,7 @@ public interface IStore
 	 * @param name
 	 * @return
 	 */
-	ICollection get(String name);
+	IStoreItem get(String name);
 
 	void addChangeListener(StoreChangeListener listener);
 

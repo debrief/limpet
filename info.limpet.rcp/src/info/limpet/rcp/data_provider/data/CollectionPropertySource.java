@@ -68,7 +68,8 @@ public class CollectionPropertySource implements IPropertySource
 			descriptionDescriptor.setCategory("Label");
 
 			// see if we want to add a value editor
-			if (_collection.getCollection().size() == 1)
+			final ICollection coll = (ICollection) _collection.getCollection();
+			if (coll.size() == 1)
 			{
 				// ok, just use a text editor
 				final PropertyDescriptor valueDescriptor = new TextPropertyDescriptor(
@@ -77,7 +78,7 @@ public class CollectionPropertySource implements IPropertySource
 				dList.add(valueDescriptor);
 
 				// see if the type has any units
-				if (_collection.getCollection() instanceof IQuantityCollection)
+				if (coll instanceof IQuantityCollection)
 				{
 					IQuantityCollection<?> qc = (IQuantityCollection<?>) _collection
 							.getCollection();
@@ -106,19 +107,20 @@ public class CollectionPropertySource implements IPropertySource
 	public Object getPropertyValue(final Object id)
 	{
 		final String prop = (String) id;
+		
+		final ICollection coll = (ICollection) _collection.getCollection();
 
 		if (prop.equals(PROPERTY_NAME))
-			return _collection.getCollection().getName();
+			return coll.getName();
 		else if (prop.equals(PROPERTY_SIZE))
-			return _collection.getCollection().size();
+			return coll.size();
 		else if (prop.equals(PROPERTY_DESCRIPTION))
-			return _collection.getCollection().getDescription();
+			return coll.getDescription();
 		else if (prop.equals(PROPERTY_VALUE))
 		{
-			ICollection theColl = _collection.getCollection();
-			if (theColl instanceof IQuantityCollection<?>)
+			if (coll instanceof IQuantityCollection<?>)
 			{
-				IQuantityCollection<Quantity> qc = (IQuantityCollection<Quantity>) theColl;
+				IQuantityCollection<Quantity> qc = (IQuantityCollection<Quantity>) coll;
 				Measurable<Quantity> first = getSingleton();
 				if (first != null)
 				{
@@ -128,12 +130,11 @@ public class CollectionPropertySource implements IPropertySource
 		}
 		else if (prop.equals(PROPERTY_VALUE_SLIDER))
 		{
-			ICollection theColl = _collection.getCollection();
-			if (theColl instanceof IQuantityCollection<?>)
+			if (coll instanceof IQuantityCollection<?>)
 			{
 				// ok - we have to create a composite object that includes both the
 				// range and the current value - so it can be passed to the slider
-				IQuantityCollection<Quantity> qc = (IQuantityCollection<Quantity>) theColl;
+				IQuantityCollection<Quantity> qc = (IQuantityCollection<Quantity>) coll;
 
 				Measurable<Quantity> first = getSingleton();
 				if (first != null)
@@ -145,12 +146,11 @@ public class CollectionPropertySource implements IPropertySource
 		}
 		else if (prop.equals(PROPERTY_UNITS))
 		{
-			ICollection theColl = _collection.getCollection();
-			if (theColl instanceof IQuantityCollection<?>)
+			if (coll instanceof IQuantityCollection<?>)
 			{
 				// ok - we have to create a composite object that includes both the
 				// range and the current value - so it can be passed to the slider
-				IQuantityCollection<?> qc = (IQuantityCollection<?>) theColl;
+				IQuantityCollection<?> qc = (IQuantityCollection<?>) coll;
 				return "" + qc.getUnits();
 			}
 		}
@@ -191,19 +191,20 @@ public class CollectionPropertySource implements IPropertySource
 	public void setPropertyValue(final Object id, final Object value)
 	{
 		final String prop = (String) id;
+		
+		final ICollection coll = (ICollection) _collection.getCollection();
 
 		if (prop.equals(PROPERTY_NAME))
-			_collection.getCollection().setName((String) value);
+			coll.setName((String) value);
 		else if (prop.equals(PROPERTY_SIZE))
 			throw new RuntimeException("Can't set size, silly");
 		else if (prop.equals(PROPERTY_DESCRIPTION))
-			_collection.getCollection().setDescription((String) value);
+			coll.setDescription((String) value);
 		else if (prop.equals(PROPERTY_VALUE))
 		{
-			ICollection theColl = _collection.getCollection();
-			if (theColl instanceof IQuantityCollection<?>)
+			if (coll instanceof IQuantityCollection<?>)
 			{
-				IQuantityCollection<?> tt = (IQuantityCollection<?>) theColl;
+				IQuantityCollection<?> tt = (IQuantityCollection<?>) coll;
 				tt.replaceSingleton(Double.parseDouble((String) value));
 
 				// ok, fire changed!
@@ -212,10 +213,9 @@ public class CollectionPropertySource implements IPropertySource
 		}
 		else if (prop.equals(PROPERTY_VALUE_SLIDER))
 		{
-			ICollection theColl = _collection.getCollection();
-			if (theColl instanceof IQuantityCollection<?>)
+			if (coll instanceof IQuantityCollection<?>)
 			{
-				IQuantityCollection<?> tt = (IQuantityCollection<?>) theColl;
+				IQuantityCollection<?> tt = (IQuantityCollection<?>) coll;
 
 				// ok, extract the new value from the input object. It's probably
 				// going to be a composite object that combines both range and value

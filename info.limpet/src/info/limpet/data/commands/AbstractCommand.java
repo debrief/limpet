@@ -4,6 +4,7 @@ import info.limpet.ICollection;
 import info.limpet.ICommand;
 import info.limpet.IQuantityCollection;
 import info.limpet.IStore;
+import info.limpet.IStore.IStoreItem;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -85,7 +86,7 @@ public abstract class AbstractCommand<T extends ICollection> implements
 	}
 
 	@Override
-	public void dataChanged(ICollection subject)
+	public void dataChanged(IStoreItem subject)
 	{
 		// are we doing live updates?
 		if (dynamic)
@@ -106,7 +107,7 @@ public abstract class AbstractCommand<T extends ICollection> implements
 	abstract protected void recalculate();
 
 	@Override
-	public void collectionDeleted(ICollection subject)
+	public void collectionDeleted(IStoreItem subject)
 	{
 	}
 

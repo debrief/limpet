@@ -2,24 +2,104 @@ package info.limpet.data.store;
 
 import info.limpet.IChangeListener;
 import info.limpet.ICollection;
+import info.limpet.ICommand;
 import info.limpet.IStore;
+import info.limpet.data.impl.ListenerHelper;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class InMemoryStore implements IStore, IChangeListener
 {
 
-	List<ICollection> _store = new ArrayList<ICollection>();
+	List<IStoreItem> _store = new ArrayList<IStoreItem>();
 
 	private transient List<StoreChangeListener> _listeners = new ArrayList<StoreChangeListener>();
 
-	private Object readResolve() {
-    _listeners = new ArrayList<StoreChangeListener>();
-    return this;
-  }
-	
+	public static class StoreGroup extends ArrayList<IStoreItem> implements
+			IStoreItem
+	{
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+		private String _name;
+
+		// note: we make the change support listeners transient, since
+		// they refer to UI elements that we don't persist
+		private transient ListenerHelper _changeSupport;
+
+		public StoreGroup(String name)
+		{
+			_name = name;
+		}
+
+		@Override
+		public String getName()
+		{
+			return _name;
+		}
+
+		@Override
+		public boolean hasChildren()
+		{
+			return size() > 0;
+		}
+
+		public List<IStoreItem> children()
+		{
+			return this;
+		}
+
+		public void setName(String value)
+		{
+			_name = value;
+		}
+
+		protected void initListeners()
+		{
+			if (_changeSupport == null)
+			{
+				_changeSupport = new ListenerHelper();
+			}
+		}
+
+		@Override
+		public void addChangeListener(IChangeListener listener)
+		{
+			initListeners();
+
+			_changeSupport.add(listener);
+		}
+
+		@Override
+		public void removeChangeListener(IChangeListener listener)
+		{
+			initListeners();
+
+			_changeSupport.remove(listener);
+		}
+
+		@Override
+		public void fireChanged()
+		{
+			if (_changeSupport != null)
+			{
+				// tell any standard listeners
+				_changeSupport.fireChange(this);
+			}
+		}
+
+	}
+
+	private Object readResolve()
+	{
+		_listeners = new ArrayList<StoreChangeListener>();
+		return this;
+	}
+
 	public static interface StoreChangeListener
 	{
 		public void changed();
@@ -47,13 +127,13 @@ public class InMemoryStore implements IStore, IChangeListener
 	}
 
 	@Override
-	public void addAll(List<ICollection> results)
+	public void addAll(List<IStoreItem> results)
 	{
 		// add the items individually, so we can register as a listener
-		Iterator<ICollection> iter = results.iterator();
+		Iterator<IStoreItem> iter = results.iterator();
 		while (iter.hasNext())
 		{
-			ICollection iCollection = (ICollection) iter.next();
+			IStoreItem iCollection = iter.next();
 			add(iCollection);
 		}
 
@@ -61,12 +141,16 @@ public class InMemoryStore implements IStore, IChangeListener
 	}
 
 	@Override
-	public void add(ICollection results)
+	public void add(IStoreItem results)
 	{
 		_store.add(results);
-		
+
 		// register as a listener with the results object
-		results.addChangeListener(this);
+		if (results instanceof ICollection)
+		{
+			ICollection coll = (ICollection) results;
+			coll.addChangeListener(this);
+		}
 
 		fireModified();
 	}
@@ -77,23 +161,37 @@ public class InMemoryStore implements IStore, IChangeListener
 	}
 
 	@Override
-	public ICollection get(String name)
+	public IStoreItem get(String name)
 	{
-		ICollection res = null;
-		Iterator<ICollection> iter = _store.iterator();
+		IStoreItem res = null;
+		Iterator<IStoreItem> iter = _store.iterator();
 		while (iter.hasNext())
 		{
-			ICollection iCollection = (ICollection) iter.next();
-			if (name.equals(iCollection.getName()))
+			IStoreItem item = iter.next();
+			if (item instanceof StoreGroup)
 			{
-				res = iCollection;
+				StoreGroup group = (StoreGroup) item;
+				Iterator<IStoreItem> iter2 = group.iterator();
+				while (iter2.hasNext())
+				{
+					IStore.IStoreItem thisI = (IStore.IStoreItem) iter2.next();
+					if (name.equals(thisI.getName()))
+					{
+						res = thisI;
+						break;
+					}
+				}
+			}
+			if (name.equals(item.getName()))
+			{
+				res = item;
 				break;
 			}
 		}
 		return res;
 	}
 
-	public Iterator<ICollection> iterator()
+	public Iterator<IStoreItem> iterator()
 	{
 		return _store.iterator();
 	}
@@ -103,35 +201,43 @@ public class InMemoryStore implements IStore, IChangeListener
 		// stop listening to the collections individually
 		// - defer the clear until the end,
 		// so we don't get concurrent modification
-		Iterator<ICollection> iter = _store.iterator();
+		Iterator<IStoreItem> iter = _store.iterator();
 		while (iter.hasNext())
 		{
-			ICollection iC = (ICollection) iter.next();
-			iC.removeChangeListener(this);
+			IStoreItem iC = iter.next();
+			if (iC instanceof ICollection)
+			{
+				ICollection coll = (ICollection) iC;
+				coll.removeChangeListener(this);
+			}
 		}
-		
+
 		_store.clear();
 		fireModified();
 	}
 
-	public void remove(ICollection collection)
+	public void remove(IStoreItem item)
 	{
-		_store.remove(collection);
-		
+		_store.remove(item);
+
 		// stop listening to this one
-		collection.removeChangeListener(this);
+		if (item instanceof ICollection)
+		{
+			ICollection collection = (ICollection) item;
+			collection.removeChangeListener(this);
+		}
 
 		fireModified();
 	}
 
 	@Override
-	public void dataChanged(ICollection subject)
+	public void dataChanged(IStoreItem subject)
 	{
 		fireModified();
 	}
 
 	@Override
-	public void collectionDeleted(ICollection subject)
+	public void collectionDeleted(IStoreItem subject)
 	{
 	}
 

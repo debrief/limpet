@@ -39,6 +39,7 @@ import javax.measure.quantity.Length;
 import javax.measure.quantity.Quantity;
 import javax.measure.quantity.Velocity;
 import javax.measure.unit.Unit;
+
 import junit.framework.TestCase;
 
 public class TestOperations extends TestCase
@@ -191,7 +192,7 @@ public class TestOperations extends TestCase
 
 		assertEquals("new collection added to store", 1, store.size());
 
-		ICollection firstItem = store.iterator().next();
+		ICollection firstItem = (ICollection) store.iterator().next();
 		ICommand<?> precedent = firstItem.getPrecedent();
 		assertNotNull("has precedent", precedent);
 		assertEquals("Correct name", "Add series", precedent.getTitle());
@@ -232,16 +233,16 @@ public class TestOperations extends TestCase
 		InMemoryStore store = new SampleData().getData(10);
 
 		// ok, let's try one that works
-		List<ICollection> selection = new ArrayList<ICollection>(3);
+		List<ICollection> selection = new ArrayList<ICollection>();
 
 		// ///////////////
 		// TEST INVALID PERMUTATIONS
 		// ///////////////
-		ICollection speed_good_1 = store.get(SampleData.SPEED_ONE);
-		ICollection speed_good_2 = store.get(SampleData.SPEED_TWO);
-		ICollection string_1 = store.get(SampleData.STRING_ONE);
-		ICollection len1 = store.get(SampleData.LENGTH_ONE);
-		ICollection factor = store.get(SampleData.FLOATING_POINT_FACTOR);
+		ICollection speed_good_1 = (ICollection) store.get(SampleData.SPEED_ONE);
+		ICollection speed_good_2 = (ICollection) store.get(SampleData.SPEED_TWO);
+		ICollection string_1 = (ICollection) store.get(SampleData.STRING_ONE);
+		ICollection len1 = (ICollection) store.get(SampleData.LENGTH_ONE);
+		ICollection factor = (ICollection) store.get(SampleData.FLOATING_POINT_FACTOR);
 
 		selection.clear();
 		selection.add(speed_good_1);
@@ -289,7 +290,7 @@ public class TestOperations extends TestCase
 		// test store has a new item in it
 		assertEquals("store not empty", 1, store.size());
 
-		ICollection newS = store.get(MultiplyQuantityOperation.SERIES_NAME);
+		ICollection newS = (ICollection) store.get(MultiplyQuantityOperation.SERIES_NAME);
 
 		// test results is same length as thisSpeed
 		assertEquals("correct size", 10, newS.size());
@@ -311,7 +312,7 @@ public class TestOperations extends TestCase
 
 		List<ICollection> selection = new ArrayList<ICollection>(3);
 		// speed one defined in m/s
-		ICollection speed_good_1 = store.get(SampleData.SPEED_ONE);
+		ICollection speed_good_1 = (ICollection) store.get(SampleData.SPEED_ONE);
 		selection.add(speed_good_1);
 
 		// test incompatible target unit
@@ -329,7 +330,7 @@ public class TestOperations extends TestCase
 		// apply action
 		command.execute();
 
-		ICollection newS = store.get(speed_good_1.getName()
+		ICollection newS = (ICollection) store.get(speed_good_1.getName()
 				+ UnitConversionOperation.CONVERTED_TO + KILOMETRES_PER_HOUR);
 		assertNotNull(newS);
 
@@ -434,7 +435,7 @@ public class TestOperations extends TestCase
 		selection.clear();
 
 		// test not all quantities
-		ICollection string_1 = store.get(SampleData.STRING_ONE);
+		ICollection string_1 = (ICollection) store.get(SampleData.STRING_ONE);
 		selection.add(speed_good_1);
 		selection.add(string_1);
 		commands = new SubtractQuantityOperation().actionsFor(selection, store);
@@ -486,13 +487,13 @@ public class TestOperations extends TestCase
 
 		IQuantityCollection<Velocity> speed_good_1 = (IQuantityCollection<Velocity>) store
 				.get(SampleData.SPEED_ONE);
-		ICollection speed_good_2 = store.get(SampleData.SPEED_TWO);
+		ICollection speed_good_2 = (ICollection) store.get(SampleData.SPEED_TWO);
 		IQuantityCollection<Length> length_1 = (IQuantityCollection<Length>) store
 				.get(SampleData.LENGTH_ONE);
-		ICollection string_1 = store.get(SampleData.STRING_ONE);
+		ICollection string_1 = (ICollection) store.get(SampleData.STRING_ONE);
 		IQuantityCollection<Dimensionless> factor = (IQuantityCollection<Dimensionless>) store
 				.get(SampleData.FLOATING_POINT_FACTOR);
-		ICollection speed_good_1_bigger = new SampleData().getData(20).get(
+		ICollection speed_good_1_bigger = (ICollection) new SampleData().getData(20).get(
 				SampleData.SPEED_ONE);
 
 		// /

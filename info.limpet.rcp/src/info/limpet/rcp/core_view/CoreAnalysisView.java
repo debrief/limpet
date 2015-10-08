@@ -2,6 +2,7 @@ package info.limpet.rcp.core_view;
 
 import info.limpet.IChangeListener;
 import info.limpet.ICollection;
+import info.limpet.IStore.IStoreItem;
 import info.limpet.data.operations.CollectionComplianceTests;
 import info.limpet.rcp.Activator;
 
@@ -57,13 +58,13 @@ public abstract class CoreAnalysisView extends ViewPart
 		{
 
 			@Override
-			public void dataChanged(ICollection subject)
+			public void dataChanged(IStoreItem subject)
 			{
 				display(curList);
 			}
 
 			@Override
-			public void collectionDeleted(ICollection subject)
+			public void collectionDeleted(IStoreItem subject)
 			{
 				// hmm, we should probably stop listening to that collection
 				curList.remove(subject);

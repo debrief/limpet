@@ -1,8 +1,10 @@
 package info.limpet;
 
+import info.limpet.IStore.IStoreItem;
+
 import java.util.List;
 
-public interface ICollection
+public interface ICollection extends IStoreItem
 {
 	public String getName();
 	public void setName(String name);
@@ -18,9 +20,6 @@ public interface ICollection
 	public abstract List<ICommand<?>> getDependents();
 	public abstract ICommand<?> getPrecedent();
 	public void addDependent(ICommand<?> addQuantityValues);
-
-	public void addChangeListener(IChangeListener listener);
-	public void removeChangeListener(IChangeListener listener);
 	
 	/** indicate that the collection has changed
 	 *  Note: both registeered listeners and dependents are informed of the change

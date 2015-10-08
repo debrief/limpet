@@ -51,6 +51,8 @@ public class CollectionWrapper implements IAdaptable, LimpetWrapper
 	@Override
 	public String toString()
 	{
-		return _collection.getName() + " (" + _collection.size() + " items)";
+		final String msg;
+		msg = _collection.getName() + " (" + (_collection).size() + " items)";
+		return msg;
 	}
 }

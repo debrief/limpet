@@ -4,6 +4,7 @@ import info.limpet.ICollection;
 import info.limpet.ICommand;
 import info.limpet.IOperation;
 import info.limpet.IStore;
+import info.limpet.IStore.IStoreItem;
 import info.limpet.data.commands.AbstractCommand;
 import info.limpet.data.impl.samples.SampleData;
 import info.limpet.data.store.InMemoryStore;
@@ -63,10 +64,10 @@ public class GenerateDummyDataOperation implements IOperation<ICollection>
 		public void execute()
 		{
 			InMemoryStore newData = new SampleData().getData(_count);
-			Iterator<ICollection> iter = newData.iterator();
+			Iterator<IStoreItem> iter = newData.iterator();
 			while (iter.hasNext())
 			{
-				ICollection iCollection = (ICollection) iter.next();
+				IStoreItem iCollection = iter.next();
 				getStore().add(iCollection);
 
 			}

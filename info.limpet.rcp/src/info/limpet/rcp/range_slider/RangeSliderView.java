@@ -17,6 +17,7 @@ import org.eclipse.swt.widgets.Slider;
 import info.limpet.IChangeListener;
 import info.limpet.ICollection;
 import info.limpet.IQuantityCollection;
+import info.limpet.IStore.IStoreItem;
 import info.limpet.QuantityRange;
 import info.limpet.data.operations.CollectionComplianceTests;
 import info.limpet.rcp.core_view.CoreAnalysisView;
@@ -212,14 +213,14 @@ public class RangeSliderView extends CoreAnalysisView implements
 	}
 
 	@Override
-	public void dataChanged(ICollection subject)
+	public void dataChanged(IStoreItem subject)
 	{
 		// ok, re=do the update
 		showData(_current);
 	}
 
 	@Override
-	public void collectionDeleted(ICollection subject)
+	public void collectionDeleted(IStoreItem subject)
 	{
 		// TODO Auto-generated method stub
 
