@@ -39,7 +39,7 @@ public class CollectionComplianceTests
 		// are they all non location?
 		boolean allValid = true;
 
-		for (int i = 0; i < selection.size();)
+		for (int i = 0; i < selection.size();i++)
 		{
 			IStoreItem thisI = selection.get(i);
 			if (thisI instanceof ICollection)
@@ -188,7 +188,7 @@ public class CollectionComplianceTests
 	public boolean allEqualDimensions(List<? extends IStoreItem> selection)
 	{
 		// are they all temporal?
-		boolean allValid = true;
+		boolean allValid = false;
 		Dimension theD = null;
 
 		for (int i = 0; i < selection.size(); i++)
@@ -210,6 +210,7 @@ public class CollectionComplianceTests
 						if (thisD.equals(theD))
 						{
 							// all fine.
+							allValid = true;
 						}
 						else
 						{
