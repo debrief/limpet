@@ -20,8 +20,13 @@ public class QuantityCollection<T extends Quantity> extends
 
 	Unit<T> units;
 	
-	transient QuantityHelper<T> _qHelper;
+	private transient QuantityHelper<T> _qHelper;
 
+	// TODO: we store range at this level, and in the Q Helper
+	// this is required for persistence reasons, since the
+	// Q Helper is transient
+	private QuantityRange<T> _range;
+	
 	public QuantityCollection(String name, Unit<T> units)
 	{
 		this(name, null, units);
@@ -46,6 +51,7 @@ public class QuantityCollection<T extends Quantity> extends
 	public void setRange(QuantityRange<T> range)
 	{
 		initQHelper();
+		_range = range;
 		_qHelper.setRange(range);
 	}
 	
@@ -53,7 +59,7 @@ public class QuantityCollection<T extends Quantity> extends
 	public QuantityRange<T> getRange()
 	{
 		initQHelper();
-		return _qHelper.getRange();
+		return _range;
 	}
 
 	@Override
