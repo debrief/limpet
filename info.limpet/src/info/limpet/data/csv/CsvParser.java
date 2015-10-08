@@ -3,15 +3,15 @@ package info.limpet.data.csv;
 import java.util.ArrayList;
 import java.util.List;
 
-import info.limpet.ICollection;
+import info.limpet.IStore.IStoreItem;
 
 public class CsvParser
 {
-	public List<ICollection> parse(String fileName)
+	public List<IStoreItem> parse(String fileName)
 	{
-		List<ICollection> collections = new ArrayList<ICollection>();
+		List<IStoreItem> items = new ArrayList<IStoreItem>();
 		// TODO parse
 		System.out.println(fileName);
-		return collections;
+		return items;
 	}
 }

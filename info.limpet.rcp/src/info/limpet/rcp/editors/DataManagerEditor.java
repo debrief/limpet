@@ -43,6 +43,7 @@ import info.limpet.ICollection;
 import info.limpet.ICommand;
 import info.limpet.IOperation;
 import info.limpet.IStore;
+import info.limpet.IStore.IStoreItem;
 import info.limpet.data.csv.CsvParser;
 import info.limpet.data.operations.GenerateDummyDataOperation;
 import info.limpet.data.persistence.xml.XStreamHandler;
@@ -210,7 +211,7 @@ public class DataManagerEditor extends EditorPart implements
 
 	private void parseCsv(String fileName)
 	{
-		List<ICollection> collections = new CsvParser().parse(fileName);
+		List<IStoreItem> collections = new CsvParser().parse(fileName);
 		_store.addAll(collections);
 		changed();
 	}
