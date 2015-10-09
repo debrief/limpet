@@ -21,7 +21,9 @@ import java.util.List;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
-import org.opengis.geometry.Geometry;
+import org.geotools.geometry.GeometryBuilder;
+import org.geotools.referencing.crs.DefaultGeographicCRS;
+import org.opengis.geometry.primitive.Point;
 
 public class CsvParser
 {
@@ -143,7 +145,7 @@ public class CsvParser
 					if (i1 > 0)
 					{
 						// ok, we have units
-						colName = nextVal.substring(0, i1);
+						colName = nextVal.substring(0, i1).trim();
 					}
 					else
 					{
@@ -174,7 +176,7 @@ public class CsvParser
 						int i2 = nextVal.indexOf(")");
 						if (i2 > 0 && i2 > i1 + 1)
 						{
-							final String units = nextVal.substring(i1 + 1, i2);
+							final String units = nextVal.substring(i1 + 1, i2).trim();
 
 							Iterator<DataImporter> cIter2 = candidates.iterator();
 							while (cIter2.hasNext())
@@ -305,18 +307,21 @@ public class CsvParser
 			return new Temporal.Location(name);
 		}
 
-		@SuppressWarnings("unused")
 		public void consume(ICollection series, long thisTime, int colStart,
 				CSVRecord row)
 		{
+			final Temporal.Location locS = (Location) series;
+			
 			String latVal = row.get(colStart);
 			Double valLat = Double.parseDouble(latVal);
 			String longVal = row.get(colStart + 1);
 			Double valLong = Double.parseDouble(longVal);
 
-			Temporal.Location locS = (Location) series;
-			Geometry newLoc = null;
-			locS.add(thisTime, newLoc);
+			GeometryBuilder builder = new GeometryBuilder( DefaultGeographicCRS.WGS84 );
+			Point point = builder.createPoint( valLong, valLat);
+
+			
+			locS.add(thisTime, point);
 		}
 
 		public int numCols()
