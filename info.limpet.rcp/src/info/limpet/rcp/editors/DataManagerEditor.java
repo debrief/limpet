@@ -29,12 +29,15 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
@@ -55,6 +58,7 @@ public class DataManagerEditor extends EditorPart implements
 	private Action action1;
 	private Action refreshView;
 	private Action generateData;
+	private Action addLayer;
 	private boolean _dirty = false;
 	private DataModel _model;
 	private StoreChangeListener _changeListener = new StoreChangeListener()
@@ -137,6 +141,7 @@ public class DataManagerEditor extends EditorPart implements
 	{
 		manager.add(refreshView);
 		manager.add(generateData);
+		manager.add(addLayer);
 	}
 
 	private void makeActions()
@@ -166,6 +171,17 @@ public class DataManagerEditor extends EditorPart implements
 		generateData.setText("Generate data");
 		generateData.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
 				.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD));
+
+		addLayer = new Action()
+		{
+			public void run()
+			{
+				addLayer();
+			}
+		};
+		addLayer.setText("Add Layer");
+		addLayer.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
+				.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE));
 
 		refreshView = new Action()
 		{
@@ -199,8 +215,17 @@ public class DataManagerEditor extends EditorPart implements
 					@Override
 					public String getString(String title)
 					{
-						// TODO Auto-generated method stub
-						return null;
+						String res = null;
+						InputDialog dlg = new InputDialog(Display.getCurrent()
+								.getActiveShell(), title, null, null,
+								null);
+						if (dlg.open() == Window.OK)
+						{
+							// User clicked OK; update the label with the input
+							res = dlg.getValue();
+						}
+
+						return res;
 					}
 				});
 
