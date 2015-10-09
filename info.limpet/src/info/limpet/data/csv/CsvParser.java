@@ -1,10 +1,14 @@
 package info.limpet.data.csv;
 
 import info.limpet.ICollection;
+import info.limpet.IQuantityCollection;
 import info.limpet.IStore.IStoreItem;
 import info.limpet.ITemporalQuantityCollection;
+import info.limpet.data.impl.ObjectCollection;
+import info.limpet.data.impl.samples.StockTypes.NonTemporal;
 import info.limpet.data.impl.samples.StockTypes.Temporal;
 import info.limpet.data.impl.samples.StockTypes.Temporal.Location;
+import info.limpet.data.impl.samples.StockTypes.Temporal.Strings;
 import info.limpet.data.store.InMemoryStore.StoreGroup;
 
 import java.io.File;
@@ -48,7 +52,7 @@ public class CsvParser
 		candidates.add(new TemporalSeriesSupporter<Temporal.Frequency_Hz>(
 				Temporal.Frequency_Hz.class, null, "Hz"));
 		candidates.add(new TemporalSeriesSupporter<Temporal.TurnRate>(
-				 Temporal.TurnRate.class,	null, "Degs/sec"));
+				Temporal.TurnRate.class, null, "Degs/sec"));
 		candidates.add(new TemporalSeriesSupporter<Temporal.Length_M>(
 				Temporal.Length_M.class, null, "m"));
 		candidates.add(new TemporalSeriesSupporter<Temporal.Angle_Degrees>(
@@ -58,9 +62,16 @@ public class CsvParser
 		candidates.add(new TemporalSeriesSupporter<Temporal.Temp_C>(
 				Temporal.Temp_C.class, null, "C"));
 
-		// store one importer per column-set		
+		final DataImporter temporalDimensionless = new TemporalSeriesSupporter<Temporal.DimensionlessDouble>(
+				Temporal.DimensionlessDouble.class, null, null);
+		final DataImporter temporalStrings = new TemporalStringImporter();
+		final DataImporter strings = new StringImporter();
+		final DataImporter dimensionless = new SeriesSupporter<NonTemporal.DimensionlessDouble>(
+				NonTemporal.DimensionlessDouble.class, null, null);
+
+		// store one importer per column-set
 		List<DataImporter> importers = new ArrayList<DataImporter>();
-		
+
 		// and store one series per column-set
 		List<ICollection> series = new ArrayList<ICollection>();
 
@@ -107,7 +118,8 @@ public class CsvParser
 						if (thisI.handleName(colName))
 						{
 							importers.add(thisI);
-							series.add(thisI.create(fileName + " - " + thisI.nameFor(colName)));
+							series
+									.add(thisI.create(fileName + " - " + thisI.nameFor(colName)));
 							handled = true;
 							ctr += thisI.numCols();
 							break;
@@ -130,12 +142,25 @@ public class CsvParser
 								if (thisI.handleUnits(units))
 								{
 									importers.add(thisI);
-									series.add(thisI.create(fileName + " - " + thisI.nameFor(colName)));
+									series.add(thisI.create(fileName + " - "
+											+ thisI.nameFor(colName)));
 									ctr += thisI.numCols();
+									handled = true;
 									break;
 								}
 							}
 						}
+					}
+
+					// have we managed it?
+					if (!handled)
+					{
+						// ok, in that case we don't know. Let's introduce a deferred
+						// decision
+						// maker, so we can make a decision once we've read in some data
+						importers.add(new DeferredLoadSupporter(colName));
+						series.add(new ObjectCollection<String>("null"));
+						ctr += 1;
 					}
 				}
 			}
@@ -170,6 +195,56 @@ public class CsvParser
 				for (int i = 0; i < numImporters; i++)
 				{
 					DataImporter thisI = importers.get(i);
+
+					// ok, just check if this is a deferred importer
+					if (thisI instanceof DeferredLoadSupporter)
+					{
+						DeferredLoadSupporter dl = (DeferredLoadSupporter) thisI;
+						String seriesName = dl.getName();
+
+						// ok, have a look at the next field
+						String nextVal = record.get(thisCol);
+
+						// is it numeric?
+						DataImporter importer = null;
+						// ok, treat it as string data
+						if (isTime)
+						{
+							if (isNumeric(nextVal))
+							{
+								// ok, we've got dimensionless quantity data
+								importer = temporalDimensionless;
+							}
+							else
+							{
+								importer = temporalStrings;
+							}
+						}
+						else
+						{
+							if (isNumeric(nextVal))
+							{
+								// ok, we've got dimensionless quantity data
+								importer = dimensionless;
+							}
+							else
+							{
+								importer = strings;
+							}
+						}
+						
+						if(importer != null)
+						{
+							int index =importers.indexOf(dl);
+							importers.set(index, importer);
+							
+							series.set(index, importer.create(seriesName));
+							
+							thisI = importer;
+						}
+						
+					}
+
 					ICollection thisS = series.get(i);
 
 					thisI.consume(thisS, theTime, thisCol, record);
@@ -204,10 +279,25 @@ public class CsvParser
 		return res;
 	}
 
-	/** base helper class, to help importing series of data
+	public static boolean isNumeric(String str)
+	{
+		try
+		{
+			@SuppressWarnings("unused")
+			double d = Double.parseDouble(str);
+		}
+		catch (NumberFormatException nfe)
+		{
+			return false;
+		}
+		return true;
+	}
+
+	/**
+	 * base helper class, to help importing series of data
 	 * 
 	 * @author ian
-	 *
+	 * 
 	 */
 	public static abstract class DataImporter
 	{
@@ -215,11 +305,15 @@ public class CsvParser
 		final private String _colName;
 		private Class<?> _classType;
 
-		/** constructor
+		/**
+		 * constructor
 		 * 
-		 * @param classType the type of series we represent (used for default constructor)
-		 * @param colName name of the column we store
-		 * @param units name of the units we store
+		 * @param classType
+		 *          the type of series we represent (used for default constructor)
+		 * @param colName
+		 *          name of the column we store
+		 * @param units
+		 *          name of the units we store
 		 */
 		protected DataImporter(Class<?> classType, String colName, String units)
 		{
@@ -228,7 +322,8 @@ public class CsvParser
 			_classType = classType;
 		}
 
-		/** create an instance of this series, using the specified name
+		/**
+		 * create an instance of this series, using the specified name
 		 * 
 		 * @param name
 		 * @return
@@ -248,7 +343,8 @@ public class CsvParser
 			return res;
 		}
 
-		/** what should this series be called, if the supplied column name is found
+		/**
+		 * what should this series be called, if the supplied column name is found
 		 * 
 		 */
 		public String nameFor(String colName)
@@ -256,17 +352,23 @@ public class CsvParser
 			return colName;
 		}
 
-		/** read some data from this record
+		/**
+		 * read some data from this record
 		 * 
-		 * @param series target series
-		 * @param thisTime this time stamp
-		 * @param colStart column to start reading from
-		 * @param row current row of data
+		 * @param series
+		 *          target series
+		 * @param thisTime
+		 *          this time stamp
+		 * @param colStart
+		 *          column to start reading from
+		 * @param row
+		 *          current row of data
 		 */
 		abstract public void consume(ICollection series, long thisTime,
 				int colStart, CSVRecord row);
 
-		/** can we handle this column name?
+		/**
+		 * can we handle this column name?
 		 * 
 		 * @param colName
 		 * @return
@@ -279,7 +381,8 @@ public class CsvParser
 				return _colName.equals(colName);
 		}
 
-		/** can we handle this units type?
+		/**
+		 * can we handle this units type?
 		 * 
 		 * @param units
 		 * @return
@@ -292,7 +395,8 @@ public class CsvParser
 				return _units.equals(units);
 		}
 
-		/** how many columns do we consume?
+		/**
+		 * how many columns do we consume?
 		 * 
 		 * @return
 		 */
@@ -302,10 +406,58 @@ public class CsvParser
 		}
 	}
 
-	/** class to handle importing two columns of location data
+	/**
+	 * class to handle importing time-related strings
 	 * 
 	 * @author ian
-	 *
+	 * 
+	 */
+	protected static class TemporalStringImporter extends DataImporter
+	{
+		protected TemporalStringImporter()
+		{
+			super(Temporal.Strings.class, null, null);
+		}
+
+		@Override
+		public void consume(ICollection series, long thisTime, int colStart,
+				CSVRecord row)
+		{
+			String thisVal = row.get(colStart);
+			Temporal.Strings thisS = (Strings) series;
+			thisS.add(thisTime, thisVal);
+		}
+	}
+
+	/**
+	 * class to handle importing time-related strings
+	 * 
+	 * @author ian
+	 * 
+	 */
+	protected static class StringImporter extends DataImporter
+	{
+		protected StringImporter()
+		{
+			super(NonTemporal.Strings.class, null, null);
+		}
+
+		@Override
+		public void consume(ICollection series, long thisTime, int colStart,
+				CSVRecord row)
+		{
+			String thisVal = row.get(colStart);
+			NonTemporal.Strings thisS = (NonTemporal.Strings) series;
+			thisS.add(thisVal);
+		}
+	}
+
+	
+	/**
+	 * class to handle importing two columns of location data
+	 * 
+	 * @author ian
+	 * 
 	 */
 	protected static class LocationImporter extends DataImporter
 	{
@@ -346,16 +498,57 @@ public class CsvParser
 		}
 	}
 
-	/** generic class to handle importing series of data
+	
+	/**
+	 * generic class to handle importing series of data
 	 * 
 	 * @author ian
-	 *
+	 * 
+	 * @param <T>
+	 */
+	protected static class SeriesSupporter<T extends IQuantityCollection<?>>
+			extends DataImporter
+	{
+		protected SeriesSupporter(Class<?> classType, String colName,
+				String units)
+		{
+			super(classType, colName, units);
+		}
+
+		protected void add(ICollection series, long time, Number quantity)
+		{
+			IQuantityCollection<?> target = (IQuantityCollection<?>) series;
+			target.add(quantity);
+		}
+
+		@Override
+		public void consume(ICollection series, long thisTime, int colStart,
+				CSVRecord row)
+		{
+			String thisVal = row.get(colStart);
+			Double val = Double.parseDouble(thisVal);
+			add(series, thisTime, val);
+		}
+
+		@Override
+		public int numCols()
+		{
+			return 1;
+		}
+	}
+
+	/**
+	 * generic class to handle importing series of data
+	 * 
+	 * @author ian
+	 * 
 	 * @param <T>
 	 */
 	protected static class TemporalSeriesSupporter<T extends ITemporalQuantityCollection<?>>
 			extends DataImporter
 	{
-		protected TemporalSeriesSupporter(Class<?> classType, String colName, String units)
+		protected TemporalSeriesSupporter(Class<?> classType, String colName,
+				String units)
 		{
 			super(classType, colName, units);
 		}
@@ -382,4 +575,28 @@ public class CsvParser
 		}
 	}
 
+	protected static class DeferredLoadSupporter extends DataImporter
+	{
+		String _name;
+
+		public DeferredLoadSupporter(String name)
+		{
+			super(null, null, null);
+			_name = name;
+		}
+
+		public String getName()
+		{
+			return _name;
+		}
+
+		@Override
+		public void consume(ICollection series, long thisTime, int colStart,
+				CSVRecord row)
+		{
+			throw new RuntimeException(
+					"We're just temporary - we should never actually be called!");
+		}
+
+	}
 }
