@@ -3,6 +3,7 @@ package info.limpet.data;
 import java.io.File;
 import java.util.List;
 
+import info.limpet.ICollection;
 import info.limpet.IStore.IStoreItem;
 import info.limpet.data.csv.CsvParser;
 import junit.framework.TestCase;
@@ -16,14 +17,29 @@ public class TestCsvParser extends TestCase
 		assertTrue(file.isFile());
 		List<IStoreItem> items = new CsvParser().parse(file.getAbsolutePath());
 		assertTrue(items.size() == 1);
+		ICollection firstColl = (ICollection) items.get(0);
+		assertEquals("correct num rows", 69, firstColl.size());
 	}
-	
+
 	public void testFrequencs() throws Exception
 	{
 		File file = getDataFile("frequences.csv");
 		assertTrue(file.isFile());
 		List<IStoreItem> items = new CsvParser().parse(file.getAbsolutePath());
 		assertTrue(items.size() == 1);
+		ICollection firstColl = (ICollection) items.get(0);
+		assertEquals("correct num rows", 11, firstColl.size());
+	}
+
+	public void testMultiColumn() throws Exception
+	{
+		File file = getDataFile("track.csv");
+		assertTrue(file.isFile());
+		CsvParser parser = new CsvParser();
+		List<IStoreItem> items = parser.parse(file.getAbsolutePath());
+		assertEquals("correct num collections", 6, items.size());
+		ICollection firstColl = (ICollection) items.get(0);
+		assertEquals("correct num rows", 7, firstColl.size());
 	}
 
 	private File getDataFile(String name)
