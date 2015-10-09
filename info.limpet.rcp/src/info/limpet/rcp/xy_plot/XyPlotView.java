@@ -15,12 +15,14 @@ import java.util.List;
 
 import javax.measure.Measurable;
 import javax.measure.quantity.Quantity;
+import javax.measure.unit.Unit;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.opengis.geometry.Geometry;
 import org.swtchart.Chart;
 import org.swtchart.IAxis;
+import org.swtchart.IAxis.Position;
 import org.swtchart.ILineSeries;
 import org.swtchart.ILineSeries.PlotSymbolType;
 import org.swtchart.ISeries;
@@ -122,14 +124,10 @@ public class XyPlotView extends CoreAnalysisView
 	{
 		Iterator<IStoreItem> iter = res.iterator();
 
-		// clear the graph
-		ISeries[] series = chart.getSeriesSet().getSeries();
-		for (int i = 0; i < series.length; i++)
-		{
-			ISeries iSeries = series[i];
-			chart.getSeriesSet().deleteSeries(iSeries.getId());
-		}
+		clearGraph();
 
+		Unit<Quantity> existingUnits = null;
+		
 		while (iter.hasNext())
 		{
 			ICollection coll = (ICollection) iter.next();
@@ -142,7 +140,8 @@ public class XyPlotView extends CoreAnalysisView
 
 						IQuantityCollection<Quantity> thisQ = (IQuantityCollection<Quantity>) coll;
 
-						String seriesName = thisQ.getName() + " (" + thisQ.getUnits() + ")";
+						final Unit<Quantity> theseUnits = thisQ.getUnits();
+						String seriesName = thisQ.getName() + " (" + theseUnits + ")";
 						ILineSeries newSeries = (ILineSeries) chart.getSeriesSet()
 								.createSeries(SeriesType.LINE, seriesName);
 						newSeries.setSymbolType(PlotSymbolType.NONE);
@@ -158,6 +157,25 @@ public class XyPlotView extends CoreAnalysisView
 							yData[ctr++] = tQ.doubleValue(thisQ.getUnits());
 						}
 
+						// ok, do we have existing data?
+						if((existingUnits != null) && !(existingUnits.equals(theseUnits)))
+						{
+							// 	create second Y axis
+							int axisId = chart.getAxisSet().createYAxis();								
+
+							// set the properties of second Y axis
+							IAxis yAxis2 = chart.getAxisSet().getYAxis(axisId);
+							yAxis2.getTitle().setText(theseUnits.toString());
+							yAxis2.setPosition(Position.Secondary);
+							newSeries.setYAxisId(axisId);
+						}
+						else
+						{
+							chart.getAxisSet().getYAxes()[0].getTitle().setText(theseUnits.toString());
+							existingUnits = theseUnits;
+						}
+
+						
 						// newSeries.setXSeries(xData);
 						newSeries.setYSeries(yData);
 
@@ -180,13 +198,9 @@ public class XyPlotView extends CoreAnalysisView
 	{
 		Iterator<IStoreItem> iter = res.iterator();
 
-		// clear the graph
-		ISeries[] series = chart.getSeriesSet().getSeries();
-		for (int i = 0; i < series.length; i++)
-		{
-			ISeries iSeries = series[i];
-			chart.getSeriesSet().deleteSeries(iSeries.getId());
-		}
+		clearGraph();
+		
+		Unit<Quantity> existingUnits = null;
 
 		while (iter.hasNext())
 		{
@@ -201,7 +215,9 @@ public class XyPlotView extends CoreAnalysisView
 						{
 							ITemporalQuantityCollection<Quantity> thisQ = (ITemporalQuantityCollection<Quantity>) coll;
 
-							String seriesName = thisQ.getName() + " (" + thisQ.getUnits()
+							final Unit<Quantity> theseUnits = thisQ.getUnits();
+
+							String seriesName = thisQ.getName() + " (" + theseUnits
 									+ ")";
 							ILineSeries newSeries = (ILineSeries) chart.getSeriesSet()
 									.createSeries(SeriesType.LINE, seriesName);
@@ -223,6 +239,25 @@ public class XyPlotView extends CoreAnalysisView
 
 							newSeries.setXDateSeries(xData);
 							newSeries.setYSeries(yData);
+							
+							// ok, do we have existing data?
+							if((existingUnits != null) && !(existingUnits.equals(theseUnits)))
+							{
+								// 	create second Y axis
+								int axisId = chart.getAxisSet().createYAxis();								
+
+								// set the properties of second Y axis
+								IAxis yAxis2 = chart.getAxisSet().getYAxis(axisId);
+								yAxis2.getTitle().setText(theseUnits.toString());
+								yAxis2.setPosition(Position.Secondary);
+								newSeries.setYAxisId(axisId);
+							}
+							else
+							{
+								chart.getAxisSet().getYAxes()[0].getTitle().setText(theseUnits.toString());
+								existingUnits = theseUnits;
+							}
+
 
 							newSeries.setSymbolType(PlotSymbolType.CROSS);
 
@@ -237,6 +272,25 @@ public class XyPlotView extends CoreAnalysisView
 						}
 					}
 				}
+			}
+		}
+	}
+
+	private void clearGraph()
+	{
+		// clear the graph
+		ISeries[] series = chart.getSeriesSet().getSeries();
+		for (int i = 0; i < series.length; i++)
+		{
+			ISeries iSeries = series[i];
+			chart.getSeriesSet().deleteSeries(iSeries.getId());
+			
+			// and clear any series
+			IAxis[] yA = chart.getAxisSet().getYAxes();
+			for (int j = 1; j < yA.length; j++)
+			{
+				IAxis iAxis = yA[j];
+				chart.getAxisSet().deleteYAxis(iAxis.getId());				
 			}
 		}
 	}
