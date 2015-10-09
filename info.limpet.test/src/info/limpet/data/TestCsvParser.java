@@ -6,6 +6,7 @@ import java.util.List;
 import info.limpet.ICollection;
 import info.limpet.IStore.IStoreItem;
 import info.limpet.data.csv.CsvParser;
+import info.limpet.data.store.InMemoryStore.StoreGroup;
 import junit.framework.TestCase;
 
 public class TestCsvParser extends TestCase
@@ -33,13 +34,15 @@ public class TestCsvParser extends TestCase
 
 	public void testMultiColumn() throws Exception
 	{
-		File file = getDataFile("track.csv");
+		File file = getDataFile("track_one.csv");
 		assertTrue(file.isFile());
 		CsvParser parser = new CsvParser();
 		List<IStoreItem> items = parser.parse(file.getAbsolutePath());
-		assertEquals("correct num collections", 6, items.size());
-		ICollection firstColl = (ICollection) items.get(0);
-		assertEquals("correct num rows", 7, firstColl.size());
+		assertEquals("correct group", 1, items.size());
+		StoreGroup group = (StoreGroup) items.get(0);
+		assertEquals("correct num collections", 6, group.size());
+		ICollection firstColl = (ICollection) group.get(0);
+		assertEquals("correct num rows", 69, firstColl.size());
 	}
 
 	private File getDataFile(String name)
