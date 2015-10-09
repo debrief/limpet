@@ -1,8 +1,10 @@
 package info.limpet.rcp.editors;
 
+import info.limpet.ICollection;
 import info.limpet.rcp.Activator;
 import info.limpet.rcp.data_provider.data.CollectionWrapper;
 import info.limpet.rcp.data_provider.data.CommandWrapper;
+import info.limpet.rcp.data_provider.data.GroupWrapper;
 import info.limpet.rcp.data_provider.data.NamedList;
 
 import org.eclipse.jface.viewers.LabelProvider;
@@ -18,18 +20,26 @@ public class LimpetLabelProvider extends LabelProvider
 	{
 		Image res = null;
 
+		if (obj instanceof GroupWrapper)
+		{
+			// is it just one, or multiple?
+			res = PlatformUI.getWorkbench().getSharedImages()
+					.getImage(ISharedImages.IMG_OBJ_FOLDER);
+		}
 		if (obj instanceof CollectionWrapper)
 		{
 			// is it just one, or multiple?
 			CollectionWrapper cw = (CollectionWrapper) obj;
-			if(cw.getCollection().size()>1)
+			ICollection coll = cw.getCollection();
+			if (coll.size() > 1)
 			{
 				res = PlatformUI.getWorkbench().getSharedImages()
 						.getImage(ISharedImages.IMG_OBJ_FILE);
 			}
 			else
 			{
-				res = Activator.getImageFromRegistry(Activator.getImageDescriptor("icons/number_icon.png"));
+				res = Activator.getImageFromRegistry(Activator
+						.getImageDescriptor("icons/number_icon.png"));
 			}
 		}
 		else if (obj instanceof CommandWrapper)

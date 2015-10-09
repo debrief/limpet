@@ -1,6 +1,7 @@
 package info.limpet.data.impl.samples;
 
 import static javax.measure.unit.SI.HERTZ;
+import static javax.measure.unit.SI.KELVIN;
 import static javax.measure.unit.SI.METRE;
 import static javax.measure.unit.SI.RADIAN;
 import static javax.measure.unit.SI.SECOND;
@@ -14,10 +15,12 @@ import info.limpet.data.impl.TemporalQuantityCollection;
 
 import javax.measure.quantity.Acceleration;
 import javax.measure.quantity.Angle;
+import javax.measure.quantity.AngularVelocity;
 import javax.measure.quantity.Dimensionless;
 import javax.measure.quantity.Duration;
 import javax.measure.quantity.Frequency;
 import javax.measure.quantity.Length;
+import javax.measure.quantity.Temperature;
 import javax.measure.quantity.Velocity;
 import javax.measure.unit.Unit;
 
@@ -32,7 +35,7 @@ public class StockTypes
 	{
 		public List<Geometry> getLocations();
 	}
-	
+
 	/**
 	 * time series (temporal) collections
 	 * 
@@ -47,6 +50,25 @@ public class StockTypes
 			{
 				super(name, METRE.divide(SECOND).asType(Velocity.class));
 			}
+
+			public Speed_MSec()
+			{
+				this(null);
+			}
+		}
+
+		public static class DimensionlessDouble extends
+				TemporalQuantityCollection<Dimensionless>
+		{
+			public DimensionlessDouble(String name)
+			{
+				super(name, Dimensionless.UNIT);
+			}
+
+			public DimensionlessDouble()
+			{
+				this(null);
+			}
 		}
 
 		public static class Length_M extends TemporalQuantityCollection<Length>
@@ -54,6 +76,51 @@ public class StockTypes
 			public Length_M(String name)
 			{
 				super(name, METRE.asType(Length.class));
+			}
+
+			public Length_M()
+			{
+				this(null);
+			}
+		}
+
+		public static class Temp_C extends TemporalQuantityCollection<Temperature>
+		{
+			public Temp_C(String name)
+			{
+				super(name, KELVIN.asType(Temperature.class));
+			}
+
+			public Temp_C()
+			{
+				this(null);
+			}
+		}
+
+		public static class TurnRate extends
+				TemporalQuantityCollection<AngularVelocity>
+		{
+			public TurnRate(String name)
+			{
+				super(null, DEGREE_ANGLE.divide(SECOND).asType(AngularVelocity.class));
+			}
+
+			public TurnRate()
+			{
+				this(null);
+			}
+		}
+
+		public static class Strings extends TemporalObjectCollection<String>
+		{
+			public Strings(String name)
+			{
+				super(name);
+			}
+
+			public Strings()
+			{
+				this(null);
 			}
 		}
 
@@ -65,6 +132,11 @@ public class StockTypes
 				super(name, METRE.divide(SECOND).divide(SECOND)
 						.asType(Acceleration.class));
 			}
+
+			public Acceleration_MSecSec()
+			{
+				this(null);
+			}
 		}
 
 		public static class ElapsedTime_Sec extends
@@ -73,6 +145,11 @@ public class StockTypes
 			public ElapsedTime_Sec(String name)
 			{
 				super(name, SECOND.asType(Duration.class));
+			}
+
+			public ElapsedTime_Sec()
+			{
+				this(null);
 			}
 		}
 
@@ -83,6 +160,11 @@ public class StockTypes
 			{
 				super(name, HERTZ.asType(Frequency.class));
 			}
+
+			public Frequency_Hz()
+			{
+				this(null);
+			}
 		}
 
 		public static class AcousticStrength extends
@@ -92,6 +174,11 @@ public class StockTypes
 			{
 				super(name, Dimensionless.UNIT);
 			}
+
+			public AcousticStrength()
+			{
+				this(null);
+			}
 		}
 
 		public static class Angle_Radians extends TemporalQuantityCollection<Angle>
@@ -99,6 +186,11 @@ public class StockTypes
 			public Angle_Radians(String name)
 			{
 				super(name, RADIAN.asType(Angle.class));
+			}
+
+			public Angle_Radians()
+			{
+				this(null);
 			}
 		}
 
@@ -108,9 +200,15 @@ public class StockTypes
 			{
 				super(name, DEGREE_ANGLE.asType(Angle.class));
 			}
+
+			public Angle_Degrees()
+			{
+				this(null);
+			}
 		}
 
-		public static class Location extends TemporalObjectCollection<Geometry> implements ILocations
+		public static class Location extends TemporalObjectCollection<Geometry>
+				implements ILocations
 		{
 			public Location(String name)
 			{
@@ -121,6 +219,11 @@ public class StockTypes
 			public List<Geometry> getLocations()
 			{
 				return super.getValues();
+			}
+
+			public Location()
+			{
+				this(null);
 			}
 		}
 
@@ -158,6 +261,20 @@ public class StockTypes
 			}
 		}
 
+		public static class DimensionlessDouble extends
+				QuantityCollection<Dimensionless>
+		{
+			public DimensionlessDouble(String name)
+			{
+				super(name, Dimensionless.UNIT);
+			}
+
+			public DimensionlessDouble()
+			{
+				this(null);
+			}
+		}
+
 		public static class Acceleration_MSecSec extends
 				QuantityCollection<Acceleration>
 		{
@@ -168,7 +285,8 @@ public class StockTypes
 			}
 		}
 
-		public static class Location extends ObjectCollection<Geometry> implements ILocations
+		public static class Location extends ObjectCollection<Geometry> implements
+				ILocations
 		{
 			public Location(String name)
 			{
@@ -181,21 +299,13 @@ public class StockTypes
 				return super.getValues();
 			}
 		}
-		
 
-
-	}
-
-	public static class TmpLocationItem
-	{
-		public double latVal, longVal, depthVal;
-
-		public TmpLocationItem(double latV, double longV, double depthV)
+		public static class Strings extends ObjectCollection<String>
 		{
-			latVal = latV;
-			longVal = longV;
-			depthVal = depthV;
+			public Strings(String name)
+			{
+				super(name);
+			}
 		}
 	}
-
 }

@@ -1,9 +1,9 @@
 package info.limpet.data.operations.location;
 
-import info.limpet.ICollection;
 import info.limpet.ICommand;
 import info.limpet.IQuantityCollection;
 import info.limpet.IStore;
+import info.limpet.IStore.IStoreItem;
 import info.limpet.data.impl.samples.StockTypes;
 import info.limpet.data.impl.samples.StockTypes.NonTemporal.Angle_Degrees;
 
@@ -19,13 +19,13 @@ import org.opengis.geometry.primitive.Point;
 public class BearingBetweenTracksOperation extends TwoTrackOperation
 {
 
-	public Collection<ICommand<ICollection>> actionsFor(
-			List<ICollection> selection, IStore destination)
+	public Collection<ICommand<IStoreItem>> actionsFor(
+			List<IStoreItem> selection, IStore destination)
 	{
-		Collection<ICommand<ICollection>> res = new ArrayList<ICommand<ICollection>>();
+		Collection<ICommand<IStoreItem>> res = new ArrayList<ICommand<IStoreItem>>();
 		if (appliesTo(selection))
 		{
-			ICommand<ICollection> newC = new DistanceOperation(null, selection,
+			ICommand<IStoreItem> newC = new DistanceOperation(null, selection,
 					destination, "Bearing between tracks",
 					"Calculate bearing between two tracks")
 			{
@@ -40,7 +40,7 @@ public class BearingBetweenTracksOperation extends TwoTrackOperation
 						final Point locA, final Point locB)
 				{
 					// get the output dataset
-					Angle_Degrees target = (Angle_Degrees) _outputs.get(0);
+					Angle_Degrees target = (Angle_Degrees) getOutputs().get(0);
 
 					// now find the range between them
 					calc.setStartingGeographicPoint(locA.getCentroid().getOrdinate(0),

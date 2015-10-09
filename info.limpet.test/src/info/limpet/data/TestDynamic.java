@@ -3,6 +3,7 @@ package info.limpet.data;
 import info.limpet.ICollection;
 import info.limpet.ICommand;
 import info.limpet.IQuantityCollection;
+import info.limpet.IStore.IStoreItem;
 import info.limpet.data.impl.CoreChangeListener;
 import info.limpet.data.impl.QuantityCollection;
 import info.limpet.data.impl.samples.SampleData;
@@ -28,8 +29,8 @@ public class TestDynamic extends TestCase
 
 		// ok, let's try one that works
 		List<ICollection> selection = new ArrayList<ICollection>();
-		ICollection speedOne = store.get(SampleData.SPEED_ONE);
-		ICollection speedTwo = store.get(SampleData.SPEED_TWO);
+		ICollection speedOne = (ICollection) store.get(SampleData.SPEED_ONE);
+		ICollection speedTwo = (ICollection) store.get(SampleData.SPEED_TWO);
 		selection.add(speedOne);
 		selection.add(speedTwo);
 
@@ -47,7 +48,7 @@ public class TestDynamic extends TestCase
 		assertEquals("new data created", storeSize + 1, store.size());
 
 		// ok, get the new dataset
-		ICollection resSeries = store.get(AddQuantityOperation.SUM_OF_INPUT_SERIES);
+		ICollection resSeries = (ICollection) store.get(AddQuantityOperation.SUM_OF_INPUT_SERIES);
 		assertNotNull(resSeries);
 
 		// remember the units
@@ -59,7 +60,7 @@ public class TestDynamic extends TestCase
 		CoreChangeListener listener = new CoreChangeListener()
 		{
 			@Override
-			public void dataChanged(ICollection subject)
+			public void dataChanged(IStoreItem subject)
 			{
 				events.add("changed!");
 			}
@@ -93,7 +94,7 @@ public class TestDynamic extends TestCase
 		// now check the output changed again
 		events.clear();
 
-		ICollection newResSeries = store.get("output2");
+		ICollection newResSeries = (ICollection) store.get("output2");
 		assertNotNull("found new series");
 		newResSeries.addChangeListener(listener);
 

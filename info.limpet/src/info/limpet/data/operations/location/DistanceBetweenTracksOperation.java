@@ -1,9 +1,9 @@
 package info.limpet.data.operations.location;
 
-import info.limpet.ICollection;
 import info.limpet.ICommand;
 import info.limpet.IQuantityCollection;
 import info.limpet.IStore;
+import info.limpet.IStore.IStoreItem;
 import info.limpet.data.impl.samples.StockTypes;
 import info.limpet.data.impl.samples.StockTypes.NonTemporal.Length_M;
 
@@ -23,7 +23,7 @@ public class DistanceBetweenTracksOperation extends TwoTrackOperation
 	private final class DistanceBetweenOperation extends DistanceOperation
 	{
 		private DistanceBetweenOperation(String outputName,
-				List<ICollection> selection, IStore store, String title,
+				List<IStoreItem> selection, IStore store, String title,
 				String description)
 		{
 			super(outputName, selection, store, title, description);
@@ -38,7 +38,7 @@ public class DistanceBetweenTracksOperation extends TwoTrackOperation
 				final Point locB)
 		{
 			// get the output dataset
-			Length_M target = (Length_M) _outputs.get(0);
+			Length_M target = (Length_M) getOutputs().get(0);
 
 			// now find the range between them
 			calc.setStartingGeographicPoint(locA.getCentroid().getOrdinate(0), locA
@@ -50,13 +50,13 @@ public class DistanceBetweenTracksOperation extends TwoTrackOperation
 		}
 	}
 
-	public Collection<ICommand<ICollection>> actionsFor(
-			List<ICollection> selection, IStore destination)
+	public Collection<ICommand<IStoreItem>> actionsFor(
+			List<IStoreItem> selection, IStore destination)
 	{
-		Collection<ICommand<ICollection>> res = new ArrayList<ICommand<ICollection>>();
+		Collection<ICommand<IStoreItem>> res = new ArrayList<ICommand<IStoreItem>>();
 		if (appliesTo(selection))
 		{
-			ICommand<ICollection> newC = new DistanceBetweenOperation(null, selection, destination, "Distance between tracks", "Calculate distance between two tracks");
+			ICommand<IStoreItem> newC = new DistanceBetweenOperation(null, selection, destination, "Distance between tracks", "Calculate distance between two tracks");
 
 			res.add(newC);
 		}

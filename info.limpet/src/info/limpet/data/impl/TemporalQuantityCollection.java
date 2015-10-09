@@ -24,7 +24,14 @@ public class TemporalQuantityCollection<T extends Quantity> extends
 		TemporalObjectCollection<Measurable<T>> implements
 		ITemporalQuantityCollection<T>, IQuantityCollection<T>
 {
-	private QuantityHelper<T> _qHelper;
+	transient private QuantityHelper<T> _qHelper;
+	
+	// TODO: we're duplicating range in this class and the helper, because the helper
+	// is transient
+	
+	private QuantityRange<T> _range;
+
+	private Unit<T> units;
 
 	public TemporalQuantityCollection(String name, Unit<T> units)
 	{
@@ -35,7 +42,8 @@ public class TemporalQuantityCollection<T extends Quantity> extends
 			Unit<T> units)
 	{
 		super(name);
-		_qHelper = new QuantityHelper<T>((ArrayList<Measurable<T>>) _values, units);
+		this.units = units;
+		_qHelper = new QuantityHelper<T>((ArrayList<Measurable<T>>) values, units);
 	}
 	
 	
@@ -75,30 +83,35 @@ public class TemporalQuantityCollection<T extends Quantity> extends
 	@Override
 	public Measurable<T> min()
 	{
+		initQHelper();
 		return _qHelper.min();
 	}
 
 	@Override
 	public Measurable<T> max()
 	{
+		initQHelper();
 		return _qHelper.max();
 	}
 
 	@Override
 	public Measurable<T> mean()
 	{
+		initQHelper();
 		return _qHelper.mean();
 	}
 
 	@Override
 	public Measurable<T> variance()
 	{
+		initQHelper();
 		return _qHelper.variance();
 	}
 
 	@Override
 	public Measurable<T> sd()
 	{
+		initQHelper();
 		return _qHelper.sd();
 	}
 
@@ -114,33 +127,47 @@ public class TemporalQuantityCollection<T extends Quantity> extends
 		return true;
 	}
 
+	protected void initQHelper()
+	{
+		if(_qHelper == null)
+		{
+			_qHelper = new QuantityHelper<T>((ArrayList<Measurable<T>>) values, units);
+		}
+	}
+	
+
 	@Override
 	public Dimension getDimension()
 	{
+		initQHelper();
 		return _qHelper.getDimension();
 	}
 
 	@Override
 	public Unit<T> getUnits()
 	{
+		initQHelper();
 		return _qHelper.getUnits();
 	}
 
 	@Override
 	public void replaceSingleton(double newValue)
 	{
+		initQHelper();
 		_qHelper.replace(newValue);
 	}
 
 	@Override
 	public void setRange(QuantityRange<T> range)
 	{
+		initQHelper();
+		_range = range;
 		_qHelper.setRange(range);
 	}
 
 	@Override
 	public QuantityRange<T> getRange()
 	{
-		return _qHelper.getRange();
+		return _range;
 	}
 }

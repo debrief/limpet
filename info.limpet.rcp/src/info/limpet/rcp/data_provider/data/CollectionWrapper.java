@@ -1,6 +1,7 @@
 package info.limpet.rcp.data_provider.data;
 
 import info.limpet.ICollection;
+import info.limpet.IStore.IStoreItem;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ui.views.properties.IPropertySource;
@@ -23,6 +24,10 @@ public class CollectionWrapper implements IAdaptable, LimpetWrapper
 		if (adapter == IPropertySource.class)
 		{
 			return new CollectionPropertySource(this);
+		}
+		else if (adapter == IStoreItem.class)
+		{
+			return _collection;
 		}
 		else if (adapter == ICollection.class)
 		{
@@ -51,6 +56,8 @@ public class CollectionWrapper implements IAdaptable, LimpetWrapper
 	@Override
 	public String toString()
 	{
-		return _collection.getName() + " (" + _collection.size() + " items)";
+		final String msg;
+		msg = _collection.getName() + " (" + (_collection).size() + " items)";
+		return msg;
 	}
 }

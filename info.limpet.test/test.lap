@@ -1,0 +1,1732 @@
+<store>
+  <__store>
+    <info.limpet.data.impl.samples.StockTypes_-Temporal_-Angle__Degrees>
+      <__values>
+        <javax.measure.Measure_-Double>
+          <__value>140.0013778674234</__value>
+          <__unit class="javax.measure.unit.TransformedUnit">
+            <__parentUnit class="javax.measure.unit.AlternateUnit">
+              <__symbol>rad</__symbol>
+              <__parent class="javax.measure.unit.ProductUnit">
+                <__elements/>
+                <__hashCode>0</__hashCode>
+              </__parent>
+            </__parentUnit>
+            <__toParentUnit class="javax.measure.converter.MultiplyConverter">
+              <__factor>6.283185307179586</__factor>
+            </__toParentUnit>
+          </__unit>
+        </javax.measure.Measure_-Double>
+        <javax.measure.Measure_-Double>
+          <__value>150.87782048595534</__value>
+          <__unit class="javax.measure.unit.TransformedUnit" reference="../../javax.measure.Measure_-Double/__unit"/>
+        </javax.measure.Measure_-Double>
+        <javax.measure.Measure_-Double>
+          <__value>114.11876012050972</__value>
+          <__unit class="javax.measure.unit.TransformedUnit" reference="../../javax.measure.Measure_-Double/__unit"/>
+        </javax.measure.Measure_-Double>
+        <javax.measure.Measure_-Double>
+          <__value>58.48732126780472</__value>
+          <__unit class="javax.measure.unit.TransformedUnit" reference="../../javax.measure.Measure_-Double/__unit"/>
+        </javax.measure.Measure_-Double>
+        <javax.measure.Measure_-Double>
+          <__value>27.513833205682452</__value>
+          <__unit class="javax.measure.unit.TransformedUnit" reference="../../javax.measure.Measure_-Double/__unit"/>
+        </javax.measure.Measure_-Double>
+        <javax.measure.Measure_-Double>
+          <__value>45.43434235022323</__value>
+          <__unit class="javax.measure.unit.TransformedUnit" reference="../../javax.measure.Measure_-Double/__unit"/>
+        </javax.measure.Measure_-Double>
+        <javax.measure.Measure_-Double>
+          <__value>98.22645992313448</__value>
+          <__unit class="javax.measure.unit.TransformedUnit" reference="../../javax.measure.Measure_-Double/__unit"/>
+        </javax.measure.Measure_-Double>
+        <javax.measure.Measure_-Double>
+          <__value>144.58156064675742</__value>
+          <__unit class="javax.measure.unit.TransformedUnit" reference="../../javax.measure.Measure_-Double/__unit"/>
+        </javax.measure.Measure_-Double>
+        <javax.measure.Measure_-Double>
+          <__value>148.22783779055789</__value>
+          <__unit class="javax.measure.unit.TransformedUnit" reference="../../javax.measure.Measure_-Double/__unit"/>
+        </javax.measure.Measure_-Double>
+        <javax.measure.Measure_-Double>
+          <__value>106.3121628361786</__value>
+          <__unit class="javax.measure.unit.TransformedUnit" reference="../../javax.measure.Measure_-Double/__unit"/>
+        </javax.measure.Measure_-Double>
+      </__values>
+      <__name>Angle One Time</__name>
+      <__description></__description>
+      <__dependents/>
+      <__changeSupport>
+        <__listeners/>
+      </__changeSupport>
+      <__times>
+        <long>1444081976833</long>
+        <long>1444082006998</long>
+        <long>1444082036999</long>
+        <long>1444082066999</long>
+        <long>1444082097000</long>
+        <long>1444082127000</long>
+        <long>1444082157001</long>
+        <long>1444082187001</long>
+        <long>1444082217002</long>
+        <long>1444082247003</long>
+      </__times>
+      <__tSupport>
+        <__times reference="../../__times"/>
+      </__tSupport>
+      <__qHelper>
+        <__values reference="../../__values"/>
+        <__myUnits class="javax.measure.unit.TransformedUnit" reference="../../__values/javax.measure.Measure_-Double/__unit"/>
+      </__qHelper>
+    </info.limpet.data.impl.samples.StockTypes_-Temporal_-Angle__Degrees>
+    <info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec>
+      <__values>
+        <javax.measure.Measure_-Double>
+          <__value>1.1883951057781212</__value>
+          <__unit class="javax.measure.unit.ProductUnit">
+            <__elements>
+              <javax.measure.unit.ProductUnit_-Element>
+                <__unit class="javax.measure.unit.BaseUnit">
+                  <__symbol>m</__symbol>
+                </__unit>
+                <__pow>1</__pow>
+                <__root>1</__root>
+              </javax.measure.unit.ProductUnit_-Element>
+              <javax.measure.unit.ProductUnit_-Element>
+                <__unit class="javax.measure.unit.BaseUnit">
+                  <__symbol>s</__symbol>
+                </__unit>
+                <__pow>-1</__pow>
+                <__root>1</__root>
+              </javax.measure.unit.ProductUnit_-Element>
+            </__elements>
+            <__hashCode>0</__hashCode>
+          </__unit>
+        </javax.measure.Measure_-Double>
+        <javax.measure.Measure_-Double>
+          <__value>1.0997501702946164</__value>
+          <__unit class="javax.measure.unit.ProductUnit" reference="../../javax.measure.Measure_-Double/__unit"/>
+        </javax.measure.Measure_-Double>
+        <javax.measure.Measure_-Double>
+          <__value>7.086167395737187</__value>
+          <__unit class="javax.measure.unit.ProductUnit" reference="../../javax.measure.Measure_-Double/__unit"/>
+        </javax.measure.Measure_-Double>
+        <javax.measure.Measure_-Double>
+          <__value>-1.3213487088109024</__value>
+          <__unit class="javax.measure.unit.ProductUnit" reference="../../javax.measure.Measure_-Double/__unit"/>
+        </javax.measure.Measure_-Double>
+        <javax.measure.Measure_-Double>
+          <__value>-1.0428352127714058</__value>
+          <__unit class="javax.measure.unit.ProductUnit" reference="../../javax.measure.Measure_-Double/__unit"/>
+        </javax.measure.Measure_-Double>
+        <javax.measure.Measure_-Double>
+          <__value>-3.5788995472544056</__value>
+          <__unit class="javax.measure.unit.ProductUnit" reference="../../javax.measure.Measure_-Double/__unit"/>
+        </javax.measure.Measure_-Double>
+        <javax.measure.Measure_-Double>
+          <__value>1.5221010625637303</__value>
+          <__unit class="javax.measure.unit.ProductUnit" reference="../../javax.measure.Measure_-Double/__unit"/>
+        </javax.measure.Measure_-Double>
+        <javax.measure.Measure_-Double>
+          <__value>1.010756218400097</__value>
+          <__unit class="javax.measure.unit.ProductUnit" reference="../../javax.measure.Measure_-Double/__unit"/>
+        </javax.measure.Measure_-Double>
+        <javax.measure.Measure_-Double>
+          <__value>2.426486643551989</__value>
+          <__unit class="javax.measure.unit.ProductUnit" reference="../../javax.measure.Measure_-Double/__unit"/>
+        </javax.measure.Measure_-Double>
+        <javax.measure.Measure_-Double>
+          <__value>-1.8381639608896658</__value>
+          <__unit class="javax.measure.unit.ProductUnit" reference="../../javax.measure.Measure_-Double/__unit"/>
+        </javax.measure.Measure_-Double>
+      </__values>
+      <__name>Speed One Time</__name>
+      <__description></__description>
+      <__dependents>
+        <info.limpet.data.operations.AddQuantityOperation_-AddQuantityValues>
+          <__title>Add series</__title>
+          <__description>Add numeric values in provided series</__description>
+          <__canUndo>false</__canUndo>
+          <__canRedo>false</__canRedo>
+          <__store class="store" reference="../../../../.."/>
+          <__inputs>
+            <info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec reference="../../../.."/>
+            <info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec>
+              <__values>
+                <javax.measure.Measure_-Double>
+                  <__value>8.682941969615793</__value>
+                  <__unit class="javax.measure.unit.ProductUnit">
+                    <__elements>
+                      <javax.measure.unit.ProductUnit_-Element>
+                        <__unit class="javax.measure.unit.BaseUnit" reference="../../../../../../../../../../__values/javax.measure.Measure_-Double/__unit/__elements/javax.measure.unit.ProductUnit_-Element/__unit"/>
+                        <__pow>1</__pow>
+                        <__root>1</__root>
+                      </javax.measure.unit.ProductUnit_-Element>
+                      <javax.measure.unit.ProductUnit_-Element>
+                        <__unit class="javax.measure.unit.BaseUnit" reference="../../../../../../../../../../__values/javax.measure.Measure_-Double/__unit/__elements/javax.measure.unit.ProductUnit_-Element[2]/__unit"/>
+                        <__pow>-1</__pow>
+                        <__root>1</__root>
+                      </javax.measure.unit.ProductUnit_-Element>
+                    </__elements>
+                    <__hashCode>0</__hashCode>
+                  </__unit>
+                </javax.measure.Measure_-Double>
+                <javax.measure.Measure_-Double>
+                  <__value>8.818594853651364</__value>
+                  <__unit class="javax.measure.unit.ProductUnit" reference="../../javax.measure.Measure_-Double/__unit"/>
+                </javax.measure.Measure_-Double>
+                <javax.measure.Measure_-Double>
+                  <__value>7.282240016119735</__value>
+                  <__unit class="javax.measure.unit.ProductUnit" reference="../../javax.measure.Measure_-Double/__unit"/>
+                </javax.measure.Measure_-Double>
+                <javax.measure.Measure_-Double>
+                  <__value>5.486395009384143</__value>
+                  <__unit class="javax.measure.unit.ProductUnit" reference="../../javax.measure.Measure_-Double/__unit"/>
+                </javax.measure.Measure_-Double>
+                <javax.measure.Measure_-Double>
+                  <__value>5.082151450673723</__value>
+                  <__unit class="javax.measure.unit.ProductUnit" reference="../../javax.measure.Measure_-Double/__unit"/>
+                </javax.measure.Measure_-Double>
+                <javax.measure.Measure_-Double>
+                  <__value>6.441169003602148</__value>
+                  <__unit class="javax.measure.unit.ProductUnit" reference="../../javax.measure.Measure_-Double/__unit"/>
+                </javax.measure.Measure_-Double>
+                <javax.measure.Measure_-Double>
+                  <__value>8.313973197437578</__value>
+                  <__unit class="javax.measure.unit.ProductUnit" reference="../../javax.measure.Measure_-Double/__unit"/>
+                </javax.measure.Measure_-Double>
+                <javax.measure.Measure_-Double>
+                  <__value>8.978716493246763</__value>
+                  <__unit class="javax.measure.unit.ProductUnit" reference="../../javax.measure.Measure_-Double/__unit"/>
+                </javax.measure.Measure_-Double>
+                <javax.measure.Measure_-Double>
+                  <__value>7.824236970483513</__value>
+                  <__unit class="javax.measure.unit.ProductUnit" reference="../../javax.measure.Measure_-Double/__unit"/>
+                </javax.measure.Measure_-Double>
+                <javax.measure.Measure_-Double>
+                  <__value>5.911957778221261</__value>
+                  <__unit class="javax.measure.unit.ProductUnit" reference="../../javax.measure.Measure_-Double/__unit"/>
+                </javax.measure.Measure_-Double>
+              </__values>
+              <__name>Speed Two Time</__name>
+              <__description></__description>
+              <__dependents>
+                <info.limpet.data.operations.AddQuantityOperation_-AddQuantityValues reference="../../../.."/>
+              </__dependents>
+              <__changeSupport>
+                <__listeners/>
+              </__changeSupport>
+              <__times>
+                <long>1444081976833</long>
+                <long>1444082006998</long>
+                <long>1444082036999</long>
+                <long>1444082066999</long>
+                <long>1444082097000</long>
+                <long>1444082127000</long>
+                <long>1444082157001</long>
+                <long>1444082187001</long>
+                <long>1444082217002</long>
+                <long>1444082247003</long>
+              </__times>
+              <__tSupport>
+                <__times reference="../../__times"/>
+              </__tSupport>
+              <__qHelper>
+                <__values reference="../../__values"/>
+                <__myUnits class="javax.measure.unit.ProductUnit" reference="../../__values/javax.measure.Measure_-Double/__unit"/>
+              </__qHelper>
+            </info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec>
+          </__inputs>
+          <__outputs>
+            <info.limpet.data.impl.QuantityCollection>
+              <__values>
+                <javax.measure.Measure_-Double>
+                  <__value>9.871337075393914</__value>
+                  <__unit class="javax.measure.unit.ProductUnit" reference="../../../../../../../__values/javax.measure.Measure_-Double/__unit"/>
+                </javax.measure.Measure_-Double>
+                <javax.measure.Measure_-Double>
+                  <__value>9.91834502394598</__value>
+                  <__unit class="javax.measure.unit.ProductUnit" reference="../../../../../../../__values/javax.measure.Measure_-Double/__unit"/>
+                </javax.measure.Measure_-Double>
+                <javax.measure.Measure_-Double>
+                  <__value>14.368407411856921</__value>
+                  <__unit class="javax.measure.unit.ProductUnit" reference="../../../../../../../__values/javax.measure.Measure_-Double/__unit"/>
+                </javax.measure.Measure_-Double>
+                <javax.measure.Measure_-Double>
+                  <__value>4.165046300573241</__value>
+                  <__unit class="javax.measure.unit.ProductUnit" reference="../../../../../../../__values/javax.measure.Measure_-Double/__unit"/>
+                </javax.measure.Measure_-Double>
+                <javax.measure.Measure_-Double>
+                  <__value>4.039316237902317</__value>
+                  <__unit class="javax.measure.unit.ProductUnit" reference="../../../../../../../__values/javax.measure.Measure_-Double/__unit"/>
+                </javax.measure.Measure_-Double>
+                <javax.measure.Measure_-Double>
+                  <__value>2.8622694563477427</__value>
+                  <__unit class="javax.measure.unit.ProductUnit" reference="../../../../../../../__values/javax.measure.Measure_-Double/__unit"/>
+                </javax.measure.Measure_-Double>
+                <javax.measure.Measure_-Double>
+                  <__value>9.836074260001308</__value>
+                  <__unit class="javax.measure.unit.ProductUnit" reference="../../../../../../../__values/javax.measure.Measure_-Double/__unit"/>
+                </javax.measure.Measure_-Double>
+                <javax.measure.Measure_-Double>
+                  <__value>9.98947271164686</__value>
+                  <__unit class="javax.measure.unit.ProductUnit" reference="../../../../../../../__values/javax.measure.Measure_-Double/__unit"/>
+                </javax.measure.Measure_-Double>
+                <javax.measure.Measure_-Double>
+                  <__value>10.250723614035502</__value>
+                  <__unit class="javax.measure.unit.ProductUnit" reference="../../../../../../../__values/javax.measure.Measure_-Double/__unit"/>
+                </javax.measure.Measure_-Double>
+                <javax.measure.Measure_-Double>
+                  <__value>4.073793817331595</__value>
+                  <__unit class="javax.measure.unit.ProductUnit" reference="../../../../../../../__values/javax.measure.Measure_-Double/__unit"/>
+                </javax.measure.Measure_-Double>
+              </__values>
+              <__name>Sum of input series</__name>
+              <__description></__description>
+              <__precedent class="info.limpet.data.operations.AddQuantityOperation$AddQuantityValues" reference="../../.."/>
+              <__dependents/>
+              <__changeSupport>
+                <__listeners/>
+              </__changeSupport>
+              <__units class="javax.measure.unit.ProductUnit" reference="../../../../../__values/javax.measure.Measure_-Double/__unit"/>
+              <__qHelper>
+                <__values reference="../../__values"/>
+                <__min class="javax.measure.Measure$Double" reference="../../__values/javax.measure.Measure_-Double[6]"/>
+                <__max class="javax.measure.Measure$Double" reference="../../__values/javax.measure.Measure_-Double[3]"/>
+                <__myUnits class="javax.measure.unit.ProductUnit" reference="../../../../../../__values/javax.measure.Measure_-Double/__unit"/>
+              </__qHelper>
+            </info.limpet.data.impl.QuantityCollection>
+          </__outputs>
+          <__dynamic>true</__dynamic>
+          <__outputName>Sum of input series</__outputName>
+          <outer-class>
+            <aTests/>
+            <outputName>Sum of input series</outputName>
+          </outer-class>
+        </info.limpet.data.operations.AddQuantityOperation_-AddQuantityValues>
+        <info.limpet.data.operations.MultiplyQuantityOperation_-MultiplyQuantityValues>
+          <__title>Multiply series</__title>
+          <__description>Multiply series</__description>
+          <__canUndo>false</__canUndo>
+          <__canRedo>false</__canRedo>
+          <__store class="store" reference="../../../../.."/>
+          <__inputs>
+            <info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec reference="../../../.."/>
+            <info.limpet.data.impl.QuantityCollection>
+              <__values>
+                <javax.measure.Measure_-Double>
+                  <__value>4.0</__value>
+                  <__unit class="javax.measure.unit.ProductUnit" reference="../../../../../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Angle__Degrees/__values/javax.measure.Measure_-Double/__unit/__parentUnit/__parent"/>
+                </javax.measure.Measure_-Double>
+              </__values>
+              <__name>Floating point factor</__name>
+              <__description></__description>
+              <__dependents>
+                <info.limpet.data.operations.MultiplyQuantityOperation_-MultiplyQuantityValues reference="../../../.."/>
+              </__dependents>
+              <__changeSupport>
+                <__listeners/>
+              </__changeSupport>
+              <__units class="javax.measure.unit.ProductUnit" reference="../../../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Angle__Degrees/__values/javax.measure.Measure_-Double/__unit/__parentUnit/__parent"/>
+              <__qHelper>
+                <__values reference="../../__values"/>
+                <__myUnits class="javax.measure.unit.ProductUnit" reference="../../../../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Angle__Degrees/__values/javax.measure.Measure_-Double/__unit/__parentUnit/__parent"/>
+              </__qHelper>
+            </info.limpet.data.impl.QuantityCollection>
+          </__inputs>
+          <__outputs>
+            <info.limpet.data.impl.QuantityCollection>
+              <__values>
+                <javax.measure.Measure_-Double>
+                  <__value>4.753580423112485</__value>
+                  <__unit class="javax.measure.unit.ProductUnit">
+                    <__elements>
+                      <javax.measure.unit.ProductUnit_-Element>
+                        <__unit class="javax.measure.unit.BaseUnit" reference="../../../../../../../../../../__values/javax.measure.Measure_-Double/__unit/__elements/javax.measure.unit.ProductUnit_-Element/__unit"/>
+                        <__pow>1</__pow>
+                        <__root>1</__root>
+                      </javax.measure.unit.ProductUnit_-Element>
+                      <javax.measure.unit.ProductUnit_-Element>
+                        <__unit class="javax.measure.unit.BaseUnit" reference="../../../../../../../../../../__values/javax.measure.Measure_-Double/__unit/__elements/javax.measure.unit.ProductUnit_-Element[2]/__unit"/>
+                        <__pow>-1</__pow>
+                        <__root>1</__root>
+                      </javax.measure.unit.ProductUnit_-Element>
+                    </__elements>
+                    <__hashCode>0</__hashCode>
+                  </__unit>
+                </javax.measure.Measure_-Double>
+                <javax.measure.Measure_-Double>
+                  <__value>4.399000681178466</__value>
+                  <__unit class="javax.measure.unit.ProductUnit" reference="../../javax.measure.Measure_-Double/__unit"/>
+                </javax.measure.Measure_-Double>
+                <javax.measure.Measure_-Double>
+                  <__value>28.344669582948747</__value>
+                  <__unit class="javax.measure.unit.ProductUnit" reference="../../javax.measure.Measure_-Double/__unit"/>
+                </javax.measure.Measure_-Double>
+                <javax.measure.Measure_-Double>
+                  <__value>-5.2853948352436095</__value>
+                  <__unit class="javax.measure.unit.ProductUnit" reference="../../javax.measure.Measure_-Double/__unit"/>
+                </javax.measure.Measure_-Double>
+                <javax.measure.Measure_-Double>
+                  <__value>-4.171340851085623</__value>
+                  <__unit class="javax.measure.unit.ProductUnit" reference="../../javax.measure.Measure_-Double/__unit"/>
+                </javax.measure.Measure_-Double>
+                <javax.measure.Measure_-Double>
+                  <__value>-14.315598189017622</__value>
+                  <__unit class="javax.measure.unit.ProductUnit" reference="../../javax.measure.Measure_-Double/__unit"/>
+                </javax.measure.Measure_-Double>
+                <javax.measure.Measure_-Double>
+                  <__value>6.088404250254921</__value>
+                  <__unit class="javax.measure.unit.ProductUnit" reference="../../javax.measure.Measure_-Double/__unit"/>
+                </javax.measure.Measure_-Double>
+                <javax.measure.Measure_-Double>
+                  <__value>4.043024873600388</__value>
+                  <__unit class="javax.measure.unit.ProductUnit" reference="../../javax.measure.Measure_-Double/__unit"/>
+                </javax.measure.Measure_-Double>
+                <javax.measure.Measure_-Double>
+                  <__value>9.705946574207957</__value>
+                  <__unit class="javax.measure.unit.ProductUnit" reference="../../javax.measure.Measure_-Double/__unit"/>
+                </javax.measure.Measure_-Double>
+                <javax.measure.Measure_-Double>
+                  <__value>-7.352655843558663</__value>
+                  <__unit class="javax.measure.unit.ProductUnit" reference="../../javax.measure.Measure_-Double/__unit"/>
+                </javax.measure.Measure_-Double>
+              </__values>
+              <__name>Multiplication product</__name>
+              <__description></__description>
+              <__precedent class="info.limpet.data.operations.MultiplyQuantityOperation$MultiplyQuantityValues" reference="../../.."/>
+              <__dependents/>
+              <__changeSupport>
+                <__listeners/>
+              </__changeSupport>
+              <__units class="javax.measure.unit.ProductUnit" reference="../__values/javax.measure.Measure_-Double/__unit"/>
+              <__qHelper>
+                <__values reference="../../__values"/>
+                <__myUnits class="javax.measure.unit.ProductUnit" reference="../../__values/javax.measure.Measure_-Double/__unit"/>
+              </__qHelper>
+            </info.limpet.data.impl.QuantityCollection>
+          </__outputs>
+          <__dynamic>true</__dynamic>
+          <__outputName>Multiplication product</__outputName>
+        </info.limpet.data.operations.MultiplyQuantityOperation_-MultiplyQuantityValues>
+      </__dependents>
+      <__changeSupport>
+        <__listeners/>
+      </__changeSupport>
+      <__times>
+        <long>1444081976833</long>
+        <long>1444082006998</long>
+        <long>1444082036999</long>
+        <long>1444082066999</long>
+        <long>1444082097000</long>
+        <long>1444082127000</long>
+        <long>1444082157001</long>
+        <long>1444082187001</long>
+        <long>1444082217002</long>
+        <long>1444082247003</long>
+      </__times>
+      <__tSupport>
+        <__times reference="../../__times"/>
+      </__tSupport>
+      <__qHelper>
+        <__values reference="../../__values"/>
+        <__myUnits class="javax.measure.unit.ProductUnit" reference="../../__values/javax.measure.Measure_-Double/__unit"/>
+      </__qHelper>
+    </info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec>
+    <info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec reference="../info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec/__dependents/info.limpet.data.operations.AddQuantityOperation_-AddQuantityValues/__inputs/info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec[2]"/>
+    <info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec>
+      <__values>
+        <javax.measure.Measure_-Double>
+          <__value>8.682941969615793</__value>
+          <__unit class="javax.measure.unit.ProductUnit">
+            <__elements>
+              <javax.measure.unit.ProductUnit_-Element>
+                <__unit class="javax.measure.unit.BaseUnit" reference="../../../../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec/__values/javax.measure.Measure_-Double/__unit/__elements/javax.measure.unit.ProductUnit_-Element/__unit"/>
+                <__pow>1</__pow>
+                <__root>1</__root>
+              </javax.measure.unit.ProductUnit_-Element>
+              <javax.measure.unit.ProductUnit_-Element>
+                <__unit class="javax.measure.unit.BaseUnit" reference="../../../../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec/__values/javax.measure.Measure_-Double/__unit/__elements/javax.measure.unit.ProductUnit_-Element[2]/__unit"/>
+                <__pow>-1</__pow>
+                <__root>1</__root>
+              </javax.measure.unit.ProductUnit_-Element>
+            </__elements>
+            <__hashCode>0</__hashCode>
+          </__unit>
+        </javax.measure.Measure_-Double>
+        <javax.measure.Measure_-Double>
+          <__value>8.818594853651364</__value>
+          <__unit class="javax.measure.unit.ProductUnit" reference="../../javax.measure.Measure_-Double/__unit"/>
+        </javax.measure.Measure_-Double>
+        <javax.measure.Measure_-Double>
+          <__value>7.282240016119735</__value>
+          <__unit class="javax.measure.unit.ProductUnit" reference="../../javax.measure.Measure_-Double/__unit"/>
+        </javax.measure.Measure_-Double>
+        <javax.measure.Measure_-Double>
+          <__value>6.441169003602148</__value>
+          <__unit class="javax.measure.unit.ProductUnit" reference="../../javax.measure.Measure_-Double/__unit"/>
+        </javax.measure.Measure_-Double>
+        <javax.measure.Measure_-Double>
+          <__value>8.313973197437578</__value>
+          <__unit class="javax.measure.unit.ProductUnit" reference="../../javax.measure.Measure_-Double/__unit"/>
+        </javax.measure.Measure_-Double>
+        <javax.measure.Measure_-Double>
+          <__value>5.000019586898593</__value>
+          <__unit class="javax.measure.unit.ProductUnit" reference="../../javax.measure.Measure_-Double/__unit"/>
+        </javax.measure.Measure_-Double>
+      </__values>
+      <__name>Speed two irregular time</__name>
+      <__description></__description>
+      <__dependents/>
+      <__changeSupport>
+        <__listeners/>
+      </__changeSupport>
+      <__times>
+        <long>1444082031998</long>
+        <long>1444082061999</long>
+        <long>1444082091999</long>
+        <long>1444082119500</long>
+        <long>1444082212001</long>
+        <long>1444082269503</long>
+      </__times>
+      <__tSupport>
+        <__times reference="../../__times"/>
+      </__tSupport>
+      <__qHelper>
+        <__values reference="../../__values"/>
+        <__myUnits class="javax.measure.unit.ProductUnit" reference="../../__values/javax.measure.Measure_-Double/__unit"/>
+      </__qHelper>
+    </info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec>
+    <info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec>
+      <__values>
+        <javax.measure.Measure_-Double>
+          <__value>0.8414709848078965</__value>
+          <__unit class="javax.measure.unit.ProductUnit">
+            <__elements>
+              <javax.measure.unit.ProductUnit_-Element>
+                <__unit class="javax.measure.unit.BaseUnit" reference="../../../../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec/__values/javax.measure.Measure_-Double/__unit/__elements/javax.measure.unit.ProductUnit_-Element/__unit"/>
+                <__pow>1</__pow>
+                <__root>1</__root>
+              </javax.measure.unit.ProductUnit_-Element>
+              <javax.measure.unit.ProductUnit_-Element>
+                <__unit class="javax.measure.unit.BaseUnit" reference="../../../../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec/__values/javax.measure.Measure_-Double/__unit/__elements/javax.measure.unit.ProductUnit_-Element[2]/__unit"/>
+                <__pow>-1</__pow>
+                <__root>1</__root>
+              </javax.measure.unit.ProductUnit_-Element>
+            </__elements>
+            <__hashCode>0</__hashCode>
+          </__unit>
+        </javax.measure.Measure_-Double>
+        <javax.measure.Measure_-Double>
+          <__value>0.9092974268256817</__value>
+          <__unit class="javax.measure.unit.ProductUnit" reference="../../javax.measure.Measure_-Double/__unit"/>
+        </javax.measure.Measure_-Double>
+        <javax.measure.Measure_-Double>
+          <__value>0.1411200080598672</__value>
+          <__unit class="javax.measure.unit.ProductUnit" reference="../../javax.measure.Measure_-Double/__unit"/>
+        </javax.measure.Measure_-Double>
+        <javax.measure.Measure_-Double>
+          <__value>-0.7568024953079282</__value>
+          <__unit class="javax.measure.unit.ProductUnit" reference="../../javax.measure.Measure_-Double/__unit"/>
+        </javax.measure.Measure_-Double>
+        <javax.measure.Measure_-Double>
+          <__value>-0.9589242746631385</__value>
+          <__unit class="javax.measure.unit.ProductUnit" reference="../../javax.measure.Measure_-Double/__unit"/>
+        </javax.measure.Measure_-Double>
+        <javax.measure.Measure_-Double>
+          <__value>-0.27941549819892586</__value>
+          <__unit class="javax.measure.unit.ProductUnit" reference="../../javax.measure.Measure_-Double/__unit"/>
+        </javax.measure.Measure_-Double>
+        <javax.measure.Measure_-Double>
+          <__value>0.6569865987187891</__value>
+          <__unit class="javax.measure.unit.ProductUnit" reference="../../javax.measure.Measure_-Double/__unit"/>
+        </javax.measure.Measure_-Double>
+        <javax.measure.Measure_-Double>
+          <__value>0.9893582466233818</__value>
+          <__unit class="javax.measure.unit.ProductUnit" reference="../../javax.measure.Measure_-Double/__unit"/>
+        </javax.measure.Measure_-Double>
+        <javax.measure.Measure_-Double>
+          <__value>0.4121184852417566</__value>
+          <__unit class="javax.measure.unit.ProductUnit" reference="../../javax.measure.Measure_-Double/__unit"/>
+        </javax.measure.Measure_-Double>
+        <javax.measure.Measure_-Double>
+          <__value>-0.5440211108893698</__value>
+          <__unit class="javax.measure.unit.ProductUnit" reference="../../javax.measure.Measure_-Double/__unit"/>
+        </javax.measure.Measure_-Double>
+      </__values>
+      <__name>Speed Two Time (earlier)</__name>
+      <__description></__description>
+      <__dependents/>
+      <__changeSupport>
+        <__listeners/>
+      </__changeSupport>
+      <__times>
+        <long>1444722169345</long>
+        <long>1444722199510</long>
+        <long>1444722229511</long>
+        <long>1444722259511</long>
+        <long>1444722289512</long>
+        <long>1444722319512</long>
+        <long>1444722349513</long>
+        <long>1444722379513</long>
+        <long>1444722409514</long>
+        <long>1444722439515</long>
+      </__times>
+      <__tSupport>
+        <__times reference="../../__times"/>
+      </__tSupport>
+      <__qHelper>
+        <__values reference="../../__values"/>
+        <__myUnits class="javax.measure.unit.ProductUnit" reference="../../__values/javax.measure.Measure_-Double/__unit"/>
+      </__qHelper>
+    </info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec>
+    <info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec>
+      <__values>
+        <javax.measure.Measure_-Double>
+          <__value>1.6209069176044193</__value>
+          <__unit class="javax.measure.unit.ProductUnit">
+            <__elements>
+              <javax.measure.unit.ProductUnit_-Element>
+                <__unit class="javax.measure.unit.BaseUnit" reference="../../../../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec/__values/javax.measure.Measure_-Double/__unit/__elements/javax.measure.unit.ProductUnit_-Element/__unit"/>
+                <__pow>1</__pow>
+                <__root>1</__root>
+              </javax.measure.unit.ProductUnit_-Element>
+              <javax.measure.unit.ProductUnit_-Element>
+                <__unit class="javax.measure.unit.BaseUnit" reference="../../../../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec/__values/javax.measure.Measure_-Double/__unit/__elements/javax.measure.unit.ProductUnit_-Element[2]/__unit"/>
+                <__pow>-1</__pow>
+                <__root>1</__root>
+              </javax.measure.unit.ProductUnit_-Element>
+            </__elements>
+            <__hashCode>0</__hashCode>
+          </__unit>
+        </javax.measure.Measure_-Double>
+        <javax.measure.Measure_-Double>
+          <__value>-1.2484405096414273</__value>
+          <__unit class="javax.measure.unit.ProductUnit" reference="../../javax.measure.Measure_-Double/__unit"/>
+        </javax.measure.Measure_-Double>
+        <javax.measure.Measure_-Double>
+          <__value>-2.9699774898013365</__value>
+          <__unit class="javax.measure.unit.ProductUnit" reference="../../javax.measure.Measure_-Double/__unit"/>
+        </javax.measure.Measure_-Double>
+        <javax.measure.Measure_-Double>
+          <__value>-1.960930862590836</__value>
+          <__unit class="javax.measure.unit.ProductUnit" reference="../../javax.measure.Measure_-Double/__unit"/>
+        </javax.measure.Measure_-Double>
+        <javax.measure.Measure_-Double>
+          <__value>0.8509865563896788</__value>
+          <__unit class="javax.measure.unit.ProductUnit" reference="../../javax.measure.Measure_-Double/__unit"/>
+        </javax.measure.Measure_-Double>
+        <javax.measure.Measure_-Double>
+          <__value>2.880510859951098</__value>
+          <__unit class="javax.measure.unit.ProductUnit" reference="../../javax.measure.Measure_-Double/__unit"/>
+        </javax.measure.Measure_-Double>
+        <javax.measure.Measure_-Double>
+          <__value>2.2617067630299137</__value>
+          <__unit class="javax.measure.unit.ProductUnit" reference="../../javax.measure.Measure_-Double/__unit"/>
+        </javax.measure.Measure_-Double>
+        <javax.measure.Measure_-Double>
+          <__value>-0.4365001014258406</__value>
+          <__unit class="javax.measure.unit.ProductUnit" reference="../../javax.measure.Measure_-Double/__unit"/>
+        </javax.measure.Measure_-Double>
+        <javax.measure.Measure_-Double>
+          <__value>-2.7333907856540307</__value>
+          <__unit class="javax.measure.unit.ProductUnit" reference="../../javax.measure.Measure_-Double/__unit"/>
+        </javax.measure.Measure_-Double>
+        <javax.measure.Measure_-Double>
+          <__value>-2.517214587229357</__value>
+          <__unit class="javax.measure.unit.ProductUnit" reference="../../javax.measure.Measure_-Double/__unit"/>
+        </javax.measure.Measure_-Double>
+        <javax.measure.Measure_-Double>
+          <__value>12.0</__value>
+          <__unit class="javax.measure.unit.ProductUnit" reference="../../javax.measure.Measure_-Double/__unit"/>
+        </javax.measure.Measure_-Double>
+      </__values>
+      <__name>Speed Three (longer)</__name>
+      <__description></__description>
+      <__dependents/>
+      <__changeSupport>
+        <__listeners/>
+      </__changeSupport>
+      <__times>
+        <long>1444081976833</long>
+        <long>1444082006998</long>
+        <long>1444082036999</long>
+        <long>1444082066999</long>
+        <long>1444082097000</long>
+        <long>1444082127000</long>
+        <long>1444082157001</long>
+        <long>1444082187001</long>
+        <long>1444082217002</long>
+        <long>1444082247003</long>
+        <long>1444082607003</long>
+      </__times>
+      <__tSupport>
+        <__times reference="../../__times"/>
+      </__tSupport>
+      <__qHelper>
+        <__values reference="../../__values"/>
+        <__myUnits class="javax.measure.unit.ProductUnit" reference="../../__values/javax.measure.Measure_-Double/__unit"/>
+      </__qHelper>
+    </info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec>
+    <info.limpet.data.impl.samples.StockTypes_-NonTemporal_-Length__M>
+      <__values>
+        <javax.measure.Measure_-Double>
+          <__value>1.0</__value>
+          <__unit class="javax.measure.unit.BaseUnit" reference="../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec/__values/javax.measure.Measure_-Double/__unit/__elements/javax.measure.unit.ProductUnit_-Element/__unit"/>
+        </javax.measure.Measure_-Double>
+        <javax.measure.Measure_-Double>
+          <__value>2.0</__value>
+          <__unit class="javax.measure.unit.BaseUnit" reference="../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec/__values/javax.measure.Measure_-Double/__unit/__elements/javax.measure.unit.ProductUnit_-Element/__unit"/>
+        </javax.measure.Measure_-Double>
+        <javax.measure.Measure_-Double>
+          <__value>0.0</__value>
+          <__unit class="javax.measure.unit.BaseUnit" reference="../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec/__values/javax.measure.Measure_-Double/__unit/__elements/javax.measure.unit.ProductUnit_-Element/__unit"/>
+        </javax.measure.Measure_-Double>
+        <javax.measure.Measure_-Double>
+          <__value>1.0</__value>
+          <__unit class="javax.measure.unit.BaseUnit" reference="../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec/__values/javax.measure.Measure_-Double/__unit/__elements/javax.measure.unit.ProductUnit_-Element/__unit"/>
+        </javax.measure.Measure_-Double>
+        <javax.measure.Measure_-Double>
+          <__value>2.0</__value>
+          <__unit class="javax.measure.unit.BaseUnit" reference="../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec/__values/javax.measure.Measure_-Double/__unit/__elements/javax.measure.unit.ProductUnit_-Element/__unit"/>
+        </javax.measure.Measure_-Double>
+        <javax.measure.Measure_-Double>
+          <__value>0.0</__value>
+          <__unit class="javax.measure.unit.BaseUnit" reference="../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec/__values/javax.measure.Measure_-Double/__unit/__elements/javax.measure.unit.ProductUnit_-Element/__unit"/>
+        </javax.measure.Measure_-Double>
+        <javax.measure.Measure_-Double>
+          <__value>1.0</__value>
+          <__unit class="javax.measure.unit.BaseUnit" reference="../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec/__values/javax.measure.Measure_-Double/__unit/__elements/javax.measure.unit.ProductUnit_-Element/__unit"/>
+        </javax.measure.Measure_-Double>
+        <javax.measure.Measure_-Double>
+          <__value>2.0</__value>
+          <__unit class="javax.measure.unit.BaseUnit" reference="../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec/__values/javax.measure.Measure_-Double/__unit/__elements/javax.measure.unit.ProductUnit_-Element/__unit"/>
+        </javax.measure.Measure_-Double>
+        <javax.measure.Measure_-Double>
+          <__value>0.0</__value>
+          <__unit class="javax.measure.unit.BaseUnit" reference="../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec/__values/javax.measure.Measure_-Double/__unit/__elements/javax.measure.unit.ProductUnit_-Element/__unit"/>
+        </javax.measure.Measure_-Double>
+        <javax.measure.Measure_-Double>
+          <__value>1.0</__value>
+          <__unit class="javax.measure.unit.BaseUnit" reference="../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec/__values/javax.measure.Measure_-Double/__unit/__elements/javax.measure.unit.ProductUnit_-Element/__unit"/>
+        </javax.measure.Measure_-Double>
+      </__values>
+      <__name>Length One non-Time</__name>
+      <__description></__description>
+      <__dependents/>
+      <__changeSupport>
+        <__listeners/>
+      </__changeSupport>
+      <__units class="javax.measure.unit.BaseUnit" reference="../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec/__values/javax.measure.Measure_-Double/__unit/__elements/javax.measure.unit.ProductUnit_-Element/__unit"/>
+      <__qHelper>
+        <__values reference="../../__values"/>
+        <__myUnits class="javax.measure.unit.BaseUnit" reference="../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec/__values/javax.measure.Measure_-Double/__unit/__elements/javax.measure.unit.ProductUnit_-Element/__unit"/>
+      </__qHelper>
+    </info.limpet.data.impl.samples.StockTypes_-NonTemporal_-Length__M>
+    <info.limpet.data.impl.samples.StockTypes_-NonTemporal_-Length__M>
+      <__values>
+        <javax.measure.Measure_-Double>
+          <__value>1.0</__value>
+          <__unit class="javax.measure.unit.BaseUnit" reference="../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec/__values/javax.measure.Measure_-Double/__unit/__elements/javax.measure.unit.ProductUnit_-Element/__unit"/>
+        </javax.measure.Measure_-Double>
+        <javax.measure.Measure_-Double>
+          <__value>2.0</__value>
+          <__unit class="javax.measure.unit.BaseUnit" reference="../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec/__values/javax.measure.Measure_-Double/__unit/__elements/javax.measure.unit.ProductUnit_-Element/__unit"/>
+        </javax.measure.Measure_-Double>
+        <javax.measure.Measure_-Double>
+          <__value>3.0</__value>
+          <__unit class="javax.measure.unit.BaseUnit" reference="../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec/__values/javax.measure.Measure_-Double/__unit/__elements/javax.measure.unit.ProductUnit_-Element/__unit"/>
+        </javax.measure.Measure_-Double>
+        <javax.measure.Measure_-Double>
+          <__value>4.0</__value>
+          <__unit class="javax.measure.unit.BaseUnit" reference="../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec/__values/javax.measure.Measure_-Double/__unit/__elements/javax.measure.unit.ProductUnit_-Element/__unit"/>
+        </javax.measure.Measure_-Double>
+        <javax.measure.Measure_-Double>
+          <__value>0.0</__value>
+          <__unit class="javax.measure.unit.BaseUnit" reference="../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec/__values/javax.measure.Measure_-Double/__unit/__elements/javax.measure.unit.ProductUnit_-Element/__unit"/>
+        </javax.measure.Measure_-Double>
+        <javax.measure.Measure_-Double>
+          <__value>1.0</__value>
+          <__unit class="javax.measure.unit.BaseUnit" reference="../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec/__values/javax.measure.Measure_-Double/__unit/__elements/javax.measure.unit.ProductUnit_-Element/__unit"/>
+        </javax.measure.Measure_-Double>
+        <javax.measure.Measure_-Double>
+          <__value>2.0</__value>
+          <__unit class="javax.measure.unit.BaseUnit" reference="../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec/__values/javax.measure.Measure_-Double/__unit/__elements/javax.measure.unit.ProductUnit_-Element/__unit"/>
+        </javax.measure.Measure_-Double>
+        <javax.measure.Measure_-Double>
+          <__value>3.0</__value>
+          <__unit class="javax.measure.unit.BaseUnit" reference="../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec/__values/javax.measure.Measure_-Double/__unit/__elements/javax.measure.unit.ProductUnit_-Element/__unit"/>
+        </javax.measure.Measure_-Double>
+        <javax.measure.Measure_-Double>
+          <__value>4.0</__value>
+          <__unit class="javax.measure.unit.BaseUnit" reference="../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec/__values/javax.measure.Measure_-Double/__unit/__elements/javax.measure.unit.ProductUnit_-Element/__unit"/>
+        </javax.measure.Measure_-Double>
+        <javax.measure.Measure_-Double>
+          <__value>0.0</__value>
+          <__unit class="javax.measure.unit.BaseUnit" reference="../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec/__values/javax.measure.Measure_-Double/__unit/__elements/javax.measure.unit.ProductUnit_-Element/__unit"/>
+        </javax.measure.Measure_-Double>
+      </__values>
+      <__name>Length Two non-Time</__name>
+      <__description></__description>
+      <__dependents/>
+      <__changeSupport>
+        <__listeners/>
+      </__changeSupport>
+      <__units class="javax.measure.unit.BaseUnit" reference="../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec/__values/javax.measure.Measure_-Double/__unit/__elements/javax.measure.unit.ProductUnit_-Element/__unit"/>
+      <__qHelper>
+        <__values reference="../../__values"/>
+        <__myUnits class="javax.measure.unit.BaseUnit" reference="../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec/__values/javax.measure.Measure_-Double/__unit/__elements/javax.measure.unit.ProductUnit_-Element/__unit"/>
+      </__qHelper>
+    </info.limpet.data.impl.samples.StockTypes_-NonTemporal_-Length__M>
+    <info.limpet.data.impl.ObjectCollection>
+      <__values>
+        <string>item 1</string>
+        <string>item 2</string>
+        <string>item 3</string>
+        <string>item 4</string>
+        <string>item 5</string>
+        <string>item 6</string>
+        <string>item 7</string>
+        <string>item 8</string>
+        <string>item 9</string>
+        <string>item 10</string>
+      </__values>
+      <__name>String one</__name>
+      <__description></__description>
+      <__dependents/>
+      <__changeSupport>
+        <__listeners/>
+      </__changeSupport>
+    </info.limpet.data.impl.ObjectCollection>
+    <info.limpet.data.impl.ObjectCollection>
+      <__values>
+        <string>item 1</string>
+        <string>item 2</string>
+        <string>item 0</string>
+        <string>item 1</string>
+        <string>item 2</string>
+        <string>item 0</string>
+        <string>item 1</string>
+        <string>item 2</string>
+        <string>item 0</string>
+        <string>item 1</string>
+      </__values>
+      <__name>String two</__name>
+      <__description></__description>
+      <__dependents/>
+      <__changeSupport>
+        <__listeners/>
+      </__changeSupport>
+    </info.limpet.data.impl.ObjectCollection>
+    <info.limpet.data.impl.QuantityCollection reference="../info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec/__dependents/info.limpet.data.operations.MultiplyQuantityOperation_-MultiplyQuantityValues/__inputs/info.limpet.data.impl.QuantityCollection"/>
+    <info.limpet.data.impl.samples.StockTypes_-NonTemporal_-Speed__MSec>
+      <__values>
+        <javax.measure.Measure_-Double>
+          <__value>998.0</__value>
+          <__unit class="javax.measure.unit.ProductUnit">
+            <__elements>
+              <javax.measure.unit.ProductUnit_-Element>
+                <__unit class="javax.measure.unit.BaseUnit" reference="../../../../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec/__values/javax.measure.Measure_-Double/__unit/__elements/javax.measure.unit.ProductUnit_-Element/__unit"/>
+                <__pow>1</__pow>
+                <__root>1</__root>
+              </javax.measure.unit.ProductUnit_-Element>
+              <javax.measure.unit.ProductUnit_-Element>
+                <__unit class="javax.measure.unit.BaseUnit" reference="../../../../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec/__values/javax.measure.Measure_-Double/__unit/__elements/javax.measure.unit.ProductUnit_-Element[2]/__unit"/>
+                <__pow>-1</__pow>
+                <__root>1</__root>
+              </javax.measure.unit.ProductUnit_-Element>
+            </__elements>
+            <__hashCode>0</__hashCode>
+          </__unit>
+        </javax.measure.Measure_-Double>
+      </__values>
+      <__name>Ranged Speed Singleton</__name>
+      <__description></__description>
+      <__dependents>
+        <info.limpet.data.operations.MultiplyQuantityOperation_-MultiplyQuantityValues>
+          <__title>Multiply series</__title>
+          <__description>Multiply series</__description>
+          <__canUndo>false</__canUndo>
+          <__canRedo>false</__canRedo>
+          <__store class="store" reference="../../../../.."/>
+          <__inputs>
+            <info.limpet.data.impl.samples.StockTypes_-Temporal_-ElapsedTime__Sec>
+              <__values>
+                <javax.measure.Measure_-Double>
+                  <__value>4.994670493730452</__value>
+                  <__unit class="javax.measure.unit.BaseUnit" reference="../../../../../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec/__values/javax.measure.Measure_-Double/__unit/__elements/javax.measure.unit.ProductUnit_-Element[2]/__unit"/>
+                </javax.measure.Measure_-Double>
+                <javax.measure.Measure_-Double>
+                  <__value>4.9476845525325</__value>
+                  <__unit class="javax.measure.unit.BaseUnit" reference="../../../../../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec/__values/javax.measure.Measure_-Double/__unit/__elements/javax.measure.unit.ProductUnit_-Element[2]/__unit"/>
+                </javax.measure.Measure_-Double>
+                <javax.measure.Measure_-Double>
+                  <__value>4.359038574149312</__value>
+                  <__unit class="javax.measure.unit.BaseUnit" reference="../../../../../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec/__values/javax.measure.Measure_-Double/__unit/__elements/javax.measure.unit.ProductUnit_-Element[2]/__unit"/>
+                </javax.measure.Measure_-Double>
+                <javax.measure.Measure_-Double>
+                  <__value>4.210324086234717</__value>
+                  <__unit class="javax.measure.unit.BaseUnit" reference="../../../../../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec/__values/javax.measure.Measure_-Double/__unit/__elements/javax.measure.unit.ProductUnit_-Element[2]/__unit"/>
+                </javax.measure.Measure_-Double>
+                <javax.measure.Measure_-Double>
+                  <__value>4.607222154085413</__value>
+                  <__unit class="javax.measure.unit.BaseUnit" reference="../../../../../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec/__values/javax.measure.Measure_-Double/__unit/__elements/javax.measure.unit.ProductUnit_-Element[2]/__unit"/>
+                </javax.measure.Measure_-Double>
+                <javax.measure.Measure_-Double>
+                  <__value>4.70068746810905</__value>
+                  <__unit class="javax.measure.unit.BaseUnit" reference="../../../../../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec/__values/javax.measure.Measure_-Double/__unit/__elements/javax.measure.unit.ProductUnit_-Element[2]/__unit"/>
+                </javax.measure.Measure_-Double>
+                <javax.measure.Measure_-Double>
+                  <__value>4.925399810170022</__value>
+                  <__unit class="javax.measure.unit.BaseUnit" reference="../../../../../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec/__values/javax.measure.Measure_-Double/__unit/__elements/javax.measure.unit.ProductUnit_-Element[2]/__unit"/>
+                </javax.measure.Measure_-Double>
+                <javax.measure.Measure_-Double>
+                  <__value>4.1675667974894</__value>
+                  <__unit class="javax.measure.unit.BaseUnit" reference="../../../../../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec/__values/javax.measure.Measure_-Double/__unit/__elements/javax.measure.unit.ProductUnit_-Element[2]/__unit"/>
+                </javax.measure.Measure_-Double>
+                <javax.measure.Measure_-Double>
+                  <__value>4.631359309232684</__value>
+                  <__unit class="javax.measure.unit.BaseUnit" reference="../../../../../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec/__values/javax.measure.Measure_-Double/__unit/__elements/javax.measure.unit.ProductUnit_-Element[2]/__unit"/>
+                </javax.measure.Measure_-Double>
+                <javax.measure.Measure_-Double>
+                  <__value>4.921461389419826</__value>
+                  <__unit class="javax.measure.unit.BaseUnit" reference="../../../../../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec/__values/javax.measure.Measure_-Double/__unit/__elements/javax.measure.unit.ProductUnit_-Element[2]/__unit"/>
+                </javax.measure.Measure_-Double>
+              </__values>
+              <__name>Time intervals</__name>
+              <__description></__description>
+              <__dependents>
+                <info.limpet.data.operations.MultiplyQuantityOperation_-MultiplyQuantityValues reference="../../../.."/>
+              </__dependents>
+              <__changeSupport>
+                <__listeners/>
+              </__changeSupport>
+              <__times>
+                <long>1444081976833</long>
+                <long>1444082006998</long>
+                <long>1444082036999</long>
+                <long>1444082066999</long>
+                <long>1444082097000</long>
+                <long>1444082127000</long>
+                <long>1444082157001</long>
+                <long>1444082187001</long>
+                <long>1444082217002</long>
+                <long>1444082247003</long>
+              </__times>
+              <__tSupport>
+                <__times reference="../../__times"/>
+              </__tSupport>
+              <__qHelper>
+                <__values reference="../../__values"/>
+                <__myUnits class="javax.measure.unit.BaseUnit" reference="../../../../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec/__values/javax.measure.Measure_-Double/__unit/__elements/javax.measure.unit.ProductUnit_-Element[2]/__unit"/>
+              </__qHelper>
+            </info.limpet.data.impl.samples.StockTypes_-Temporal_-ElapsedTime__Sec>
+            <info.limpet.data.impl.samples.StockTypes_-NonTemporal_-Speed__MSec reference="../../../.."/>
+          </__inputs>
+          <__outputs>
+            <info.limpet.data.impl.QuantityCollection>
+              <__values>
+                <javax.measure.Measure_-Double>
+                  <__value>4984.681152742991</__value>
+                  <__unit class="javax.measure.unit.BaseUnit" reference="../../../../../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec/__values/javax.measure.Measure_-Double/__unit/__elements/javax.measure.unit.ProductUnit_-Element/__unit"/>
+                </javax.measure.Measure_-Double>
+                <javax.measure.Measure_-Double>
+                  <__value>4937.789183427435</__value>
+                  <__unit class="javax.measure.unit.BaseUnit" reference="../../../../../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec/__values/javax.measure.Measure_-Double/__unit/__elements/javax.measure.unit.ProductUnit_-Element/__unit"/>
+                </javax.measure.Measure_-Double>
+                <javax.measure.Measure_-Double>
+                  <__value>4350.320497001014</__value>
+                  <__unit class="javax.measure.unit.BaseUnit" reference="../../../../../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec/__values/javax.measure.Measure_-Double/__unit/__elements/javax.measure.unit.ProductUnit_-Element/__unit"/>
+                </javax.measure.Measure_-Double>
+                <javax.measure.Measure_-Double>
+                  <__value>4201.903438062248</__value>
+                  <__unit class="javax.measure.unit.BaseUnit" reference="../../../../../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec/__values/javax.measure.Measure_-Double/__unit/__elements/javax.measure.unit.ProductUnit_-Element/__unit"/>
+                </javax.measure.Measure_-Double>
+                <javax.measure.Measure_-Double>
+                  <__value>4598.007709777242</__value>
+                  <__unit class="javax.measure.unit.BaseUnit" reference="../../../../../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec/__values/javax.measure.Measure_-Double/__unit/__elements/javax.measure.unit.ProductUnit_-Element/__unit"/>
+                </javax.measure.Measure_-Double>
+                <javax.measure.Measure_-Double>
+                  <__value>4691.286093172832</__value>
+                  <__unit class="javax.measure.unit.BaseUnit" reference="../../../../../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec/__values/javax.measure.Measure_-Double/__unit/__elements/javax.measure.unit.ProductUnit_-Element/__unit"/>
+                </javax.measure.Measure_-Double>
+                <javax.measure.Measure_-Double>
+                  <__value>4915.549010549682</__value>
+                  <__unit class="javax.measure.unit.BaseUnit" reference="../../../../../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec/__values/javax.measure.Measure_-Double/__unit/__elements/javax.measure.unit.ProductUnit_-Element/__unit"/>
+                </javax.measure.Measure_-Double>
+                <javax.measure.Measure_-Double>
+                  <__value>4159.231663894421</__value>
+                  <__unit class="javax.measure.unit.BaseUnit" reference="../../../../../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec/__values/javax.measure.Measure_-Double/__unit/__elements/javax.measure.unit.ProductUnit_-Element/__unit"/>
+                </javax.measure.Measure_-Double>
+                <javax.measure.Measure_-Double>
+                  <__value>4622.096590614218</__value>
+                  <__unit class="javax.measure.unit.BaseUnit" reference="../../../../../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec/__values/javax.measure.Measure_-Double/__unit/__elements/javax.measure.unit.ProductUnit_-Element/__unit"/>
+                </javax.measure.Measure_-Double>
+                <javax.measure.Measure_-Double>
+                  <__value>4911.618466640986</__value>
+                  <__unit class="javax.measure.unit.BaseUnit" reference="../../../../../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec/__values/javax.measure.Measure_-Double/__unit/__elements/javax.measure.unit.ProductUnit_-Element/__unit"/>
+                </javax.measure.Measure_-Double>
+              </__values>
+              <__name>Calculated distance</__name>
+              <__description></__description>
+              <__precedent class="info.limpet.data.operations.MultiplyQuantityOperation$MultiplyQuantityValues" reference="../../.."/>
+              <__dependents/>
+              <__changeSupport>
+                <__listeners/>
+              </__changeSupport>
+              <__units class="javax.measure.unit.BaseUnit" reference="../../../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec/__values/javax.measure.Measure_-Double/__unit/__elements/javax.measure.unit.ProductUnit_-Element/__unit"/>
+              <__qHelper>
+                <__values reference="../../__values"/>
+                <__myUnits class="javax.measure.unit.BaseUnit" reference="../../../../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec/__values/javax.measure.Measure_-Double/__unit/__elements/javax.measure.unit.ProductUnit_-Element/__unit"/>
+              </__qHelper>
+            </info.limpet.data.impl.QuantityCollection>
+          </__outputs>
+          <__dynamic>true</__dynamic>
+          <__outputName>Calculated distance</__outputName>
+        </info.limpet.data.operations.MultiplyQuantityOperation_-MultiplyQuantityValues>
+      </__dependents>
+      <__changeSupport>
+        <__listeners/>
+      </__changeSupport>
+      <__units class="javax.measure.unit.ProductUnit" reference="../__values/javax.measure.Measure_-Double/__unit"/>
+      <__qHelper>
+        <__values reference="../../__values"/>
+        <__myUnits class="javax.measure.unit.ProductUnit" reference="../../__values/javax.measure.Measure_-Double/__unit"/>
+        <__range>
+          <__min class="javax.measure.Measure$Double">
+            <__value>940.0</__value>
+            <__unit class="javax.measure.unit.ProductUnit" reference="../../../../__values/javax.measure.Measure_-Double/__unit"/>
+          </__min>
+          <__max class="javax.measure.Measure$Double">
+            <__value>1050.0</__value>
+            <__unit class="javax.measure.unit.ProductUnit" reference="../../../../__values/javax.measure.Measure_-Double/__unit"/>
+          </__max>
+        </__range>
+      </__qHelper>
+    </info.limpet.data.impl.samples.StockTypes_-NonTemporal_-Speed__MSec>
+    <info.limpet.data.impl.samples.StockTypes_-NonTemporal_-Length__M>
+      <__values>
+        <javax.measure.Measure_-Double>
+          <__value>12.0</__value>
+          <__unit class="javax.measure.unit.BaseUnit" reference="../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec/__values/javax.measure.Measure_-Double/__unit/__elements/javax.measure.unit.ProductUnit_-Element/__unit"/>
+        </javax.measure.Measure_-Double>
+      </__values>
+      <__name>Length Singleton</__name>
+      <__description></__description>
+      <__dependents/>
+      <__changeSupport>
+        <__listeners/>
+      </__changeSupport>
+      <__units class="javax.measure.unit.BaseUnit" reference="../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec/__values/javax.measure.Measure_-Double/__unit/__elements/javax.measure.unit.ProductUnit_-Element/__unit"/>
+      <__qHelper>
+        <__values reference="../../__values"/>
+        <__myUnits class="javax.measure.unit.BaseUnit" reference="../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec/__values/javax.measure.Measure_-Double/__unit/__elements/javax.measure.unit.ProductUnit_-Element/__unit"/>
+      </__qHelper>
+    </info.limpet.data.impl.samples.StockTypes_-NonTemporal_-Length__M>
+    <info.limpet.data.impl.samples.StockTypes_-Temporal_-ElapsedTime__Sec reference="../info.limpet.data.impl.samples.StockTypes_-NonTemporal_-Speed__MSec/__dependents/info.limpet.data.operations.MultiplyQuantityOperation_-MultiplyQuantityValues/__inputs/info.limpet.data.impl.samples.StockTypes_-Temporal_-ElapsedTime__Sec"/>
+    <info.limpet.data.impl.samples.StockTypes_-Temporal_-Location>
+      <__values>
+        <org.geotools.geometry.iso.primitive.PointImpl>
+          <mutable>true</mutable>
+          <crs class="org.geotools.referencing.crs.DefaultGeographicCRS">
+            <name class="org.geotools.referencing.NamedIdentifier">
+              <code>WGS84(DD)</code>
+              <name class="org.geotools.util.LocalName">
+                <name class="string">WGS84(DD)</name>
+              </name>
+            </name>
+            <alias class="java.util.Collections$UnmodifiableSet">
+              <c class="linked-hash-set">
+                <org.geotools.util.LocalName>
+                  <name class="string">WGS84</name>
+                </org.geotools.util.LocalName>
+                <org.geotools.util.LocalName>
+                  <name class="string">WGS 84</name>
+                </org.geotools.util.LocalName>
+              </c>
+            </alias>
+            <domainOfValidity class="org.geotools.metadata.iso.extent.ExtentImpl">
+              <geographicElements class="org.geotools.resources.UnmodifiableArrayList">
+                <array>
+                  <org.geotools.metadata.iso.extent.GeographicBoundingBoxImpl>
+                    <inclusion>true</inclusion>
+                    <westBoundLongitude>-180.0</westBoundLongitude>
+                    <eastBoundLongitude>180.0</eastBoundLongitude>
+                    <southBoundLatitude>-90.0</southBoundLatitude>
+                    <northBoundLatitude>90.0</northBoundLatitude>
+                  </org.geotools.metadata.iso.extent.GeographicBoundingBoxImpl>
+                </array>
+              </geographicElements>
+              <temporalElements class="empty-set"/>
+              <verticalElements class="empty-set"/>
+            </domainOfValidity>
+            <coordinateSystem class="org.geotools.referencing.cs.DefaultEllipsoidalCS">
+              <name class="org.geotools.referencing.NamedIdentifier">
+                <code>Geodetic 2D</code>
+                <name class="org.geotools.util.LocalName">
+                  <name class="string">Geodetic 2D</name>
+                </name>
+              </name>
+              <alias class="singleton-set">
+                <org.geotools.util.LocalName>
+                  <name class="string">Geodetic 2D</name>
+                </org.geotools.util.LocalName>
+              </alias>
+              <axis>
+                <org.geotools.referencing.cs.DefaultCoordinateSystemAxis>
+                  <name class="org.geotools.referencing.NamedIdentifier">
+                    <code>Geodetic longitude</code>
+                    <name class="org.geotools.util.LocalName">
+                      <name class="string">Geodetic longitude</name>
+                    </name>
+                  </name>
+                  <alias class="singleton-set">
+                    <org.geotools.util.LocalName>
+                      <name class="org.geotools.util.ResourceInternationalString">
+                        <resources>org.geotools.resources.i18n.Vocabulary</resources>
+                        <key>86</key>
+                      </name>
+                    </org.geotools.util.LocalName>
+                  </alias>
+                  <abbreviation>λ</abbreviation>
+                  <direction>
+                    <name>EAST</name>
+                  </direction>
+                  <unit class="javax.measure.unit.TransformedUnit">
+                    <__parentUnit class="javax.measure.unit.AlternateUnit" reference="../../../../../../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Angle__Degrees/__values/javax.measure.Measure_-Double/__unit/__parentUnit"/>
+                    <__toParentUnit class="javax.measure.converter.MultiplyConverter">
+                      <__factor>0.017453292519943295</__factor>
+                    </__toParentUnit>
+                  </unit>
+                  <minimum>-180.0</minimum>
+                  <maximum>180.0</maximum>
+                  <rangeMeaning>
+                    <name>WRAPAROUND</name>
+                  </rangeMeaning>
+                </org.geotools.referencing.cs.DefaultCoordinateSystemAxis>
+                <org.geotools.referencing.cs.DefaultCoordinateSystemAxis>
+                  <name class="org.geotools.referencing.NamedIdentifier">
+                    <code>Geodetic latitude</code>
+                    <name class="org.geotools.util.LocalName">
+                      <name class="string">Geodetic latitude</name>
+                    </name>
+                  </name>
+                  <alias class="singleton-set">
+                    <org.geotools.util.LocalName>
+                      <name class="org.geotools.util.ResourceInternationalString">
+                        <resources>org.geotools.resources.i18n.Vocabulary</resources>
+                        <key>85</key>
+                      </name>
+                    </org.geotools.util.LocalName>
+                  </alias>
+                  <abbreviation>φ</abbreviation>
+                  <direction>
+                    <name>NORTH</name>
+                  </direction>
+                  <unit class="javax.measure.unit.TransformedUnit" reference="../../org.geotools.referencing.cs.DefaultCoordinateSystemAxis/unit"/>
+                  <minimum>-90.0</minimum>
+                  <maximum>90.0</maximum>
+                  <rangeMeaning>
+                    <name>EXACT</name>
+                  </rangeMeaning>
+                </org.geotools.referencing.cs.DefaultCoordinateSystemAxis>
+              </axis>
+            </coordinateSystem>
+            <datum class="org.geotools.referencing.datum.DefaultGeodeticDatum">
+              <name class="org.geotools.referencing.NamedIdentifier">
+                <code>WGS84</code>
+                <codespace>OGC</codespace>
+                <authority class="org.geotools.metadata.iso.citation.CitationImpl">
+                  <title class="org.geotools.util.SimpleInternationalString" serialization="custom">
+                    <unserializable-parents/>
+                    <org.geotools.util.SimpleInternationalString>
+                      <default/>
+                      <string>Open Geospatial Consortium</string>
+                    </org.geotools.util.SimpleInternationalString>
+                  </title>
+                  <alternateTitles class="org.geotools.resources.UnmodifiableArrayList">
+                    <array>
+                      <org.geotools.util.SimpleInternationalString serialization="custom">
+                        <unserializable-parents/>
+                        <org.geotools.util.SimpleInternationalString>
+                          <default/>
+                          <string>OGC</string>
+                        </org.geotools.util.SimpleInternationalString>
+                      </org.geotools.util.SimpleInternationalString>
+                    </array>
+                  </alternateTitles>
+                  <dates class="empty-set"/>
+                  <editionDate>-9223372036854775808</editionDate>
+                  <identifiers class="empty-set"/>
+                  <citedResponsibleParties class="org.geotools.resources.UnmodifiableArrayList">
+                    <array>
+                      <org.geotools.metadata.iso.citation.ResponsiblePartyImpl>
+                        <organisationName class="org.geotools.util.SimpleInternationalString" reference="../../../../title"/>
+                        <contactInfo class="org.geotools.metadata.iso.citation.ContactImpl">
+                          <onLineResource class="org.geotools.metadata.iso.citation.OnLineResourceImpl">
+                            <function>
+                              <name>INFORMATION</name>
+                            </function>
+                            <linkage>http://www.opengeospatial.org/</linkage>
+                          </onLineResource>
+                        </contactInfo>
+                        <role>
+                          <name>RESOURCE_PROVIDER</name>
+                        </role>
+                      </org.geotools.metadata.iso.citation.ResponsiblePartyImpl>
+                    </array>
+                  </citedResponsibleParties>
+                  <presentationForm class="org.geotools.resources.UnmodifiableArrayList">
+                    <array>
+                      <org.opengis.metadata.citation.PresentationForm>
+                        <name>DOCUMENT_DIGITAL</name>
+                      </org.opengis.metadata.citation.PresentationForm>
+                    </array>
+                  </presentationForm>
+                </authority>
+                <name class="org.geotools.util.ScopedName">
+                  <scope class="org.geotools.util.LocalName">
+                    <name class="string">OGC</name>
+                  </scope>
+                  <separator>:</separator>
+                  <name class="org.geotools.util.LocalName">
+                    <asScopedName class="org.geotools.util.ScopedName" reference="../.."/>
+                    <name class="string">WGS84</name>
+                  </name>
+                </name>
+              </name>
+              <alias class="java.util.Collections$UnmodifiableSet">
+                <c class="linked-hash-set">
+                  <org.geotools.referencing.NamedIdentifier reference="../../../name"/>
+                  <org.geotools.referencing.NamedIdentifier>
+                    <code>WGS 84</code>
+                    <codespace>Oracle</codespace>
+                    <authority class="org.geotools.metadata.iso.citation.CitationImpl">
+                      <title class="org.geotools.util.SimpleInternationalString" serialization="custom">
+                        <unserializable-parents/>
+                        <org.geotools.util.SimpleInternationalString>
+                          <default/>
+                          <string>Oracle</string>
+                        </org.geotools.util.SimpleInternationalString>
+                      </title>
+                      <alternateTitles class="empty-set"/>
+                      <dates class="empty-set"/>
+                      <editionDate>-9223372036854775808</editionDate>
+                      <identifiers class="empty-set"/>
+                      <citedResponsibleParties class="org.geotools.resources.UnmodifiableArrayList">
+                        <array>
+                          <org.geotools.metadata.iso.citation.ResponsiblePartyImpl>
+                            <organisationName class="org.geotools.util.SimpleInternationalString" reference="../../../../title"/>
+                            <contactInfo class="org.geotools.metadata.iso.citation.ContactImpl">
+                              <onLineResource class="org.geotools.metadata.iso.citation.OnLineResourceImpl">
+                                <function reference="../../../../../../../../../../name/authority/citedResponsibleParties/array/org.geotools.metadata.iso.citation.ResponsiblePartyImpl/contactInfo/onLineResource/function"/>
+                                <linkage>http://www.oracle.com</linkage>
+                              </onLineResource>
+                            </contactInfo>
+                            <role>
+                              <name>OWNER</name>
+                            </role>
+                          </org.geotools.metadata.iso.citation.ResponsiblePartyImpl>
+                        </array>
+                      </citedResponsibleParties>
+                      <presentationForm class="empty-set"/>
+                    </authority>
+                  </org.geotools.referencing.NamedIdentifier>
+                  <org.geotools.referencing.NamedIdentifier>
+                    <code>WGS_84</code>
+                  </org.geotools.referencing.NamedIdentifier>
+                  <org.geotools.referencing.NamedIdentifier>
+                    <code>WGS 1984</code>
+                  </org.geotools.referencing.NamedIdentifier>
+                  <org.geotools.referencing.NamedIdentifier>
+                    <code>WGS_1984</code>
+                    <codespace>EPSG</codespace>
+                    <authority class="org.geotools.metadata.iso.citation.CitationImpl">
+                      <title class="org.geotools.util.SimpleInternationalString" serialization="custom">
+                        <unserializable-parents/>
+                        <org.geotools.util.SimpleInternationalString>
+                          <default/>
+                          <string>European Petroleum Survey Group</string>
+                        </org.geotools.util.SimpleInternationalString>
+                      </title>
+                      <alternateTitles class="org.geotools.resources.UnmodifiableArrayList">
+                        <array>
+                          <org.geotools.util.SimpleInternationalString serialization="custom">
+                            <unserializable-parents/>
+                            <org.geotools.util.SimpleInternationalString>
+                              <default/>
+                              <string>EPSG</string>
+                            </org.geotools.util.SimpleInternationalString>
+                          </org.geotools.util.SimpleInternationalString>
+                        </array>
+                      </alternateTitles>
+                      <dates class="empty-set"/>
+                      <editionDate>-9223372036854775808</editionDate>
+                      <identifiers class="org.geotools.resources.UnmodifiableArrayList">
+                        <array>
+                          <org.geotools.metadata.iso.IdentifierImpl>
+                            <code>EPSG</code>
+                          </org.geotools.metadata.iso.IdentifierImpl>
+                        </array>
+                      </identifiers>
+                      <citedResponsibleParties class="org.geotools.resources.UnmodifiableArrayList">
+                        <array>
+                          <org.geotools.metadata.iso.citation.ResponsiblePartyImpl>
+                            <organisationName class="org.geotools.util.SimpleInternationalString" reference="../../../../title"/>
+                            <contactInfo class="org.geotools.metadata.iso.citation.ContactImpl">
+                              <onLineResource class="org.geotools.metadata.iso.citation.OnLineResourceImpl">
+                                <function reference="../../../../../../../../../../name/authority/citedResponsibleParties/array/org.geotools.metadata.iso.citation.ResponsiblePartyImpl/contactInfo/onLineResource/function"/>
+                                <linkage>http://www.epsg.org</linkage>
+                              </onLineResource>
+                            </contactInfo>
+                            <role>
+                              <name>PRINCIPAL_INVESTIGATOR</name>
+                            </role>
+                          </org.geotools.metadata.iso.citation.ResponsiblePartyImpl>
+                        </array>
+                      </citedResponsibleParties>
+                      <presentationForm class="org.geotools.resources.UnmodifiableArrayList">
+                        <array>
+                          <org.opengis.metadata.citation.PresentationForm>
+                            <name>TABLE_DIGITAL</name>
+                          </org.opengis.metadata.citation.PresentationForm>
+                        </array>
+                      </presentationForm>
+                    </authority>
+                  </org.geotools.referencing.NamedIdentifier>
+                  <org.geotools.referencing.NamedIdentifier>
+                    <code>D_WGS_1984</code>
+                    <codespace>ESRI</codespace>
+                    <authority class="org.geotools.metadata.iso.citation.CitationImpl">
+                      <title class="org.geotools.util.SimpleInternationalString" serialization="custom">
+                        <unserializable-parents/>
+                        <org.geotools.util.SimpleInternationalString>
+                          <default/>
+                          <string>ESRI</string>
+                        </org.geotools.util.SimpleInternationalString>
+                      </title>
+                      <alternateTitles class="org.geotools.resources.UnmodifiableArrayList">
+                        <array>
+                          <org.geotools.util.SimpleInternationalString serialization="custom">
+                            <unserializable-parents/>
+                            <org.geotools.util.SimpleInternationalString>
+                              <default/>
+                              <string>ESRI</string>
+                            </org.geotools.util.SimpleInternationalString>
+                          </org.geotools.util.SimpleInternationalString>
+                        </array>
+                      </alternateTitles>
+                      <dates class="empty-set"/>
+                      <editionDate>-9223372036854775808</editionDate>
+                      <identifiers class="org.geotools.resources.UnmodifiableArrayList">
+                        <array>
+                          <org.geotools.metadata.iso.IdentifierImpl>
+                            <code>ESRI</code>
+                          </org.geotools.metadata.iso.IdentifierImpl>
+                        </array>
+                      </identifiers>
+                      <citedResponsibleParties class="org.geotools.resources.UnmodifiableArrayList">
+                        <array>
+                          <org.geotools.metadata.iso.citation.ResponsiblePartyImpl>
+                            <organisationName class="org.geotools.util.SimpleInternationalString" reference="../../../../title"/>
+                            <contactInfo class="org.geotools.metadata.iso.citation.ContactImpl">
+                              <onLineResource class="org.geotools.metadata.iso.citation.OnLineResourceImpl">
+                                <function reference="../../../../../../../../../../name/authority/citedResponsibleParties/array/org.geotools.metadata.iso.citation.ResponsiblePartyImpl/contactInfo/onLineResource/function"/>
+                                <linkage>http://www.esri.com</linkage>
+                              </onLineResource>
+                            </contactInfo>
+                            <role reference="../../../../../../org.geotools.referencing.NamedIdentifier[2]/authority/citedResponsibleParties/array/org.geotools.metadata.iso.citation.ResponsiblePartyImpl/role"/>
+                          </org.geotools.metadata.iso.citation.ResponsiblePartyImpl>
+                        </array>
+                      </citedResponsibleParties>
+                      <presentationForm class="empty-set"/>
+                    </authority>
+                  </org.geotools.referencing.NamedIdentifier>
+                  <org.geotools.referencing.NamedIdentifier>
+                    <code>World Geodetic System 1984</code>
+                    <codespace>EPSG</codespace>
+                    <authority class="org.geotools.metadata.iso.citation.CitationImpl" reference="../../org.geotools.referencing.NamedIdentifier[5]/authority"/>
+                  </org.geotools.referencing.NamedIdentifier>
+                </c>
+              </alias>
+              <realizationEpoch>-9223372036854775808</realizationEpoch>
+              <ellipsoid class="org.geotools.referencing.datum.DefaultEllipsoid">
+                <name class="org.geotools.referencing.NamedIdentifier">
+                  <code>WGS84</code>
+                  <name class="org.geotools.util.LocalName">
+                    <name class="string">WGS84</name>
+                  </name>
+                </name>
+                <semiMajorAxis>6378137.0</semiMajorAxis>
+                <semiMinorAxis>6356752.314245179</semiMinorAxis>
+                <inverseFlattening>298.257223563</inverseFlattening>
+                <ivfDefinitive>true</ivfDefinitive>
+                <unit class="javax.measure.unit.BaseUnit" reference="../../../../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec/__values/javax.measure.Measure_-Double/__unit/__elements/javax.measure.unit.ProductUnit_-Element/__unit"/>
+              </ellipsoid>
+              <primeMeridian class="org.geotools.referencing.datum.DefaultPrimeMeridian">
+                <name class="org.geotools.referencing.NamedIdentifier">
+                  <code>Greenwich</code>
+                  <name class="org.geotools.util.LocalName">
+                    <name class="string">Greenwich</name>
+                  </name>
+                </name>
+                <greenwichLongitude>0.0</greenwichLongitude>
+                <angularUnit class="javax.measure.unit.TransformedUnit" reference="../../../coordinateSystem/axis/org.geotools.referencing.cs.DefaultCoordinateSystemAxis/unit"/>
+              </primeMeridian>
+            </datum>
+          </crs>
+          <percision class="org.geotools.geometry.iso.PrecisionModel">
+            <modelType>
+              <name>DOUBLE</name>
+              <isFloating>true</isFloating>
+            </modelType>
+            <scale>0.0</scale>
+          </percision>
+          <position>
+            <coordinate>
+              <double>-3.999803556210891</double>
+              <double>55.804974598550906</double>
+            </coordinate>
+            <crs class="org.geotools.referencing.crs.DefaultGeographicCRS" reference="../../crs"/>
+          </position>
+        </org.geotools.geometry.iso.primitive.PointImpl>
+        <org.geotools.geometry.iso.primitive.PointImpl>
+          <mutable>true</mutable>
+          <crs class="org.geotools.referencing.crs.DefaultGeographicCRS" reference="../../org.geotools.geometry.iso.primitive.PointImpl/crs"/>
+          <percision class="org.geotools.geometry.iso.PrecisionModel">
+            <modelType reference="../../../org.geotools.geometry.iso.primitive.PointImpl/percision/modelType"/>
+            <scale>0.0</scale>
+          </percision>
+          <position>
+            <coordinate>
+              <double>-3.9996178511535603</double>
+              <double>55.80994932418469</double>
+            </coordinate>
+            <crs class="org.geotools.referencing.crs.DefaultGeographicCRS" reference="../../../org.geotools.geometry.iso.primitive.PointImpl/crs"/>
+          </position>
+        </org.geotools.geometry.iso.primitive.PointImpl>
+        <org.geotools.geometry.iso.primitive.PointImpl>
+          <mutable>true</mutable>
+          <crs class="org.geotools.referencing.crs.DefaultGeographicCRS" reference="../../org.geotools.geometry.iso.primitive.PointImpl/crs"/>
+          <percision class="org.geotools.geometry.iso.PrecisionModel">
+            <modelType reference="../../../org.geotools.geometry.iso.primitive.PointImpl/percision/modelType"/>
+            <scale>0.0</scale>
+          </percision>
+          <position>
+            <coordinate>
+              <double>-3.999442887841297</double>
+              <double>55.814924169514576</double>
+            </coordinate>
+            <crs class="org.geotools.referencing.crs.DefaultGeographicCRS" reference="../../../org.geotools.geometry.iso.primitive.PointImpl/crs"/>
+          </position>
+        </org.geotools.geometry.iso.primitive.PointImpl>
+        <org.geotools.geometry.iso.primitive.PointImpl>
+          <mutable>true</mutable>
+          <crs class="org.geotools.referencing.crs.DefaultGeographicCRS" reference="../../org.geotools.geometry.iso.primitive.PointImpl/crs"/>
+          <percision class="org.geotools.geometry.iso.PrecisionModel">
+            <modelType reference="../../../org.geotools.geometry.iso.primitive.PointImpl/percision/modelType"/>
+            <scale>0.0</scale>
+          </percision>
+          <position>
+            <coordinate>
+              <double>-3.999278669272936</double>
+              <double>55.81989912715361</double>
+            </coordinate>
+            <crs class="org.geotools.referencing.crs.DefaultGeographicCRS" reference="../../../org.geotools.geometry.iso.primitive.PointImpl/crs"/>
+          </position>
+        </org.geotools.geometry.iso.primitive.PointImpl>
+        <org.geotools.geometry.iso.primitive.PointImpl>
+          <mutable>true</mutable>
+          <crs class="org.geotools.referencing.crs.DefaultGeographicCRS" reference="../../org.geotools.geometry.iso.primitive.PointImpl/crs"/>
+          <percision class="org.geotools.geometry.iso.PrecisionModel">
+            <modelType reference="../../../org.geotools.geometry.iso.primitive.PointImpl/percision/modelType"/>
+            <scale>0.0</scale>
+          </percision>
+          <position>
+            <coordinate>
+              <double>-3.999125198432839</double>
+              <double>55.8248741897147</double>
+            </coordinate>
+            <crs class="org.geotools.referencing.crs.DefaultGeographicCRS" reference="../../../org.geotools.geometry.iso.primitive.PointImpl/crs"/>
+          </position>
+        </org.geotools.geometry.iso.primitive.PointImpl>
+        <org.geotools.geometry.iso.primitive.PointImpl>
+          <mutable>true</mutable>
+          <crs class="org.geotools.referencing.crs.DefaultGeographicCRS" reference="../../org.geotools.geometry.iso.primitive.PointImpl/crs"/>
+          <percision class="org.geotools.geometry.iso.PrecisionModel">
+            <modelType reference="../../../org.geotools.geometry.iso.primitive.PointImpl/percision/modelType"/>
+            <scale>0.0</scale>
+          </percision>
+          <position>
+            <coordinate>
+              <double>-3.99898247829088</double>
+              <double>55.82984934981062</double>
+            </coordinate>
+            <crs class="org.geotools.referencing.crs.DefaultGeographicCRS" reference="../../../org.geotools.geometry.iso.primitive.PointImpl/crs"/>
+          </position>
+        </org.geotools.geometry.iso.primitive.PointImpl>
+        <org.geotools.geometry.iso.primitive.PointImpl>
+          <mutable>true</mutable>
+          <crs class="org.geotools.referencing.crs.DefaultGeographicCRS" reference="../../org.geotools.geometry.iso.primitive.PointImpl/crs"/>
+          <percision class="org.geotools.geometry.iso.PrecisionModel">
+            <modelType reference="../../../org.geotools.geometry.iso.primitive.PointImpl/percision/modelType"/>
+            <scale>0.0</scale>
+          </percision>
+          <position>
+            <coordinate>
+              <double>-3.998850511802431</double>
+              <double>55.834824600054034</double>
+            </coordinate>
+            <crs class="org.geotools.referencing.crs.DefaultGeographicCRS" reference="../../../org.geotools.geometry.iso.primitive.PointImpl/crs"/>
+          </position>
+        </org.geotools.geometry.iso.primitive.PointImpl>
+        <org.geotools.geometry.iso.primitive.PointImpl>
+          <mutable>true</mutable>
+          <crs class="org.geotools.referencing.crs.DefaultGeographicCRS" reference="../../org.geotools.geometry.iso.primitive.PointImpl/crs"/>
+          <percision class="org.geotools.geometry.iso.PrecisionModel">
+            <modelType reference="../../../org.geotools.geometry.iso.primitive.PointImpl/percision/modelType"/>
+            <scale>0.0</scale>
+          </percision>
+          <position>
+            <coordinate>
+              <double>-3.998729301908345</double>
+              <double>55.83979993305744</double>
+            </coordinate>
+            <crs class="org.geotools.referencing.crs.DefaultGeographicCRS" reference="../../../org.geotools.geometry.iso.primitive.PointImpl/crs"/>
+          </position>
+        </org.geotools.geometry.iso.primitive.PointImpl>
+        <org.geotools.geometry.iso.primitive.PointImpl>
+          <mutable>true</mutable>
+          <crs class="org.geotools.referencing.crs.DefaultGeographicCRS" reference="../../org.geotools.geometry.iso.primitive.PointImpl/crs"/>
+          <percision class="org.geotools.geometry.iso.PrecisionModel">
+            <modelType reference="../../../org.geotools.geometry.iso.primitive.PointImpl/percision/modelType"/>
+            <scale>0.0</scale>
+          </percision>
+          <position>
+            <coordinate>
+              <double>-3.9986188515349395</double>
+              <double>55.8447753414333</double>
+            </coordinate>
+            <crs class="org.geotools.referencing.crs.DefaultGeographicCRS" reference="../../../org.geotools.geometry.iso.primitive.PointImpl/crs"/>
+          </position>
+        </org.geotools.geometry.iso.primitive.PointImpl>
+        <org.geotools.geometry.iso.primitive.PointImpl>
+          <mutable>true</mutable>
+          <crs class="org.geotools.referencing.crs.DefaultGeographicCRS" reference="../../org.geotools.geometry.iso.primitive.PointImpl/crs"/>
+          <percision class="org.geotools.geometry.iso.PrecisionModel">
+            <modelType reference="../../../org.geotools.geometry.iso.primitive.PointImpl/percision/modelType"/>
+            <scale>0.0</scale>
+          </percision>
+          <position>
+            <coordinate>
+              <double>-3.9985191635939827</double>
+              <double>55.84975081779391</double>
+            </coordinate>
+            <crs class="org.geotools.referencing.crs.DefaultGeographicCRS" reference="../../../org.geotools.geometry.iso.primitive.PointImpl/crs"/>
+          </position>
+        </org.geotools.geometry.iso.primitive.PointImpl>
+      </__values>
+      <__name>Track One Time</__name>
+      <__description></__description>
+      <__dependents/>
+      <__changeSupport>
+        <__listeners/>
+      </__changeSupport>
+      <__times>
+        <long>1444081976833</long>
+        <long>1444082006998</long>
+        <long>1444082036999</long>
+        <long>1444082066999</long>
+        <long>1444082097000</long>
+        <long>1444082127000</long>
+        <long>1444082157001</long>
+        <long>1444082187001</long>
+        <long>1444082217002</long>
+        <long>1444082247003</long>
+      </__times>
+      <__tSupport>
+        <__times reference="../../__times"/>
+      </__tSupport>
+    </info.limpet.data.impl.samples.StockTypes_-Temporal_-Location>
+    <info.limpet.data.impl.samples.StockTypes_-Temporal_-Location>
+      <__values>
+        <org.geotools.geometry.iso.primitive.PointImpl>
+          <mutable>true</mutable>
+          <crs class="org.geotools.referencing.crs.DefaultGeographicCRS" reference="../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Location/__values/org.geotools.geometry.iso.primitive.PointImpl/crs"/>
+          <percision class="org.geotools.geometry.iso.PrecisionModel">
+            <modelType reference="../../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Location/__values/org.geotools.geometry.iso.primitive.PointImpl/percision/modelType"/>
+            <scale>0.0</scale>
+          </percision>
+          <position>
+            <coordinate>
+              <double>-4.199962741135602</double>
+              <double>54.90119454267957</double>
+            </coordinate>
+            <crs class="org.geotools.referencing.crs.DefaultGeographicCRS" reference="../../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Location/__values/org.geotools.geometry.iso.primitive.PointImpl/crs"/>
+          </position>
+        </org.geotools.geometry.iso.primitive.PointImpl>
+        <org.geotools.geometry.iso.primitive.PointImpl>
+          <mutable>true</mutable>
+          <crs class="org.geotools.referencing.crs.DefaultGeographicCRS" reference="../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Location/__values/org.geotools.geometry.iso.primitive.PointImpl/crs"/>
+          <percision class="org.geotools.geometry.iso.PrecisionModel">
+            <modelType reference="../../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Location/__values/org.geotools.geometry.iso.primitive.PointImpl/percision/modelType"/>
+            <scale>0.0</scale>
+          </percision>
+          <position>
+            <coordinate>
+              <double>-4.199922323928409</double>
+              <double>54.902389051033836</double>
+            </coordinate>
+            <crs class="org.geotools.referencing.crs.DefaultGeographicCRS" reference="../../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Location/__values/org.geotools.geometry.iso.primitive.PointImpl/crs"/>
+          </position>
+        </org.geotools.geometry.iso.primitive.PointImpl>
+        <org.geotools.geometry.iso.primitive.PointImpl>
+          <mutable>true</mutable>
+          <crs class="org.geotools.referencing.crs.DefaultGeographicCRS" reference="../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Location/__values/org.geotools.geometry.iso.primitive.PointImpl/crs"/>
+          <percision class="org.geotools.geometry.iso.PrecisionModel">
+            <modelType reference="../../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Location/__values/org.geotools.geometry.iso.primitive.PointImpl/percision/modelType"/>
+            <scale>0.0</scale>
+          </percision>
+          <position>
+            <coordinate>
+              <double>-4.199878748285225</double>
+              <double>54.903583522291726</double>
+            </coordinate>
+            <crs class="org.geotools.referencing.crs.DefaultGeographicCRS" reference="../../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Location/__values/org.geotools.geometry.iso.primitive.PointImpl/crs"/>
+          </position>
+        </org.geotools.geometry.iso.primitive.PointImpl>
+        <org.geotools.geometry.iso.primitive.PointImpl>
+          <mutable>true</mutable>
+          <crs class="org.geotools.referencing.crs.DefaultGeographicCRS" reference="../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Location/__values/org.geotools.geometry.iso.primitive.PointImpl/crs"/>
+          <percision class="org.geotools.geometry.iso.PrecisionModel">
+            <modelType reference="../../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Location/__values/org.geotools.geometry.iso.primitive.PointImpl/percision/modelType"/>
+            <scale>0.0</scale>
+          </percision>
+          <position>
+            <coordinate>
+              <double>-4.199832014120175</double>
+              <double>54.90477795368225</double>
+            </coordinate>
+            <crs class="org.geotools.referencing.crs.DefaultGeographicCRS" reference="../../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Location/__values/org.geotools.geometry.iso.primitive.PointImpl/crs"/>
+          </position>
+        </org.geotools.geometry.iso.primitive.PointImpl>
+        <org.geotools.geometry.iso.primitive.PointImpl>
+          <mutable>true</mutable>
+          <crs class="org.geotools.referencing.crs.DefaultGeographicCRS" reference="../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Location/__values/org.geotools.geometry.iso.primitive.PointImpl/crs"/>
+          <percision class="org.geotools.geometry.iso.PrecisionModel">
+            <modelType reference="../../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Location/__values/org.geotools.geometry.iso.primitive.PointImpl/percision/modelType"/>
+            <scale>0.0</scale>
+          </percision>
+          <position>
+            <coordinate>
+              <double>-4.199782121354709</double>
+              <double>54.905972342434524</double>
+            </coordinate>
+            <crs class="org.geotools.referencing.crs.DefaultGeographicCRS" reference="../../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Location/__values/org.geotools.geometry.iso.primitive.PointImpl/crs"/>
+          </position>
+        </org.geotools.geometry.iso.primitive.PointImpl>
+        <org.geotools.geometry.iso.primitive.PointImpl>
+          <mutable>true</mutable>
+          <crs class="org.geotools.referencing.crs.DefaultGeographicCRS" reference="../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Location/__values/org.geotools.geometry.iso.primitive.PointImpl/crs"/>
+          <percision class="org.geotools.geometry.iso.PrecisionModel">
+            <modelType reference="../../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Location/__values/org.geotools.geometry.iso.primitive.PointImpl/percision/modelType"/>
+            <scale>0.0</scale>
+          </percision>
+          <position>
+            <coordinate>
+              <double>-4.199729069917606</double>
+              <double>54.90716668577777</double>
+            </coordinate>
+            <crs class="org.geotools.referencing.crs.DefaultGeographicCRS" reference="../../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Location/__values/org.geotools.geometry.iso.primitive.PointImpl/crs"/>
+          </position>
+        </org.geotools.geometry.iso.primitive.PointImpl>
+        <org.geotools.geometry.iso.primitive.PointImpl>
+          <mutable>true</mutable>
+          <crs class="org.geotools.referencing.crs.DefaultGeographicCRS" reference="../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Location/__values/org.geotools.geometry.iso.primitive.PointImpl/crs"/>
+          <percision class="org.geotools.geometry.iso.PrecisionModel">
+            <modelType reference="../../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Location/__values/org.geotools.geometry.iso.primitive.PointImpl/percision/modelType"/>
+            <scale>0.0</scale>
+          </percision>
+          <position>
+            <coordinate>
+              <double>-4.199672859744973</double>
+              <double>54.90836098094128</double>
+            </coordinate>
+            <crs class="org.geotools.referencing.crs.DefaultGeographicCRS" reference="../../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Location/__values/org.geotools.geometry.iso.primitive.PointImpl/crs"/>
+          </position>
+        </org.geotools.geometry.iso.primitive.PointImpl>
+        <org.geotools.geometry.iso.primitive.PointImpl>
+          <mutable>true</mutable>
+          <crs class="org.geotools.referencing.crs.DefaultGeographicCRS" reference="../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Location/__values/org.geotools.geometry.iso.primitive.PointImpl/crs"/>
+          <percision class="org.geotools.geometry.iso.PrecisionModel">
+            <modelType reference="../../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Location/__values/org.geotools.geometry.iso.primitive.PointImpl/percision/modelType"/>
+            <scale>0.0</scale>
+          </percision>
+          <position>
+            <coordinate>
+              <double>-4.199613490780243</double>
+              <double>54.909555225154506</double>
+            </coordinate>
+            <crs class="org.geotools.referencing.crs.DefaultGeographicCRS" reference="../../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Location/__values/org.geotools.geometry.iso.primitive.PointImpl/crs"/>
+          </position>
+        </org.geotools.geometry.iso.primitive.PointImpl>
+        <org.geotools.geometry.iso.primitive.PointImpl>
+          <mutable>true</mutable>
+          <crs class="org.geotools.referencing.crs.DefaultGeographicCRS" reference="../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Location/__values/org.geotools.geometry.iso.primitive.PointImpl/crs"/>
+          <percision class="org.geotools.geometry.iso.PrecisionModel">
+            <modelType reference="../../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Location/__values/org.geotools.geometry.iso.primitive.PointImpl/percision/modelType"/>
+            <scale>0.0</scale>
+          </percision>
+          <position>
+            <coordinate>
+              <double>-4.199550962974187</double>
+              <double>54.91074941564699</double>
+            </coordinate>
+            <crs class="org.geotools.referencing.crs.DefaultGeographicCRS" reference="../../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Location/__values/org.geotools.geometry.iso.primitive.PointImpl/crs"/>
+          </position>
+        </org.geotools.geometry.iso.primitive.PointImpl>
+        <org.geotools.geometry.iso.primitive.PointImpl>
+          <mutable>true</mutable>
+          <crs class="org.geotools.referencing.crs.DefaultGeographicCRS" reference="../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Location/__values/org.geotools.geometry.iso.primitive.PointImpl/crs"/>
+          <percision class="org.geotools.geometry.iso.PrecisionModel">
+            <modelType reference="../../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Location/__values/org.geotools.geometry.iso.primitive.PointImpl/percision/modelType"/>
+            <scale>0.0</scale>
+          </percision>
+          <position>
+            <coordinate>
+              <double>-4.199485276284902</double>
+              <double>54.91194354964843</double>
+            </coordinate>
+            <crs class="org.geotools.referencing.crs.DefaultGeographicCRS" reference="../../../../../info.limpet.data.impl.samples.StockTypes_-Temporal_-Location/__values/org.geotools.geometry.iso.primitive.PointImpl/crs"/>
+          </position>
+        </org.geotools.geometry.iso.primitive.PointImpl>
+      </__values>
+      <__name>Track Two Time</__name>
+      <__description></__description>
+      <__dependents/>
+      <__changeSupport>
+        <__listeners/>
+      </__changeSupport>
+      <__times>
+        <long>1444081976833</long>
+        <long>1444082006998</long>
+        <long>1444082036999</long>
+        <long>1444082066999</long>
+        <long>1444082097000</long>
+        <long>1444082127000</long>
+        <long>1444082157001</long>
+        <long>1444082187001</long>
+        <long>1444082217002</long>
+        <long>1444082247003</long>
+      </__times>
+      <__tSupport>
+        <__times reference="../../__times"/>
+      </__tSupport>
+    </info.limpet.data.impl.samples.StockTypes_-Temporal_-Location>
+    <info.limpet.data.impl.QuantityCollection reference="../info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec/__dependents/info.limpet.data.operations.AddQuantityOperation_-AddQuantityValues/__outputs/info.limpet.data.impl.QuantityCollection"/>
+    <info.limpet.data.impl.QuantityCollection reference="../info.limpet.data.impl.samples.StockTypes_-Temporal_-Speed__MSec/__dependents/info.limpet.data.operations.MultiplyQuantityOperation_-MultiplyQuantityValues/__outputs/info.limpet.data.impl.QuantityCollection"/>
+    <info.limpet.data.impl.QuantityCollection reference="../info.limpet.data.impl.samples.StockTypes_-NonTemporal_-Speed__MSec/__dependents/info.limpet.data.operations.MultiplyQuantityOperation_-MultiplyQuantityValues/__outputs/info.limpet.data.impl.QuantityCollection"/>
+  </__store>
+  <__listeners/>
+</store>

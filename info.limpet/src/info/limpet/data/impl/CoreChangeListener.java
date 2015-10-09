@@ -1,18 +1,18 @@
 package info.limpet.data.impl;
 
 import info.limpet.IChangeListener;
-import info.limpet.ICollection;
+import info.limpet.IStore.IStoreItem;
 
 public class CoreChangeListener implements IChangeListener
 {
 
 	@Override
-	public void dataChanged(ICollection subject)
+	public void dataChanged(IStoreItem subject)
 	{
 	}
 
 	@Override
-	public void collectionDeleted(ICollection subject)
+	public void collectionDeleted(IStoreItem subject)
 	{
 	}
 

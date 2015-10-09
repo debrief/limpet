@@ -10,14 +10,18 @@ import static javax.measure.unit.SI.METRES_PER_SECOND;
 import info.limpet.ICollection;
 import info.limpet.ICommand;
 import info.limpet.IQuantityCollection;
+import info.limpet.IStore;
+import info.limpet.IStore.IStoreItem;
 import info.limpet.data.impl.ObjectCollection;
 import info.limpet.data.impl.QuantityCollection;
 import info.limpet.data.impl.TemporalQuantityCollection;
 import info.limpet.data.impl.samples.SampleData;
 import info.limpet.data.operations.AddQuantityOperation;
 import info.limpet.data.operations.CollectionComplianceTests;
+import info.limpet.data.operations.DivideQuantityOperation;
 import info.limpet.data.operations.MultiplyQuantityOperation;
 import info.limpet.data.operations.SimpleMovingAverageOperation;
+import info.limpet.data.operations.SubtractQuantityOperation;
 import info.limpet.data.operations.UnitConversionOperation;
 import info.limpet.data.store.InMemoryStore;
 
@@ -29,12 +33,15 @@ import java.util.List;
 import javax.measure.Measurable;
 import javax.measure.Measure;
 import javax.measure.converter.UnitConverter;
+import javax.measure.quantity.Angle;
+import javax.measure.quantity.Dimensionless;
+import javax.measure.quantity.Duration;
 import javax.measure.quantity.Length;
+import javax.measure.quantity.Quantity;
 import javax.measure.quantity.Velocity;
 import javax.measure.unit.Unit;
 
 import junit.framework.TestCase;
-
 
 public class TestOperations extends TestCase
 {
@@ -42,10 +49,8 @@ public class TestOperations extends TestCase
 	public void testAppliesTo()
 	{
 		// the units for this measurement
-		Unit<Velocity> kmh = KILO(METRE).divide(HOUR)
-				.asType(Velocity.class);
-		Unit<Velocity> kmm = KILO(METRE).divide(MINUTE)
-				.asType(Velocity.class);
+		Unit<Velocity> kmh = KILO(METRE).divide(HOUR).asType(Velocity.class);
+		Unit<Velocity> kmm = KILO(METRE).divide(MINUTE).asType(Velocity.class);
 		Unit<Length> m = (METRE).asType(Length.class);
 
 		// the target collection
@@ -92,7 +97,7 @@ public class TestOperations extends TestCase
 		Measurable<Velocity> speedVal3a = Measure.valueOf(2, kmh);
 		speed_longer.add(speedVal3a);
 
-		List<ICollection> selection = new ArrayList<ICollection>(3);
+		List<IStoreItem> selection = new ArrayList<IStoreItem>();
 		CollectionComplianceTests testOp = new CollectionComplianceTests();
 
 		selection.clear();
@@ -188,15 +193,15 @@ public class TestOperations extends TestCase
 
 		assertEquals("new collection added to store", 1, store.size());
 
-		ICollection firstItem = store.iterator().next();
+		ICollection firstItem = (ICollection) store.iterator().next();
 		ICommand<?> precedent = firstItem.getPrecedent();
 		assertNotNull("has precedent", precedent);
 		assertEquals("Correct name", "Add series", precedent.getTitle());
 
-		List<? extends ICollection> inputs = precedent.getInputs();
+		List<? extends IStoreItem> inputs = precedent.getInputs();
 		assertEquals("Has both precedents", 2, inputs.size());
 
-		Iterator<? extends ICollection> iIter = inputs.iterator();
+		Iterator<? extends IStoreItem> iIter = inputs.iterator();
 		while (iIter.hasNext())
 		{
 			ICollection thisC = (ICollection) iIter.next();
@@ -210,10 +215,10 @@ public class TestOperations extends TestCase
 			}
 		}
 
-		List<? extends ICollection> outputs = precedent.getOutputs();
+		List<? extends IStoreItem> outputs = precedent.getOutputs();
 		assertEquals("Has both dependents", 1, outputs.size());
 
-		Iterator<? extends ICollection> oIter = outputs.iterator();
+		Iterator<? extends IStoreItem> oIter = outputs.iterator();
 		while (oIter.hasNext())
 		{
 			ICollection thisC = (ICollection) oIter.next();
@@ -229,21 +234,21 @@ public class TestOperations extends TestCase
 		InMemoryStore store = new SampleData().getData(10);
 
 		// ok, let's try one that works
-		List<ICollection> selection = new ArrayList<ICollection>(3);
+		List<IStoreItem> selection = new ArrayList<IStoreItem>();
 
 		// ///////////////
 		// TEST INVALID PERMUTATIONS
 		// ///////////////
-		ICollection speed_good_1 = store.get(SampleData.SPEED_ONE);
-		ICollection speed_good_2 = store.get(SampleData.SPEED_TWO);
-		ICollection string_1 = store.get(SampleData.STRING_ONE);
-		ICollection len1 = store.get(SampleData.LENGTH_ONE);
-		ICollection factor = store.get(SampleData.FLOATING_POINT_FACTOR);
+		ICollection speed_good_1 = (ICollection) store.get(SampleData.SPEED_ONE);
+		ICollection speed_good_2 = (ICollection) store.get(SampleData.SPEED_TWO);
+		ICollection string_1 = (ICollection) store.get(SampleData.STRING_ONE);
+		ICollection len1 = (ICollection) store.get(SampleData.LENGTH_ONE);
+		ICollection factor = (ICollection) store.get(SampleData.FLOATING_POINT_FACTOR);
 
 		selection.clear();
 		selection.add(speed_good_1);
 		selection.add(string_1);
-		Collection<ICommand<ICollection>> commands = new MultiplyQuantityOperation()
+		Collection<ICommand<IStoreItem>> commands = new MultiplyQuantityOperation()
 				.actionsFor(selection, store);
 		assertEquals("invalid collections - not both quantities", 0,
 				commands.size());
@@ -275,7 +280,7 @@ public class TestOperations extends TestCase
 		commands = new MultiplyQuantityOperation().actionsFor(selection, store);
 		assertEquals("valid collections - one is singleton", 1, commands.size());
 
-		ICommand<ICollection> command = commands.iterator().next();
+		ICommand<IStoreItem> command = commands.iterator().next();
 
 		// test actions has single item: "Multiply series by constant"
 		assertEquals("correct name", "Multiply series", command.getTitle());
@@ -286,7 +291,7 @@ public class TestOperations extends TestCase
 		// test store has a new item in it
 		assertEquals("store not empty", 1, store.size());
 
-		ICollection newS = store.get(MultiplyQuantityOperation.SERIES_NAME);
+		ICollection newS = (ICollection) store.get(MultiplyQuantityOperation.SERIES_NAME);
 
 		// test results is same length as thisSpeed
 		assertEquals("correct size", 10, newS.size());
@@ -304,11 +309,11 @@ public class TestOperations extends TestCase
 	public void testUnitConversion()
 	{
 		// place to store results data
-		InMemoryStore store = new SampleData().getData(10);
+		IStore store = new SampleData().getData(10);
 
 		List<ICollection> selection = new ArrayList<ICollection>(3);
 		// speed one defined in m/s
-		ICollection speed_good_1 = store.get(SampleData.SPEED_ONE);
+		ICollection speed_good_1 = (ICollection) store.get(SampleData.SPEED_ONE);
 		selection.add(speed_good_1);
 
 		// test incompatible target unit
@@ -317,8 +322,8 @@ public class TestOperations extends TestCase
 		assertEquals("target unit not same dimension as input", 0, commands.size());
 
 		// test valid target unit
-		commands = new UnitConversionOperation(KILOMETRES_PER_HOUR)
-				.actionsFor(selection, store);
+		commands = new UnitConversionOperation(KILOMETRES_PER_HOUR).actionsFor(
+				selection, store);
 		assertEquals("valid unit dimensions", 1, commands.size());
 
 		ICommand<ICollection> command = commands.iterator().next();
@@ -326,7 +331,7 @@ public class TestOperations extends TestCase
 		// apply action
 		command.execute();
 
-		ICollection newS = store.get(speed_good_1.getName()
+		ICollection newS = (ICollection) store.get(speed_good_1.getName()
 				+ UnitConversionOperation.CONVERTED_TO + KILOMETRES_PER_HOUR);
 		assertNotNull(newS);
 
@@ -341,25 +346,28 @@ public class TestOperations extends TestCase
 
 		IQuantityCollection<?> inputSpeed = (IQuantityCollection<?>) speed_good_1;
 
-		Measurable<Velocity> firstInputSpeed = (Measurable<Velocity>) inputSpeed.getValues()
-				.get(0);
+		Measurable<Velocity> firstInputSpeed = (Measurable<Velocity>) inputSpeed
+				.getValues().get(0);
 
 		IQuantityCollection<?> outputSpeed = (IQuantityCollection<?>) newS;
 
-		Measurable<Velocity> outputMEas = (Measurable<Velocity>) outputSpeed.getValues().get(0);
-		double firstOutputSpeed = outputMEas.doubleValue((Unit<Velocity>)outputSpeed.getUnits());
-		
-		UnitConverter oc = inputSpeed.getUnits().getConverterTo(KILOMETERS_PER_HOUR);
+		Measurable<Velocity> outputMEas = (Measurable<Velocity>) outputSpeed
+				.getValues().get(0);
+		double firstOutputSpeed = outputMEas
+				.doubleValue((Unit<Velocity>) outputSpeed.getUnits());
 
-		assertEquals(oc.convert(firstInputSpeed.doubleValue((Unit<Velocity>) inputSpeed.getUnits())),
-				firstOutputSpeed);
+		UnitConverter oc = inputSpeed.getUnits()
+				.getConverterTo(KILOMETERS_PER_HOUR);
+
+		assertEquals(oc.convert(firstInputSpeed
+				.doubleValue((Unit<Velocity>) inputSpeed.getUnits())), firstOutputSpeed);
 
 	}
 
 	public void testSimpleMovingAverage()
 	{
 		// place to store results data
-		InMemoryStore store = new SampleData().getData(10);
+		IStore store = new SampleData().getData(10);
 
 		List<ICollection> selection = new ArrayList<>();
 
@@ -381,7 +389,8 @@ public class TestOperations extends TestCase
 
 		@SuppressWarnings("unchecked")
 		IQuantityCollection<Velocity> newS = (IQuantityCollection<Velocity>) store
-				.get(speed_good_1.getName()+ " " + SimpleMovingAverageOperation.SERIES_NAME_TEMPLATE);
+				.get(speed_good_1.getName() + " "
+						+ SimpleMovingAverageOperation.SERIES_NAME_TEMPLATE);
 		assertNotNull(newS);
 
 		// test results is same length as thisSpeed
@@ -397,9 +406,190 @@ public class TestOperations extends TestCase
 		double average = sum / windowSize;
 
 		// compare to output value [windowSize-1]
-		Measurable<Velocity> simpleMovingAverage = newS.getValues().get(windowSize - 1);
+		Measurable<Velocity> simpleMovingAverage = newS.getValues().get(
+				windowSize - 1);
 
 		assertEquals(average, simpleMovingAverage.doubleValue(newS.getUnits()), 0);
-		
+
+	}
+
+	@SuppressWarnings(
+	{ "rawtypes", "unchecked" })
+	public void testSubtraction()
+	{
+		InMemoryStore store = new SampleData().getData(10);
+		int storeSize = store.size();
+		List<ICollection> selection = new ArrayList<ICollection>(3);
+
+		// test invalid dimensions
+		IQuantityCollection<Velocity> speed_good_1 = (IQuantityCollection<Velocity>) store
+				.get(SampleData.SPEED_ONE);
+		IQuantityCollection<Angle> angle_1 = (IQuantityCollection<Angle>) store
+				.get(SampleData.ANGLE_ONE);
+		selection.add(speed_good_1);
+		selection.add(angle_1);
+		Collection<ICommand<ICollection>> commands = new SubtractQuantityOperation()
+				.actionsFor(selection, store);
+		assertEquals("invalid collections - not same dimensions", 0,
+				commands.size());
+
+		selection.clear();
+
+		// test not all quantities
+		ICollection string_1 = (ICollection) store.get(SampleData.STRING_ONE);
+		selection.add(speed_good_1);
+		selection.add(string_1);
+		commands = new SubtractQuantityOperation().actionsFor(selection, store);
+		assertEquals("invalid collections - not all quantities", 0, commands.size());
+
+		selection.clear();
+
+		// test valid command
+		IQuantityCollection<Velocity> speed_good_2 = (IQuantityCollection<Velocity>) store
+				.get(SampleData.SPEED_TWO);
+		selection.add(speed_good_1);
+		selection.add(speed_good_2);
+
+		commands = new SubtractQuantityOperation().actionsFor(selection, store);
+		assertEquals("valid command", 2, commands.size());
+
+		ICommand<ICollection> command = commands.iterator().next();
+		command.execute();
+
+		// test store has a new item in it
+		assertEquals("store not empty", storeSize + 1, store.size());
+
+		IQuantityCollection<Velocity> newS = (IQuantityCollection<Velocity>) store
+				.get(speed_good_2.getName() + " from " + speed_good_1.getName());
+
+		assertNotNull(newS);
+		assertEquals("correct size", 10, newS.size());
+
+		// assert same unit
+		assertEquals(newS.getUnits(), speed_good_1.getUnits());
+
+		double firstDifference = newS.getValues().get(0)
+				.doubleValue(newS.getUnits());
+		double speed1firstValue = speed_good_1.getValues().get(0)
+				.doubleValue(speed_good_1.getUnits());
+		double speed2firstValue = speed_good_2.getValues().get(0)
+				.doubleValue(speed_good_2.getUnits());
+
+		assertEquals(firstDifference, speed1firstValue - speed2firstValue);
+	}
+
+	@SuppressWarnings("unchecked")
+	public void testDivision()
+	{
+		// place to store results data
+		InMemoryStore store = new SampleData().getData(10);
+
+		List<IStoreItem> selection = new ArrayList<IStoreItem>();
+
+		IQuantityCollection<Velocity> speed_good_1 = (IQuantityCollection<Velocity>) store
+				.get(SampleData.SPEED_ONE);
+		ICollection speed_good_2 = (ICollection) store.get(SampleData.SPEED_TWO);
+		IQuantityCollection<Length> length_1 = (IQuantityCollection<Length>) store
+				.get(SampleData.LENGTH_ONE);
+		ICollection string_1 = (ICollection) store.get(SampleData.STRING_ONE);
+		IQuantityCollection<Dimensionless> factor = (IQuantityCollection<Dimensionless>) store
+				.get(SampleData.FLOATING_POINT_FACTOR);
+		ICollection speed_good_1_bigger = (ICollection) new SampleData().getData(20).get(
+				SampleData.SPEED_ONE);
+
+		// /
+		// / TEST NOT APPLICABLE INPUT
+		// /
+
+		// test invalid number of inputs
+		selection.add(speed_good_1);
+		selection.add(speed_good_2);
+		selection.add(length_1);
+		Collection<ICommand<IStoreItem>> commands = new DivideQuantityOperation()
+				.actionsFor(selection, store);
+		assertEquals("invalid number of inputs", 0, commands.size());
+
+		// test not all quantities
+		selection.clear();
+		selection.add(speed_good_1);
+		selection.add(string_1);
+		commands = new DivideQuantityOperation().actionsFor(selection, store);
+		assertEquals("not all quantities", 0, commands.size());
+
+		// test different size
+		selection.clear();
+		selection.add(speed_good_1);
+		selection.add(speed_good_1_bigger);
+		commands = new DivideQuantityOperation().actionsFor(selection, store);
+		assertEquals("collection not same size", 0, commands.size());
+
+		// /
+		// / TEST APPLICABLE INPUT
+		// /
+
+		// test length over speed
+		selection.clear();
+		selection.add(length_1);
+		selection.add(speed_good_1);
+		commands = new DivideQuantityOperation().actionsFor(selection, store);
+		assertEquals("valid input", 2, commands.size());
+
+		ICommand<IStoreItem> command = commands.iterator().next();
+
+		store.clear();
+		command.execute();
+
+		assertEquals(1, store.size());
+		IQuantityCollection<Duration> duration = (IQuantityCollection<Duration>) store
+				.iterator().next();
+		assertEquals(speed_good_1.size(), duration.size());
+
+		double firstDuration = duration.getValues().get(0)
+				.doubleValue(duration.getUnits());
+		double firstLength = length_1.getValues().get(0)
+				.doubleValue(length_1.getUnits());
+		double firstSpeed = speed_good_1.getValues().get(0)
+				.doubleValue(speed_good_1.getUnits());
+
+		assertEquals(firstLength / firstSpeed, firstDuration);
+
+		// test length over factor
+		selection.clear();
+		selection.add(length_1);
+		selection.add(factor);
+		commands = new DivideQuantityOperation().actionsFor(selection, store);
+		assertEquals("valid input", 2, commands.size());
+
+		Iterator<ICommand<IStoreItem>> iterator = commands.iterator();
+		command = iterator.next();
+
+		store.clear();
+		command.execute();
+
+		assertEquals(1, store.size());
+		IQuantityCollection<Length> resultLength = (IQuantityCollection<Length>) store
+				.iterator().next();
+		assertEquals(length_1.size(), resultLength.size());
+
+		double firstResultLength = resultLength.getValues().get(0)
+				.doubleValue(resultLength.getUnits());
+		double factorValue = factor.getValues().get(0)
+				.doubleValue(factor.getUnits());
+		assertEquals(firstLength / factorValue, firstResultLength);
+
+		// test command #2: factor over length
+		command = iterator.next();
+		store.clear();
+		command.execute();
+		IQuantityCollection<Quantity> resultQuantity = (IQuantityCollection<Quantity>) store
+				.iterator().next();
+		// assert expected unit (1/m)
+		assertEquals("1/" + length_1.getUnits().toString(), resultQuantity
+				.getUnits().toString());
+		assertEquals(length_1.size(), resultQuantity.size());
+
+		double firstResultQuantity = resultQuantity.getValues().get(0)
+				.doubleValue(resultQuantity.getUnits());
+		assertEquals(factorValue / firstLength, firstResultQuantity);
 	}
 }

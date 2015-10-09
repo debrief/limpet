@@ -1,7 +1,7 @@
 package info.limpet.rcp.core_view;
 
 import info.limpet.IChangeListener;
-import info.limpet.ICollection;
+import info.limpet.IStore.IStoreItem;
 import info.limpet.data.operations.CollectionComplianceTests;
 import info.limpet.rcp.Activator;
 
@@ -40,7 +40,7 @@ public abstract class CoreAnalysisView extends ViewPart
 	private Action followSelection;
 	private ISelectionListener selListener;
 	protected CollectionComplianceTests aTests;
-	final private List<ICollection> curList = new ArrayList<ICollection>();
+	final private List<IStoreItem> curList = new ArrayList<IStoreItem>();
 	private IChangeListener changeListener;
 	final private String _myId;
 	final private String _myTitle;
@@ -57,13 +57,13 @@ public abstract class CoreAnalysisView extends ViewPart
 		{
 
 			@Override
-			public void dataChanged(ICollection subject)
+			public void dataChanged(IStoreItem subject)
 			{
 				display(curList);
 			}
 
 			@Override
-			public void collectionDeleted(ICollection subject)
+			public void collectionDeleted(IStoreItem subject)
 			{
 				// hmm, we should probably stop listening to that collection
 				curList.remove(subject);
@@ -80,7 +80,7 @@ public abstract class CoreAnalysisView extends ViewPart
 	 * 
 	 * @param val
 	 */
-	public void follow(List<ICollection> data)
+	public void follow(List<IStoreItem> data)
 	{
 		followSelection.setChecked(false);
 		followSelection.setEnabled(false);
@@ -103,7 +103,7 @@ public abstract class CoreAnalysisView extends ViewPart
 
 	protected void newSelection(ISelection selection)
 	{
-		List<ICollection> res = new ArrayList<ICollection>();
+		List<IStoreItem> res = new ArrayList<IStoreItem>();
 		if (selection instanceof StructuredSelection)
 		{
 			StructuredSelection str = (StructuredSelection) selection;
@@ -116,7 +116,7 @@ public abstract class CoreAnalysisView extends ViewPart
 				if (object instanceof IAdaptable)
 				{
 					IAdaptable ad = (IAdaptable) object;
-					ICollection coll = (ICollection) ad.getAdapter(ICollection.class);
+					IStoreItem coll = (IStoreItem) ad.getAdapter(IStoreItem.class);
 					if (coll != null)
 					{
 						res.add(coll);
@@ -138,10 +138,10 @@ public abstract class CoreAnalysisView extends ViewPart
 				curList.addAll(res);
 
 				// now listen to the new list
-				Iterator<ICollection> iter = curList.iterator();
+				Iterator<IStoreItem> iter = curList.iterator();
 				while (iter.hasNext())
 				{
-					ICollection iC = (ICollection) iter.next();
+					IStoreItem iC = iter.next();
 					iC.addChangeListener(changeListener);
 				}
 
@@ -156,10 +156,10 @@ public abstract class CoreAnalysisView extends ViewPart
 	{
 		if (curList.size() > 0)
 		{
-			Iterator<ICollection> iter = curList.iterator();
+			Iterator<IStoreItem> iter = curList.iterator();
 			while (iter.hasNext())
 			{
-				ICollection iC = (ICollection) iter.next();
+				IStoreItem iC =  iter.next();
 				iC.removeChangeListener(changeListener);
 			}
 
@@ -168,7 +168,7 @@ public abstract class CoreAnalysisView extends ViewPart
 		}
 	}
 
-	public List<ICollection> getData()
+	public List<IStoreItem> getData()
 	{
 		return curList;
 	}
@@ -180,7 +180,7 @@ public abstract class CoreAnalysisView extends ViewPart
 	 * @param aTests2
 	 * @return
 	 */
-	abstract protected boolean appliesToMe(List<ICollection> res,
+	abstract protected boolean appliesToMe(List<IStoreItem> res,
 			CollectionComplianceTests aTests2);
 
 	/**
@@ -188,7 +188,7 @@ public abstract class CoreAnalysisView extends ViewPart
 	 * 
 	 * @param res
 	 */
-	abstract public void display(List<ICollection> res);
+	abstract public void display(List<IStoreItem> res);
 
 	protected void fillLocalPullDown(IMenuManager manager)
 	{
@@ -309,7 +309,6 @@ public abstract class CoreAnalysisView extends ViewPart
 		}
 		catch (PartInitException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

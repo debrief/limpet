@@ -2,8 +2,9 @@ package info.limpet.rcp.data_provider.data;
 
 import info.limpet.ICollection;
 import info.limpet.ICommand;
-import info.limpet.IStore;
+import info.limpet.IStore.IStoreItem;
 import info.limpet.data.store.InMemoryStore;
+import info.limpet.data.store.InMemoryStore.StoreGroup;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -20,30 +21,57 @@ import org.eclipse.jface.viewers.Viewer;
  */
 public class DataModel implements ITreeContentProvider
 {
-	private InMemoryStore _store;
-
 	private void addCollectionItems(final List<Object> res,
 			final CollectionWrapper cw)
 	{
-		final ICollection coll = cw.getCollection();
+		final IStoreItem item = cw.getCollection();
 
-		final ICommand<?> prec = coll.getPrecedent();
-		if (prec != null)
+		if (item instanceof ICollection)
 		{
-			final NamedList dList = new NamedList(cw, "Precedents");
-			dList.add(new CommandWrapper(dList, prec));
-			res.add(dList);
+			ICollection coll = (ICollection) item;
+			final ICommand<?> prec = coll.getPrecedent();
+			if (prec != null)
+			{
+				final NamedList dList = new NamedList(cw, "Precedents");
+				dList.add(new CommandWrapper(dList, prec));
+				res.add(dList);
+			}
+
+			final List<ICommand<?>> dep = coll.getDependents();
+			if (dep != null)
+			{
+				final NamedList dList = new NamedList(cw, "Dependents");
+				final Iterator<ICommand<?>> dIter = dep.iterator();
+				while (dIter.hasNext())
+				{
+					final ICommand<?> thisI = dIter.next();
+					dList.add(new CommandWrapper(dList, thisI));
+				}
+
+				// did we find any?
+				if (dList.size() > 0)
+				{
+					res.add(dList);
+				}
+			}
 		}
-
-		final List<ICommand<?>> dep = coll.getDependents();
-		if (dep != null)
+		else if (item instanceof StoreGroup)
 		{
-			final NamedList dList = new NamedList(cw, "Dependents");
-			final Iterator<ICommand<?>> dIter = dep.iterator();
+			StoreGroup group = (StoreGroup) item;
+			final NamedList dList = new NamedList(cw, group.getName());
+			final Iterator<IStoreItem> dIter = group.iterator();
 			while (dIter.hasNext())
 			{
-				final ICommand<?> thisI = dIter.next();
-				dList.add(new CommandWrapper(dList, thisI));
+				final IStoreItem thisI = dIter.next();
+				if (thisI instanceof CommandWrapper)
+				{
+					dList.add(new CommandWrapper(dList, (ICommand<?>) thisI));
+
+				}
+				else if (thisI instanceof CollectionWrapper)
+				{
+					dList.add(new CollectionWrapper(dList, (ICollection) thisI));
+				}
 			}
 
 			// did we find any?
@@ -58,15 +86,23 @@ public class DataModel implements ITreeContentProvider
 	{
 		final ICommand<?> coll = cw.getCommand();
 
-		final List<? extends ICollection> inp = coll.getInputs();
+		final List<? extends IStoreItem> inp = coll.getInputs();
 		if (inp != null)
 		{
 			final NamedList dList = new NamedList(cw, "Inputs");
-			final Iterator<? extends ICollection> dIter = inp.iterator();
+			final Iterator<? extends IStoreItem> dIter = inp.iterator();
 			while (dIter.hasNext())
 			{
-				final ICollection thisI = dIter.next();
-				dList.add(new CollectionWrapper(dList, thisI));
+				final IStoreItem thisI = dIter.next();
+				if(thisI instanceof ICollection)
+				{
+				dList.add(new CollectionWrapper(dList, (ICollection) thisI));
+				}
+				else if(thisI instanceof StoreGroup)
+				{
+					dList.add(new GroupWrapper(dList, (StoreGroup) thisI));
+				}
+					
 			}
 			// did we find any?
 			if (dList.size() > 0)
@@ -75,21 +111,53 @@ public class DataModel implements ITreeContentProvider
 			}
 		}
 
-		final List<? extends ICollection> outp = coll.getOutputs();
+		final List<? extends IStoreItem> outp = coll.getOutputs();
 		if (outp != null)
 		{
 			final NamedList dList = new NamedList(cw, "Outputs");
-			final Iterator<? extends ICollection> dIter = outp.iterator();
+			final Iterator<? extends IStoreItem> dIter = outp.iterator();
 			while (dIter.hasNext())
 			{
-				final ICollection thisI = dIter.next();
-				dList.add(new CollectionWrapper(dList, thisI));
+				final IStoreItem thisI = dIter.next();
+				if (thisI instanceof ICollection)
+				{
+					dList.add(new CollectionWrapper(dList, (ICollection) thisI));
+				}
+				else if (thisI instanceof StoreGroup)
+				{
+					dList.add(new GroupWrapper(dList, (StoreGroup) thisI));
+				}
 			}
 			// did we find any?
 			if (dList.size() > 0)
 			{
 				res.add(dList);
 			}
+		}
+	}
+
+	private void addGroupItems(final List<Object> res, final GroupWrapper cw)
+	{
+		final StoreGroup coll = cw.getGroup();
+
+		final NamedList dList = new NamedList(cw, coll.getName());
+		final Iterator<IStoreItem> dIter = coll.iterator();
+		while (dIter.hasNext())
+		{
+			final IStoreItem thisI = dIter.next();
+			if (thisI instanceof ICollection)
+			{
+				dList.add(new CollectionWrapper(dList, (ICollection) thisI));
+			}
+			else if (thisI instanceof StoreGroup)
+			{
+				dList.add(new GroupWrapper(dList, (StoreGroup) thisI));
+			}
+		}
+		// did we find any?
+		if (dList.size() > 0)
+		{
+			res.add(dList);
 		}
 	}
 
@@ -147,6 +215,11 @@ public class DataModel implements ITreeContentProvider
 			// see if it has predecessors or successors
 			addCommandItems(res, (CommandWrapper) parentElement);
 		}
+		else if (parentElement instanceof GroupWrapper)
+		{
+			// see if it has predecessors or successors
+			addGroupItems(res, (GroupWrapper) parentElement);
+		}
 		else if (parentElement instanceof List)
 		{
 			final List list = (List) parentElement;
@@ -164,15 +237,24 @@ public class DataModel implements ITreeContentProvider
 	@Override
 	public Object[] getElements(final Object parent)
 	{
-		final List<CollectionWrapper> list = new ArrayList<CollectionWrapper>();
+		final List<LimpetWrapper> list = new ArrayList<LimpetWrapper>();
 
-		if (_store != null)
+		if (parent != null)
 		{
-			final Iterator<ICollection> iter = _store.iterator();
+			InMemoryStore store = (InMemoryStore) parent;
+
+			final Iterator<IStoreItem> iter = store.iterator();
 			while (iter.hasNext())
 			{
-				final ICollection iCollection = iter.next();
-				list.add(new CollectionWrapper(null, iCollection));
+				final IStoreItem item = iter.next();
+				if (item instanceof ICollection)
+				{
+					list.add(new CollectionWrapper(null, (ICollection) item));
+				}
+				else if (item instanceof StoreGroup)
+				{
+					list.add(new GroupWrapper(null, (StoreGroup) item));
+				}
 			}
 		}
 		else
@@ -205,11 +287,16 @@ public class DataModel implements ITreeContentProvider
 				{
 					// see if it has predecessors or successors
 					final CollectionWrapper cw = (CollectionWrapper) element;
-					final ICollection coll = cw.getCollection();
 
-					final boolean hasDependents = coll.getDependents().size() > 0;
-					final boolean hasPrecedents = coll.getPrecedent() != null;
-					res = (hasDependents || hasPrecedents);
+					final IStoreItem item = cw.getCollection();
+					if (item instanceof ICollection)
+					{
+						ICollection coll = (ICollection) item;
+						final boolean hasDependents = ((coll.getDependents() != null) && (coll
+								.getDependents().size() > 0));
+						final boolean hasPrecedents = coll.getPrecedent() != null;
+						res = (hasDependents || hasPrecedents);
+					}
 				}
 				else if (element instanceof CommandWrapper)
 				{
@@ -218,6 +305,14 @@ public class DataModel implements ITreeContentProvider
 					final ICommand<?> comm = cw.getCommand();
 
 					res = ((comm.getInputs().size() > 0) || (comm.getOutputs().size() > 0));
+				}
+				else if (element instanceof GroupWrapper)
+				{
+					// see if it has predecessors or successors
+					final GroupWrapper cw = (GroupWrapper) element;
+					final StoreGroup comm = cw.getGroup();
+
+					res = comm.size() > 0;
 				}
 				else if (element instanceof ArrayList)
 				{
@@ -230,23 +325,18 @@ public class DataModel implements ITreeContentProvider
 		return res;
 	}
 
-	public IStore getStore()
-	{
-		return _store;
-	}
-	
 	@Override
 	public void inputChanged(final Viewer v, final Object oldInput,
 			final Object newInput)
 	{
-		if (newInput instanceof InMemoryStore)
-		{
-			_store = (InMemoryStore) newInput;
-		}
-		else
-		{
-			_store = null;
-		}
+		// if (newInput instanceof InMemoryStore)
+		// {
+		// _store = (InMemoryStore) newInput;
+		// }
+		// else
+		// {
+		// _store = null;
+		// }
 	}
 
 }

@@ -10,5 +10,6 @@ Require-Bundle: info.limpet;bundle-version="1.0.0",
  org.eclipse.equinox.console,
  org.apache.felix.gogo.command,
  org.apache.felix.gogo.runtime,
- org.apache.felix.gogo.shell
- 
+ org.apache.felix.gogo.shell,
+ org.eclipse.core.resources,
+ org.eclipse.core.runtime

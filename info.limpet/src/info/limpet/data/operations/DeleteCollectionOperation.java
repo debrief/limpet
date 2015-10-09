@@ -1,9 +1,9 @@
 package info.limpet.data.operations;
 
-import info.limpet.ICollection;
 import info.limpet.ICommand;
 import info.limpet.IOperation;
 import info.limpet.IStore;
+import info.limpet.IStore.IStoreItem;
 import info.limpet.data.commands.AbstractCommand;
 import info.limpet.data.store.InMemoryStore;
 
@@ -12,14 +12,14 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-public class DeleteCollectionOperation implements IOperation<ICollection>
+public class DeleteCollectionOperation implements IOperation<IStoreItem>
 {
 	CollectionComplianceTests aTests = new CollectionComplianceTests();
 
-	public Collection<ICommand<ICollection>> actionsFor(
-			List<ICollection> selection, IStore destination)
+	public Collection<ICommand<IStoreItem>> actionsFor(
+			List<IStoreItem> selection, IStore destination)
 	{
-		Collection<ICommand<ICollection>> res = new ArrayList<ICommand<ICollection>>();
+		Collection<ICommand<IStoreItem>> res = new ArrayList<ICommand<IStoreItem>>();
 		if (appliesTo(selection))
 		{
 			final String commandTitle;
@@ -31,7 +31,7 @@ public class DeleteCollectionOperation implements IOperation<ICollection>
 			{
 				commandTitle = "Delete collections";
 			}
-			ICommand<ICollection> newC = new DeleteCollection(commandTitle,
+			ICommand<IStoreItem> newC = new DeleteCollection(commandTitle,
 					selection, destination);
 			res.add(newC);
 		}
@@ -39,15 +39,15 @@ public class DeleteCollectionOperation implements IOperation<ICollection>
 		return res;
 	}
 
-	private boolean appliesTo(List<ICollection> selection)
+	private boolean appliesTo(List<IStoreItem> selection)
 	{
 		return (selection.size() > 0);
 	}
 
-	public static class DeleteCollection extends AbstractCommand<ICollection>
+	public static class DeleteCollection extends AbstractCommand<IStoreItem>
 	{
 
-		public DeleteCollection(String title, List<ICollection> selection,
+		public DeleteCollection(String title, List<IStoreItem> selection,
 				IStore store)
 		{
 			super(title, "Delete specific collections", null, store, false, false,
@@ -58,10 +58,10 @@ public class DeleteCollectionOperation implements IOperation<ICollection>
 		public void execute()
 		{
 			// tell each series that we're a dependent
-			Iterator<ICollection> iter = _inputs.iterator();
+			Iterator<IStoreItem> iter = inputs.iterator();
 			while (iter.hasNext())
 			{
-				ICollection iCollection = iter.next();
+				IStoreItem iCollection = iter.next();
 				IStore store = getStore();
 				if (store instanceof InMemoryStore)
 				{

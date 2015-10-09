@@ -1,64 +1,64 @@
 package info.limpet.data.commands;
 
-import info.limpet.ICollection;
 import info.limpet.ICommand;
 import info.limpet.IQuantityCollection;
 import info.limpet.IStore;
+import info.limpet.IStore.IStoreItem;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public abstract class AbstractCommand<T extends ICollection> implements
+public abstract class AbstractCommand<T extends IStoreItem> implements
 		ICommand<T>
 {
-	final private String _title;
-	final private String _description;
-	final private boolean _canUndo;
-	final private boolean _canRedo;
-	final private IStore _store;
+	final private String title;
+	final private String description;
+	final private boolean canUndo;
+	final private boolean canRedo;
+	final private IStore store;
 
-	final protected List<T> _inputs;
-	final protected List<T> _outputs;
+	final protected List<T> inputs;
+	final protected List<T> outputs;
 
 	/**
 	 * whether the command should recalculate if its children change
 	 * 
 	 */
-	private boolean _dynamic = true;
-	final private String _outputName;
+	private boolean dynamic = true;
+	final private String outputName;
 
 	public AbstractCommand(String title, String description, String outputName,
 			IStore store, boolean canUndo, boolean canRedo, List<T> inputs)
 	{
-		_title = title;
-		_description = description;
-		_store = store;
-		_canUndo = canUndo;
-		_canRedo = canRedo;
-		_outputName = outputName;
+		this.title = title;
+		this.description = description;
+		this.store = store;
+		this.canUndo = canUndo;
+		this.canRedo = canRedo;
+		this.outputName = outputName;
 
 		if (inputs != null)
 		{
-			_inputs = new ArrayList<T>(inputs);
+			this.inputs = new ArrayList<T>(inputs);
 		}
 		else
 		{
-			_inputs = null;
+			this.inputs = null;
 		}
-		_outputs = new ArrayList<T>();
+		this.outputs = new ArrayList<T>();
 	}
 
 	protected String getOutputName()
 	{
-		return _outputName;
+		return outputName;
 	}
 
-	protected int getNonSingletonArrayLength(List<ICollection> inputs)
+	protected int getNonSingletonArrayLength(List<IStoreItem> inputs)
 	{
 		int size = 0;
 
-		Iterator<ICollection> iter = inputs.iterator();
+		Iterator<IStoreItem> iter = inputs.iterator();
 		while (iter.hasNext())
 		{
 			IQuantityCollection<?> thisC = (IQuantityCollection<?>) iter.next();
@@ -75,26 +75,26 @@ public abstract class AbstractCommand<T extends ICollection> implements
 	@Override
 	public boolean getDynamic()
 	{
-		return _dynamic;
+		return dynamic;
 	}
 
 	@Override
 	public void setDynamic(boolean dynamic)
 	{
-		this._dynamic = dynamic;
+		this.dynamic = dynamic;
 	}
 
 	@Override
-	public void dataChanged(ICollection subject)
+	public void dataChanged(IStoreItem subject)
 	{
 		// are we doing live updates?
-		if (_dynamic)
+		if (dynamic)
 		{
 			// do the recalc
 			recalculate();
 
 			// now tell the outputs they have changed
-			Iterator<T> iter = _outputs.iterator();
+			Iterator<T> iter = outputs.iterator();
 			while (iter.hasNext())
 			{
 				T t = (T) iter.next();
@@ -106,32 +106,32 @@ public abstract class AbstractCommand<T extends ICollection> implements
 	abstract protected void recalculate();
 
 	@Override
-	public void collectionDeleted(ICollection subject)
+	public void collectionDeleted(IStoreItem subject)
 	{
 	}
 
 	public IStore getStore()
 	{
-		return _store;
+		return store;
 	}
 
 	@Override
 	public String getTitle()
 	{
-		return _title;
+		return title;
 	}
 
 	@Override
 	public String getDescription()
 	{
-		return _description;
+		return description;
 	}
 
 	@Override
 	public void execute()
 	{
 		// ok, register as a listener with the input files
-		Iterator<T> iter = _inputs.iterator();
+		Iterator<T> iter = inputs.iterator();
 		while (iter.hasNext())
 		{
 			T t = (T) iter.next();
@@ -156,29 +156,29 @@ public abstract class AbstractCommand<T extends ICollection> implements
 	@Override
 	public boolean canUndo()
 	{
-		return _canUndo;
+		return canUndo;
 	}
 
 	@Override
 	public boolean canRedo()
 	{
-		return _canRedo;
+		return canRedo;
 	}
 
 	public List<T> getInputs()
 	{
-		return _inputs;
+		return inputs;
 	}
 
 	@Override
 	public List<T> getOutputs()
 	{
-		return _outputs;
+		return outputs;
 	}
 
 	public void addOutput(T output)
 	{
-		_outputs.add(output);
+		outputs.add(output);
 	}
 
 }

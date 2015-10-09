@@ -2,6 +2,7 @@ package info.limpet.rcp.xy_plot;
 
 import info.limpet.ICollection;
 import info.limpet.IQuantityCollection;
+import info.limpet.IStore.IStoreItem;
 import info.limpet.ITemporalQuantityCollection;
 import info.limpet.data.impl.samples.StockTypes.Temporal.Location;
 import info.limpet.data.operations.CollectionComplianceTests;
@@ -14,12 +15,14 @@ import java.util.List;
 
 import javax.measure.Measurable;
 import javax.measure.quantity.Quantity;
+import javax.measure.unit.Unit;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.opengis.geometry.Geometry;
 import org.swtchart.Chart;
 import org.swtchart.IAxis;
+import org.swtchart.IAxis.Position;
 import org.swtchart.ILineSeries;
 import org.swtchart.ILineSeries.PlotSymbolType;
 import org.swtchart.ISeries;
@@ -75,52 +78,56 @@ public class XyPlotView extends CoreAnalysisView
 	}
 
 	@Override
-	public void display(List<ICollection> res)
+	public void display(List<IStoreItem> res)
 	{
-		// they're all the same type - check the first one
-		Iterator<ICollection> iter = res.iterator();
-
-		ICollection first = iter.next();
-
-		// sort out what type of data this is.
-		if (first.isQuantity())
+		if (res.size() == 0)
 		{
-			if (aTests.allTemporal(res))
-			{
-				showTemporalQuantity(res);
-			}
-			else
-			{
-				showQuantity(res);
-			}
-			chart.setVisible(true);
+			chart.setVisible(false);
 		}
 		else
 		{
-			// exception - show locations
-			if (aTests.allLocation(res))
+
+			// they're all the same type - check the first one
+			Iterator<IStoreItem> iter = res.iterator();
+
+			ICollection first = (ICollection) iter.next();
+
+			// sort out what type of data this is.
+			if (first.isQuantity())
 			{
-				showLocations(res);
+				if (aTests.allTemporal(res))
+				{
+					showTemporalQuantity(res);
+				}
+				else
+				{
+					showQuantity(res);
+				}
 				chart.setVisible(true);
 			}
 			else
-				chart.setVisible(false);
+			{
+				// exception - show locations
+				if (aTests.allLocation(res))
+				{
+					showLocations(res);
+					chart.setVisible(true);
+				}
+				else
+					chart.setVisible(false);
+			}
 		}
 	}
 
 	@SuppressWarnings("unchecked")
-	private void showQuantity(List<ICollection> res)
+	private void showQuantity(List<IStoreItem> res)
 	{
-		Iterator<ICollection> iter = res.iterator();
+		Iterator<IStoreItem> iter = res.iterator();
 
-		// clear the graph
-		ISeries[] series = chart.getSeriesSet().getSeries();
-		for (int i = 0; i < series.length; i++)
-		{
-			ISeries iSeries = series[i];
-			chart.getSeriesSet().deleteSeries(iSeries.getId());
-		}
+		clearGraph();
 
+		Unit<Quantity> existingUnits = null;
+		
 		while (iter.hasNext())
 		{
 			ICollection coll = (ICollection) iter.next();
@@ -133,7 +140,8 @@ public class XyPlotView extends CoreAnalysisView
 
 						IQuantityCollection<Quantity> thisQ = (IQuantityCollection<Quantity>) coll;
 
-						String seriesName = thisQ.getName() + " (" + thisQ.getUnits() + ")";
+						final Unit<Quantity> theseUnits = thisQ.getUnits();
+						String seriesName = thisQ.getName() + " (" + theseUnits + ")";
 						ILineSeries newSeries = (ILineSeries) chart.getSeriesSet()
 								.createSeries(SeriesType.LINE, seriesName);
 						newSeries.setSymbolType(PlotSymbolType.NONE);
@@ -149,6 +157,25 @@ public class XyPlotView extends CoreAnalysisView
 							yData[ctr++] = tQ.doubleValue(thisQ.getUnits());
 						}
 
+						// ok, do we have existing data?
+						if((existingUnits != null) && !(existingUnits.equals(theseUnits)))
+						{
+							// 	create second Y axis
+							int axisId = chart.getAxisSet().createYAxis();								
+
+							// set the properties of second Y axis
+							IAxis yAxis2 = chart.getAxisSet().getYAxis(axisId);
+							yAxis2.getTitle().setText(theseUnits.toString());
+							yAxis2.setPosition(Position.Secondary);
+							newSeries.setYAxisId(axisId);
+						}
+						else
+						{
+							chart.getAxisSet().getYAxes()[0].getTitle().setText(theseUnits.toString());
+							existingUnits = theseUnits;
+						}
+
+						
 						// newSeries.setXSeries(xData);
 						newSeries.setYSeries(yData);
 
@@ -167,17 +194,13 @@ public class XyPlotView extends CoreAnalysisView
 	}
 
 	@SuppressWarnings("unchecked")
-	private void showTemporalQuantity(List<ICollection> res)
+	private void showTemporalQuantity(List<IStoreItem> res)
 	{
-		Iterator<ICollection> iter = res.iterator();
+		Iterator<IStoreItem> iter = res.iterator();
 
-		// clear the graph
-		ISeries[] series = chart.getSeriesSet().getSeries();
-		for (int i = 0; i < series.length; i++)
-		{
-			ISeries iSeries = series[i];
-			chart.getSeriesSet().deleteSeries(iSeries.getId());
-		}
+		clearGraph();
+		
+		Unit<Quantity> existingUnits = null;
 
 		while (iter.hasNext())
 		{
@@ -192,7 +215,9 @@ public class XyPlotView extends CoreAnalysisView
 						{
 							ITemporalQuantityCollection<Quantity> thisQ = (ITemporalQuantityCollection<Quantity>) coll;
 
-							String seriesName = thisQ.getName() + " (" + thisQ.getUnits()
+							final Unit<Quantity> theseUnits = thisQ.getUnits();
+
+							String seriesName = thisQ.getName() + " (" + theseUnits
 									+ ")";
 							ILineSeries newSeries = (ILineSeries) chart.getSeriesSet()
 									.createSeries(SeriesType.LINE, seriesName);
@@ -214,6 +239,25 @@ public class XyPlotView extends CoreAnalysisView
 
 							newSeries.setXDateSeries(xData);
 							newSeries.setYSeries(yData);
+							
+							// ok, do we have existing data?
+							if((existingUnits != null) && !(existingUnits.equals(theseUnits)))
+							{
+								// 	create second Y axis
+								int axisId = chart.getAxisSet().createYAxis();								
+
+								// set the properties of second Y axis
+								IAxis yAxis2 = chart.getAxisSet().getYAxis(axisId);
+								yAxis2.getTitle().setText(theseUnits.toString());
+								yAxis2.setPosition(Position.Secondary);
+								newSeries.setYAxisId(axisId);
+							}
+							else
+							{
+								chart.getAxisSet().getYAxes()[0].getTitle().setText(theseUnits.toString());
+								existingUnits = theseUnits;
+							}
+
 
 							newSeries.setSymbolType(PlotSymbolType.CROSS);
 
@@ -232,9 +276,28 @@ public class XyPlotView extends CoreAnalysisView
 		}
 	}
 
-	private void showLocations(List<ICollection> res)
+	private void clearGraph()
 	{
-		Iterator<ICollection> iter = res.iterator();
+		// clear the graph
+		ISeries[] series = chart.getSeriesSet().getSeries();
+		for (int i = 0; i < series.length; i++)
+		{
+			ISeries iSeries = series[i];
+			chart.getSeriesSet().deleteSeries(iSeries.getId());
+			
+			// and clear any series
+			IAxis[] yA = chart.getAxisSet().getYAxes();
+			for (int j = 1; j < yA.length; j++)
+			{
+				IAxis iAxis = yA[j];
+				chart.getAxisSet().deleteYAxis(iAxis.getId());				
+			}
+		}
+	}
+
+	private void showLocations(List<IStoreItem> res)
+	{
+		Iterator<IStoreItem> iter = res.iterator();
 
 		// clear the graph
 		ISeries[] series = chart.getSeriesSet().getSeries();
@@ -308,10 +371,11 @@ public class XyPlotView extends CoreAnalysisView
 	}
 
 	@Override
-	protected boolean appliesToMe(List<ICollection> res,
+	protected boolean appliesToMe(List<IStoreItem> res,
 			CollectionComplianceTests tests)
 	{
-		return (tests.allQuantity(res) || tests.allNonQuantity(res));
+		return (tests.allCollections(res) && tests.allQuantity(res) || tests
+				.allNonQuantity(res));
 	}
 
 	@Override

@@ -17,6 +17,7 @@ import org.eclipse.swt.widgets.Slider;
 import info.limpet.IChangeListener;
 import info.limpet.ICollection;
 import info.limpet.IQuantityCollection;
+import info.limpet.IStore.IStoreItem;
 import info.limpet.QuantityRange;
 import info.limpet.data.operations.CollectionComplianceTests;
 import info.limpet.rcp.core_view.CoreAnalysisView;
@@ -127,9 +128,9 @@ public class RangeSliderView extends CoreAnalysisView implements
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void display(List<ICollection> res)
+	public void display(List<IStoreItem> res)
 	{
-		ICollection newColl = res.get(0);
+		ICollection newColl = (ICollection) res.get(0);
 
 		// is this different?
 		if (_current != newColl)
@@ -154,7 +155,8 @@ public class RangeSliderView extends CoreAnalysisView implements
 	{
 
 		QuantityRange<Quantity> rng = qc.getRange();
-		int curVal = (int) qc.getValues().iterator().next().doubleValue(qc.getUnits());
+		int curVal = (int) qc.getValues().iterator().next()
+				.doubleValue(qc.getUnits());
 
 		label.setText(getData().get(0).getName() + " (" + qc.getUnits().toString()
 				+ ")");
@@ -184,21 +186,27 @@ public class RangeSliderView extends CoreAnalysisView implements
 	}
 
 	@Override
-	protected boolean appliesToMe(final List<ICollection> selection,
+	protected boolean appliesToMe(final List<IStoreItem> selection,
 			final CollectionComplianceTests tests)
 	{
 		boolean res = false;
 
 		if (selection.size() == 1)
 		{
-			ICollection coll = selection.iterator().next();
-			if (coll.isQuantity())
+
+			IStoreItem item = selection.iterator().next();
+			if (item instanceof ICollection)
 			{
-				if (coll.size() == 1)
+				ICollection coll = (ICollection) item;
+
+				if (coll.isQuantity())
 				{
-					IQuantityCollection<?> qc = (IQuantityCollection<?>) coll;
-					QuantityRange<?> range = qc.getRange();
-					res = (range != null);
+					if (coll.size() == 1)
+					{
+						IQuantityCollection<?> qc = (IQuantityCollection<?>) coll;
+						QuantityRange<?> range = qc.getRange();
+						res = (range != null);
+					}
 				}
 			}
 		}
@@ -212,14 +220,14 @@ public class RangeSliderView extends CoreAnalysisView implements
 	}
 
 	@Override
-	public void dataChanged(ICollection subject)
+	public void dataChanged(IStoreItem subject)
 	{
 		// ok, re=do the update
 		showData(_current);
 	}
 
 	@Override
-	public void collectionDeleted(ICollection subject)
+	public void collectionDeleted(IStoreItem subject)
 	{
 		// TODO Auto-generated method stub
 

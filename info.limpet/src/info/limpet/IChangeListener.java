@@ -1,8 +1,10 @@
 package info.limpet;
 
+import info.limpet.IStore.IStoreItem;
+
 public interface IChangeListener
 {
-	public void dataChanged(ICollection subject);
+	public void dataChanged(IStoreItem subject);
 	
-	public void collectionDeleted(ICollection subject);
+	public void collectionDeleted(IStoreItem subject);
 }

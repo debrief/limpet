@@ -2,7 +2,10 @@ package info.limpet.data.operations;
 
 import info.limpet.ICollection;
 import info.limpet.IQuantityCollection;
+import info.limpet.IStore.IStoreItem;
+import info.limpet.data.store.InMemoryStore.StoreGroup;
 
+import java.util.Iterator;
 import java.util.List;
 
 import javax.measure.unit.Dimension;
@@ -20,7 +23,7 @@ public class CollectionComplianceTests
 	 * @param num
 	 * @return
 	 */
-	public boolean exactNumber(final List<ICollection> selection, final int num)
+	public boolean exactNumber(final List<IStoreItem> selection, final int num)
 	{
 		return selection.size() == num;
 	}
@@ -31,16 +34,25 @@ public class CollectionComplianceTests
 	 * @param selection
 	 * @return true/false
 	 */
-	public boolean allNonLocation(List<ICollection> selection)
+	public boolean allNonLocation(List<IStoreItem> selection)
 	{
 		// are they all non location?
 		boolean allValid = true;
 
-		for (int i = 0; i < selection.size();)
+		for (int i = 0; i < selection.size();i++)
 		{
-			ICollection thisC = selection.get(i);
-			Class<?> theClass = thisC.storedClass();
-			if (Geometry.class.equals(theClass));
+			IStoreItem thisI = selection.get(i);
+			if (thisI instanceof ICollection)
+			{
+				ICollection thisC = (ICollection) thisI;
+				Class<?> theClass = thisC.storedClass();
+				if (Geometry.class.equals(theClass))
+				{
+					allValid = false;
+					break;
+				}
+			}
+			else
 			{
 				allValid = false;
 				break;
@@ -48,55 +60,72 @@ public class CollectionComplianceTests
 		}
 		return allValid;
 	}
-	
+
 	/**
 	 * check if the series are all non locations
 	 * 
 	 * @param selection
 	 * @return true/false
 	 */
-	public boolean allLocation(List<ICollection> selection)
+	public boolean allLocation(List<IStoreItem> selection)
 	{
 		// are they all non location?
 		boolean allValid = true;
 
 		for (int i = 0; i < selection.size(); i++)
 		{
-			ICollection thisC = selection.get(i);
-			Class<?> theClass = thisC.storedClass();
-			if (!Geometry.class.equals(theClass))
+			IStoreItem thisI = selection.get(i);
+			if (thisI instanceof ICollection)
+			{
+				ICollection thisC = (ICollection) thisI;
+				Class<?> theClass = thisC.storedClass();
+				if (!Geometry.class.equals(theClass))
+				{
+					allValid = false;
+					break;
+				}
+			}
+			else
 			{
 				allValid = false;
 				break;
 			}
+
 		}
 		return allValid;
 	}
 
-
-	
 	/**
 	 * check if the series are all quantity datasets
 	 * 
 	 * @param selection
 	 * @return true/false
 	 */
-	public boolean allNonQuantity(List<ICollection> selection)
+	public boolean allNonQuantity(List<IStoreItem> selection)
 	{
 		// are they all temporal?
 		boolean allValid = true;
 
 		for (int i = 0; i < selection.size(); i++)
 		{
-			ICollection thisC = selection.get(i);
-			if (thisC.isQuantity())
+			IStoreItem thisI = selection.get(i);
+			if (thisI instanceof ICollection)
 			{
-				// oops, no
-				allValid = false;
-				break;
+				ICollection thisC = (ICollection) thisI;
+				if (thisC.isQuantity())
+				{
+					// oops, no
+					allValid = false;
+					break;
+				}
+				else
+				{
+				}
 			}
 			else
 			{
+				allValid = false;
+				break;
 			}
 		}
 		return allValid;
@@ -108,23 +137,33 @@ public class CollectionComplianceTests
 	 * @param selection
 	 * @return true/false
 	 */
-	public boolean allQuantity(List<? extends ICollection> selection)
+	public boolean allQuantity(List<? extends IStoreItem> selection)
 	{
 		// are they all temporal?
 		boolean allValid = true;
 
 		for (int i = 0; i < selection.size(); i++)
 		{
-			ICollection thisC = selection.get(i);
-			if (thisC.isQuantity())
+			IStoreItem thisI = selection.get(i);
+			if (thisI instanceof ICollection)
 			{
+				ICollection thisC = (ICollection) thisI;
+				if (thisC.isQuantity())
+				{
+				}
+				else
+				{
+					// oops, no
+					allValid = false;
+					break;
+				}
 			}
 			else
 			{
-				// oops, no
 				allValid = false;
 				break;
 			}
+			
 		}
 		return allValid;
 	}
@@ -135,7 +174,7 @@ public class CollectionComplianceTests
 	 * @param selection
 	 * @return true/false
 	 */
-	public boolean nonEmpty(List<? extends ICollection> selection)
+	public boolean nonEmpty(List<? extends IStoreItem> selection)
 	{
 		return selection.size() > 0;
 	}
@@ -146,33 +185,38 @@ public class CollectionComplianceTests
 	 * @param selection
 	 * @return true/false
 	 */
-	public boolean allEqualDimensions(List<? extends ICollection> selection)
+	public boolean allEqualDimensions(List<? extends IStoreItem> selection)
 	{
 		// are they all temporal?
-		boolean allValid = true;
+		boolean allValid = false;
 		Dimension theD = null;
 
 		for (int i = 0; i < selection.size(); i++)
 		{
-			ICollection thisC = selection.get(i);
-			if (thisC.isQuantity())
+			IStoreItem thisI = selection.get(i);
+			if (thisI instanceof ICollection)
 			{
-				IQuantityCollection<?> qc = (IQuantityCollection<?>) thisC;
-				Dimension thisD = qc.getDimension();
-				if (theD == null)
+				ICollection thisC = (ICollection) thisI;
+				if (thisC.isQuantity())
 				{
-					theD = thisD;
-				}
-				else
-				{
-					if (thisD.equals(theD))
+					IQuantityCollection<?> qc = (IQuantityCollection<?>) thisC;
+					Dimension thisD = qc.getDimension();
+					if (theD == null)
 					{
-						// all fine.
+						theD = thisD;
 					}
 					else
 					{
-						allValid = false;
-						break;
+						if (thisD.equals(theD))
+						{
+							// all fine.
+							allValid = true;
+						}
+						else
+						{
+							allValid = false;
+							break;
+						}
 					}
 				}
 			}
@@ -192,7 +236,7 @@ public class CollectionComplianceTests
 	 * @param selection
 	 * @return true/false
 	 */
-	public boolean allEqualUnits(List<? extends ICollection> selection)
+	public boolean allEqualUnits(List<? extends IStoreItem> selection)
 	{
 		// are they all temporal?
 		boolean allValid = true;
@@ -200,34 +244,44 @@ public class CollectionComplianceTests
 
 		for (int i = 0; i < selection.size(); i++)
 		{
-			ICollection thisC = selection.get(i);
-			if (thisC.isQuantity())
+			IStoreItem thisI = selection.get(i);
+			if (thisI instanceof ICollection)
 			{
-				IQuantityCollection<?> qc = (IQuantityCollection<?>) thisC;
-				Unit<?> thisD = qc.getUnits();
-				if (theD == null)
+				ICollection thisC = (ICollection) thisI;
+				if (thisC.isQuantity())
 				{
-					theD = thisD;
-				}
-				else
-				{
-					if (thisD.equals(theD))
+					IQuantityCollection<?> qc = (IQuantityCollection<?>) thisC;
+					Unit<?> thisD = qc.getUnits();
+					if (theD == null)
 					{
-						// all fine.
+						theD = thisD;
 					}
 					else
 					{
-						allValid = false;
-						break;
+						if (thisD.equals(theD))
+						{
+							// all fine.
+						}
+						else
+						{
+							allValid = false;
+							break;
+						}
 					}
+				}
+				else
+				{
+					// oops, no
+					allValid = false;
+					break;
 				}
 			}
 			else
 			{
-				// oops, no
 				allValid = false;
 				break;
 			}
+
 		}
 		return allValid;
 	}
@@ -238,16 +292,26 @@ public class CollectionComplianceTests
 	 * @param selection
 	 * @return true/false
 	 */
-	public boolean allTemporal(List<ICollection> selection)
+	public boolean allTemporal(List<IStoreItem> selection)
 	{
 		// are they all temporal?
 		boolean allValid = true;
 
 		for (int i = 0; i < selection.size(); i++)
 		{
-			ICollection thisC = selection.get(i);
-			if (thisC.isTemporal())
+			IStoreItem thisI = selection.get(i);
+			if (thisI instanceof ICollection)
 			{
+				ICollection thisC = (ICollection) thisI;
+				if (thisC.isTemporal())
+				{
+				}
+				else
+				{
+					// oops, no
+					allValid = false;
+					break;
+				}
 			}
 			else
 			{
@@ -265,7 +329,7 @@ public class CollectionComplianceTests
 	 * @param selection
 	 * @return true/false
 	 */
-	public boolean allEqualLengthOrSingleton(List<? extends ICollection> selection)
+	public boolean allEqualLengthOrSingleton(List<? extends IStoreItem> selection)
 	{
 		// are they all temporal?
 		boolean allValid = true;
@@ -273,30 +337,38 @@ public class CollectionComplianceTests
 
 		for (int i = 0; i < selection.size(); i++)
 		{
-			ICollection thisC = selection.get(i);
-
-			int thisSize = thisC.size();
-
-			// valid, check the size
-			if (size == -1)
+			IStoreItem thisI = selection.get(i);
+			if (thisI instanceof ICollection)
 			{
-				// ok, is this a singleton?
-				if (thisSize != 1)
+				ICollection thisC = (ICollection) thisI;
+
+				int thisSize = thisC.size();
+
+				// valid, check the size
+				if (size == -1)
 				{
-					// nope, it's a real array store it.
-					size = thisSize;
+					// ok, is this a singleton?
+					if (thisSize != 1)
+					{
+						// nope, it's a real array store it.
+						size = thisSize;
+					}
+				}
+				else
+				{
+					if ((thisSize != size) && (thisSize != 1))
+					{
+						// oops, no
+						allValid = false;
+						break;
+					}
 				}
 			}
 			else
 			{
-				if ((thisSize != size) && (thisSize != 1))
-				{
-					// oops, no
-					allValid = false;
-					break;
-				}
+				allValid = false;
+				break;
 			}
-
 		}
 
 		return allValid;
@@ -308,7 +380,7 @@ public class CollectionComplianceTests
 	 * @param selection
 	 * @return true/false
 	 */
-	public boolean allEqualLength(List<? extends ICollection> selection)
+	public boolean allEqualLength(List<? extends IStoreItem> selection)
 	{
 		// are they all temporal?
 		boolean allValid = true;
@@ -316,25 +388,49 @@ public class CollectionComplianceTests
 
 		for (int i = 0; i < selection.size(); i++)
 		{
-			ICollection thisC = selection.get(i);
-
-			// valid, check the size
-			if (size == -1)
+			IStoreItem thisI = selection.get(i);
+			if (thisI instanceof ICollection)
 			{
-				size = thisC.size();
+				ICollection thisC = (ICollection) thisI;
+
+				// valid, check the size
+				if (size == -1)
+				{
+					size = thisC.size();
+				}
+				else
+				{
+					if (size != thisC.size())
+					{
+						// oops, no
+						allValid = false;
+						break;
+					}
+				}
 			}
 			else
 			{
-				if (size != thisC.size())
-				{
-					// oops, no
-					allValid = false;
-					break;
-				}
+				allValid = false;
+				break;
 			}
-
 		}
 
 		return allValid;
+	}
+
+	public boolean allCollections(List<IStoreItem> selection)
+	{
+		boolean res = true;
+		Iterator<IStoreItem> iter = selection.iterator();
+		while (iter.hasNext())
+		{
+			IStoreItem storeItem = iter.next();
+			if(storeItem instanceof StoreGroup)
+			{
+				res = false;
+				break;
+			}
+		}
+		return res;
 	}
 }

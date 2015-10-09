@@ -4,6 +4,7 @@ import info.limpet.ICollection;
 import info.limpet.IOperation;
 import info.limpet.IQuantityCollection;
 import info.limpet.IStore;
+import info.limpet.IStore.IStoreItem;
 import info.limpet.data.commands.AbstractCommand;
 import info.limpet.data.impl.samples.StockTypes.Temporal.Location;
 import info.limpet.data.operations.CollectionComplianceTests;
@@ -15,14 +16,14 @@ import java.util.List;
 import org.geotools.referencing.GeodeticCalculator;
 import org.opengis.geometry.primitive.Point;
 
-abstract public class TwoTrackOperation implements IOperation<ICollection>
+abstract public class TwoTrackOperation implements IOperation<IStoreItem>
 {
 
 	abstract public static class DistanceOperation extends
-			AbstractCommand<ICollection>
+			AbstractCommand<IStoreItem>
 	{
 
-		public DistanceOperation(String outputName, List<ICollection> selection,
+		public DistanceOperation(String outputName, List<IStoreItem> selection,
 				IStore store, String title, String description)
 		{
 			super(title, description, outputName, store, false, false, selection);
@@ -32,11 +33,13 @@ abstract public class TwoTrackOperation implements IOperation<ICollection>
 		public void execute()
 		{
 			// get the unit
-			List<ICollection> outputs = new ArrayList<ICollection>();
+			List<IStoreItem> outputs = new ArrayList<IStoreItem>();
 
 			// put the names into a string
-			String title = _inputs.get(0).getName() + " and "
-					+ _inputs.get(1).getName();
+			ICollection input0 = (ICollection) super.getInputs().get(0);
+			ICollection input1 = (ICollection) super.getInputs().get(1);
+			String title = input0.getName() + " and "
+					+ input1.getName();
 
 			// ok, generate the new series
 			IQuantityCollection<?> target = getOutputCollection(title);
@@ -50,15 +53,15 @@ abstract public class TwoTrackOperation implements IOperation<ICollection>
 			performCalc(outputs);
 
 			// tell each series that we're a dependent
-			Iterator<ICollection> iter = _inputs.iterator();
+			Iterator<IStoreItem> iter = getInputs().iterator();
 			while (iter.hasNext())
 			{
-				ICollection iCollection = iter.next();
+				ICollection iCollection = (ICollection) iter.next();
 				iCollection.addDependent(this);
 			}
 
 			// ok, done
-			List<ICollection> res = new ArrayList<ICollection>();
+			List<IStoreItem> res = new ArrayList<IStoreItem>();
 			res.add(target);
 			getStore().addAll(res);
 		}
@@ -70,7 +73,7 @@ abstract public class TwoTrackOperation implements IOperation<ICollection>
 		protected void recalculate()
 		{
 			// clear out the lists, first
-			Iterator<ICollection> iter = _outputs.iterator();
+			Iterator<IStoreItem> iter = getOutputs().iterator();
 			while (iter.hasNext())
 			{
 				IQuantityCollection<?> qC = (IQuantityCollection<?>) iter.next();
@@ -78,7 +81,7 @@ abstract public class TwoTrackOperation implements IOperation<ICollection>
 			}
 
 			// update the results
-			performCalc(_outputs);
+			performCalc(getOutputs());
 		}
 
 		/**
@@ -88,10 +91,10 @@ abstract public class TwoTrackOperation implements IOperation<ICollection>
 		 * @param unit
 		 * @param outputs
 		 */
-		private void performCalc(List<ICollection> outputs)
+		private void performCalc(List<IStoreItem> outputs)
 		{
-			ICollection track1 = _inputs.get(0);
-			ICollection track2 = _inputs.get(1);
+			ICollection track1 = (ICollection) getInputs().get(0);
+			ICollection track2 = (ICollection) getInputs().get(1);
 
 			// find one wiht more than one item
 			final Location primary;
@@ -135,7 +138,7 @@ abstract public class TwoTrackOperation implements IOperation<ICollection>
 
 	CollectionComplianceTests aTests = new CollectionComplianceTests();
 
-	protected boolean appliesTo(List<ICollection> selection)
+	protected boolean appliesTo(List<IStoreItem> selection)
 	{
 		boolean nonEmpty = aTests.nonEmpty(selection);
 		boolean equalLength = aTests.allEqualLengthOrSingleton(selection);
