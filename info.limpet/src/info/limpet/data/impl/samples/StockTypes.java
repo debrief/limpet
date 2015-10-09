@@ -42,7 +42,22 @@ public class StockTypes
 			{
 				super(name, METRE.divide(SECOND).asType(Velocity.class));
 			}
+
 			public Speed_MSec()
+			{
+				this(null);
+			}
+		}
+
+		public static class DimensionlessDouble extends
+				TemporalQuantityCollection<Dimensionless>
+		{
+			public DimensionlessDouble(String name)
+			{
+				super(name, Dimensionless.UNIT);
+			}
+
+			public DimensionlessDouble()
 			{
 				this(null);
 			}
@@ -54,6 +69,7 @@ public class StockTypes
 			{
 				super(name, METRE.asType(Length.class));
 			}
+
 			public Length_M()
 			{
 				this(null);
@@ -66,18 +82,21 @@ public class StockTypes
 			{
 				super(name, KELVIN.asType(Temperature.class));
 			}
+
 			public Temp_C()
 			{
 				this(null);
 			}
 		}
 
-		public static class TurnRate extends TemporalQuantityCollection<AngularVelocity>
+		public static class TurnRate extends
+				TemporalQuantityCollection<AngularVelocity>
 		{
 			public TurnRate(String name)
 			{
 				super(null, DEGREE_ANGLE.divide(SECOND).asType(AngularVelocity.class));
 			}
+
 			public TurnRate()
 			{
 				this(null);
@@ -90,6 +109,7 @@ public class StockTypes
 			{
 				super(name);
 			}
+
 			public Strings()
 			{
 				this(null);
@@ -104,6 +124,7 @@ public class StockTypes
 				super(name, METRE.divide(SECOND).divide(SECOND)
 						.asType(Acceleration.class));
 			}
+
 			public Acceleration_MSecSec()
 			{
 				this(null);
@@ -117,6 +138,7 @@ public class StockTypes
 			{
 				super(name, SECOND.asType(Duration.class));
 			}
+
 			public ElapsedTime_Sec()
 			{
 				this(null);
@@ -130,6 +152,7 @@ public class StockTypes
 			{
 				super(name, HERTZ.asType(Frequency.class));
 			}
+
 			public Frequency_Hz()
 			{
 				this(null);
@@ -143,6 +166,7 @@ public class StockTypes
 			{
 				super(name, Dimensionless.UNIT);
 			}
+
 			public AcousticStrength()
 			{
 				this(null);
@@ -155,6 +179,7 @@ public class StockTypes
 			{
 				super(name, RADIAN.asType(Angle.class));
 			}
+
 			public Angle_Radians()
 			{
 				this(null);
@@ -167,6 +192,7 @@ public class StockTypes
 			{
 				super(name, DEGREE_ANGLE.asType(Angle.class));
 			}
+
 			public Angle_Degrees()
 			{
 				this(null);
@@ -179,6 +205,7 @@ public class StockTypes
 			{
 				super(name);
 			}
+
 			public Location()
 			{
 				this(null);
@@ -219,6 +246,20 @@ public class StockTypes
 			}
 		}
 
+		public static class DimensionlessDouble extends
+				QuantityCollection<Dimensionless>
+		{
+			public DimensionlessDouble(String name)
+			{
+				super(name, Dimensionless.UNIT);
+			}
+
+			public DimensionlessDouble()
+			{
+				this(null);
+			}
+		}
+
 		public static class Acceleration_MSecSec extends
 				QuantityCollection<Acceleration>
 		{
@@ -236,7 +277,7 @@ public class StockTypes
 				super(name);
 			}
 		}
-		
+
 		public static class Strings extends ObjectCollection<String>
 		{
 			public Strings(String name)
