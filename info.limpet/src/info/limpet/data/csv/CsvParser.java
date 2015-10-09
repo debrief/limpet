@@ -4,8 +4,6 @@ import info.limpet.ICollection;
 import info.limpet.IStore.IStoreItem;
 import info.limpet.ITemporalQuantityCollection;
 import info.limpet.data.impl.samples.StockTypes.Temporal;
-import info.limpet.data.impl.samples.StockTypes.Temporal.ElapsedTime_Sec;
-import info.limpet.data.impl.samples.StockTypes.Temporal.Frequency_Hz;
 import info.limpet.data.impl.samples.StockTypes.Temporal.Location;
 import info.limpet.data.store.InMemoryStore.StoreGroup;
 
@@ -42,85 +40,28 @@ public class CsvParser
 		final Iterable<CSVRecord> records = CSVFormat.DEFAULT.parse(in);
 		boolean first = true;
 
-		// Time,Lat(Degs),Long(Degs),Elev (m),Course (Degs),Speed (kts),Temp
-		// (C),Turn rate (Degs/sec)
-
-		TemporalSeriesSupporter<?> TurnRateImporter = new TemporalSeriesSupporter<Temporal.TurnRate>(
-				null, "Degs/sec")
-		{
-			@Override
-			public Temporal.TurnRate create(String name)
-			{
-				return new Temporal.TurnRate(name);
-			}
-		};
-
-		TemporalSeriesSupporter<?> TemperatureImporter = new TemporalSeriesSupporter<Temporal.Temp_C>(
-				null, "C")
-		{
-			@Override
-			public Temporal.Temp_C create(String name)
-			{
-				return new Temporal.Temp_C(name);
-			}
-		};
-		TemporalSeriesSupporter<?> SpeedImporter = new TemporalSeriesSupporter<Temporal.Speed_MSec>(
-				null, "kts")
-		{
-			@Override
-			public Temporal.Speed_MSec create(String name)
-			{
-				return new Temporal.Speed_MSec(name);
-			}
-		};
-		TemporalSeriesSupporter<?> CourseImporter = new TemporalSeriesSupporter<Temporal.Angle_Degrees>(
-				null, "Degs")
-		{
-			@Override
-			public Temporal.Angle_Degrees create(String name)
-			{
-				return new Temporal.Angle_Degrees(name);
-			}
-		};
-		TemporalSeriesSupporter<?> ElapsedImporter = new TemporalSeriesSupporter<Temporal.ElapsedTime_Sec>(
-				null, "secs")
-		{
-			@Override
-			public ElapsedTime_Sec create(String name)
-			{
-				return new ElapsedTime_Sec(name);
-			}
-		};
-		TemporalSeriesSupporter<?> LengthImporter = new TemporalSeriesSupporter<Temporal.Length_M>(
-				null, "m")
-		{
-			@Override
-			public Temporal.Length_M create(String name)
-			{
-				return new Temporal.Length_M(name);
-			}
-		};
-		TemporalSeriesSupporter<?> FrequencyImporter = new TemporalSeriesSupporter<Temporal.Frequency_Hz>(
-				null, "Hz")
-		{
-			@Override
-			public Frequency_Hz create(String name)
-			{
-				return new Frequency_Hz(name);
-			}
-		};
-
+		// generate our list of importers
 		List<DataImporter> candidates = new ArrayList<DataImporter>();
 		candidates.add(new LocationImporter());
-		candidates.add(ElapsedImporter);
-		candidates.add(FrequencyImporter);
-		candidates.add(TurnRateImporter);
-		candidates.add(LengthImporter);
-		candidates.add(TemperatureImporter);
-		candidates.add(SpeedImporter);
-		candidates.add(CourseImporter);
+		candidates.add(new TemporalSeriesSupporter<Temporal.ElapsedTime_Sec>(
+				Temporal.ElapsedTime_Sec.class, null, "secs"));
+		candidates.add(new TemporalSeriesSupporter<Temporal.Frequency_Hz>(
+				Temporal.Frequency_Hz.class, null, "Hz"));
+		candidates.add(new TemporalSeriesSupporter<Temporal.TurnRate>(
+				 Temporal.TurnRate.class,	null, "Degs/sec"));
+		candidates.add(new TemporalSeriesSupporter<Temporal.Length_M>(
+				Temporal.Length_M.class, null, "m"));
+		candidates.add(new TemporalSeriesSupporter<Temporal.Angle_Degrees>(
+				Temporal.Angle_Degrees.class, null, "Degs"));
+		candidates.add(new TemporalSeriesSupporter<Temporal.Speed_MSec>(
+				Temporal.Speed_MSec.class, null, "kts"));
+		candidates.add(new TemporalSeriesSupporter<Temporal.Temp_C>(
+				Temporal.Temp_C.class, null, "C"));
 
+		// store one importer per column-set		
 		List<DataImporter> importers = new ArrayList<DataImporter>();
+		
+		// and store one series per column-set
 		List<ICollection> series = new ArrayList<ICollection>();
 
 		boolean isTime = false;
@@ -215,7 +156,6 @@ public class CsvParser
 					}
 					catch (ParseException e)
 					{
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
@@ -264,27 +204,73 @@ public class CsvParser
 		return res;
 	}
 
+	/** base helper class, to help importing series of data
+	 * 
+	 * @author ian
+	 *
+	 */
 	public static abstract class DataImporter
 	{
 		final private String _units;
 		final private String _colName;
+		private Class<?> _classType;
 
-		protected DataImporter(String colName, String units)
+		/** constructor
+		 * 
+		 * @param classType the type of series we represent (used for default constructor)
+		 * @param colName name of the column we store
+		 * @param units name of the units we store
+		 */
+		protected DataImporter(Class<?> classType, String colName, String units)
 		{
 			_units = units;
 			_colName = colName;
+			_classType = classType;
 		}
 
-		abstract public ICollection create(String name);
+		/** create an instance of this series, using the specified name
+		 * 
+		 * @param name
+		 * @return
+		 */
+		public ICollection create(String name)
+		{
+			ICollection res = null;
+			try
+			{
+				res = (ICollection) _classType.newInstance();
+				res.setName(name);
+			}
+			catch (InstantiationException | IllegalAccessException e)
+			{
+				e.printStackTrace();
+			}
+			return res;
+		}
 
+		/** what should this series be called, if the supplied column name is found
+		 * 
+		 */
 		public String nameFor(String colName)
 		{
 			return colName;
 		}
 
+		/** read some data from this record
+		 * 
+		 * @param series target series
+		 * @param thisTime this time stamp
+		 * @param colStart column to start reading from
+		 * @param row current row of data
+		 */
 		abstract public void consume(ICollection series, long thisTime,
 				int colStart, CSVRecord row);
 
+		/** can we handle this column name?
+		 * 
+		 * @param colName
+		 * @return
+		 */
 		final public boolean handleName(String colName)
 		{
 			if (_colName == null)
@@ -293,6 +279,11 @@ public class CsvParser
 				return _colName.equals(colName);
 		}
 
+		/** can we handle this units type?
+		 * 
+		 * @param units
+		 * @return
+		 */
 		final public boolean handleUnits(String units)
 		{
 			if (_units == null)
@@ -301,17 +292,26 @@ public class CsvParser
 				return _units.equals(units);
 		}
 
+		/** how many columns do we consume?
+		 * 
+		 * @return
+		 */
 		public int numCols()
 		{
 			return 1;
 		}
 	}
 
+	/** class to handle importing two columns of location data
+	 * 
+	 * @author ian
+	 *
+	 */
 	protected static class LocationImporter extends DataImporter
 	{
 		protected LocationImporter()
 		{
-			super("Lat", null);
+			super(Temporal.Location.class, "Lat", null);
 		}
 
 		public String nameFor(String colName)
@@ -346,23 +346,27 @@ public class CsvParser
 		}
 	}
 
-	abstract protected static class TemporalSeriesSupporter<T extends ITemporalQuantityCollection<?>>
+	/** generic class to handle importing series of data
+	 * 
+	 * @author ian
+	 *
+	 * @param <T>
+	 */
+	protected static class TemporalSeriesSupporter<T extends ITemporalQuantityCollection<?>>
 			extends DataImporter
 	{
-		protected TemporalSeriesSupporter(String colName, String units)
+		protected TemporalSeriesSupporter(Class<?> classType, String colName, String units)
 		{
-			super(colName, units);
+			super(classType, colName, units);
 		}
-
-		abstract public T create(String name);
 
 		protected void add(ICollection series, long time, Number quantity)
 		{
-			@SuppressWarnings("unchecked")
-			T target = (T) series;
+			ITemporalQuantityCollection<?> target = (ITemporalQuantityCollection<?>) series;
 			target.add(time, quantity);
 		}
 
+		@Override
 		public void consume(ICollection series, long thisTime, int colStart,
 				CSVRecord row)
 		{
@@ -371,6 +375,7 @@ public class CsvParser
 			add(series, thisTime, val);
 		}
 
+		@Override
 		public int numCols()
 		{
 			return 1;

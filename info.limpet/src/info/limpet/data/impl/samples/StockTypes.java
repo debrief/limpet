@@ -42,12 +42,10 @@ public class StockTypes
 			{
 				super(name, METRE.divide(SECOND).asType(Velocity.class));
 			}
-
-			// Note: here is how to create the speed series with specific units
-			// public TemporalSpeed_MSec(String name, Unit<Speed> units)
-			// {
-			// super(name,units.asType(Speed.class));
-			// }
+			public Speed_MSec()
+			{
+				this(null);
+			}
 		}
 
 		public static class Length_M extends TemporalQuantityCollection<Length>
@@ -55,6 +53,10 @@ public class StockTypes
 			public Length_M(String name)
 			{
 				super(name, METRE.asType(Length.class));
+			}
+			public Length_M()
+			{
+				this(null);
 			}
 		}
 
@@ -64,13 +66,21 @@ public class StockTypes
 			{
 				super(name, KELVIN.asType(Temperature.class));
 			}
+			public Temp_C()
+			{
+				this(null);
+			}
 		}
 
 		public static class TurnRate extends TemporalQuantityCollection<AngularVelocity>
 		{
 			public TurnRate(String name)
 			{
-				super(name, DEGREE_ANGLE.divide(SECOND).asType(AngularVelocity.class));
+				super(null, DEGREE_ANGLE.divide(SECOND).asType(AngularVelocity.class));
+			}
+			public TurnRate()
+			{
+				this(null);
 			}
 		}
 
@@ -79,6 +89,10 @@ public class StockTypes
 			public Strings(String name)
 			{
 				super(name);
+			}
+			public Strings()
+			{
+				this(null);
 			}
 		}
 
@@ -90,6 +104,10 @@ public class StockTypes
 				super(name, METRE.divide(SECOND).divide(SECOND)
 						.asType(Acceleration.class));
 			}
+			public Acceleration_MSecSec()
+			{
+				this(null);
+			}
 		}
 
 		public static class ElapsedTime_Sec extends
@@ -98,6 +116,10 @@ public class StockTypes
 			public ElapsedTime_Sec(String name)
 			{
 				super(name, SECOND.asType(Duration.class));
+			}
+			public ElapsedTime_Sec()
+			{
+				this(null);
 			}
 		}
 
@@ -108,6 +130,10 @@ public class StockTypes
 			{
 				super(name, HERTZ.asType(Frequency.class));
 			}
+			public Frequency_Hz()
+			{
+				this(null);
+			}
 		}
 
 		public static class AcousticStrength extends
@@ -117,6 +143,10 @@ public class StockTypes
 			{
 				super(name, Dimensionless.UNIT);
 			}
+			public AcousticStrength()
+			{
+				this(null);
+			}
 		}
 
 		public static class Angle_Radians extends TemporalQuantityCollection<Angle>
@@ -124,6 +154,10 @@ public class StockTypes
 			public Angle_Radians(String name)
 			{
 				super(name, RADIAN.asType(Angle.class));
+			}
+			public Angle_Radians()
+			{
+				this(null);
 			}
 		}
 
@@ -133,6 +167,10 @@ public class StockTypes
 			{
 				super(name, DEGREE_ANGLE.asType(Angle.class));
 			}
+			public Angle_Degrees()
+			{
+				this(null);
+			}
 		}
 
 		public static class Location extends TemporalObjectCollection<Geometry>
@@ -140,6 +178,10 @@ public class StockTypes
 			public Location(String name)
 			{
 				super(name);
+			}
+			public Location()
+			{
+				this(null);
 			}
 		}
 
@@ -202,20 +244,5 @@ public class StockTypes
 				super(name);
 			}
 		}
-
-
 	}
-
-	public static class TmpLocationItem
-	{
-		public double latVal, longVal, depthVal;
-
-		public TmpLocationItem(double latV, double longV, double depthV)
-		{
-			latVal = latV;
-			longVal = longV;
-			depthVal = depthV;
-		}
-	}
-
 }
