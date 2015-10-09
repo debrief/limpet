@@ -1,6 +1,5 @@
 package info.limpet.rcp.analysis_view;
 
-import info.limpet.ICollection;
 import info.limpet.IStore.IStoreItem;
 import info.limpet.analysis.AnalysisLibrary;
 import info.limpet.data.operations.CollectionComplianceTests;

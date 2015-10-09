@@ -1,6 +1,5 @@
 package info.limpet.data.impl.samples;
 
-import info.limpet.ICollection;
 import info.limpet.ICommand;
 import info.limpet.IObjectCollection;
 import info.limpet.IQuantityCollection;

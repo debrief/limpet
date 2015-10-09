@@ -1,6 +1,5 @@
 package info.limpet.data.operations;
 
-import info.limpet.ICollection;
 import info.limpet.ICommand;
 import info.limpet.IOperation;
 import info.limpet.IStore;

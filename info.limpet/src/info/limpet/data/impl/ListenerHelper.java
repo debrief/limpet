@@ -1,7 +1,6 @@
 package info.limpet.data.impl;
 
 import info.limpet.IChangeListener;
-import info.limpet.ICollection;
 import info.limpet.IStore.IStoreItem;
 
 import java.util.ArrayList;
