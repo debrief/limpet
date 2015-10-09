@@ -4,6 +4,8 @@ import info.limpet.ICommand;
 import info.limpet.IOperation;
 import info.limpet.IStore;
 import info.limpet.IStore.IStoreItem;
+import info.limpet.data.operations.AddLayerOperation;
+import info.limpet.data.operations.AddLayerOperation.StringProvider;
 import info.limpet.data.operations.GenerateDummyDataOperation;
 import info.limpet.data.persistence.xml.XStreamHandler;
 import info.limpet.data.store.InMemoryStore;
@@ -57,7 +59,7 @@ public class DataManagerEditor extends EditorPart implements
 	private DataModel _model;
 	private StoreChangeListener _changeListener = new StoreChangeListener()
 	{
-		
+
 		@Override
 		public void changed()
 		{
@@ -76,7 +78,8 @@ public class DataManagerEditor extends EditorPart implements
 		{
 			try
 			{
-				_store = new XStreamHandler().load(((IFileEditorInput)input).getFile());
+				_store = new XStreamHandler()
+						.load(((IFileEditorInput) input).getFile());
 			}
 			catch (Exception e)
 			{
@@ -93,7 +96,7 @@ public class DataManagerEditor extends EditorPart implements
 	@Override
 	public boolean isDirty()
 	{
-		return _dirty ;
+		return _dirty;
 	}
 
 	@Override
@@ -153,8 +156,6 @@ public class DataManagerEditor extends EditorPart implements
 		action1.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
 				.getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
 
-
-		
 		generateData = new Action()
 		{
 			public void run()
@@ -180,10 +181,32 @@ public class DataManagerEditor extends EditorPart implements
 
 	protected void generateData()
 	{
-		GenerateDummyDataOperation operation = new GenerateDummyDataOperation("small", 20);
-		
+		GenerateDummyDataOperation operation = new GenerateDummyDataOperation(
+				"small", 20);
+
 		Object input = viewer.getInput();
-		Collection<ICommand<IStoreItem>> commands = operation.actionsFor(getSuitableObjects(), (IStore) input);
+		Collection<ICommand<IStoreItem>> commands = operation.actionsFor(
+				getSuitableObjects(), (IStore) input);
+		commands.iterator().next().execute();
+	}
+
+	protected void addLayer()
+	{
+		IOperation<IStoreItem> operation = new AddLayerOperation(
+				new StringProvider()
+				{
+
+					@Override
+					public String getString(String title)
+					{
+						// TODO Auto-generated method stub
+						return null;
+					}
+				});
+
+		Object input = viewer.getInput();
+		Collection<ICommand<IStoreItem>> commands = operation.actionsFor(
+				getSuitableObjects(), (IStore) input);
 		commands.iterator().next().execute();
 	}
 
@@ -257,8 +280,7 @@ public class DataManagerEditor extends EditorPart implements
 			Iterator<ICommand<IStoreItem>> mIter = matches.iterator();
 			while (mIter.hasNext())
 			{
-				final ICommand<IStoreItem> thisC = (ICommand<IStoreItem>) mIter
-						.next();
+				final ICommand<IStoreItem> thisC = (ICommand<IStoreItem>) mIter.next();
 				newM.add(new Action(thisC.getTitle())
 				{
 					@Override
@@ -330,8 +352,9 @@ public class DataManagerEditor extends EditorPart implements
 		final IEditorInput input = getEditorInput();
 		// FIXME we will support FileEditorInput, FileStoreEditorInput and
 		// FileRevisionEditorInput
-		if (input instanceof IFileEditorInput) {
-			IFile file = ((IFileEditorInput)input).getFile();
+		if (input instanceof IFileEditorInput)
+		{
+			IFile file = ((IFileEditorInput) input).getFile();
 			try
 			{
 				new XStreamHandler().save(_store, file);
