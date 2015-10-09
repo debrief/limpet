@@ -34,6 +34,8 @@ public class CsvParser
 	// 21/09/2015 07:00:31
 	public static final DateFormat DATE_FORMAT = new SimpleDateFormat(
 			"dd/MM/yyyy hh:mm:ss");
+	public static final DateFormat TIME_FORMAT = new SimpleDateFormat(
+			"hh:mm:ss");
 
 	public List<IStoreItem> parse(String filePath) throws IOException
 	{
@@ -59,6 +61,8 @@ public class CsvParser
 				Temporal.Angle_Degrees.class, null, "Degs"));
 		candidates.add(new TemporalSeriesSupporter<Temporal.Speed_MSec>(
 				Temporal.Speed_MSec.class, null, "kts"));
+		candidates.add(new TemporalSeriesSupporter<Temporal.Speed_MSec>(
+				Temporal.Speed_MSec.class, null, "M/Sec"));
 		candidates.add(new TemporalSeriesSupporter<Temporal.Temp_C>(
 				Temporal.Temp_C.class, null, "C"));
 
@@ -83,13 +87,18 @@ public class CsvParser
 			{
 				first = false;
 				String time = record.get(0);
+				int ctr = 0;;
 
 				if (time != null && time.toLowerCase().equals("time"))
 				{
 					isTime = true;
+					ctr = 1;
+				}
+				else
+				{
+					ctr = 0;
 				}
 
-				int ctr = 1;
 				while (ctr < record.size())
 				{
 					String nextVal = record.get(ctr);
@@ -169,6 +178,7 @@ public class CsvParser
 
 				String firstRow = record.get(0);
 				long theTime = -1;
+				int thisCol = 0;
 
 				// ok, we're out of the first row
 				if (isTime)
@@ -176,8 +186,19 @@ public class CsvParser
 					// ok, get the time field
 					try
 					{
-						Date date = DATE_FORMAT.parse(firstRow);
+						int len = firstRow.length();
+						final DateFormat format;
+						if(len < 10)
+						{
+							format = TIME_FORMAT;
+						}
+						else
+						{
+							format = DATE_FORMAT;
+						}
+						Date date = format.parse(firstRow);
 						theTime = date.getTime();
+						thisCol = 1;
 					}
 					catch (ParseException e)
 					{
@@ -187,10 +208,10 @@ public class CsvParser
 				else
 				{
 					// not temporal, use this field
+					thisCol = 0;
 				}
 
 				// now move through the other cols
-				int thisCol = 1;
 				int numImporters = importers.size();
 				for (int i = 0; i < numImporters; i++)
 				{

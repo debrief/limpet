@@ -45,6 +45,19 @@ public class TestCsvParser extends TestCase
 		assertEquals("correct num rows", 69, firstColl.size());
 	}
 
+	public void testMultiColumnUSA() throws Exception
+	{
+		File file = getDataFile("usa.csv");
+		assertTrue(file.isFile());
+		CsvParser parser = new CsvParser();
+		List<IStoreItem> items = parser.parse(file.getAbsolutePath());
+		assertEquals("correct group", 1, items.size());
+		StoreGroup group = (StoreGroup) items.get(0);
+		assertEquals("correct num collections", 3, group.size());
+		ICollection firstColl = (ICollection) group.get(0);
+		assertEquals("correct num rows", 1708, firstColl.size());
+	}
+	
 	private File getDataFile(String name)
 	{
 		File file = new File(getFileName(name));
