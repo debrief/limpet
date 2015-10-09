@@ -1,6 +1,5 @@
 package info.limpet.data.impl.samples;
 
-import info.limpet.ICollection;
 import info.limpet.ICommand;
 import info.limpet.IObjectCollection;
 import info.limpet.IQuantityCollection;
@@ -193,7 +192,7 @@ public class SampleData
 		res.addAll(list);
 
 		// perform an operation, so we have some audit trail
-		List<ICollection> selection = new ArrayList<ICollection>();
+		List<IStoreItem> selection = new ArrayList<IStoreItem>();
 		selection.add(speedSeries1);
 		selection.add(speedSeries2);
 		@SuppressWarnings(
@@ -207,7 +206,7 @@ public class SampleData
 		selection.clear();
 		selection.add(speedSeries1);
 		selection.add(singleton1);
-		Collection<ICommand<ICollection>> actions2 = new MultiplyQuantityOperation()
+		Collection<ICommand<IStoreItem>> actions2 = new MultiplyQuantityOperation()
 				.actionsFor(selection, res);
 		addAction = actions2.iterator().next();
 		addAction.execute();
@@ -216,7 +215,7 @@ public class SampleData
 		selection.clear();
 		selection.add(timeIntervals);
 		selection.add(singletonRange1);
-		Collection<ICommand<ICollection>> actions3 = new MultiplyQuantityOperation(
+		Collection<ICommand<IStoreItem>> actions3 = new MultiplyQuantityOperation(
 				"Calculated distance").actionsFor(selection, res);
 		addAction = actions3.iterator().next();
 		addAction.execute();

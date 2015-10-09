@@ -1,5 +1,6 @@
 package info.limpet.rcp.data_provider.data;
 
+import info.limpet.IStore.IStoreItem;
 import info.limpet.data.store.InMemoryStore.StoreGroup;
 
 import org.eclipse.core.runtime.IAdaptable;
@@ -23,7 +24,7 @@ public class GroupWrapper implements IAdaptable, LimpetWrapper
 		{
 			return new GroupPropertySource(this);
 		}
-		else if (adapter == StoreGroup.class)
+		else if (adapter == IStoreItem.class)
 		{
 			return _group;
 		}

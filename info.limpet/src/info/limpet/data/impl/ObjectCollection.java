@@ -175,4 +175,23 @@ public class ObjectCollection<T extends Object> implements IObjectCollection<T>
 		return size() > 0;
 	}
 
+	@Override
+	public void beingDeleted()
+	{
+		if (_changeSupport != null)
+		{
+			// tell any standard listeners
+			_changeSupport.beingDeleted(this);
+		}
+
+		// now tell the dependents
+		Iterator<ICommand<?>> iter = dependents.iterator();
+		while (iter.hasNext())
+		{
+			ICommand<?> iC = (ICommand<?>) iter.next();
+			iC.collectionDeleted(this);
+		}
+
+	}
+
 }

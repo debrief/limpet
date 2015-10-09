@@ -1,7 +1,14 @@
 package info.limpet.rcp.editors;
 
-import info.limpet.ICollection;
+import static javax.measure.unit.NonSI.MINUTE;
+import static javax.measure.unit.SI.CELSIUS;
+import static javax.measure.unit.SI.METRE;
+import static javax.measure.unit.SI.METRES_PER_SECOND;
+import static javax.measure.unit.SI.METRES_PER_SQUARE_SECOND;
+import static javax.measure.unit.SI.RADIAN;
+import static javax.measure.unit.SI.SECOND;
 import info.limpet.IOperation;
+import info.limpet.IStore.IStoreItem;
 import info.limpet.data.impl.samples.StockTypes;
 import info.limpet.data.operations.AddQuantityOperation;
 import info.limpet.data.operations.DeleteCollectionOperation;
@@ -20,9 +27,6 @@ import info.limpet.rcp.xy_plot.XyPlotView;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-import static javax.measure.unit.SI.*;
-import static javax.measure.unit.NonSI.*;
 
 public class OperationsLibrary
 {
@@ -43,7 +47,7 @@ public class OperationsLibrary
 		List<IOperation<?>> analysis = new ArrayList<IOperation<?>>();
 		analysis.add(new ShowInNamedView("Show in XY Plot View", XyPlotView.ID)
 		{
-			protected boolean appliesTo(List<ICollection> selection)
+			protected boolean appliesTo(List<IStoreItem> selection)
 			{
 				return getTests().nonEmpty(selection)
 						&& getTests().allQuantity(selection);

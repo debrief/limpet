@@ -1,5 +1,19 @@
 package info.limpet.rcp.editors;
 
+import info.limpet.ICommand;
+import info.limpet.IOperation;
+import info.limpet.IStore;
+import info.limpet.IStore.IStoreItem;
+import info.limpet.data.csv.CsvParser;
+import info.limpet.data.operations.AddLayerOperation;
+import info.limpet.data.operations.AddLayerOperation.StringProvider;
+import info.limpet.data.operations.GenerateDummyDataOperation;
+import info.limpet.data.persistence.xml.XStreamHandler;
+import info.limpet.data.store.InMemoryStore;
+import info.limpet.data.store.InMemoryStore.StoreChangeListener;
+import info.limpet.rcp.Activator;
+import info.limpet.rcp.data_provider.data.DataModel;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -17,10 +31,12 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTarget;
@@ -29,6 +45,7 @@ import org.eclipse.swt.dnd.DropTargetListener;
 import org.eclipse.swt.dnd.FileTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
@@ -40,19 +57,6 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.EditorPart;
 
-import info.limpet.ICollection;
-import info.limpet.ICommand;
-import info.limpet.IOperation;
-import info.limpet.IStore;
-import info.limpet.IStore.IStoreItem;
-import info.limpet.data.csv.CsvParser;
-import info.limpet.data.operations.GenerateDummyDataOperation;
-import info.limpet.data.persistence.xml.XStreamHandler;
-import info.limpet.data.store.InMemoryStore;
-import info.limpet.data.store.InMemoryStore.StoreChangeListener;
-import info.limpet.rcp.Activator;
-import info.limpet.rcp.data_provider.data.DataModel;
-
 public class DataManagerEditor extends EditorPart implements
 		StoreChangeListener
 {
@@ -63,11 +67,12 @@ public class DataManagerEditor extends EditorPart implements
 	private Action action1;
 	private Action refreshView;
 	private Action generateData;
+	private Action addLayer;
 	private boolean _dirty = false;
 	private DataModel _model;
 	private StoreChangeListener _changeListener = new StoreChangeListener()
 	{
-		
+
 		@Override
 		public void changed()
 		{
@@ -86,7 +91,8 @@ public class DataManagerEditor extends EditorPart implements
 		{
 			try
 			{
-				_store = new XStreamHandler().load(((IFileEditorInput)input).getFile());
+				_store = new XStreamHandler()
+						.load(((IFileEditorInput) input).getFile());
 			}
 			catch (Exception e)
 			{
@@ -103,7 +109,7 @@ public class DataManagerEditor extends EditorPart implements
 	@Override
 	public boolean isDirty()
 	{
-		return _dirty ;
+		return _dirty;
 	}
 
 	@Override
@@ -235,6 +241,7 @@ public class DataManagerEditor extends EditorPart implements
 	{
 		manager.add(refreshView);
 		manager.add(generateData);
+		manager.add(addLayer);
 	}
 
 	private void makeActions()
@@ -254,8 +261,6 @@ public class DataManagerEditor extends EditorPart implements
 		action1.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
 				.getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
 
-
-		
 		generateData = new Action()
 		{
 			public void run()
@@ -266,6 +271,17 @@ public class DataManagerEditor extends EditorPart implements
 		generateData.setText("Generate data");
 		generateData.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
 				.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD));
+
+		addLayer = new Action()
+		{
+			public void run()
+			{
+				addLayer();
+			}
+		};
+		addLayer.setText("Add Layer");
+		addLayer.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
+				.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE));
 
 		refreshView = new Action()
 		{
@@ -281,10 +297,41 @@ public class DataManagerEditor extends EditorPart implements
 
 	protected void generateData()
 	{
-		GenerateDummyDataOperation operation = new GenerateDummyDataOperation("small", 20);
-		
+		GenerateDummyDataOperation operation = new GenerateDummyDataOperation(
+				"small", 20);
+
 		Object input = viewer.getInput();
-		Collection<ICommand<ICollection>> commands = operation.actionsFor(getSuitableObjects(), (IStore) input);
+		Collection<ICommand<IStoreItem>> commands = operation.actionsFor(
+				getSuitableObjects(), (IStore) input);
+		commands.iterator().next().execute();
+	}
+
+	protected void addLayer()
+	{
+		IOperation<IStoreItem> operation = new AddLayerOperation(
+				new StringProvider()
+				{
+
+					@Override
+					public String getString(String title)
+					{
+						String res = null;
+						InputDialog dlg = new InputDialog(Display.getCurrent()
+								.getActiveShell(), title, null, null,
+								null);
+						if (dlg.open() == Window.OK)
+						{
+							// User clicked OK; update the label with the input
+							res = dlg.getValue();
+						}
+
+						return res;
+					}
+				});
+
+		Object input = viewer.getInput();
+		Collection<ICommand<IStoreItem>> commands = operation.actionsFor(
+				getSuitableObjects(), (IStore) input);
 		commands.iterator().next().execute();
 	}
 
@@ -309,7 +356,7 @@ public class DataManagerEditor extends EditorPart implements
 	protected void editorContextMenuAboutToShow(IMenuManager menu)
 	{
 		// get any suitable objects from selection
-		List<ICollection> selection = getSuitableObjects();
+		List<IStoreItem> selection = getSuitableObjects();
 
 		// include some top level items
 		showThisList(selection, menu, OperationsLibrary.getTopLevel());
@@ -343,23 +390,22 @@ public class DataManagerEditor extends EditorPart implements
 		menu.add(refreshView);
 	}
 
-	private void showThisList(List<ICollection> selection, IMenuManager newM,
+	private void showThisList(List<IStoreItem> selection, IMenuManager newM,
 			List<IOperation<?>> values)
 	{
 		Iterator<IOperation<?>> oIter = values.iterator();
 		while (oIter.hasNext())
 		{
 			@SuppressWarnings("unchecked")
-			final IOperation<ICollection> op = (IOperation<ICollection>) oIter.next();
+			final IOperation<IStoreItem> op = (IOperation<IStoreItem>) oIter.next();
 			final IStore theStore = _store;
-			Collection<ICommand<ICollection>> matches = op.actionsFor(selection,
+			Collection<ICommand<IStoreItem>> matches = op.actionsFor(selection,
 					theStore);
 
-			Iterator<ICommand<ICollection>> mIter = matches.iterator();
+			Iterator<ICommand<IStoreItem>> mIter = matches.iterator();
 			while (mIter.hasNext())
 			{
-				final ICommand<info.limpet.ICollection> thisC = (ICommand<info.limpet.ICollection>) mIter
-						.next();
+				final ICommand<IStoreItem> thisC = (ICommand<IStoreItem>) mIter.next();
 				newM.add(new Action(thisC.getTitle())
 				{
 					@Override
@@ -372,9 +418,9 @@ public class DataManagerEditor extends EditorPart implements
 		}
 	}
 
-	private List<ICollection> getSuitableObjects()
+	private List<IStoreItem> getSuitableObjects()
 	{
-		ArrayList<ICollection> matches = new ArrayList<ICollection>();
+		ArrayList<IStoreItem> matches = new ArrayList<IStoreItem>();
 
 		// ok, find the applicable operations
 		ISelection sel = viewer.getSelection();
@@ -383,17 +429,17 @@ public class DataManagerEditor extends EditorPart implements
 		while (iter.hasNext())
 		{
 			Object object = (Object) iter.next();
-			if (object instanceof ICollection)
+			if (object instanceof IStoreItem)
 			{
-				matches.add((ICollection) object);
+				matches.add((IStoreItem) object);
 			}
 			else if (object instanceof IAdaptable)
 			{
 				IAdaptable ada = (IAdaptable) object;
-				Object match = ada.getAdapter(ICollection.class);
+				Object match = ada.getAdapter(IStoreItem.class);
 				if (match != null)
 				{
-					matches.add((ICollection) match);
+					matches.add((IStoreItem) match);
 				}
 			}
 		}
@@ -431,8 +477,9 @@ public class DataManagerEditor extends EditorPart implements
 		final IEditorInput input = getEditorInput();
 		// FIXME we will support FileEditorInput, FileStoreEditorInput and
 		// FileRevisionEditorInput
-		if (input instanceof IFileEditorInput) {
-			IFile file = ((IFileEditorInput)input).getFile();
+		if (input instanceof IFileEditorInput)
+		{
+			IFile file = ((IFileEditorInput) input).getFile();
 			try
 			{
 				new XStreamHandler().save(_store, file);

@@ -3,6 +3,7 @@ package info.limpet.rcp.data_frequency;
 import info.limpet.ICollection;
 import info.limpet.IObjectCollection;
 import info.limpet.IQuantityCollection;
+import info.limpet.IStore.IStoreItem;
 import info.limpet.analysis.ObjectFrequencyBins;
 import info.limpet.analysis.ObjectFrequencyBins.BinnedData;
 import info.limpet.analysis.QuantityFrequencyBins;
@@ -80,15 +81,15 @@ public class DataFrequencyView extends CoreAnalysisView
 	}
 
 	@Override
-	public void display(List<ICollection> res)
+	public void display(List<IStoreItem> res)
 	{
 
 		// they're all the same type - check the first one
-		Iterator<ICollection> iter = res.iterator();
+		Iterator<IStoreItem> iter = res.iterator();
 
-		ICollection first = iter.next();
+		ICollection first = (ICollection) iter.next();
 
-		// sort out what type of data this is.
+		// sort out what type of data this is.		
 		if (first.isQuantity())
 		{
 			showQuantity(res);
@@ -99,9 +100,9 @@ public class DataFrequencyView extends CoreAnalysisView
 		}
 	}
 
-	private void showObject(List<ICollection> res)
+	private void showObject(List<IStoreItem> res)
 	{
-		Iterator<ICollection> iter = res.iterator();
+		Iterator<IStoreItem> iter = res.iterator();
 
 		// clear the graph
 		ISeries[] coll = chart.getSeriesSet().getSeries();
@@ -154,9 +155,9 @@ public class DataFrequencyView extends CoreAnalysisView
 	}
 
 	@SuppressWarnings("unchecked")
-	private void showQuantity(List<ICollection> res)
+	private void showQuantity(List<IStoreItem> res)
 	{
-		Iterator<ICollection> iter = res.iterator();
+		Iterator<IStoreItem> iter = res.iterator();
 
 		// clear the graph
 		ISeries[] coll = chart.getSeriesSet().getSeries();
@@ -228,7 +229,7 @@ public class DataFrequencyView extends CoreAnalysisView
 	}
 
 	@Override
-	protected boolean appliesToMe(List<ICollection> res,
+	protected boolean appliesToMe(List<IStoreItem> res,
 			CollectionComplianceTests tests)
 	{
 		// are all the items of the same type?

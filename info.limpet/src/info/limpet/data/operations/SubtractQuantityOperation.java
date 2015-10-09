@@ -19,7 +19,7 @@ import javax.measure.quantity.Quantity;
 import javax.measure.unit.Unit;
 
 public class SubtractQuantityOperation<Q extends Quantity> implements
-		IOperation<ICollection>
+		IOperation<IStoreItem>
 {
 	CollectionComplianceTests aTests = new CollectionComplianceTests();
 
@@ -39,18 +39,18 @@ public class SubtractQuantityOperation<Q extends Quantity> implements
 
 	@SuppressWarnings(
 	{ "unchecked", "rawtypes" })
-	public Collection<ICommand<ICollection>> actionsFor(
-			List<ICollection> selection, IStore destination)
+	public Collection<ICommand<IStoreItem>> actionsFor(
+			List<IStoreItem> selection, IStore destination)
 	{
-		Collection<ICommand<ICollection>> res = new ArrayList<ICommand<ICollection>>();
+		Collection<ICommand<IStoreItem>> res = new ArrayList<ICommand<IStoreItem>>();
 
 		if (appliesTo(selection))
 		{
-			ICollection item1 = selection.get(0);
-			ICollection item2 = selection.get(1);
+			ICollection item1 = (ICollection) selection.get(0);
+			ICollection item2 = (ICollection) selection.get(1);
 
 			String oName = item2.getName() + " from " + item1.getName();
-			ICommand<ICollection> newC = new SubtractQuantityValues("Subtract "
+			ICommand<IStoreItem> newC = new SubtractQuantityValues("Subtract "
 					+ item2.getName() + " from " + item1.getName(), oName, selection,
 					item1, item2, destination);
 			res.add(newC);
@@ -64,9 +64,9 @@ public class SubtractQuantityOperation<Q extends Quantity> implements
 		return res;
 	}
 
-	private boolean appliesTo(List<ICollection> selection)
+	private boolean appliesTo(List<IStoreItem> selection)
 	{
-		if (aTests.exactNumber(selection, 2))
+		if (aTests.exactNumber(selection, 2) && aTests.allCollections(selection))
 		{
 			boolean allQuantity = aTests.allQuantity(selection);
 			boolean equalLength = aTests.allEqualLength(selection);
@@ -80,14 +80,14 @@ public class SubtractQuantityOperation<Q extends Quantity> implements
 	}
 
 	public class SubtractQuantityValues<T extends Quantity> extends
-			AbstractCommand<ICollection>
+			AbstractCommand<IStoreItem>
 	{
 		IQuantityCollection<T> _item1;
 		IQuantityCollection<T> _item2;
 
 		@SuppressWarnings("unchecked")
 		public SubtractQuantityValues(String title, String outputName,
-				List<ICollection> selection, ICollection item1, ICollection item2,
+				List<IStoreItem> selection, ICollection item1, ICollection item2,
 				IStore store)
 		{
 			super(title, "Subtract provided series", outputName, store, false, false,
@@ -102,7 +102,7 @@ public class SubtractQuantityOperation<Q extends Quantity> implements
 			// get the unit
 			Unit<T> unit = _item1.getUnits();
 
-			List<ICollection> outputs = new ArrayList<ICollection>();
+			List<IStoreItem> outputs = new ArrayList<IStoreItem>();
 
 			// ok, generate the new series
 			IQuantityCollection<T> target = new QuantityCollection<T>(
@@ -117,10 +117,10 @@ public class SubtractQuantityOperation<Q extends Quantity> implements
 			performCalc(unit, outputs, _item1, _item2);
 
 			// tell each series that we're a dependent
-			Iterator<ICollection> iter = inputs.iterator();
+			Iterator<IStoreItem> iter = inputs.iterator();
 			while (iter.hasNext())
 			{
-				ICollection iCollection = iter.next();
+				ICollection iCollection = (ICollection) iter.next();
 				iCollection.addDependent(this);
 			}
 
@@ -151,21 +151,23 @@ public class SubtractQuantityOperation<Q extends Quantity> implements
 		 * @param outputs
 		 */
 		@SuppressWarnings("unchecked")
-		private void performCalc(Unit<T> unit, List<ICollection> outputs,
+		private void performCalc(Unit<T> unit, List<IStoreItem> outputs,
 				ICollection item1, ICollection item2)
 		{
 			IQuantityCollection<T> target = (IQuantityCollection<T>) outputs
 					.iterator().next();
 
 			// clear out the lists, first
-			Iterator<ICollection> iter = outputs.iterator();
+			Iterator<IStoreItem> iter = outputs.iterator();
 			while (iter.hasNext())
 			{
 				IQuantityCollection<T> qC = (IQuantityCollection<T>) iter.next();
 				qC.getValues().clear();
 			}
 
-			for (int j = 0; j < inputs.get(0).size(); j++)
+			ICollection firstItem = (ICollection) inputs.get(0);
+			
+			for (int j = 0; j < firstItem.size(); j++)
 			{
 				final Measurable<T> thisValue = _item1.getValues().get(j);
 				final Measurable<T> otherValue = _item2.getValues().get(j);
