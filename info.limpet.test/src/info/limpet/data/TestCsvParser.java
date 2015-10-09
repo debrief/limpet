@@ -18,7 +18,9 @@ public class TestCsvParser extends TestCase
 		assertTrue(file.isFile());
 		List<IStoreItem> items = new CsvParser().parse(file.getAbsolutePath());
 		assertTrue(items.size() == 1);
-		ICollection firstColl = (ICollection) items.get(0);
+		StoreGroup group = (StoreGroup) items.get(0);
+		assertEquals("correct num collections", 1, group.size());
+		ICollection firstColl = (ICollection) group.get(0);
 		assertEquals("correct num rows", 69, firstColl.size());
 	}
 
@@ -28,7 +30,9 @@ public class TestCsvParser extends TestCase
 		assertTrue(file.isFile());
 		List<IStoreItem> items = new CsvParser().parse(file.getAbsolutePath());
 		assertTrue(items.size() == 1);
-		ICollection firstColl = (ICollection) items.get(0);
+		StoreGroup group = (StoreGroup) items.get(0);
+		assertEquals("correct num collections", 1, group.size());
+		ICollection firstColl = (ICollection) group.get(0);
 		assertEquals("correct num rows", 11, firstColl.size());
 	}
 
