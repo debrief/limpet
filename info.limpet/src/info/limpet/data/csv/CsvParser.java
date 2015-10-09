@@ -240,7 +240,7 @@ public class CsvParser
 		}
 
 		// ok, store the series
-		if (series.size() > 0)
+		if (series.size() > 1)
 		{
 			StoreGroup target = new StoreGroup(fileName);
 			Iterator<ICollection> sIter = series.iterator();
@@ -250,6 +250,15 @@ public class CsvParser
 				target.add(coll);
 			}
 			res.add(target);
+		}
+		else
+		{
+			Iterator<ICollection> sIter = series.iterator();
+			while (sIter.hasNext())
+			{
+				ICollection coll = (ICollection) sIter.next();
+				res.add(coll);
+			}
 		}
 
 		return res;
