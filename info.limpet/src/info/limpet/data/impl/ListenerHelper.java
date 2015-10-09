@@ -32,6 +32,16 @@ public class ListenerHelper
 		}
 	}
 
+	public void beingDeleted(IStoreItem subject)
+	{
+		Iterator<IChangeListener> iter = _listeners.iterator();
+		while (iter.hasNext())
+		{
+			IChangeListener iL = (IChangeListener) iter.next();
+			iL.collectionDeleted(subject);
+		}
+	}
+
 	public void remove(IChangeListener listener)
 	{
 		_listeners.remove(listener);

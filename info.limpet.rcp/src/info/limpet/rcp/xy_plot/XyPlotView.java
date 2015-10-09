@@ -78,34 +78,42 @@ public class XyPlotView extends CoreAnalysisView
 	@Override
 	public void display(List<IStoreItem> res)
 	{
-		// they're all the same type - check the first one
-		Iterator<IStoreItem> iter = res.iterator();
-
-		ICollection first = (ICollection) iter.next();
-
-		// sort out what type of data this is.
-		if (first.isQuantity())
+		if (res.size() == 0)
 		{
-			if (aTests.allTemporal(res))
-			{
-				showTemporalQuantity(res);
-			}
-			else
-			{
-				showQuantity(res);
-			}
-			chart.setVisible(true);
+			chart.setVisible(false);
 		}
 		else
 		{
-			// exception - show locations
-			if (aTests.allLocation(res))
+
+			// they're all the same type - check the first one
+			Iterator<IStoreItem> iter = res.iterator();
+
+			ICollection first = (ICollection) iter.next();
+
+			// sort out what type of data this is.
+			if (first.isQuantity())
 			{
-				showLocations(res);
+				if (aTests.allTemporal(res))
+				{
+					showTemporalQuantity(res);
+				}
+				else
+				{
+					showQuantity(res);
+				}
 				chart.setVisible(true);
 			}
 			else
-				chart.setVisible(false);
+			{
+				// exception - show locations
+				if (aTests.allLocation(res))
+				{
+					showLocations(res);
+					chart.setVisible(true);
+				}
+				else
+					chart.setVisible(false);
+			}
 		}
 	}
 
@@ -312,7 +320,8 @@ public class XyPlotView extends CoreAnalysisView
 	protected boolean appliesToMe(List<IStoreItem> res,
 			CollectionComplianceTests tests)
 	{
-		return (tests.allCollections(res) && tests.allQuantity(res) || tests.allNonQuantity(res));
+		return (tests.allCollections(res) && tests.allQuantity(res) || tests
+				.allNonQuantity(res));
 	}
 
 	@Override

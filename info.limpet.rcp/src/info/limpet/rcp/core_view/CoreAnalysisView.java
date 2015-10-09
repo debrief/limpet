@@ -1,7 +1,6 @@
 package info.limpet.rcp.core_view;
 
 import info.limpet.IChangeListener;
-import info.limpet.ICollection;
 import info.limpet.IStore.IStoreItem;
 import info.limpet.data.operations.CollectionComplianceTests;
 import info.limpet.rcp.Activator;
@@ -117,7 +116,7 @@ public abstract class CoreAnalysisView extends ViewPart
 				if (object instanceof IAdaptable)
 				{
 					IAdaptable ad = (IAdaptable) object;
-					ICollection coll = (ICollection) ad.getAdapter(ICollection.class);
+					IStoreItem coll = (IStoreItem) ad.getAdapter(IStoreItem.class);
 					if (coll != null)
 					{
 						res.add(coll);

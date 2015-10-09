@@ -223,6 +223,9 @@ public class InMemoryStore implements IStore, IChangeListener
 		{
 			ICollection collection = (ICollection) item;
 			collection.removeChangeListener(this);
+			
+			// ok, also tell it that it's being deleted
+			collection.beingDeleted();
 		}
 
 		fireModified();

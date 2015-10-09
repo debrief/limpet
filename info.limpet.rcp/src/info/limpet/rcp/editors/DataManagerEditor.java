@@ -1,6 +1,5 @@
 package info.limpet.rcp.editors;
 
-import info.limpet.ICollection;
 import info.limpet.ICommand;
 import info.limpet.IOperation;
 import info.limpet.IStore;
@@ -290,10 +289,10 @@ public class DataManagerEditor extends EditorPart implements
 			else if (object instanceof IAdaptable)
 			{
 				IAdaptable ada = (IAdaptable) object;
-				Object match = ada.getAdapter(ICollection.class);
+				Object match = ada.getAdapter(IStoreItem.class);
 				if (match != null)
 				{
-					matches.add((ICollection) match);
+					matches.add((IStoreItem) match);
 				}
 			}
 		}
