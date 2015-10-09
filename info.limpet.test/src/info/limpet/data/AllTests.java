@@ -10,7 +10,10 @@ import junit.framework.TestSuite;
 	TestCollections.class,
 	TestOperations.class,
 	TestAnalysis.class,
-	TestDynamic.class
+	TestDynamic.class,
+	TestGeotoolsGeometry.class,
+	TestPersistence.class,
+	TestCsvParser.class,
 })
 
 @RunWith(Suite.class)
