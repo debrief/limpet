@@ -7,7 +7,9 @@ import info.limpet.data.impl.samples.StockTypes.Temporal;
 import info.limpet.data.impl.samples.StockTypes.Temporal.ElapsedTime_Sec;
 import info.limpet.data.impl.samples.StockTypes.Temporal.Frequency_Hz;
 import info.limpet.data.impl.samples.StockTypes.Temporal.Location;
+import info.limpet.data.store.InMemoryStore.StoreGroup;
 
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
@@ -31,11 +33,13 @@ public class CsvParser
 	public static final DateFormat DATE_FORMAT = new SimpleDateFormat(
 			"dd/MM/yyyy hh:mm:ss");
 
-	public List<IStoreItem> parse(String fileName) throws IOException
+	public List<IStoreItem> parse(String filePath) throws IOException
 	{
-		List<IStoreItem> items = new ArrayList<IStoreItem>();
-		Reader in = new FileReader(fileName);
-		Iterable<CSVRecord> records = CSVFormat.DEFAULT.parse(in);
+		final List<IStoreItem> res = new ArrayList<IStoreItem>();
+		final File inFile = new File(filePath);
+		final Reader in = new FileReader(inFile);
+		final String fileName = inFile.getName();
+		final Iterable<CSVRecord> records = CSVFormat.DEFAULT.parse(in);
 		boolean first = true;
 
 		// Time,Lat(Degs),Long(Degs),Elev (m),Course (Degs),Speed (kts),Temp
@@ -162,7 +166,7 @@ public class CsvParser
 						if (thisI.handleName(colName))
 						{
 							importers.add(thisI);
-							series.add(thisI.create(thisI.nameFor(colName)));
+							series.add(thisI.create(fileName + " - " + thisI.nameFor(colName)));
 							handled = true;
 							ctr += thisI.numCols();
 							break;
@@ -185,7 +189,7 @@ public class CsvParser
 								if (thisI.handleUnits(units))
 								{
 									importers.add(thisI);
-									series.add(thisI.create(colName));
+									series.add(thisI.create(fileName + " - " + thisI.nameFor(colName)));
 									ctr += thisI.numCols();
 									break;
 								}
@@ -236,15 +240,19 @@ public class CsvParser
 		}
 
 		// ok, store the series
-		Iterator<ICollection> sIter = series.iterator();
-		while (sIter.hasNext())
+		if (series.size() > 0)
 		{
-			ICollection coll = (ICollection) sIter.next();
-			items.add(coll);
-
+			StoreGroup target = new StoreGroup(fileName);
+			Iterator<ICollection> sIter = series.iterator();
+			while (sIter.hasNext())
+			{
+				ICollection coll = (ICollection) sIter.next();
+				target.add(coll);
+			}
+			res.add(target);
 		}
 
-		return items;
+		return res;
 	}
 
 	public static abstract class DataImporter
@@ -311,16 +319,15 @@ public class CsvParser
 				CSVRecord row)
 		{
 			final Temporal.Location locS = (Location) series;
-			
+
 			String latVal = row.get(colStart);
 			Double valLat = Double.parseDouble(latVal);
 			String longVal = row.get(colStart + 1);
 			Double valLong = Double.parseDouble(longVal);
 
-			GeometryBuilder builder = new GeometryBuilder( DefaultGeographicCRS.WGS84 );
-			Point point = builder.createPoint( valLong, valLat);
+			GeometryBuilder builder = new GeometryBuilder(DefaultGeographicCRS.WGS84);
+			Point point = builder.createPoint(valLong, valLat);
 
-			
 			locS.add(thisTime, point);
 		}
 
