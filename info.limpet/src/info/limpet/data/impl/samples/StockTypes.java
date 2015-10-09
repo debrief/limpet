@@ -1,6 +1,7 @@
 package info.limpet.data.impl.samples;
 
 import static javax.measure.unit.SI.HERTZ;
+import static javax.measure.unit.SI.KELVIN;
 import static javax.measure.unit.SI.METRE;
 import static javax.measure.unit.SI.RADIAN;
 import static javax.measure.unit.SI.SECOND;
@@ -11,10 +12,12 @@ import info.limpet.data.impl.TemporalQuantityCollection;
 
 import javax.measure.quantity.Acceleration;
 import javax.measure.quantity.Angle;
+import javax.measure.quantity.AngularVelocity;
 import javax.measure.quantity.Dimensionless;
 import javax.measure.quantity.Duration;
 import javax.measure.quantity.Frequency;
 import javax.measure.quantity.Length;
+import javax.measure.quantity.Temperature;
 import javax.measure.quantity.Velocity;
 import javax.measure.unit.Unit;
 
@@ -52,6 +55,22 @@ public class StockTypes
 			public Length_M(String name)
 			{
 				super(name, METRE.asType(Length.class));
+			}
+		}
+
+		public static class Temp_C extends TemporalQuantityCollection<Temperature>
+		{
+			public Temp_C(String name)
+			{
+				super(name, KELVIN.asType(Temperature.class));
+			}
+		}
+
+		public static class TurnRate extends TemporalQuantityCollection<AngularVelocity>
+		{
+			public TurnRate(String name)
+			{
+				super(name, DEGREE_ANGLE.divide(SECOND).asType(AngularVelocity.class));
 			}
 		}
 
