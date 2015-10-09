@@ -2,6 +2,7 @@ package info.limpet.rcp.xy_plot;
 
 import info.limpet.ICollection;
 import info.limpet.IQuantityCollection;
+import info.limpet.IStore.IStoreItem;
 import info.limpet.ITemporalQuantityCollection;
 import info.limpet.data.impl.samples.StockTypes.Temporal.Location;
 import info.limpet.data.operations.CollectionComplianceTests;
@@ -75,43 +76,51 @@ public class XyPlotView extends CoreAnalysisView
 	}
 
 	@Override
-	public void display(List<ICollection> res)
+	public void display(List<IStoreItem> res)
 	{
-		// they're all the same type - check the first one
-		Iterator<ICollection> iter = res.iterator();
-
-		ICollection first = iter.next();
-
-		// sort out what type of data this is.
-		if (first.isQuantity())
+		if (res.size() == 0)
 		{
-			if (aTests.allTemporal(res))
-			{
-				showTemporalQuantity(res);
-			}
-			else
-			{
-				showQuantity(res);
-			}
-			chart.setVisible(true);
+			chart.setVisible(false);
 		}
 		else
 		{
-			// exception - show locations
-			if (aTests.allLocation(res))
+
+			// they're all the same type - check the first one
+			Iterator<IStoreItem> iter = res.iterator();
+
+			ICollection first = (ICollection) iter.next();
+
+			// sort out what type of data this is.
+			if (first.isQuantity())
 			{
-				showLocations(res);
+				if (aTests.allTemporal(res))
+				{
+					showTemporalQuantity(res);
+				}
+				else
+				{
+					showQuantity(res);
+				}
 				chart.setVisible(true);
 			}
 			else
-				chart.setVisible(false);
+			{
+				// exception - show locations
+				if (aTests.allLocation(res))
+				{
+					showLocations(res);
+					chart.setVisible(true);
+				}
+				else
+					chart.setVisible(false);
+			}
 		}
 	}
 
 	@SuppressWarnings("unchecked")
-	private void showQuantity(List<ICollection> res)
+	private void showQuantity(List<IStoreItem> res)
 	{
-		Iterator<ICollection> iter = res.iterator();
+		Iterator<IStoreItem> iter = res.iterator();
 
 		// clear the graph
 		ISeries[] series = chart.getSeriesSet().getSeries();
@@ -167,9 +176,9 @@ public class XyPlotView extends CoreAnalysisView
 	}
 
 	@SuppressWarnings("unchecked")
-	private void showTemporalQuantity(List<ICollection> res)
+	private void showTemporalQuantity(List<IStoreItem> res)
 	{
-		Iterator<ICollection> iter = res.iterator();
+		Iterator<IStoreItem> iter = res.iterator();
 
 		// clear the graph
 		ISeries[] series = chart.getSeriesSet().getSeries();
@@ -232,9 +241,9 @@ public class XyPlotView extends CoreAnalysisView
 		}
 	}
 
-	private void showLocations(List<ICollection> res)
+	private void showLocations(List<IStoreItem> res)
 	{
-		Iterator<ICollection> iter = res.iterator();
+		Iterator<IStoreItem> iter = res.iterator();
 
 		// clear the graph
 		ISeries[] series = chart.getSeriesSet().getSeries();
@@ -308,10 +317,11 @@ public class XyPlotView extends CoreAnalysisView
 	}
 
 	@Override
-	protected boolean appliesToMe(List<ICollection> res,
+	protected boolean appliesToMe(List<IStoreItem> res,
 			CollectionComplianceTests tests)
 	{
-		return (tests.allQuantity(res) || tests.allNonQuantity(res));
+		return (tests.allCollections(res) && tests.allQuantity(res) || tests
+				.allNonQuantity(res));
 	}
 
 	@Override

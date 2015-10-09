@@ -2,6 +2,7 @@ package info.limpet.rcp.time_frequency;
 
 import info.limpet.IBaseTemporalCollection;
 import info.limpet.ICollection;
+import info.limpet.IStore.IStoreItem;
 import info.limpet.analysis.TimeFrequencyBins;
 import info.limpet.analysis.TimeFrequencyBins.Bin;
 import info.limpet.data.operations.CollectionComplianceTests;
@@ -74,7 +75,7 @@ public class TimeFrequencyView extends CoreAnalysisView
 	}
 
 	@Override
-	public void display(List<ICollection> res)
+	public void display(List<IStoreItem> res)
 	{
 		if (aTests.allTemporal(res))
 		{
@@ -88,9 +89,9 @@ public class TimeFrequencyView extends CoreAnalysisView
 		}
 	}
 
-	private void showData(List<ICollection> res)
+	private void showData(List<IStoreItem> res)
 	{
-		Iterator<ICollection> iter = res.iterator();
+		Iterator<IStoreItem> iter = res.iterator();
 
 		// clear the graph
 		ISeries[] coll = chart.getSeriesSet().getSeries();
@@ -164,11 +165,11 @@ public class TimeFrequencyView extends CoreAnalysisView
 	}
 
 	@Override
-	protected boolean appliesToMe(List<ICollection> res,
+	protected boolean appliesToMe(List<IStoreItem> res,
 			CollectionComplianceTests tests)
 	{
 		// are all the items of the same type?
-		boolean isValid = tests.nonEmpty(res) && tests.allTemporal(res);
+		boolean isValid = tests.allCollections(res) && tests.nonEmpty(res) && tests.allTemporal(res);
 		chart.setVisible(isValid);
 		return isValid;
 	}

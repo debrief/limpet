@@ -1,9 +1,9 @@
 package info.limpet.rcp.operations;
 
-import info.limpet.ICollection;
 import info.limpet.ICommand;
 import info.limpet.IOperation;
 import info.limpet.IStore;
+import info.limpet.IStore.IStoreItem;
 import info.limpet.data.commands.AbstractCommand;
 import info.limpet.data.operations.CollectionComplianceTests;
 import info.limpet.rcp.core_view.CoreAnalysisView;
@@ -19,7 +19,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 
-public class ShowInNamedView implements IOperation<ICollection>
+public class ShowInNamedView implements IOperation<IStoreItem>
 {
 	CollectionComplianceTests aTests = new CollectionComplianceTests();
 	final private String theId;
@@ -36,13 +36,13 @@ public class ShowInNamedView implements IOperation<ICollection>
 		return aTests;
 	}
 
-	public Collection<ICommand<ICollection>> actionsFor(
-			List<ICollection> selection, IStore destination)
+	public Collection<ICommand<IStoreItem>> actionsFor(
+			List<IStoreItem> selection, IStore destination)
 	{
-		Collection<ICommand<ICollection>> res = new ArrayList<ICommand<ICollection>>();
+		Collection<ICommand<IStoreItem>> res = new ArrayList<ICommand<IStoreItem>>();
 		if (appliesTo(selection))
 		{
-			ICommand<ICollection> newC = new ShowInViewOperation(_title, selection,
+			ICommand<IStoreItem> newC = new ShowInViewOperation(_title, selection,
 					theId);
 			res.add(newC);
 		}
@@ -50,17 +50,17 @@ public class ShowInNamedView implements IOperation<ICollection>
 		return res;
 	}
 
-	protected boolean appliesTo(List<ICollection> selection)
+	protected boolean appliesTo(List<IStoreItem> selection)
 	{
-		return aTests.nonEmpty(selection);
+		return aTests.allCollections(selection) && aTests.nonEmpty(selection);
 	}
 
-	public static class ShowInViewOperation extends AbstractCommand<ICollection>
+	public static class ShowInViewOperation extends AbstractCommand<IStoreItem>
 	{
 
 		final private String _id;
 
-		public ShowInViewOperation(String title, List<ICollection> selection,
+		public ShowInViewOperation(String title, List<IStoreItem> selection,
 				String id)
 		{
 			super(title, "Show selection in specified view", null, null, false,

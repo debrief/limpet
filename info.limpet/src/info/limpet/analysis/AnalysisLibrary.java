@@ -1,6 +1,6 @@
 package info.limpet.analysis;
 
-import info.limpet.ICollection;
+import info.limpet.IStore.IStoreItem;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -57,7 +57,7 @@ abstract public class AnalysisLibrary extends CoreAnalysis
 	}
 
 	@Override
-	public void analyse(List<ICollection> selection)
+	public void analyse(List<IStoreItem> selection)
 	{
 		// clear the lists
 		_titles.clear();

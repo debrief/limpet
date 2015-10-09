@@ -1,6 +1,6 @@
 package info.limpet.analysis;
 
-import info.limpet.ICollection;
+import info.limpet.IStore.IStoreItem;
 
 import java.util.List;
 
@@ -10,7 +10,7 @@ public interface IAnalysis
 	 * 
 	 * @param selection
 	 */
-	public void analyse(List<ICollection> selection);
+	public void analyse(List<IStoreItem> selection);
 
 	public String getName();
 }

@@ -1,8 +1,6 @@
 package info.limpet.rcp.editors;
 
 import info.limpet.ICollection;
-import info.limpet.IStore.IStoreItem;
-import info.limpet.data.store.InMemoryStore.StoreGroup;
 import info.limpet.rcp.Activator;
 import info.limpet.rcp.data_provider.data.CollectionWrapper;
 import info.limpet.rcp.data_provider.data.CommandWrapper;

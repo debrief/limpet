@@ -1,7 +1,6 @@
 package info.limpet.data.impl;
 
 import info.limpet.IChangeListener;
-import info.limpet.ICollection;
 import info.limpet.IStore.IStoreItem;
 
 import java.util.ArrayList;
@@ -30,6 +29,16 @@ public class ListenerHelper
 		{
 			IChangeListener iL = (IChangeListener) iter.next();
 			iL.dataChanged(subject);
+		}
+	}
+
+	public void beingDeleted(IStoreItem subject)
+	{
+		Iterator<IChangeListener> iter = _listeners.iterator();
+		while (iter.hasNext())
+		{
+			IChangeListener iL = (IChangeListener) iter.next();
+			iL.collectionDeleted(subject);
 		}
 	}
 

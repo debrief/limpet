@@ -1,6 +1,6 @@
 package info.limpet.rcp.analysis_view;
 
-import info.limpet.ICollection;
+import info.limpet.IStore.IStoreItem;
 import info.limpet.analysis.AnalysisLibrary;
 import info.limpet.data.operations.CollectionComplianceTests;
 import info.limpet.rcp.core_view.CoreAnalysisView;
@@ -85,7 +85,7 @@ public class AnalysisView extends CoreAnalysisView
 	}
 
 	@Override
-	public void display(List<ICollection> res)
+	public void display(List<IStoreItem> res)
 	{
 		// clear the output
 		final ArrayList<ArrayList<String>> resList = new ArrayList<ArrayList<String>>();
@@ -169,7 +169,7 @@ public class AnalysisView extends CoreAnalysisView
 	}
 
 	@Override
-	protected boolean appliesToMe(List<ICollection> res,
+	protected boolean appliesToMe(List<IStoreItem> res,
 			CollectionComplianceTests tests)
 	{
 		return true;

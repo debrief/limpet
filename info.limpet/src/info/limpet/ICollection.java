@@ -31,4 +31,9 @@ public interface ICollection extends IStoreItem
 	 * @return
 	 */
 	Class<?> storedClass();
+	
+	/** tell listeners that it's about to be deleted
+	 * 
+	 */
+	public void beingDeleted();
 }

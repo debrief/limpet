@@ -17,7 +17,7 @@ import java.util.List;
 import javax.measure.quantity.Quantity;
 import javax.measure.unit.Unit;
 
-public class MultiplyQuantityOperation implements IOperation<ICollection>
+public class MultiplyQuantityOperation implements IOperation<IStoreItem>
 {
 	public static final String SERIES_NAME = "Multiplication product";
 
@@ -35,13 +35,13 @@ public class MultiplyQuantityOperation implements IOperation<ICollection>
 		outputName = seriesName;
 	}
 
-	public Collection<ICommand<ICollection>> actionsFor(
-			List<ICollection> selection, IStore destination)
+	public Collection<ICommand<IStoreItem>> actionsFor(
+			List<IStoreItem> selection, IStore destination)
 	{
-		Collection<ICommand<ICollection>> res = new ArrayList<ICommand<ICollection>>();
+		Collection<ICommand<IStoreItem>> res = new ArrayList<ICommand<IStoreItem>>();
 		if (appliesTo(selection))
 		{
-			ICommand<ICollection> newC = new MultiplyQuantityValues(outputName,
+			ICommand<IStoreItem> newC = new MultiplyQuantityValues(outputName,
 					selection, destination);
 			res.add(newC);
 		}
@@ -49,10 +49,10 @@ public class MultiplyQuantityOperation implements IOperation<ICollection>
 		return res;
 	}
 
-	private boolean appliesTo(List<ICollection> selection)
+	private boolean appliesTo(List<IStoreItem> selection)
 	{
 		// first check we have quantity data
-		if (aTests.nonEmpty(selection) && aTests.allQuantity(selection))
+		if (aTests.allCollections(selection) && aTests.nonEmpty(selection) && aTests.allQuantity(selection))
 		{
 			// ok, we have quantity data. See if we have series of the same length, or
 			// singletons
@@ -65,11 +65,11 @@ public class MultiplyQuantityOperation implements IOperation<ICollection>
 	}
 
 	public static class MultiplyQuantityValues extends
-			AbstractCommand<ICollection>
+			AbstractCommand<IStoreItem>
 	{
 
 		public MultiplyQuantityValues(String outputName,
-				List<ICollection> selection, IStore store)
+				List<IStoreItem> selection, IStore store)
 		{
 			super("Multiply series", "Multiply series", outputName, store, false,
 					false, selection);
@@ -79,7 +79,7 @@ public class MultiplyQuantityOperation implements IOperation<ICollection>
 		public void execute()
 		{
 			Unit<?> unit = calculateOutputUnit();
-			List<ICollection> outputs = new ArrayList<ICollection>();
+			List<IStoreItem> outputs = new ArrayList<IStoreItem>();
 
 			// ok, generate the new series
 			IQuantityCollection<?> target = new QuantityCollection<>(getOutputName(),
@@ -94,10 +94,10 @@ public class MultiplyQuantityOperation implements IOperation<ICollection>
 			performCalc(unit, outputs);
 
 			// tell each series that we're a dependent
-			Iterator<ICollection> iter = inputs.iterator();
+			Iterator<IStoreItem> iter = inputs.iterator();
 			while (iter.hasNext())
 			{
-				ICollection iCollection = iter.next();
+				ICollection iCollection = (ICollection) iter.next();
 				iCollection.addDependent(this);
 			}
 
@@ -109,7 +109,7 @@ public class MultiplyQuantityOperation implements IOperation<ICollection>
 
 		private Unit<?> calculateOutputUnit()
 		{
-			Iterator<ICollection> inputsIterator = inputs.iterator();
+			Iterator<IStoreItem> inputsIterator = inputs.iterator();
 			IQuantityCollection<?> firstItem = (IQuantityCollection<?>) inputsIterator
 					.next();
 			Unit<?> unit = firstItem.getUnits();
@@ -139,13 +139,13 @@ public class MultiplyQuantityOperation implements IOperation<ICollection>
 		 * @param unit
 		 * @param outputs
 		 */
-		private void performCalc(Unit<?> unit, List<ICollection> outputs)
+		private void performCalc(Unit<?> unit, List<IStoreItem> outputs)
 		{
 			IQuantityCollection<?> target = (IQuantityCollection<?>) outputs
 					.iterator().next();
 
 			// clear out the lists, first
-			Iterator<ICollection> iter = outputs.iterator();
+			Iterator<IStoreItem> iter = outputs.iterator();
 			while (iter.hasNext())
 			{
 				IQuantityCollection<?> qC = (IQuantityCollection<?>) iter.next();

@@ -1,6 +1,6 @@
 package info.limpet.data;
 
-import info.limpet.ICollection;
+import info.limpet.IStore.IStoreItem;
 import info.limpet.analysis.AnalysisLibrary;
 import info.limpet.analysis.IAnalysis;
 import info.limpet.analysis.TimeFrequencyBins;
@@ -33,7 +33,7 @@ public class TestAnalysis extends TestCase
 		};
 		
 		// collate the data
-		List<ICollection> selection = new ArrayList<ICollection>();
+		List<IStoreItem> selection = new ArrayList<IStoreItem>();
 		StockTypes.NonTemporal.Length_M len_1 = new StockTypes.NonTemporal.Length_M("lengths 1"); 
 		selection.add(len_1);
 		
@@ -70,7 +70,7 @@ public class TestAnalysis extends TestCase
 		};
 		
 		// collate the data
-		List<ICollection> selection = new ArrayList<ICollection>();
+		List<IStoreItem> selection = new ArrayList<IStoreItem>();
 		ObjectCollection<String> len_1 = new ObjectCollection<String>("some strings"); 
 		selection.add(len_1);
 		
@@ -107,7 +107,7 @@ public class TestAnalysis extends TestCase
 		};
 		
 		// collate the data
-		List<ICollection> selection = new ArrayList<ICollection>();
+		List<IStoreItem> selection = new ArrayList<IStoreItem>();
 		TemporalObjectCollection<String> len_1 = new TemporalObjectCollection<String>("some strings"); 
 		selection.add(len_1);
 		

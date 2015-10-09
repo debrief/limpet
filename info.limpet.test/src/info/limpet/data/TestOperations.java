@@ -11,6 +11,7 @@ import info.limpet.ICollection;
 import info.limpet.ICommand;
 import info.limpet.IQuantityCollection;
 import info.limpet.IStore;
+import info.limpet.IStore.IStoreItem;
 import info.limpet.data.impl.ObjectCollection;
 import info.limpet.data.impl.QuantityCollection;
 import info.limpet.data.impl.TemporalQuantityCollection;
@@ -96,7 +97,7 @@ public class TestOperations extends TestCase
 		Measurable<Velocity> speedVal3a = Measure.valueOf(2, kmh);
 		speed_longer.add(speedVal3a);
 
-		List<ICollection> selection = new ArrayList<ICollection>(3);
+		List<IStoreItem> selection = new ArrayList<IStoreItem>();
 		CollectionComplianceTests testOp = new CollectionComplianceTests();
 
 		selection.clear();
@@ -197,10 +198,10 @@ public class TestOperations extends TestCase
 		assertNotNull("has precedent", precedent);
 		assertEquals("Correct name", "Add series", precedent.getTitle());
 
-		List<? extends ICollection> inputs = precedent.getInputs();
+		List<? extends IStoreItem> inputs = precedent.getInputs();
 		assertEquals("Has both precedents", 2, inputs.size());
 
-		Iterator<? extends ICollection> iIter = inputs.iterator();
+		Iterator<? extends IStoreItem> iIter = inputs.iterator();
 		while (iIter.hasNext())
 		{
 			ICollection thisC = (ICollection) iIter.next();
@@ -214,10 +215,10 @@ public class TestOperations extends TestCase
 			}
 		}
 
-		List<? extends ICollection> outputs = precedent.getOutputs();
+		List<? extends IStoreItem> outputs = precedent.getOutputs();
 		assertEquals("Has both dependents", 1, outputs.size());
 
-		Iterator<? extends ICollection> oIter = outputs.iterator();
+		Iterator<? extends IStoreItem> oIter = outputs.iterator();
 		while (oIter.hasNext())
 		{
 			ICollection thisC = (ICollection) oIter.next();
@@ -233,7 +234,7 @@ public class TestOperations extends TestCase
 		InMemoryStore store = new SampleData().getData(10);
 
 		// ok, let's try one that works
-		List<ICollection> selection = new ArrayList<ICollection>();
+		List<IStoreItem> selection = new ArrayList<IStoreItem>();
 
 		// ///////////////
 		// TEST INVALID PERMUTATIONS
@@ -247,7 +248,7 @@ public class TestOperations extends TestCase
 		selection.clear();
 		selection.add(speed_good_1);
 		selection.add(string_1);
-		Collection<ICommand<ICollection>> commands = new MultiplyQuantityOperation()
+		Collection<ICommand<IStoreItem>> commands = new MultiplyQuantityOperation()
 				.actionsFor(selection, store);
 		assertEquals("invalid collections - not both quantities", 0,
 				commands.size());
@@ -279,7 +280,7 @@ public class TestOperations extends TestCase
 		commands = new MultiplyQuantityOperation().actionsFor(selection, store);
 		assertEquals("valid collections - one is singleton", 1, commands.size());
 
-		ICommand<ICollection> command = commands.iterator().next();
+		ICommand<IStoreItem> command = commands.iterator().next();
 
 		// test actions has single item: "Multiply series by constant"
 		assertEquals("correct name", "Multiply series", command.getTitle());
@@ -483,7 +484,7 @@ public class TestOperations extends TestCase
 		// place to store results data
 		InMemoryStore store = new SampleData().getData(10);
 
-		List<ICollection> selection = new ArrayList<ICollection>(3);
+		List<IStoreItem> selection = new ArrayList<IStoreItem>();
 
 		IQuantityCollection<Velocity> speed_good_1 = (IQuantityCollection<Velocity>) store
 				.get(SampleData.SPEED_ONE);
@@ -504,7 +505,7 @@ public class TestOperations extends TestCase
 		selection.add(speed_good_1);
 		selection.add(speed_good_2);
 		selection.add(length_1);
-		Collection<ICommand<ICollection>> commands = new DivideQuantityOperation()
+		Collection<ICommand<IStoreItem>> commands = new DivideQuantityOperation()
 				.actionsFor(selection, store);
 		assertEquals("invalid number of inputs", 0, commands.size());
 
@@ -533,7 +534,7 @@ public class TestOperations extends TestCase
 		commands = new DivideQuantityOperation().actionsFor(selection, store);
 		assertEquals("valid input", 2, commands.size());
 
-		ICommand<ICollection> command = commands.iterator().next();
+		ICommand<IStoreItem> command = commands.iterator().next();
 
 		store.clear();
 		command.execute();
@@ -559,7 +560,7 @@ public class TestOperations extends TestCase
 		commands = new DivideQuantityOperation().actionsFor(selection, store);
 		assertEquals("valid input", 2, commands.size());
 
-		Iterator<ICommand<ICollection>> iterator = commands.iterator();
+		Iterator<ICommand<IStoreItem>> iterator = commands.iterator();
 		command = iterator.next();
 
 		store.clear();
