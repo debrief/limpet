@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -67,7 +68,7 @@ public class TestGeotoolsGeometry extends TestCase
 		
 		Collection<ICommand<IStoreItem>> ops = genny.actionsFor(sel, store);
 		assertNotNull("created command", ops);
-		assertEquals("created operatoins",1, ops.size());
+		assertEquals("created operatoins",2, ops.size());
 		ICommand<IStoreItem> firstOp = ops.iterator().next();
 		assertEquals("store empty", 0, store.size());
 		firstOp.execute();
@@ -109,14 +110,20 @@ public class TestGeotoolsGeometry extends TestCase
 		
 		InMemoryStore store = new InMemoryStore();
 		
-		Collection<ICommand<IStoreItem>> ops = genny.actionsFor(sel, store);
+		List<ICommand<IStoreItem>> ops = (List<ICommand<IStoreItem>>) genny.actionsFor(sel, store);
 		assertNotNull("created command", ops);
-		assertEquals("created operatoins",1, ops.size());
-		ICommand<IStoreItem> firstOp = ops.iterator().next();
+		assertEquals("created operatoins",2, ops.size());
+		ICommand<IStoreItem> courseOp = ops.get(0);
 		assertEquals("store empty", 0, store.size());
-		firstOp.execute();
+		courseOp.execute();
 		assertEquals("new colls created", 2, store.size());
-		ICollection newColl = (ICollection) firstOp.getOutputs().get(0);
+		ICollection newColl = (ICollection) courseOp.getOutputs().get(0);
+		assertEquals("correct size", firstColl.size()-1, newColl.size());
+		ICommand<IStoreItem> speedOp = ops.get(1);
+		assertEquals("store empty", 2, store.size());
+		speedOp.execute();
+		assertEquals("new colls created", 4, store.size());
+		 newColl = (ICollection) courseOp.getOutputs().get(0);
 		assertEquals("correct size", firstColl.size()-1, newColl.size());
 		
 	}

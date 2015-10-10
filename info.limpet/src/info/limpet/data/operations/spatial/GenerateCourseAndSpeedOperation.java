@@ -45,7 +45,8 @@ public class GenerateCourseAndSpeedOperation implements IOperation<IStoreItem>
 			// ok, generate the new series
 			for (int i = 0; i < getInputs().size(); i++)
 			{
-				IQuantityCollection<?> target = getOutputCollection(getInputs().get(i).getName());
+				IQuantityCollection<?> target = getOutputCollection(getInputs().get(i)
+						.getName());
 				outputs.add(target);
 				// store the output
 				super.addOutput(target);
@@ -102,7 +103,7 @@ public class GenerateCourseAndSpeedOperation implements IOperation<IStoreItem>
 			{
 				Temporal.Location thisTrack = (Temporal.Location) iter.next();
 				IStoreItem thisOut = oIter.next();
-				
+
 				// ok, walk through it
 				Iterator<Geometry> pITer = thisTrack.getLocations().iterator();
 				Iterator<Long> tIter = thisTrack.getTimes().iterator();
@@ -118,7 +119,8 @@ public class GenerateCourseAndSpeedOperation implements IOperation<IStoreItem>
 
 					if (lastLocation != null)
 					{
-						calcAndStore(thisOut, calc, lastTime, lastLocation, thisTime, geometry);
+						calcAndStore(thisOut, calc, lastTime, lastLocation, thisTime,
+								geometry);
 					}
 
 					// and remember the values
@@ -129,8 +131,9 @@ public class GenerateCourseAndSpeedOperation implements IOperation<IStoreItem>
 			}
 		}
 
-		abstract protected void calcAndStore(IStoreItem thisOut, final GeodeticCalculator calc,
-				final long timeA, final Point locA, final long timeB, final Point locB);
+		abstract protected void calcAndStore(IStoreItem thisOut,
+				final GeodeticCalculator calc, final long timeA, final Point locA,
+				final long timeB, final Point locB);
 	}
 
 	CollectionComplianceTests aTests = new CollectionComplianceTests();
@@ -163,7 +166,7 @@ public class GenerateCourseAndSpeedOperation implements IOperation<IStoreItem>
 			}
 
 			ICommand<IStoreItem> genCourse = new DistanceOperation(null, selection,
-					destination, "Calculated course", title)
+					destination, "Generate calculated course", title)
 			{
 
 				protected IQuantityCollection<?> getOutputCollection(String title)
@@ -172,8 +175,9 @@ public class GenerateCourseAndSpeedOperation implements IOperation<IStoreItem>
 							+ title);
 				}
 
-				protected void calcAndStore(IStoreItem output, final GeodeticCalculator calc,
-						long lastTime, final Point locA, long thisTime, final Point locB)
+				protected void calcAndStore(IStoreItem output,
+						final GeodeticCalculator calc, long lastTime, final Point locA,
+						long thisTime, final Point locB)
 				{
 					// get the output dataset
 					Temporal.Angle_Degrees target = (Angle_Degrees) output;
@@ -183,12 +187,15 @@ public class GenerateCourseAndSpeedOperation implements IOperation<IStoreItem>
 							locA.getCentroid().getOrdinate(1));
 					calc.setDestinationGeographicPoint(locB.getCentroid().getOrdinate(0),
 							locB.getCentroid().getOrdinate(1));
-					double thisDist = calc.getAzimuth();
-					target.add(thisTime, Measure.valueOf(thisDist, target.getUnits()));
+					double angleDegs = calc.getAzimuth();
+					if (angleDegs < 0)
+						angleDegs += 360;
+
+					target.add(thisTime, Measure.valueOf(angleDegs, target.getUnits()));
 				}
 			};
 			ICommand<IStoreItem> genSpeed = new DistanceOperation(null, selection,
-					destination, "Calculated speed", title)
+					destination, "Generate calculated speed", title)
 			{
 
 				protected IQuantityCollection<?> getOutputCollection(String title)
@@ -197,8 +204,9 @@ public class GenerateCourseAndSpeedOperation implements IOperation<IStoreItem>
 							+ title);
 				}
 
-				protected void calcAndStore(IStoreItem output, final GeodeticCalculator calc,
-						long lastTime, final Point locA, long thisTime, final Point locB)
+				protected void calcAndStore(IStoreItem output,
+						final GeodeticCalculator calc, long lastTime, final Point locA,
+						long thisTime, final Point locB)
 				{
 					// get the output dataset
 					Temporal.Speed_MSec target = (Temporal.Speed_MSec) output;
@@ -208,7 +216,7 @@ public class GenerateCourseAndSpeedOperation implements IOperation<IStoreItem>
 							locA.getCentroid().getOrdinate(1));
 					calc.setDestinationGeographicPoint(locB.getCentroid().getOrdinate(0),
 							locB.getCentroid().getOrdinate(1));
-					double thisDist = calc.getAzimuth();
+					double thisDist = calc.getOrthodromicDistance();
 					double calcTime = thisTime - lastTime;
 					double thisSpeed = thisDist / calcTime;
 					target.add(thisTime, Measure.valueOf(thisSpeed, target.getUnits()));
