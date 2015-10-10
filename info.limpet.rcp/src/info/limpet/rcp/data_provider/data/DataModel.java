@@ -140,25 +140,25 @@ public class DataModel implements ITreeContentProvider
 	{
 		final StoreGroup coll = cw.getGroup();
 
-		final NamedList dList = new NamedList(cw, coll.getName());
+		//final NamedList dList = new NamedList(cw, coll.getName());
 		final Iterator<IStoreItem> dIter = coll.iterator();
 		while (dIter.hasNext())
 		{
 			final IStoreItem thisI = dIter.next();
 			if (thisI instanceof ICollection)
 			{
-				dList.add(new CollectionWrapper(dList, (ICollection) thisI));
+				res.add(new CollectionWrapper(cw, (ICollection) thisI));
 			}
 			else if (thisI instanceof StoreGroup)
 			{
-				dList.add(new GroupWrapper(dList, (StoreGroup) thisI));
+				res.add(new GroupWrapper(cw, (StoreGroup) thisI));
 			}
 		}
 		// did we find any?
-		if (dList.size() > 0)
-		{
-			res.add(dList);
-		}
+		//if (dList.size() > 0)
+		//{
+		//	res.add(dList);
+		//}
 	}
 
 	/**
