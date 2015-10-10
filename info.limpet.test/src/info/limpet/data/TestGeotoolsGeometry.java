@@ -1,16 +1,22 @@
 package info.limpet.data;
 
+import info.limpet.ICollection;
 import info.limpet.ICommand;
 import info.limpet.IStore;
 import info.limpet.IStore.IStoreItem;
+import info.limpet.data.csv.CsvParser;
 import info.limpet.data.impl.TemporalObjectCollection;
 import info.limpet.data.impl.samples.StockTypes;
 import info.limpet.data.impl.samples.StockTypes.NonTemporal.Location;
 import info.limpet.data.impl.samples.StockTypes.Temporal;
 import info.limpet.data.operations.spatial.DistanceBetweenTracksOperation;
+import info.limpet.data.operations.spatial.GenerateCourseOperation;
 import info.limpet.data.operations.spatial.GeoSupport;
 import info.limpet.data.store.InMemoryStore;
+import info.limpet.data.store.InMemoryStore.StoreGroup;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -39,6 +45,83 @@ public class TestGeotoolsGeometry extends TestCase
 				"test");
 		assertNotNull(locations);
 	}
+	
+	public void testGenerateSingleCourse() throws IOException
+	{
+		File file = TestCsvParser.getDataFile("americas_cup/usa.csv");
+		assertTrue(file.isFile());
+		CsvParser parser = new CsvParser();
+		List<IStoreItem> items = parser.parse(file.getAbsolutePath());
+		assertEquals("correct group", 1, items.size());
+		StoreGroup group = (StoreGroup) items.get(0);
+		assertEquals("correct num collections", 3, group.size());
+		ICollection firstColl = (ICollection) group.get(2);
+		assertEquals("correct num rows", 1708, firstColl.size());
+		
+		Temporal.Location track = (Temporal.Location) firstColl;
+		GenerateCourseOperation genny = new GenerateCourseOperation();
+		List<IStoreItem> sel = new ArrayList<IStoreItem>();
+		sel.add(track);
+		
+		InMemoryStore store = new InMemoryStore();
+		
+		Collection<ICommand<IStoreItem>> ops = genny.actionsFor(sel, store);
+		assertNotNull("created command", ops);
+		assertEquals("created operatoins",1, ops.size());
+		ICommand<IStoreItem> firstOp = ops.iterator().next();
+		assertEquals("store empty", 0, store.size());
+		firstOp.execute();
+		assertEquals("new coll created", 1, store.size());
+		ICollection newColl = (ICollection) firstOp.getOutputs().get(0);
+		assertEquals("correct size", firstColl.size()-1, newColl.size());
+		
+	}
+	
+
+	public void testGenerateMultipleCourse() throws IOException
+	{
+		File file = TestCsvParser.getDataFile("americas_cup/usa.csv");
+		assertTrue(file.isFile());
+		File file2 = TestCsvParser.getDataFile("americas_cup/nzl.csv");
+		assertTrue(file2.isFile());
+		CsvParser parser = new CsvParser();
+		List<IStoreItem> items = parser.parse(file.getAbsolutePath());
+		assertEquals("correct group", 1, items.size());
+		StoreGroup group = (StoreGroup) items.get(0);
+		assertEquals("correct num collections", 3, group.size());
+		ICollection firstColl = (ICollection) group.get(2);
+		assertEquals("correct num rows", 1708, firstColl.size());
+
+		List<IStoreItem> items2 = parser.parse(file2.getAbsolutePath());
+		assertEquals("correct group", 1, items2.size());
+		StoreGroup group2 = (StoreGroup) items2.get(0);
+		assertEquals("correct num collections", 3, group2.size());
+		ICollection secondColl = (ICollection) group2.get(2);
+		assertEquals("correct num rows", 1708, secondColl.size());
+
+		
+		Temporal.Location track1 = (Temporal.Location) firstColl;
+		Temporal.Location track2 = (Temporal.Location) secondColl;
+		GenerateCourseOperation genny = new GenerateCourseOperation();
+		List<IStoreItem> sel = new ArrayList<IStoreItem>();
+		sel.add(track1);
+		sel.add(track2);
+		
+		InMemoryStore store = new InMemoryStore();
+		
+		Collection<ICommand<IStoreItem>> ops = genny.actionsFor(sel, store);
+		assertNotNull("created command", ops);
+		assertEquals("created operatoins",1, ops.size());
+		ICommand<IStoreItem> firstOp = ops.iterator().next();
+		assertEquals("store empty", 0, store.size());
+		firstOp.execute();
+		assertEquals("new colls created", 2, store.size());
+		ICollection newColl = (ICollection) firstOp.getOutputs().get(0);
+		assertEquals("correct size", firstColl.size()-1, newColl.size());
+		
+	}
+	
+	
 	
 	public void testBuilder() throws TransformException
 	{
