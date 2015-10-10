@@ -7,8 +7,8 @@ import info.limpet.data.impl.TemporalObjectCollection;
 import info.limpet.data.impl.samples.StockTypes;
 import info.limpet.data.impl.samples.StockTypes.NonTemporal.Location;
 import info.limpet.data.impl.samples.StockTypes.Temporal;
-import info.limpet.data.operations.location.DistanceBetweenTracksOperation;
-import info.limpet.data.operations.location.GeoSupport;
+import info.limpet.data.operations.spatial.DistanceBetweenTracksOperation;
+import info.limpet.data.operations.spatial.GeoSupport;
 import info.limpet.data.store.InMemoryStore;
 
 import java.util.ArrayList;

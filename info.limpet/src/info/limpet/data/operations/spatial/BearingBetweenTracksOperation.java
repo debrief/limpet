@@ -1,4 +1,4 @@
-package info.limpet.data.operations.location;
+package info.limpet.data.operations.spatial;
 
 import info.limpet.ICommand;
 import info.limpet.IQuantityCollection;

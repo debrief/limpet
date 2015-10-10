@@ -1,4 +1,4 @@
-package info.limpet.data.operations.location;
+package info.limpet.data.operations.spatial;
 
 import org.geotools.geometry.DirectPosition2D;
 import org.geotools.geometry.GeometryBuilder;
