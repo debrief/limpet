@@ -23,7 +23,7 @@ import org.geotools.referencing.GeodeticCalculator;
 import org.opengis.geometry.Geometry;
 import org.opengis.geometry.primitive.Point;
 
-public class GenerateCourseOperation implements IOperation<IStoreItem>
+public class GenerateCourseAndSpeedOperation implements IOperation<IStoreItem>
 {
 
 	protected static abstract class DistanceOperation extends
@@ -45,7 +45,7 @@ public class GenerateCourseOperation implements IOperation<IStoreItem>
 			// ok, generate the new series
 			for (int i = 0; i < getInputs().size(); i++)
 			{
-				IQuantityCollection<?> target = getOutputCollection(getTitle());
+				IQuantityCollection<?> target = getOutputCollection(getInputs().get(i).getName());
 				outputs.add(target);
 				// store the output
 				super.addOutput(target);
@@ -162,13 +162,13 @@ public class GenerateCourseOperation implements IOperation<IStoreItem>
 				title = "Generate course for tracks";
 			}
 
-			ICommand<IStoreItem> newC = new DistanceOperation(null, selection,
+			ICommand<IStoreItem> genCourse = new DistanceOperation(null, selection,
 					destination, "Calculated course", title)
 			{
 
 				protected IQuantityCollection<?> getOutputCollection(String title)
 				{
-					return new StockTypes.Temporal.Angle_Degrees("Bearing between "
+					return new StockTypes.Temporal.Angle_Degrees("Generated course for "
 							+ title);
 				}
 
@@ -183,12 +183,40 @@ public class GenerateCourseOperation implements IOperation<IStoreItem>
 							locA.getCentroid().getOrdinate(1));
 					calc.setDestinationGeographicPoint(locB.getCentroid().getOrdinate(0),
 							locB.getCentroid().getOrdinate(1));
-					double thisDist = Math.random() * 12;
+					double thisDist = calc.getAzimuth();
 					target.add(thisTime, Measure.valueOf(thisDist, target.getUnits()));
 				}
 			};
+			ICommand<IStoreItem> genSpeed = new DistanceOperation(null, selection,
+					destination, "Calculated speed", title)
+			{
 
-			res.add(newC);
+				protected IQuantityCollection<?> getOutputCollection(String title)
+				{
+					return new StockTypes.Temporal.Speed_MSec("Generated speed for "
+							+ title);
+				}
+
+				protected void calcAndStore(IStoreItem output, final GeodeticCalculator calc,
+						long lastTime, final Point locA, long thisTime, final Point locB)
+				{
+					// get the output dataset
+					Temporal.Speed_MSec target = (Temporal.Speed_MSec) output;
+
+					// now find the range between them
+					calc.setStartingGeographicPoint(locA.getCentroid().getOrdinate(0),
+							locA.getCentroid().getOrdinate(1));
+					calc.setDestinationGeographicPoint(locB.getCentroid().getOrdinate(0),
+							locB.getCentroid().getOrdinate(1));
+					double thisDist = calc.getAzimuth();
+					double calcTime = thisTime - lastTime;
+					double thisSpeed = thisDist / calcTime;
+					target.add(thisTime, Measure.valueOf(thisSpeed, target.getUnits()));
+				}
+			};
+
+			res.add(genCourse);
+			res.add(genSpeed);
 		}
 
 		return res;

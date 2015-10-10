@@ -10,7 +10,7 @@ import info.limpet.data.impl.samples.StockTypes;
 import info.limpet.data.impl.samples.StockTypes.NonTemporal.Location;
 import info.limpet.data.impl.samples.StockTypes.Temporal;
 import info.limpet.data.operations.spatial.DistanceBetweenTracksOperation;
-import info.limpet.data.operations.spatial.GenerateCourseOperation;
+import info.limpet.data.operations.spatial.GenerateCourseAndSpeedOperation;
 import info.limpet.data.operations.spatial.GeoSupport;
 import info.limpet.data.store.InMemoryStore;
 import info.limpet.data.store.InMemoryStore.StoreGroup;
@@ -59,7 +59,7 @@ public class TestGeotoolsGeometry extends TestCase
 		assertEquals("correct num rows", 1708, firstColl.size());
 		
 		Temporal.Location track = (Temporal.Location) firstColl;
-		GenerateCourseOperation genny = new GenerateCourseOperation();
+		GenerateCourseAndSpeedOperation genny = new GenerateCourseAndSpeedOperation();
 		List<IStoreItem> sel = new ArrayList<IStoreItem>();
 		sel.add(track);
 		
@@ -102,7 +102,7 @@ public class TestGeotoolsGeometry extends TestCase
 		
 		Temporal.Location track1 = (Temporal.Location) firstColl;
 		Temporal.Location track2 = (Temporal.Location) secondColl;
-		GenerateCourseOperation genny = new GenerateCourseOperation();
+		GenerateCourseAndSpeedOperation genny = new GenerateCourseAndSpeedOperation();
 		List<IStoreItem> sel = new ArrayList<IStoreItem>();
 		sel.add(track1);
 		sel.add(track2);

@@ -20,7 +20,7 @@ import info.limpet.data.operations.SubtractQuantityOperation;
 import info.limpet.data.operations.UnitConversionOperation;
 import info.limpet.data.operations.spatial.BearingBetweenTracksOperation;
 import info.limpet.data.operations.spatial.DistanceBetweenTracksOperation;
-import info.limpet.data.operations.spatial.GenerateCourseOperation;
+import info.limpet.data.operations.spatial.GenerateCourseAndSpeedOperation;
 import info.limpet.rcp.analysis_view.AnalysisView;
 import info.limpet.rcp.data_frequency.DataFrequencyView;
 import info.limpet.rcp.operations.ShowInNamedView;
@@ -98,7 +98,7 @@ public class OperationsLibrary
 		List<IOperation<?>> spatial = new ArrayList<IOperation<?>>();
 		spatial.add(new DistanceBetweenTracksOperation());
 		spatial.add(new BearingBetweenTracksOperation());
-		spatial.add(new GenerateCourseOperation());
+		spatial.add(new GenerateCourseAndSpeedOperation());
 		return spatial;
 	}
 
