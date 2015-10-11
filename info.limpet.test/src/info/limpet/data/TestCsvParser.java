@@ -58,13 +58,13 @@ public class TestCsvParser extends TestCase
 		assertEquals("correct num rows", 1708, firstColl.size());
 	}
 	
-	private File getDataFile(String name)
+	public static File getDataFile(String name)
 	{
 		File file = new File(getFileName(name));
 		return file;
 	}
 
-	private String getFileName(String name)
+	public static String getFileName(String name)
 	{
 		StringBuilder builder = new StringBuilder();
 		builder.append("..");

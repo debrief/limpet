@@ -83,6 +83,8 @@ public class DataFrequencyView extends CoreAnalysisView
 	@Override
 	public void display(List<IStoreItem> res)
 	{
+		if(res.size() == 0)
+			return;
 
 		// they're all the same type - check the first one
 		Iterator<IStoreItem> iter = res.iterator();

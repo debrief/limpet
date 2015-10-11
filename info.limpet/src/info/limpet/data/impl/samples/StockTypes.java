@@ -5,6 +5,9 @@ import static javax.measure.unit.SI.KELVIN;
 import static javax.measure.unit.SI.METRE;
 import static javax.measure.unit.SI.RADIAN;
 import static javax.measure.unit.SI.SECOND;
+
+import java.util.List;
+
 import info.limpet.data.impl.ObjectCollection;
 import info.limpet.data.impl.QuantityCollection;
 import info.limpet.data.impl.TemporalObjectCollection;
@@ -27,6 +30,11 @@ public class StockTypes
 {
 
 	public static Unit<?> DEGREE_ANGLE = RADIAN.times(2 * Math.PI);
+
+	public static interface ILocations
+	{
+		public List<Geometry> getLocations();
+	}
 
 	/**
 	 * time series (temporal) collections
@@ -200,10 +208,17 @@ public class StockTypes
 		}
 
 		public static class Location extends TemporalObjectCollection<Geometry>
+				implements ILocations
 		{
 			public Location(String name)
 			{
 				super(name);
+			}
+
+			@Override
+			public List<Geometry> getLocations()
+			{
+				return super.getValues();
 			}
 
 			public Location()
@@ -270,11 +285,18 @@ public class StockTypes
 			}
 		}
 
-		public static class Location extends ObjectCollection<Geometry>
+		public static class Location extends ObjectCollection<Geometry> implements
+				ILocations
 		{
 			public Location(String name)
 			{
 				super(name);
+			}
+
+			@Override
+			public List<Geometry> getLocations()
+			{
+				return super.getValues();
 			}
 		}
 
