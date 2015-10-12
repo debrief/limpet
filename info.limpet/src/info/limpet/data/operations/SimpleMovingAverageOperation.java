@@ -114,7 +114,7 @@ public class SimpleMovingAverageOperation implements IOperation<ICollection>
 		}
 
 		@Override
-		protected void recalculate()
+		public void recalculate()
 		{
 			// update the results
 			performCalc(outputs);
