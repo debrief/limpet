@@ -39,7 +39,7 @@ public class TestDynamic extends TestCase
 		Collection<ICommand<?>> actions = new AddQuantityOperation().actionsFor(
 				selection, store);
 		ICommand<?> firstAction = actions.iterator().next();
-		assertEquals("correct action", "Add series", firstAction.getTitle());
+		assertEquals("correct action", "Add series", firstAction.getName());
 
 		// run the action
 		firstAction.execute();
@@ -86,7 +86,7 @@ public class TestDynamic extends TestCase
 		// ok - now for a further dependent calculation
 		actions = new AddQuantityOperation("output2").actionsFor(selection, store);
 		firstAction = actions.iterator().next();
-		assertEquals("correct action", "Add series", firstAction.getTitle());
+		assertEquals("correct action", "Add series", firstAction.getName());
 
 		// ok, now create the new series
 		firstAction.execute();

@@ -10,9 +10,8 @@ import java.util.List;
  * @author ian
  *
  */
-public interface ICommand<T extends IStoreItem> extends IChangeListener
+public interface ICommand<T extends IStoreItem> extends IChangeListener, IStoreItem
 {
-	public String getTitle();
 	public String getDescription();
 	public void execute();
 	public void undo();

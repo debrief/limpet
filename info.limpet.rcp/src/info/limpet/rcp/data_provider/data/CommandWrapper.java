@@ -1,6 +1,7 @@
 package info.limpet.rcp.data_provider.data;
 
 import info.limpet.ICommand;
+import info.limpet.IStore.IStoreItem;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ui.views.properties.IPropertySource;
@@ -23,7 +24,7 @@ public class CommandWrapper implements IAdaptable, LimpetWrapper
 		{
 			return new CommandPropertySource(this);
 		}
-		else if (adapter == ICommand.class)
+		else if (adapter == IStoreItem.class)
 		{
 			return _command;
 		}
@@ -50,6 +51,6 @@ public class CommandWrapper implements IAdaptable, LimpetWrapper
 	@Override
 	public String toString()
 	{
-		return _command.getTitle();
+		return _command.getName();
 	}
 }

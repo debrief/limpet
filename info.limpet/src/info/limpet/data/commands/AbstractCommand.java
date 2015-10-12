@@ -1,5 +1,6 @@
 package info.limpet.data.commands;
 
+import info.limpet.IChangeListener;
 import info.limpet.ICommand;
 import info.limpet.IQuantityCollection;
 import info.limpet.IStore;
@@ -116,12 +117,6 @@ public abstract class AbstractCommand<T extends IStoreItem> implements
 	}
 
 	@Override
-	public String getTitle()
-	{
-		return title;
-	}
-
-	@Override
 	public String getDescription()
 	{
 		return description;
@@ -181,4 +176,39 @@ public abstract class AbstractCommand<T extends IStoreItem> implements
 		outputs.add(output);
 	}
 
+	@Override
+	public String getName()
+	{
+		return title;
+	}
+
+	@Override
+	public boolean hasChildren()
+	{
+		return true;
+	}
+
+	@Override
+	public void addChangeListener(IChangeListener listener)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeChangeListener(IChangeListener listener)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void fireChanged()
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	
+	
 }

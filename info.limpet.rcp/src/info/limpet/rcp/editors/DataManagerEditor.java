@@ -406,7 +406,7 @@ public class DataManagerEditor extends EditorPart implements
 			while (mIter.hasNext())
 			{
 				final ICommand<IStoreItem> thisC = (ICommand<IStoreItem>) mIter.next();
-				newM.add(new Action(thisC.getTitle())
+				newM.add(new Action(thisC.getName())
 				{
 					@Override
 					public void run()
