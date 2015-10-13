@@ -243,6 +243,11 @@ public class StockTypes
 			{
 				super(name, METRE.divide(SECOND).asType(Velocity.class));
 			}
+
+			public Speed_MSec()
+			{
+				this(null);
+			}
 		}
 
 		public static class Angle_Degrees extends QuantityCollection<Angle>
@@ -250,6 +255,11 @@ public class StockTypes
 			public Angle_Degrees(String name)
 			{
 				super(name, DEGREE_ANGLE.asType(Angle.class));
+			}
+
+			public Angle_Degrees()
+			{
+				this(null);
 			}
 		}
 
@@ -259,6 +269,12 @@ public class StockTypes
 			{
 				super(name, METRE.asType(Length.class));
 			}
+
+			public Length_M()
+			{
+				this(null);
+			}
+
 		}
 
 		public static class DimensionlessDouble extends
@@ -283,6 +299,12 @@ public class StockTypes
 				super(name, METRE.divide(SECOND).divide(SECOND)
 						.asType(Acceleration.class));
 			}
+
+			public Acceleration_MSecSec()
+			{
+				this(null);
+			}
+
 		}
 
 		public static class Location extends ObjectCollection<Geometry> implements
@@ -291,6 +313,11 @@ public class StockTypes
 			public Location(String name)
 			{
 				super(name);
+			}
+
+			public Location()
+			{
+				this(null);
 			}
 
 			@Override
@@ -306,6 +333,12 @@ public class StockTypes
 			{
 				super(name);
 			}
+
+			public Strings()
+			{
+				this(null);
+			}
+
 		}
 	}
 }

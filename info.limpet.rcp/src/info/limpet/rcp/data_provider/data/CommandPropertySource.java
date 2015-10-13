@@ -86,7 +86,7 @@ public class CommandPropertySource implements IPropertySource
 		final String prop = (String) id;
 
 		if (prop.equals(COMMAND_NAME))
-			return _operation.getCommand().getTitle();
+			return _operation.getCommand().getName();
 		else if (prop.equals(COMMAND_DESCRIPTION))
 			return _operation.getCommand().getDescription();
 		else if (prop.equals(COMMAND_DYNAMIC))

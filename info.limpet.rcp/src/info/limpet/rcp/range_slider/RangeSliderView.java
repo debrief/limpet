@@ -16,10 +16,12 @@ import org.eclipse.swt.widgets.Slider;
 
 import info.limpet.IChangeListener;
 import info.limpet.ICollection;
+import info.limpet.ICommand;
 import info.limpet.IQuantityCollection;
 import info.limpet.IStore.IStoreItem;
 import info.limpet.QuantityRange;
 import info.limpet.data.operations.CollectionComplianceTests;
+import info.limpet.data.operations.SimpleMovingAverageOperation.SimpleMovingAverageCommand;
 import info.limpet.rcp.core_view.CoreAnalysisView;
 
 /**
@@ -47,7 +49,8 @@ public class RangeSliderView extends CoreAnalysisView implements
 
 	private Label label;
 
-	private IQuantityCollection<Quantity> _current;
+	private IQuantityCollection<Quantity> _currentColl;
+	private SimpleMovingAverageCommand _command;
 
 	/**
 	 * The constructor.
@@ -115,14 +118,15 @@ public class RangeSliderView extends CoreAnalysisView implements
 
 	protected void setValue(double val)
 	{
-		if (getData() != null)
+		if(_currentColl != null)
 		{
-			if (getData().size() > 0)
-			{
-				IQuantityCollection<?> qc = (IQuantityCollection<?>) getData().get(0);
-				qc.replaceSingleton(val);
-				qc.fireChanged();
-			}
+			_currentColl.replaceSingleton(val);
+			_currentColl.fireChanged();
+		}
+		else if(_command != null)
+		{
+			_command.setWindowSize((int)val);
+			_command.recalculate();
 		}
 	}
 
@@ -130,24 +134,74 @@ public class RangeSliderView extends CoreAnalysisView implements
 	@Override
 	public void display(List<IStoreItem> res)
 	{
-		ICollection newColl = (ICollection) res.get(0);
-
-		// is this different?
-		if (_current != newColl)
+		if(res.size() != 1)
+			return;
+		
+		if(_currentColl != null)
 		{
-			// are we showing anything?
-			if (_current != null)
-			{
-				// ok, stop listening
-				_current.removeChangeListener(this);
+			// ok, stop listening
+			_currentColl.removeChangeListener(this);
+			
+		}
+		
+		if(_command != null)
+		{
+			
+		}
+		
+		
+		IStoreItem first = res.get(0);
+		if(first instanceof ICollection)
+		{
+			ICollection newColl = (ICollection) res.get(0);
 
-				_current = null;
+			_currentColl = (IQuantityCollection<Quantity>) newColl;
+
+			showData(_currentColl);
+		}
+		else if(first instanceof ICommand<?>)
+		{
+
+			if(first instanceof SimpleMovingAverageCommand)
+			{
+				SimpleMovingAverageCommand command = (SimpleMovingAverageCommand) first;
+
+			// is this different?
+			if (_command != command)
+			{
+				// are we showing anything?
+				if (_command != null)
+				{
+					_command = null;
+				}
+			}
+
+			_command = command;
+
+			showData(_command);
+
 			}
 		}
+		
+	}
 
-		_current = (IQuantityCollection<Quantity>) newColl;
+	private void showData(SimpleMovingAverageCommand command)
+	{
+		int curVal = (int)command.getWindowSize();
 
-		showData(_current);
+		label.setText(command.getName());
+
+		slider.setMinimum((int) 1);
+		slider.setMaximum((int) (50 + slider.getThumb()));
+		// note: add the width of the thumb object to get the true max value
+		slider.setSelection(curVal);
+
+		minL.setText("" + 0);
+		maxL.setText("" + 50);
+		val.setText("" + curVal);
+
+		label.getParent().getParent().layout(true, true);
+		label.getParent().getParent().redraw();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -193,7 +247,6 @@ public class RangeSliderView extends CoreAnalysisView implements
 
 		if (selection.size() == 1)
 		{
-
 			IStoreItem item = selection.iterator().next();
 			if (item instanceof ICollection)
 			{
@@ -209,7 +262,20 @@ public class RangeSliderView extends CoreAnalysisView implements
 					}
 				}
 			}
+			else if (item instanceof ICommand)
+			{
+				ICommand<?> coll = (ICommand<?>) item;
+
+				if(coll instanceof SimpleMovingAverageCommand)
+				{
+						res = true;
+				}
+			}
+			
 		}
+		
+		slider.setEnabled(res);
+		
 		return res;
 	}
 
@@ -223,7 +289,7 @@ public class RangeSliderView extends CoreAnalysisView implements
 	public void dataChanged(IStoreItem subject)
 	{
 		// ok, re=do the update
-		showData(_current);
+		showData(_currentColl);
 	}
 
 	@Override

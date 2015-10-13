@@ -196,7 +196,7 @@ public class TestOperations extends TestCase
 		ICollection firstItem = (ICollection) store.iterator().next();
 		ICommand<?> precedent = firstItem.getPrecedent();
 		assertNotNull("has precedent", precedent);
-		assertEquals("Correct name", "Add series", precedent.getTitle());
+		assertEquals("Correct name", "Add series", precedent.getName());
 
 		List<? extends IStoreItem> inputs = precedent.getInputs();
 		assertEquals("Has both precedents", 2, inputs.size());
@@ -283,7 +283,7 @@ public class TestOperations extends TestCase
 		ICommand<IStoreItem> command = commands.iterator().next();
 
 		// test actions has single item: "Multiply series by constant"
-		assertEquals("correct name", "Multiply series", command.getTitle());
+		assertEquals("correct name", "Multiply series", command.getName());
 
 		// apply action
 		command.execute();

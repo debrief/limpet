@@ -425,7 +425,7 @@ public class CollectionComplianceTests
 		while (iter.hasNext())
 		{
 			IStoreItem storeItem = iter.next();
-			if(storeItem instanceof StoreGroup)
+			if(!(storeItem instanceof ICollection))
 			{
 				res = false;
 				break;

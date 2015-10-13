@@ -55,7 +55,7 @@
    	<editor
       	name="Data Manager Editor"
       	extensions="lap"
-      	icon="icons/sample.gif"
+      	icon="icons/limpet.png"
       	class="info.limpet.rcp.editors.DataManagerEditor"
       	contributorClass="info.limpet.rcp.editors.DataManagerEditorActionBarContributor"
       	id="info.limpet.rcp.editors.dataManagerEditor">
@@ -76,7 +76,7 @@
       <perspective
             name="Limpet Perspective"
             class="info.limpet.rcp.product.Perspective"
-            icon="icons/debrief_icon.png"
+            icon="icons/limpet.png"
             id="info.limpet.product.perspective">
       </perspective>
    </extension>
@@ -88,10 +88,10 @@
             name="Limpet" description="Lightweight InforMation ProcEssing Toolkit">
          	<property name="appName" value="Limpet"/>
             <property name="introTitle" value="Welcome to Limpet"/>
-            <property name="introBrandingImage" value="product:icons/icon.png"/>
+            <property name="introBrandingImage" value="product:icons/about.jpg"/>
             <property name="introBrandingImageText"
                 value="Limpet"/>
-            <property name="aboutImage" value="icons/DebriefNGlogoSmall.png"/>
+            <property name="aboutImage" value="icons/about.png"/>
             <property name="windowImages" value="icons/icon.png,icons/48/icon_48.png"/>
             <property name="startupForegroundColor" value="000000"/>
             <property name="startupMessageRect" value="0,0,0,0"/>
@@ -103,7 +103,7 @@
             <property name="aboutText" value="%aboutText"> </property>
          <property
                name="windowImages"
-               value="icons/alt_window_16.gif,icons/alt_window_32.gif">
+               value="icons/limpet.png,icons/alt_window_32.gif">
          </property>
          <property
                name="preferenceCustomization"

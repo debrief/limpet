@@ -140,11 +140,11 @@ public class GenerateCourseAndSpeedOperation implements IOperation<IStoreItem>
 
 	protected boolean appliesTo(List<IStoreItem> selection)
 	{
-		boolean allLocation = aTests.allLocation(selection);
 		boolean nonEmpty = aTests.nonEmpty(selection);
 		boolean allTemporal = aTests.allTemporal(selection);
 
-		return (nonEmpty && allLocation & allTemporal);
+		return (nonEmpty && allTemporal && aTests.allNonQuantity(selection) && aTests
+				.allLocation(selection));
 	}
 
 	public Collection<ICommand<IStoreItem>> actionsFor(
@@ -218,7 +218,7 @@ public class GenerateCourseAndSpeedOperation implements IOperation<IStoreItem>
 							locB.getCentroid().getOrdinate(1));
 					double thisDist = calc.getOrthodromicDistance();
 					double calcTime = thisTime - lastTime;
-					double thisSpeed = thisDist / calcTime;
+					double thisSpeed = thisDist / (calcTime / 1000d);
 					target.add(thisTime, Measure.valueOf(thisSpeed, target.getUnits()));
 				}
 			};
