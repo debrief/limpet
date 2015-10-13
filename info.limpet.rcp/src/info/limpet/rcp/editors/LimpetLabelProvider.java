@@ -44,8 +44,8 @@ public class LimpetLabelProvider extends LabelProvider
 		}
 		else if (obj instanceof CommandWrapper)
 		{
-			res = PlatformUI.getWorkbench().getSharedImages()
-					.getImage(ISharedImages.IMG_DEF_VIEW);
+			res = Activator.getImageFromRegistry(Activator
+					.getImageDescriptor("icons/interpolate.png"));
 		}
 		else if (obj instanceof NamedList)
 		{
