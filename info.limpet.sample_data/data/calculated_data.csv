@@ -1,4 +1,4 @@
-Name,Time(hhmmss),Time(dd/MMM/yy HH:mm:ss),Depth(m),Speed(Knots),Course(degs),Range(yds),Bearing(degs),Rel Brg(degs),ATB(degs),Brg Rate(degs/min),Color,Name,PrimaryName
+Name,Debrief Time(hhmmss),time,Depth(m),Speed(kts),Course(Degs),Range(yds),Bearing(Degs),Rel Brg(Degs),ATB(Degs),Brg Rate(Degs/min),Color,Name,PrimaryName
 ALPHA,951212 050300,12/Dec/95 05:03:00,0,2,268.7,37733,160.1,R108.6,R20.2,0.159L,Red,120503,503
 ALPHA,951212 050400,12/Dec/95 05:04:00,0,2,270.6,37724,159.5,R111.1,R20.1,0.157L,Red,504,504
 ALPHA,951212 050500,12/Dec/95 05:05:00,0,2,269.4,37734,158.8,R110.6,R19.7,0.156L,Red,505,505
