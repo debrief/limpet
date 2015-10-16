@@ -5,6 +5,8 @@ import static javax.measure.unit.SI.KELVIN;
 import static javax.measure.unit.SI.METRE;
 import static javax.measure.unit.SI.RADIAN;
 import static javax.measure.unit.SI.SECOND;
+import static javax.measure.unit.NonSI.YARD;
+import static javax.measure.unit.NonSI.NAUTICAL_MILE;
 
 import java.util.List;
 
@@ -56,6 +58,20 @@ public class StockTypes
 				this(null);
 			}
 		}
+		
+		public static class Speed_Kts extends TemporalQuantityCollection<Velocity>
+		{
+			public Speed_Kts(String name)
+			{
+				super(name, NAUTICAL_MILE.divide(SECOND).asType(Velocity.class));
+			}
+
+			public Speed_Kts()
+			{
+				this(null);
+			}
+		}
+
 
 		public static class DimensionlessDouble extends
 				TemporalQuantityCollection<Dimensionless>
@@ -79,6 +95,18 @@ public class StockTypes
 			}
 
 			public Length_M()
+			{
+				this(null);
+			}
+		}
+		public static class Length_Yd extends TemporalQuantityCollection<Length>
+		{
+			public Length_Yd(String name)
+			{
+				super(name, YARD.asType(Length.class));
+			}
+
+			public Length_Yd()
 			{
 				this(null);
 			}

@@ -11,7 +11,7 @@
       <view
             allowMultiple="true"
             name="Analysis View"
-            icon="icons/sample.gif"
+            icon="icons/overview.png"
             category="info.limpet.rcp"
             class="info.limpet.rcp.analysis_view.AnalysisView"
             id="info.limpet.rcp.AnalysisView">
@@ -19,7 +19,7 @@
       <view
             allowMultiple="true"
             name="Data Frequency"
-            icon="icons/sample.gif"
+            icon="icons/bar-chart.png"
             category="info.limpet.rcp"
             class="info.limpet.rcp.data_frequency.DataFrequencyView"
             id="info.limpet.rcp.DataFrequencyView">
@@ -27,7 +27,7 @@
       <view
             allowMultiple="true"
             name="Time Frequency"
-            icon="icons/sample.gif"
+            icon="icons/time-bar-chart.png"
             category="info.limpet.rcp"
             class="info.limpet.rcp.time_frequency.TimeFrequencyView"
             id="info.limpet.rcp.TimeFrequencyView">
@@ -36,7 +36,7 @@
             allowMultiple="true"
             category="info.limpet.rcp"
             class="info.limpet.rcp.xy_plot.XyPlotView"
-            icon="icons/sample.gif"
+            icon="icons/line-chart.png"
             id="info.limpet.rcp.XyPlotView"
             name="XY Plot">
       </view>
@@ -44,7 +44,7 @@
             allowMultiple="true"
             category="info.limpet.rcp"
             class="info.limpet.rcp.range_slider.RangeSliderView"
-            icon="icons/sample.gif"
+            icon="icons/properties.png"
             id="info.limpet.rcp.RangeSliderView"
             name="Range Slider">
       </view>
@@ -74,7 +74,7 @@
    <extension
          point="org.eclipse.ui.perspectives">
       <perspective
-            name="Limpet Perspective"
+            name="Data Analysis"
             class="info.limpet.rcp.product.Perspective"
             icon="icons/limpet.png"
             id="info.limpet.product.perspective">
