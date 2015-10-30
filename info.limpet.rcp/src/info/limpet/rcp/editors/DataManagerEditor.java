@@ -33,8 +33,11 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.DecoratingLabelProvider;
+import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
@@ -125,7 +128,9 @@ public class DataManagerEditor extends EditorPart implements
 		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		_model = new DataModel();
 		viewer.setContentProvider(_model);
-		viewer.setLabelProvider(new LimpetLabelProvider());
+		LabelProvider labelProvider = new LimpetLabelProvider();
+		ILabelDecorator decorator = PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator();
+		viewer.setLabelProvider(new DecoratingLabelProvider(labelProvider, decorator));
 		viewer.setInput(_store);
 
 		getSite().setSelectionProvider(viewer);
