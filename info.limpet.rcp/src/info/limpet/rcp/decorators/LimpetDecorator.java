@@ -36,9 +36,9 @@ public class LimpetDecorator implements ILightweightLabelDecorator
 		TWO_WAY_ARROW = AbstractUIPlugin.imageDescriptorFromPlugin(
 				Activator.PLUGIN_ID, "icons/two_way_arrow.png");
 		TIME = AbstractUIPlugin.imageDescriptorFromPlugin(Activator.PLUGIN_ID,
-				"icons/time_dec.png");
+				"icons/watch.png");
 		QUANTITY = AbstractUIPlugin.imageDescriptorFromPlugin(Activator.PLUGIN_ID,
-				"icons/quantity_dec.png");
+				"icons/plus.png");
 	}
 	
 	@Override
