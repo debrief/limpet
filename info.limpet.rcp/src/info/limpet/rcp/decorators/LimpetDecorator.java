@@ -19,7 +19,7 @@ public class LimpetDecorator implements ILightweightLabelDecorator
 
 	private static final ImageDescriptor TIME;
 	
-	private static final ImageDescriptor MULTIPLE;
+	private static final ImageDescriptor SINGLE;
 	
 	private static final ImageDescriptor LEFT_ARROW;
 
@@ -32,15 +32,15 @@ public class LimpetDecorator implements ILightweightLabelDecorator
 	static
 	{
 		LEFT_ARROW = AbstractUIPlugin.imageDescriptorFromPlugin(Activator.PLUGIN_ID,
-				"icons/left_arrow.png");
+				"icons/left.png");
 		RIGHT_ARROW = AbstractUIPlugin.imageDescriptorFromPlugin(
-				Activator.PLUGIN_ID, "icons/right_arrow.png");
+				Activator.PLUGIN_ID, "icons/right.png");
 		TWO_WAY_ARROW = AbstractUIPlugin.imageDescriptorFromPlugin(
-				Activator.PLUGIN_ID, "icons/two_way_arrow.png");
+				Activator.PLUGIN_ID, "icons/left_right.png");
 		TIME = AbstractUIPlugin.imageDescriptorFromPlugin(Activator.PLUGIN_ID,
 				"icons/watch.png");
-		MULTIPLE = AbstractUIPlugin.imageDescriptorFromPlugin(Activator.PLUGIN_ID,
-				"icons/plus.png");
+		SINGLE = AbstractUIPlugin.imageDescriptorFromPlugin(Activator.PLUGIN_ID,
+				"icons/one.png");
 		
 		// TODO: switch to better "dynamic/connected" icon.
 		DYNAMIC = AbstractUIPlugin.imageDescriptorFromPlugin(Activator.PLUGIN_ID,
@@ -121,7 +121,7 @@ public class LimpetDecorator implements ILightweightLabelDecorator
 			}
 			if (coll.size()==1)
 			{
-				decoration.addOverlay(MULTIPLE, IDecoration.BOTTOM_LEFT);
+				decoration.addOverlay(SINGLE, IDecoration.BOTTOM_LEFT);
 			}
 		}
 	}
