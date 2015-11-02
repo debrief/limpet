@@ -161,7 +161,11 @@ public class ObjectCollection<T extends Object> implements IObjectCollection<T>
 		if (superType instanceof ParameterizedType)
 		{
 			final ParameterizedType parameterizedType = (ParameterizedType) superType;
-			return (Class<?>) parameterizedType.getActualTypeArguments()[0];
+			Type theItem = parameterizedType.getActualTypeArguments()[0];
+			if(theItem instanceof Class<?>)
+				return (Class<?>) theItem;
+			else
+				return null;
 		}
 		else
 		{
