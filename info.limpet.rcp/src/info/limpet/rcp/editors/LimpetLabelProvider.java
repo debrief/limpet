@@ -1,9 +1,6 @@
 package info.limpet.rcp.editors;
 
-import javax.measure.unit.Dimension;
-
 import info.limpet.ICollection;
-import info.limpet.IObjectCollection;
 import info.limpet.IQuantityCollection;
 import info.limpet.data.impl.samples.StockTypes.NonTemporal;
 import info.limpet.data.impl.samples.StockTypes.Temporal;
@@ -12,6 +9,8 @@ import info.limpet.rcp.data_provider.data.CollectionWrapper;
 import info.limpet.rcp.data_provider.data.CommandWrapper;
 import info.limpet.rcp.data_provider.data.GroupWrapper;
 import info.limpet.rcp.data_provider.data.NamedList;
+
+import javax.measure.unit.Dimension;
 
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;

@@ -3,7 +3,6 @@ package info.limpet.data.operations;
 import info.limpet.ICollection;
 import info.limpet.IQuantityCollection;
 import info.limpet.IStore.IStoreItem;
-import info.limpet.data.store.InMemoryStore.StoreGroup;
 
 import java.util.Iterator;
 import java.util.List;
