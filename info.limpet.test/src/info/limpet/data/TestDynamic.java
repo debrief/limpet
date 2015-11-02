@@ -5,7 +5,6 @@ import info.limpet.ICommand;
 import info.limpet.IQuantityCollection;
 import info.limpet.IStore.IStoreItem;
 import info.limpet.data.impl.CoreChangeListener;
-import info.limpet.data.impl.QuantityCollection;
 import info.limpet.data.impl.samples.SampleData;
 import info.limpet.data.operations.AddQuantityOperation;
 import info.limpet.data.store.InMemoryStore;
@@ -138,7 +137,7 @@ public class TestDynamic extends TestCase
 
 		
 		// check the data lengths
-		QuantityCollection<?> newResQ = (QuantityCollection<?>) newResSeries;
+		IQuantityCollection<?> newResQ = (IQuantityCollection<?>) newResSeries;
 		assertEquals("correct elements", 10, newResQ.size());
 		assertEquals("correct elements", 10, speedTwo.size());
 		assertEquals("correct elements", 10, resSeries.size());

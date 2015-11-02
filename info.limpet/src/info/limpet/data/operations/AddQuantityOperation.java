@@ -6,8 +6,10 @@ import info.limpet.IOperation;
 import info.limpet.IQuantityCollection;
 import info.limpet.IStore;
 import info.limpet.IStore.IStoreItem;
+import info.limpet.ITemporalQuantityCollection;
 import info.limpet.data.commands.AbstractCommand;
 import info.limpet.data.impl.QuantityCollection;
+import info.limpet.data.impl.TemporalQuantityCollection;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -83,8 +85,16 @@ public class AddQuantityOperation<Q extends Quantity> implements
 			List<IQuantityCollection<T>> outputs = new ArrayList<IQuantityCollection<T>>();
 
 			// ok, generate the new series
-			IQuantityCollection<T> target = new QuantityCollection<T>(
-					getOutputName(), this, unit);
+			// does it have to be temporal?
+			final IQuantityCollection<T> target;
+			if (first.isTemporal())
+			{
+				target = new TemporalQuantityCollection<T>(getOutputName(), this, unit);
+			}
+			else
+			{
+				target = new QuantityCollection<T>(getOutputName(), this, unit);
+			}
 
 			outputs.add(target);
 
@@ -158,7 +168,16 @@ public class AddQuantityOperation<Q extends Quantity> implements
 					}
 				}
 
-				target.add(Measure.valueOf(runningTotal, target.getUnits()));
+				if(target.isTemporal())
+				{
+					ITemporalQuantityCollection<T> qc = (ITemporalQuantityCollection<T>) target;
+					ITemporalQuantityCollection<T> qi = (ITemporalQuantityCollection<T>) inputs.get(0);
+					qc.add(qi.getTimes().toArray(new Long[]{})[j],  Measure.valueOf(runningTotal, target.getUnits()));					
+				}
+				else
+				{
+					target.add(Measure.valueOf(runningTotal, target.getUnits()));
+				}
 			}
 		}
 	}
