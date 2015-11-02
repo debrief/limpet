@@ -36,6 +36,7 @@ public class CsvParser
 			"dd/MM/yyyy hh:mm:ss");
 	public static final DateFormat TIME_FORMAT = new SimpleDateFormat(
 			"hh:mm:ss");
+	private ArrayList<DataImporter> _candidates;
 
 	public List<IStoreItem> parse(String filePath) throws IOException
 	{
@@ -47,24 +48,7 @@ public class CsvParser
 		boolean first = true;
 
 		// generate our list of importers
-		List<DataImporter> candidates = new ArrayList<DataImporter>();
-		candidates.add(new LocationImporter());
-		candidates.add(new TemporalSeriesSupporter<Temporal.ElapsedTime_Sec>(
-				Temporal.ElapsedTime_Sec.class, null, "secs"));
-		candidates.add(new TemporalSeriesSupporter<Temporal.Frequency_Hz>(
-				Temporal.Frequency_Hz.class, null, "Hz"));
-		candidates.add(new TemporalSeriesSupporter<Temporal.TurnRate>(
-				Temporal.TurnRate.class, null, "Degs/sec"));
-		candidates.add(new TemporalSeriesSupporter<Temporal.Length_M>(
-				Temporal.Length_M.class, null, "m"));
-		candidates.add(new TemporalSeriesSupporter<Temporal.Angle_Degrees>(
-				Temporal.Angle_Degrees.class, null, "Degs"));
-		candidates.add(new TemporalSeriesSupporter<Temporal.Speed_MSec>(
-				Temporal.Speed_MSec.class, null, "kts"));
-		candidates.add(new TemporalSeriesSupporter<Temporal.Speed_MSec>(
-				Temporal.Speed_MSec.class, null, "M/Sec"));
-		candidates.add(new TemporalSeriesSupporter<Temporal.Temp_C>(
-				Temporal.Temp_C.class, null, "C"));
+		createImporters();
 
 		final DataImporter temporalDimensionless = new TemporalSeriesSupporter<Temporal.DimensionlessDouble>(
 				Temporal.DimensionlessDouble.class, null, null);
@@ -115,12 +99,12 @@ public class CsvParser
 					else
 					{
 						// no, no units
-						colName = nextVal;
+						colName = nextVal.trim();
 					}
 
 					// see if anybody can handle this name
 					boolean handled = false;
-					Iterator<DataImporter> cIter = candidates.iterator();
+					Iterator<DataImporter> cIter = _candidates.iterator();
 					while (cIter.hasNext())
 					{
 						DataImporter thisI = cIter.next();
@@ -128,7 +112,7 @@ public class CsvParser
 						{
 							importers.add(thisI);
 							series
-									.add(thisI.create(fileName + " - " + thisI.nameFor(colName)));
+									.add(thisI.create(thisI.nameFor(colName)));
 							handled = true;
 							ctr += thisI.numCols();
 							break;
@@ -144,15 +128,14 @@ public class CsvParser
 						{
 							final String units = nextVal.substring(i1 + 1, i2).trim();
 
-							Iterator<DataImporter> cIter2 = candidates.iterator();
+							Iterator<DataImporter> cIter2 = _candidates.iterator();
 							while (cIter2.hasNext())
 							{
 								DataImporter thisI = cIter2.next();
 								if (thisI.handleUnits(units))
 								{
 									importers.add(thisI);
-									series.add(thisI.create(fileName + " - "
-											+ thisI.nameFor(colName)));
+									series.add(thisI.create(thisI.nameFor(colName)));
 									ctr += thisI.numCols();
 									handled = true;
 									break;
@@ -298,6 +281,31 @@ public class CsvParser
 		}
 
 		return res;
+	}
+
+	private void createImporters()
+	{
+		if(_candidates != null)
+			return; 
+		
+		_candidates = new ArrayList<DataImporter>();
+		_candidates.add(new LocationImporter());
+		_candidates.add(new TemporalSeriesSupporter<Temporal.ElapsedTime_Sec>(
+				Temporal.ElapsedTime_Sec.class, null, "secs"));
+		_candidates.add(new TemporalSeriesSupporter<Temporal.Frequency_Hz>(
+				Temporal.Frequency_Hz.class, null, "Hz"));
+		_candidates.add(new TemporalSeriesSupporter<Temporal.TurnRate>(
+				Temporal.TurnRate.class, null, "Degs/sec"));
+		_candidates.add(new TemporalSeriesSupporter<Temporal.Length_M>(
+				Temporal.Length_M.class, null, "m"));
+		_candidates.add(new TemporalSeriesSupporter<Temporal.Angle_Degrees>(
+				Temporal.Angle_Degrees.class, null, "Degs"));
+		_candidates.add(new TemporalSeriesSupporter<Temporal.Speed_MSec>(
+				Temporal.Speed_MSec.class, null, "kts"));
+		_candidates.add(new TemporalSeriesSupporter<Temporal.Speed_MSec>(
+				Temporal.Speed_MSec.class, null, "M/Sec"));
+		_candidates.add(new TemporalSeriesSupporter<Temporal.Temp_C>(
+				Temporal.Temp_C.class, null, "C"));
 	}
 
 	public static boolean isNumeric(String str)
