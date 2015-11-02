@@ -19,13 +19,15 @@ public class LimpetDecorator implements ILightweightLabelDecorator
 
 	private static final ImageDescriptor TIME;
 	
-	private static final ImageDescriptor QUANTITY;
+	private static final ImageDescriptor MULTIPLE;
 	
 	private static final ImageDescriptor LEFT_ARROW;
 
 	private static final ImageDescriptor RIGHT_ARROW;
 
 	private static final ImageDescriptor TWO_WAY_ARROW;
+
+	private static final ImageDescriptor DYNAMIC;
 
 	static
 	{
@@ -37,7 +39,11 @@ public class LimpetDecorator implements ILightweightLabelDecorator
 				Activator.PLUGIN_ID, "icons/two_way_arrow.png");
 		TIME = AbstractUIPlugin.imageDescriptorFromPlugin(Activator.PLUGIN_ID,
 				"icons/watch.png");
-		QUANTITY = AbstractUIPlugin.imageDescriptorFromPlugin(Activator.PLUGIN_ID,
+		MULTIPLE = AbstractUIPlugin.imageDescriptorFromPlugin(Activator.PLUGIN_ID,
+				"icons/plus.png");
+		
+		// TODO: switch to better "dynamic/connected" icon.
+		DYNAMIC = AbstractUIPlugin.imageDescriptorFromPlugin(Activator.PLUGIN_ID,
 				"icons/plus.png");
 	}
 	
@@ -81,7 +87,7 @@ public class LimpetDecorator implements ILightweightLabelDecorator
 	
 	protected void decorateWrapper(GroupWrapper element, IDecoration decoration)
 	{
-		// FIXME
+		// we don't currently apply and decorations to groups
 	}
 
 	protected void decorateWrapper(CommandWrapper element, IDecoration decoration)
@@ -91,6 +97,12 @@ public class LimpetDecorator implements ILightweightLabelDecorator
 		boolean in = coll.getInputs() != null && coll.getInputs().size() > 0;
 		boolean out = coll.getOutputs() != null && coll.getOutputs().size() > 0;
 		decorateInOut(decoration, in, out);
+		
+		// also apply a decoration to indicate that the symbol is dynamically updating
+		if(coll.getDynamic())
+		{
+			decoration.addOverlay(DYNAMIC, IDecoration.BOTTOM_RIGHT);
+		}
 	}
 
 	protected void decorateWrapper(CollectionWrapper element, IDecoration decoration)
@@ -107,9 +119,9 @@ public class LimpetDecorator implements ILightweightLabelDecorator
 			{
 				decoration.addOverlay(TIME, IDecoration.BOTTOM_RIGHT);
 			}
-			else if (coll.isQuantity())
+			if (coll.size()==1)
 			{
-				decoration.addOverlay(QUANTITY, IDecoration.BOTTOM_LEFT);
+				decoration.addOverlay(MULTIPLE, IDecoration.BOTTOM_LEFT);
 			}
 		}
 	}
