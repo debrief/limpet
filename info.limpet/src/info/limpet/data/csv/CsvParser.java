@@ -43,7 +43,8 @@ public class CsvParser
 		final List<IStoreItem> res = new ArrayList<IStoreItem>();
 		final File inFile = new File(filePath);
 		final Reader in = new FileReader(inFile);
-		final String fileName = inFile.getName();
+		final String fullFileName = inFile.getName();
+		final String fileName = filePrefix(fullFileName);
 		final Iterable<CSVRecord> records = CSVFormat.DEFAULT.parse(in);
 		boolean first = true;
 
@@ -112,7 +113,7 @@ public class CsvParser
 						{
 							importers.add(thisI);
 							series
-									.add(thisI.create(thisI.nameFor(colName)));
+									.add(thisI.create(fileName + "-" + thisI.nameFor(colName)));
 							handled = true;
 							ctr += thisI.numCols();
 							break;
@@ -135,7 +136,7 @@ public class CsvParser
 								if (thisI.handleUnits(units))
 								{
 									importers.add(thisI);
-									series.add(thisI.create(thisI.nameFor(colName)));
+									series.add(thisI.create(fileName + "-" + thisI.nameFor(colName)));
 									ctr += thisI.numCols();
 									handled = true;
 									break;
@@ -242,7 +243,7 @@ public class CsvParser
 							int index =importers.indexOf(dl);
 							importers.set(index, importer);
 							
-							series.set(index, importer.create(seriesName));
+							series.set(index, importer.create(fileName + "-" + seriesName));
 							
 							thisI = importer;
 						}
@@ -261,7 +262,7 @@ public class CsvParser
 		// ok, store the series
 		if (series.size() > 1)
 		{
-			StoreGroup target = new StoreGroup(fileName);
+			StoreGroup target = new StoreGroup(fullFileName);
 			Iterator<ICollection> sIter = series.iterator();
 			while (sIter.hasNext())
 			{
@@ -282,6 +283,11 @@ public class CsvParser
 
 		return res;
 	}
+	
+  private String filePrefix(String fullPath) { // gets filename without extension
+  	return fullPath.split("\\.(?=[^\\.]+$)")[0];
+
+  }
 
 	private void createImporters()
 	{
