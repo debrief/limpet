@@ -44,9 +44,25 @@ public abstract class CoreQuantityOperation<Q extends Quantity>
 		return res;
 	}
 
+	/**
+	 * produce any new commands for this s election
+	 * 
+	 * @param selection
+	 *          current selection
+	 * @param destination
+	 *          where the results will end up
+	 * @param commands
+	 *          the list of commands
+	 */
 	abstract protected void addCommands(List<IQuantityCollection<Q>> selection,
-			IStore destination, Collection<ICommand<IQuantityCollection<Q>>> res);
+			IStore destination, Collection<ICommand<IQuantityCollection<Q>>> commands);
 
+	/**
+	 * the command that actually produces data
+	 * 
+	 * @author ian
+	 * 
+	 */
 	abstract public class CoreQuantityCommand extends
 			AbstractCommand<IQuantityCollection<Q>>
 	{
@@ -54,11 +70,14 @@ public abstract class CoreQuantityOperation<Q extends Quantity>
 				String outputName, IStore store, boolean canUndo, boolean canRedo,
 				List<IQuantityCollection<Q>> inputs)
 		{
-			super("Add series", "Add numeric values in provided series", outputName,
-					store, false, false, inputs);
-
+			super(title, description, outputName, store, canUndo, canRedo, inputs);
 		}
 
+		/**
+		 * empty the contents of any results collections
+		 * 
+		 * @param outputs
+		 */
 		protected void clearOutputs(List<IQuantityCollection<Q>> outputs)
 		{
 			// clear out the lists, first
@@ -75,7 +94,9 @@ public abstract class CoreQuantityOperation<Q extends Quantity>
 		 * from the core "execute" operation in order to support dynamic updates
 		 * 
 		 * @param unit
+		 *          the units to use
 		 * @param outputs
+		 *          the list of output series
 		 */
 		protected void performCalc(Unit<Q> unit,
 				List<IQuantityCollection<Q>> outputs)
@@ -93,6 +114,13 @@ public abstract class CoreQuantityOperation<Q extends Quantity>
 			}
 		}
 
+		/**
+		 * produce a calculated value for the relevant index of the first input
+		 * collection
+		 * 
+		 * @param elementCount
+		 * @return
+		 */
 		abstract protected Double calcThisElement(int elementCount);
 
 		@Override
@@ -106,11 +134,20 @@ public abstract class CoreQuantityOperation<Q extends Quantity>
 			performCalc(unit, outputs);
 		}
 
+		/**
+		 * produce a target of the correct type
+		 * 
+		 * @param input
+		 *          one of the input series
+		 * @param unit
+		 *          the units to use
+		 * @return
+		 */
 		protected IQuantityCollection<Q> createQuantityTarget(
-				IQuantityCollection<Q> first, Unit<Q> unit)
+				IQuantityCollection<Q> input, Unit<Q> unit)
 		{
 			final IQuantityCollection<Q> target;
-			if (first.isTemporal())
+			if (input.isTemporal())
 			{
 				target = new TemporalQuantityCollection<Q>(getOutputName(), this, unit);
 			}
@@ -156,22 +193,32 @@ public abstract class CoreQuantityOperation<Q extends Quantity>
 			getStore().addAll(res);
 		}
 
+		/**
+		 * store this value into the target (optionally including temporal aspects)
+		 * 
+		 * @param target
+		 *          destination
+		 * @param count
+		 *          index for this value
+		 * @param value
+		 *          the value to store
+		 */
 		protected void storeValue(IQuantityCollection<Q> target, int count,
-				Double runningTotal)
+				Double value)
 		{
 			if (target.isTemporal())
 			{
+				// ok, the input and output arrays must be temporal.
 				ITemporalQuantityCollection<Q> qc = (ITemporalQuantityCollection<Q>) target;
 				ITemporalQuantityCollection<Q> qi = (ITemporalQuantityCollection<Q>) inputs
 						.get(0);
 				Long[] timeData = qi.getTimes().toArray(new Long[]
 				{});
-				qc.add(timeData[count],
-						Measure.valueOf(runningTotal, target.getUnits()));
+				qc.add(timeData[count], Measure.valueOf(value, target.getUnits()));
 			}
 			else
 			{
-				target.add(Measure.valueOf(runningTotal, target.getUnits()));
+				target.add(Measure.valueOf(value, target.getUnits()));
 			}
 		}
 

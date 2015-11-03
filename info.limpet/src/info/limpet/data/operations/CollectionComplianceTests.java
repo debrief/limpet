@@ -22,7 +22,7 @@ public class CollectionComplianceTests
 	 * @param num
 	 * @return
 	 */
-	public boolean exactNumber(final List<IStoreItem> selection, final int num)
+	public boolean exactNumber(final List<? extends IStoreItem> selection, final int num)
 	{
 		return selection.size() == num;
 	}
@@ -417,10 +417,10 @@ public class CollectionComplianceTests
 		return allValid;
 	}
 
-	public boolean allCollections(List<IStoreItem> selection)
+	public boolean allCollections(List<? extends IStoreItem> selection)
 	{
 		boolean res = true;
-		Iterator<IStoreItem> iter = selection.iterator();
+		Iterator<? extends IStoreItem> iter = selection.iterator();
 		while (iter.hasNext())
 		{
 			IStoreItem storeItem = iter.next();

@@ -55,6 +55,7 @@ public class AddQuantityOperation<Q extends Quantity> extends
 					store, false, false, selection);
 		}
 
+		@Override
 		protected Double calcThisElement(int elementCount)
 		{
 			Double thisResult = null;
@@ -77,7 +78,6 @@ public class AddQuantityOperation<Q extends Quantity> extends
 			}
 			return thisResult;
 		}
-
 	}
 
 }
