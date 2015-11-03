@@ -30,19 +30,62 @@ public abstract class CoreQuantityOperation<Q extends Quantity>
 		this.outputName = outputName;
 	}
 
-	abstract protected boolean appliesTo(List<IQuantityCollection<Q>> selection);
-
 	public Collection<ICommand<IQuantityCollection<Q>>> actionsFor(
 			List<IQuantityCollection<Q>> selection, IStore destination)
 	{
 		Collection<ICommand<IQuantityCollection<Q>>> res = new ArrayList<ICommand<IQuantityCollection<Q>>>();
 		if (appliesTo(selection))
 		{
-			addCommands(selection, destination, res);
+
+			// so, do we do our indexed commands?
+			if (aTests.allNonTemporal(selection) && aTests.allEqualLength(selection))
+			{
+				addIndexedCommands(selection, destination, res);
+			}
+
+			// aah, what about temporal (interpolated) values?
+			if (aTests.allTemporal(selection)
+					&& aTests.suitableForTimeInterpolation(selection))
+			{
+				addInterpolatedCommands(selection, destination, res);
+			}
+
 		}
 
 		return res;
 	}
+
+	protected ITemporalQuantityCollection<Q> getLongestTemporalCollections(
+			List<IQuantityCollection<Q>> selection)
+	{
+		// find the longest time series.
+		Iterator<IQuantityCollection<Q>> iter = selection.iterator();
+		ITemporalQuantityCollection<Q> longest = null;
+
+		while (iter.hasNext())
+		{
+			ITemporalQuantityCollection<Q> thisC = (ITemporalQuantityCollection<Q>) iter
+					.next();
+			if (longest == null)
+			{
+				longest = thisC;
+			}
+			else
+			{
+				// store the longest one
+				longest = thisC.size() > longest.size() ? thisC : longest;
+			}
+		}
+		return longest;
+	}
+
+	/**
+	 * determine if this dataset is suitable
+	 * 
+	 * @param selection
+	 * @return
+	 */
+	abstract protected boolean appliesTo(List<IQuantityCollection<Q>> selection);
 
 	/**
 	 * produce any new commands for this s election
@@ -54,8 +97,20 @@ public abstract class CoreQuantityOperation<Q extends Quantity>
 	 * @param commands
 	 *          the list of commands
 	 */
-	abstract protected void addCommands(List<IQuantityCollection<Q>> selection,
-			IStore destination, Collection<ICommand<IQuantityCollection<Q>>> commands);
+	abstract protected void addIndexedCommands(
+			List<IQuantityCollection<Q>> selection, IStore destination,
+			Collection<ICommand<IQuantityCollection<Q>>> commands);
+
+	/**
+	 * add any commands that require temporal interpolation
+	 * 
+	 * @param selection
+	 * @param destination
+	 * @param res
+	 */
+	abstract protected void addInterpolatedCommands(
+			List<IQuantityCollection<Q>> selection, IStore destination,
+			Collection<ICommand<IQuantityCollection<Q>>> res);
 
 	/**
 	 * the command that actually produces data
@@ -66,11 +121,25 @@ public abstract class CoreQuantityOperation<Q extends Quantity>
 	abstract public class CoreQuantityCommand extends
 			AbstractCommand<IQuantityCollection<Q>>
 	{
+
+		final private ITemporalQuantityCollection<Q> _timeProvider;
+
 		public CoreQuantityCommand(String title, String description,
 				String outputName, IStore store, boolean canUndo, boolean canRedo,
 				List<IQuantityCollection<Q>> inputs)
 		{
+			this(title, description, outputName, store, canUndo, canRedo, inputs,
+					null);
+		}
+
+		public CoreQuantityCommand(String title, String description,
+				String outputName, IStore store, boolean canUndo, boolean canRedo,
+				List<IQuantityCollection<Q>> inputs,
+				ITemporalQuantityCollection<Q> timeProvider)
+		{
 			super(title, description, outputName, store, canUndo, canRedo, inputs);
+
+			_timeProvider = timeProvider;
 		}
 
 		/**
@@ -105,12 +174,66 @@ public abstract class CoreQuantityOperation<Q extends Quantity>
 
 			clearOutputs(outputs);
 
-			for (int elementCount = 0; elementCount < inputs.get(0).size(); elementCount++)
+			if (_timeProvider != null)
 			{
-				Double thisResult = calcThisElement(elementCount);
+				Collection<Long> times = _timeProvider.getTimes();
+				Iterator<Long> iter = times.iterator();
+				while (iter.hasNext())
+				{
+					long thisT = (long) iter.next();
+					Double val = calcThisInterpolatedElement(thisT);
+					if (val != null)
+					{
+						storeTemporalValue(target, thisT, val);
+					}
+				}
+			}
+			else
+			{
+				for (int elementCount = 0; elementCount < inputs.get(0).size(); elementCount++)
+				{
+					Double thisResult = calcThisElement(elementCount);
 
-				// ok, done - store it!
-				storeValue(target, elementCount, thisResult);
+					// ok, done - store it!
+					storeValue(target, elementCount, thisResult);
+				}
+			}
+
+		}
+
+		private void storeTemporalValue(IQuantityCollection<Q> target, long thisT,
+				double val)
+		{
+			ITemporalQuantityCollection<Q> qc = (ITemporalQuantityCollection<Q>) target;
+			qc.add(thisT, Measure.valueOf(val, target.getUnits()));
+		}
+
+		/**
+		 * store this value into the target (optionally including temporal aspects)
+		 * 
+		 * @param target
+		 *          destination
+		 * @param count
+		 *          index for this value
+		 * @param value
+		 *          the value to store
+		 */
+		protected void storeValue(IQuantityCollection<Q> target, int count,
+				Double value)
+		{
+			if (target.isTemporal())
+			{
+				// ok, the input and output arrays must be temporal.
+				ITemporalQuantityCollection<Q> qc = (ITemporalQuantityCollection<Q>) target;
+				ITemporalQuantityCollection<Q> qi = (ITemporalQuantityCollection<Q>) inputs
+						.get(0);
+				Long[] timeData = qi.getTimes().toArray(new Long[]
+				{});
+				qc.add(timeData[count], Measure.valueOf(value, target.getUnits()));
+			}
+			else
+			{
+				target.add(Measure.valueOf(value, target.getUnits()));
 			}
 		}
 
@@ -122,6 +245,15 @@ public abstract class CoreQuantityOperation<Q extends Quantity>
 		 * @return
 		 */
 		abstract protected Double calcThisElement(int elementCount);
+
+		/**
+		 * produce a calculated value for the relevant index of the first input
+		 * collection
+		 * 
+		 * @param elementCount
+		 * @return
+		 */
+		abstract protected Double calcThisInterpolatedElement(long time);
 
 		@Override
 		protected void recalculate()
@@ -191,35 +323,6 @@ public abstract class CoreQuantityOperation<Q extends Quantity>
 			List<IStoreItem> res = new ArrayList<IStoreItem>();
 			res.add(target);
 			getStore().addAll(res);
-		}
-
-		/**
-		 * store this value into the target (optionally including temporal aspects)
-		 * 
-		 * @param target
-		 *          destination
-		 * @param count
-		 *          index for this value
-		 * @param value
-		 *          the value to store
-		 */
-		protected void storeValue(IQuantityCollection<Q> target, int count,
-				Double value)
-		{
-			if (target.isTemporal())
-			{
-				// ok, the input and output arrays must be temporal.
-				ITemporalQuantityCollection<Q> qc = (ITemporalQuantityCollection<Q>) target;
-				ITemporalQuantityCollection<Q> qi = (ITemporalQuantityCollection<Q>) inputs
-						.get(0);
-				Long[] timeData = qi.getTimes().toArray(new Long[]
-				{});
-				qc.add(timeData[count], Measure.valueOf(value, target.getUnits()));
-			}
-			else
-			{
-				target.add(Measure.valueOf(value, target.getUnits()));
-			}
 		}
 
 	}

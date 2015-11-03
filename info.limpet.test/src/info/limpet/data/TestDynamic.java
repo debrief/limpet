@@ -38,7 +38,7 @@ public class TestDynamic extends TestCase
 		Collection<ICommand<?>> actions = new AddQuantityOperation().actionsFor(
 				selection, store);
 		ICommand<?> firstAction = actions.iterator().next();
-		assertEquals("correct action", "Add series", firstAction.getName());
+		assertEquals("correct action", "Sum of input series (interpolated)", firstAction.getName());
 
 		// run the action
 		firstAction.execute();
@@ -47,7 +47,7 @@ public class TestDynamic extends TestCase
 		assertEquals("new data created", storeSize + 1, store.size());
 
 		// ok, get the new dataset
-		ICollection resSeries = (ICollection) store.get(AddQuantityOperation.SUM_OF_INPUT_SERIES);
+		ICollection resSeries = (ICollection) store.get("Sum of input series (interpolated)");
 		assertNotNull(resSeries);
 
 		// remember the units
@@ -85,7 +85,7 @@ public class TestDynamic extends TestCase
 		// ok - now for a further dependent calculation
 		actions = new AddQuantityOperation("output2").actionsFor(selection, store);
 		firstAction = actions.iterator().next();
-		assertEquals("correct action", "Add series", firstAction.getName());
+		assertEquals("correct action", "output2 (interpolated)", firstAction.getName());
 
 		// ok, now create the new series
 		firstAction.execute();
@@ -93,7 +93,7 @@ public class TestDynamic extends TestCase
 		// now check the output changed again
 		events.clear();
 
-		ICollection newResSeries = (ICollection) store.get("output2");
+		ICollection newResSeries = (ICollection) store.get("output2 (interpolated)");
 		assertNotNull("found new series");
 		newResSeries.addChangeListener(listener);
 
