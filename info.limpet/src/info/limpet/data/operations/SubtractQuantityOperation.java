@@ -36,9 +36,10 @@ public class SubtractQuantityOperation<Q extends Quantity> extends
 		if (aTests.exactNumber(selection, 2) && aTests.allCollections(selection))
 		{
 			boolean allQuantity = aTests.allQuantity(selection);
-			boolean equalLength = aTests.allEqualLength(selection);
+			boolean suitableLength = aTests.allTemporal(selection)
+					|| aTests.allNonTemporal(selection) && aTests.allEqualLength(selection);
 			boolean equalDimensions = aTests.allEqualDimensions(selection);
-			return (allQuantity && equalLength && equalDimensions);
+			return (allQuantity && suitableLength && equalDimensions);
 		}
 		else
 		{
