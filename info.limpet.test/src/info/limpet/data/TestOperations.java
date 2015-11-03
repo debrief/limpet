@@ -12,6 +12,7 @@ import info.limpet.ICommand;
 import info.limpet.IQuantityCollection;
 import info.limpet.IStore;
 import info.limpet.IStore.IStoreItem;
+import info.limpet.ITemporalQuantityCollection;
 import info.limpet.data.impl.ObjectCollection;
 import info.limpet.data.impl.QuantityCollection;
 import info.limpet.data.impl.TemporalQuantityCollection;
@@ -413,6 +414,48 @@ public class TestOperations extends TestCase
 
 	}
 
+
+	@SuppressWarnings(
+	{"unchecked" })
+	public void testAddition()
+	{
+		InMemoryStore store = new SampleData().getData(10);
+
+		// test invalid dimensions
+		ITemporalQuantityCollection<Velocity> speed_good_1 = (ITemporalQuantityCollection<Velocity>) store
+				.get(SampleData.SPEED_ONE);
+		IQuantityCollection<Velocity> speed_good_2 = (IQuantityCollection<Velocity>) store
+				.get(SampleData.SPEED_TWO);
+	
+		IQuantityCollection<Velocity> newS = (IQuantityCollection<Velocity>) store
+				.get("Sum of input series");
+
+		assertNotNull(newS);
+		assertEquals("correct size", 10, newS.size());
+
+		// assert same unit
+		assertEquals(newS.getUnits(), speed_good_1.getUnits());
+
+		double firstDifference = newS.getValues().get(0)
+				.doubleValue(newS.getUnits());
+		double speed1firstValue = speed_good_1.getValues().get(0)
+				.doubleValue(speed_good_1.getUnits());
+		double speed2firstValue = speed_good_2.getValues().get(0)
+				.doubleValue(speed_good_2.getUnits());
+
+		assertEquals(firstDifference, speed1firstValue + speed2firstValue);
+		
+		// test that original series have dependents
+		assertEquals("first series has dependents", 2, speed_good_1.getDependents().size());
+		assertEquals("second series has dependents", 1, speed_good_2.getDependents().size());
+		
+		// test that new series has predecessors
+		assertNotNull("new series has precedent", newS.getPrecedent());
+		
+		
+		
+	}
+	
 	@SuppressWarnings(
 	{ "rawtypes", "unchecked" })
 	public void testSubtraction()

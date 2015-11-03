@@ -14,12 +14,6 @@ import javax.measure.quantity.Quantity;
 import javax.measure.unit.Dimension;
 import javax.measure.unit.Unit;
 
-//public class QuantityCollection<T extends Quantity> extends
-//ObjectCollection<T> implements IQuantityCollection<T>
-
-//public interface ITemporalQuantityCollection<Q extends Quantity> extends
-//ITemporalObjectCollection<Measurable<Q>>,IBaseQuantityCollection<Q>, IQuantityCollection<Q>
-
 public class TemporalQuantityCollection<T extends Quantity> extends
 		TemporalObjectCollection<Measurable<T>> implements
 		ITemporalQuantityCollection<T>, IQuantityCollection<T>
@@ -41,7 +35,7 @@ public class TemporalQuantityCollection<T extends Quantity> extends
 	public TemporalQuantityCollection(String name, ICommand<?> precedent,
 			Unit<T> units)
 	{
-		super(name);
+		super(name, precedent);
 		this.units = units;
 		_qHelper = new QuantityHelper<T>((ArrayList<Measurable<T>>) values, units);
 	}
