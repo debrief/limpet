@@ -28,6 +28,17 @@ public class TemporalObjectCollection<T extends Object> extends
 		initTime();
 	}
 	
+	
+	
+	@Override
+	public void clear()
+	{
+		times.clear();
+		
+		// let the parent clear the objects/values
+		super.clear();
+	}
+
 	protected void initTime()
 	{
 		if(tSupport == null)

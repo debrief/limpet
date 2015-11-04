@@ -27,6 +27,7 @@ import info.limpet.data.impl.samples.StockTypes.Temporal;
 import info.limpet.data.operations.AddQuantityOperation;
 import info.limpet.data.operations.MultiplyQuantityOperation;
 import info.limpet.data.operations.SubtractQuantityOperation;
+import info.limpet.data.operations.UnitaryMathOperation;
 import info.limpet.data.store.InMemoryStore;
 
 import java.util.ArrayList;
@@ -289,7 +290,72 @@ public class TestCollections extends TestCase
 				22d,
 				tq.interpolateValue(440, InterpMethod.Linear).doubleValue(
 						(Unit) tq.getUnits()));
+	}
 
+	@SuppressWarnings(
+	{ "unchecked" })
+	public void testMathOperators()
+	{
+		ITemporalQuantityCollection<?> tq1 = new StockTypes.Temporal.Speed_MSec(
+				"Some data1");
+		tq1.add(100, 10);
+		tq1.add(200, -20);
+		tq1.add(300, 30);
+		tq1.add(400, -20);
+
+		ITemporalQuantityCollection<?> tq2 = new StockTypes.Temporal.Speed_MSec(
+				"Some data2");
+		tq2.add(220, -11);
+		tq2.add(340, -17);
+		tq2.add(440, -22);
+
+		List<ICollection> selection = new ArrayList<ICollection>();
+		selection.add((IQuantityCollection<Quantity>) tq1);
+		selection.add((IQuantityCollection<Quantity>) tq2);
+
+		InMemoryStore store = new InMemoryStore();
+		UnitaryMathOperation absOp = new UnitaryMathOperation("Abs")
+		{
+			@Override
+			public double calcFor(double val)
+			{
+				return Math.abs(val);
+			}
+		};
+		Collection<ICommand<ICollection>> commands = absOp.actionsFor(selection,
+				store);
+		ICommand<ICollection> firstC = commands.iterator().next();
+
+		assertEquals("store empty", 0, store.size());
+
+		firstC.execute();
+
+		assertEquals("new collection created", 2, store.size());
+		assertEquals("corrent num of outputs", 2, firstC.getOutputs().size());
+
+		// get the first one.
+		ITemporalQuantityCollection<?> series = (ITemporalQuantityCollection<?>) firstC.getOutputs().iterator().next();
+		assertTrue("non empty", series.size() > 0);
+		assertEquals("corrent length results", 4, series.size());
+		assertTrue("temporal", series.isTemporal());
+		assertTrue("quantity", series.isQuantity());
+		
+		// check some values
+		assertEquals("value correct", 10d, series.getValues().get(0).doubleValue((Unit) series.getUnits()));
+		assertEquals("value correct", 20d, series.getValues().get(1).doubleValue((Unit) series.getUnits()));
+		assertEquals("value correct", 30d, series.getValues().get(2).doubleValue((Unit) series.getUnits()));
+		assertEquals("value correct", 20d, series.getValues().get(3).doubleValue((Unit) series.getUnits()));
+
+		series = (ITemporalQuantityCollection<?>) firstC.getOutputs().get(1);
+		assertTrue("non empty", series.size() > 0);
+		assertEquals("corrent length results", 3, series.size());
+		assertTrue("temporal", series.isTemporal());
+		assertTrue("quantity", series.isQuantity());
+		
+		// check some values
+		assertEquals("value correct", 11d, series.getValues().get(0).doubleValue((Unit) series.getUnits()));
+		assertEquals("value correct", 17d, series.getValues().get(1).doubleValue((Unit) series.getUnits()));
+		assertEquals("value correct", 22d, series.getValues().get(2).doubleValue((Unit) series.getUnits()));
 	}
 
 	@SuppressWarnings(

@@ -213,4 +213,11 @@ public class ObjectCollection<T extends Object> implements IObjectCollection<T>
 		}		
 	}
 
+	@Override
+	public void clear()
+	{
+		values.clear();
+		fireDataChanged();
+	}
+
 }
