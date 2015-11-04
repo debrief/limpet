@@ -1,36 +1,26 @@
 package info.limpet.data.operations;
 
-import info.limpet.ICollection;
 import info.limpet.ICommand;
 import info.limpet.IOperation;
 import info.limpet.IQuantityCollection;
 import info.limpet.IStore;
-import info.limpet.IStore.IStoreItem;
-import info.limpet.data.commands.AbstractCommand;
-import info.limpet.data.impl.QuantityCollection;
+import info.limpet.ITemporalQuantityCollection;
+import info.limpet.ITemporalQuantityCollection.InterpMethod;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.measure.Measurable;
-import javax.measure.Measure;
 import javax.measure.quantity.Quantity;
-import javax.measure.unit.Unit;
 
-public class AddQuantityOperation<Q extends Quantity> implements
-		IOperation<IQuantityCollection<Q>>
+public class AddQuantityOperation<Q extends Quantity> extends
+		CoreQuantityOperation<Q> implements IOperation<IQuantityCollection<Q>>
 {
-	CollectionComplianceTests aTests = new CollectionComplianceTests();
-
 	public static final String SUM_OF_INPUT_SERIES = "Sum of input series";
-
-	final protected String outputName;
 
 	public AddQuantityOperation(String name)
 	{
-		outputName = name;
+		super(name);
 	}
 
 	public AddQuantityOperation()
@@ -38,128 +28,111 @@ public class AddQuantityOperation<Q extends Quantity> implements
 		this(SUM_OF_INPUT_SERIES);
 	}
 
-	public Collection<ICommand<IQuantityCollection<Q>>> actionsFor(
-			List<IQuantityCollection<Q>> selection, IStore destination)
+	@Override
+	protected void addInterpolatedCommands(
+			List<IQuantityCollection<Q>> selection, IStore destination,
+			Collection<ICommand<IQuantityCollection<Q>>> res)
 	{
-		Collection<ICommand<IQuantityCollection<Q>>> res = new ArrayList<ICommand<IQuantityCollection<Q>>>();
-		if (appliesTo(selection))
+		ITemporalQuantityCollection<Q> longest = getLongestTemporalCollections(selection);
+
+		if (longest != null)
 		{
 			ICommand<IQuantityCollection<Q>> newC = new AddQuantityValues<Q>(
-					outputName, selection, destination);
+					outputName + " (interpolated)", selection, destination, longest);
 			res.add(newC);
 		}
-
-		return res;
 	}
 
-	private boolean appliesTo(List<IQuantityCollection<Q>> selection)
+	protected void addIndexedCommands(List<IQuantityCollection<Q>> selection,
+			IStore destination, Collection<ICommand<IQuantityCollection<Q>>> res)
+	{
+		ICommand<IQuantityCollection<Q>> newC = new AddQuantityValues<Q>(
+				outputName, selection, destination);
+		res.add(newC);
+	}
+
+	protected boolean appliesTo(List<IQuantityCollection<Q>> selection)
 	{
 		boolean nonEmpty = aTests.nonEmpty(selection);
 		boolean allQuantity = aTests.allQuantity(selection);
-		boolean equalLength = aTests.allEqualLength(selection);
+		boolean suitableLength = aTests.allTemporal(selection)
+				|| aTests.allNonTemporal(selection) && aTests.allEqualLength(selection);
 		boolean equalDimensions = aTests.allEqualDimensions(selection);
 		boolean equalUnits = aTests.allEqualUnits(selection);
-		return (nonEmpty && allQuantity && equalLength && equalDimensions && equalUnits);
+
+		return (nonEmpty && allQuantity && suitableLength && equalDimensions && equalUnits);
 	}
 
 	public class AddQuantityValues<T extends Quantity> extends
-			AbstractCommand<IQuantityCollection<T>>
+			CoreQuantityOperation<Q>.CoreQuantityCommand
 	{
 
 		public AddQuantityValues(String outputName,
-				List<IQuantityCollection<T>> selection, IStore store)
+				List<IQuantityCollection<Q>> selection, IStore store)
 		{
-			super("Add series", "Add numeric values in provided series", outputName,
+			super(outputName, "Add numeric values in provided series", outputName,
 					store, false, false, selection);
 		}
 
-		@Override
-		public void execute()
+		public AddQuantityValues(String outputName,
+				List<IQuantityCollection<Q>> selection, IStore destination,
+				ITemporalQuantityCollection<Q> timeProvider)
 		{
-			// get the unit
-			IQuantityCollection<T> first = inputs.get(0);
-			Unit<T> unit = first.getUnits();
-
-			List<IQuantityCollection<T>> outputs = new ArrayList<IQuantityCollection<T>>();
-
-			// ok, generate the new series
-			IQuantityCollection<T> target = new QuantityCollection<T>(
-					getOutputName(), this, unit);
-
-			outputs.add(target);
-
-			// store the output
-			super.addOutput(target);
-
-			// start adding values.
-			performCalc(unit, outputs);
-
-			// tell each series that we're a dependent
-			Iterator<IQuantityCollection<T>> iter = inputs.iterator();
-			while (iter.hasNext())
-			{
-				ICollection iCollection = iter.next();
-				iCollection.addDependent(this);
-			}
-
-			// ok, done
-			List<IStoreItem> res = new ArrayList<IStoreItem>();
-			res.add(target);
-			getStore().addAll(res);
+			super(outputName, "Add numeric values in provided series", outputName,
+					destination, false, false, selection, timeProvider);
 		}
 
 		@Override
-		protected void recalculate()
+		protected Double calcThisElement(int elementCount)
 		{
-			// get the unit
-			IQuantityCollection<T> first = inputs.get(0);
-			Unit<T> unit = first.getUnits();
+			Double thisResult = null;
 
-			// update the results
-			performCalc(unit, outputs);
-		}
-
-		/**
-		 * wrap the actual operation. We're doing this since we need to separate it
-		 * from the core "execute" operation in order to support dynamic updates
-		 * 
-		 * @param unit
-		 * @param outputs
-		 */
-		private void performCalc(Unit<T> unit, List<IQuantityCollection<T>> outputs)
-		{
-			IQuantityCollection<T> target = outputs.iterator().next();
-
-			// clear out the lists, first
-			Iterator<IQuantityCollection<T>> iter = outputs.iterator();
-			while (iter.hasNext())
+			for (int seriesCount = 0; seriesCount < inputs.size(); seriesCount++)
 			{
-				IQuantityCollection<T> qC = (IQuantityCollection<T>) iter.next();
-				qC.getValues().clear();
-			}
+				IQuantityCollection<Q> thisC = inputs.get(seriesCount);
+				Measurable<Q> thisV = (Measurable<Q>) thisC.getValues().get(
+						elementCount);
 
-			for (int j = 0; j < inputs.get(0).size(); j++)
-			{
-				Double runningTotal = null;
-
-				for (int i = 0; i < inputs.size(); i++)
+				// is this the first field?
+				if (thisResult == null)
 				{
-					IQuantityCollection<T> thisC = inputs.get(i);
-					Measurable<T> thisV = (Measurable<T>) thisC.getValues().get(j);
+					thisResult = thisV.doubleValue(thisC.getUnits());
+				}
+				else
+				{
+					thisResult += thisV.doubleValue(thisC.getUnits());
+				}
+			}
+			return thisResult;
+		}
 
+		@Override
+		protected Double calcThisInterpolatedElement(long time)
+		{
+			Double thisResult = null;
+
+			for (int seriesCount = 0; seriesCount < inputs.size(); seriesCount++)
+			{
+				ITemporalQuantityCollection<Q> thisC = (ITemporalQuantityCollection<Q>) inputs
+						.get(seriesCount);
+
+				// find the value to use
+				Measurable<Q> thisV = thisC.interpolateValue(time, InterpMethod.Linear);
+
+				if (thisV != null)
+				{
 					// is this the first field?
-					if (runningTotal == null)
+					if (thisResult == null)
 					{
-						runningTotal = thisV.doubleValue(thisC.getUnits());
+						thisResult = thisV.doubleValue(thisC.getUnits());
 					}
 					else
 					{
-						runningTotal += thisV.doubleValue(thisC.getUnits());
+						thisResult += thisV.doubleValue(thisC.getUnits());
 					}
 				}
-
-				target.add(Measure.valueOf(runningTotal, target.getUnits()));
 			}
+			return thisResult;
 		}
 	}
 

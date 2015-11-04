@@ -6,9 +6,14 @@ import static javax.measure.unit.SI.METRE;
 import static javax.measure.unit.SI.METRES_PER_SECOND;
 import static javax.measure.unit.SI.SECOND;
 import info.limpet.IBaseTemporalCollection;
+import info.limpet.ICollection;
+import info.limpet.ICommand;
 import info.limpet.IQuantityCollection;
 import info.limpet.IStore;
+import info.limpet.IStore.IStoreItem;
 import info.limpet.ITemporalObjectCollection.Doublet;
+import info.limpet.ITemporalQuantityCollection;
+import info.limpet.ITemporalQuantityCollection.InterpMethod;
 import info.limpet.QuantityRange;
 import info.limpet.data.impl.ObjectCollection;
 import info.limpet.data.impl.QuantityCollection;
@@ -17,10 +22,17 @@ import info.limpet.data.impl.TemporalQuantityCollection;
 import info.limpet.data.impl.samples.SampleData;
 import info.limpet.data.impl.samples.StockTypes;
 import info.limpet.data.impl.samples.StockTypes.NonTemporal;
-import info.limpet.data.impl.samples.StockTypes.Temporal;
 import info.limpet.data.impl.samples.StockTypes.NonTemporal.Speed_MSec;
+import info.limpet.data.impl.samples.StockTypes.Temporal;
+import info.limpet.data.operations.AddQuantityOperation;
+import info.limpet.data.operations.MultiplyQuantityOperation;
+import info.limpet.data.operations.SubtractQuantityOperation;
+import info.limpet.data.store.InMemoryStore;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.measure.Measurable;
 import javax.measure.Measure;
@@ -54,7 +66,7 @@ public class TestCollections extends TestCase
 		tStr.add(1000, "aaa");
 		tStr.add(1002, "bbb");
 		assertEquals("correct size", 2, tStr.size());
-		
+
 		NonTemporal.Strings str = new NonTemporal.Strings("non t strings");
 		str.add("aaa");
 		str.add("bbb");
@@ -62,22 +74,412 @@ public class TestCollections extends TestCase
 		assertEquals("correct size", 3, str.size());
 
 	}
-	
+
+	@SuppressWarnings(
+	{ "rawtypes", "unchecked" })
+	public void testTemporalQuantityInterp()
+	{
+		ITemporalQuantityCollection<?> tq = new StockTypes.Temporal.Speed_MSec(
+				"Some data");
+		tq.add(100, 10);
+		tq.add(200, 20);
+		tq.add(300, 30);
+		tq.add(400, 40);
+
+		assertEquals("returned null", null,
+				tq.interpolateValue(90, InterpMethod.Linear));
+		assertEquals("returned null", null,
+				tq.interpolateValue(410, InterpMethod.Linear));
+
+		assertEquals(
+				"returned correct value",
+				15d,
+				tq.interpolateValue(150, InterpMethod.Linear).doubleValue(
+						(Unit) tq.getUnits()));
+		assertEquals(
+				"returned correct value",
+				28d,
+				tq.interpolateValue(280, InterpMethod.Linear).doubleValue(
+						(Unit) tq.getUnits()));
+		assertEquals(
+				"returned correct value",
+				10d,
+				tq.interpolateValue(100, InterpMethod.Linear).doubleValue(
+						(Unit) tq.getUnits()));
+		assertEquals(
+				"returned correct value",
+				20d,
+				tq.interpolateValue(200, InterpMethod.Linear).doubleValue(
+						(Unit) tq.getUnits()));
+		assertEquals(
+				"returned correct value",
+				30d,
+				tq.interpolateValue(300, InterpMethod.Linear).doubleValue(
+						(Unit) tq.getUnits()));
+		assertEquals(
+				"returned correct value",
+				40d,
+				tq.interpolateValue(400, InterpMethod.Linear).doubleValue(
+						(Unit) tq.getUnits()));
+	}
+
+	@SuppressWarnings(
+	{ "unchecked", "rawtypes" })
+	public void testAddQuantityTemporalInterp()
+	{
+		ITemporalQuantityCollection<?> tq1 = new StockTypes.Temporal.Speed_MSec(
+				"Some data1");
+		tq1.add(100, 10);
+		tq1.add(200, 20);
+		tq1.add(300, 30);
+		tq1.add(400, 40);
+
+		ITemporalQuantityCollection<?> tq2 = new StockTypes.Temporal.Speed_MSec(
+				"Some data2");
+		tq2.add(220, 11);
+		tq2.add(340, 17);
+		tq2.add(440, 22);
+
+		List<IQuantityCollection<Quantity>> selection = new ArrayList<IQuantityCollection<Quantity>>();
+		selection.add((IQuantityCollection<Quantity>) tq1);
+		selection.add((IQuantityCollection<Quantity>) tq2);
+
+		InMemoryStore store = new InMemoryStore();
+		Collection<ICommand<IQuantityCollection<Quantity>>> commands = new AddQuantityOperation<>()
+				.actionsFor(selection, store);
+		ICommand<IQuantityCollection<Quantity>> firstC = commands.iterator().next();
+
+		assertEquals("store empty", 0, store.size());
+
+		firstC.execute();
+
+		assertEquals("new collection created", 1, store.size());
+
+		ICollection series = (ICollection) store
+				.get("Sum of input series (interpolated)");
+		assertTrue("non empty", series.size() > 0);
+		assertTrue("temporal", series.isTemporal());
+		assertTrue("quantity", series.isQuantity());
+
+		ITemporalQuantityCollection<?> tq = (ITemporalQuantityCollection<?>) series;
+
+		assertEquals(
+				"returned correct value",
+				10d,
+				tq.interpolateValue(100, InterpMethod.Linear).doubleValue(
+						(Unit) tq.getUnits()));
+		assertEquals(
+				"returned correct value",
+				20d,
+				tq.interpolateValue(200, InterpMethod.Linear).doubleValue(
+						(Unit) tq.getUnits()));
+		assertEquals(
+				"returned correct value",
+				45d,
+				tq.interpolateValue(300, InterpMethod.Linear).doubleValue(
+						(Unit) tq.getUnits()));
+		assertEquals(
+				"returned correct value",
+				60d,
+				tq.interpolateValue(400, InterpMethod.Linear).doubleValue(
+						(Unit) tq.getUnits()));
+
+		// ok, mangle the second array a bit more
+		tq2 = new StockTypes.Temporal.Speed_MSec("Some data2");
+		tq2.add(20, 11);
+		tq2.add(340, 17);
+		tq2.add(440, 22);
+
+		selection = new ArrayList<IQuantityCollection<Quantity>>();
+		selection.add((IQuantityCollection<Quantity>) tq1);
+		selection.add((IQuantityCollection<Quantity>) tq2);
+
+		store = new InMemoryStore();
+		commands = new AddQuantityOperation<>().actionsFor(selection, store);
+		firstC = commands.iterator().next();
+
+		assertEquals("store empty", 0, store.size());
+
+		firstC.execute();
+
+		assertEquals("new collection created", 1, store.size());
+
+		series = (ICollection) store.get("Sum of input series (interpolated)");
+		assertTrue("non empty", series.size() > 0);
+		assertTrue("temporal", series.isTemporal());
+		assertTrue("quantity", series.isQuantity());
+
+		tq = (ITemporalQuantityCollection<?>) series;
+
+		assertEquals(
+				"returned correct value",
+				22.5d,
+				tq.interpolateValue(100, InterpMethod.Linear).doubleValue(
+						(Unit) tq.getUnits()));
+		assertEquals(
+				"returned correct value",
+				34.375d,
+				tq.interpolateValue(200, InterpMethod.Linear).doubleValue(
+						(Unit) tq.getUnits()));
+		assertEquals(
+				"returned correct value",
+				46.25d,
+				tq.interpolateValue(300, InterpMethod.Linear).doubleValue(
+						(Unit) tq.getUnits()));
+		assertEquals(
+				"returned correct value",
+				60d,
+				tq.interpolateValue(400, InterpMethod.Linear).doubleValue(
+						(Unit) tq.getUnits()));
+
+		// ok, make the second array longer
+		tq2 = new StockTypes.Temporal.Speed_MSec("Some data2");
+		tq2.add(200, 11);
+		tq2.add(250, 13);
+		tq2.add(330, 17);
+		tq2.add(360, 19);
+		tq2.add(440, 22);
+
+		selection = new ArrayList<IQuantityCollection<Quantity>>();
+		selection.add((IQuantityCollection<Quantity>) tq1);
+		selection.add((IQuantityCollection<Quantity>) tq2);
+
+		store = new InMemoryStore();
+		commands = new AddQuantityOperation().actionsFor(selection, store);
+		firstC = commands.iterator().next();
+
+		assertEquals("store empty", 0, store.size());
+
+		firstC.execute();
+
+		assertEquals("new collection created", 1, store.size());
+
+		series = (ICollection) firstC.getOutputs().iterator().next();
+		assertTrue("non empty", series.size() > 0);
+		assertEquals("corrent length results", 5, series.size());
+		assertTrue("temporal", series.isTemporal());
+		assertTrue("quantity", series.isQuantity());
+
+		tq = (ITemporalQuantityCollection<?>) series;
+
+		assertEquals("returned correct value", null,
+				tq.interpolateValue(100, InterpMethod.Linear));
+		assertEquals(
+				"returned correct value",
+				31d,
+				tq.interpolateValue(200, InterpMethod.Linear).doubleValue(
+						(Unit) tq.getUnits()));
+		assertEquals(
+				"returned correct value",
+				45.5d,
+				tq.interpolateValue(300, InterpMethod.Linear).doubleValue(
+						(Unit) tq.getUnits()));
+		assertEquals(
+				"returned correct value",
+				38.5d,
+				tq.interpolateValue(400, InterpMethod.Linear).doubleValue(
+						(Unit) tq.getUnits()));
+		assertEquals(
+				"returned correct value",
+				30.25d,
+				tq.interpolateValue(420, InterpMethod.Linear).doubleValue(
+						(Unit) tq.getUnits()));
+		assertEquals(
+				"returned correct value",
+				22d,
+				tq.interpolateValue(440, InterpMethod.Linear).doubleValue(
+						(Unit) tq.getUnits()));
+
+	}
+
+	@SuppressWarnings(
+	{ "unchecked", "rawtypes" })
+	public void testMultiplyQuantityTemporalInterp()
+	{
+		ITemporalQuantityCollection<?> tq1 = new StockTypes.Temporal.Speed_MSec(
+				"Some data1");
+		tq1.add(100, 10);
+		tq1.add(200, 20);
+		tq1.add(300, 30);
+		tq1.add(400, 40);
+
+		ITemporalQuantityCollection<?> tq2 = new StockTypes.Temporal.Speed_MSec(
+				"Some data2");
+		tq2.add(220, 11);
+		tq2.add(340, 17);
+		tq2.add(440, 22);
+
+		List<IStoreItem> selection = new ArrayList<IStoreItem>();
+		selection.add((IQuantityCollection<Quantity>) tq1);
+		selection.add((IQuantityCollection<Quantity>) tq2);
+
+		InMemoryStore store = new InMemoryStore();
+		Collection<ICommand<IStoreItem>> commands = new MultiplyQuantityOperation()
+				.actionsFor(selection, store);
+		ICommand<IStoreItem> firstC = commands.iterator().next();
+
+		assertEquals("store empty", 0, store.size());
+
+		firstC.execute();
+
+		assertEquals("new collection created", 1, store.size());
+
+		ICollection series = (ICollection) firstC.getOutputs().iterator().next();
+		assertTrue("non empty", series.size() > 0);
+		assertEquals("corrent length results", 4, series.size());
+		assertTrue("temporal", series.isTemporal());
+		assertTrue("quantity", series.isQuantity());
+
+		ITemporalQuantityCollection<?> tq = (ITemporalQuantityCollection<?>) series;
+
+		assertEquals(
+				"returned correct value",
+				10d,
+				tq.interpolateValue(100, InterpMethod.Linear).doubleValue(
+						(Unit) tq.getUnits()));
+		assertEquals(
+				"returned correct value",
+				20d,
+				tq.interpolateValue(200, InterpMethod.Linear).doubleValue(
+						(Unit) tq.getUnits()));
+		assertEquals(
+				"returned correct value",
+				450d,
+				tq.interpolateValue(300, InterpMethod.Linear).doubleValue(
+						(Unit) tq.getUnits()));
+		assertEquals(
+				"returned correct value",
+				800d,
+				tq.interpolateValue(400, InterpMethod.Linear).doubleValue(
+						(Unit) tq.getUnits()));
+
+		// ok, mangle the second array a bit more
+		tq2 = new StockTypes.Temporal.Speed_MSec("Some data2");
+		tq2.add(20, 11);
+		tq2.add(340, 17);
+		tq2.add(440, 22);
+
+		selection = new ArrayList<IStoreItem>();
+		selection.add((IQuantityCollection<Quantity>) tq1);
+		selection.add((IQuantityCollection<Quantity>) tq2);
+
+		store = new InMemoryStore();
+		commands = new MultiplyQuantityOperation().actionsFor(selection, store);
+		firstC = commands.iterator().next();
+
+		assertEquals("store empty", 0, store.size());
+
+		firstC.execute();
+
+		assertEquals("new collection created", 1, store.size());
+
+		series = (ICollection) firstC.getOutputs().iterator().next();
+		assertTrue("non empty", series.size() > 0);
+		assertEquals("corrent length results", 4, series.size());
+		assertTrue("temporal", series.isTemporal());
+		assertTrue("quantity", series.isQuantity());
+
+		tq = (ITemporalQuantityCollection<?>) series;
+
+		assertEquals(
+				"returned correct value",
+				125d,
+				tq.interpolateValue(100, InterpMethod.Linear).doubleValue(
+						(Unit) tq.getUnits()));
+		assertEquals(
+				"returned correct value",
+				287.5d,
+				tq.interpolateValue(200, InterpMethod.Linear).doubleValue(
+						(Unit) tq.getUnits()));
+		assertEquals(
+				"returned correct value",
+				487.5d,
+				tq.interpolateValue(300, InterpMethod.Linear).doubleValue(
+						(Unit) tq.getUnits()));
+		assertEquals(
+				"returned correct value",
+				800d,
+				tq.interpolateValue(400, InterpMethod.Linear).doubleValue(
+						(Unit) tq.getUnits()));
+
+		// ok, make the second array longer
+		tq2 = new StockTypes.Temporal.Speed_MSec("Some data2");
+		tq2.add(200, 11);
+		tq2.add(250, 13);
+		tq2.add(330, 17);
+		tq2.add(360, 19);
+		tq2.add(440, 22);
+
+		selection = new ArrayList<IStoreItem>();
+		selection.add((IQuantityCollection<Quantity>) tq1);
+		selection.add((IQuantityCollection<Quantity>) tq2);
+
+		store = new InMemoryStore();
+		commands = new MultiplyQuantityOperation().actionsFor(selection, store);
+		firstC = commands.iterator().next();
+
+		assertEquals("store empty", 0, store.size());
+
+		firstC.execute();
+
+		assertEquals("new collection created", 1, store.size());
+
+		series = (ICollection) firstC.getOutputs().iterator().next();
+		assertTrue("non empty", series.size() > 0);
+		assertEquals("corrent length results", 5, series.size());
+		assertTrue("temporal", series.isTemporal());
+		assertTrue("quantity", series.isQuantity());
+
+		tq = (ITemporalQuantityCollection<?>) series;
+
+		assertEquals("returned correct value", null,
+				tq.interpolateValue(100, InterpMethod.Linear));
+		assertEquals(
+				"returned correct value",
+				220d,
+				tq.interpolateValue(200, InterpMethod.Linear).doubleValue(
+						(Unit) tq.getUnits()));
+		assertEquals(
+				"returned correct value",
+				472.5d,
+				tq.interpolateValue(300, InterpMethod.Linear).doubleValue(
+						(Unit) tq.getUnits()));
+		assertEquals(
+				"returned correct value",
+				353d,
+				tq.interpolateValue(400, InterpMethod.Linear).doubleValue(
+						(Unit) tq.getUnits()));
+		assertEquals(
+				"returned correct value",
+				187.5d,
+				tq.interpolateValue(420, InterpMethod.Linear).doubleValue(
+						(Unit) tq.getUnits()));
+		assertEquals(
+				"returned correct value",
+				22d,
+				tq.interpolateValue(440, InterpMethod.Linear).doubleValue(
+						(Unit) tq.getUnits()));
+
+	}
+
 	public void testSampleData()
 	{
 		IStore data = new SampleData().getData(10);
 		@SuppressWarnings("unchecked")
-		IQuantityCollection<Quantity> ranged = (IQuantityCollection<Quantity>) data.get(SampleData.RANGED_SPEED_SINGLETON);
+		IQuantityCollection<Quantity> ranged = (IQuantityCollection<Quantity>) data
+				.get(SampleData.RANGED_SPEED_SINGLETON);
 		assertNotNull("found series", ranged);
-		
-		QuantityRange<Quantity> range = ranged.getRange();		
+
+		QuantityRange<Quantity> range = ranged.getRange();
 		assertNotNull("found range", range);
-		
+
 		// check the range has values
-		assertEquals("correct values", 940d, range.getMinimum().doubleValue(ranged.getUnits()), 0.1);
-		assertEquals("correct values", 1050d, range.getMaximum().doubleValue(ranged.getUnits()), 0.1);
+		assertEquals("correct values", 940d,
+				range.getMinimum().doubleValue(ranged.getUnits()), 0.1);
+		assertEquals("correct values", 1050d,
+				range.getMaximum().doubleValue(ranged.getUnits()), 0.1);
 	}
-	
+
 	public void testCreateTemporalObject()
 	{
 		// the target collection
@@ -111,8 +513,7 @@ public class TestCollections extends TestCase
 		}
 		assertEquals("values adds up", 51, runningValueSum);
 		assertEquals("times adds up", 78, runningTimeSum);
-		
-		
+
 		boolean eThrown = false;
 		try
 		{
@@ -124,18 +525,17 @@ public class TestCollections extends TestCase
 		}
 
 		assertTrue("exception thrown for invalid add operation", eThrown);
-		
+
 	}
 
 	public void testUnitlessQuantity()
 	{
 		// the units for this measurement
-		Unit<Velocity> kmh = KILO(METRE).divide(HOUR)
-				.asType(Velocity.class);
+		Unit<Velocity> kmh = KILO(METRE).divide(HOUR).asType(Velocity.class);
 
 		// the target collection
 		Speed_MSec speedCollection = new StockTypes.NonTemporal.Speed_MSec("Speed");
-		
+
 		for (int i = 1; i <= 10; i++)
 		{
 			// create a measurement
@@ -145,19 +545,18 @@ public class TestCollections extends TestCase
 			// store the measurement
 			speedCollection.add(speedVal);
 		}
-		
+
 		assertEquals("correct num of items", 10, speedCollection.size());
-		
+
 		speedCollection.add(12);
-		
+
 		assertEquals("correct num of items", 11, speedCollection.size());
 	}
-	
+
 	public void testCreateQuantity()
 	{
 		// the units for this measurement
-		Unit<Velocity> ms = METRE.divide(SECOND)
-				.asType(Velocity.class);
+		Unit<Velocity> ms = METRE.divide(SECOND).asType(Velocity.class);
 
 		// the target collection
 		Speed_MSec speedCollection = new StockTypes.NonTemporal.Speed_MSec("Speed");
@@ -176,18 +575,22 @@ public class TestCollections extends TestCase
 		assertEquals("correct number of samples", 10, speedCollection.size());
 		assertEquals("correct name", "Speed", speedCollection.getName());
 
-		assertEquals("correct min", 2d, speedCollection.min().doubleValue(speedCollection.getUnits()));
-		assertEquals("correct max", 20d, speedCollection.max().doubleValue(speedCollection.getUnits()));
-		assertEquals("correct mean", 11d, speedCollection.mean().doubleValue(speedCollection.getUnits()));
-		assertEquals("correct variance", 33, speedCollection.variance().doubleValue(speedCollection.getUnits()), 0.1);
-		assertEquals("correct sd", 5.744, speedCollection.sd().doubleValue(speedCollection.getUnits()), 0.001);
+		assertEquals("correct min", 2d,
+				speedCollection.min().doubleValue(speedCollection.getUnits()));
+		assertEquals("correct max", 20d,
+				speedCollection.max().doubleValue(speedCollection.getUnits()));
+		assertEquals("correct mean", 11d,
+				speedCollection.mean().doubleValue(speedCollection.getUnits()));
+		assertEquals("correct variance", 33, speedCollection.variance()
+				.doubleValue(speedCollection.getUnits()), 0.1);
+		assertEquals("correct sd", 5.744,
+				speedCollection.sd().doubleValue(speedCollection.getUnits()), 0.001);
 	}
 
 	public void testTemporalQuantityAddition()
 	{
 		// the units for this measurement
-		Unit<Velocity> kmh = KILO(METRE).divide(HOUR)
-				.asType(Velocity.class);
+		Unit<Velocity> kmh = KILO(METRE).divide(HOUR).asType(Velocity.class);
 		Unit<Velocity> m_sec = METRES_PER_SECOND;
 
 		// the target collection
@@ -238,7 +641,7 @@ public class TestCollections extends TestCase
 
 		// check it got get stored
 		assertEquals("correct number of samples", 2, sc.size());
-		
+
 		boolean eThrown = false;
 		try
 		{
@@ -250,16 +653,13 @@ public class TestCollections extends TestCase
 		}
 
 		assertTrue("exception thrown for invalid add operation", eThrown);
-				
-		
-		
+
 	}
 
 	public void testTimeQuantityCollectionIterator()
 	{
 		// the units for this measurement
-		Unit<Velocity> kmh = KILO(METRE).divide(HOUR)
-				.asType(Velocity.class);
+		Unit<Velocity> kmh = KILO(METRE).divide(HOUR).asType(Velocity.class);
 
 		// the target collection
 		TemporalQuantityCollection<Velocity> speedCollection = new TemporalQuantityCollection<Velocity>(
@@ -291,26 +691,26 @@ public class TestCollections extends TestCase
 		while (iter.hasNext())
 		{
 			Doublet<Measurable<Velocity>> doublet = iter.next();
-			runningValueSum += doublet.getObservation().doubleValue(speedCollection.getUnits());
+			runningValueSum += doublet.getObservation().doubleValue(
+					speedCollection.getUnits());
 			runningTimeSum += doublet.getTime();
 		}
 		assertEquals("values adds up", 110d, runningValueSum);
 		assertEquals("times adds up", 55d, runningTimeSum);
 
-		assertEquals("correct mean", 11d, speedCollection.mean().doubleValue(speedCollection.getUnits())
-				);
-		assertEquals("correct variance", 33, speedCollection.variance().doubleValue(speedCollection.getUnits())
-				, 0.1);
-		assertEquals("correct sd", 5.744, speedCollection.sd().doubleValue(speedCollection.getUnits())
-				, 0.001);
+		assertEquals("correct mean", 11d,
+				speedCollection.mean().doubleValue(speedCollection.getUnits()));
+		assertEquals("correct variance", 33, speedCollection.variance()
+				.doubleValue(speedCollection.getUnits()), 0.1);
+		assertEquals("correct sd", 5.744,
+				speedCollection.sd().doubleValue(speedCollection.getUnits()), 0.001);
 
 	}
 
 	public void testQuantityCollectionIterator()
 	{
 		// the units for this measurement
-		Unit<Velocity> kmh = KILO(METRE).divide(HOUR)
-				.asType(Velocity.class);
+		Unit<Velocity> kmh = KILO(METRE).divide(HOUR).asType(Velocity.class);
 
 		// the target collection
 		QuantityCollection<Velocity> speedCollection = new QuantityCollection<Velocity>(
@@ -331,7 +731,8 @@ public class TestCollections extends TestCase
 
 		// ok, now check the iterator
 		double runningValueSum = 0;
-		Iterator<Measurable<Velocity>> vIter = speedCollection.getValues().iterator();
+		Iterator<Measurable<Velocity>> vIter = speedCollection.getValues()
+				.iterator();
 		while (vIter.hasNext())
 		{
 			Measurable<Velocity> value = vIter.next();
@@ -339,14 +740,124 @@ public class TestCollections extends TestCase
 		}
 		assertEquals("values adds up", 110d, runningValueSum);
 
-		assertEquals("correct mean", 11d, speedCollection.mean().doubleValue(speedCollection.getUnits())
-				);
-		assertEquals("correct variance", 33, speedCollection.variance().doubleValue(speedCollection.getUnits())
-				, 0.1);
-		assertEquals("correct sd", 5.744, speedCollection.sd().doubleValue(speedCollection.getUnits())
-				, 0.001);
+		assertEquals("correct mean", 11d,
+				speedCollection.mean().doubleValue(speedCollection.getUnits()));
+		assertEquals("correct variance", 33, speedCollection.variance()
+				.doubleValue(speedCollection.getUnits()), 0.1);
+		assertEquals("correct sd", 5.744,
+				speedCollection.sd().doubleValue(speedCollection.getUnits()), 0.001);
 
 	}
-	
+
+	@SuppressWarnings(
+	{ "unchecked", "rawtypes" })
+	public void testSubtractQuantityTemporalInterp()
+	{
+		ITemporalQuantityCollection<?> tq1 = new StockTypes.Temporal.Speed_MSec(
+				"Some data1");
+		tq1.add(100, 10);
+		tq1.add(200, 20);
+		tq1.add(300, 30);
+		tq1.add(400, 40);
+
+		ITemporalQuantityCollection<?> tq2 = new StockTypes.Temporal.Speed_MSec(
+				"Some data2");
+		tq2.add(220, 11);
+		tq2.add(340, 17);
+		tq2.add(440, 22);
+
+		List<IQuantityCollection<Quantity>> selection = new ArrayList<IQuantityCollection<Quantity>>();
+		selection.add((IQuantityCollection<Quantity>) tq1);
+		selection.add((IQuantityCollection<Quantity>) tq2);
+
+		InMemoryStore store = new InMemoryStore();
+		Collection<ICommand<IQuantityCollection<Quantity>>> commands = new SubtractQuantityOperation<>()
+				.actionsFor(selection, store);
+		ICommand<IQuantityCollection<Quantity>> firstC = commands.iterator().next();
+
+		assertEquals("store empty", 0, store.size());
+
+		firstC.execute();
+
+		assertEquals("new collection created", 1, store.size());
+
+		ICollection series = firstC.getOutputs().iterator().next();
+		assertTrue("non empty", series.size() > 0);
+		assertEquals("corrent length results", 4, series.size());
+		assertTrue("temporal", series.isTemporal());
+		assertTrue("quantity", series.isQuantity());
+
+		ITemporalQuantityCollection<?> tq = (ITemporalQuantityCollection<?>) series;
+
+		assertEquals(
+				"returned correct value",
+				10d,
+				tq.interpolateValue(100, InterpMethod.Linear).doubleValue(
+						(Unit) tq.getUnits()));
+		assertEquals(
+				"returned correct value",
+				20d,
+				tq.interpolateValue(200, InterpMethod.Linear).doubleValue(
+						(Unit) tq.getUnits()));
+		assertEquals(
+				"returned correct value",
+				15d,
+				tq.interpolateValue(300, InterpMethod.Linear).doubleValue(
+						(Unit) tq.getUnits()));
+		assertEquals(
+				"returned correct value",
+				20d,
+				tq.interpolateValue(400, InterpMethod.Linear).doubleValue(
+						(Unit) tq.getUnits()));
+
+		// ok, mangle the second array a bit more
+		tq2 = new StockTypes.Temporal.Speed_MSec("Some data2");
+		tq2.add(20, 11);
+		tq2.add(340, 17);
+		tq2.add(440, 22);
+
+		selection = new ArrayList<IQuantityCollection<Quantity>>();
+		selection.add((IQuantityCollection<Quantity>) tq1);
+		selection.add((IQuantityCollection<Quantity>) tq2);
+
+		store = new InMemoryStore();
+		commands = new SubtractQuantityOperation<>().actionsFor(selection, store);
+		firstC = commands.iterator().next();
+
+		assertEquals("store empty", 0, store.size());
+
+		firstC.execute();
+
+		assertEquals("new collection created", 1, store.size());
+
+		series = firstC.getOutputs().iterator().next();
+		assertTrue("non empty", series.size() > 0);
+		assertEquals("corrent length results", 4, series.size());
+		assertTrue("temporal", series.isTemporal());
+		assertTrue("quantity", series.isQuantity());
+
+		tq = (ITemporalQuantityCollection<?>) series;
+
+		assertEquals(
+				"returned correct value",
+				-2.5d,
+				tq.interpolateValue(100, InterpMethod.Linear).doubleValue(
+						(Unit) tq.getUnits()));
+		assertEquals(
+				"returned correct value",
+				5.625d,
+				tq.interpolateValue(200, InterpMethod.Linear).doubleValue(
+						(Unit) tq.getUnits()));
+		assertEquals(
+				"returned correct value",
+				13.75d,
+				tq.interpolateValue(300, InterpMethod.Linear).doubleValue(
+						(Unit) tq.getUnits()));
+		assertEquals(
+				"returned correct value",
+				20d,
+				tq.interpolateValue(400, InterpMethod.Linear).doubleValue(
+						(Unit) tq.getUnits()));
+	}
 
 }

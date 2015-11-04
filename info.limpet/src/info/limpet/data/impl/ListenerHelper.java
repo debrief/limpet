@@ -22,7 +22,7 @@ public class ListenerHelper
 		_listeners.add(listener);
 	}
 
-	public void fireChange(IStoreItem subject)
+	public void fireDataChange(IStoreItem subject)
 	{
 		Iterator<IChangeListener> iter = _listeners.iterator();
 		while (iter.hasNext())
@@ -31,7 +31,17 @@ public class ListenerHelper
 			iL.dataChanged(subject);
 		}
 	}
-
+	
+	public void fireMetadataChange(IStoreItem subject)
+	{
+		Iterator<IChangeListener> iter = _listeners.iterator();
+		while (iter.hasNext())
+		{
+			IChangeListener iL = (IChangeListener) iter.next();
+			iL.metadataChanged(subject);
+		}
+	}
+	
 	public void beingDeleted(IStoreItem subject)
 	{
 		Iterator<IChangeListener> iter = _listeners.iterator();

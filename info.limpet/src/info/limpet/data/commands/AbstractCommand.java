@@ -85,6 +85,15 @@ public abstract class AbstractCommand<T extends IStoreItem> implements
 		this.dynamic = dynamic;
 	}
 
+	
+	
+	@Override
+	public void metadataChanged(IStoreItem subject)
+	{
+		// TODO: do a more intelligent/informed processing of metadata changed
+		dataChanged(subject);
+	}
+
 	@Override
 	public void dataChanged(IStoreItem subject)
 	{
@@ -99,7 +108,7 @@ public abstract class AbstractCommand<T extends IStoreItem> implements
 			while (iter.hasNext())
 			{
 				T t = (T) iter.next();
-				t.fireChanged();
+				t.fireDataChanged();
 			}
 		}
 	}
@@ -203,7 +212,7 @@ public abstract class AbstractCommand<T extends IStoreItem> implements
 	}
 
 	@Override
-	public void fireChanged()
+	public void fireDataChanged()
 	{
 		// TODO Auto-generated method stub
 		

@@ -12,6 +12,7 @@ import info.limpet.ICommand;
 import info.limpet.IQuantityCollection;
 import info.limpet.IStore;
 import info.limpet.IStore.IStoreItem;
+import info.limpet.ITemporalQuantityCollection;
 import info.limpet.data.impl.ObjectCollection;
 import info.limpet.data.impl.QuantityCollection;
 import info.limpet.data.impl.TemporalQuantityCollection;
@@ -45,6 +46,46 @@ import junit.framework.TestCase;
 
 public class TestOperations extends TestCase
 {
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public void testInterpolateTests()
+	{
+		// place to store results data
+		InMemoryStore store = new SampleData().getData(10);
+
+		// ok, let's try one that works
+		List<IStoreItem> selection = new ArrayList<IStoreItem>();
+
+		// ///////////////
+		// TEST INVALID PERMUTATIONS
+		// ///////////////
+		ICollection speed_good_1 = (ICollection) store.get(SampleData.SPEED_ONE);
+		ICollection speed_good_2 = (ICollection) store.get(SampleData.SPEED_TWO);
+		ICollection speed_early = (ICollection) store.get(SampleData.SPEED_EARLY);
+
+		selection.add(speed_good_1);
+		selection.add(speed_early);
+
+		Collection<ICommand<ICollection>> actions = new AddQuantityOperation()
+				.actionsFor(selection, store);
+
+		assertEquals("correct number of actions returned", 0, actions.size());
+
+		selection.clear();
+		selection.add(speed_good_1);
+		selection.add(speed_good_2);
+
+		actions = new AddQuantityOperation()
+				.actionsFor(selection, store);
+
+		assertEquals("correct number of actions returned", 1, actions.size());
+
+		ICommand<?> addAction = actions.iterator().next();
+
+		assertNotNull("found action", addAction);
+		
+		
+	}
 
 	public void testAppliesTo()
 	{
@@ -196,7 +237,7 @@ public class TestOperations extends TestCase
 		ICollection firstItem = (ICollection) store.iterator().next();
 		ICommand<?> precedent = firstItem.getPrecedent();
 		assertNotNull("has precedent", precedent);
-		assertEquals("Correct name", "Add series", precedent.getName());
+		assertEquals("Correct name", "Sum of input series", precedent.getName());
 
 		List<? extends IStoreItem> inputs = precedent.getInputs();
 		assertEquals("Has both precedents", 2, inputs.size());
@@ -241,9 +282,11 @@ public class TestOperations extends TestCase
 		// ///////////////
 		ICollection speed_good_1 = (ICollection) store.get(SampleData.SPEED_ONE);
 		ICollection speed_good_2 = (ICollection) store.get(SampleData.SPEED_TWO);
+		ICollection speed_irregular = (ICollection) store.get(SampleData.SPEED_IRREGULAR2);
 		ICollection string_1 = (ICollection) store.get(SampleData.STRING_ONE);
 		ICollection len1 = (ICollection) store.get(SampleData.LENGTH_ONE);
-		ICollection factor = (ICollection) store.get(SampleData.FLOATING_POINT_FACTOR);
+		ICollection factor = (ICollection) store
+				.get(SampleData.FLOATING_POINT_FACTOR);
 
 		selection.clear();
 		selection.add(speed_good_1);
@@ -291,7 +334,8 @@ public class TestOperations extends TestCase
 		// test store has a new item in it
 		assertEquals("store not empty", 1, store.size());
 
-		ICollection newS = (ICollection) store.get(MultiplyQuantityOperation.SERIES_NAME);
+		ICollection newS = (ICollection) store
+				.get(MultiplyQuantityOperation.SERIES_NAME);
 
 		// test results is same length as thisSpeed
 		assertEquals("correct size", 10, newS.size());
@@ -303,6 +347,23 @@ public class TestOperations extends TestCase
 		assertEquals("store empty", 0, store.size());
 		commands = new MultiplyQuantityOperation().actionsFor(selection, store);
 		assertEquals("valid collections - one is singleton", 1, commands.size());
+				
+		selection.clear();
+		selection.add(speed_good_1);
+		selection.add(speed_irregular);
+		store.clear();
+		assertEquals("store empty", 0, store.size());
+		commands = new MultiplyQuantityOperation().actionsFor(selection, store);
+		assertEquals("valid collections - one is singleton", 1, commands.size());
+		command = commands.iterator().next();
+		command.execute();
+		ICollection output = (ICollection) command.getOutputs().iterator().next();
+		assertTrue(output.isTemporal());
+		assertTrue(output.isQuantity());
+		assertEquals("Correct len", Math.max(speed_good_1.size(),  speed_irregular.size()),
+				output.size());
+		System.out.println("done");
+		
 	}
 
 	@SuppressWarnings("unchecked")
@@ -414,6 +475,47 @@ public class TestOperations extends TestCase
 	}
 
 	@SuppressWarnings(
+	{ "unchecked" })
+	public void testAddition()
+	{
+		InMemoryStore store = new SampleData().getData(10);
+
+		// test invalid dimensions
+		ITemporalQuantityCollection<Velocity> speed_good_1 = (ITemporalQuantityCollection<Velocity>) store
+				.get(SampleData.SPEED_ONE);
+		IQuantityCollection<Velocity> speed_good_2 = (IQuantityCollection<Velocity>) store
+				.get(SampleData.SPEED_TWO);
+
+		IQuantityCollection<Velocity> newS = (IQuantityCollection<Velocity>) store
+				.get("Sum of input series (interpolated)");
+
+		assertNotNull(newS);
+		assertEquals("correct size", 10, newS.size());
+
+		// assert same unit
+		assertEquals(newS.getUnits(), speed_good_1.getUnits());
+
+		double firstDifference = newS.getValues().get(0)
+				.doubleValue(newS.getUnits());
+		double speed1firstValue = speed_good_1.getValues().get(0)
+				.doubleValue(speed_good_1.getUnits());
+		double speed2firstValue = speed_good_2.getValues().get(0)
+				.doubleValue(speed_good_2.getUnits());
+
+		assertEquals(firstDifference, speed1firstValue + speed2firstValue);
+
+		// test that original series have dependents
+		assertEquals("first series has dependents", 2, speed_good_1.getDependents()
+				.size());
+		assertEquals("second series has dependents", 1, speed_good_2
+				.getDependents().size());
+
+		// test that new series has predecessors
+		assertNotNull("new series has precedent", newS.getPrecedent());
+
+	}
+
+	@SuppressWarnings(
 	{ "rawtypes", "unchecked" })
 	public void testSubtraction()
 	{
@@ -494,8 +596,8 @@ public class TestOperations extends TestCase
 		ICollection string_1 = (ICollection) store.get(SampleData.STRING_ONE);
 		IQuantityCollection<Dimensionless> factor = (IQuantityCollection<Dimensionless>) store
 				.get(SampleData.FLOATING_POINT_FACTOR);
-		ICollection speed_good_1_bigger = (ICollection) new SampleData().getData(20).get(
-				SampleData.SPEED_ONE);
+		ICollection speed_good_1_bigger = (ICollection) new SampleData()
+				.getData(20).get(SampleData.SPEED_ONE);
 
 		// /
 		// / TEST NOT APPLICABLE INPUT

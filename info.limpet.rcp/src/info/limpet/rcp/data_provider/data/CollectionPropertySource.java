@@ -208,7 +208,7 @@ public class CollectionPropertySource implements IPropertySource
 				tt.replaceSingleton(Double.parseDouble((String) value));
 
 				// ok, fire changed!
-				tt.fireChanged();
+				tt.fireDataChanged();
 			}
 		}
 		else if (prop.equals(PROPERTY_VALUE_SLIDER))
@@ -223,7 +223,7 @@ public class CollectionPropertySource implements IPropertySource
 				tt.replaceSingleton(Double.parseDouble((String) value));
 
 				// ok, fire changed!
-				tt.fireChanged();
+				tt.fireDataChanged();
 			}
 		}
 

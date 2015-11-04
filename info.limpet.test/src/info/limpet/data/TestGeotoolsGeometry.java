@@ -74,6 +74,7 @@ public class TestGeotoolsGeometry extends TestCase
 		assertEquals("new coll created", 1, store.size());
 		ICollection newColl = (ICollection) firstOp.getOutputs().get(0);
 		assertEquals("correct size", firstColl.size()-1, newColl.size());
+		assertNotNull("knows about parent", newColl.getPrecedent());
 		
 	}
 	

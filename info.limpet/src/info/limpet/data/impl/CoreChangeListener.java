@@ -15,5 +15,11 @@ public class CoreChangeListener implements IChangeListener
 	public void collectionDeleted(IStoreItem subject)
 	{
 	}
+	
+	@Override
+	public void metadataChanged(IStoreItem subject)
+	{
+	}
+
 
 }

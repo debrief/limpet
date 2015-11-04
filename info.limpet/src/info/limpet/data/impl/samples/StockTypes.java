@@ -1,19 +1,19 @@
 package info.limpet.data.impl.samples;
 
+import static javax.measure.unit.NonSI.NAUTICAL_MILE;
+import static javax.measure.unit.NonSI.YARD;
 import static javax.measure.unit.SI.HERTZ;
 import static javax.measure.unit.SI.KELVIN;
 import static javax.measure.unit.SI.METRE;
 import static javax.measure.unit.SI.RADIAN;
 import static javax.measure.unit.SI.SECOND;
-import static javax.measure.unit.NonSI.YARD;
-import static javax.measure.unit.NonSI.NAUTICAL_MILE;
-
-import java.util.List;
-
+import info.limpet.ICommand;
 import info.limpet.data.impl.ObjectCollection;
 import info.limpet.data.impl.QuantityCollection;
 import info.limpet.data.impl.TemporalObjectCollection;
 import info.limpet.data.impl.TemporalQuantityCollection;
+
+import java.util.List;
 
 import javax.measure.quantity.Acceleration;
 import javax.measure.quantity.Angle;
@@ -48,14 +48,18 @@ public class StockTypes
 	{
 		public static class Speed_MSec extends TemporalQuantityCollection<Velocity>
 		{
+			public Speed_MSec(String name, ICommand<?> precedent)
+			{
+				super(name, precedent, METRE.divide(SECOND).asType(Velocity.class));
+			}
 			public Speed_MSec(String name)
 			{
-				super(name, METRE.divide(SECOND).asType(Velocity.class));
+				super(name, null, METRE.divide(SECOND).asType(Velocity.class));
 			}
 
 			public Speed_MSec()
 			{
-				this(null);
+				this(null, null);
 			}
 		}
 		
@@ -224,14 +228,14 @@ public class StockTypes
 
 		public static class Angle_Degrees extends TemporalQuantityCollection<Angle>
 		{
-			public Angle_Degrees(String name)
+			public Angle_Degrees(String name,  ICommand<?> precedent)
 			{
-				super(name, DEGREE_ANGLE.asType(Angle.class));
+				super(name, precedent, DEGREE_ANGLE.asType(Angle.class));
 			}
 
 			public Angle_Degrees()
 			{
-				this(null);
+				this(null, null);
 			}
 		}
 
