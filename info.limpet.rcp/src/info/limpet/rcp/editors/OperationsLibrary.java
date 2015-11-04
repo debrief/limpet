@@ -18,6 +18,7 @@ import info.limpet.data.operations.MultiplyQuantityOperation;
 import info.limpet.data.operations.SimpleMovingAverageOperation;
 import info.limpet.data.operations.SubtractQuantityOperation;
 import info.limpet.data.operations.UnitConversionOperation;
+import info.limpet.data.operations.UnitaryMathOperation;
 import info.limpet.data.operations.spatial.BearingBetweenTracksOperation;
 import info.limpet.data.operations.spatial.DistanceBetweenTracksOperation;
 import info.limpet.data.operations.spatial.GenerateCourseAndSpeedOperation;
@@ -90,6 +91,32 @@ public class OperationsLibrary
 		arithmetic.add(new SubtractQuantityOperation<>());
 		arithmetic.add(new DivideQuantityOperation());
 		arithmetic.add(new SimpleMovingAverageOperation(3));
+
+		// also our generic maths operators
+		arithmetic.add(new UnitaryMathOperation("Abs")
+		{  public double calcFor(double val)
+			{	return Math.abs(val);}});
+		arithmetic.add(new UnitaryMathOperation("Sin")
+		{  public double calcFor(double val)
+			{	return Math.sin(val);}});
+		arithmetic.add(new UnitaryMathOperation("Cos")
+		{  public double calcFor(double val)
+			{	return Math.sin(val);}});
+		arithmetic.add(new UnitaryMathOperation("Tan")
+		{  public double calcFor(double val)
+			{	return Math.tan(val);}});
+		arithmetic.add(new UnitaryMathOperation("Inv")
+		{  public double calcFor(double val)
+			{	return -val;}});
+		arithmetic.add(new UnitaryMathOperation("Sqrt")
+		{  public double calcFor(double val)
+			{	return Math.sqrt(val);}});
+		arithmetic.add(new UnitaryMathOperation("Sqr")
+		{  public double calcFor(double val)
+			{	return val * val;}});
+		
+		
+
 		return arithmetic;
 	}
 
@@ -101,7 +128,6 @@ public class OperationsLibrary
 		spatial.add(new GenerateCourseAndSpeedOperation());
 		return spatial;
 	}
-
 
 	private static List<IOperation<?>> getConversions()
 	{
@@ -118,8 +144,7 @@ public class OperationsLibrary
 		conversions.add(new UnitConversionOperation(METRES_PER_SECOND));
 
 		// Acceleration
-		conversions
-				.add(new UnitConversionOperation(METRES_PER_SQUARE_SECOND));
+		conversions.add(new UnitConversionOperation(METRES_PER_SQUARE_SECOND));
 
 		// Temperature
 		conversions.add(new UnitConversionOperation(CELSIUS));
