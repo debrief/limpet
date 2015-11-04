@@ -282,6 +282,7 @@ public class TestOperations extends TestCase
 		// ///////////////
 		ICollection speed_good_1 = (ICollection) store.get(SampleData.SPEED_ONE);
 		ICollection speed_good_2 = (ICollection) store.get(SampleData.SPEED_TWO);
+		ICollection speed_irregular = (ICollection) store.get(SampleData.SPEED_IRREGULAR2);
 		ICollection string_1 = (ICollection) store.get(SampleData.STRING_ONE);
 		ICollection len1 = (ICollection) store.get(SampleData.LENGTH_ONE);
 		ICollection factor = (ICollection) store
@@ -346,6 +347,23 @@ public class TestOperations extends TestCase
 		assertEquals("store empty", 0, store.size());
 		commands = new MultiplyQuantityOperation().actionsFor(selection, store);
 		assertEquals("valid collections - one is singleton", 1, commands.size());
+				
+		selection.clear();
+		selection.add(speed_good_1);
+		selection.add(speed_irregular);
+		store.clear();
+		assertEquals("store empty", 0, store.size());
+		commands = new MultiplyQuantityOperation().actionsFor(selection, store);
+		assertEquals("valid collections - one is singleton", 1, commands.size());
+		command = commands.iterator().next();
+		command.execute();
+		ICollection output = (ICollection) command.getOutputs().iterator().next();
+		assertTrue(output.isTemporal());
+		assertTrue(output.isQuantity());
+		assertEquals("Correct len", Math.max(speed_good_1.size(),  speed_irregular.size()),
+				output.size());
+		System.out.println("done");
+		
 	}
 
 	@SuppressWarnings("unchecked")

@@ -1,5 +1,6 @@
 package info.limpet.data.operations;
 
+import info.limpet.IBaseTemporalCollection;
 import info.limpet.ICollection;
 import info.limpet.ICommand;
 import info.limpet.IQuantityCollection;
@@ -55,7 +56,7 @@ public abstract class CoreQuantityOperation<Q extends Quantity>
 		return res;
 	}
 
-	protected ITemporalQuantityCollection<Q> getLongestTemporalCollections(
+	protected  ITemporalQuantityCollection<Q> getLongestTemporalCollections(
 			List<IQuantityCollection<Q>> selection)
 	{
 		// find the longest time series.
@@ -147,7 +148,7 @@ public abstract class CoreQuantityOperation<Q extends Quantity>
 		 * 
 		 * @param outputs
 		 */
-		protected void clearOutputs(List<IQuantityCollection<Q>> outputs)
+		private void clearOutputs(List<IQuantityCollection<Q>> outputs)
 		{
 			// clear out the lists, first
 			Iterator<IQuantityCollection<Q>> iter = outputs.iterator();
@@ -155,6 +156,12 @@ public abstract class CoreQuantityOperation<Q extends Quantity>
 			{
 				IQuantityCollection<Q> qC = (IQuantityCollection<Q>) iter.next();
 				qC.getValues().clear();
+				
+				if(qC.isTemporal())
+				{
+					IBaseTemporalCollection bt = (IBaseTemporalCollection) qC;
+					bt.getTimes().clear();
+				}
 			}
 		}
 
@@ -190,7 +197,7 @@ public abstract class CoreQuantityOperation<Q extends Quantity>
 			}
 			else
 			{
-				for (int elementCount = 0; elementCount < inputs.get(0).size(); elementCount++)
+				for (int elementCount = 0; elementCount < numElements(); elementCount++)
 				{
 					Double thisResult = calcThisElement(elementCount);
 
@@ -201,11 +208,16 @@ public abstract class CoreQuantityOperation<Q extends Quantity>
 
 		}
 
+		protected int numElements()
+		{
+			return inputs.get(0).size();
+		}
+		
 		private void storeTemporalValue(IQuantityCollection<Q> target, long thisT,
 				double val)
 		{
 			ITemporalQuantityCollection<Q> qc = (ITemporalQuantityCollection<Q>) target;
-			qc.add(thisT, Measure.valueOf(val, target.getUnits()));
+			qc.add(thisT, Measure.valueOf(val, determineOutputUnit(target)));
 		}
 
 		/**
@@ -218,7 +230,7 @@ public abstract class CoreQuantityOperation<Q extends Quantity>
 		 * @param value
 		 *          the value to store
 		 */
-		protected void storeValue(IQuantityCollection<Q> target, int count,
+		private void storeValue(IQuantityCollection<Q> target, int count,
 				Double value)
 		{
 			if (target.isTemporal())
@@ -229,11 +241,11 @@ public abstract class CoreQuantityOperation<Q extends Quantity>
 						.get(0);
 				Long[] timeData = qi.getTimes().toArray(new Long[]
 				{});
-				qc.add(timeData[count], Measure.valueOf(value, target.getUnits()));
+				qc.add(timeData[count], Measure.valueOf(value, determineOutputUnit(target)));
 			}
 			else
 			{
-				target.add(Measure.valueOf(value, target.getUnits()));
+				target.add(Measure.valueOf(value, determineOutputUnit(target)));
 			}
 		}
 
@@ -260,7 +272,7 @@ public abstract class CoreQuantityOperation<Q extends Quantity>
 		{
 			// get the unit
 			IQuantityCollection<Q> first = inputs.get(0);
-			Unit<Q> unit = first.getUnits();
+			Unit<Q> unit = determineOutputUnit(first);
 
 			// update the results
 			performCalc(unit, outputs);
@@ -296,9 +308,11 @@ public abstract class CoreQuantityOperation<Q extends Quantity>
 		{
 			// get the unit
 			IQuantityCollection<Q> first = inputs.get(0);
-			Unit<Q> unit = first.getUnits();
 
 			List<IQuantityCollection<Q>> outputs = new ArrayList<IQuantityCollection<Q>>();
+			
+			// sort out the output unit
+			Unit<Q> unit = determineOutputUnit(first);
 
 			// ok, generate the new series
 			final IQuantityCollection<Q> target = createQuantityTarget(first, unit);
@@ -323,6 +337,11 @@ public abstract class CoreQuantityOperation<Q extends Quantity>
 			List<IStoreItem> res = new ArrayList<IStoreItem>();
 			res.add(target);
 			getStore().addAll(res);
+		}
+
+		protected Unit<Q> determineOutputUnit(IQuantityCollection<Q> first)
+		{
+			return first.getUnits();
 		}
 
 	}
