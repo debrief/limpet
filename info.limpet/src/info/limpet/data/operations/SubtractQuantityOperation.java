@@ -37,7 +37,8 @@ public class SubtractQuantityOperation<Q extends Quantity> extends
 		{
 			boolean allQuantity = aTests.allQuantity(selection);
 			boolean suitableLength = aTests.allTemporal(selection)
-					|| aTests.allNonTemporal(selection) && aTests.allEqualLength(selection);
+					|| aTests.allNonTemporal(selection)
+					&& aTests.allEqualLength(selection);
 			boolean equalDimensions = aTests.allEqualDimensions(selection);
 			return (allQuantity && suitableLength && equalDimensions);
 		}
@@ -137,18 +138,17 @@ public class SubtractQuantityOperation<Q extends Quantity> extends
 
 			final Measurable<T> thisValue = (Measurable<T>) tqc1.interpolateValue(
 					time, InterpMethod.Linear);
+			double thisD = 0;
+			if (thisValue != null)
+				thisD = thisValue.doubleValue(_item1.getUnits());
+
 			final Measurable<T> otherValue = (Measurable<T>) tqc2.interpolateValue(
 					time, InterpMethod.Linear);
-			if (thisValue != null && otherValue != null)
-			{
-				double runningTotal = thisValue.doubleValue(_item1.getUnits())
-						- otherValue.doubleValue(_item2.getUnits());
-				return runningTotal;
-			}
-			else
-			{
-				return null;
-			}
+			double otherD = 0;
+			if (otherValue != null)
+				otherD = otherValue.doubleValue(_item1.getUnits());
+
+			return thisD - otherD;
 		}
 
 	}
