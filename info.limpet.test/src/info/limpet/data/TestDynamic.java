@@ -68,14 +68,14 @@ public class TestDynamic extends TestCase
 		assertEquals("empty at start", 0, events.size());
 
 		// ok, now make a change in one of hte input collections
-		speedOne.fireChanged();
+		speedOne.fireDataChanged();
 		assertEquals("change received", 1, events.size());
 		
 		// check the units haven't changed
 		assertEquals("units still valid", resUnits, iq.getUnits().toString());
 
 		// ok, now make another change in one of hte input collections
-		speedOne.fireChanged();
+		speedOne.fireDataChanged();
 		assertEquals("second change received", 2, events.size());
 
 		selection.clear();
@@ -101,13 +101,13 @@ public class TestDynamic extends TestCase
 		final String resUnits2 = iq2.getUnits().toString();
 
 		// ok, fire a change in speed one
-		speedOne.fireChanged();
+		speedOne.fireDataChanged();
 		assertEquals("change received", 2, events.size());
 
-		speedTwo.fireChanged();
+		speedTwo.fireDataChanged();
 		assertEquals("change received", 5, events.size());
 
-		resSeries.fireChanged();
+		resSeries.fireDataChanged();
 		assertEquals("change received", 7, events.size());
 		
 		// switch off dynamic update
@@ -120,7 +120,7 @@ public class TestDynamic extends TestCase
 		
 		// check that only the change listener event gets fired, not
 		// the depedendent operation event.
-		resSeries.fireChanged();
+		resSeries.fireDataChanged();
 		assertEquals("change received", 8, events.size());
 
 		// switch off dynamic update
@@ -132,7 +132,7 @@ public class TestDynamic extends TestCase
 		}
 
 		// check we get two updates
-		resSeries.fireChanged();
+		resSeries.fireDataChanged();
 		assertEquals("change received", 10, events.size());
 
 		

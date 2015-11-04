@@ -1,13 +1,13 @@
 package info.limpet.data.store;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import info.limpet.IChangeListener;
 import info.limpet.ICollection;
 import info.limpet.IStore;
 import info.limpet.data.impl.ListenerHelper;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class InMemoryStore implements IStore, IChangeListener
 {
@@ -81,12 +81,12 @@ public class InMemoryStore implements IStore, IChangeListener
 		}
 
 		@Override
-		public void fireChanged()
+		public void fireDataChanged()
 		{
 			if (_changeSupport != null)
 			{
 				// tell any standard listeners
-				_changeSupport.fireChange(this);
+				_changeSupport.fireDataChange(this);
 			}
 		}
 
@@ -236,6 +236,14 @@ public class InMemoryStore implements IStore, IChangeListener
 	{
 		fireModified();
 	}
+	
+	@Override
+	public void metadataChanged(IStoreItem subject)
+	{
+		// TODO: provide a more informed way of doing update
+		dataChanged(subject);
+	}
+
 
 	@Override
 	public void collectionDeleted(IStoreItem subject)

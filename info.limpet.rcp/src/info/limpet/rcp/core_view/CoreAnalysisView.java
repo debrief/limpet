@@ -71,6 +71,12 @@ public abstract class CoreAnalysisView extends ViewPart
 				// and update the UI
 				display(curList);
 			}
+
+			@Override
+			public void metadataChanged(IStoreItem subject)
+			{
+				display(curList);
+			}
 		};
 	}
 

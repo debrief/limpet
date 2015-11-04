@@ -53,6 +53,9 @@ public class QuantityCollection<T extends Quantity> extends
 		initQHelper();
 		_range = range;
 		_qHelper.setRange(range);
+		
+		// tell anyone that wants to know
+		super.fireMetadataChanged();
 	}
 	
 	@Override

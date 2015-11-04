@@ -48,6 +48,9 @@ public class ObjectCollection<T extends Object> implements IObjectCollection<T>
 	public void setDescription(String description)
 	{
 		this.description = description;
+		
+		// tell anyone that wants to know
+		_changeSupport.fireMetadataChange(this);
 	}
 
 	@Override
@@ -108,6 +111,9 @@ public class ObjectCollection<T extends Object> implements IObjectCollection<T>
 	public void setName(String name)
 	{
 		this.name = name;
+		
+		// tell anyone that wants to know
+		_changeSupport.fireMetadataChange(this);
 	}
 
 	protected void initListeners()
@@ -135,12 +141,12 @@ public class ObjectCollection<T extends Object> implements IObjectCollection<T>
 	}
 
 	@Override
-	public void fireChanged()
+	public void fireDataChanged()
 	{
 		if (_changeSupport != null)
 		{
 			// tell any standard listeners
-			_changeSupport.fireChange(this);
+			_changeSupport.fireDataChange(this);
 		}
 
 		// now tell the dependents
@@ -196,6 +202,15 @@ public class ObjectCollection<T extends Object> implements IObjectCollection<T>
 			iC.collectionDeleted(this);
 		}
 
+	}
+
+	public void fireMetadataChanged()
+	{
+		if (_changeSupport != null)
+		{
+			// tell any standard listeners
+			_changeSupport.fireMetadataChange(this);
+		}		
 	}
 
 }

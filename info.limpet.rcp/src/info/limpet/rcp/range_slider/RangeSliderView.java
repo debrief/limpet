@@ -121,7 +121,7 @@ public class RangeSliderView extends CoreAnalysisView implements
 		if(_currentColl != null)
 		{
 			_currentColl.replaceSingleton(val);
-			_currentColl.fireChanged();
+			_currentColl.fireDataChanged();
 		}
 		else if(_command != null)
 		{
@@ -297,6 +297,13 @@ public class RangeSliderView extends CoreAnalysisView implements
 	{
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public void metadataChanged(IStoreItem subject)
+	{
+		// TODO: provide a more informed way of doing update
+		dataChanged(subject);
 	}
 
 }

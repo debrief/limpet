@@ -24,7 +24,7 @@ public interface IStore
 		/** indicate that the collection has changed
 		 *  Note: both registeered listeners and dependents are informed of the change
 		 */
-		public void fireChanged();
+		public void fireDataChanged();
 	}
 
 	/**
