@@ -55,7 +55,7 @@ public class SampleData
 
 		// // collate our data series
 		StockTypes.Temporal.Angle_Degrees angle1 = new StockTypes.Temporal.Angle_Degrees(
-				ANGLE_ONE);
+				ANGLE_ONE, null);
 		StockTypes.Temporal.Speed_MSec speedSeries1 = new StockTypes.Temporal.Speed_MSec(
 				SPEED_ONE);
 		StockTypes.Temporal.Speed_MSec speedSeries2 = new StockTypes.Temporal.Speed_MSec(

@@ -47,6 +47,7 @@ public class GenerateCourseAndSpeedOperation implements IOperation<IStoreItem>
 			{
 				IQuantityCollection<?> target = getOutputCollection(getInputs().get(i)
 						.getName());
+				
 				outputs.add(target);
 				// store the output
 				super.addOutput(target);
@@ -172,7 +173,7 @@ public class GenerateCourseAndSpeedOperation implements IOperation<IStoreItem>
 				protected IQuantityCollection<?> getOutputCollection(String title)
 				{
 					return new StockTypes.Temporal.Angle_Degrees("Generated course for "
-							+ title);
+							+ title, this);
 				}
 
 				protected void calcAndStore(IStoreItem output,
@@ -201,7 +202,7 @@ public class GenerateCourseAndSpeedOperation implements IOperation<IStoreItem>
 				protected IQuantityCollection<?> getOutputCollection(String title)
 				{
 					return new StockTypes.Temporal.Speed_MSec("Generated speed for "
-							+ title);
+							+ title, this);
 				}
 
 				protected void calcAndStore(IStoreItem output,
