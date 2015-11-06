@@ -38,9 +38,9 @@ public class LimpetDecorator implements ILightweightLabelDecorator
 		TWO_WAY_ARROW = AbstractUIPlugin.imageDescriptorFromPlugin(
 				Activator.PLUGIN_ID, "icons/left_right.png");
 		TIME = AbstractUIPlugin.imageDescriptorFromPlugin(Activator.PLUGIN_ID,
-				"icons/watch.png");
+				"icons/clock.png");
 		SINGLE = AbstractUIPlugin.imageDescriptorFromPlugin(Activator.PLUGIN_ID,
-				"icons/one.png");
+				"icons/singleton.png");
 		
 		// TODO: switch to better "dynamic/connected" icon.
 		DYNAMIC = AbstractUIPlugin.imageDescriptorFromPlugin(Activator.PLUGIN_ID,
