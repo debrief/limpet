@@ -163,7 +163,7 @@ public class DivideQuantityOperation implements IOperation<IStoreItem>
 			while (iter.hasNext())
 			{
 				IQuantityCollection<Quantity> qC = (IQuantityCollection<Quantity>) iter.next();
-				qC.getValues().clear();
+				qC.clearQuiet();
 			}
 
 			// find the (non-singleton) array length

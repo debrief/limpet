@@ -293,7 +293,7 @@ public class TestCollections extends TestCase
 	}
 
 	@SuppressWarnings(
-	{ "unchecked" })
+	{ "unchecked", "rawtypes" })
 	public void testMathOperators()
 	{
 		ITemporalQuantityCollection<?> tq1 = new StockTypes.Temporal.Speed_MSec(

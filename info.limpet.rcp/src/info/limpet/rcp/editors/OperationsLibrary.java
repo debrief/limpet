@@ -25,6 +25,7 @@ import info.limpet.data.operations.spatial.GenerateCourseAndSpeedOperation;
 import info.limpet.rcp.analysis_view.AnalysisView;
 import info.limpet.rcp.data_frequency.DataFrequencyView;
 import info.limpet.rcp.operations.ShowInNamedView;
+import info.limpet.rcp.range_slider.RangeSliderView;
 import info.limpet.rcp.time_frequency.TimeFrequencyView;
 import info.limpet.rcp.xy_plot.XyPlotView;
 
@@ -63,6 +64,7 @@ public class OperationsLibrary
 		analysis.add(new ShowInNamedView("Show in Data Frequency View",
 				DataFrequencyView.ID));
 		analysis.add(new ShowInNamedView("Show in Analysis View", AnalysisView.ID));
+		analysis.add(new ShowInNamedView("Show in Range Slider", RangeSliderView.ID));
 		return analysis;
 	}
 

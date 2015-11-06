@@ -2,12 +2,15 @@ package info.limpet.rcp.data_provider.data;
 
 import info.limpet.ICollection;
 import info.limpet.IQuantityCollection;
+import info.limpet.QuantityRange;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.measure.Measurable;
+import javax.measure.Measure;
 import javax.measure.quantity.Quantity;
+import javax.measure.unit.Unit;
 
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
@@ -26,6 +29,7 @@ public class CollectionPropertySource implements IPropertySource
 	private static final String PROPERTY_VALUE = "limpet.collection.value";
 	private static final String PROPERTY_VALUE_SLIDER = "limpet.collection.value.slider";
 	private static final String PROPERTY_UNITS = "limpet.collection.units";
+	private static final String PROPERTY_RANGE = "limpet.collection.range";
 
 	private IPropertyDescriptor[] propertyDescriptors;
 	private final CollectionWrapper _collection;
@@ -89,7 +93,14 @@ public class CollectionPropertySource implements IPropertySource
 						unitsDescriptor.setCategory("Value");
 						dList.add(unitsDescriptor);
 					}
+
+					// also provide a range descriptor
+					final PropertyDescriptor rangeDescriptor = new TextPropertyDescriptor(
+							PROPERTY_RANGE, "Range");
+					rangeDescriptor.setCategory("Metadata");
+					dList.add(rangeDescriptor);
 				}
+
 			}
 
 			dList.add(textDescriptor);
@@ -107,7 +118,7 @@ public class CollectionPropertySource implements IPropertySource
 	public Object getPropertyValue(final Object id)
 	{
 		final String prop = (String) id;
-		
+
 		final ICollection coll = (ICollection) _collection.getCollection();
 
 		if (prop.equals(PROPERTY_NAME))
@@ -126,6 +137,25 @@ public class CollectionPropertySource implements IPropertySource
 				{
 					return "" + first.doubleValue(qc.getUnits());
 				}
+			}
+		}
+		else if (prop.equals(PROPERTY_RANGE))
+		{
+			if (coll instanceof IQuantityCollection<?>)
+			{
+				final String str;
+				IQuantityCollection<Quantity> qc = (IQuantityCollection<Quantity>) coll;
+				QuantityRange<Quantity> range = qc.getRange();
+				if (range != null)
+				{
+					str = "" + range.getMinimum().longValue(qc.getUnits()) + " : "
+							+ range.getMaximum().longValue(qc.getUnits());
+				}
+				else
+				{
+					str = " : ";
+				}
+				return str;
 			}
 		}
 		else if (prop.equals(PROPERTY_VALUE_SLIDER))
@@ -187,11 +217,12 @@ public class CollectionPropertySource implements IPropertySource
 
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public void setPropertyValue(final Object id, final Object value)
 	{
 		final String prop = (String) id;
-		
+
 		final ICollection coll = (ICollection) _collection.getCollection();
 
 		if (prop.equals(PROPERTY_NAME))
@@ -224,6 +255,48 @@ public class CollectionPropertySource implements IPropertySource
 
 				// ok, fire changed!
 				tt.fireDataChanged();
+			}
+		}
+		else if (prop.equals(PROPERTY_RANGE))
+		{
+			if (coll instanceof IQuantityCollection<?>)
+			{
+				IQuantityCollection<?> tt = (IQuantityCollection<?>) coll;
+
+				// try to get a range from the string
+				String str = (String) value;
+				if (str.length() > 0)
+				{
+					// ok, split it up
+					String[] bits = str.split(":");
+					if (bits.length == 2)
+					{
+						String min = bits[0].trim();
+						String max = bits[1].trim();
+						try
+						{
+							double minV = Double.parseDouble(min);
+							double maxV = Double.parseDouble(max);
+							if (maxV > minV)
+							{
+								Unit<?> collUnits = tt.getUnits();
+								QuantityRange newR = new QuantityRange(Measure.valueOf(minV,
+										collUnits), Measure.valueOf(maxV, collUnits));
+								tt.setRange(newR);
+							}
+						}
+						catch (NumberFormatException fe)
+						{
+							System.err.println("Failed to extract number range: fe");
+						}
+					}
+					else
+					{
+						System.err.println("Number format string not properly constructed:" + str  + " (should be 1:10)");
+					}
+				}
+				// ok, fire changed!
+				tt.fireMetadataChanged();
 			}
 		}
 

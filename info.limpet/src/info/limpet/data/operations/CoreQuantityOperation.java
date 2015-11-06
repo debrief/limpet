@@ -1,12 +1,11 @@
 package info.limpet.data.operations;
 
-import info.limpet.IBaseTemporalCollection;
 import info.limpet.ICollection;
 import info.limpet.ICommand;
 import info.limpet.IQuantityCollection;
 import info.limpet.IStore;
-import info.limpet.ITemporalQuantityCollection;
 import info.limpet.IStore.IStoreItem;
+import info.limpet.ITemporalQuantityCollection;
 import info.limpet.data.commands.AbstractCommand;
 import info.limpet.data.impl.QuantityCollection;
 import info.limpet.data.impl.TemporalQuantityCollection;
@@ -155,13 +154,7 @@ public abstract class CoreQuantityOperation<Q extends Quantity>
 			while (iter.hasNext())
 			{
 				IQuantityCollection<Q> qC = (IQuantityCollection<Q>) iter.next();
-				qC.getValues().clear();
-				
-				if(qC.isTemporal())
-				{
-					IBaseTemporalCollection bt = (IBaseTemporalCollection) qC;
-					bt.getTimes().clear();
-				}
+				qC.clearQuiet();
 			}
 		}
 

@@ -139,7 +139,7 @@ public class UnitConversionOperation implements IOperation<ICollection>
 			while (iter.hasNext())
 			{
 				IQuantityCollection<Quantity> qC = (IQuantityCollection<Quantity>) iter.next();
-				qC.getValues().clear();
+				qC.clearQuiet();
 			}
 
 			IQuantityCollection<Quantity> singleInputSeries = (IQuantityCollection<Quantity>) inputs
