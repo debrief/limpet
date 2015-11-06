@@ -229,20 +229,8 @@ public class MultiplyQuantityOperation implements IOperation<IStoreItem>
 			IQuantityCollection<?> target = (IQuantityCollection<?>) outputs
 					.iterator().next();
 
-			// clear out the lists, first
-			Iterator<IStoreItem> iter = outputs.iterator();
-			while (iter.hasNext())
-			{
-				IQuantityCollection<?> qC = (IQuantityCollection<?>) iter.next();
-				qC.getValues().clear();
-
-				// hey, if it's a time series we need to clear the times, too
-				if (_timeProvider != null)
-				{
-					IBaseTemporalCollection bt = (IBaseTemporalCollection) qC;
-					bt.getTimes().clear();
-				}
-			}
+			// clear out the output list first
+			target.clearQuiet();
 
 			if (_timeProvider != null)
 			{

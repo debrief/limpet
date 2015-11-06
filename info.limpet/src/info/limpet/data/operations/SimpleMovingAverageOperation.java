@@ -137,7 +137,7 @@ public class SimpleMovingAverageOperation implements IOperation<ICollection>
 			while (iter.hasNext())
 			{
 				IQuantityCollection<?> qC = (IQuantityCollection<?>) iter.next();
-				qC.getValues().clear();
+				qC.clearQuiet();
 			}
 
 			SimpleMovingAverage sma = new SimpleMovingAverage(winSize);

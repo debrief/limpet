@@ -133,7 +133,7 @@ public class XyPlotView extends CoreAnalysisView
 			ICollection coll = (ICollection) iter.next();
 			if (coll.isQuantity())
 			{
-				if (coll.size() > 1)
+				if (coll.size() >= 1)
 				{
 					if (coll.size() < maxSize)
 					{
@@ -144,8 +144,21 @@ public class XyPlotView extends CoreAnalysisView
 						String seriesName = thisQ.getName() + " (" + theseUnits + ")";
 						ILineSeries newSeries = (ILineSeries) chart.getSeriesSet()
 								.createSeries(SeriesType.LINE, seriesName);
-						newSeries.setSymbolType(PlotSymbolType.NONE);
+						
+						// if it's a singleton, show the symbol
+						final PlotSymbolType theSym;
+						if(thisQ.size() == 1)
+						{
+							theSym = PlotSymbolType.CIRCLE;
+						}
+						else
+						{
+							theSym = PlotSymbolType.NONE;
+						}
+						
+						newSeries.setSymbolType(theSym);
 						newSeries.setLineColor(PlottingHelpers.colorFor(seriesName));
+						newSeries.setSymbolColor(PlottingHelpers.colorFor(seriesName));
 
 						double[] yData = new double[thisQ.size()];
 

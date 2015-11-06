@@ -28,6 +28,15 @@ public class TemporalObjectCollection<T extends Object> extends
 		initTime();
 	}
 	
+	@Override
+	public void clearQuiet()
+	{
+		times.clear();
+		
+		// let the parent clear the objects/values
+		super.clearQuiet();
+	}
+
 	
 	
 	@Override

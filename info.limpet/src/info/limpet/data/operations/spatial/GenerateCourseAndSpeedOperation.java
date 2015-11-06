@@ -98,6 +98,9 @@ public class GenerateCourseAndSpeedOperation implements IOperation<IStoreItem>
 			// get a calculator to use
 			final GeodeticCalculator calc = GeoSupport.getCalculator();
 
+			// do some clearing first
+			
+			
 			Iterator<IStoreItem> iter = inputs.iterator();
 			Iterator<IStoreItem> oIter = outputs.iterator();
 			while (iter.hasNext())

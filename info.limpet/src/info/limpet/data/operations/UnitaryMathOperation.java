@@ -49,9 +49,10 @@ abstract public class UnitaryMathOperation implements IOperation<ICollection>
 
 	private boolean appliesTo(List<ICollection> selection)
 	{
+		boolean notEmpty = aTests.nonEmpty(selection);
 		boolean allQuantity = aTests.allQuantity(selection);
 
-		return (allQuantity);
+		return (notEmpty && allQuantity);
 	}
 
 	public class MathCommand extends AbstractCommand<ICollection>
@@ -161,7 +162,7 @@ abstract public class UnitaryMathOperation implements IOperation<ICollection>
 				IQuantityCollection<?> thisOutput = (IQuantityCollection<?>) oIter
 						.next();
 
-				thisOutput.clear();
+				thisOutput.clearQuiet();
 
 				if (thisInput.isTemporal())
 				{

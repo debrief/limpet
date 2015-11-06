@@ -1,19 +1,5 @@
 package info.limpet.rcp.range_slider;
 
-import java.util.List;
-
-import javax.measure.Measurable;
-import javax.measure.quantity.Quantity;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Slider;
-
 import info.limpet.IChangeListener;
 import info.limpet.ICollection;
 import info.limpet.ICommand;
@@ -23,6 +9,21 @@ import info.limpet.QuantityRange;
 import info.limpet.data.operations.CollectionComplianceTests;
 import info.limpet.data.operations.SimpleMovingAverageOperation.SimpleMovingAverageCommand;
 import info.limpet.rcp.core_view.CoreAnalysisView;
+
+import java.util.List;
+
+import javax.measure.Measurable;
+import javax.measure.quantity.Quantity;
+import javax.measure.unit.Unit;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Slider;
 
 /**
  * display analysis overview of selection
@@ -209,11 +210,21 @@ public class RangeSliderView extends CoreAnalysisView implements
 	{
 
 		QuantityRange<Quantity> rng = qc.getRange();
+		Unit<Quantity> theUnits = qc.getUnits();
 		int curVal = (int) qc.getValues().iterator().next()
-				.doubleValue(qc.getUnits());
+				.doubleValue(theUnits);
 
-		label.setText(getData().get(0).getName() + " (" + qc.getUnits().toString()
-				+ ")");
+		final String unitStr;
+		if(theUnits != null && theUnits.toString().length()>0)
+		{
+			unitStr = theUnits.toString();
+		}
+		else
+		{
+			unitStr = "n/a";
+		}
+		
+		label.setText(qc.getName() + " (" + unitStr	+ ")");
 
 		Object min = rng.getMinimum();
 		Object max = rng.getMaximum();

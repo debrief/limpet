@@ -5,6 +5,8 @@ import info.limpet.IOperation;
 import info.limpet.IStore;
 import info.limpet.IStore.IStoreItem;
 import info.limpet.data.csv.CsvParser;
+import info.limpet.data.impl.samples.StockTypes;
+import info.limpet.data.impl.samples.StockTypes.NonTemporal.DimensionlessDouble;
 import info.limpet.data.operations.AddLayerOperation;
 import info.limpet.data.operations.AddLayerOperation.StringProvider;
 import info.limpet.data.operations.GenerateDummyDataOperation;
@@ -67,7 +69,6 @@ public class DataManagerEditor extends EditorPart implements
 	private IStore _store;
 	private TreeViewer viewer;
 	private IMenuListener _menuListener;
-	private Action action1;
 	private Action refreshView;
 	private Action generateData;
 	private Action addLayer;
@@ -83,6 +84,7 @@ public class DataManagerEditor extends EditorPart implements
 			firePropertyChange(PROP_DIRTY);
 		}
 	};
+	private Action createSingleton;
 
 	@Override
 	public void init(IEditorSite site, IEditorInput input)
@@ -247,25 +249,11 @@ public class DataManagerEditor extends EditorPart implements
 		manager.add(refreshView);
 		manager.add(generateData);
 		manager.add(addLayer);
+		manager.add(createSingleton);
 	}
 
 	private void makeActions()
 	{
-
-		action1 = new Action()
-		{
-			public void run()
-			{
-				ISelection selection = viewer.getSelection();
-				Object obj = ((IStructuredSelection) selection).getFirstElement();
-				showMessage("Action 1 executed on " + obj.toString());
-			}
-		};
-		action1.setText("Action 1");
-		action1.setToolTipText("Action 1 tooltip");
-		action1.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
-				.getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
-
 		generateData = new Action()
 		{
 			public void run()
@@ -298,6 +286,27 @@ public class DataManagerEditor extends EditorPart implements
 		refreshView.setText("Refresh");
 		refreshView.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
 				.getImageDescriptor(ISharedImages.IMG_TOOL_REDO));
+		
+
+		createSingleton = new Action()
+		{
+			public void run()
+			{
+				// get the name
+				String name = "new constant";
+				
+				// get units?
+				DimensionlessDouble newData = new StockTypes.NonTemporal.DimensionlessDouble(name);
+				newData.add(10);
+				
+				_store.add(newData);
+				
+			}
+		};
+		createSingleton.setText("Create singleton");
+		createSingleton.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
+				.getImageDescriptor(ISharedImages.IMG_TOOL_REDO));
+
 	}
 
 	protected void generateData()
@@ -393,6 +402,7 @@ public class DataManagerEditor extends EditorPart implements
 
 		menu.add(new Separator());
 		menu.add(refreshView);
+		menu.add(createSingleton);
 	}
 
 	private void showThisList(List<IStoreItem> selection, IMenuManager newM,

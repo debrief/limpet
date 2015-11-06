@@ -26,6 +26,11 @@ public interface ICollection extends IStoreItem
 	 */
 	public void fireDataChanged();
 	
+	/** indicate that the collection's metadata has changed
+	 *  Note: both registeered listeners and dependents are informed of the change
+	 */
+	public void fireMetadataChanged();
+	
 	/** what type is stored in collection
 	 * 
 	 * @return
