@@ -116,6 +116,9 @@ public class OperationsLibrary
 		arithmetic.add(new UnitaryMathOperation("Sqr")
 		{  public double calcFor(double val)
 			{	return val * val;}});
+		arithmetic.add(new UnitaryMathOperation("Log")
+		{  public double calcFor(double val)
+			{	return Math.log(val);}});
 		
 		
 
