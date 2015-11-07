@@ -294,18 +294,52 @@ public class DataManagerEditor extends EditorPart implements
 			{
 				// get the name
 				String name = "new constant";
+				double value;
 				
-				// get units?
-				DimensionlessDouble newData = new StockTypes.NonTemporal.DimensionlessDouble(name);
-				newData.add(10);
-				
-				_store.add(newData);
+				InputDialog dlgName = new InputDialog(Display.getCurrent().getActiveShell(),
+            "New variable", "Enter name for variable", "",null);
+        if (dlgName.open() == Window.OK) {
+          // User clicked OK; update the label with the input
+        	name = dlgName.getValue();
+        }
+        else
+        {
+        	return;
+        }
+        
+				InputDialog dlgValue = new InputDialog(Display.getCurrent().getActiveShell(),
+            "New variable", "Enter initial value for variable", "",null);
+        if (dlgValue.open() == Window.OK) {
+          // User clicked OK; update the label with the input
+        	String str = dlgValue.getValue();
+        	try
+					{
+						value = Double.parseDouble(str);
+						
+						// get units?
+						DimensionlessDouble newData = new StockTypes.NonTemporal.DimensionlessDouble(name);
+						newData.add(value);
+						
+						// and store it
+						_store.add(newData);
+					}
+					catch (NumberFormatException e)
+					{
+						System.err.println("Failed to parse initial value");
+						e.printStackTrace();
+					}
+
+        }
+        else
+        {
+        	return;
+        }
+
 				
 			}
 		};
 		createSingleton.setText("Create singleton");
-		createSingleton.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
-				.getImageDescriptor(ISharedImages.IMG_TOOL_REDO));
+		createSingleton.setImageDescriptor(Activator.getImageDescriptor("icons/variable.png"));
 
 	}
 
