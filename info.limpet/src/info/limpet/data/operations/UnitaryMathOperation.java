@@ -47,6 +47,12 @@ abstract public class UnitaryMathOperation implements IOperation<ICollection>
 		return res;
 	}
 
+
+	protected Unit<?> getUnits(IQuantityCollection<?> input)
+	{ 
+		return input.getUnits();
+	}
+	
 	private boolean appliesTo(List<ICollection> selection)
 	{
 		boolean notEmpty = aTests.nonEmpty(selection);
@@ -65,6 +71,7 @@ abstract public class UnitaryMathOperation implements IOperation<ICollection>
 					false, false, selection);
 		}
 
+		
 		@Override
 		public void execute()
 		{
@@ -80,12 +87,12 @@ abstract public class UnitaryMathOperation implements IOperation<ICollection>
 				if (thisInput.isTemporal())
 				{
 					thisOutput = new TemporalQuantityCollection<>(this.getName() + " - "
-							+ thisInput.getName(), this, thisInput.getUnits());
+							+ thisInput.getName(), this, getUnits(thisInput));
 				}
 				else
 				{
 					thisOutput = new QuantityCollection<>(this.getName() + " - "
-							+ thisInput.getName(), this, thisInput.getUnits());
+							+ thisInput.getName(), this, getUnits(thisInput));
 				}
 
 				thisInput.addDependent(this);
@@ -110,8 +117,8 @@ abstract public class UnitaryMathOperation implements IOperation<ICollection>
 			while (iter.hasNext())
 			{
 				Measurable<?> thisV = (Measurable<?>) iter.next();
-				Unit theUnits = thisInput.getUnits();
-				double thisD = thisV.doubleValue(theUnits);
+				Unit theUnits =  getUnits(thisInput);
+				double thisD = thisV.doubleValue((Unit) thisInput.getUnits());
 				double newD = calcFor(thisD);
 				thisOutput.add(Measure.valueOf(newD, theUnits));
 			}
@@ -128,8 +135,8 @@ abstract public class UnitaryMathOperation implements IOperation<ICollection>
 			{
 				Measurable<?> thisV = (Measurable<?>) iter.next();
 				Long thisT = tIter.next();
-				Unit theUnits = thisInput.getUnits();
-				double thisD = thisV.doubleValue(theUnits);
+				Unit theUnits = getUnits(thisInput);
+				double thisD = thisV.doubleValue((Unit) thisInput.getUnits());
 				double newD = calcFor(thisD);
 				thisOutput.add(thisT, Measure.valueOf(newD, theUnits));
 			}
