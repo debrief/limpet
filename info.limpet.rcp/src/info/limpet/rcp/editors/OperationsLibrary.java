@@ -8,6 +8,7 @@ import static javax.measure.unit.SI.METRES_PER_SQUARE_SECOND;
 import static javax.measure.unit.SI.RADIAN;
 import static javax.measure.unit.SI.SECOND;
 import info.limpet.IOperation;
+import info.limpet.IQuantityCollection;
 import info.limpet.IStore.IStoreItem;
 import info.limpet.data.impl.samples.StockTypes;
 import info.limpet.data.operations.AddQuantityOperation;
@@ -32,6 +33,9 @@ import info.limpet.rcp.xy_plot.XyPlotView;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import javax.measure.quantity.Dimensionless;
+import javax.measure.unit.Unit;
 
 public class OperationsLibrary
 {
@@ -81,6 +85,12 @@ public class OperationsLibrary
 		admin.add(new GenerateDummyDataOperation("small", 20));
 		admin.add(new GenerateDummyDataOperation("large", 1000));
 		admin.add(new GenerateDummyDataOperation("monster", 1000000));
+		admin.add(new UnitaryMathOperation("Clear units")
+		{  public double calcFor(double val)
+			{	return val;}
+		protected Unit<?> getUnits(IQuantityCollection<?> input)
+		{return Dimensionless.UNIT;}});
+
 
 		return admin;
 	}
