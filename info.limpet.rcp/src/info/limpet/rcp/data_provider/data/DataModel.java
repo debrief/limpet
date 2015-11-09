@@ -21,6 +21,9 @@ import org.eclipse.jface.viewers.Viewer;
  */
 public class DataModel implements ITreeContentProvider
 {
+	public static final String DEPENDENTS = "Dependents";
+	public static final String PRECEDENTS = "Precedents";
+
 	private void addCollectionItems(final List<Object> res,
 			final CollectionWrapper cw)
 	{
@@ -32,7 +35,7 @@ public class DataModel implements ITreeContentProvider
 			final ICommand<?> prec = coll.getPrecedent();
 			if (prec != null)
 			{
-				final NamedList dList = new NamedList(cw, "Precedents");
+				final NamedList dList = new NamedList(cw, PRECEDENTS);
 				dList.add(new CommandWrapper(dList, prec));
 				res.add(dList);
 			}
@@ -40,7 +43,7 @@ public class DataModel implements ITreeContentProvider
 			final List<ICommand<?>> dep = coll.getDependents();
 			if (dep != null)
 			{
-				final NamedList dList = new NamedList(cw, "Dependents");
+				final NamedList dList = new NamedList(cw, DEPENDENTS);
 				final Iterator<ICommand<?>> dIter = dep.iterator();
 				while (dIter.hasNext())
 				{
