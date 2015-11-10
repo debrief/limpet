@@ -13,7 +13,7 @@ import org.apache.commons.math3.stat.Frequency;
 
 public abstract class ObjectFrequencyBins extends CoreAnalysis
 {
-	private static final int MAX_SIZE = 1000;
+	private static final int MAX_SIZE = 2000;
 	final CollectionComplianceTests aTests;
 
 	public ObjectFrequencyBins()

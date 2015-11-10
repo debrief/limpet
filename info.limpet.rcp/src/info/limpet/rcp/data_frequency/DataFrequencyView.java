@@ -38,7 +38,7 @@ import org.swtchart.ext.InteractiveChart;
 public class DataFrequencyView extends CoreAnalysisView
 {
 
-	private static final int MAX_SIZE = 1000;
+	private static final int MAX_SIZE = 2000;
 	protected CollectionComplianceTests aTests = new CollectionComplianceTests();
 
 	/**
