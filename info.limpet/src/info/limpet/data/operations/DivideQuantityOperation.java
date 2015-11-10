@@ -8,6 +8,7 @@ import info.limpet.IQuantityCollection;
 import info.limpet.IStore;
 import info.limpet.ITemporalQuantityCollection;
 import info.limpet.IStore.IStoreItem;
+import info.limpet.ITemporalQuantityCollection.InterpMethod;
 import info.limpet.data.commands.AbstractCommand;
 import info.limpet.data.impl.QuantityCollection;
 import info.limpet.data.impl.TemporalQuantityCollection;
@@ -17,6 +18,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.measure.Measurable;
 import javax.measure.quantity.Quantity;
 import javax.measure.unit.Unit;
 
@@ -53,7 +55,8 @@ public class DivideQuantityOperation implements IOperation<IStoreItem>
 			if (aTests.allTemporal(selection) || !aTests.allNonTemporal(selection)
 					&& aTests.allEqualLengthOrSingleton(selection))
 			{
-				longest = MultiplyQuantityOperation.getLongestTemporalCollections(selection);
+				longest = MultiplyQuantityOperation
+						.getLongestTemporalCollections(selection);
 			}
 			else
 			{
@@ -83,10 +86,11 @@ public class DivideQuantityOperation implements IOperation<IStoreItem>
 		{
 			if (aTests.allQuantity(selection))
 			{
-				// ok, we have quantity data. See if we have series of the same length,
+				// ok, we have quantity data. See if we have series of the same
+				// length,
 				// or
 				// singletons
-				res = aTests.allEqualLengthOrSingleton(selection);
+				res = aTests.allTemporal(selection) || aTests.allEqualLengthOrSingleton(selection);
 			}
 		}
 
@@ -135,9 +139,7 @@ public class DivideQuantityOperation implements IOperation<IStoreItem>
 
 			return target;
 		}
-		
-		@SuppressWarnings(
-		{ "unchecked", "rawtypes" })
+
 		@Override
 		public void execute()
 		{
@@ -147,8 +149,8 @@ public class DivideQuantityOperation implements IOperation<IStoreItem>
 			List<IStoreItem> outputs = new ArrayList<IStoreItem>();
 
 			// ok, generate the new series
-			IQuantityCollection<Quantity> target = new QuantityCollection(
-					getOutputName(), this, unit);
+			IQuantityCollection<?> target = createQuantityTarget();
+			;
 
 			outputs.add(target);
 
@@ -186,8 +188,6 @@ public class DivideQuantityOperation implements IOperation<IStoreItem>
 			// update the results
 			performCalc(unit, outputs, _item1, _item2);
 		}
-		
-		
 
 		/**
 		 * wrap the actual operation. We're doing this since we need to separate it
@@ -212,38 +212,103 @@ public class DivideQuantityOperation implements IOperation<IStoreItem>
 				qC.clearQuiet();
 			}
 
-			// find the (non-singleton) array length
-			final int length = getNonSingletonArrayLength(inputs);
-
-			for (int j = 0; j < length; j++)
+			if (_timeProvider != null)
 			{
-				final double thisValue;
-				if (_item1.size() == 1)
+				// ok, temporal (interpolated) calculation
+				Collection<Long> times = _timeProvider.getTimes();
+				Iterator<Long> tIter = times.iterator();
+				while (tIter.hasNext())
 				{
-					thisValue = _item1.getValues().get(0)
-							.doubleValue((Unit<Quantity>) _item1.getUnits());
-				}
-				else
-				{
-					thisValue = _item1.getValues().get(j)
-							.doubleValue((Unit<Quantity>) _item1.getUnits());
+					final Long thisTime = tIter.next();
+					Double runningTotal = null;
+
+					final double thisValue, otherValue;
+
+					if (_item1.size() == 1)
+					{
+						thisValue = _item1.getValues().get(0)
+								.doubleValue((Unit<Quantity>) _item1.getUnits());
+					}
+					else
+					{
+						ITemporalQuantityCollection<Quantity> tqc = (ITemporalQuantityCollection<Quantity>) _item1;
+						Measurable<Quantity> thisMeasure = tqc.interpolateValue(thisTime,
+								InterpMethod.Linear);
+						if (thisMeasure != null)
+						{
+							thisValue = thisMeasure.doubleValue(_item1.getUnits());
+						}
+						else
+						{
+							thisValue = 1;
+						}
+					}
+
+					if (_item2.size() == 1)
+					{
+						otherValue = _item2.getValues().get(0)
+								.doubleValue((Unit<Quantity>) _item2.getUnits());
+					}
+					else
+					{
+						ITemporalQuantityCollection<Quantity> tqc = (ITemporalQuantityCollection<Quantity>) _item2;
+						Measurable<Quantity> thisMeasure = tqc.interpolateValue(thisTime,
+								InterpMethod.Linear);
+						if (thisMeasure != null)
+						{
+							otherValue = thisMeasure.doubleValue(_item2.getUnits());
+						}
+						else
+						{
+							otherValue = 1;
+						}
+					}
+
+					// first value?
+					runningTotal = thisValue / otherValue;
+					
+					ITemporalQuantityCollection<?> itq = (ITemporalQuantityCollection<?>) target;
+					itq.add(thisTime, runningTotal);
 				}
 
-				final double otherValue;
-				if (_item2.size() == 1)
-				{
-					otherValue = _item2.getValues().get(0)
-							.doubleValue((Unit<Quantity>) _item2.getUnits());
-				}
-				else
-				{
-					otherValue = _item2.getValues().get(j)
-							.doubleValue((Unit<Quantity>) _item2.getUnits());
-				}
 
-				double res = thisValue / otherValue;
+			}
+			else
+			{
 
-				target.add(res);
+				// find the (non-singleton) array length
+				final int length = getNonSingletonArrayLength(inputs);
+
+				for (int j = 0; j < length; j++)
+				{
+					final double thisValue;
+					if (_item1.size() == 1)
+					{
+						thisValue = _item1.getValues().get(0)
+								.doubleValue((Unit<Quantity>) _item1.getUnits());
+					}
+					else
+					{
+						thisValue = _item1.getValues().get(j)
+								.doubleValue((Unit<Quantity>) _item1.getUnits());
+					}
+
+					final double otherValue;
+					if (_item2.size() == 1)
+					{
+						otherValue = _item2.getValues().get(0)
+								.doubleValue((Unit<Quantity>) _item2.getUnits());
+					}
+					else
+					{
+						otherValue = _item2.getValues().get(j)
+								.doubleValue((Unit<Quantity>) _item2.getUnits());
+					}
+
+					double res = thisValue / otherValue;
+
+					target.add(res);
+				}
 			}
 		}
 	}
