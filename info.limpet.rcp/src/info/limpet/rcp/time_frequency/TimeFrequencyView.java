@@ -33,7 +33,7 @@ import org.swtchart.Range;
 public class TimeFrequencyView extends CoreAnalysisView
 {
 
-	private static final int MAX_SIZE = 1005;
+	private static final int MAX_SIZE = 2000;
 
 	/**
 	 * The ID of the view as specified by the extension.

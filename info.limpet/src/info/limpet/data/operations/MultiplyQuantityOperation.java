@@ -69,7 +69,7 @@ public class MultiplyQuantityOperation implements IOperation<IStoreItem>
 		return res;
 	}
 
-	protected ITemporalQuantityCollection<?> getLongestTemporalCollections(
+	public static ITemporalQuantityCollection<?> getLongestTemporalCollections(
 			List<IStoreItem> selection)
 	{
 		// find the longest time series.
