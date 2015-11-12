@@ -83,7 +83,7 @@ public class DataFrequencyView extends CoreAnalysisView
 	@Override
 	public void display(List<IStoreItem> res)
 	{
-		if(res.size() == 0)
+		if (res.size() == 0)
 			return;
 
 		// they're all the same type - check the first one
@@ -91,7 +91,7 @@ public class DataFrequencyView extends CoreAnalysisView
 
 		ICollection first = (ICollection) iter.next();
 
-		// sort out what type of data this is.		
+		// sort out what type of data this is.
 		if (first.isQuantity())
 		{
 			showQuantity(res);
@@ -214,7 +214,7 @@ public class DataFrequencyView extends CoreAnalysisView
 						xAxis.enableCategory(false);
 
 						// set the y axis min to be zero
-						Range yRange = chart.getAxisSet().getYAxis(0).getRange(); 
+						Range yRange = chart.getAxisSet().getYAxis(0).getRange();
 						chart.getAxisSet().getYAxis(0).setRange(new Range(0, yRange.upper));
 
 						chart.redraw();
@@ -231,11 +231,34 @@ public class DataFrequencyView extends CoreAnalysisView
 	}
 
 	@Override
-	protected boolean appliesToMe(List<IStoreItem> res,
+	protected boolean appliesToMe(List<IStoreItem> selection,
 			CollectionComplianceTests tests)
 	{
-		// are all the items of the same type?
-		return (tests.allQuantity(res) || tests.allNonQuantity(res));
+		final boolean res;
+		if (tests.allQuantity(selection))
+		{
+			//ok, all quantities - that's easy
+			res = true;
+		}
+		else if (tests.allNonQuantity(selection))
+		{
+			if (tests.allNonLocation(selection))
+			{
+				// none of them are locations - that's ok
+				res = true;
+			}
+			else
+			{
+				// hmm, locations - scary. say no
+				res = false;
+			}
+		}
+		else
+		{
+			// mixed sorts, let's not bother
+			res = false;
+		}
+		return res;
 	}
 
 	@Override

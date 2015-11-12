@@ -169,7 +169,7 @@ public class TimeFrequencyView extends CoreAnalysisView
 			CollectionComplianceTests tests)
 	{
 		// are all the items of the same type?
-		boolean isValid = tests.allCollections(res) && tests.nonEmpty(res) && tests.allTemporal(res);
+		boolean isValid = tests.allCollections(res) && tests.nonEmpty(res) && tests.allTemporal(res) && tests.allNonLocation(res);
 		chart.setVisible(isValid);
 		return isValid;
 	}
