@@ -195,11 +195,6 @@ public class TimeFrequencyView extends CoreAnalysisView
 		chart.setVisible(res);
 		
 		return res;
-		
-		// are all the items of the same type?
-//		boolean isValid = tests.allCollections(res) && tests.nonEmpty(res) && tests.allTemporal(res) && tests.allNonLocation(res);
-//		chart.setVisible(isValid);
-//		return isValid;
 	}
 
 	@Override
