@@ -258,6 +258,9 @@ public class DataFrequencyView extends CoreAnalysisView
 			// mixed sorts, let's not bother
 			res = false;
 		}
+		
+		chart.setVisible(res);
+
 		return res;
 	}
 
