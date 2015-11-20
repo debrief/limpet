@@ -165,13 +165,41 @@ public class TimeFrequencyView extends CoreAnalysisView
 	}
 
 	@Override
-	protected boolean appliesToMe(List<IStoreItem> res,
+	protected boolean appliesToMe(List<IStoreItem> selection,
 			CollectionComplianceTests tests)
 	{
+		final boolean res;
+		if (tests.allQuantity(selection))
+		{
+			//ok, all quantities - that's easy
+			res = true;
+		}
+		else if (tests.allNonQuantity(selection))
+		{
+			if (tests.allNonLocation(selection))
+			{
+				// none of them are locations - that's ok
+				res = true;
+			}
+			else
+			{
+				// hmm, locations - scary. say no
+				res = false;
+			}
+		}
+		else
+		{
+			// mixed sorts, let's not bother
+			res = false;
+		}
+		chart.setVisible(res);
+		
+		return res;
+		
 		// are all the items of the same type?
-		boolean isValid = tests.allCollections(res) && tests.nonEmpty(res) && tests.allTemporal(res) && tests.allNonLocation(res);
-		chart.setVisible(isValid);
-		return isValid;
+//		boolean isValid = tests.allCollections(res) && tests.nonEmpty(res) && tests.allTemporal(res) && tests.allNonLocation(res);
+//		chart.setVisible(isValid);
+//		return isValid;
 	}
 
 	@Override
