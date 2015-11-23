@@ -4,6 +4,7 @@ import info.limpet.IBaseTemporalCollection;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 
 public class TimeHelper implements IBaseTemporalCollection
@@ -66,7 +67,7 @@ public class TimeHelper implements IBaseTemporalCollection
 	}
 
 	@Override
-	public Collection<Long> getTimes()
+	public List<Long> getTimes()
 	{
 		return _times;
 	}

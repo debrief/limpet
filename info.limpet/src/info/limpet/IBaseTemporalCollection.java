@@ -1,6 +1,6 @@
 package info.limpet;
 
-import java.util.Collection;
+import java.util.List;
 
 public interface IBaseTemporalCollection
 {
@@ -38,6 +38,6 @@ public interface IBaseTemporalCollection
 	 * 
 	 * @return
 	 */
-	public Collection<Long> getTimes();
+	public List<Long> getTimes();
 	
 }

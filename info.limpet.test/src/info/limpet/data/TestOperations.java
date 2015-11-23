@@ -36,9 +36,7 @@ import javax.measure.Measure;
 import javax.measure.converter.UnitConverter;
 import javax.measure.quantity.Angle;
 import javax.measure.quantity.Dimensionless;
-import javax.measure.quantity.Duration;
 import javax.measure.quantity.Length;
-import javax.measure.quantity.Quantity;
 import javax.measure.quantity.Velocity;
 import javax.measure.unit.Unit;
 
@@ -398,6 +396,7 @@ public class TestOperations extends TestCase
 
 		// test results is same length as thisSpeed
 		assertEquals("correct size", 10, newS.size());
+		assertTrue("is temporal", newS.isTemporal());
 
 		// check that operation isn't offered if the dataset is already in
 		// that type

@@ -1,6 +1,7 @@
 package info.limpet.rcp.editors;
 
 import static javax.measure.unit.NonSI.MINUTE;
+import static javax.measure.unit.NonSI.NAUTICAL_MILE;
 import static javax.measure.unit.SI.CELSIUS;
 import static javax.measure.unit.SI.METRE;
 import static javax.measure.unit.SI.METRES_PER_SECOND;
@@ -35,6 +36,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import javax.measure.quantity.Dimensionless;
+import javax.measure.quantity.Velocity;
 import javax.measure.unit.Unit;
 
 public class OperationsLibrary
@@ -157,6 +159,7 @@ public class OperationsLibrary
 
 		// Speed
 		conversions.add(new UnitConversionOperation(METRES_PER_SECOND));
+		conversions.add(new UnitConversionOperation(NAUTICAL_MILE.divide(SECOND.times(3600)).asType(Velocity.class)));
 
 		// Acceleration
 		conversions.add(new UnitConversionOperation(METRES_PER_SQUARE_SECOND));

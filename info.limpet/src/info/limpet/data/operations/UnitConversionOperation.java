@@ -8,6 +8,7 @@ import info.limpet.IStore;
 import info.limpet.IStore.IStoreItem;
 import info.limpet.data.commands.AbstractCommand;
 import info.limpet.data.impl.QuantityCollection;
+import info.limpet.data.impl.TemporalQuantityCollection;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -62,7 +63,8 @@ public class UnitConversionOperation implements IOperation<ICollection>
 				Unit<?> units = ((IQuantityCollection<?>) selection.get(0)).getUnits();
 				sameDimension = units.getDimension().equals(targetUnit.getDimension());
 
-				// check they're different units. It's not worth offering the operation
+				// check they're different units. It's not worth offering the
+				// operation
 				// if
 				// they're already in the same units
 				sameUnits = units.equals(targetUnit);
@@ -86,11 +88,22 @@ public class UnitConversionOperation implements IOperation<ICollection>
 		{
 			List<ICollection> outputs = new ArrayList<ICollection>();
 
-			String seriesName = inputs.iterator().next().getName();
+			ICollection theInput = inputs.iterator().next();
+			String seriesName = theInput.getName();
 
 			// ok, generate the new series
-			IQuantityCollection<?> target = new QuantityCollection<>(seriesName
-					+ getOutputName(), this, targetUnit);
+			final IQuantityCollection<?> target;
+
+			// hmm, is it a temporal operation
+			if (theInput.isTemporal())
+			{
+				target = new TemporalQuantityCollection<>(seriesName + getOutputName(),this, targetUnit);
+			}
+			else
+			{
+				target = new QuantityCollection<>(seriesName + getOutputName(), this,
+						targetUnit);
+			}
 
 			outputs.add(target);
 
@@ -138,21 +151,37 @@ public class UnitConversionOperation implements IOperation<ICollection>
 			Iterator<ICollection> iter = outputs.iterator();
 			while (iter.hasNext())
 			{
-				IQuantityCollection<Quantity> qC = (IQuantityCollection<Quantity>) iter.next();
+				IQuantityCollection<Quantity> qC = (IQuantityCollection<Quantity>) iter
+						.next();
 				qC.clearQuiet();
 			}
 
 			IQuantityCollection<Quantity> singleInputSeries = (IQuantityCollection<Quantity>) inputs
 					.get(0);
 
-			UnitConverter converter = singleInputSeries.getUnits().getConverterTo(target.getUnits());
-			
+			UnitConverter converter = singleInputSeries.getUnits().getConverterTo(
+					target.getUnits());
+
 			for (int j = 0; j < singleInputSeries.getValues().size(); j++)
 			{
 
 				Measurable<Quantity> thisValue = singleInputSeries.getValues().get(j);
-				double converted = converter.convert(thisValue.doubleValue(singleInputSeries.getUnits()));
-				target.add(converted);
+				double converted = converter.convert(thisValue
+						.doubleValue(singleInputSeries.getUnits()));
+				
+				if(singleInputSeries.isTemporal())
+				{
+					TemporalQuantityCollection<Quantity> tq= (TemporalQuantityCollection<Quantity>) singleInputSeries;
+					Long time = (Long) tq.getTimes().get(j);
+					TemporalQuantityCollection<Quantity> tgtQ = (TemporalQuantityCollection<Quantity>) target;
+					tgtQ.add(time,  converted);
+				}
+				else
+				{
+					target.add(converted);
+					
+				}
+				
 			}
 		}
 	}

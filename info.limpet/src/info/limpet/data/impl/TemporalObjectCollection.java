@@ -7,6 +7,7 @@ import info.limpet.data.impl.helpers.TimeHelper;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 
 public class TemporalObjectCollection<T extends Object> extends
@@ -57,7 +58,7 @@ public class TemporalObjectCollection<T extends Object> extends
 	}
 
 	@Override
-	public Collection<Long> getTimes()
+	public List<Long> getTimes()
 	{
 		return times;
 	}
