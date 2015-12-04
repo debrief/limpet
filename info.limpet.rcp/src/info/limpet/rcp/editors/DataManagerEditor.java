@@ -1,21 +1,5 @@
 package info.limpet.rcp.editors;
 
-import info.limpet.ICommand;
-import info.limpet.IOperation;
-import info.limpet.IStore;
-import info.limpet.IStore.IStoreItem;
-import info.limpet.data.csv.CsvParser;
-import info.limpet.data.impl.samples.StockTypes;
-import info.limpet.data.impl.samples.StockTypes.NonTemporal.DimensionlessDouble;
-import info.limpet.data.operations.AddLayerOperation;
-import info.limpet.data.operations.AddLayerOperation.StringProvider;
-import info.limpet.data.operations.GenerateDummyDataOperation;
-import info.limpet.data.persistence.xml.XStreamHandler;
-import info.limpet.data.store.InMemoryStore;
-import info.limpet.data.store.InMemoryStore.StoreChangeListener;
-import info.limpet.rcp.Activator;
-import info.limpet.rcp.data_provider.data.DataModel;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -44,15 +28,11 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
-import org.eclipse.swt.dnd.DropTarget;
-import org.eclipse.swt.dnd.DropTargetEvent;
-import org.eclipse.swt.dnd.DropTargetListener;
 import org.eclipse.swt.dnd.FileTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
@@ -61,6 +41,23 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.EditorPart;
+
+import info.limpet.ICommand;
+import info.limpet.IOperation;
+import info.limpet.IStore;
+import info.limpet.IStore.IStoreItem;
+import info.limpet.data.impl.samples.StockTypes;
+import info.limpet.data.impl.samples.StockTypes.NonTemporal.DimensionlessDouble;
+import info.limpet.data.operations.AddLayerOperation;
+import info.limpet.data.operations.AddLayerOperation.StringProvider;
+import info.limpet.data.operations.GenerateDummyDataOperation;
+import info.limpet.data.persistence.xml.XStreamHandler;
+import info.limpet.data.store.InMemoryStore;
+import info.limpet.data.store.InMemoryStore.StoreChangeListener;
+import info.limpet.rcp.Activator;
+import info.limpet.rcp.data_provider.data.DataModel;
+import info.limpet.rcp.editors.dnd.DataManagerDropAdapter;
+import info.limpet.rcp.editors.dnd.LimpetTransfer;
 
 public class DataManagerEditor extends EditorPart implements
 		StoreChangeListener
@@ -150,100 +147,27 @@ public class DataManagerEditor extends EditorPart implements
 			IStore ms = (IStore) store;
 			ms.addChangeListener(this);
 		}
-		configureDropSupport(parent);
+		configureDropSupport();
+		configureDragSupport();
 	}
 	
+	private void configureDragSupport()
+	{
+		int ops = DND.DROP_COPY | DND.DROP_MOVE;
+		Transfer[] transfers = new Transfer[] { LimpetTransfer.getInstance() };
+		viewer.addDragSupport(ops, transfers, new LimpetDragListener(viewer));
+	}
+
 	/**
 	 * sort out the drop target
 	 */
-	private void configureDropSupport(Composite parent)
+	private void configureDropSupport()
 	{
-		final int dropOperation = DND.DROP_COPY;
-		final Transfer[] dropTypes = { FileTransfer.getInstance() };
-
-		DropTarget target = new DropTarget(parent, dropOperation);
-		target.setTransfer(dropTypes);
-		target.addDropListener(new DropTargetListener()
-		{
-			public void dragEnter(final DropTargetEvent event)
-			{
-				if (FileTransfer.getInstance().isSupportedType(event.currentDataType))
-				{
-					if (event.detail != DND.DROP_COPY)
-					{
-						event.detail = DND.DROP_COPY;
-					}
-				}
-			}
-
-			public void dragLeave(final DropTargetEvent event)
-			{
-			}
-
-			public void dragOperationChanged(final DropTargetEvent event)
-			{
-			}
-
-			public void dragOver(final DropTargetEvent event)
-			{
-			}
-
-			public void dropAccept(final DropTargetEvent event)
-			{
-			}
-
-			public void drop(final DropTargetEvent event)
-			{
-				String[] fileNames = null;
-				if (FileTransfer.getInstance().isSupportedType(event.currentDataType))
-				{
-					fileNames = (String[]) event.data;
-				}
-				if (fileNames != null)
-				{
-					filesDropped(fileNames);
-				}
-			}
-
-		});
-
+		final int dropOperation = DND.DROP_COPY | DND.DROP_MOVE;
+		final Transfer[] dropTypes = { FileTransfer.getInstance(), LimpetTransfer.getInstance() };
+		viewer.addDropSupport(dropOperation, dropTypes, new DataManagerDropAdapter(viewer, _store));
 	}
-
-	protected void filesDropped(String[] fileNames)
-	{
-		if (fileNames != null)
-		{
-			for (int i = 0; i < fileNames.length; i++)
-			{
-				String fileName = fileNames[i];
-				if (fileName != null && fileName.endsWith(".csv"))
-				{
-					try
-					{
-						parseCsv(fileName);
-					}
-					catch (IOException e)
-					{
-						MessageDialog.openWarning(getShell(), "Warning", "Cannot drop '" + fileName + "'. See log for more details");
-						Activator.log(e);
-					}
-				}
-			}
-		}
-	}
-
-	private Shell getShell()
-	{
-		return PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-	}
-
-	private void parseCsv(String fileName) throws IOException
-	{
-		List<IStoreItem> collections = new CsvParser().parse(fileName);
-		_store.addAll(collections);
-		changed();
-	}
-
+	
 	protected void fillLocalToolBar(IToolBarManager manager)
 	{
 		manager.add(refreshView);

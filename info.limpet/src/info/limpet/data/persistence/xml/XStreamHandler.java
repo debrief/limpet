@@ -109,5 +109,15 @@ public class XStreamHandler
 		File file = getFile(iFile);
 		save(store, file);
 	}
+	
+	public IStore fromXML(String xml)
+	{
+		return (IStore) xstream.fromXML(xml);
+	}
+	
+	public String toXML(IStore store)
+	{
+		return xstream.toXML(store);
+	}
 
 }

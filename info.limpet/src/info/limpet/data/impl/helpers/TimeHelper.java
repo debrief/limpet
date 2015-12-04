@@ -1,10 +1,9 @@
 package info.limpet.data.impl.helpers;
 
-import info.limpet.IBaseTemporalCollection;
-
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
+
+import info.limpet.IBaseTemporalCollection;
 
 
 public class TimeHelper implements IBaseTemporalCollection
