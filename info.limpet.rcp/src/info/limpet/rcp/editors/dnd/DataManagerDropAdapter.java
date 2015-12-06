@@ -68,11 +68,7 @@ public class DataManagerDropAdapter extends ViewerDropAdapter
 						else if (object instanceof CollectionWrapper)
 						{
 							CollectionWrapper collectionWrapper = (CollectionWrapper) object;
-							List<IStoreItem> l = new ArrayList<IStoreItem>();
-							StoreGroup storeGroup = new StoreGroup(collectionWrapper.toString());
-							l.add(storeGroup);
-							storeGroup.add(collectionWrapper.getCollection());
-							((GroupWrapper) target).getGroup().addAll(l);
+							((GroupWrapper) target).getGroup().add(collectionWrapper.getCollection());
 						}
 					}
 				}
