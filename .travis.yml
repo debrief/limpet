@@ -1,14 +1,21 @@
 language: java
 jdk: oraclejdk7
 sudo: false
-install: 
+install:
 - mvn --version
 before_script:
 - export DISPLAY=:99
 - sh -e /etc/init.d/xvfb start
 - sleep 3
-script: 
+script:
 - cd info.limpet.targetplatforms
 - mvn clean install
 - cd ..
 - mvn clean verify -U -B -fae
+deploy:
+  provider: releases
+  api_key:
+    secure: jQINyAWBIuogWhJag6SwP9gcGfYATvJ577smqmeYOdfuXSGxQN0TprFj0/X6KGe03lLfZUAgQnhQbE/KjGzUL+LY/R8LhXiFHvlVCk8kWaFXF4Aeyk67RZuwLl3MOMREbN1vAjZFQnBoFHyImm4j5fdDgkuSnFbZg+IM3rw4I6kwjBcl7BuTUVYBstm4/sHpntsM9LAvIvSH9E8tWmj/ToiUfMm4RbOtptsUm+kds7WKDww4A0WlVO/yp5Hhi46azuzWSTP5advXXnTpvgozOdca9ThLI1wMgcuWPSwIBquHypW9AqXp8p/ShcwwtuNww/1IHrQcUaPrPgrRhotu8Xmh+O2ymE6r078qqYFMY4OfhhM/TEOUJusK5P51m+WMpIsgouT94MA9MDAg+kBuxQys8j8XazGLJJsRiBlegP73/3JtaJ80HegIprtv64XH96TlgdoZo29MbVtPC2gD5QbSgq3XfiGGm5Jx4EsQo72hPZucFvnhBLOm5ClJZ9RcDECZJwStEV3hpGWMSGzUbItywg5owyC7eH2hqXyaFHUPI/N0NZkbozDFdZEAjp4elg6Z8OB/rGvaIfu87CQUFnrJLvOPFycVfeouo2yil6Cp1tbcy4pSBz9h5kmKNYGJh97jWgkCcTnctgpBaCl1KacT8/GRWl5TMjfmCW+BSS8=
+  file: LICENSE
+  on:
+    repo: debrief/limpet
