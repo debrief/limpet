@@ -1,5 +1,8 @@
 language: java
 jdk: oraclejdk7
+cache:
+  directories:
+    - $HOME/.m2
 sudo: false
 install:
 - mvn --version
@@ -12,8 +15,8 @@ script:
 - mvn clean install
 - cd ..
 - mvn clean verify -U -B -fae
-- ./deploy_ghpages.sh
+- "./deploy_ghpages.sh"
 env:
   global:
   - GH_REF: github.com/debrief/limpet-release.git
-  - secure: VKM/Cae1fBwZgR7+U2ea9PpuuIZ09OEAJtjDcSwGq5evTdIKRAdfnIWFUbloFiELefRKlr9fUuz3xg816uajn3HxWDrEfc5GWKAvrWhvrXrVMjc0Laa6qtl1K8dHcxeLY8d0WDg/1CUg42j1eGulu3T9YuZdfhu+n6Tmvgh98hb0xwpJw0UToSI+CM8WdLVxaxK5sXMr+ZoFuraEU5LyHixz7cWomBXGmhxmHhuMlLN6wPhQelI/yOPOB+r3CrdbqioEp1+QsnEi8GR+0nrIOplg/i76R6XibfZ483dZKNMsSmV66uqrQn0HxFE8z1xvYXZ8GXLZhHIX46kpb9Xifa/Wx94W0zTZdO4Sj8QwzhM2Ju/hiC98zdnNGTv0+noJljzfcyrpjLwWOzJvHmbAsghe8nfWvWcLzJv6Cc1N6V0ks1B7RT+Ju02ST+1PuWu/mAoZV0ZDlC5oxH0GdFaaKMki7TneZ5jTRyO5qUZAGqOJUHvfKhviWjcngs+wG+F4Ye3dZsTClSuSSnfYJLs7YLHGI/kBwkBB3KnqNnzyfx9Ndj3cHFJVqcnNTOMVXWiIwccP6+Ek5tgoW8lIjkwOa5+en6zJQBiKBF8HT63YQ9hMLk5AKKmd/3HDVnQJUBN1r/jnoFE11sA78MUj4qX+YrdadFyzxAdlaR6nlmnQl5g=
+  - secure: MpdxPXI7Rgpp3mjJoYNIN8R223Nu0Mbz2ST1NsI7PyUEC8qU5CqWTu9lqOIDRo8NJA8Xej4e+dwbFas3pq1l+yktOAcS7hXlJnNcgILnz45/wRSDgDmcot7ASZ0UxlN++snhUcO3Y0+xY/DmvbZooVD/YK5UfnyeZa8/ImDuPQ0GAhdr8zcV/tVEs2eYTGRT/Wh5DAEt9p3rp9gA5EB4VPvRzLlMefbdNetti+EB3SZ+FGzJOcrJgDwv25XNZMeqSyM/RUH7G/Nww85k6vC5KR4s1SD2hfp1zDpxe7xcfQfvESjOs4tHuojLyBW2vq2G5stqeOf6kj6ZUHZkUTj6TMD8TPXJ26wACA/ev9nvhu8p4C4wFvJgoN2BzG4JjWemRLrkSQYzOn3Mwu1rSmuMKTBQRnJXv5NTukDP8v/cX/9/79u3LbIKDWlSEVfGlUXSknDFFqFGa6pQ07fWuPkYFvw0GGI7mtrEGUmyIEZWoahyFfKM/sY273GSbHLrj9Aifg75nmde/p8AH/7HiA6lW3I5t56pXUVMDjI+D2FPgZ73lTz6OmuEhIZz7jqWGeZKBQel5247m0ivqPRibScjuNzETq6RND1FypWVVweEc2ByGFQOYqozonMA5ObklbE4JfH2S/S5W5oJNVodMXEDaKIXb/nUvqOeif8MWNvZHSs=
