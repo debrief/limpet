@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="Limpet" uid="Limpet" id="info.limpet.rcp.product" application="info.limpet.rcp.application" version="1.0.0" useFeatures="true" includeLaunchers="true">
+<product name="Limpet" uid="Limpet" id="info.limpet.rcp.product" application="info.limpet.rcp.application" version="1.0.1" useFeatures="true" includeLaunchers="true">
 
    <aboutInfo>
       <image path="icons/DebriefNGlogoSmall.png"/>
@@ -43,7 +43,6 @@ openFile
          <bmp/>
       </win>
    </launcher>
-
 
    <vm>
       <linux include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7</linux>
@@ -232,8 +231,8 @@ Library.
       <feature id="org.eclipse.equinox.p2.rcp.feature"/>
       <feature id="org.eclipse.equinox.p2.user.ui"/>
       <feature id="org.eclipse.equinox.p2.extras.feature"/>
-      <feature id="info.limpet.feature" version="1.0.0"/>
-      <feature id="info.limpet.rcp.feature" version="1.0.0"/>
+      <feature id="info.limpet.feature"/>
+      <feature id="info.limpet.rcp.feature"/>
    </features>
 
    <configurations>
@@ -245,12 +244,5 @@ Library.
       <plugin id="org.eclipse.equinox.simpleconfigurator" autoStart="true" startLevel="1" />
       <property name="org.eclipse.update.reconcile" value="false" />
    </configurations>
-
-   <preferencesInfo>
-      <targetfile overwrite="false"/>
-   </preferencesInfo>
-
-   <cssInfo>
-   </cssInfo>
 
 </product>
