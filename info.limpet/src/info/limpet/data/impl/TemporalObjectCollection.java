@@ -1,13 +1,12 @@
 package info.limpet.data.impl;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import info.limpet.ICommand;
 import info.limpet.ITemporalObjectCollection;
 import info.limpet.data.impl.helpers.TimeHelper;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
 
 
 public class TemporalObjectCollection<T extends Object> extends

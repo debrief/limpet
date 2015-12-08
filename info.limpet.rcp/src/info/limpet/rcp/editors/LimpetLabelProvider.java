@@ -1,5 +1,15 @@
 package info.limpet.rcp.editors;
 
+import javax.measure.quantity.Angle;
+import javax.measure.quantity.Dimensionless;
+import javax.measure.unit.Dimension;
+import javax.measure.unit.SI;
+
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
+
 import info.limpet.ICollection;
 import info.limpet.IQuantityCollection;
 import info.limpet.data.impl.ObjectCollection;
@@ -12,17 +22,6 @@ import info.limpet.rcp.data_provider.data.CommandWrapper;
 import info.limpet.rcp.data_provider.data.DataModel;
 import info.limpet.rcp.data_provider.data.GroupWrapper;
 import info.limpet.rcp.data_provider.data.NamedList;
-
-import javax.measure.quantity.Angle;
-import javax.measure.quantity.Dimensionless;
-import javax.measure.unit.Dimension;
-import javax.measure.unit.SI;
-import javax.measure.unit.Unit;
-
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.PlatformUI;
 
 public class LimpetLabelProvider extends LabelProvider
 {
