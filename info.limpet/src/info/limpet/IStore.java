@@ -1,6 +1,7 @@
 package info.limpet;
 
 import java.util.List;
+import java.util.UUID;
 
 import info.limpet.data.store.InMemoryStore.StoreChangeListener;
 
@@ -12,19 +13,41 @@ import info.limpet.data.store.InMemoryStore.StoreChangeListener;
  */
 public interface IStore
 {
-	
+
 	public static interface IStoreItem
 	{
-		public String getName();
+
+		/** if this object has children
+		 * 
+		 * @return
+		 */
 		public boolean hasChildren();
 		
-		public void addChangeListener(IChangeListener listener);
-		public void removeChangeListener(IChangeListener listener);
+		/** find the layer that contains this collection (or null if applicable)
+		 * 
+		 * @return parent collection, or null
+		 */
+		public IStoreGroup getParent();
 		
-		/** indicate that the collection has changed
-		 *  Note: both registeered listeners and dependents are informed of the change
+		/** set the parent object for this collection
+		 * 
+		 * @param parent
+		 */
+		public void setParent(IStoreGroup parent);
+		
+		public String getName();
+
+		public void addChangeListener(IChangeListener listener);
+
+		public void removeChangeListener(IChangeListener listener);
+
+		/**
+		 * indicate that the collection has changed Note: both registeered listeners
+		 * and dependents are informed of the change
 		 */
 		public void fireDataChanged();
+
+		public UUID getUUID();
 	}
 
 	/**
@@ -48,6 +71,15 @@ public interface IStore
 	 * @return
 	 */
 	IStoreItem get(String name);
+
+	/**
+	 * retrieve the data item with the specified UUID
+	 * 
+	 * @param uuid
+	 *          the item we're looking for
+	 * @return the matching item (or null)
+	 */
+	IStoreItem get(UUID uuid);
 
 	void addChangeListener(StoreChangeListener listener);
 

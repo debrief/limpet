@@ -3,11 +3,13 @@ package info.limpet.data.store;
 import info.limpet.IChangeListener;
 import info.limpet.ICollection;
 import info.limpet.IStore;
+import info.limpet.IStoreGroup;
 import info.limpet.data.impl.ListenerHelper;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.UUID;
 
 public class InMemoryStore implements IStore, IChangeListener
 {
@@ -17,13 +19,15 @@ public class InMemoryStore implements IStore, IChangeListener
 	private transient List<StoreChangeListener> _listeners = new ArrayList<StoreChangeListener>();
 
 	public static class StoreGroup extends ArrayList<IStoreItem> implements
-			IStoreItem
+			IStoreItem, IStoreGroup
 	{
 		/**
 		 * 
 		 */
 		private static final long serialVersionUID = 1L;
 		private String _name;
+		private IStoreGroup _parent;
+		final transient private UUID uuid;
 
 		// note: we make the change support listeners transient, since
 		// they refer to UI elements that we don't persist
@@ -32,6 +36,43 @@ public class InMemoryStore implements IStore, IChangeListener
 		public StoreGroup(String name)
 		{
 			_name = name;
+			uuid = UUID.randomUUID();
+		}
+
+		@Override
+		public UUID getUUID()
+		{
+			return uuid;
+		}
+
+		@Override
+		public boolean add(IStoreItem e)
+		{
+			e.setParent(this);
+			
+			boolean res = super.add(e);
+			
+			fireDataChanged();
+			
+			return res;
+		}
+
+		@Override
+		public boolean remove(Object o)
+		{
+			if(o instanceof IStoreItem)
+			{
+				IStoreItem si = (IStoreItem) o;
+				si.setParent(null);
+				
+			}
+			
+			boolean res = super.remove(o);
+			
+			// ok, fire an update.
+			fireDataChanged();
+			
+			return res;
 		}
 
 		@Override
@@ -88,6 +129,21 @@ public class InMemoryStore implements IStore, IChangeListener
 				// tell any standard listeners
 				_changeSupport.fireDataChange(this);
 			}
+		}
+
+		@Override
+		public IStoreGroup getParent()
+		{
+			return _parent;
+		}
+
+
+
+
+		@Override
+		public void setParent(IStoreGroup parent)
+		{
+			_parent = parent;
 		}
 
 	}
@@ -149,6 +205,11 @@ public class InMemoryStore implements IStore, IChangeListener
 			ICollection coll = (ICollection) results;
 			coll.addChangeListener(this);
 		}
+		else if(results instanceof IStoreGroup)
+		{
+			IStoreGroup group = (IStoreGroup) results;
+			group.addChangeListener(this);
+		}
 
 		fireModified();
 	}
@@ -188,6 +249,39 @@ public class InMemoryStore implements IStore, IChangeListener
 		}
 		return res;
 	}
+	
+
+	@Override
+	public IStoreItem get(UUID uuid)
+	{
+		IStoreItem res = null;
+		Iterator<IStoreItem> iter = _store.iterator();
+		while (iter.hasNext())
+		{
+			IStoreItem item = iter.next();
+			if (item instanceof StoreGroup)
+			{
+				StoreGroup group = (StoreGroup) item;
+				Iterator<IStoreItem> iter2 = group.iterator();
+				while (iter2.hasNext())
+				{
+					IStore.IStoreItem thisI = (IStore.IStoreItem) iter2.next();
+					if (uuid.equals(thisI.getUUID()))
+					{
+						res = thisI;
+						break;
+					}
+				}
+			}
+			if (uuid.equals(item.getUUID()))
+			{
+				res = item;
+				break;
+			}
+		}
+		return res;
+	}
+
 
 	public Iterator<IStoreItem> iterator()
 	{
@@ -223,7 +317,7 @@ public class InMemoryStore implements IStore, IChangeListener
 		{
 			ICollection collection = (ICollection) item;
 			collection.removeChangeListener(this);
-			
+
 			// ok, also tell it that it's being deleted
 			collection.beingDeleted();
 		}
@@ -236,14 +330,12 @@ public class InMemoryStore implements IStore, IChangeListener
 	{
 		fireModified();
 	}
-	
+
 	@Override
 	public void metadataChanged(IStoreItem subject)
 	{
-		// TODO: provide a more informed way of doing update
 		dataChanged(subject);
 	}
-
 
 	@Override
 	public void collectionDeleted(IStoreItem subject)

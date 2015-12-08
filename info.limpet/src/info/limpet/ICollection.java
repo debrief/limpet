@@ -14,6 +14,7 @@ public interface ICollection extends IStoreItem
 	public abstract void setDescription(String description);
 	public abstract String getDescription();
 
+
 	// note: dependents and precedents are intended to be persistent,
 	// change listeners aren't
 	

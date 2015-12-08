@@ -5,14 +5,17 @@ import info.limpet.ICommand;
 import info.limpet.IQuantityCollection;
 import info.limpet.IStore;
 import info.limpet.IStore.IStoreItem;
+import info.limpet.IStoreGroup;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.UUID;
 
 public abstract class AbstractCommand<T extends IStoreItem> implements
 		ICommand<T>
 {
+
 	final private String title;
 	final private String description;
 	final private boolean canUndo;
@@ -21,6 +24,8 @@ public abstract class AbstractCommand<T extends IStoreItem> implements
 
 	final protected List<T> inputs;
 	final protected List<T> outputs;
+	
+	IStoreGroup _parent;
 
 	/**
 	 * whether the command should recalculate if its children change
@@ -28,6 +33,7 @@ public abstract class AbstractCommand<T extends IStoreItem> implements
 	 */
 	private boolean dynamic = true;
 	final private String outputName;
+	final transient private UUID uuid;
 
 	public AbstractCommand(String title, String description, String outputName,
 			IStore store, boolean canUndo, boolean canRedo, List<T> inputs)
@@ -38,6 +44,7 @@ public abstract class AbstractCommand<T extends IStoreItem> implements
 		this.canUndo = canUndo;
 		this.canRedo = canRedo;
 		this.outputName = outputName;
+		this.uuid = UUID.randomUUID();
 
 		if (inputs != null)
 		{
@@ -49,6 +56,16 @@ public abstract class AbstractCommand<T extends IStoreItem> implements
 		}
 		this.outputs = new ArrayList<T>();
 	}
+	
+	
+
+	@Override
+	public UUID getUUID()
+	{
+		return uuid;
+	}
+
+
 
 	protected String getOutputName()
 	{
@@ -92,6 +109,18 @@ public abstract class AbstractCommand<T extends IStoreItem> implements
 	{
 		// TODO: do a more intelligent/informed processing of metadata changed
 		dataChanged(subject);
+	}
+
+	@Override
+	public IStoreGroup getParent()
+	{
+		return _parent;
+	}
+
+	@Override
+	public void setParent(IStoreGroup parent)
+	{
+		_parent = parent;
 	}
 
 	@Override

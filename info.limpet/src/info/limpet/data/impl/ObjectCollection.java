@@ -3,12 +3,14 @@ package info.limpet.data.impl;
 import info.limpet.IChangeListener;
 import info.limpet.ICommand;
 import info.limpet.IObjectCollection;
+import info.limpet.IStoreGroup;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.UUID;
 
 public class ObjectCollection<T extends Object> implements IObjectCollection<T>
 {
@@ -18,10 +20,13 @@ public class ObjectCollection<T extends Object> implements IObjectCollection<T>
 	private String description = "";
 	private final ICommand<?> precedent;
 	private final List<ICommand<?>> dependents;
+	private transient final UUID uuid;
 
 	// note: we make the change support listeners transient, since
 	// they refer to UI elements that we don't persist
 	private transient ListenerHelper _changeSupport;
+	private IStoreGroup parent;
+	
 
 	public ObjectCollection(String name)
 	{
@@ -33,9 +38,18 @@ public class ObjectCollection<T extends Object> implements IObjectCollection<T>
 		this.name = name;
 		this.precedent = precedent;
 		dependents = new ArrayList<ICommand<?>>();
+		uuid = UUID.randomUUID();
 
 		// setup helpers
 		initListeners();
+	}
+
+	
+	
+	@Override
+	public UUID getUUID()
+	{
+		return uuid;
 	}
 
 	@Override
@@ -140,6 +154,20 @@ public class ObjectCollection<T extends Object> implements IObjectCollection<T>
 		_changeSupport.remove(listener);
 	}
 
+	@Override
+	public IStoreGroup getParent()
+	{
+		return parent;
+	}
+
+	@Override
+	public void setParent(IStoreGroup parent)
+	{
+		this.parent = parent;
+	}
+
+
+	
 	@Override
 	public void fireDataChanged()
 	{
