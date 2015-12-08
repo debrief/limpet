@@ -3,6 +3,7 @@ package info.limpet.data.store;
 import info.limpet.IChangeListener;
 import info.limpet.ICollection;
 import info.limpet.IStore;
+import info.limpet.IStoreGroup;
 import info.limpet.data.impl.ListenerHelper;
 
 import java.util.ArrayList;
@@ -18,13 +19,14 @@ public class InMemoryStore implements IStore, IChangeListener
 	private transient List<StoreChangeListener> _listeners = new ArrayList<StoreChangeListener>();
 
 	public static class StoreGroup extends ArrayList<IStoreItem> implements
-			IStoreItem
+			IStoreItem, IStoreGroup
 	{
 		/**
 		 * 
 		 */
 		private static final long serialVersionUID = 1L;
 		private String _name;
+		private IStoreGroup _parent;
 		final transient private UUID uuid;
 
 		// note: we make the change support listeners transient, since
@@ -41,6 +43,36 @@ public class InMemoryStore implements IStore, IChangeListener
 		public UUID getUUID()
 		{
 			return uuid;
+		}
+
+		@Override
+		public boolean add(IStoreItem e)
+		{
+			e.setParent(this);
+			
+			boolean res = super.add(e);
+			
+			fireDataChanged();
+			
+			return res;
+		}
+
+		@Override
+		public boolean remove(Object o)
+		{
+			if(o instanceof IStoreItem)
+			{
+				IStoreItem si = (IStoreItem) o;
+				si.setParent(null);
+				
+			}
+			
+			boolean res = super.remove(o);
+			
+			// ok, fire an update.
+			fireDataChanged();
+			
+			return res;
 		}
 
 		@Override
@@ -97,6 +129,21 @@ public class InMemoryStore implements IStore, IChangeListener
 				// tell any standard listeners
 				_changeSupport.fireDataChange(this);
 			}
+		}
+
+		@Override
+		public IStoreGroup getParent()
+		{
+			return _parent;
+		}
+
+
+
+
+		@Override
+		public void setParent(IStoreGroup parent)
+		{
+			_parent = parent;
 		}
 
 	}
@@ -157,6 +204,11 @@ public class InMemoryStore implements IStore, IChangeListener
 		{
 			ICollection coll = (ICollection) results;
 			coll.addChangeListener(this);
+		}
+		else if(results instanceof IStoreGroup)
+		{
+			IStoreGroup group = (IStoreGroup) results;
+			group.addChangeListener(this);
 		}
 
 		fireModified();

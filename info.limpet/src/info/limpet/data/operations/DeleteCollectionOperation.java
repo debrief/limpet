@@ -4,6 +4,7 @@ import info.limpet.ICommand;
 import info.limpet.IOperation;
 import info.limpet.IStore;
 import info.limpet.IStore.IStoreItem;
+import info.limpet.IStoreGroup;
 import info.limpet.data.commands.AbstractCommand;
 import info.limpet.data.store.InMemoryStore;
 
@@ -62,12 +63,23 @@ public class DeleteCollectionOperation implements IOperation<IStoreItem>
 			while (iter.hasNext())
 			{
 				IStoreItem iCollection = iter.next();
-				IStore store = getStore();
-				if (store instanceof InMemoryStore)
+				
+				// do we know the parent?
+				IStoreGroup parent = iCollection.getParent();
+				if(parent != null)
 				{
-					InMemoryStore mem = (InMemoryStore) store;
-					mem.remove(iCollection);
+					parent.remove(iCollection);
 				}
+				else
+				{
+					// hmm, must be at the top level
+					IStore store = getStore();
+					if (store instanceof InMemoryStore)
+					{
+						InMemoryStore mem = (InMemoryStore) store;
+						mem.remove(iCollection);
+					}
+				}				
 			}
 		}
 

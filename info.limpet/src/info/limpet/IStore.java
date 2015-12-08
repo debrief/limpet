@@ -16,9 +16,26 @@ public interface IStore
 
 	public static interface IStoreItem
 	{
-		public String getName();
 
+		/** if this object has children
+		 * 
+		 * @return
+		 */
 		public boolean hasChildren();
+		
+		/** find the layer that contains this collection (or null if applicable)
+		 * 
+		 * @return parent collection, or null
+		 */
+		public IStoreGroup getParent();
+		
+		/** set the parent object for this collection
+		 * 
+		 * @param parent
+		 */
+		public void setParent(IStoreGroup parent);
+		
+		public String getName();
 
 		public void addChangeListener(IChangeListener listener);
 
