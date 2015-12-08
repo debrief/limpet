@@ -20,7 +20,7 @@ public class ObjectCollection<T extends Object> implements IObjectCollection<T>
 	private String description = "";
 	private final ICommand<?> precedent;
 	private final List<ICommand<?>> dependents;
-	private transient final UUID uuid;
+	private transient UUID uuid;
 
 	// note: we make the change support listeners transient, since
 	// they refer to UI elements that we don't persist
@@ -38,7 +38,6 @@ public class ObjectCollection<T extends Object> implements IObjectCollection<T>
 		this.name = name;
 		this.precedent = precedent;
 		dependents = new ArrayList<ICommand<?>>();
-		uuid = UUID.randomUUID();
 
 		// setup helpers
 		initListeners();
@@ -49,6 +48,10 @@ public class ObjectCollection<T extends Object> implements IObjectCollection<T>
 	@Override
 	public UUID getUUID()
 	{
+		if (uuid == null)
+		{
+			uuid = UUID.randomUUID();
+		}
 		return uuid;
 	}
 
