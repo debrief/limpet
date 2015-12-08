@@ -3,6 +3,7 @@ package info.limpet.data.impl;
 import info.limpet.IChangeListener;
 import info.limpet.ICommand;
 import info.limpet.IObjectCollection;
+import info.limpet.IStoreGroup;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -22,6 +23,8 @@ public class ObjectCollection<T extends Object> implements IObjectCollection<T>
 	// note: we make the change support listeners transient, since
 	// they refer to UI elements that we don't persist
 	private transient ListenerHelper _changeSupport;
+	private IStoreGroup parent;
+	
 
 	public ObjectCollection(String name)
 	{
@@ -140,6 +143,20 @@ public class ObjectCollection<T extends Object> implements IObjectCollection<T>
 		_changeSupport.remove(listener);
 	}
 
+	@Override
+	public IStoreGroup getParent()
+	{
+		return parent;
+	}
+
+	@Override
+	public void setParent(IStoreGroup parent)
+	{
+		this.parent = parent;
+	}
+
+
+	
 	@Override
 	public void fireDataChanged()
 	{
