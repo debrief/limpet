@@ -9,6 +9,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.UUID;
 
 public class ObjectCollection<T extends Object> implements IObjectCollection<T>
 {
@@ -18,6 +19,7 @@ public class ObjectCollection<T extends Object> implements IObjectCollection<T>
 	private String description = "";
 	private final ICommand<?> precedent;
 	private final List<ICommand<?>> dependents;
+	private transient final UUID uuid;
 
 	// note: we make the change support listeners transient, since
 	// they refer to UI elements that we don't persist
@@ -33,9 +35,18 @@ public class ObjectCollection<T extends Object> implements IObjectCollection<T>
 		this.name = name;
 		this.precedent = precedent;
 		dependents = new ArrayList<ICommand<?>>();
+		uuid = UUID.randomUUID();
 
 		// setup helpers
 		initListeners();
+	}
+
+	
+	
+	@Override
+	public UUID getUUID()
+	{
+		return uuid;
 	}
 
 	@Override
