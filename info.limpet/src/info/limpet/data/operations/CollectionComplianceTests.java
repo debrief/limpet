@@ -1,14 +1,19 @@
 package info.limpet.data.operations;
 
+import static javax.measure.unit.SI.METRE;
+import static javax.measure.unit.SI.SECOND;
 import info.limpet.ICollection;
 import info.limpet.IQuantityCollection;
-import info.limpet.ITemporalQuantityCollection;
 import info.limpet.IStore.IStoreItem;
+import info.limpet.ITemporalQuantityCollection;
+import info.limpet.data.impl.samples.StockTypes.ILocations;
+import info.limpet.data.store.InMemoryStore.StoreGroup;
 
 import java.util.Iterator;
 import java.util.List;
 
 import javax.measure.unit.Dimension;
+import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 
 import org.opengis.geometry.Geometry;
@@ -95,7 +100,7 @@ public class CollectionComplianceTests
 		}
 		return allValid;
 	}
-	
+
 	/**
 	 * check if the series are all quantity datasets
 	 * 
@@ -131,7 +136,6 @@ public class CollectionComplianceTests
 		}
 		return allValid;
 	}
-
 
 	/**
 	 * check if the series are all quantity datasets
@@ -532,6 +536,146 @@ public class CollectionComplianceTests
 				break;
 			}
 		}
+		return res;
+	}
+
+	public boolean allGroups(List<IStoreItem> selection)
+	{
+		boolean res = true;
+		Iterator<? extends IStoreItem> iter = selection.iterator();
+		while (iter.hasNext())
+		{
+			IStoreItem storeItem = iter.next();
+			if (!(storeItem instanceof StoreGroup))
+			{
+				res = false;
+				break;
+			}
+		}
+		return res;
+	}
+
+	public boolean allTracks(List<IStoreItem> selection)
+	{
+		boolean res = true;
+		Iterator<? extends IStoreItem> iter = selection.iterator();
+		while (iter.hasNext())
+		{
+			IStoreItem storeItem = iter.next();
+			if (storeItem instanceof StoreGroup)
+			{
+				// ok, check the contents
+				StoreGroup group = (StoreGroup) storeItem;
+				List<IStoreItem> kids = group.children();
+				
+				// ok, keep looping through, to check we have the right types
+				if(!isPresent(kids, METRE.divide(SECOND).getDimension()))
+				{
+					res = false;
+					break;
+				}
+				
+				// ok, keep looping through, to check we have the right types
+				if(!isPresent(kids, SI.RADIAN.getDimension()))
+				{
+					res = false;
+					break;
+				}
+	
+				if(!hasLocation(kids))
+				{
+					res = false;
+					break;
+				}
+				
+			}
+		}
+		return res;
+	}
+
+	/**
+	 * see if a collection of the specified dimension is present
+	 * 
+	 * @param items
+	 *          to check
+	 * @param dimension
+	 *          we're looking for
+	 * @return yes/no
+	 */
+	private boolean isPresent(List<IStoreItem> kids, Dimension dim)
+	{
+		boolean res = false;
+
+		Iterator<IStoreItem> iter = kids.iterator();
+		while (iter.hasNext())
+		{
+			IStoreItem item = iter.next();
+			if (item instanceof IQuantityCollection<?>)
+			{
+				IQuantityCollection<?> coll = (IQuantityCollection<?>) item;
+				if (coll.getDimension().equals(dim))
+				{
+					res = true;
+					break;
+				}
+			}
+		}
+
+		return res;
+	}
+
+	/**
+	 * see if a collection of the specified dimension is present
+	 * 
+	 * @param items
+	 *          to check
+	 * @param dimension
+	 *          we're looking for
+	 * @return yes/no
+	 */
+	private boolean hasLocation(List<IStoreItem> kids)
+	{
+		boolean res = false;
+
+		Iterator<IStoreItem> iter = kids.iterator();
+		while (iter.hasNext())
+		{
+			IStoreItem item = iter.next();
+			if (item instanceof ILocations)
+			{
+				res = true;
+				break;
+			}
+		}
+
+		return res;
+	}
+
+	/** check the list has a collection with the specified dimension
+	 *  
+	 * @param kids items to examine
+	 * @param dimension dimension we need to be present
+	 * @return yes/no
+	 */
+	public boolean allHave(List<IStoreItem> kids, Dimension dimension)
+	{
+		boolean res = false;
+
+		Iterator<IStoreItem> iter = kids.iterator();
+		while (iter.hasNext())
+		{
+			IStoreItem item = iter.next();
+			if (item instanceof IQuantityCollection<?>)
+			{
+				IQuantityCollection<?> coll = (IQuantityCollection<?>) item;
+				if (coll.getDimension().equals(dimension))
+				{
+					res = true;
+					break;
+				}
+			}
+		}
+
 		return res;
 	}
 }
