@@ -9,6 +9,7 @@ import info.limpet.IStore.IStoreItem;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.UUID;
 
 public abstract class AbstractCommand<T extends IStoreItem> implements
 		ICommand<T>
@@ -28,6 +29,7 @@ public abstract class AbstractCommand<T extends IStoreItem> implements
 	 */
 	private boolean dynamic = true;
 	final private String outputName;
+	final private UUID uuid;
 
 	public AbstractCommand(String title, String description, String outputName,
 			IStore store, boolean canUndo, boolean canRedo, List<T> inputs)
@@ -38,6 +40,7 @@ public abstract class AbstractCommand<T extends IStoreItem> implements
 		this.canUndo = canUndo;
 		this.canRedo = canRedo;
 		this.outputName = outputName;
+		this.uuid = UUID.randomUUID();
 
 		if (inputs != null)
 		{
@@ -49,6 +52,16 @@ public abstract class AbstractCommand<T extends IStoreItem> implements
 		}
 		this.outputs = new ArrayList<T>();
 	}
+	
+	
+
+	@Override
+	public UUID getUUID()
+	{
+		return uuid;
+	}
+
+
 
 	protected String getOutputName()
 	{
