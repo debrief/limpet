@@ -5,6 +5,7 @@ import info.limpet.ICommand;
 import info.limpet.IQuantityCollection;
 import info.limpet.IStore;
 import info.limpet.IStore.IStoreItem;
+import info.limpet.IStoreGroup;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -13,6 +14,7 @@ import java.util.List;
 public abstract class AbstractCommand<T extends IStoreItem> implements
 		ICommand<T>
 {
+
 	final private String title;
 	final private String description;
 	final private boolean canUndo;
@@ -21,6 +23,8 @@ public abstract class AbstractCommand<T extends IStoreItem> implements
 
 	final protected List<T> inputs;
 	final protected List<T> outputs;
+	
+	IStoreGroup _parent;
 
 	/**
 	 * whether the command should recalculate if its children change
@@ -92,6 +96,18 @@ public abstract class AbstractCommand<T extends IStoreItem> implements
 	{
 		// TODO: do a more intelligent/informed processing of metadata changed
 		dataChanged(subject);
+	}
+
+	@Override
+	public IStoreGroup getParent()
+	{
+		return _parent;
+	}
+
+	@Override
+	public void setParent(IStoreGroup parent)
+	{
+		_parent = parent;
 	}
 
 	@Override
