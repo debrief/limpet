@@ -19,7 +19,7 @@ public class ObjectCollection<T extends Object> implements IObjectCollection<T>
 	private String description = "";
 	private final ICommand<?> precedent;
 	private final List<ICommand<?>> dependents;
-	private final UUID uuid;
+	private transient final UUID uuid;
 
 	// note: we make the change support listeners transient, since
 	// they refer to UI elements that we don't persist

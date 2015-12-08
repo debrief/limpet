@@ -29,7 +29,7 @@ public abstract class AbstractCommand<T extends IStoreItem> implements
 	 */
 	private boolean dynamic = true;
 	final private String outputName;
-	final private UUID uuid;
+	final transient private UUID uuid;
 
 	public AbstractCommand(String title, String description, String outputName,
 			IStore store, boolean canUndo, boolean canRedo, List<T> inputs)

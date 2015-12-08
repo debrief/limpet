@@ -25,7 +25,7 @@ public class InMemoryStore implements IStore, IChangeListener
 		 */
 		private static final long serialVersionUID = 1L;
 		private String _name;
-		final private UUID uuid;
+		final transient private UUID uuid;
 
 		// note: we make the change support listeners transient, since
 		// they refer to UI elements that we don't persist
