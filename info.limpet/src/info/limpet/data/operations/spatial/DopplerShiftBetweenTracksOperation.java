@@ -164,7 +164,7 @@ public class DopplerShiftBetweenTracksOperation implements IOperation<IStoreItem
 	{
 		// ok, check we have two collections
 		boolean allGroups = aTests.allGroups(selection);
-		boolean allTracks = aTests.allTracks(selection);
+		boolean allTracks = aTests.allChildrenAreTracks(selection);
 		boolean allHaveFreq = aTests.allHave(selection, Frequency.UNIT.getDimension());
 		return (allGroups && allTracks && allHaveFreq);
 	}

@@ -555,7 +555,12 @@ public class CollectionComplianceTests
 		return res;
 	}
 
-	public boolean allTracks(List<IStoreItem> selection)
+	/** convenience test to verify if children of the supplied item can all
+	 * be treated as tracks
+	 * @param selection one or more group objects
+	 * @return yes/no
+	 */
+	public boolean allChildrenAreTracks(List<IStoreItem> selection)
 	{
 		boolean res = true;
 		Iterator<? extends IStoreItem> iter = selection.iterator();
@@ -665,7 +670,13 @@ public class CollectionComplianceTests
 		while (iter.hasNext())
 		{
 			IStoreItem item = iter.next();
-			if (item instanceof IQuantityCollection<?>)
+			if(item instanceof StoreGroup)
+			{
+				StoreGroup group = (StoreGroup) item;
+				res = allHave(group.children(), dimension);
+				break;
+			}
+			else if (item instanceof IQuantityCollection<?>)
 			{
 				IQuantityCollection<?> coll = (IQuantityCollection<?>) item;
 				if (coll.getDimension().equals(dimension))
