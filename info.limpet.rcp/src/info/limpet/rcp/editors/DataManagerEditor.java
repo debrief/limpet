@@ -29,6 +29,7 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.FileTransfer;
+import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -57,7 +58,6 @@ import info.limpet.data.store.InMemoryStore.StoreChangeListener;
 import info.limpet.rcp.Activator;
 import info.limpet.rcp.data_provider.data.DataModel;
 import info.limpet.rcp.editors.dnd.DataManagerDropAdapter;
-import info.limpet.rcp.editors.dnd.LimpetTransfer;
 
 public class DataManagerEditor extends EditorPart implements
 		StoreChangeListener
@@ -154,7 +154,7 @@ public class DataManagerEditor extends EditorPart implements
 	private void configureDragSupport()
 	{
 		int ops = DND.DROP_COPY | DND.DROP_MOVE;
-		Transfer[] transfers = new Transfer[] { LimpetTransfer.getInstance() };
+		Transfer[] transfers = new Transfer[] { TextTransfer.getInstance() };
 		viewer.addDragSupport(ops, transfers, new LimpetDragListener(viewer));
 	}
 
@@ -164,7 +164,7 @@ public class DataManagerEditor extends EditorPart implements
 	private void configureDropSupport()
 	{
 		final int dropOperation = DND.DROP_COPY | DND.DROP_MOVE;
-		final Transfer[] dropTypes = { FileTransfer.getInstance(), LimpetTransfer.getInstance() };
+		final Transfer[] dropTypes = { FileTransfer.getInstance(), TextTransfer.getInstance() };
 		viewer.addDropSupport(dropOperation, dropTypes, new DataManagerDropAdapter(viewer, _store));
 	}
 	

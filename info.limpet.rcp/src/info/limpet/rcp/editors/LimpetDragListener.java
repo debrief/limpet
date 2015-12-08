@@ -1,15 +1,19 @@
 package info.limpet.rcp.editors;
 
+import java.util.Iterator;
+
+import info.limpet.IStore.IStoreItem;
+import info.limpet.rcp.data_provider.data.LimpetWrapper;
+
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.dnd.DragSourceAdapter;
 import org.eclipse.swt.dnd.DragSourceEvent;
-
-import info.limpet.rcp.data_provider.data.LimpetWrapper;
-import info.limpet.rcp.editors.dnd.LimpetTransfer;
+import org.eclipse.swt.dnd.TextTransfer;
 
 public class LimpetDragListener extends DragSourceAdapter
 {
+	public static final String SEPARATOR = "__";
 	private StructuredViewer viewer;
 
 	public LimpetDragListener(StructuredViewer viewer)
@@ -31,12 +35,19 @@ public class LimpetDragListener extends DragSourceAdapter
 	{
 		IStructuredSelection selection = (IStructuredSelection) viewer
 				.getSelection();
-		@SuppressWarnings("unchecked")
-		LimpetWrapper[] wrappers = (LimpetWrapper[]) selection.toList()
-				.toArray(new LimpetWrapper[selection.size()]);
-		if (LimpetTransfer.getInstance().isSupportedType(event.dataType))
+		StringBuffer items = new StringBuffer();
+		Iterator<?> iter = selection.iterator();
+		while (iter.hasNext())
 		{
-			event.data = wrappers;
+			LimpetWrapper object = (LimpetWrapper) iter.next();
+			IStoreItem si = (IStoreItem) object.getSubject();
+			items.append(si.getUUID().toString());
+			items.append(SEPARATOR);
+		}
+		
+		if (TextTransfer.getInstance().isSupportedType(event.dataType))
+		{
+			event.data = items.toString();
 		}
 	}
 
