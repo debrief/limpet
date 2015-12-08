@@ -16,6 +16,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerDropAdapter;
@@ -75,6 +76,13 @@ public class DataManagerDropAdapter extends ViewerDropAdapter
 					// find the item
 					IStoreItem item = _store.get(UUID.fromString(thisS));
 
+					if (item == null)
+					{
+						Activator.logError(Status.ERROR,
+								"Failed to find matching UUID, from another editor?", null);
+						return false;
+					}
+
 					IStoreGroup hisParent = item.getParent();
 					if (hisParent != null)
 					{
@@ -107,41 +115,41 @@ public class DataManagerDropAdapter extends ViewerDropAdapter
 			}
 
 		}
-//		else if (data instanceof List[])
-	//	{
-//			Object target = getCurrentTarget();
-//			if (target == getSelectedObject())
-//			{
-//				return false;
-//			}
-//			if (target instanceof GroupWrapper)
-//			{
-//				for (@SuppressWarnings("rawtypes")
-//				List list : (List[]) data)
-//				{
-//					for (Object object : list)
-//					{
-//						if (object instanceof GroupWrapper)
-//						{
-//							GroupWrapper groupWrapper = (GroupWrapper) object;
-//							List<IStoreItem> l = new ArrayList<IStoreItem>();
-//							StoreGroup storeGroup = new StoreGroup(groupWrapper.toString());
-//							l.add(storeGroup);
-//							storeGroup.addAll(groupWrapper.getGroup());
-//							((GroupWrapper) target).getGroup().addAll(l);
-//						}
-//						else if (object instanceof CollectionWrapper)
-//						{
-//							CollectionWrapper collectionWrapper = (CollectionWrapper) object;
-//							((GroupWrapper) target).getGroup().add(
-//									collectionWrapper.getCollection());
-//						}
-//					}
-//				}
-//				changed();
-			//	return true;
-		//	}
-	//	}
+		// else if (data instanceof List[])
+		// {
+		// Object target = getCurrentTarget();
+		// if (target == getSelectedObject())
+		// {
+		// return false;
+		// }
+		// if (target instanceof GroupWrapper)
+		// {
+		// for (@SuppressWarnings("rawtypes")
+		// List list : (List[]) data)
+		// {
+		// for (Object object : list)
+		// {
+		// if (object instanceof GroupWrapper)
+		// {
+		// GroupWrapper groupWrapper = (GroupWrapper) object;
+		// List<IStoreItem> l = new ArrayList<IStoreItem>();
+		// StoreGroup storeGroup = new StoreGroup(groupWrapper.toString());
+		// l.add(storeGroup);
+		// storeGroup.addAll(groupWrapper.getGroup());
+		// ((GroupWrapper) target).getGroup().addAll(l);
+		// }
+		// else if (object instanceof CollectionWrapper)
+		// {
+		// CollectionWrapper collectionWrapper = (CollectionWrapper) object;
+		// ((GroupWrapper) target).getGroup().add(
+		// collectionWrapper.getCollection());
+		// }
+		// }
+		// }
+		// changed();
+		// return true;
+		// }
+		// }
 		return false;
 	}
 
