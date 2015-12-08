@@ -95,6 +95,9 @@ public class InMemoryStore implements IStore, IChangeListener
 		public void setName(String value)
 		{
 			_name = value;
+			
+			// and tell any listeners
+			fireDataChanged();
 		}
 
 		protected void initListeners()
@@ -136,9 +139,6 @@ public class InMemoryStore implements IStore, IChangeListener
 		{
 			return _parent;
 		}
-
-
-
 
 		@Override
 		public void setParent(IStoreGroup parent)

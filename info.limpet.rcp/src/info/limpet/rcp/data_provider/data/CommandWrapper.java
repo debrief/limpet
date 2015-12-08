@@ -43,7 +43,7 @@ public class CommandWrapper implements IAdaptable, LimpetWrapper
 	}
 
 	@Override
-	public Object getSubject()
+	public IStoreItem getSubject()
 	{
 		return _command;
 	}

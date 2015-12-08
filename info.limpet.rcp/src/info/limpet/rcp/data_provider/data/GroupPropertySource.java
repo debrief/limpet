@@ -8,6 +8,7 @@ import java.util.List;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
+import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 
 /**
  * This class provides property sheet properties for ButtonElement.
@@ -48,7 +49,7 @@ public class GroupPropertySource implements IPropertySource
 			List<IPropertyDescriptor> list = new ArrayList<IPropertyDescriptor>();
 
 			// Create a descriptor and set a category
-			final PropertyDescriptor textDescriptor = new PropertyDescriptor(
+			final PropertyDescriptor textDescriptor = new TextPropertyDescriptor(
 					GROUP_NAME, "Name");
 			textDescriptor.setCategory("Label");
 			list.add(textDescriptor);
