@@ -88,6 +88,7 @@ public class DataManagerEditor extends EditorPart
 	private Action createSingleton1;
 	private Action createSingleton2;
 	private Action createSingleton3;
+	private Action createSingleton4;
 
 	@Override
 	public void init(IEditorSite site, IEditorInput input)
@@ -248,6 +249,14 @@ public class DataManagerEditor extends EditorPart
 			public QuantityCollection<?> generate(String name)
 			{
 				return new StockTypes.NonTemporal.AcousticStrength(name);
+			}
+		});
+
+		createSingleton4 = createSingletonGenerator("speed (m/s)", new ItemGenerator()
+		{
+			public QuantityCollection<?> generate(String name)
+			{
+				return new StockTypes.NonTemporal.Speed_MSec(name);
 			}
 		});
 
@@ -428,6 +437,7 @@ public class DataManagerEditor extends EditorPart
 		createMenu.add(createSingleton1);
 		createMenu.add(createSingleton2);
 		createMenu.add(createSingleton3);
+		createMenu.add(createSingleton4);
 
 		menu.add(new Separator());
 		menu.add(refreshView);
