@@ -14,6 +14,7 @@ import info.limpet.data.store.InMemoryStore;
 import info.limpet.data.store.InMemoryStore.StoreChangeListener;
 import info.limpet.rcp.Activator;
 import info.limpet.rcp.data_provider.data.DataModel;
+import info.limpet.rcp.data_provider.data.GroupWrapper;
 import info.limpet.rcp.editors.dnd.DataManagerDropAdapter;
 
 import java.io.IOException;
@@ -283,14 +284,29 @@ public class DataManagerEditor extends EditorPart implements
 					String str = dlgValue.getValue();
 					try
 					{
-						value = Double.parseDouble(str);
-
-						// get units?
+						// get the new collection
 						QuantityCollection<?> newData = generator.generate(name);
+						
+						// add the new value
+						value = Double.parseDouble(str);
 						newData.add(value);
 
-						// and store it
-						_store.add(newData);
+						// put the new collection in to the selected folder, or into root
+						ISelection selection = viewer.getSelection();
+						IStructuredSelection stru = (IStructuredSelection) selection;
+						Object first = stru.getFirstElement();
+						if(first instanceof GroupWrapper)
+						{
+							GroupWrapper gW = (GroupWrapper) first;
+							gW.getGroup().add(newData);
+						}
+						else
+						{
+							// just store it at the top level
+							_store.add(newData);
+						}
+						
+						
 					}
 					catch (NumberFormatException e)
 					{
