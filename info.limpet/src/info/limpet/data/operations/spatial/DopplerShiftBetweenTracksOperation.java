@@ -65,6 +65,10 @@ public class DopplerShiftBetweenTracksOperation implements
 			data.put(RX + "COURSE", CollectionComplianceTests.someHave(_rx, SI.RADIAN.getDimension() , true));
 			data.put(RX + "SPEED", CollectionComplianceTests.someHave(_rx, METRE.divide(SECOND).getDimension(), true));
 			data.put(RX + "LOC", CollectionComplianceTests.someHaveLocation(_rx));
+
+			// and the sound speed
+			data.put("SOUND_SPEED", CollectionComplianceTests.someHave(getInputs(), METRE.divide(SECOND).getDimension(), false));
+
 			
 			// get the unit
 			List<IStoreItem> outputs = new ArrayList<IStoreItem>();
@@ -176,8 +180,6 @@ public class DopplerShiftBetweenTracksOperation implements
 		 */
 		private void performCalc(List<IStoreItem> outputs)
 		{
-			
-			
 			
 			ICollection track1 = (ICollection) getInputs().get(0);
 			ICollection track2 = (ICollection) getInputs().get(1);
