@@ -1,5 +1,21 @@
 package info.limpet.rcp.editors;
 
+import info.limpet.ICommand;
+import info.limpet.IOperation;
+import info.limpet.IStore;
+import info.limpet.IStore.IStoreItem;
+import info.limpet.data.impl.QuantityCollection;
+import info.limpet.data.impl.samples.StockTypes;
+import info.limpet.data.operations.AddLayerOperation;
+import info.limpet.data.operations.AddLayerOperation.StringProvider;
+import info.limpet.data.operations.GenerateDummyDataOperation;
+import info.limpet.data.persistence.xml.XStreamHandler;
+import info.limpet.data.store.InMemoryStore;
+import info.limpet.data.store.InMemoryStore.StoreChangeListener;
+import info.limpet.rcp.Activator;
+import info.limpet.rcp.data_provider.data.DataModel;
+import info.limpet.rcp.editors.dnd.DataManagerDropAdapter;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -43,22 +59,6 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.EditorPart;
 
-import info.limpet.ICommand;
-import info.limpet.IOperation;
-import info.limpet.IStore;
-import info.limpet.IStore.IStoreItem;
-import info.limpet.data.impl.samples.StockTypes;
-import info.limpet.data.impl.samples.StockTypes.NonTemporal.DimensionlessDouble;
-import info.limpet.data.operations.AddLayerOperation;
-import info.limpet.data.operations.AddLayerOperation.StringProvider;
-import info.limpet.data.operations.GenerateDummyDataOperation;
-import info.limpet.data.persistence.xml.XStreamHandler;
-import info.limpet.data.store.InMemoryStore;
-import info.limpet.data.store.InMemoryStore.StoreChangeListener;
-import info.limpet.rcp.Activator;
-import info.limpet.rcp.data_provider.data.DataModel;
-import info.limpet.rcp.editors.dnd.DataManagerDropAdapter;
-
 public class DataManagerEditor extends EditorPart implements
 		StoreChangeListener
 {
@@ -81,7 +81,9 @@ public class DataManagerEditor extends EditorPart implements
 			firePropertyChange(PROP_DIRTY);
 		}
 	};
-	private Action createSingleton;
+	private Action createSingleton1;
+	private Action createSingleton2;
+	private Action createSingleton3;
 
 	@Override
 	public void init(IEditorSite site, IEditorInput input)
@@ -128,8 +130,10 @@ public class DataManagerEditor extends EditorPart implements
 		_model = new DataModel();
 		viewer.setContentProvider(_model);
 		LabelProvider labelProvider = new LimpetLabelProvider();
-		ILabelDecorator decorator = PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator();
-		viewer.setLabelProvider(new DecoratingLabelProvider(labelProvider, decorator));
+		ILabelDecorator decorator = PlatformUI.getWorkbench().getDecoratorManager()
+				.getLabelDecorator();
+		viewer.setLabelProvider(new DecoratingLabelProvider(labelProvider,
+				decorator));
 		viewer.setInput(_store);
 
 		getSite().setSelectionProvider(viewer);
@@ -150,11 +154,12 @@ public class DataManagerEditor extends EditorPart implements
 		configureDropSupport();
 		configureDragSupport();
 	}
-	
+
 	private void configureDragSupport()
 	{
 		int ops = DND.DROP_COPY | DND.DROP_MOVE;
-		Transfer[] transfers = new Transfer[] { TextTransfer.getInstance() };
+		Transfer[] transfers = new Transfer[]
+		{ TextTransfer.getInstance() };
 		viewer.addDragSupport(ops, transfers, new LimpetDragListener(viewer));
 	}
 
@@ -164,16 +169,17 @@ public class DataManagerEditor extends EditorPart implements
 	private void configureDropSupport()
 	{
 		final int dropOperation = DND.DROP_COPY | DND.DROP_MOVE;
-		final Transfer[] dropTypes = { FileTransfer.getInstance(), TextTransfer.getInstance() };
-		viewer.addDropSupport(dropOperation, dropTypes, new DataManagerDropAdapter(viewer, _store));
+		final Transfer[] dropTypes =
+		{ FileTransfer.getInstance(), TextTransfer.getInstance() };
+		viewer.addDropSupport(dropOperation, dropTypes, new DataManagerDropAdapter(
+				viewer, _store));
 	}
-	
+
 	protected void fillLocalToolBar(IToolBarManager manager)
 	{
 		manager.add(refreshView);
 		manager.add(generateData);
 		manager.add(addLayer);
-		manager.add(createSingleton);
 	}
 
 	private void makeActions()
@@ -210,40 +216,79 @@ public class DataManagerEditor extends EditorPart implements
 		refreshView.setText("Refresh");
 		refreshView.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
 				.getImageDescriptor(ISharedImages.IMG_TOOL_REDO));
-		
 
-		createSingleton = new Action()
+		createSingleton1 = createSingletonGenerator("dimensionless",
+				new ItemGenerator()
+				{
+					public QuantityCollection<?> generate(String name)
+					{
+						return new StockTypes.NonTemporal.DimensionlessDouble(name);
+					}
+				});
+
+		createSingleton2 = createSingletonGenerator("frequency",
+				new ItemGenerator()
+				{
+					public QuantityCollection<?> generate(String name)
+					{
+						return new StockTypes.NonTemporal.Frequency_Hz(name);
+					}
+				});
+
+		createSingleton3 = createSingletonGenerator("decibels", new ItemGenerator()
+		{
+			public QuantityCollection<?> generate(String name)
+			{
+				return new StockTypes.NonTemporal.AcousticStrength(name);
+			}
+		});
+
+	}
+
+	private static interface ItemGenerator
+	{
+		public QuantityCollection<?> generate(final String name);
+	}
+
+	private Action createSingletonGenerator(final String sType,
+			final ItemGenerator generator)
+	{
+		final Action res = new Action()
 		{
 			public void run()
 			{
 				// get the name
-				String name = "new constant";
+				String name = "new " + sType;
 				double value;
-				
-				InputDialog dlgName = new InputDialog(Display.getCurrent().getActiveShell(),
-            "New variable", "Enter name for variable", "",null);
-        if (dlgName.open() == Window.OK) {
-          // User clicked OK; update the label with the input
-        	name = dlgName.getValue();
-        }
-        else
-        {
-        	return;
-        }
-        
-				InputDialog dlgValue = new InputDialog(Display.getCurrent().getActiveShell(),
-            "New variable", "Enter initial value for variable", "",null);
-        if (dlgValue.open() == Window.OK) {
-          // User clicked OK; update the label with the input
-        	String str = dlgValue.getValue();
-        	try
+
+				InputDialog dlgName = new InputDialog(Display.getCurrent()
+						.getActiveShell(), "New variable", "Enter name for variable", "",
+						null);
+				if (dlgName.open() == Window.OK)
+				{
+					// User clicked OK; update the label with the input
+					name = dlgName.getValue();
+				}
+				else
+				{
+					return;
+				}
+
+				InputDialog dlgValue = new InputDialog(Display.getCurrent()
+						.getActiveShell(), "New variable",
+						"Enter initial value for variable", "", null);
+				if (dlgValue.open() == Window.OK)
+				{
+					// User clicked OK; update the label with the input
+					String str = dlgValue.getValue();
+					try
 					{
 						value = Double.parseDouble(str);
-						
+
 						// get units?
-						DimensionlessDouble newData = new StockTypes.NonTemporal.DimensionlessDouble(name);
+						QuantityCollection<?> newData = generator.generate(name);
 						newData.add(value);
-						
+
 						// and store it
 						_store.add(newData);
 					}
@@ -252,19 +297,17 @@ public class DataManagerEditor extends EditorPart implements
 						System.err.println("Failed to parse initial value");
 						e.printStackTrace();
 					}
-
-        }
-        else
-        {
-        	return;
-        }
-
-				
+				}
+				else
+				{
+					return;
+				}
 			}
 		};
-		createSingleton.setText("Create singleton");
-		createSingleton.setImageDescriptor(Activator.getImageDescriptor("icons/variable.png"));
+		res.setText("Create single " + sType + " value");
+		res.setImageDescriptor(Activator.getImageDescriptor("icons/variable.png"));
 
+		return res;
 	}
 
 	protected void generateData()
@@ -289,8 +332,7 @@ public class DataManagerEditor extends EditorPart implements
 					{
 						String res = null;
 						InputDialog dlg = new InputDialog(Display.getCurrent()
-								.getActiveShell(), title, null, null,
-								null);
+								.getActiveShell(), title, null, null, null);
 						if (dlg.open() == Window.OK)
 						{
 							// User clicked OK; update the label with the input
@@ -358,9 +400,16 @@ public class DataManagerEditor extends EditorPart implements
 			showThisList(selection, newM, values);
 		}
 
+		// and the generators
+		MenuManager createMenu = new MenuManager("Create");
+		menu.add(createMenu);
+		createMenu.add(createSingleton1);
+		createMenu.add(createSingleton2);
+		createMenu.add(createSingleton3);
+
 		menu.add(new Separator());
 		menu.add(refreshView);
-		menu.add(createSingleton);
+
 	}
 
 	private void showThisList(List<IStoreItem> selection, IMenuManager newM,

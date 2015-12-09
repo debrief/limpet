@@ -52,6 +52,7 @@ public class StockTypes
 			{
 				super(name, precedent, METRE.divide(SECOND).asType(Velocity.class));
 			}
+
 			public Speed_MSec(String name)
 			{
 				super(name, null, METRE.divide(SECOND).asType(Velocity.class));
@@ -62,7 +63,7 @@ public class StockTypes
 				this(null, null);
 			}
 		}
-		
+
 		public static class Speed_Kts extends TemporalQuantityCollection<Velocity>
 		{
 			public Speed_Kts(String name)
@@ -75,7 +76,6 @@ public class StockTypes
 				this(null);
 			}
 		}
-
 
 		public static class DimensionlessDouble extends
 				TemporalQuantityCollection<Dimensionless>
@@ -103,6 +103,7 @@ public class StockTypes
 				this(null);
 			}
 		}
+
 		public static class Length_Yd extends TemporalQuantityCollection<Length>
 		{
 			public Length_Yd(String name)
@@ -228,7 +229,7 @@ public class StockTypes
 
 		public static class Angle_Degrees extends TemporalQuantityCollection<Angle>
 		{
-			public Angle_Degrees(String name,  ICommand<?> precedent)
+			public Angle_Degrees(String name, ICommand<?> precedent)
 			{
 				super(name, precedent, DEGREE_ANGLE.asType(Angle.class));
 			}
@@ -290,6 +291,33 @@ public class StockTypes
 			}
 
 			public Angle_Degrees()
+			{
+				this(null);
+			}
+		}
+
+		public static class AcousticStrength extends
+				QuantityCollection<Dimensionless>
+		{
+			public AcousticStrength(String name)
+			{
+				super(name, Dimensionless.UNIT);
+			}
+
+			public AcousticStrength()
+			{
+				this(null);
+			}
+		}
+
+		public static class Frequency_Hz extends QuantityCollection<Frequency>
+		{
+			public Frequency_Hz(String name)
+			{
+				super(name, HERTZ.asType(Frequency.class));
+			}
+
+			public Frequency_Hz()
 			{
 				this(null);
 			}
