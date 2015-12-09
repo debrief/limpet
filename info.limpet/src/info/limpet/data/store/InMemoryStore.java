@@ -1,15 +1,15 @@
 package info.limpet.data.store;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.UUID;
+
 import info.limpet.IChangeListener;
 import info.limpet.ICollection;
 import info.limpet.IStore;
 import info.limpet.IStoreGroup;
 import info.limpet.data.impl.ListenerHelper;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.UUID;
 
 public class InMemoryStore implements IStore, IChangeListener
 {
@@ -19,7 +19,7 @@ public class InMemoryStore implements IStore, IChangeListener
 	private transient List<StoreChangeListener> _listeners = new ArrayList<StoreChangeListener>();
 
 	public static class StoreGroup extends ArrayList<IStoreItem> implements
-			IStoreItem, IStoreGroup
+			IStoreItem, IStoreGroup, IChangeListener
 	{
 		/**
 		 * 
@@ -53,6 +53,9 @@ public class InMemoryStore implements IStore, IChangeListener
 		{
 			e.setParent(this);
 			
+			// ok, start listening to this item
+			e.addChangeListener(this);
+			
 			boolean res = super.add(e);
 			
 			fireDataChanged();
@@ -67,6 +70,8 @@ public class InMemoryStore implements IStore, IChangeListener
 			{
 				IStoreItem si = (IStoreItem) o;
 				si.setParent(null);
+
+				si.removeChangeListener(this);
 				
 			}
 			
@@ -82,6 +87,37 @@ public class InMemoryStore implements IStore, IChangeListener
 		public String getName()
 		{
 			return _name;
+		}
+
+		
+		
+		@Override
+		public int hashCode()
+		{
+			final int prime = 31;
+			int result = super.hashCode();
+			result = prime * result + ((_name == null) ? 0 : _name.hashCode());
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj)
+		{
+			if (this == obj)
+				return true;
+			if (!super.equals(obj))
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			StoreGroup other = (StoreGroup) obj;
+			if (_name == null)
+			{
+				if (other._name != null)
+					return false;
+			}
+			else if (!_name.equals(other._name))
+				return false;
+			return true;
 		}
 
 		@Override
@@ -149,6 +185,23 @@ public class InMemoryStore implements IStore, IChangeListener
 			_parent = parent;
 		}
 
+		@Override
+		public void dataChanged(IStoreItem subject)
+		{
+			fireDataChanged();
+		}
+
+		@Override
+		public void metadataChanged(IStoreItem subject)
+		{
+			fireDataChanged();
+		}
+
+		@Override
+		public void collectionDeleted(IStoreItem subject)
+		{
+			fireDataChanged();
+		}
 	}
 
 	private Object readResolve()
@@ -344,5 +397,4 @@ public class InMemoryStore implements IStore, IChangeListener
 	public void collectionDeleted(IStoreItem subject)
 	{
 	}
-
 }

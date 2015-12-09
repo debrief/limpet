@@ -18,6 +18,42 @@ public class CollectionWrapper implements IAdaptable, LimpetWrapper
 		_collection = collection;
 	}
 
+	
+	
+	@Override
+	public int hashCode()
+	{
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((_collection == null) ? 0 : _collection.hashCode());
+		return result;
+	}
+
+
+
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		CollectionWrapper other = (CollectionWrapper) obj;
+		if (_collection == null)
+		{
+			if (other._collection != null)
+				return false;
+		}
+		else if (!_collection.equals(other._collection))
+			return false;
+		return true;
+	}
+
+
+
 	@Override
 	public Object getAdapter(@SuppressWarnings("rawtypes") final Class adapter)
 	{
