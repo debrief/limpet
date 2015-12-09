@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Stream;
 
 public class InMemoryStore implements IStore, IChangeListener
 {
