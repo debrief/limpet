@@ -779,7 +779,7 @@ public class CollectionComplianceTests
 			}
 			else if (item instanceof IObjectCollection<?>)
 			{
-				IQuantityCollection<?> coll = (IQuantityCollection<?>) item;
+				IObjectCollection<?> coll = (IObjectCollection<?>) item;
 				if (coll instanceof ILocations)
 				{
 					res = coll;
