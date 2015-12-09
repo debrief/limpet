@@ -54,6 +54,8 @@ public class DataManagerDropAdapter extends ViewerDropAdapter
 
 			final boolean validTarget;
 			final Object target = getCurrentTarget();
+			if (target == getSelectedObject())
+				return false;
 			if (target == null)
 				validTarget = true;
 			else if (target instanceof GroupWrapper)
@@ -111,6 +113,7 @@ public class DataManagerDropAdapter extends ViewerDropAdapter
 						_store.add(item);
 					}
 				}
+				changed();
 				return true;
 			}
 

@@ -579,7 +579,7 @@ public class TestOperations extends TestCase
 		assertEquals(firstDifference, speed1firstValue - speed2firstValue);
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "unused" })
 	public void testDivision()
 	{
 		// place to store results data

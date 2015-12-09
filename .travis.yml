@@ -18,5 +18,5 @@ script:
 - "./deploy_ghpages.sh"
 env:
   global:
-  - GH_REF: github.com/debrief/limpet-release.git
+  - GH_REF: github.com/debrief/limpet-update.git
   - secure: MpdxPXI7Rgpp3mjJoYNIN8R223Nu0Mbz2ST1NsI7PyUEC8qU5CqWTu9lqOIDRo8NJA8Xej4e+dwbFas3pq1l+yktOAcS7hXlJnNcgILnz45/wRSDgDmcot7ASZ0UxlN++snhUcO3Y0+xY/DmvbZooVD/YK5UfnyeZa8/ImDuPQ0GAhdr8zcV/tVEs2eYTGRT/Wh5DAEt9p3rp9gA5EB4VPvRzLlMefbdNetti+EB3SZ+FGzJOcrJgDwv25XNZMeqSyM/RUH7G/Nww85k6vC5KR4s1SD2hfp1zDpxe7xcfQfvESjOs4tHuojLyBW2vq2G5stqeOf6kj6ZUHZkUTj6TMD8TPXJ26wACA/ev9nvhu8p4C4wFvJgoN2BzG4JjWemRLrkSQYzOn3Mwu1rSmuMKTBQRnJXv5NTukDP8v/cX/9/79u3LbIKDWlSEVfGlUXSknDFFqFGa6pQ07fWuPkYFvw0GGI7mtrEGUmyIEZWoahyFfKM/sY273GSbHLrj9Aifg75nmde/p8AH/7HiA6lW3I5t56pXUVMDjI+D2FPgZ73lTz6OmuEhIZz7jqWGeZKBQel5247m0ivqPRibScjuNzETq6RND1FypWVVweEc2ByGFQOYqozonMA5ObklbE4JfH2S/S5W5oJNVodMXEDaKIXb/nUvqOeif8MWNvZHSs=

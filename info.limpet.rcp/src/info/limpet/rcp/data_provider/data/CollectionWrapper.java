@@ -48,7 +48,7 @@ public class CollectionWrapper implements IAdaptable, LimpetWrapper
 	}
 
 	@Override
-	public Object getSubject()
+	public IStoreItem getSubject()
 	{
 		return _collection;
 	}

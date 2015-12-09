@@ -27,7 +27,7 @@ public class InMemoryStore implements IStore, IChangeListener
 		private static final long serialVersionUID = 1L;
 		private String _name;
 		private IStoreGroup _parent;
-		final transient private UUID uuid;
+		transient private UUID uuid;
 
 		// note: we make the change support listeners transient, since
 		// they refer to UI elements that we don't persist
@@ -36,12 +36,15 @@ public class InMemoryStore implements IStore, IChangeListener
 		public StoreGroup(String name)
 		{
 			_name = name;
-			uuid = UUID.randomUUID();
 		}
 
 		@Override
 		public UUID getUUID()
 		{
+			if (uuid == null)
+			{
+				uuid = UUID.randomUUID();
+			}
 			return uuid;
 		}
 
@@ -95,6 +98,9 @@ public class InMemoryStore implements IStore, IChangeListener
 		public void setName(String value)
 		{
 			_name = value;
+			
+			// and tell any listeners
+			fireDataChanged();
 		}
 
 		protected void initListeners()
@@ -136,9 +142,6 @@ public class InMemoryStore implements IStore, IChangeListener
 		{
 			return _parent;
 		}
-
-
-
 
 		@Override
 		public void setParent(IStoreGroup parent)

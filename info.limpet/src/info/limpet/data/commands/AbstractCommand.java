@@ -33,7 +33,7 @@ public abstract class AbstractCommand<T extends IStoreItem> implements
 	 */
 	private boolean dynamic = true;
 	final private String outputName;
-	final transient private UUID uuid;
+	transient private UUID uuid;
 
 	public AbstractCommand(String title, String description, String outputName,
 			IStore store, boolean canUndo, boolean canRedo, List<T> inputs)
@@ -44,7 +44,6 @@ public abstract class AbstractCommand<T extends IStoreItem> implements
 		this.canUndo = canUndo;
 		this.canRedo = canRedo;
 		this.outputName = outputName;
-		this.uuid = UUID.randomUUID();
 
 		if (inputs != null)
 		{
@@ -62,6 +61,10 @@ public abstract class AbstractCommand<T extends IStoreItem> implements
 	@Override
 	public UUID getUUID()
 	{
+		if (uuid == null)
+		{
+			uuid = UUID.randomUUID();
+		}
 		return uuid;
 	}
 
