@@ -60,8 +60,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.EditorPart;
 
-public class DataManagerEditor extends EditorPart implements
-		StoreChangeListener
+public class DataManagerEditor extends EditorPart
 {
 
 	private IStore _store;
@@ -78,8 +77,12 @@ public class DataManagerEditor extends EditorPart implements
 		@Override
 		public void changed()
 		{
+			// indicate the file is dirty
 			_dirty = true;
 			firePropertyChange(PROP_DIRTY);
+			
+			// and refresh the UI
+			viewer.refresh();
 		}
 	};
 	private Action createSingleton1;
@@ -94,16 +97,28 @@ public class DataManagerEditor extends EditorPart implements
 		// FileRevisionEditorInput
 		if (input instanceof IFileEditorInput)
 		{
+			// just check if the document is empty
+			IFileEditorInput iF = (IFileEditorInput) input;
 			try
 			{
-				_store = new XStreamHandler()
-						.load(((IFileEditorInput) input).getFile());
+				// ok, the file may be empty, do a quick check
+				if (iF.getFile().exists() && iF.getFile().getContents().available() > 1)
+				{
+					_store = new XStreamHandler().load(((IFileEditorInput) input)
+							.getFile());
+				}
+				else
+				{
+					// ok, it was empty. generate an empty store
+					_store = new InMemoryStore();
+				}
 			}
-			catch (Exception e)
+			catch (IOException | CoreException e)
 			{
-				// FIXME temporary workaround
-				_store = new InMemoryStore();
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
+
 		}
 		_store.addChangeListener(_changeListener);
 		setSite(site);
@@ -144,14 +159,6 @@ public class DataManagerEditor extends EditorPart implements
 		IActionBars bars = getEditorSite().getActionBars();
 		fillLocalToolBar(bars.getToolBarManager());
 
-		// ok, setup as listener
-		IStore store = (IStore) viewer.getInput();
-
-		if (store instanceof InMemoryStore)
-		{
-			IStore ms = (IStore) store;
-			ms.addChangeListener(this);
-		}
 		configureDropSupport();
 		configureDragSupport();
 	}
@@ -286,7 +293,7 @@ public class DataManagerEditor extends EditorPart implements
 					{
 						// get the new collection
 						QuantityCollection<?> newData = generator.generate(name);
-						
+
 						// add the new value
 						value = Double.parseDouble(str);
 						newData.add(value);
@@ -295,7 +302,7 @@ public class DataManagerEditor extends EditorPart implements
 						ISelection selection = viewer.getSelection();
 						IStructuredSelection stru = (IStructuredSelection) selection;
 						Object first = stru.getFirstElement();
-						if(first instanceof GroupWrapper)
+						if (first instanceof GroupWrapper)
 						{
 							GroupWrapper gW = (GroupWrapper) first;
 							gW.getGroup().add(newData);
@@ -305,8 +312,7 @@ public class DataManagerEditor extends EditorPart implements
 							// just store it at the top level
 							_store.add(newData);
 						}
-						
-						
+
 					}
 					catch (NumberFormatException e)
 					{
@@ -536,12 +542,6 @@ public class DataManagerEditor extends EditorPart implements
 	public void doSaveAs()
 	{
 		// TODO
-	}
-
-	@Override
-	public void changed()
-	{
-		viewer.refresh();
 	}
 
 	@Override
