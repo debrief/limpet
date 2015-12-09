@@ -3,6 +3,7 @@ package info.limpet.data.operations;
 import static javax.measure.unit.SI.METRE;
 import static javax.measure.unit.SI.SECOND;
 import info.limpet.ICollection;
+import info.limpet.IObjectCollection;
 import info.limpet.IQuantityCollection;
 import info.limpet.IStore.IStoreItem;
 import info.limpet.ITemporalQuantityCollection;
@@ -539,6 +540,21 @@ public class CollectionComplianceTests
 		return res;
 	}
 
+	public boolean numberOfGroups(List<IStoreItem> selection, final int count)
+	{
+		int res = 0;
+		Iterator<? extends IStoreItem> iter = selection.iterator();
+		while (iter.hasNext())
+		{
+			IStoreItem storeItem = iter.next();
+			if (storeItem instanceof StoreGroup)
+			{
+				res++;
+			}
+		}
+		return res == count;
+	}
+	
 	public boolean allGroups(List<IStoreItem> selection)
 	{
 		boolean res = true;
@@ -555,6 +571,57 @@ public class CollectionComplianceTests
 		return res;
 	}
 
+	/** convenience test to verify if children of the supplied item can all
+	 * be treated as tracks
+	 * @param selection one or more group objects
+	 * @return yes/no
+	 */
+	public boolean numberOfTracks(List<IStoreItem> selection, final int number)
+	{
+		int count = 0;
+		Iterator<? extends IStoreItem> iter = selection.iterator();
+		while (iter.hasNext())
+		{
+			IStoreItem storeItem = iter.next();
+			boolean valid = true;
+			if (storeItem instanceof StoreGroup)
+			{
+				// ok, check the contents
+				StoreGroup group = (StoreGroup) storeItem;
+				List<IStoreItem> kids = group.children();
+				
+				// ok, keep looping through, to check we have the right types
+				if(!isPresent(kids, METRE.divide(SECOND).getDimension()))
+				{
+					valid = false;
+					break;
+				}
+				
+				// ok, keep looping through, to check we have the right types
+				if(!isPresent(kids, SI.RADIAN.getDimension()))
+				{
+					valid = false;
+					break;
+				}
+	
+				if(!hasLocation(kids))
+				{
+					valid = false;
+					break;
+				}
+			}
+			else
+			{
+				valid = false;
+			}
+			if(valid)
+				count++;
+			
+		}
+		return count == number;
+	}
+
+	
 	/** convenience test to verify if children of the supplied item can all
 	 * be treated as tracks
 	 * @param selection one or more group objects
@@ -662,9 +729,43 @@ public class CollectionComplianceTests
 	 * @param dimension dimension we need to be present
 	 * @return yes/no
 	 */
-	public boolean allHave(List<IStoreItem> kids, Dimension dimension)
+	public static IQuantityCollection<?> someHave(List<IStoreItem> kids, Dimension dimension, final boolean walkTree)
 	{
-		boolean res = false;
+		IQuantityCollection<?> res = null;
+
+		Iterator<IStoreItem> iter = kids.iterator();
+		while (iter.hasNext())
+		{
+			IStoreItem item = iter.next();
+			if(item instanceof StoreGroup && walkTree)
+			{
+				StoreGroup group = (StoreGroup) item;
+				res = someHave(group.children(), dimension, walkTree);
+				break;
+			}
+			else if (item instanceof IQuantityCollection<?>)
+			{
+				IQuantityCollection<?> coll = (IQuantityCollection<?>) item;
+				if (coll.getDimension().equals(dimension))
+				{
+					res = coll;
+					break;
+				}
+			}
+		}
+
+		return res;
+	}
+	
+	/** check the list has a location collection
+	 *  
+	 * @param kids items to examine
+	 * @param dimension dimension we need to be present
+	 * @return yes/no
+	 */
+	public static IObjectCollection<?> someHaveLocation(List<IStoreItem> kids)
+	{
+		IObjectCollection<?> res = null;
 
 		Iterator<IStoreItem> iter = kids.iterator();
 		while (iter.hasNext())
@@ -673,15 +774,15 @@ public class CollectionComplianceTests
 			if(item instanceof StoreGroup)
 			{
 				StoreGroup group = (StoreGroup) item;
-				res = allHave(group.children(), dimension);
+				res = someHaveLocation(group.children());
 				break;
 			}
-			else if (item instanceof IQuantityCollection<?>)
+			else if (item instanceof IObjectCollection<?>)
 			{
 				IQuantityCollection<?> coll = (IQuantityCollection<?>) item;
-				if (coll.getDimension().equals(dimension))
+				if (coll instanceof ILocations)
 				{
-					res = true;
+					res = coll;
 					break;
 				}
 			}
@@ -689,4 +790,5 @@ public class CollectionComplianceTests
 
 		return res;
 	}
+
 }
