@@ -1,5 +1,7 @@
 package info.limpet.data.operations.spatial;
 
+import static javax.measure.unit.SI.METRE;
+import static javax.measure.unit.SI.SECOND;
 import info.limpet.ICollection;
 import info.limpet.ICommand;
 import info.limpet.IOperation;
@@ -11,42 +13,64 @@ import info.limpet.data.impl.samples.StockTypes;
 import info.limpet.data.impl.samples.StockTypes.NonTemporal.Length_M;
 import info.limpet.data.impl.samples.StockTypes.Temporal.Location;
 import info.limpet.data.operations.CollectionComplianceTests;
+import info.limpet.data.store.InMemoryStore.StoreGroup;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
 import javax.measure.Measure;
 import javax.measure.quantity.Frequency;
+import javax.measure.unit.SI;
 
 import org.geotools.referencing.GeodeticCalculator;
 import org.opengis.geometry.primitive.Point;
 
-public class DopplerShiftBetweenTracksOperation implements IOperation<IStoreItem>
+public class DopplerShiftBetweenTracksOperation implements
+		IOperation<IStoreItem>
 {
 
-	public static class DopplerShiftOperation extends
-			AbstractCommand<IStoreItem>
+	public static class DopplerShiftOperation extends AbstractCommand<IStoreItem>
 	{
 
-		public DopplerShiftOperation(String outputName, List<IStoreItem> selection,
-				IStore store, String title, String description)
+		private static final String RX = "RX_";
+		private static final String TX = "TX_";
+		private HashMap<String, ICollection> data;
+		private final StoreGroup _tx;
+		private final StoreGroup _rx;
+
+		public DopplerShiftOperation(String outputName, StoreGroup tx,
+				StoreGroup rx, IStore store, String title, String description, List<IStoreItem> selection)
 		{
 			super(title, description, outputName, store, false, false, selection);
+			_tx = tx;
+			_rx = rx;
 		}
 
 		@Override
 		public void execute()
 		{
+			// ok, we need to collate the data
+			data = new HashMap<String, ICollection>();
+
+			// ok, transmitter data
+			data.put(TX + "FREQ", CollectionComplianceTests.someHave(_tx, Frequency.UNIT.getDimension(), true));
+			data.put(TX + "COURSE", CollectionComplianceTests.someHave(_tx, SI.RADIAN.getDimension() , true));
+			data.put(TX + "SPEED", CollectionComplianceTests.someHave(_tx, METRE.divide(SECOND).getDimension(), true));
+			data.put(TX + "LOC", CollectionComplianceTests.someHaveLocation(_tx));
+
+			// and the receiver
+			data.put(RX + "COURSE", CollectionComplianceTests.someHave(_rx, SI.RADIAN.getDimension() , true));
+			data.put(RX + "SPEED", CollectionComplianceTests.someHave(_rx, METRE.divide(SECOND).getDimension(), true));
+			data.put(RX + "LOC", CollectionComplianceTests.someHaveLocation(_rx));
+			
 			// get the unit
 			List<IStoreItem> outputs = new ArrayList<IStoreItem>();
 
 			// put the names into a string
-			ICollection input0 = (ICollection) super.getInputs().get(0);
-			ICollection input1 = (ICollection) super.getInputs().get(1);
-			String title = input0.getName() + " and "
-					+ input1.getName();
+			String title = _tx.getName() + " and " + _rx.getName();
 
 			// ok, generate the new series
 			IQuantityCollection<?> target = getOutputCollection(title);
@@ -75,11 +99,12 @@ public class DopplerShiftBetweenTracksOperation implements IOperation<IStoreItem
 
 		protected IQuantityCollection<?> getOutputCollection(String title)
 		{
-			return new StockTypes.NonTemporal.Length_M("Distance between " + title);
+			return new StockTypes.NonTemporal.Length_M("Doppler shift between "
+					+ title);
 		}
 
-		protected void calcAndStore(final GeodeticCalculator calc, final Point locA, 
-				final Point locB)
+		protected void calcAndStore(final GeodeticCalculator calc,
+				final Point locA, final Point locB)
 		{
 			// get the output dataset
 			Length_M target = (Length_M) getOutputs().get(0);
@@ -107,6 +132,40 @@ public class DopplerShiftBetweenTracksOperation implements IOperation<IStoreItem
 			// update the results
 			performCalc(getOutputs());
 		}
+		
+		
+
+		/**
+		 * 
+		 * @param SpeedOfSound
+		 * @param osHeadingRads
+		 * @param tgtHeadingRads
+		 * @param osSpeed
+		 * @param tgtSpeed
+		 * @param bearing
+		 * @param fNought
+		 * @return
+		 */
+		public static double calcPredictedFreqSI(final double SpeedOfSound,
+				final double osHeadingRads, final double tgtHeadingRads,
+				final double osSpeed, final double tgtSpeed, double bearing,
+				final double fNought)
+		{
+			final double relB = bearing - osHeadingRads;
+			
+			// note - contrary to some publications TSL uses the
+			// angle along the bearing, not the angle back down the bearing (ATB).
+			final double AngleOffTheOtherB = tgtHeadingRads - bearing;
+
+			final double OSL = Math.cos(relB) * osSpeed;
+			final double TSL = Math.cos(AngleOffTheOtherB) * tgtSpeed;
+
+			final double freq = fNought * (SpeedOfSound + OSL) / (SpeedOfSound + TSL);
+
+			return freq;
+		}
+
+		
 
 		/**
 		 * wrap the actual operation. We're doing this since we need to separate it
@@ -117,6 +176,9 @@ public class DopplerShiftBetweenTracksOperation implements IOperation<IStoreItem
 		 */
 		private void performCalc(List<IStoreItem> outputs)
 		{
+			
+			
+			
 			ICollection track1 = (ICollection) getInputs().get(0);
 			ICollection track2 = (ICollection) getInputs().get(1);
 
@@ -163,10 +225,14 @@ public class DopplerShiftBetweenTracksOperation implements IOperation<IStoreItem
 	protected boolean appliesTo(List<IStoreItem> selection)
 	{
 		// ok, check we have two collections
-		boolean allGroups = aTests.allGroups(selection);
-		boolean allTracks = aTests.allChildrenAreTracks(selection);
-		boolean allHaveFreq = aTests.allHave(selection, Frequency.UNIT.getDimension());
-		return (allGroups && allTracks && allHaveFreq);
+		boolean allGroups = aTests.numberOfGroups(selection, 2);
+		boolean allTracks = aTests.numberOfTracks(selection, 2);
+		boolean someHaveFreq = CollectionComplianceTests.someHave(selection,
+				Frequency.UNIT.getDimension(),true) != null;
+		boolean topLevelSpeed = CollectionComplianceTests.someHave(selection,
+				METRE.divide(SECOND).getDimension(),true) != null;
+		
+		return (aTests.exactNumber(selection, 3) && allGroups && allTracks && someHaveFreq && topLevelSpeed);
 	}
 
 	public Collection<ICommand<IStoreItem>> actionsFor(
@@ -175,8 +241,17 @@ public class DopplerShiftBetweenTracksOperation implements IOperation<IStoreItem
 		Collection<ICommand<IStoreItem>> res = new ArrayList<ICommand<IStoreItem>>();
 		if (appliesTo(selection))
 		{
-			ICommand<IStoreItem> newC = new DopplerShiftOperation(null, selection, destination, "Doppler between tracks", "Calculate doppler between two tracks");
+			StoreGroup groupA = (StoreGroup) selection.get(0);
+			StoreGroup groupB = (StoreGroup) selection.get(1);
 
+			ICommand<IStoreItem> newC = new DopplerShiftOperation(null, groupA,
+					groupB, destination, "Doppler between tracks (from "
+							+ groupA.getName() + ")", "Calculate doppler between two tracks", selection);
+
+			res.add(newC);
+			newC = new DopplerShiftOperation(null, groupB, groupA, destination,
+					"Doppler between tracks (from " + groupB.getName() + ")",
+					"Calculate doppler between two tracks", selection);
 			res.add(newC);
 		}
 
