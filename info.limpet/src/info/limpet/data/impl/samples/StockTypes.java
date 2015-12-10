@@ -31,7 +31,7 @@ import org.opengis.geometry.Geometry;
 public class StockTypes
 {
 
-	public static Unit<?> DEGREE_ANGLE = RADIAN.times(2 * Math.PI);
+	public static Unit<?> DEGREE_ANGLE = RADIAN.times(Math.PI / 180d);
 
 	public static interface ILocations
 	{
