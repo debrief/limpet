@@ -11,9 +11,10 @@ import info.limpet.IStore;
 import info.limpet.IStore.IStoreItem;
 import info.limpet.ITemporalQuantityCollection.InterpMethod;
 import info.limpet.data.commands.AbstractCommand;
+import info.limpet.data.impl.TemporalQuantityCollection;
 import info.limpet.data.impl.samples.StockTypes;
-import info.limpet.data.impl.samples.StockTypes.NonTemporal.Length_M;
 import info.limpet.data.impl.samples.StockTypes.NonTemporal;
+import info.limpet.data.impl.samples.StockTypes.NonTemporal.Length_M;
 import info.limpet.data.impl.samples.StockTypes.Temporal;
 import info.limpet.data.impl.samples.StockTypes.Temporal.Frequency_Hz;
 import info.limpet.data.impl.samples.TemporalLocation;
@@ -26,9 +27,13 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.measure.Measurable;
 import javax.measure.Measure;
+import javax.measure.converter.UnitConverter;
 import javax.measure.quantity.Frequency;
+import javax.measure.quantity.Quantity;
 import javax.measure.unit.SI;
+import javax.measure.unit.Unit;
 
 import org.geotools.referencing.GeodeticCalculator;
 import org.opengis.geometry.Geometry;
@@ -124,6 +129,45 @@ public class DopplerShiftBetweenTracksOperation implements
 							res = timeC;
 							resMean = thisMean;
 						}
+					}
+				}
+			}
+
+			return res;
+		}
+
+		public static class TimePeriod
+		{
+			public long startTime;
+			public long endTime;
+
+			public boolean invalid()
+			{
+				return endTime < startTime;
+			}
+		}
+
+		public TimePeriod getBoundingTime()
+		{
+			TimePeriod res = null;
+
+			Iterator<ICollection> iter = data.values().iterator();
+			while (iter.hasNext())
+			{
+				ICollection iCollection = (ICollection) iter.next();
+				if (iCollection.isTemporal())
+				{
+					IBaseTemporalCollection timeC = (IBaseTemporalCollection) iCollection;
+					if (res == null)
+					{
+						res = new TimePeriod();
+						res.startTime = timeC.start();
+						res.endTime = timeC.finish();
+					}
+					else
+					{
+						res.startTime = Math.max(res.startTime, timeC.start());
+						res.endTime = Math.min(res.endTime, timeC.finish());
 					}
 				}
 			}
@@ -269,65 +313,113 @@ public class DopplerShiftBetweenTracksOperation implements
 				return;
 			}
 
+			// and the bounding period
+			TimePeriod period = getBoundingTime();
+
+			// check it's valid
+			if (period.invalid())
+			{
+				System.err.println("Insufficient coverage for datasets");
+				return;
+			}
+
 			// get the output dataset
 			final Temporal.Frequency_Hz output = (Frequency_Hz) outputs.iterator()
 					.next();
+
+			final GeodeticCalculator calc = GeoSupport.getCalculator();
 
 			// and now we can start looping through
 			Iterator<Long> tIter = times.getTimes().iterator();
 			while (tIter.hasNext())
 			{
-				Long thisTime = (Long) tIter.next();
+				long thisTime = (long) tIter.next();
 
-				// ok, now collate our data
-				Geometry txLoc = locationFor(data.get(TX + "LOC"), thisTime);
+				if ((thisTime >= period.startTime) && (thisTime <= period.endTime))
+				{
+					// ok, now collate our data
+					Geometry txLoc = locationFor(data.get(TX + "LOC"), thisTime);
+					Geometry rxLoc = locationFor(data.get(RX + "LOC"), thisTime);
 
+					double txCourseRads = valueAt(data.get(TX + "COURSE"), thisTime,
+							SI.RADIAN);
+					double rxCourseRads = valueAt(data.get(RX + "COURSE"), thisTime,
+							SI.RADIAN);
+
+					double txSpeedMSec = valueAt(data.get(TX + "SPEED"), thisTime,
+							SI.METERS_PER_SECOND);
+					double rxSpeedMSec = valueAt(data.get(RX + "SPEED"), thisTime,
+							SI.METERS_PER_SECOND);
+
+					double freq = valueAt(data.get(TX + "FREQ"), thisTime, SI.HERTZ);
+
+					double soundSpeed = valueAt(data.get("SOUND_SPEED"), thisTime,
+							SI.METERS_PER_SECOND);
+
+					// now find the bearing between them
+					calc.setStartingGeographicPoint(txLoc.getCentroid().getOrdinate(0),
+							txLoc.getCentroid().getOrdinate(1));
+					calc.setDestinationGeographicPoint(
+							rxLoc.getCentroid().getOrdinate(0), rxLoc.getCentroid()
+									.getOrdinate(1));
+					double angleDegs = calc.getAzimuth();
+					if (angleDegs < 0)
+						angleDegs += 360;
+
+					// ok, and the calculation
+					double shifted = calcPredictedFreqSI(soundSpeed, txCourseRads,
+							rxCourseRads, txSpeedMSec, rxSpeedMSec,
+							Math.toRadians(angleDegs), freq);
+
+					output.add(thisTime, shifted);
+				}
 			}
+		}
 
-			//
-			// ICollection track1 = (ICollection) getInputs().get(0);
-			// ICollection track2 = (ICollection) getInputs().get(1);
-			//
-			// // find one wiht more than one item
-			// final Location primary;
-			// final Location secondary;
-			// if (track1.size() > 1)
-			// {
-			// primary = (Location) track1;
-			// secondary = (Location) track2;
-			// }
-			// else
-			// {
-			// primary = (Location) track2;
-			// secondary = (Location) track1;
-			// }
-			//
-			// // get a calculator to use
-			// final GeodeticCalculator calc = GeoSupport.getCalculator();
-			//
-			// for (int j = 0; j < primary.size(); j++)
-			// {
-			// final Point locA, locB;
-			//
-			// locA = (Point) primary.getValues().get(j);
-			//
-			// if (secondary.size() > 1)
-			// {
-			// locB = (Point) secondary.getValues().get(j);
-			// }
-			// else
-			// {
-			// locB = (Point) secondary.getValues().get(0);
-			// }
-			//
-			// calcAndStore(calc, locA, locB);
-			// }
+		@SuppressWarnings("unchecked")
+		public double valueAt(ICollection iCollection, long thisTime,
+				Unit<?> requiredUnits)
+		{
+			Measurable<Quantity> res;
+			if (iCollection.isQuantity())
+			{
+				IQuantityCollection<?> iQ = (IQuantityCollection<?>) iCollection;
+
+				if (iCollection.isTemporal())
+				{
+					TemporalQuantityCollection<?> tQ = (TemporalQuantityCollection<?>) iCollection;
+					res = (Measurable<Quantity>) tQ.interpolateValue(thisTime,
+							InterpMethod.Linear);
+				}
+				else
+				{
+					IQuantityCollection<?> qC = (IQuantityCollection<?>) iCollection;
+					res = (Measurable<Quantity>) qC.getValues().iterator().next();
+				}
+
+				if (res != null)
+				{
+					UnitConverter converter = iQ.getUnits().getConverterTo(requiredUnits);
+					Unit<?> sourceUnits = iQ.getUnits();
+					double doubleValue = res.doubleValue((Unit<Quantity>) sourceUnits);
+					return converter.convert(doubleValue);
+				}
+				else
+				{
+					return 0;
+				}
+			}
+			else
+			{
+				throw new RuntimeException(
+						"Tried to get value of non quantity data type");
+			}
 		}
 
 		private Geometry locationFor(ICollection iCollection, Long thisTime)
 		{
 			Geometry res;
-			if(iCollection.isTemporal())
+			if (iCollection.isTemporal())
 			{
 				TemporalLocation tLoc = (TemporalLocation) iCollection;
 				res = tLoc.interpolateValue(thisTime, InterpMethod.Linear);

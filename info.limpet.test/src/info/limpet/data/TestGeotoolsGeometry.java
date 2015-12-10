@@ -17,6 +17,7 @@ import info.limpet.data.operations.CollectionComplianceTests;
 import info.limpet.data.operations.spatial.DistanceBetweenTracksOperation;
 import info.limpet.data.operations.spatial.DopplerShiftBetweenTracksOperation;
 import info.limpet.data.operations.spatial.DopplerShiftBetweenTracksOperation.DopplerShiftOperation;
+import info.limpet.data.operations.spatial.DopplerShiftBetweenTracksOperation.DopplerShiftOperation.TimePeriod;
 import info.limpet.data.operations.spatial.GenerateCourseAndSpeedOperation;
 import info.limpet.data.operations.spatial.GeoSupport;
 import info.limpet.data.store.InMemoryStore;
@@ -29,6 +30,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.measure.converter.ConversionException;
 import javax.measure.quantity.Frequency;
 
 import junit.framework.TestCase;
@@ -171,7 +173,7 @@ public class TestGeotoolsGeometry extends TestCase
 		{ 48.44, -123.37 });
 		Assert.assertNotNull(point2);
 	}
-
+	
 	public void testRangeCalc()
 	{
 
@@ -196,6 +198,23 @@ public class TestGeotoolsGeometry extends TestCase
 		assertEquals("range 2 right", 19393, dest2, 10);
 
 	}
+	
+	public void testBearingCalc()
+	{
+
+		GeodeticCalculator calc = GeoSupport.getCalculator();
+
+		Point p1 = GeoSupport.getBuilder().createPoint(1, 0);
+		Point p2 = GeoSupport.getBuilder().createPoint(2, 1);
+
+		calc.setStartingGeographicPoint(p1.getCentroid().getOrdinate(0), p1
+				.getCentroid().getOrdinate(1));
+		calc.setDestinationGeographicPoint(p2.getCentroid().getOrdinate(0), p2
+				.getCentroid().getOrdinate(1));
+		
+		assertEquals("correct result", 45, calc.getAzimuth(), 0.2);
+
+	}
 
 	public void testLocationInterp()
 	{
@@ -203,17 +222,21 @@ public class TestGeotoolsGeometry extends TestCase
 		GeometryBuilder builder = GeoSupport.getBuilder();
 		loc1.add(1000, builder.createPoint(2, 3));
 		loc1.add(2000, builder.createPoint(3, 4));
-		
+
 		Geometry geo1 = loc1.interpolateValue(1500, InterpMethod.Linear);
-		assertEquals("correct value", 2.5, geo1.getRepresentativePoint().getDirectPosition().getCoordinate()[0]);
-		assertEquals("correct value", 3.5, geo1.getRepresentativePoint().getDirectPosition().getCoordinate()[1]);
-		
+		assertEquals("correct value", 2.5, geo1.getRepresentativePoint()
+				.getDirectPosition().getCoordinate()[0]);
+		assertEquals("correct value", 3.5, geo1.getRepresentativePoint()
+				.getDirectPosition().getCoordinate()[1]);
+
 		geo1 = loc1.interpolateValue(1700, InterpMethod.Linear);
-		assertEquals("correct value", 2.7, geo1.getRepresentativePoint().getDirectPosition().getCoordinate()[0]);
-		assertEquals("correct value", 3.7, geo1.getRepresentativePoint().getDirectPosition().getCoordinate()[1]);
+		assertEquals("correct value", 2.7, geo1.getRepresentativePoint()
+				.getDirectPosition().getCoordinate()[0]);
+		assertEquals("correct value", 3.7, geo1.getRepresentativePoint()
+				.getDirectPosition().getCoordinate()[1]);
 
 	}
-	
+
 	public void testLocationCalc()
 	{
 		TemporalLocation loc1 = new TemporalLocation("loc1");
@@ -247,6 +270,7 @@ public class TestGeotoolsGeometry extends TestCase
 		assertEquals("empty collection", 1, ops.size());
 	}
 
+	@SuppressWarnings("unused")
 	public void testDoppler()
 	{
 		final ArrayList<IStoreItem> items = new ArrayList<IStoreItem>();
@@ -274,9 +298,9 @@ public class TestGeotoolsGeometry extends TestCase
 		NonTemporal.Frequency_Hz freq2 = new NonTemporal.Frequency_Hz("freq 2");
 
 		Temporal.Speed_MSec sspdM1 = new Temporal.Speed_MSec("sound speed M 1");
-		NonTemporal.Speed_Kts sspdK2 = new NonTemporal.Speed_Kts("sound speed kts 2");
+		NonTemporal.Speed_Kts sspdK2 = new NonTemporal.Speed_Kts(
+				"sound speed kts 2");
 
-		
 		// populate the datasets
 		for (int i = 10000; i <= 90000; i += 5000)
 		{
@@ -302,7 +326,7 @@ public class TestGeotoolsGeometry extends TestCase
 
 			if (i % 3000 == 0)
 				freq1.add(i, 55 + Math.sin(i) * 4);
-			
+
 			if (i % 4000 == 0)
 				sspdM1.add(i, 950 + Math.sin(i) * 4);
 
@@ -317,7 +341,7 @@ public class TestGeotoolsGeometry extends TestCase
 		freq2.add(55.5);
 
 		sspdK2.add(400);
-		
+
 		// check we've got roughly the right amount of data
 		assertEquals("correct items", 17, loc1.size());
 		assertEquals("correct items", 9, loc2.size());
@@ -326,72 +350,77 @@ public class TestGeotoolsGeometry extends TestCase
 		assertEquals("correct items", 4, spdK1.size());
 		assertEquals("correct items", 3, spdM2.size());
 		assertEquals("correct items", 6, freq1.size());
-		
+
 		// create some incomplete input data
 		StoreGroup track1 = new StoreGroup("Track 1");
 		StoreGroup track2 = new StoreGroup("Track 1");
 		items.add(track1);
 		items.add(track2);
-		
+
 		assertEquals("empty", 0, doppler.actionsFor(items, store).size());
-		
+
 		track1.add(loc1);
-		
+
 		assertEquals("empty", 0, doppler.actionsFor(items, store).size());
 
 		track1.add(angD1);
-		
+
 		assertEquals("empty", 0, doppler.actionsFor(items, store).size());
 
 		assertFalse("valid track", tests.numberOfTracks(items, 1));
-		
+
 		track1.add(spdK1);
-		
+
 		assertEquals("empty", 0, doppler.actionsFor(items, store).size());
 
 		assertTrue("valid track", tests.numberOfTracks(items, 1));
-		
+
 		// now for track two
 		track2.add(loc2);
 		track2.add(angR2);
-		
+
 		assertFalse("valid track", tests.numberOfTracks(items, 2));
 
 		track2.add(sspdK2);
-		
+
 		assertTrue("valid track", tests.numberOfTracks(items, 2));
 
 		assertEquals("still empty", 0, doppler.actionsFor(items, store).size());
 
-		assertEquals("has freq", null, tests.someHave(items, Frequency.UNIT.getDimension(), true));
+		assertEquals("has freq", null,
+				tests.someHave(items, Frequency.UNIT.getDimension(), true));
 
 		// give one a freq
 		track1.add(freq1);
-		
+
 		assertEquals("still empty", 0, doppler.actionsFor(items, store).size());
-		
-		assertEquals("has freq", null, tests.someHave(items, Frequency.UNIT.getDimension(), false));
-		assertNotNull("has freq", tests.someHave(items, Frequency.UNIT.getDimension(), true));
-		assertNotNull("has freq",  tests.someHave(track1, Frequency.UNIT.getDimension(), true));
-		assertEquals("has freq", null, tests.someHave(track2, Frequency.UNIT.getDimension(), true));
-		
+
+		assertEquals("has freq", null,
+				tests.someHave(items, Frequency.UNIT.getDimension(), false));
+		assertNotNull("has freq",
+				tests.someHave(items, Frequency.UNIT.getDimension(), true));
+		assertNotNull("has freq",
+				tests.someHave(track1, Frequency.UNIT.getDimension(), true));
+		assertEquals("has freq", null,
+				tests.someHave(track2, Frequency.UNIT.getDimension(), true));
+
 		// and now complete dataset (with temporal location)
 
 		// add the missing sound speed
-		items.add(spdK3);
+		items.add(sspdK2);
 		assertEquals("not empty", 2, doppler.actionsFor(items, store).size());
-				
+
 		// and now complete dataset (with one non temporal location)
-		
+
 		track1.remove(loc1);
 		track1.add(loc3);
-		
+
 		assertEquals("not empty", 2, doppler.actionsFor(items, store).size());
 
 		// and now complete dataset (with two non temporal locations)
 		track2.remove(loc2);
 		track2.add(loc4);
-		
+
 		assertEquals("not empty", 2, doppler.actionsFor(items, store).size());
 
 		// back to original type
@@ -404,56 +433,98 @@ public class TestGeotoolsGeometry extends TestCase
 
 		// quick extra test
 		track1.remove(loc1);
-		
+
 		assertEquals("empty", 0, doppler.actionsFor(items, store).size());
 		// quick extra test
 		track1.add(loc1);
-		
+
 		assertEquals("empty", 2, doppler.actionsFor(items, store).size());
 
 		// ok, now check how the doppler handler organises its data
-		DopplerShiftOperation op1 = (DopplerShiftOperation) doppler.actionsFor(items, store).iterator().next();
-		
+		DopplerShiftOperation op1 = (DopplerShiftOperation) doppler
+				.actionsFor(items, store).iterator().next();
+
 		assertNotNull("found operation", op1);
-		
+
 		op1.organiseData();
 		HashMap<String, ICollection> map = op1.getDataMap();
 		assertEquals("all items", 8, map.size());
-		
+
 		IBaseTemporalCollection timing = op1.getOptimalTimes();
 		assertNotNull("found times", timing);
-		assertEquals("found most frequent", "loc 1", ((ICollection)timing).getName());
+		assertEquals("found most frequent", "loc 1",
+				((ICollection) timing).getName());
 
 		track1.remove(loc1);
 		track1.add(loc3);
-		op1 = (DopplerShiftOperation) doppler.actionsFor(items, store).iterator().next();
+		op1 = (DopplerShiftOperation) doppler.actionsFor(items, store).iterator()
+				.next();
 
 		op1.organiseData();
 		timing = op1.getOptimalTimes();
 		assertNotNull("found times", timing);
-		assertEquals("found most frequent", "loc 2", ((ICollection)timing).getName());
-		
+		assertEquals("found most frequent", "loc 2",
+				((ICollection) timing).getName());
+
 		op1.execute();
 
+		// check the bounding time
+		TimePeriod period = op1.getBoundingTime();
+		assertEquals("start", 20000, period.startTime);
+		assertEquals("start", 80000, period.endTime);
+		
 	}
-	
+
 	public void testDopplerMeanTimes()
 	{
-		DopplerShiftOperation operation = new DopplerShiftOperation(null, null, null, null, null, null, null);
+		DopplerShiftOperation operation = new DopplerShiftOperation(null, null,
+				null, null, null, null, null);
 		ArrayList<Long> times = new ArrayList<Long>();
 		times.add(1000L);
 		times.add(3000L);
-		
+
 		long res = operation.calcMeanTimes(times);
 		assertEquals("correct times", 2000, res);
 
 		times.add(5500L);
-		times.add(7600L); 
+		times.add(7600L);
 		times.add(9700L);
 		times.add(18000L);
-		
+
 		res = operation.calcMeanTimes(times);
 		assertEquals("correct times", 3400, res);
 	}
 
+	public void testDopplerInterpolation()
+	{
+		DopplerShiftOperation operation = new DopplerShiftOperation(null, null,
+				null, null, null, null, null);
+
+		Temporal.Speed_Kts sKts = new Temporal.Speed_Kts("Speed knots");
+		sKts.add(1000, 10);
+		sKts.add(2000, 20);
+		sKts.add(4000, 30);
+
+		double val = operation.valueAt(sKts, 1500L, sKts.getUnits());
+		assertEquals("correct value", 15.0, val);
+
+		val = operation.valueAt(sKts, 3000L, sKts.getUnits());
+		assertEquals("correct value", 25.0, val);
+
+		// try converting to m_sec
+		val = operation.valueAt(sKts, 1500L, new Temporal.Speed_MSec().getUnits());
+		assertEquals("correct value", 7.72, val, 0.01);
+
+		// try converting to m_sec
+		try
+		{
+			val = operation.valueAt(sKts, 1500L,
+					new Temporal.Angle_Degrees().getUnits());
+		}
+		catch (ConversionException ce)
+		{
+			assertNotNull("exception thrown", ce);
+		}
+
+	}
 }
