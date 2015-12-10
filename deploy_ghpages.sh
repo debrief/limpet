@@ -8,6 +8,7 @@ then
 	git init
 	git config user.name "Travis-CI"
 	git config user.email "travis@w3ctag.org"
+	touch .nojekyll
 	mkdir 1.0
 	cd 1.0
 	unzip ../../info.limpet.site/target/site-0.0.1-SNAPSHOT.zip
