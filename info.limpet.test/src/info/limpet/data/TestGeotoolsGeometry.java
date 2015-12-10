@@ -304,31 +304,33 @@ public class TestGeotoolsGeometry extends TestCase
 		// populate the datasets
 		for (int i = 10000; i <= 90000; i += 5000)
 		{
+			double j = Math.toRadians(i / 1000);
+			
 			loc1.add(
 					i,
-					GeoSupport.getBuilder().createPoint(2 + Math.cos(5 * i) * 5,
-							4 + Math.sin(6 * i) * 5));
+					GeoSupport.getBuilder().createPoint(2 + Math.cos(5 * j) * 5,
+							4 + Math.sin(6 * j) * 5));
 			if (i % 2000 == 0)
 				loc2.add(
 						i,
-						GeoSupport.getBuilder().createPoint(4 - Math.cos(3 * i) * 2,
-								9 - Math.sin(4 * i) * 3));
+						GeoSupport.getBuilder().createPoint(4 - Math.cos(3 * j) * 2,
+								9 - Math.sin(4 * j) * 3));
 
 			if (i % 2000 == 0)
-				angD1.add(i, 55 + Math.sin(i) * 4);
+				angD1.add(i, 55 + Math.sin(j) * 4);
 			if (i % 3000 == 0)
-				angR2.add(i, Math.toRadians(45 + Math.cos(i) * 3));
+				angR2.add(i, Math.toRadians(45 + Math.cos(j) * 3));
 
 			if (i % 4000 == 0)
-				spdK1.add(i, 55 + Math.sin(i) * 4);
+				spdK1.add(i, 5 + Math.sin(j) * 2);
 			if (i % 6000 == 0)
-				spdM2.add(i, 55 + Math.sin(i) * 4);
+				spdM2.add(i, 6 + Math.sin(j) * 2);
 
 			if (i % 3000 == 0)
-				freq1.add(i, 55 + Math.sin(i) * 4);
+				freq1.add(i, 55 + Math.sin(j) * 4);
 
 			if (i % 4000 == 0)
-				sspdM1.add(i, 950 + Math.sin(i) * 4);
+				sspdM1.add(i, 950 + Math.sin(j) * 4);
 
 		}
 

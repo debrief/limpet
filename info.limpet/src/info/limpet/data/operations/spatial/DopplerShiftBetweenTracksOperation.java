@@ -365,11 +365,13 @@ public class DopplerShiftBetweenTracksOperation implements
 					double angleDegs = calc.getAzimuth();
 					if (angleDegs < 0)
 						angleDegs += 360;
+					
+					double angleRads = Math.toRadians(angleDegs);
 
 					// ok, and the calculation
 					double shifted = calcPredictedFreqSI(soundSpeed, txCourseRads,
 							rxCourseRads, txSpeedMSec, rxSpeedMSec,
-							Math.toRadians(angleDegs), freq);
+							angleRads, freq);
 
 					output.add(thisTime, shifted);
 				}
@@ -402,7 +404,8 @@ public class DopplerShiftBetweenTracksOperation implements
 					UnitConverter converter = iQ.getUnits().getConverterTo(requiredUnits);
 					Unit<?> sourceUnits = iQ.getUnits();
 					double doubleValue = res.doubleValue((Unit<Quantity>) sourceUnits);
-					return converter.convert(doubleValue);
+					double result = converter.convert(doubleValue);
+					return result;
 				}
 				else
 				{
