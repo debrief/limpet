@@ -729,7 +729,7 @@ public class CollectionComplianceTests
 	 * @param dimension dimension we need to be present
 	 * @return yes/no
 	 */
-	public static IQuantityCollection<?> someHave(List<IStoreItem> kids, Dimension dimension, final boolean walkTree)
+	public IQuantityCollection<?> someHave(List<IStoreItem> kids, Dimension dimension, final boolean walkTree)
 	{
 		IQuantityCollection<?> res = null;
 
@@ -763,7 +763,7 @@ public class CollectionComplianceTests
 	 * @param dimension dimension we need to be present
 	 * @return yes/no
 	 */
-	public static IObjectCollection<?> someHaveLocation(List<IStoreItem> kids)
+	public IObjectCollection<?> someHaveLocation(List<IStoreItem> kids)
 	{
 		IObjectCollection<?> res = null;
 
