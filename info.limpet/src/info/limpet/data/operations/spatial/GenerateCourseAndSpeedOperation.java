@@ -187,7 +187,7 @@ public class GenerateCourseAndSpeedOperation implements IOperation<IStoreItem>
 					// get the output dataset
 					Temporal.Angle_Degrees target = (Angle_Degrees) output;
 
-					// now find the range between them
+					// now find the bearing between them
 					calc.setStartingGeographicPoint(locA.getCentroid().getOrdinate(0),
 							locA.getCentroid().getOrdinate(1));
 					calc.setDestinationGeographicPoint(locB.getCentroid().getOrdinate(0),
