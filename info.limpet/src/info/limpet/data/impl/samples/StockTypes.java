@@ -68,7 +68,7 @@ public class StockTypes
 		{
 			public Speed_Kts(String name)
 			{
-				super(name, NAUTICAL_MILE.divide(SECOND).asType(Velocity.class));
+				super(name, NAUTICAL_MILE.divide(SECOND.times(3600)).asType(Velocity.class));
 			}
 
 			public Speed_Kts()
@@ -267,7 +267,7 @@ public class StockTypes
 		{
 			public Speed_Kts(String name)
 			{
-				super(name, NAUTICAL_MILE.divide(SECOND).asType(Velocity.class));
+				super(name, NAUTICAL_MILE.divide(SECOND.times(3600)).asType(Velocity.class));
 			}
 
 			public Speed_Kts()
