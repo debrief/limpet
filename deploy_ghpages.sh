@@ -12,6 +12,9 @@ then
 	cd 1.0
 	unzip ../../info.limpet.site/target/site-0.0.1-SNAPSHOT.zip
 	cd ..
+	rm -rf coverage
+	mkdir coverage
+	cp -r ../target/jacoco/report/ coverage
 	git add .
 	git commit -m "Deploy Limpet Update Site"
 	git push --force --quiet "https://${GH_TOKEN}@${GH_REF}" master:gh-pages > /dev/null 2>&1
