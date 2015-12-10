@@ -283,6 +283,19 @@ public class StockTypes
 			}
 		}
 
+		public static class Speed_Kts extends QuantityCollection<Velocity>
+		{
+			public Speed_Kts(String name)
+			{
+				super(name, NAUTICAL_MILE.divide(SECOND).asType(Velocity.class));
+			}
+
+			public Speed_Kts()
+			{
+				this(null);
+			}
+		}
+
 		public static class Angle_Degrees extends QuantityCollection<Angle>
 		{
 			public Angle_Degrees(String name)
@@ -295,6 +308,20 @@ public class StockTypes
 				this(null);
 			}
 		}
+		
+		public static class Angle_Radians extends QuantityCollection<Angle>
+		{
+			public Angle_Radians(String name)
+			{
+				super(name, RADIAN.asType(Angle.class));
+			}
+
+			public Angle_Radians()
+			{
+				this(null);
+			}
+		}
+
 
 		public static class AcousticStrength extends
 				QuantityCollection<Dimensionless>

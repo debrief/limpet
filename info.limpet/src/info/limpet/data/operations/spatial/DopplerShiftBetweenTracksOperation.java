@@ -2,6 +2,7 @@ package info.limpet.data.operations.spatial;
 
 import static javax.measure.unit.SI.METRE;
 import static javax.measure.unit.SI.SECOND;
+import info.limpet.IBaseTemporalCollection;
 import info.limpet.ICollection;
 import info.limpet.ICommand;
 import info.limpet.IOperation;
@@ -11,6 +12,8 @@ import info.limpet.IStore.IStoreItem;
 import info.limpet.data.commands.AbstractCommand;
 import info.limpet.data.impl.samples.StockTypes;
 import info.limpet.data.impl.samples.StockTypes.NonTemporal.Length_M;
+import info.limpet.data.impl.samples.StockTypes.Temporal;
+import info.limpet.data.impl.samples.StockTypes.Temporal.Frequency_Hz;
 import info.limpet.data.impl.samples.StockTypes.Temporal.Location;
 import info.limpet.data.operations.CollectionComplianceTests;
 import info.limpet.data.store.InMemoryStore.StoreGroup;
@@ -48,27 +51,17 @@ public class DopplerShiftBetweenTracksOperation implements
 			_tx = tx;
 			_rx = rx;
 		}
+		
+		public HashMap<String, ICollection> getDataMap()
+		{
+			return data;
+		}
 
 		@Override
 		public void execute()
 		{
-			// ok, we need to collate the data
-			data = new HashMap<String, ICollection>();
-
-			// ok, transmitter data
-			data.put(TX + "FREQ", CollectionComplianceTests.someHave(_tx, Frequency.UNIT.getDimension(), true));
-			data.put(TX + "COURSE", CollectionComplianceTests.someHave(_tx, SI.RADIAN.getDimension() , true));
-			data.put(TX + "SPEED", CollectionComplianceTests.someHave(_tx, METRE.divide(SECOND).getDimension(), true));
-			data.put(TX + "LOC", CollectionComplianceTests.someHaveLocation(_tx));
-
-			// and the receiver
-			data.put(RX + "COURSE", CollectionComplianceTests.someHave(_rx, SI.RADIAN.getDimension() , true));
-			data.put(RX + "SPEED", CollectionComplianceTests.someHave(_rx, METRE.divide(SECOND).getDimension(), true));
-			data.put(RX + "LOC", CollectionComplianceTests.someHaveLocation(_rx));
-
-			// and the sound speed
-			data.put("SOUND_SPEED", CollectionComplianceTests.someHave(getInputs(), METRE.divide(SECOND).getDimension(), false));
-
+			// store the data in an accessible way
+			organiseData();
 			
 			// get the unit
 			List<IStoreItem> outputs = new ArrayList<IStoreItem>();
@@ -88,10 +81,10 @@ public class DopplerShiftBetweenTracksOperation implements
 			performCalc(outputs);
 
 			// tell each series that we're a dependent
-			Iterator<IStoreItem> iter = getInputs().iterator();
+			Iterator<ICollection> iter = data.values().iterator();
 			while (iter.hasNext())
 			{
-				ICollection iCollection = (ICollection) iter.next();
+				ICollection iCollection = iter.next();
 				iCollection.addDependent(this);
 			}
 
@@ -100,10 +93,90 @@ public class DopplerShiftBetweenTracksOperation implements
 			res.add(target);
 			getStore().addAll(res);
 		}
+		
+		public IBaseTemporalCollection getOptimalTimes()
+		{
+			IBaseTemporalCollection res = null;
+			long resMean = 0;
+			
+			Iterator<ICollection> iter = data.values().iterator();
+			while (iter.hasNext())
+			{
+				ICollection iCollection = (ICollection) iter.next();
+				if(iCollection.isTemporal())
+				{
+					IBaseTemporalCollection timeC = (IBaseTemporalCollection) iCollection;
+					final long thisMean = calcMeanTimes(timeC.getTimes());
+					
+					if(res == null)
+					{
+						res = timeC;
+						resMean = thisMean;
+					}
+					else
+					{
+						if(thisMean < resMean)
+						{
+							res = timeC;
+							resMean =  thisMean;
+						}
+					}
+				}
+			}
+			
+			return res ;
+		}
+
+		public long calcMeanTimes(List<Long> times)
+		{
+			int ctr = 0;
+			long runningSum = 0;
+			long lastVal = 0;
+			
+			Iterator<Long> tIter = times.iterator();
+			while(tIter.hasNext() && ctr <= 5)
+			{
+				long nextVal = tIter.next();
+				
+				if(ctr > 0)
+				{
+					runningSum += nextVal - lastVal;
+				}
+				
+				lastVal = nextVal;
+				ctr++;
+
+			}
+			
+			long mean = runningSum / (ctr - 1);
+			return mean;
+		}
+
+		public void organiseData()
+		{
+			// ok, we need to collate the data
+			data = new HashMap<String, ICollection>();
+			
+			final CollectionComplianceTests tests = new CollectionComplianceTests();
+
+			// ok, transmitter data
+			data.put(TX + "FREQ", tests.someHave(_tx, Frequency.UNIT.getDimension(), true));
+			data.put(TX + "COURSE", tests.someHave(_tx, SI.RADIAN.getDimension() , true));
+			data.put(TX + "SPEED", tests.someHave(_tx, METRE.divide(SECOND).getDimension(), true));
+			data.put(TX + "LOC", tests.someHaveLocation(_tx));
+
+			// and the receiver
+			data.put(RX + "COURSE", tests.someHave(_rx, SI.RADIAN.getDimension() , true));
+			data.put(RX + "SPEED", tests.someHave(_rx, METRE.divide(SECOND).getDimension(), true));
+			data.put(RX + "LOC", tests.someHaveLocation(_rx));
+
+			// and the sound speed
+			data.put("SOUND_SPEED", tests.someHave(getInputs(), METRE.divide(SECOND).getDimension(), false));
+		}
 
 		protected IQuantityCollection<?> getOutputCollection(String title)
 		{
-			return new StockTypes.NonTemporal.Length_M("Doppler shift between "
+			return new StockTypes.Temporal.Frequency_Hz("Doppler shift between "
 					+ title);
 		}
 
@@ -180,6 +253,27 @@ public class DopplerShiftBetweenTracksOperation implements
 		 */
 		private void performCalc(List<IStoreItem> outputs)
 		{
+			// ok, let's start by finding our time sync
+			IBaseTemporalCollection times = getOptimalTimes();
+			
+			// check we were able to find some times
+			if(times == null)
+			{
+				System.err.println("Unable to find time source dataset");
+				return;
+			}
+			
+			// get the output dataset
+			final Temporal.Frequency_Hz output = (Frequency_Hz) outputs.iterator().next();
+			
+			// and now we can start looping through
+			Iterator<Long> tIter = times.getTimes().iterator();
+			while (tIter.hasNext())
+			{
+				Long thisTime = (Long) tIter.next();
+				
+			}
+			
 			
 			ICollection track1 = (ICollection) getInputs().get(0);
 			ICollection track2 = (ICollection) getInputs().get(1);
@@ -229,9 +323,9 @@ public class DopplerShiftBetweenTracksOperation implements
 		// ok, check we have two collections
 		boolean allGroups = aTests.numberOfGroups(selection, 2);
 		boolean allTracks = aTests.numberOfTracks(selection, 2);
-		boolean someHaveFreq = CollectionComplianceTests.someHave(selection,
+		boolean someHaveFreq = aTests.someHave(selection,
 				Frequency.UNIT.getDimension(),true) != null;
-		boolean topLevelSpeed = CollectionComplianceTests.someHave(selection,
+		boolean topLevelSpeed = aTests.someHave(selection,
 				METRE.divide(SECOND).getDimension(),true) != null;
 		
 		return (aTests.exactNumber(selection, 3) && allGroups && allTracks && someHaveFreq && topLevelSpeed);
