@@ -10,6 +10,7 @@ import info.limpet.data.commands.AbstractCommand;
 import info.limpet.data.impl.samples.StockTypes;
 import info.limpet.data.impl.samples.StockTypes.Temporal;
 import info.limpet.data.impl.samples.StockTypes.Temporal.Angle_Degrees;
+import info.limpet.data.impl.samples.TemporalLocation;
 import info.limpet.data.operations.CollectionComplianceTests;
 
 import java.util.ArrayList;
@@ -105,7 +106,7 @@ public class GenerateCourseAndSpeedOperation implements IOperation<IStoreItem>
 			Iterator<IStoreItem> oIter = outputs.iterator();
 			while (iter.hasNext())
 			{
-				Temporal.Location thisTrack = (Temporal.Location) iter.next();
+				TemporalLocation thisTrack = (TemporalLocation) iter.next();
 				IStoreItem thisOut = oIter.next();
 
 				// ok, walk through it

@@ -14,8 +14,8 @@ import info.limpet.ICollection;
 import info.limpet.IQuantityCollection;
 import info.limpet.data.impl.ObjectCollection;
 import info.limpet.data.impl.samples.StockTypes.NonTemporal;
-import info.limpet.data.impl.samples.StockTypes.Temporal;
 import info.limpet.data.impl.samples.StockTypes.Temporal.AcousticStrength;
+import info.limpet.data.impl.samples.TemporalLocation;
 import info.limpet.rcp.Activator;
 import info.limpet.rcp.data_provider.data.CollectionWrapper;
 import info.limpet.rcp.data_provider.data.CommandWrapper;
@@ -93,7 +93,7 @@ public class LimpetLabelProvider extends LabelProvider
 							.getImageDescriptor("icons/speed.png"));
 				}
 			}
-			else if (coll instanceof Temporal.Location
+			else if (coll instanceof TemporalLocation
 					|| coll instanceof NonTemporal.Location)
 			{
 				res = Activator.getImageFromRegistry(Activator

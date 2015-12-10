@@ -240,26 +240,6 @@ public class StockTypes
 			}
 		}
 
-		public static class Location extends TemporalObjectCollection<Geometry>
-				implements ILocations
-		{
-			public Location(String name)
-			{
-				super(name);
-			}
-
-			@Override
-			public List<Geometry> getLocations()
-			{
-				return super.getValues();
-			}
-
-			public Location()
-			{
-				this(null);
-			}
-		}
-
 	}
 
 	/**

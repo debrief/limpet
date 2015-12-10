@@ -4,7 +4,7 @@ import info.limpet.ICollection;
 import info.limpet.IQuantityCollection;
 import info.limpet.IStore.IStoreItem;
 import info.limpet.ITemporalQuantityCollection;
-import info.limpet.data.impl.samples.StockTypes.Temporal.Location;
+import info.limpet.data.impl.samples.TemporalLocation;
 import info.limpet.data.operations.CollectionComplianceTests;
 import info.limpet.rcp.PlottingHelpers;
 import info.limpet.rcp.core_view.CoreAnalysisView;
@@ -333,7 +333,7 @@ public class XyPlotView extends CoreAnalysisView
 
 						if (coll.isTemporal())
 						{
-							info.limpet.data.impl.samples.StockTypes.Temporal.Location loc = (Location) coll;
+							info.limpet.data.impl.samples.TemporalLocation loc = (TemporalLocation) coll;
 							values = loc.getValues();
 						}
 						else

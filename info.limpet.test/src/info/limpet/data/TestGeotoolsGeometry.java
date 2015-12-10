@@ -5,12 +5,14 @@ import info.limpet.ICollection;
 import info.limpet.ICommand;
 import info.limpet.IStore;
 import info.limpet.IStore.IStoreItem;
+import info.limpet.ITemporalQuantityCollection.InterpMethod;
 import info.limpet.data.csv.CsvParser;
 import info.limpet.data.impl.TemporalObjectCollection;
 import info.limpet.data.impl.samples.StockTypes;
 import info.limpet.data.impl.samples.StockTypes.NonTemporal;
 import info.limpet.data.impl.samples.StockTypes.NonTemporal.Location;
 import info.limpet.data.impl.samples.StockTypes.Temporal;
+import info.limpet.data.impl.samples.TemporalLocation;
 import info.limpet.data.operations.CollectionComplianceTests;
 import info.limpet.data.operations.spatial.DistanceBetweenTracksOperation;
 import info.limpet.data.operations.spatial.DopplerShiftBetweenTracksOperation;
@@ -66,7 +68,7 @@ public class TestGeotoolsGeometry extends TestCase
 		ICollection firstColl = (ICollection) group.get(2);
 		assertEquals("correct num rows", 1708, firstColl.size());
 
-		Temporal.Location track = (Temporal.Location) firstColl;
+		TemporalLocation track = (TemporalLocation) firstColl;
 		GenerateCourseAndSpeedOperation genny = new GenerateCourseAndSpeedOperation();
 		List<IStoreItem> sel = new ArrayList<IStoreItem>();
 		sel.add(track);
@@ -107,8 +109,8 @@ public class TestGeotoolsGeometry extends TestCase
 		ICollection secondColl = (ICollection) group2.get(2);
 		assertEquals("correct num rows", 1708, secondColl.size());
 
-		Temporal.Location track1 = (Temporal.Location) firstColl;
-		Temporal.Location track2 = (Temporal.Location) secondColl;
+		TemporalLocation track1 = (TemporalLocation) firstColl;
+		TemporalLocation track2 = (TemporalLocation) secondColl;
 		GenerateCourseAndSpeedOperation genny = new GenerateCourseAndSpeedOperation();
 		List<IStoreItem> sel = new ArrayList<IStoreItem>();
 		sel.add(track1);
@@ -195,10 +197,27 @@ public class TestGeotoolsGeometry extends TestCase
 
 	}
 
+	public void testLocationInterp()
+	{
+		TemporalLocation loc1 = new TemporalLocation("loc1");
+		GeometryBuilder builder = GeoSupport.getBuilder();
+		loc1.add(1000, builder.createPoint(2, 3));
+		loc1.add(2000, builder.createPoint(3, 4));
+		
+		Geometry geo1 = loc1.interpolateValue(1500, InterpMethod.Linear);
+		assertEquals("correct value", 2.5, geo1.getRepresentativePoint().getDirectPosition().getCoordinate()[0]);
+		assertEquals("correct value", 3.5, geo1.getRepresentativePoint().getDirectPosition().getCoordinate()[1]);
+		
+		geo1 = loc1.interpolateValue(1700, InterpMethod.Linear);
+		assertEquals("correct value", 2.7, geo1.getRepresentativePoint().getDirectPosition().getCoordinate()[0]);
+		assertEquals("correct value", 3.7, geo1.getRepresentativePoint().getDirectPosition().getCoordinate()[1]);
+
+	}
+	
 	public void testLocationCalc()
 	{
-		Temporal.Location loc1 = new Temporal.Location("loc1");
-		Temporal.Location loc2 = new Temporal.Location("loc2");
+		TemporalLocation loc1 = new TemporalLocation("loc1");
+		TemporalLocation loc2 = new TemporalLocation("loc2");
 		Temporal.Length_M len1 = new Temporal.Length_M("dummy2");
 
 		List<IStoreItem> selection = new ArrayList<IStoreItem>();
@@ -236,8 +255,8 @@ public class TestGeotoolsGeometry extends TestCase
 		final CollectionComplianceTests tests = new CollectionComplianceTests();
 
 		// create datasets
-		Temporal.Location loc1 = new Temporal.Location("loc 1");
-		Temporal.Location loc2 = new Temporal.Location("loc 2");
+		TemporalLocation loc1 = new TemporalLocation("loc 1");
+		TemporalLocation loc2 = new TemporalLocation("loc 2");
 		NonTemporal.Location loc3 = new NonTemporal.Location("loc 3");
 		NonTemporal.Location loc4 = new NonTemporal.Location("loc 4");
 

@@ -6,6 +6,7 @@ import info.limpet.data.impl.ObjectCollection;
 import info.limpet.data.impl.QuantityCollection;
 import info.limpet.data.impl.TemporalObjectCollection;
 import info.limpet.data.impl.TemporalQuantityCollection;
+import info.limpet.data.impl.samples.TemporalLocation;
 import info.limpet.data.store.InMemoryStore;
 
 import java.io.File;
@@ -46,7 +47,7 @@ public class XStreamHandler
 		xstream.alias("Temporal.Angle_Degs", info.limpet.data.impl.samples.StockTypes.Temporal.Angle_Degrees.class);
 		xstream.alias("Temporal.Angle_Rads", info.limpet.data.impl.samples.StockTypes.Temporal.Angle_Radians.class);
 		xstream.alias("Temporal.Elapsed_Time", info.limpet.data.impl.samples.StockTypes.Temporal.ElapsedTime_Sec.class);
-		xstream.alias("Temporal.Location", info.limpet.data.impl.samples.StockTypes.Temporal.Location.class);
+		xstream.alias("Temporal.Location", info.limpet.data.impl.samples.TemporalLocation.class);
 
 		xstream.alias("NonTemporal.Length_m", info.limpet.data.impl.samples.StockTypes.NonTemporal.Length_M.class);
 		xstream.alias("NonTemporal.Speed_msec", info.limpet.data.impl.samples.StockTypes.NonTemporal.Speed_MSec.class);

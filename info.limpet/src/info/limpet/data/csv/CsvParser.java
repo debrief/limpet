@@ -7,8 +7,8 @@ import info.limpet.ITemporalQuantityCollection;
 import info.limpet.data.impl.ObjectCollection;
 import info.limpet.data.impl.samples.StockTypes.NonTemporal;
 import info.limpet.data.impl.samples.StockTypes.Temporal;
-import info.limpet.data.impl.samples.StockTypes.Temporal.Location;
 import info.limpet.data.impl.samples.StockTypes.Temporal.Strings;
+import info.limpet.data.impl.samples.TemporalLocation;
 import info.limpet.data.store.InMemoryStore.StoreGroup;
 
 import java.io.File;
@@ -498,7 +498,7 @@ public class CsvParser
 	{
 		protected LocationImporter()
 		{
-			super(Temporal.Location.class, "Lat", null);
+			super(TemporalLocation.class, "Lat", null);
 		}
 
 		public String nameFor(String colName)
@@ -506,15 +506,15 @@ public class CsvParser
 			return "Location";
 		}
 
-		public Temporal.Location create(String name)
+		public TemporalLocation create(String name)
 		{
-			return new Temporal.Location(name);
+			return new TemporalLocation(name);
 		}
 
 		public void consume(ICollection series, long thisTime, int colStart,
 				CSVRecord row)
 		{
-			final Temporal.Location locS = (Location) series;
+			final TemporalLocation locS = (TemporalLocation) series;
 
 			String latVal = row.get(colStart);
 			Double valLat = Double.parseDouble(latVal);
