@@ -343,6 +343,7 @@ public class TestGeotoolsGeometry extends TestCase
 		freq2.add(55.5);
 
 		sspdK2.add(400);
+		spdK3.add(4);
 
 		// check we've got roughly the right amount of data
 		assertEquals("correct items", 17, loc1.size());
@@ -383,7 +384,7 @@ public class TestGeotoolsGeometry extends TestCase
 
 		assertFalse("valid track", tests.numberOfTracks(items, 2));
 
-		track2.add(sspdK2);
+		track2.add(spdK3);
 
 		assertTrue("valid track", tests.numberOfTracks(items, 2));
 
