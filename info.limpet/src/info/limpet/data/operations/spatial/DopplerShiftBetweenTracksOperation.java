@@ -42,6 +42,8 @@ import org.opengis.geometry.primitive.Point;
 public class DopplerShiftBetweenTracksOperation implements
 		IOperation<IStoreItem>
 {
+	final private CollectionComplianceTests aTests = new CollectionComplianceTests();
+
 
 	public static class DopplerShiftOperation extends AbstractCommand<IStoreItem>
 	{
@@ -106,8 +108,8 @@ public class DopplerShiftBetweenTracksOperation implements
 		/** find the best collection to use as a time-base. Which collection has the most values within
 		 * the specified time period?
 		 * 
-		 * @param period 
-		 * @param items
+		 * @param period  (optional) period in which we count valid times
+		 * @param items list of datasets we're examining
 		 * @return most suited collection
 		 */
 		public IBaseTemporalCollection getOptimalTimes(TimePeriod period, Collection<ICollection> items)
@@ -127,7 +129,7 @@ public class DopplerShiftBetweenTracksOperation implements
 					while (times.hasNext())
 					{
 						long long1 = (long) times.next();
-						if(period.contains(long1))
+						if((period == null) || period.contains(long1))
 						{
 							score++;
 						}
@@ -429,8 +431,6 @@ public class DopplerShiftBetweenTracksOperation implements
 		}
 
 	}
-
-	CollectionComplianceTests aTests = new CollectionComplianceTests();
 
 	protected boolean appliesTo(List<IStoreItem> selection)
 	{

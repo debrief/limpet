@@ -496,6 +496,7 @@ public class TestGeotoolsGeometry extends TestCase
 		assertEquals("correct period", 100, period.startTime);
 		assertEquals("correct period", 180, period.endTime);
 		
+		
 		common = operation.getOptimalTimes(period, items);
 		assertNotNull("duh, empty set",common);
 		assertEquals("correct choice", common, speed1);
@@ -511,6 +512,12 @@ public class TestGeotoolsGeometry extends TestCase
 		common = operation.getOptimalTimes(period, items);
 		assertNotNull("duh, empty set",common);
 		assertEquals("still correct choice", common, speed2);
+
+		// step back, test it without the period
+		common = operation.getOptimalTimes(null, items);
+		assertNotNull("duh, empty set",common);
+		assertEquals("correct choice", common, speed2);
+		
 
 	}
 
