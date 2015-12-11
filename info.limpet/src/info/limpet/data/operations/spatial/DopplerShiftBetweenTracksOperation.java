@@ -166,7 +166,7 @@ public class DopplerShiftBetweenTracksOperation implements
 			}
 		}
 
-		public TimePeriod getBoundingTime(Collection<ICollection> items)
+		public TimePeriod getBoundingTime(final Collection<ICollection> items)
 		{
 			TimePeriod res = null;
 
@@ -190,31 +190,6 @@ public class DopplerShiftBetweenTracksOperation implements
 			}
 
 			return res;
-		}
-
-		public long calcMeanTimes(List<Long> times)
-		{
-			int ctr = 0;
-			long runningSum = 0;
-			long lastVal = 0;
-
-			Iterator<Long> tIter = times.iterator();
-			while (tIter.hasNext() && ctr <= 5)
-			{
-				long nextVal = tIter.next();
-
-				if (ctr > 0)
-				{
-					runningSum += nextVal - lastVal;
-				}
-
-				lastVal = nextVal;
-				ctr++;
-
-			}
-
-			long mean = runningSum / (ctr - 1);
-			return mean;
 		}
 
 		public void organiseData()

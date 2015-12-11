@@ -561,29 +561,8 @@ public class TestGeotoolsGeometry extends TestCase
 		assertNotNull("duh, empty set",common);
 		assertEquals("correct times", speed2.start(), common.startTime);
 		assertEquals("correct times", speed3.finish(), common.endTime);
-
-
 	}
 
-	public void testDopplerMeanTimes()
-	{
-		DopplerShiftOperation operation = new DopplerShiftOperation(null, null,
-				null, null, null, null, null);
-		ArrayList<Long> times = new ArrayList<Long>();
-		times.add(1000L);
-		times.add(3000L);
-
-		long res = operation.calcMeanTimes(times);
-		assertEquals("correct times", 2000, res);
-
-		times.add(5500L);
-		times.add(7600L);
-		times.add(9700L);
-		times.add(18000L);
-
-		res = operation.calcMeanTimes(times);
-		assertEquals("correct times", 3400, res);
-	}
 
 	public void testDopplerInterpolation()
 	{
