@@ -7,13 +7,12 @@ import info.limpet.ICollection;
 import info.limpet.IObjectCollection;
 import info.limpet.IQuantityCollection;
 import info.limpet.IStore.IStoreItem;
-import info.limpet.ITemporalQuantityCollection.InterpMethod;
 import info.limpet.ITemporalQuantityCollection;
+import info.limpet.ITemporalQuantityCollection.InterpMethod;
 import info.limpet.data.impl.TemporalQuantityCollection;
-import info.limpet.data.impl.samples.TemporalLocation;
 import info.limpet.data.impl.samples.StockTypes.ILocations;
 import info.limpet.data.impl.samples.StockTypes.NonTemporal;
-import info.limpet.data.operations.spatial.DopplerShiftBetweenTracksOperation.DopplerShiftOperation.TimePeriod;
+import info.limpet.data.impl.samples.TemporalLocation;
 import info.limpet.data.store.InMemoryStore.StoreGroup;
 
 import java.util.Collection;
@@ -943,4 +942,27 @@ public class CollectionComplianceTests
 		}
 		return res;
 	}
+	
+	public static class TimePeriod
+	{
+		public long startTime;
+		public long endTime;
+
+		public TimePeriod(final long tStart, final long tEnd)
+		{
+			startTime = tStart;
+			endTime = tEnd;
+		}
+
+		public boolean invalid()
+		{
+			return endTime < startTime;
+		}
+
+		public boolean contains(long time)
+		{
+			return ((startTime <= time) && (endTime >= time));
+		}
+	}
+
 }

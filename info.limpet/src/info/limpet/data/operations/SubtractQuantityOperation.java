@@ -105,7 +105,6 @@ public class SubtractQuantityOperation<Q extends Quantity> extends
 			this(title, outputName, selection, item1, item2, store, null);
 		}
 
-		@SuppressWarnings("unchecked")
 		public SubtractQuantityValues(String title, String outputName,
 				List<IQuantityCollection<Q>> selection, ICollection item1,
 				ICollection item2, IStore store,

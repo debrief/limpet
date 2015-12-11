@@ -15,6 +15,7 @@ import info.limpet.data.impl.samples.StockTypes.NonTemporal.Length_M;
 import info.limpet.data.impl.samples.StockTypes.Temporal;
 import info.limpet.data.impl.samples.StockTypes.Temporal.Frequency_Hz;
 import info.limpet.data.operations.CollectionComplianceTests;
+import info.limpet.data.operations.CollectionComplianceTests.TimePeriod;
 import info.limpet.data.store.InMemoryStore.StoreGroup;
 
 import java.util.ArrayList;
@@ -95,29 +96,6 @@ public class DopplerShiftBetweenTracksOperation implements
 			List<IStoreItem> res = new ArrayList<IStoreItem>();
 			res.add(target);
 			getStore().addAll(res);
-		}
-
-
-		public static class TimePeriod
-		{
-			public long startTime;
-			public long endTime;
-
-			public TimePeriod(final long tStart, final long tEnd)
-			{
-				startTime = tStart;
-				endTime = tEnd;
-			}
-
-			public boolean invalid()
-			{
-				return endTime < startTime;
-			}
-
-			public boolean contains(long time)
-			{
-				return ((startTime <= time) && (endTime >= time));
-			}
 		}
 
 		public void organiseData()
