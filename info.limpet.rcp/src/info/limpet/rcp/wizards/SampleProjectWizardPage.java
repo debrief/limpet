@@ -104,6 +104,8 @@ public class SampleProjectWizardPage extends WizardPage
 			Bundle bundle = Platform.getBundle("info.limpet.sample_data");
 			if (bundle == null)
 			{
+				MessageDialog.openWarning(getShell(), "Warning",
+						"The sample_data plugin is missing. Please check your installation");
 				return true;
 			}
 			URL entry = bundle.getEntry("/");
