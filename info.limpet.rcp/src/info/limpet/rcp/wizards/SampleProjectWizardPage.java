@@ -37,8 +37,8 @@ public class SampleProjectWizardPage extends WizardPage
 	protected SampleProjectWizardPage()
 	{
 		super("info.limpet.rcp.wizard.sampleProjectWizardPage");
-		setTitle("Create Sample Project");
-		setDescription("Create Sample Project");
+		setTitle("Create Project");
+		setDescription("You'll need to create a project to hold your data.  Please provide a name.");
 	}
 
 	@Override
@@ -49,7 +49,7 @@ public class SampleProjectWizardPage extends WizardPage
 		composite.setLayout(new GridLayout(2, false));
 		new Label(composite, SWT.LEFT).setText("Project name:");
 		final Text nameText = new Text(composite, SWT.SINGLE | SWT.BORDER);
-		projectName = "SampleProject";
+		projectName = "Limpet sample data";
 		IProject project = ResourcesPlugin.getWorkspace().getRoot()
 				.getProject(projectName);
 		if (project != null && project.exists())
