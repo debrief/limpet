@@ -196,9 +196,9 @@
                                         encoding="UTF-8">
                                       <fileset
                                          dir="${source-location}/info.limpet/src/" />
-                                      fileset
+                                      <fileset
                                          dir="${source-location}/info.limpet.rcp/src/" />
-                                      fileset
+                                      <fileset
                                          dir="${source-location}/info.limpet.test/src/" />
                                    </sourcefiles>
                                </structure>
