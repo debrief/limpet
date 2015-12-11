@@ -8,7 +8,6 @@ import info.limpet.ICommand;
 import info.limpet.ITemporalObjectCollection;
 import info.limpet.data.impl.helpers.TimeHelper;
 
-
 public class TemporalObjectCollection<T extends Object> extends
 		ObjectCollection<T> implements ITemporalObjectCollection<T>
 {
@@ -24,33 +23,31 @@ public class TemporalObjectCollection<T extends Object> extends
 	public TemporalObjectCollection(String name, ICommand<?> precedent)
 	{
 		super(name, precedent);
-		
+
 		initTime();
 	}
-	
+
 	@Override
 	public void clearQuiet()
 	{
 		times.clear();
-		
+
 		// let the parent clear the objects/values
 		super.clearQuiet();
 	}
 
-	
-	
 	@Override
 	public void clear()
 	{
 		times.clear();
-		
+
 		// let the parent clear the objects/values
 		super.clear();
 	}
 
 	protected void initTime()
 	{
-		if(tSupport == null)
+		if (tSupport == null)
 		{
 			tSupport = new TimeHelper(times);
 		}
@@ -59,7 +56,7 @@ public class TemporalObjectCollection<T extends Object> extends
 	@Override
 	public List<Long> getTimes()
 	{
-		return times;
+		return tSupport.getTimes();
 	}
 
 	@Override
@@ -150,7 +147,6 @@ public class TemporalObjectCollection<T extends Object> extends
 		}
 
 	}
-
 
 	@Override
 	public boolean isQuantity()

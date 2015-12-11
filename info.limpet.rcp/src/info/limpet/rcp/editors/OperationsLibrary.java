@@ -23,6 +23,7 @@ import info.limpet.data.operations.UnitConversionOperation;
 import info.limpet.data.operations.UnitaryMathOperation;
 import info.limpet.data.operations.spatial.BearingBetweenTracksOperation;
 import info.limpet.data.operations.spatial.DistanceBetweenTracksOperation;
+import info.limpet.data.operations.spatial.DopplerShiftBetweenTracksOperation;
 import info.limpet.data.operations.spatial.GenerateCourseAndSpeedOperation;
 import info.limpet.rcp.analysis_view.AnalysisView;
 import info.limpet.rcp.data_frequency.DataFrequencyView;
@@ -143,6 +144,7 @@ public class OperationsLibrary
 		spatial.add(new DistanceBetweenTracksOperation());
 		spatial.add(new BearingBetweenTracksOperation());
 		spatial.add(new GenerateCourseAndSpeedOperation());
+		spatial.add(new DopplerShiftBetweenTracksOperation());
 		return spatial;
 	}
 

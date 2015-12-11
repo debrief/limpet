@@ -31,7 +31,7 @@ import org.opengis.geometry.Geometry;
 public class StockTypes
 {
 
-	public static Unit<?> DEGREE_ANGLE = RADIAN.times(2 * Math.PI);
+	public static Unit<?> DEGREE_ANGLE = RADIAN.times(Math.PI / 180d);
 
 	public static interface ILocations
 	{
@@ -52,6 +52,7 @@ public class StockTypes
 			{
 				super(name, precedent, METRE.divide(SECOND).asType(Velocity.class));
 			}
+
 			public Speed_MSec(String name)
 			{
 				super(name, null, METRE.divide(SECOND).asType(Velocity.class));
@@ -62,12 +63,12 @@ public class StockTypes
 				this(null, null);
 			}
 		}
-		
+
 		public static class Speed_Kts extends TemporalQuantityCollection<Velocity>
 		{
 			public Speed_Kts(String name)
 			{
-				super(name, NAUTICAL_MILE.divide(SECOND).asType(Velocity.class));
+				super(name, NAUTICAL_MILE.divide(SECOND.times(3600)).asType(Velocity.class));
 			}
 
 			public Speed_Kts()
@@ -75,7 +76,6 @@ public class StockTypes
 				this(null);
 			}
 		}
-
 
 		public static class DimensionlessDouble extends
 				TemporalQuantityCollection<Dimensionless>
@@ -103,6 +103,7 @@ public class StockTypes
 				this(null);
 			}
 		}
+
 		public static class Length_Yd extends TemporalQuantityCollection<Length>
 		{
 			public Length_Yd(String name)
@@ -228,7 +229,7 @@ public class StockTypes
 
 		public static class Angle_Degrees extends TemporalQuantityCollection<Angle>
 		{
-			public Angle_Degrees(String name,  ICommand<?> precedent)
+			public Angle_Degrees(String name, ICommand<?> precedent)
 			{
 				super(name, precedent, DEGREE_ANGLE.asType(Angle.class));
 			}
@@ -236,26 +237,6 @@ public class StockTypes
 			public Angle_Degrees()
 			{
 				this(null, null);
-			}
-		}
-
-		public static class Location extends TemporalObjectCollection<Geometry>
-				implements ILocations
-		{
-			public Location(String name)
-			{
-				super(name);
-			}
-
-			@Override
-			public List<Geometry> getLocations()
-			{
-				return super.getValues();
-			}
-
-			public Location()
-			{
-				this(null);
 			}
 		}
 
@@ -282,6 +263,19 @@ public class StockTypes
 			}
 		}
 
+		public static class Speed_Kts extends QuantityCollection<Velocity>
+		{
+			public Speed_Kts(String name)
+			{
+				super(name, NAUTICAL_MILE.divide(SECOND.times(3600)).asType(Velocity.class));
+			}
+
+			public Speed_Kts()
+			{
+				this(null);
+			}
+		}
+
 		public static class Angle_Degrees extends QuantityCollection<Angle>
 		{
 			public Angle_Degrees(String name)
@@ -290,6 +284,47 @@ public class StockTypes
 			}
 
 			public Angle_Degrees()
+			{
+				this(null);
+			}
+		}
+		
+		public static class Angle_Radians extends QuantityCollection<Angle>
+		{
+			public Angle_Radians(String name)
+			{
+				super(name, RADIAN.asType(Angle.class));
+			}
+
+			public Angle_Radians()
+			{
+				this(null);
+			}
+		}
+
+
+		public static class AcousticStrength extends
+				QuantityCollection<Dimensionless>
+		{
+			public AcousticStrength(String name)
+			{
+				super(name, Dimensionless.UNIT);
+			}
+
+			public AcousticStrength()
+			{
+				this(null);
+			}
+		}
+
+		public static class Frequency_Hz extends QuantityCollection<Frequency>
+		{
+			public Frequency_Hz(String name)
+			{
+				super(name, HERTZ.asType(Frequency.class));
+			}
+
+			public Frequency_Hz()
 			{
 				this(null);
 			}

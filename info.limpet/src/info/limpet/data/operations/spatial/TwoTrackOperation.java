@@ -6,7 +6,7 @@ import info.limpet.IQuantityCollection;
 import info.limpet.IStore;
 import info.limpet.IStore.IStoreItem;
 import info.limpet.data.commands.AbstractCommand;
-import info.limpet.data.impl.samples.StockTypes.Temporal.Location;
+import info.limpet.data.impl.samples.TemporalLocation;
 import info.limpet.data.operations.CollectionComplianceTests;
 
 import java.util.ArrayList;
@@ -97,17 +97,17 @@ abstract public class TwoTrackOperation implements IOperation<IStoreItem>
 			ICollection track2 = (ICollection) getInputs().get(1);
 
 			// find one wiht more than one item
-			final Location primary;
-			final Location secondary;
+			final TemporalLocation primary;
+			final TemporalLocation secondary;
 			if (track1.size() > 1)
 			{
-				primary = (Location) track1;
-				secondary = (Location) track2;
+				primary = (TemporalLocation) track1;
+				secondary = (TemporalLocation) track2;
 			}
 			else
 			{
-				primary = (Location) track2;
-				secondary = (Location) track1;
+				primary = (TemporalLocation) track2;
+				secondary = (TemporalLocation) track1;
 			}
 
 			// get a calculator to use

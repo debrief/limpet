@@ -8,7 +8,6 @@ import info.limpet.QuantityRange;
 import info.limpet.data.impl.ObjectCollection;
 import info.limpet.data.impl.QuantityCollection;
 import info.limpet.data.impl.samples.StockTypes.Temporal.ElapsedTime_Sec;
-import info.limpet.data.impl.samples.StockTypes.Temporal.Location;
 import info.limpet.data.operations.AddQuantityOperation;
 import info.limpet.data.operations.MultiplyQuantityOperation;
 import info.limpet.data.store.InMemoryStore;
@@ -80,8 +79,8 @@ public class SampleData
 				LENGTH_SINGLETON);
 		ElapsedTime_Sec timeIntervals = new StockTypes.Temporal.ElapsedTime_Sec(
 				TIME_INTERVALS);
-		Location track_1 = new StockTypes.Temporal.Location(TRACK_ONE);
-		Location track_2 = new StockTypes.Temporal.Location(TRACK_TWO);
+		TemporalLocation track_1 = new TemporalLocation(TRACK_ONE);
+		TemporalLocation track_2 = new TemporalLocation(TRACK_TWO);
 
 		long thisTime = 0;
 		
