@@ -12,6 +12,7 @@ import info.limpet.data.impl.samples.StockTypes;
 import info.limpet.data.impl.samples.StockTypes.NonTemporal;
 import info.limpet.data.impl.samples.StockTypes.NonTemporal.Location;
 import info.limpet.data.impl.samples.StockTypes.Temporal;
+import info.limpet.data.impl.samples.StockTypes.Temporal.Speed_Kts;
 import info.limpet.data.impl.samples.TemporalLocation;
 import info.limpet.data.operations.CollectionComplianceTests;
 import info.limpet.data.operations.spatial.DistanceBetweenTracksOperation;
@@ -173,7 +174,7 @@ public class TestGeotoolsGeometry extends TestCase
 		{ 48.44, -123.37 });
 		Assert.assertNotNull(point2);
 	}
-	
+
 	public void testRangeCalc()
 	{
 
@@ -198,7 +199,7 @@ public class TestGeotoolsGeometry extends TestCase
 		assertEquals("range 2 right", 19393, dest2, 10);
 
 	}
-	
+
 	public void testBearingCalc()
 	{
 
@@ -211,7 +212,7 @@ public class TestGeotoolsGeometry extends TestCase
 				.getCentroid().getOrdinate(1));
 		calc.setDestinationGeographicPoint(p2.getCentroid().getOrdinate(0), p2
 				.getCentroid().getOrdinate(1));
-		
+
 		assertEquals("correct result", 45, calc.getAzimuth(), 0.2);
 
 	}
@@ -305,7 +306,7 @@ public class TestGeotoolsGeometry extends TestCase
 		for (int i = 10000; i <= 90000; i += 5000)
 		{
 			double j = Math.toRadians(i / 1000);
-			
+
 			loc1.add(
 					i,
 					GeoSupport.getBuilder().createPoint(2 + Math.cos(5 * j) * 5,
@@ -452,30 +453,116 @@ public class TestGeotoolsGeometry extends TestCase
 		op1.organiseData();
 		HashMap<String, ICollection> map = op1.getDataMap();
 		assertEquals("all items", 8, map.size());
-
-		IBaseTemporalCollection timing = op1.getOptimalTimes();
-		assertNotNull("found times", timing);
-		assertEquals("found most frequent", "loc 1",
-				((ICollection) timing).getName());
-
-		track1.remove(loc1);
-		track1.add(loc3);
-		op1 = (DopplerShiftOperation) doppler.actionsFor(items, store).iterator()
-				.next();
-
-		op1.organiseData();
-		timing = op1.getOptimalTimes();
-		assertNotNull("found times", timing);
-//		assertEquals("found most frequent", "loc 2",
-//				((ICollection) timing).getName());
-
-		op1.execute();
-
-		// check the bounding time
-		TimePeriod period = op1.getBoundingTime();
-		assertEquals("start", 20000, period.startTime);
-		assertEquals("start", 80000, period.endTime);
+	}
+	
+	public void testGetOptimalTimes()
+	{
+		DopplerShiftOperation operation = new DopplerShiftOperation(null, null,
+				null, null, null, null, null);
+		Collection<ICollection> items = new ArrayList<ICollection>();
 		
+		Speed_Kts speed1 = new Temporal.Speed_Kts("spd1");
+		Speed_Kts speed2 = new Temporal.Speed_Kts("spd2");
+		Speed_Kts speed3 = new Temporal.Speed_Kts("spd3");
+		
+		speed1.add(100, 5);
+		speed1.add(120, 5);
+		speed1.add(140, 5);
+		speed1.add(160, 5);
+		speed1.add(180, 5);
+		
+		speed2.add(130, 5);
+		speed2.add(140, 5);
+		speed2.add(141, 5);
+		speed2.add(142, 5);
+		speed2.add(143, 5);
+		speed2.add(145, 5);
+		speed2.add(150, 5);
+		speed2.add(160, 5);
+		speed2.add(230, 5);
+		
+		speed3.add(90, 5);
+		speed3.add(120, 5);
+		speed3.add(160, 5);
+		
+		TimePeriod period = new TimePeriod(120, 180);
+		IBaseTemporalCollection common = operation.getOptimalTimes(period , items);
+		assertEquals("duh, empty set",null, common);
+		
+		items.add(speed1);
+		
+		period = operation.getBoundingTime(items);
+		
+		assertEquals("correct period", 100, period.startTime);
+		assertEquals("correct period", 180, period.endTime);
+		
+		common = operation.getOptimalTimes(period, items);
+		assertNotNull("duh, empty set",common);
+		assertEquals("correct choice", common, speed1);
+		
+		items.add(speed2);
+		
+		common = operation.getOptimalTimes(period, items);
+		assertNotNull("duh, empty set",common);
+		assertEquals("correct choice", common, speed2);
+
+		items.add(speed3);
+		
+		common = operation.getOptimalTimes(period, items);
+		assertNotNull("duh, empty set",common);
+		assertEquals("still correct choice", common, speed2);
+
+	}
+
+	public void testGetCommonTimePeriod()
+	{
+		DopplerShiftOperation operation = new DopplerShiftOperation(null, null,
+				null, null, null, null, null);
+		Collection<ICollection> items = new ArrayList<ICollection>();
+		
+		Speed_Kts speed1 = new Temporal.Speed_Kts("spd1");
+		Speed_Kts speed2 = new Temporal.Speed_Kts("spd2");
+		Speed_Kts speed3 = new Temporal.Speed_Kts("spd3");
+		
+		speed1.add(100, 5);
+		speed1.add(120, 5);
+		speed1.add(140, 5);
+		speed1.add(160, 5);
+		speed1.add(180, 5);
+		
+		speed2.add(130, 5);
+		speed2.add(230, 5);
+		
+		speed3.add(90, 5);
+		speed3.add(120, 5);
+		speed3.add(160, 5);
+		
+		TimePeriod common = operation.getBoundingTime(items);
+		assertEquals("duh, empty set",null, common); 
+		
+		// ok, now add the items to hte collection
+		items.add(speed1);
+		
+		common = operation.getBoundingTime(items);
+		assertNotNull("duh, empty set",common);
+		assertEquals("correct times", speed1.start(), common.startTime);
+		assertEquals("correct times", speed1.finish(), common.endTime);
+		
+		items.add(speed2);
+		
+		common = operation.getBoundingTime(items);
+		assertNotNull("duh, empty set",common);
+		assertEquals("correct times", speed2.start(), common.startTime);
+		assertEquals("correct times", speed1.finish(), common.endTime);
+
+		items.add(speed3);
+		
+		common = operation.getBoundingTime(items);
+		assertNotNull("duh, empty set",common);
+		assertEquals("correct times", speed2.start(), common.startTime);
+		assertEquals("correct times", speed3.finish(), common.endTime);
+
+
 	}
 
 	public void testDopplerMeanTimes()
