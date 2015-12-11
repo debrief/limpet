@@ -6,7 +6,6 @@ import info.limpet.data.impl.ObjectCollection;
 import info.limpet.data.impl.QuantityCollection;
 import info.limpet.data.impl.TemporalObjectCollection;
 import info.limpet.data.impl.TemporalQuantityCollection;
-import info.limpet.data.impl.samples.TemporalLocation;
 import info.limpet.data.store.InMemoryStore;
 
 import java.io.File;

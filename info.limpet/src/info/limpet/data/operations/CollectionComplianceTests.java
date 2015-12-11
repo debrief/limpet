@@ -2,17 +2,27 @@ package info.limpet.data.operations;
 
 import static javax.measure.unit.SI.METRE;
 import static javax.measure.unit.SI.SECOND;
+import info.limpet.IBaseTemporalCollection;
 import info.limpet.ICollection;
 import info.limpet.IObjectCollection;
 import info.limpet.IQuantityCollection;
 import info.limpet.IStore.IStoreItem;
+import info.limpet.ITemporalQuantityCollection.InterpMethod;
 import info.limpet.ITemporalQuantityCollection;
+import info.limpet.data.impl.TemporalQuantityCollection;
+import info.limpet.data.impl.samples.TemporalLocation;
 import info.limpet.data.impl.samples.StockTypes.ILocations;
+import info.limpet.data.impl.samples.StockTypes.NonTemporal;
+import info.limpet.data.operations.spatial.DopplerShiftBetweenTracksOperation.DopplerShiftOperation.TimePeriod;
 import info.limpet.data.store.InMemoryStore.StoreGroup;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.measure.Measurable;
+import javax.measure.converter.UnitConverter;
+import javax.measure.quantity.Quantity;
 import javax.measure.unit.Dimension;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
@@ -791,4 +801,146 @@ public class CollectionComplianceTests
 		return res;
 	}
 
+
+	/** find the time period that is the intersection of time series in the supplied list
+	 * 
+	 * @param items
+	 * @return
+	 */
+	public TimePeriod getBoundingTime(final Collection<ICollection> items)
+	{
+		TimePeriod res = null;
+
+		Iterator<ICollection> iter = items.iterator();
+		while (iter.hasNext())
+		{
+			ICollection iCollection = (ICollection) iter.next();
+			if (iCollection.isTemporal())
+			{
+				IBaseTemporalCollection timeC = (IBaseTemporalCollection) iCollection;
+				if (res == null)
+				{
+					res = new TimePeriod(timeC.start(), timeC.finish());
+				}
+				else
+				{
+					res.startTime = Math.max(res.startTime, timeC.start());
+					res.endTime = Math.min(res.endTime, timeC.finish());
+				}
+			}
+		}
+
+		return res;
+	}
+
+
+	/** find the best collection to use as a time-base. Which collection has the most values within
+	 * the specified time period?
+	 * 
+	 * @param period  (optional) period in which we count valid times
+	 * @param items list of datasets we're examining
+	 * @return most suited collection
+	 */
+	public IBaseTemporalCollection getOptimalTimes(TimePeriod period, Collection<ICollection> items)
+	{
+		IBaseTemporalCollection res = null;
+		long resScore = 0;
+
+		Iterator<ICollection> iter = items.iterator();
+		while (iter.hasNext())
+		{
+			ICollection iCollection = (ICollection) iter.next();
+			if (iCollection.isTemporal())
+			{
+				IBaseTemporalCollection timeC = (IBaseTemporalCollection) iCollection;
+				Iterator<Long> times = timeC.getTimes().iterator();
+				int score = 0;
+				while (times.hasNext())
+				{
+					long long1 = (long) times.next();
+					if((period == null) || period.contains(long1))
+					{
+						score++;
+					}
+				}
+				
+				if((res == null) || (score > resScore))
+				{
+					res = timeC;
+					resScore = score;
+				}
+			}
+		}
+
+		return res;
+	}
+	
+	/** retrieve the value at the specified time (even if it's a non-temporal collection)
+	 * 
+	 * @param iCollection set of locations to use
+	 * @param thisTime time we're need a location for
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public double valueAt(ICollection iCollection, long thisTime,
+			Unit<?> requiredUnits)
+	{
+		Measurable<Quantity> res;
+		if (iCollection.isQuantity())
+		{
+			IQuantityCollection<?> iQ = (IQuantityCollection<?>) iCollection;
+
+			if (iCollection.isTemporal())
+			{
+				TemporalQuantityCollection<?> tQ = (TemporalQuantityCollection<?>) iCollection;
+				res = (Measurable<Quantity>) tQ.interpolateValue(thisTime,
+						InterpMethod.Linear);
+			}
+			else
+			{
+				IQuantityCollection<?> qC = (IQuantityCollection<?>) iCollection;
+				res = (Measurable<Quantity>) qC.getValues().iterator().next();
+			}
+
+			if (res != null)
+			{
+				UnitConverter converter = iQ.getUnits().getConverterTo(requiredUnits);
+				Unit<?> sourceUnits = iQ.getUnits();
+				double doubleValue = res.doubleValue((Unit<Quantity>) sourceUnits);
+				double result = converter.convert(doubleValue);
+				return result;
+			}
+			else
+			{
+				return 0;
+			}
+		}
+		else
+		{
+			throw new RuntimeException(
+					"Tried to get value of non quantity data type");
+		}
+	}
+
+	/** retrieve the location at the specified time (even if it's a non-temporal collection)
+	 * 
+	 * @param iCollection set of locations to use
+	 * @param thisTime time we're need a location for
+	 * @return
+	 */
+	public Geometry locationFor(ICollection iCollection, Long thisTime)
+	{
+		Geometry res;
+		if (iCollection.isTemporal())
+		{
+			TemporalLocation tLoc = (TemporalLocation) iCollection;
+			res = tLoc.interpolateValue(thisTime, InterpMethod.Linear);
+		}
+		else
+		{
+			NonTemporal.Location tLoc = (info.limpet.data.impl.samples.StockTypes.NonTemporal.Location) iCollection;
+			res = tLoc.getValues().iterator().next();
+		}
+		return res;
+	}
 }

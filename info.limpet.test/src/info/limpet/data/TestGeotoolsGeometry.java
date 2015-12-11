@@ -457,8 +457,8 @@ public class TestGeotoolsGeometry extends TestCase
 	
 	public void testGetOptimalTimes()
 	{
-		DopplerShiftOperation operation = new DopplerShiftOperation(null, null,
-				null, null, null, null, null);
+		CollectionComplianceTests aTests = new CollectionComplianceTests();
+		
 		Collection<ICollection> items = new ArrayList<ICollection>();
 		
 		Speed_Kts speed1 = new Temporal.Speed_Kts("spd1");
@@ -486,35 +486,35 @@ public class TestGeotoolsGeometry extends TestCase
 		speed3.add(160, 5);
 		
 		TimePeriod period = new TimePeriod(120, 180);
-		IBaseTemporalCollection common = operation.getOptimalTimes(period , items);
+		IBaseTemporalCollection common = aTests.getOptimalTimes(period , items);
 		assertEquals("duh, empty set",null, common);
 		
 		items.add(speed1);
 		
-		period = operation.getBoundingTime(items);
+		period = aTests.getBoundingTime(items);
 		
 		assertEquals("correct period", 100, period.startTime);
 		assertEquals("correct period", 180, period.endTime);
 		
 		
-		common = operation.getOptimalTimes(period, items);
+		common = aTests.getOptimalTimes(period, items);
 		assertNotNull("duh, empty set",common);
 		assertEquals("correct choice", common, speed1);
 		
 		items.add(speed2);
 		
-		common = operation.getOptimalTimes(period, items);
+		common = aTests.getOptimalTimes(period, items);
 		assertNotNull("duh, empty set",common);
 		assertEquals("correct choice", common, speed2);
 
 		items.add(speed3);
 		
-		common = operation.getOptimalTimes(period, items);
+		common = aTests.getOptimalTimes(period, items);
 		assertNotNull("duh, empty set",common);
 		assertEquals("still correct choice", common, speed2);
 
 		// step back, test it without the period
-		common = operation.getOptimalTimes(null, items);
+		common = aTests.getOptimalTimes(null, items);
 		assertNotNull("duh, empty set",common);
 		assertEquals("correct choice", common, speed2);
 		
@@ -523,8 +523,7 @@ public class TestGeotoolsGeometry extends TestCase
 
 	public void testGetCommonTimePeriod()
 	{
-		DopplerShiftOperation operation = new DopplerShiftOperation(null, null,
-				null, null, null, null, null);
+		CollectionComplianceTests aTests = new CollectionComplianceTests();
 		Collection<ICollection> items = new ArrayList<ICollection>();
 		
 		Speed_Kts speed1 = new Temporal.Speed_Kts("spd1");
@@ -544,27 +543,27 @@ public class TestGeotoolsGeometry extends TestCase
 		speed3.add(120, 5);
 		speed3.add(160, 5);
 		
-		TimePeriod common = operation.getBoundingTime(items);
+		TimePeriod common = aTests.getBoundingTime(items);
 		assertEquals("duh, empty set",null, common); 
 		
 		// ok, now add the items to hte collection
 		items.add(speed1);
 		
-		common = operation.getBoundingTime(items);
+		common = aTests.getBoundingTime(items);
 		assertNotNull("duh, empty set",common);
 		assertEquals("correct times", speed1.start(), common.startTime);
 		assertEquals("correct times", speed1.finish(), common.endTime);
 		
 		items.add(speed2);
 		
-		common = operation.getBoundingTime(items);
+		common = aTests.getBoundingTime(items);
 		assertNotNull("duh, empty set",common);
 		assertEquals("correct times", speed2.start(), common.startTime);
 		assertEquals("correct times", speed1.finish(), common.endTime);
 
 		items.add(speed3);
 		
-		common = operation.getBoundingTime(items);
+		common = aTests.getBoundingTime(items);
 		assertNotNull("duh, empty set",common);
 		assertEquals("correct times", speed2.start(), common.startTime);
 		assertEquals("correct times", speed3.finish(), common.endTime);
@@ -573,28 +572,27 @@ public class TestGeotoolsGeometry extends TestCase
 
 	public void testDopplerInterpolation()
 	{
-		DopplerShiftOperation operation = new DopplerShiftOperation(null, null,
-				null, null, null, null, null);
+		final CollectionComplianceTests aTests = new CollectionComplianceTests();
 
 		Temporal.Speed_Kts sKts = new Temporal.Speed_Kts("Speed knots");
 		sKts.add(1000, 10);
 		sKts.add(2000, 20);
 		sKts.add(4000, 30);
 
-		double val = operation.valueAt(sKts, 1500L, sKts.getUnits());
+		double val = aTests.valueAt(sKts, 1500L, sKts.getUnits());
 		assertEquals("correct value", 15.0, val);
 
-		val = operation.valueAt(sKts, 3000L, sKts.getUnits());
+		val = aTests.valueAt(sKts, 3000L, sKts.getUnits());
 		assertEquals("correct value", 25.0, val);
 
 		// try converting to m_sec
-		val = operation.valueAt(sKts, 1500L, new Temporal.Speed_MSec().getUnits());
+		val = aTests.valueAt(sKts, 1500L, new Temporal.Speed_MSec().getUnits());
 		assertEquals("correct value", 7.72, val, 0.01);
 
 		// try converting to m_sec
 		try
 		{
-			val = operation.valueAt(sKts, 1500L,
+			val = aTests.valueAt(sKts, 1500L,
 					new Temporal.Angle_Degrees().getUnits());
 		}
 		catch (ConversionException ce)

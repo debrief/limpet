@@ -9,15 +9,11 @@ import info.limpet.IOperation;
 import info.limpet.IQuantityCollection;
 import info.limpet.IStore;
 import info.limpet.IStore.IStoreItem;
-import info.limpet.ITemporalQuantityCollection.InterpMethod;
 import info.limpet.data.commands.AbstractCommand;
-import info.limpet.data.impl.TemporalQuantityCollection;
 import info.limpet.data.impl.samples.StockTypes;
-import info.limpet.data.impl.samples.StockTypes.NonTemporal;
 import info.limpet.data.impl.samples.StockTypes.NonTemporal.Length_M;
 import info.limpet.data.impl.samples.StockTypes.Temporal;
 import info.limpet.data.impl.samples.StockTypes.Temporal.Frequency_Hz;
-import info.limpet.data.impl.samples.TemporalLocation;
 import info.limpet.data.operations.CollectionComplianceTests;
 import info.limpet.data.store.InMemoryStore.StoreGroup;
 
@@ -27,13 +23,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.measure.Measurable;
 import javax.measure.Measure;
-import javax.measure.converter.UnitConverter;
 import javax.measure.quantity.Frequency;
-import javax.measure.quantity.Quantity;
 import javax.measure.unit.SI;
-import javax.measure.unit.Unit;
 
 import org.geotools.referencing.GeodeticCalculator;
 import org.opengis.geometry.Geometry;
@@ -42,7 +34,7 @@ import org.opengis.geometry.primitive.Point;
 public class DopplerShiftBetweenTracksOperation implements
 		IOperation<IStoreItem>
 {
-	final private CollectionComplianceTests aTests = new CollectionComplianceTests();
+	final private static CollectionComplianceTests aTests = new CollectionComplianceTests();
 
 
 	public static class DopplerShiftOperation extends AbstractCommand<IStoreItem>
@@ -105,46 +97,6 @@ public class DopplerShiftBetweenTracksOperation implements
 			getStore().addAll(res);
 		}
 
-		/** find the best collection to use as a time-base. Which collection has the most values within
-		 * the specified time period?
-		 * 
-		 * @param period  (optional) period in which we count valid times
-		 * @param items list of datasets we're examining
-		 * @return most suited collection
-		 */
-		public IBaseTemporalCollection getOptimalTimes(TimePeriod period, Collection<ICollection> items)
-		{
-			IBaseTemporalCollection res = null;
-			long resScore = 0;
-
-			Iterator<ICollection> iter = items.iterator();
-			while (iter.hasNext())
-			{
-				ICollection iCollection = (ICollection) iter.next();
-				if (iCollection.isTemporal())
-				{
-					IBaseTemporalCollection timeC = (IBaseTemporalCollection) iCollection;
-					Iterator<Long> times = timeC.getTimes().iterator();
-					int score = 0;
-					while (times.hasNext())
-					{
-						long long1 = (long) times.next();
-						if((period == null) || period.contains(long1))
-						{
-							score++;
-						}
-					}
-					
-					if((res == null) || (score > resScore))
-					{
-						res = timeC;
-						resScore = score;
-					}
-				}
-			}
-
-			return res;
-		}
 
 		public static class TimePeriod
 		{
@@ -166,32 +118,6 @@ public class DopplerShiftBetweenTracksOperation implements
 			{
 				return ((startTime <= time) && (endTime >= time));
 			}
-		}
-
-		public TimePeriod getBoundingTime(final Collection<ICollection> items)
-		{
-			TimePeriod res = null;
-
-			Iterator<ICollection> iter = items.iterator();
-			while (iter.hasNext())
-			{
-				ICollection iCollection = (ICollection) iter.next();
-				if (iCollection.isTemporal())
-				{
-					IBaseTemporalCollection timeC = (IBaseTemporalCollection) iCollection;
-					if (res == null)
-					{
-						res = new TimePeriod(timeC.start(), timeC.finish());
-					}
-					else
-					{
-						res.startTime = Math.max(res.startTime, timeC.start());
-						res.endTime = Math.min(res.endTime, timeC.finish());
-					}
-				}
-			}
-
-			return res;
 		}
 
 		public void organiseData()
@@ -299,7 +225,7 @@ public class DopplerShiftBetweenTracksOperation implements
 		{
 			
 			// and the bounding period
-			TimePeriod period = getBoundingTime(data.values());
+			TimePeriod period = aTests.getBoundingTime(data.values());
 
 			// check it's valid
 			if (period.invalid())
@@ -309,7 +235,7 @@ public class DopplerShiftBetweenTracksOperation implements
 			}
 
 			// ok, let's start by finding our time sync
-			IBaseTemporalCollection times = getOptimalTimes(period, data.values());
+			IBaseTemporalCollection times = aTests.getOptimalTimes(period, data.values());
 
 			// check we were able to find some times
 			if (times == null)
@@ -333,22 +259,22 @@ public class DopplerShiftBetweenTracksOperation implements
 				if ((thisTime >= period.startTime) && (thisTime <= period.endTime))
 				{
 					// ok, now collate our data
-					Geometry txLoc = locationFor(data.get(TX + "LOC"), thisTime);
-					Geometry rxLoc = locationFor(data.get(RX + "LOC"), thisTime);
+					Geometry txLoc = aTests.locationFor(data.get(TX + "LOC"), thisTime);
+					Geometry rxLoc = aTests.locationFor(data.get(RX + "LOC"), thisTime);
 
-					double txCourseRads = valueAt(data.get(TX + "COURSE"), thisTime,
+					double txCourseRads = aTests.valueAt(data.get(TX + "COURSE"), thisTime,
 							SI.RADIAN);
-					double rxCourseRads = valueAt(data.get(RX + "COURSE"), thisTime,
+					double rxCourseRads = aTests.valueAt(data.get(RX + "COURSE"), thisTime,
 							SI.RADIAN);
 
-					double txSpeedMSec = valueAt(data.get(TX + "SPEED"), thisTime,
+					double txSpeedMSec = aTests.valueAt(data.get(TX + "SPEED"), thisTime,
 							SI.METERS_PER_SECOND);
-					double rxSpeedMSec = valueAt(data.get(RX + "SPEED"), thisTime,
+					double rxSpeedMSec = aTests.valueAt(data.get(RX + "SPEED"), thisTime,
 							SI.METERS_PER_SECOND);
 
-					double freq = valueAt(data.get(TX + "FREQ"), thisTime, SI.HERTZ);
+					double freq = aTests.valueAt(data.get(TX + "FREQ"), thisTime, SI.HERTZ);
 
-					double soundSpeed = valueAt(data.get("SOUND_SPEED"), thisTime,
+					double soundSpeed = aTests.valueAt(data.get("SOUND_SPEED"), thisTime,
 							SI.METERS_PER_SECOND);
 
 					// now find the bearing between them
@@ -373,62 +299,7 @@ public class DopplerShiftBetweenTracksOperation implements
 			}
 		}
 
-		@SuppressWarnings("unchecked")
-		public double valueAt(ICollection iCollection, long thisTime,
-				Unit<?> requiredUnits)
-		{
-			Measurable<Quantity> res;
-			if (iCollection.isQuantity())
-			{
-				IQuantityCollection<?> iQ = (IQuantityCollection<?>) iCollection;
 
-				if (iCollection.isTemporal())
-				{
-					TemporalQuantityCollection<?> tQ = (TemporalQuantityCollection<?>) iCollection;
-					res = (Measurable<Quantity>) tQ.interpolateValue(thisTime,
-							InterpMethod.Linear);
-				}
-				else
-				{
-					IQuantityCollection<?> qC = (IQuantityCollection<?>) iCollection;
-					res = (Measurable<Quantity>) qC.getValues().iterator().next();
-				}
-
-				if (res != null)
-				{
-					UnitConverter converter = iQ.getUnits().getConverterTo(requiredUnits);
-					Unit<?> sourceUnits = iQ.getUnits();
-					double doubleValue = res.doubleValue((Unit<Quantity>) sourceUnits);
-					double result = converter.convert(doubleValue);
-					return result;
-				}
-				else
-				{
-					return 0;
-				}
-			}
-			else
-			{
-				throw new RuntimeException(
-						"Tried to get value of non quantity data type");
-			}
-		}
-
-		private Geometry locationFor(ICollection iCollection, Long thisTime)
-		{
-			Geometry res;
-			if (iCollection.isTemporal())
-			{
-				TemporalLocation tLoc = (TemporalLocation) iCollection;
-				res = tLoc.interpolateValue(thisTime, InterpMethod.Linear);
-			}
-			else
-			{
-				NonTemporal.Location tLoc = (info.limpet.data.impl.samples.StockTypes.NonTemporal.Location) iCollection;
-				res = tLoc.getValues().iterator().next();
-			}
-			return res;
-		}
 
 	}
 
