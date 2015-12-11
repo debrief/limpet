@@ -1,7 +1,5 @@
 package info.limpet.rcp;
 
-import java.io.IOException;
-
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -108,13 +106,13 @@ public class Activator extends AbstractUIPlugin
 		return imageDescriptorFromPlugin(PLUGIN_ID, path);
 	}
 
-	public static void logError(int statCode, String message, IOException e)
+	public static void logError(int statCode, String message, Exception e)
 	{
 		IStatus status = new Status(statCode, PLUGIN_ID, message, e);
 		getDefault().getLog().log(status);
 	}
 
-	public static void log(IOException e)
+	public static void log(Exception e)
 	{
 		IStatus status = new Status(IStatus.WARNING, PLUGIN_ID, e.getMessage(), e);
 		getDefault().getLog().log(status);

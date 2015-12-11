@@ -26,6 +26,7 @@
     <module>info.limpet.rcp.feature</module>
     <module>info.limpet.site</module>
     <module>info.limpet.product</module>
+    <module>info.limpet.sample_data</module>
   </modules>
 
   <build>

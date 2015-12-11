@@ -245,5 +245,25 @@
          </enablement>
       </decorator>
     </extension>
-   
+    
+    <extension point="org.eclipse.ui.commands">
+        <command defaultHandler="info.limpet.rcp.actions.CreateSampleProject"
+            id="info.limpet.rcp.sampleProject" 
+            name="Create Sample Project">
+        </command>
+    </extension>
+    
+    <extension point="org.eclipse.ui.menus">
+        <menuContribution locationURI="toolbar:org.eclipse.ui.main.toolbar?after=group.file">
+          <toolbar id="info.limpet.rcp.toolbar">
+            <command commandId="info.limpet.rcp.sampleProject"
+                icon="icons/create_project.png"
+                label="Create Sample Project"
+                tooltip="Create Sample project" style="push"
+                id="info.limpet.rcp.sampleProject">
+            </command>
+          </toolbar>
+        </menuContribution>
+    </extension>
+
 </plugin>
