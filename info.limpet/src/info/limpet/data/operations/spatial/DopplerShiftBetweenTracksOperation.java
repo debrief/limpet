@@ -103,32 +103,40 @@ public class DopplerShiftBetweenTracksOperation implements
 			getStore().addAll(res);
 		}
 
-		public IBaseTemporalCollection getOptimalTimes()
+		/** find the best collection to use as a time-base. Which collection has the most values within
+		 * the specified time period?
+		 * 
+		 * @param period 
+		 * @param items
+		 * @return most suited collection
+		 */
+		public IBaseTemporalCollection getOptimalTimes(TimePeriod period, Collection<ICollection> items)
 		{
 			IBaseTemporalCollection res = null;
-			long resMean = 0;
+			long resScore = 0;
 
-			Iterator<ICollection> iter = data.values().iterator();
+			Iterator<ICollection> iter = items.iterator();
 			while (iter.hasNext())
 			{
 				ICollection iCollection = (ICollection) iter.next();
 				if (iCollection.isTemporal())
 				{
 					IBaseTemporalCollection timeC = (IBaseTemporalCollection) iCollection;
-					final long thisMean = calcMeanTimes(timeC.getTimes());
-
-					if (res == null)
+					Iterator<Long> times = timeC.getTimes().iterator();
+					int score = 0;
+					while (times.hasNext())
+					{
+						long long1 = (long) times.next();
+						if(period.contains(long1))
+						{
+							score++;
+						}
+					}
+					
+					if((res == null) || (score > resScore))
 					{
 						res = timeC;
-						resMean = thisMean;
-					}
-					else
-					{
-						if (thisMean < resMean)
-						{
-							res = timeC;
-							resMean = thisMean;
-						}
+						resScore = score;
 					}
 				}
 			}
@@ -141,17 +149,28 @@ public class DopplerShiftBetweenTracksOperation implements
 			public long startTime;
 			public long endTime;
 
+			public TimePeriod(final long tStart, final long tEnd)
+			{
+				startTime = tStart;
+				endTime = tEnd;
+			}
+
 			public boolean invalid()
 			{
 				return endTime < startTime;
 			}
+
+			public boolean contains(long time)
+			{
+				return ((startTime <= time) && (endTime >= time));
+			}
 		}
 
-		public TimePeriod getBoundingTime()
+		public TimePeriod getBoundingTime(Collection<ICollection> items)
 		{
 			TimePeriod res = null;
 
-			Iterator<ICollection> iter = data.values().iterator();
+			Iterator<ICollection> iter = items.iterator();
 			while (iter.hasNext())
 			{
 				ICollection iCollection = (ICollection) iter.next();
@@ -160,9 +179,7 @@ public class DopplerShiftBetweenTracksOperation implements
 					IBaseTemporalCollection timeC = (IBaseTemporalCollection) iCollection;
 					if (res == null)
 					{
-						res = new TimePeriod();
-						res.startTime = timeC.start();
-						res.endTime = timeC.finish();
+						res = new TimePeriod(timeC.start(), timeC.finish());
 					}
 					else
 					{
@@ -303,23 +320,24 @@ public class DopplerShiftBetweenTracksOperation implements
 		 */
 		private void performCalc(List<IStoreItem> outputs)
 		{
-			// ok, let's start by finding our time sync
-			IBaseTemporalCollection times = getOptimalTimes();
-
-			// check we were able to find some times
-			if (times == null)
-			{
-				System.err.println("Unable to find time source dataset");
-				return;
-			}
-
+			
 			// and the bounding period
-			TimePeriod period = getBoundingTime();
+			TimePeriod period = getBoundingTime(data.values());
 
 			// check it's valid
 			if (period.invalid())
 			{
 				System.err.println("Insufficient coverage for datasets");
+				return;
+			}
+
+			// ok, let's start by finding our time sync
+			IBaseTemporalCollection times = getOptimalTimes(period, data.values());
+
+			// check we were able to find some times
+			if (times == null)
+			{
+				System.err.println("Unable to find time source dataset");
 				return;
 			}
 
