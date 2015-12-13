@@ -9,6 +9,7 @@ import info.limpet.IChangeListener;
 import info.limpet.ICollection;
 import info.limpet.IStore;
 import info.limpet.IStoreGroup;
+import info.limpet.UIProperty;
 import info.limpet.data.impl.ListenerHelper;
 
 public class InMemoryStore implements IStore, IChangeListener
@@ -19,7 +20,7 @@ public class InMemoryStore implements IStore, IChangeListener
 	private transient List<StoreChangeListener> _listeners = new ArrayList<StoreChangeListener>();
 
 	public static class StoreGroup extends ArrayList<IStoreItem> implements
-			IStoreItem, IStoreGroup, IChangeListener
+			IStoreItem, IStoreGroup<IStoreItem>, IChangeListener
 	{
 		/**
 		 * 
@@ -83,6 +84,7 @@ public class InMemoryStore implements IStore, IChangeListener
 			return res;
 		}
 
+		@UIProperty(name="Name", category="Label")
 		@Override
 		public String getName()
 		{
