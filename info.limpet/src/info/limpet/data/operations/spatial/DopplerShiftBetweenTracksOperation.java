@@ -43,7 +43,7 @@ public class DopplerShiftBetweenTracksOperation implements
 
 		private static final String RX = "RX_";
 		private static final String TX = "TX_";
-		private HashMap<String, ICollection> data;
+		private transient HashMap<String, ICollection> data;
 		private final StoreGroup _tx;
 		private final StoreGroup _rx;
 
