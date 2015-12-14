@@ -16,37 +16,6 @@ public class CommandWrapper implements IAdaptable, LimpetWrapper
 		_parent = parent;
 		_command = prec;
 	}
-	
-	@Override
-	public int hashCode()
-	{
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((_command == null) ? 0 : _command.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj)
-	{
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		CommandWrapper other = (CommandWrapper) obj;
-		if (_command == null)
-		{
-			if (other._command != null)
-				return false;
-		}
-		else if (!_command.equals(other._command))
-			return false;
-		return true;
-	}
-
-
 
 	@Override
 	public Object getAdapter(@SuppressWarnings("rawtypes") final Class adapter)
