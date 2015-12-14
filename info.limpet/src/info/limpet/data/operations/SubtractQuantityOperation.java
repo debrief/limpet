@@ -13,8 +13,7 @@ import java.util.List;
 import javax.measure.Measurable;
 import javax.measure.quantity.Quantity;
 
-public class SubtractQuantityOperation<Q extends Quantity> extends
-		CoreQuantityOperation<Q> implements IOperation<IQuantityCollection<Q>>
+public class SubtractQuantityOperation<Q extends Quantity> extends CoreQuantityOperation<Q> implements IOperation<IQuantityCollection<Q>>
 {
 	public static final String DIFFERENCE_OF_INPUT_SERIES = "Difference of input series";
 
@@ -48,9 +47,7 @@ public class SubtractQuantityOperation<Q extends Quantity> extends
 	}
 
 	@Override
-	protected void addInterpolatedCommands(
-			List<IQuantityCollection<Q>> selection, IStore destination,
-			Collection<ICommand<IQuantityCollection<Q>>> res)
+	protected void addInterpolatedCommands(List<IQuantityCollection<Q>> selection, IStore destination, Collection<ICommand<IQuantityCollection<Q>>> res)
 	{
 		ITemporalQuantityCollection<Q> longest = getLongestTemporalCollections(selection);
 
@@ -60,21 +57,17 @@ public class SubtractQuantityOperation<Q extends Quantity> extends
 			IQuantityCollection<Q> item2 =  selection.get(1);
 
 			String oName = item2.getName() + " from " + item1.getName();
-			ICommand<IQuantityCollection<Q>> newC = new SubtractQuantityValues(
-					"Subtract " + item2.getName() + " from " + item1.getName(), oName,
-					selection, item1, item2, destination, longest);
+			ICommand<IQuantityCollection<Q>> newC = new SubtractQuantityValues("Subtract " + item2.getName() + " from " + item1.getName(), oName, selection, item1, item2, destination, longest);
 
 			res.add(newC);
 			oName = item1.getName() + " from " + item2.getName();
-			newC = new SubtractQuantityValues("Subtract " + item1.getName()
-					+ " from " + item2.getName(), oName, selection, item2, item1,
+			newC = new SubtractQuantityValues("Subtract " + item1.getName() + " from " + item2.getName(), oName, selection, item2, item1,
 					destination, longest);
 			res.add(newC);
 		}
 	}
 
-	protected void addIndexedCommands(List<IQuantityCollection<Q>> selection,
-			IStore destination, Collection<ICommand<IQuantityCollection<Q>>> res)
+	protected void addIndexedCommands(List<IQuantityCollection<Q>> selection, IStore destination, Collection<ICommand<IQuantityCollection<Q>>> res)
 	{
 		IQuantityCollection<Q> item1 =  selection.get(0);
 		IQuantityCollection<Q> item2 =  selection.get(1);
@@ -122,8 +115,7 @@ public class SubtractQuantityOperation<Q extends Quantity> extends
 		{
 			final Measurable<Q> thisValue = _item1.getValues().get(elementCount);
 			final Measurable<Q> otherValue = _item2.getValues().get(elementCount);
-			double runningTotal = thisValue.doubleValue(_item1.getUnits())
-					- otherValue.doubleValue(_item2.getUnits());
+			double runningTotal = thisValue.doubleValue(_item1.getUnits()) - otherValue.doubleValue(_item2.getUnits());
 			return runningTotal;
 		}
 
@@ -147,6 +139,4 @@ public class SubtractQuantityOperation<Q extends Quantity> extends
 			return thisD - otherD;
 		}
 	}
-	
-	
 }
