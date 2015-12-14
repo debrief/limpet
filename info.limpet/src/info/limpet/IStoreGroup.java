@@ -2,7 +2,7 @@ package info.limpet;
 
 import info.limpet.IStore.IStoreItem;
 
-public interface IStoreGroup
+public interface IStoreGroup extends IChangeListener
 {
 
 	public boolean hasChildren();

@@ -1,8 +1,10 @@
 package info.limpet.rcp.editors;
 
+import info.limpet.IChangeListener;
 import info.limpet.ICommand;
 import info.limpet.IOperation;
 import info.limpet.IStore;
+import info.limpet.IStoreGroup;
 import info.limpet.IStore.IStoreItem;
 import info.limpet.data.impl.QuantityCollection;
 import info.limpet.data.impl.samples.StockTypes;
@@ -12,6 +14,7 @@ import info.limpet.data.operations.GenerateDummyDataOperation;
 import info.limpet.data.persistence.xml.XStreamHandler;
 import info.limpet.data.store.InMemoryStore;
 import info.limpet.data.store.InMemoryStore.StoreChangeListener;
+import info.limpet.data.store.InMemoryStore.StoreGroup;
 import info.limpet.rcp.Activator;
 import info.limpet.rcp.data_provider.data.DataModel;
 import info.limpet.rcp.data_provider.data.GroupWrapper;
@@ -80,7 +83,7 @@ public class DataManagerEditor extends EditorPart
 			// indicate the file is dirty
 			_dirty = true;
 			firePropertyChange(PROP_DIRTY);
-			
+
 			// and refresh the UI
 			viewer.refresh();
 		}
@@ -107,6 +110,14 @@ public class DataManagerEditor extends EditorPart
 				{
 					_store = new XStreamHandler().load(((IFileEditorInput) input)
 							.getFile());
+
+					// we need to loop down through the data, setting all of the listeners
+					InMemoryStore ms = (InMemoryStore) _store;
+					Iterator<IStoreItem> iter = ms.iterator();
+					while (iter.hasNext())
+					{
+						connectUp(iter.next(), null, ms);
+					}
 				}
 				else
 				{
@@ -125,6 +136,27 @@ public class DataManagerEditor extends EditorPart
 		setSite(site);
 		setInput(input);
 		setPartName(input.getName());
+	}
+
+	/** walk down through the object tree, connecting listeners as appropriate
+	 * 
+	 * @param next
+	 * @param parent
+	 * @param listener
+	 */
+	private void connectUp(IStoreItem next, IStoreGroup parent, IChangeListener listener)
+	{
+		if (next instanceof StoreGroup)
+		{
+			StoreGroup group = (StoreGroup) next;
+			Iterator<IStoreItem> iter = group.iterator();
+			while (iter.hasNext())
+			{
+				connectUp(iter.next(), group, group);
+			}
+		}
+
+		next.addChangeListener(listener);
 	}
 
 	@Override
@@ -252,13 +284,14 @@ public class DataManagerEditor extends EditorPart
 			}
 		});
 
-		createSingleton4 = createSingletonGenerator("speed (m/s)", new ItemGenerator()
-		{
-			public QuantityCollection<?> generate(String name)
-			{
-				return new StockTypes.NonTemporal.Speed_MSec(name);
-			}
-		});
+		createSingleton4 = createSingletonGenerator("speed (m/s)",
+				new ItemGenerator()
+				{
+					public QuantityCollection<?> generate(String name)
+					{
+						return new StockTypes.NonTemporal.Speed_MSec(name);
+					}
+				});
 
 	}
 

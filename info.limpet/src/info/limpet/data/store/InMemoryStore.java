@@ -1,16 +1,16 @@
 package info.limpet.data.store;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.UUID;
-
 import info.limpet.IChangeListener;
 import info.limpet.ICollection;
 import info.limpet.IStore;
 import info.limpet.IStoreGroup;
 import info.limpet.UIProperty;
 import info.limpet.data.impl.ListenerHelper;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.UUID;
 
 public class InMemoryStore implements IStore, IChangeListener
 {
@@ -92,13 +92,12 @@ public class InMemoryStore implements IStore, IChangeListener
 		}
 
 		
-		
 		@Override
 		public int hashCode()
 		{
 			final int prime = 31;
-			int result = super.hashCode();
-			result = prime * result + ((_name == null) ? 0 : _name.hashCode());
+			int result = 1;
+			result = prime * result + ((getUUID() == null) ? 0 : getUUID().hashCode());
 			return result;
 		}
 
@@ -107,17 +106,17 @@ public class InMemoryStore implements IStore, IChangeListener
 		{
 			if (this == obj)
 				return true;
-			if (!super.equals(obj))
+			if (obj == null)
 				return false;
 			if (getClass() != obj.getClass())
 				return false;
 			StoreGroup other = (StoreGroup) obj;
-			if (_name == null)
+			if (getUUID() == null)
 			{
-				if (other._name != null)
+				if (other.getUUID() != null)
 					return false;
 			}
-			else if (!_name.equals(other._name))
+			else if (!getUUID().equals(other.getUUID()))
 				return false;
 			return true;
 		}
@@ -366,9 +365,9 @@ public class InMemoryStore implements IStore, IChangeListener
 		fireModified();
 	}
 
-	public void remove(IStoreItem item)
+	public boolean remove(Object item)
 	{
-		_store.remove(item);
+		boolean res = _store.remove(item);
 
 		// stop listening to this one
 		if (item instanceof ICollection)
@@ -381,6 +380,8 @@ public class InMemoryStore implements IStore, IChangeListener
 		}
 
 		fireModified();
+		
+		return res;
 	}
 
 	@Override
