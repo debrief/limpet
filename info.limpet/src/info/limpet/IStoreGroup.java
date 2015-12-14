@@ -1,10 +1,8 @@
 package info.limpet;
 
-import java.util.Collection;
-
 import info.limpet.IStore.IStoreItem;
 
-public interface IStoreGroup<E extends IStoreItem> extends IStoreItem, Collection<E>
+public interface IStoreGroup
 {
 
 	public boolean hasChildren();
@@ -16,5 +14,5 @@ public interface IStoreGroup<E extends IStoreItem> extends IStoreItem, Collectio
 	public void addChangeListener(IChangeListener listener);
 
 	public void removeChangeListener(IChangeListener listener);
-
+	
 }

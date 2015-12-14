@@ -20,7 +20,7 @@ public class InMemoryStore implements IStore, IChangeListener
 	private transient List<StoreChangeListener> _listeners = new ArrayList<StoreChangeListener>();
 
 	public static class StoreGroup extends ArrayList<IStoreItem> implements
-			IStoreItem, IStoreGroup<IStoreItem>, IChangeListener
+			IStoreItem, IStoreGroup, IChangeListener
 	{
 		/**
 		 * 
