@@ -92,6 +92,12 @@ public class InMemoryStore implements IStore, IChangeListener
 		}
 
 		
+		@UIProperty(name="Children", category="Metadata")
+		public int getSize()
+		{
+			return super.size();
+		}
+
 		@Override
 		public int hashCode()
 		{
