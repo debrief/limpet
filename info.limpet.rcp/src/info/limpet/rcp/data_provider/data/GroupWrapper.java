@@ -13,7 +13,6 @@ public class GroupWrapper implements IAdaptable, LimpetWrapper
 
 	public GroupWrapper(final LimpetWrapper parent, final StoreGroup prec)
 	{
-		
 		_parent = parent;
 		_group = prec;
 	}
@@ -46,8 +45,6 @@ public class GroupWrapper implements IAdaptable, LimpetWrapper
 			return false;
 		return true;
 	}
-
-
 
 	@Override
 	public Object getAdapter(@SuppressWarnings("rawtypes") final Class adapter)

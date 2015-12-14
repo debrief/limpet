@@ -16,7 +16,7 @@ public class CommandWrapper implements IAdaptable, LimpetWrapper
 		_parent = parent;
 		_command = prec;
 	}
-	
+
 	@Override
 	public Object getAdapter(@SuppressWarnings("rawtypes") final Class adapter)
 	{
