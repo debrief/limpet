@@ -50,6 +50,37 @@ public class GroupWrapper implements IAdaptable, LimpetWrapper
 
 
 	@Override
+	public int hashCode()
+	{
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((_group == null) ? 0 : _group.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		GroupWrapper other = (GroupWrapper) obj;
+		if (_group == null)
+		{
+			if (other._group != null)
+				return false;
+		}
+		else if (!_group.equals(other._group))
+			return false;
+		return true;
+	}
+
+
+
+	@Override
 	public Object getAdapter(@SuppressWarnings("rawtypes") final Class adapter)
 	{
 		if (adapter == IPropertySource.class)

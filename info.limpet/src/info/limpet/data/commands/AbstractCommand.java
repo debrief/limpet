@@ -5,6 +5,7 @@ import info.limpet.ICommand;
 import info.limpet.IQuantityCollection;
 import info.limpet.IStore;
 import info.limpet.IStore.IStoreItem;
+import info.limpet.data.store.InMemoryStore.StoreGroup;
 import info.limpet.IStoreGroup;
 
 import java.util.ArrayList;
@@ -69,6 +70,34 @@ public abstract class AbstractCommand<T extends IStoreItem> implements
 	}
 
 
+	@Override
+	public int hashCode()
+	{
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((getUUID() == null) ? 0 : getUUID().hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		StoreGroup other = (StoreGroup) obj;
+		if (getUUID() == null)
+		{
+			if (other.getUUID() != null)
+				return false;
+		}
+		else if (!getUUID().equals(other.getUUID()))
+			return false;
+		return true;
+	}
 
 	protected String getOutputName()
 	{
