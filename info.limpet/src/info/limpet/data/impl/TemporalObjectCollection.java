@@ -56,6 +56,7 @@ public class TemporalObjectCollection<T extends Object> extends
 	@Override
 	public List<Long> getTimes()
 	{
+		initTime();
 		return tSupport.getTimes();
 	}
 
