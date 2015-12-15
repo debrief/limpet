@@ -59,15 +59,15 @@ public class TestOperations extends TestCase
 		// ///////////////
 		ICollection speed_good_1 = (ICollection) store.get(SampleData.SPEED_ONE);
 		ICollection speed_good_2 = (ICollection) store.get(SampleData.SPEED_TWO);
-		ICollection speed_early = (ICollection) store.get(SampleData.SPEED_EARLY);
+		ICollection speed_longer = (ICollection) store.get(SampleData.SPEED_THREE_LONGER);
 
 		selection.add(speed_good_1);
-		selection.add(speed_early);
+		selection.add(speed_longer);
 
 		Collection<ICommand<ICollection>> actions = new AddQuantityOperation()
 				.actionsFor(selection, store);
 
-		assertEquals("correct number of actions returned", 0, actions.size());
+		assertEquals("correct number of actions returned", 1, actions.size());
 
 		selection.clear();
 		selection.add(speed_good_1);
@@ -76,7 +76,7 @@ public class TestOperations extends TestCase
 		actions = new AddQuantityOperation()
 				.actionsFor(selection, store);
 
-		assertEquals("correct number of actions returned", 1, actions.size());
+		assertEquals("correct number of actions returned", 2, actions.size());
 
 		ICommand<?> addAction = actions.iterator().next();
 
@@ -552,7 +552,7 @@ public class TestOperations extends TestCase
 		selection.add(speed_good_2);
 
 		commands = new SubtractQuantityOperation().actionsFor(selection, store);
-		assertEquals("valid command", 2, commands.size());
+		assertEquals("valid command", 4, commands.size());
 
 		ICommand<ICollection> command = commands.iterator().next();
 		command.execute();
