@@ -36,9 +36,8 @@ public class DivideQuantityOperation<Q extends Quantity> extends CoreQuantityOpe
 		if (aTests.exactNumber(selection, 2) && aTests.allCollections(selection))
 		{
 			boolean allQuantity = aTests.allQuantity(selection);
-			boolean suitableLength = aTests.allTemporal(selection) || aTests.allNonTemporal(selection) && aTests.allEqualLength(selection);
-			boolean equalDimensions = aTests.allEqualDimensions(selection);
-			return (allQuantity && suitableLength && equalDimensions);
+			boolean suitableLength = aTests.allTemporal(selection) || aTests.allEqualLength(selection);
+			return (allQuantity && suitableLength);
 		}
 		else
 		{
@@ -127,12 +126,12 @@ public class DivideQuantityOperation<Q extends Quantity> extends CoreQuantityOpe
 
 		String oName = item2.getName() + " from " + item1.getName();
 		
-		ICommand<IQuantityCollection<Q>> newC = new DivideQuantityValues("Divide " + item2.getName() + " from " + item1.getName(), oName, selection, item1, item2, destination);
+		ICommand<IQuantityCollection<Q>> newC = new DivideQuantityValues("Divide " + item2.getName() + " by " + item1.getName() + " (indexed)", oName, selection, item1, item2, destination);
 
 		res.add(newC);
 		oName = item1.getName() + " from " + item2.getName();
 		newC = new DivideQuantityValues("Divide " + item1.getName()
-				+ " from " + item2.getName(), oName, selection, item2, item1,
+				+ " by " + item2.getName() + " (indexed)", oName, selection, item2, item1,
 				destination, null);
 		res.add(newC);
 		
@@ -150,13 +149,13 @@ public class DivideQuantityOperation<Q extends Quantity> extends CoreQuantityOpe
 
 			String oName = item2.getName() + " from " + item1.getName();
 			ICommand<IQuantityCollection<Q>> newC = new DivideQuantityValues(
-					"Divide " + item2.getName() + " from " + item1.getName(), oName,
+					"Divide " + item2.getName() + " by " + item1.getName() + " (interpolated)", oName,
 					selection, item1, item2, destination, longest);
 
 			res.add(newC);
 			oName = item1.getName() + " from " + item2.getName();
 			newC = new DivideQuantityValues("Divide " + item1.getName()
-					+ " from " + item2.getName(), oName, selection, item2, item1,
+					+ " by " + item2.getName() + " (interpolated)", oName, selection, item2, item1,
 					destination, longest);
 			res.add(newC);
 		}
