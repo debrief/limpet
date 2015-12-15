@@ -6,9 +6,11 @@ import info.limpet.IStore;
 import info.limpet.IStore.IStoreItem;
 import info.limpet.data.impl.QuantityCollection;
 import info.limpet.data.impl.samples.StockTypes;
+import info.limpet.data.impl.samples.StockTypes.NonTemporal;
 import info.limpet.data.operations.AddLayerOperation;
 import info.limpet.data.operations.AddLayerOperation.StringProvider;
 import info.limpet.data.operations.GenerateDummyDataOperation;
+import info.limpet.data.operations.spatial.GeoSupport;
 import info.limpet.data.persistence.xml.XStreamHandler;
 import info.limpet.data.store.InMemoryStore;
 import info.limpet.data.store.InMemoryStore.StoreChangeListener;
@@ -59,6 +61,7 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.EditorPart;
+import org.opengis.geometry.Geometry;
 
 public class DataManagerEditor extends EditorPart
 {
@@ -80,7 +83,7 @@ public class DataManagerEditor extends EditorPart
 			// indicate the file is dirty
 			_dirty = true;
 			firePropertyChange(PROP_DIRTY);
-			
+
 			// and refresh the UI
 			viewer.refresh();
 		}
@@ -89,6 +92,7 @@ public class DataManagerEditor extends EditorPart
 	private Action createSingleton2;
 	private Action createSingleton3;
 	private Action createSingleton4;
+	private Action createSingleton5;
 
 	@Override
 	public void init(IEditorSite site, IEditorInput input)
@@ -252,13 +256,16 @@ public class DataManagerEditor extends EditorPart
 			}
 		});
 
-		createSingleton4 = createSingletonGenerator("speed (m/s)", new ItemGenerator()
-		{
-			public QuantityCollection<?> generate(String name)
-			{
-				return new StockTypes.NonTemporal.Speed_MSec(name);
-			}
-		});
+		createSingleton4 = createSingletonGenerator("speed (m/s)",
+				new ItemGenerator()
+				{
+					public QuantityCollection<?> generate(String name)
+					{
+						return new StockTypes.NonTemporal.Speed_MSec(name);
+					}
+				});
+
+		createSingleton5 = createLocationGenerator();
 
 	}
 
@@ -438,6 +445,7 @@ public class DataManagerEditor extends EditorPart
 		createMenu.add(createSingleton2);
 		createMenu.add(createSingleton3);
 		createMenu.add(createSingleton4);
+		createMenu.add(createSingleton5);
 
 		menu.add(new Separator());
 		menu.add(refreshView);
@@ -559,6 +567,94 @@ public class DataManagerEditor extends EditorPart
 	{
 		super.dispose();
 		_store.removeChangeListener(_changeListener);
+	}
+
+	private Action createLocationGenerator()
+	{
+		final Action res = new Action()
+		{
+			public void run()
+			{
+				// get the name
+				String seriesName = "new single location";
+
+				InputDialog dlgName = new InputDialog(Display.getCurrent()
+						.getActiveShell(), "New fixed location", "Enter name for location",
+						"", null);
+				if (dlgName.open() == Window.OK)
+				{
+					// User clicked OK; update the label with the input
+					seriesName = dlgName.getValue();
+				}
+				else
+				{
+					return;
+				}
+
+				InputDialog dlgValue = new InputDialog(Display.getCurrent()
+						.getActiveShell(), "New location",
+						"Enter initial value for latitude", "", null);
+				if (dlgValue.open() == Window.OK)
+				{
+					// User clicked OK; update the label with the input
+					String strLat = dlgValue.getValue();
+
+					// ok, now the second one
+					dlgValue = new InputDialog(Display.getCurrent().getActiveShell(),
+							"New location", "Enter initial value for longitude", "", null);
+					if (dlgValue.open() == Window.OK)
+					{
+						// User clicked OK; update the label with the input
+						String strLong = dlgValue.getValue();
+
+						// ok, now the second one
+
+						try
+						{
+							
+							NonTemporal.Location newData = new NonTemporal.Location(seriesName);
+							
+							// add the new value
+							double dblLat = Double.parseDouble(strLat);
+							double dblLong = Double.parseDouble(strLong);
+							
+							Geometry newLoc = GeoSupport.getBuilder().createPoint(dblLong, dblLat);
+							newData.add(newLoc);
+
+							// put the new collection in to the selected folder, or into root
+							ISelection selection = viewer.getSelection();
+							IStructuredSelection stru = (IStructuredSelection) selection;
+							Object first = stru.getFirstElement();
+							if (first instanceof GroupWrapper)
+							{
+								GroupWrapper gW = (GroupWrapper) first;
+								gW.getGroup().add(newData);
+							}
+							else
+							{
+								// just store it at the top level
+								_store.add(newData);
+							}
+
+						}
+						catch (NumberFormatException e)
+						{
+							System.err.println("Failed to parse initial value");
+							e.printStackTrace();
+							return;
+						}
+					}
+				}
+				else
+				{
+					return;
+				}
+			}
+		};
+		res.setText("Create single location");
+		res.setImageDescriptor(Activator.getImageDescriptor("icons/variable.png"));
+
+		return res;
 	}
 
 }
