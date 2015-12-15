@@ -332,7 +332,7 @@ public class XyPlotView extends CoreAnalysisView
 			ICollection coll = (ICollection) iter.next();
 			if (!coll.isQuantity())
 			{
-				if (coll.size() > 1)
+				if (coll.size() >= 1)
 				{
 					if (coll.size() < maxSize)
 					{
@@ -368,6 +368,11 @@ public class XyPlotView extends CoreAnalysisView
 							yData[ctr++] = geom.getRepresentativePoint().getOrdinate(1);
 						}
 
+						// clear the axis labels
+						chart.getAxisSet().getXAxis(0).getTitle().setText("");
+						chart.getAxisSet().getYAxis(0).getTitle().setText("");
+						
+						
 						newSeries.setXSeries(xData);
 						newSeries.setYSeries(yData);
 
