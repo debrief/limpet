@@ -276,7 +276,7 @@ public class TestGeotoolsGeometry extends TestCase
 	{
 		final ArrayList<IStoreItem> items = new ArrayList<IStoreItem>();
 		final DopplerShiftBetweenTracksOperation doppler = new DopplerShiftBetweenTracksOperation();
-		final IStore store = new InMemoryStore();
+		final InMemoryStore store = new InMemoryStore();
 		final CollectionComplianceTests tests = new CollectionComplianceTests();
 
 		// create datasets
@@ -464,6 +464,30 @@ public class TestGeotoolsGeometry extends TestCase
 		op1.organiseData();
 		HashMap<String, ICollection> map = op1.getDataMap();
 		assertEquals("all items", 8, map.size());
+		
+		// ok, let's try undo redo
+		assertEquals("correct size store", store.size(), 0);
+		
+		op1.execute();
+		
+		assertEquals("new correct size store", store.size(), 1);
+
+		op1.undo();
+		
+		assertEquals("new correct size store", store.size(), 0);
+
+		op1.redo();
+		
+		assertEquals("new correct size store", store.size(), 1);
+
+		op1.undo();
+		
+		assertEquals("new correct size store", store.size(), 0);
+
+		op1.redo();
+		
+		assertEquals("new correct size store", store.size(), 1);
+
 	}
 	
 	public void testGetOptimalTimes()
