@@ -37,7 +37,6 @@ public class DopplerShiftBetweenTracksOperation implements
 {
 	final private static CollectionComplianceTests aTests = new CollectionComplianceTests();
 
-
 	public static class DopplerShiftOperation extends AbstractCommand<IStoreItem>
 	{
 
@@ -201,7 +200,7 @@ public class DopplerShiftBetweenTracksOperation implements
 		 */
 		private void performCalc(List<IStoreItem> outputs)
 		{
-			
+
 			// and the bounding period
 			TimePeriod period = aTests.getBoundingTime(data.values());
 
@@ -213,7 +212,8 @@ public class DopplerShiftBetweenTracksOperation implements
 			}
 
 			// ok, let's start by finding our time sync
-			IBaseTemporalCollection times = aTests.getOptimalTimes(period, data.values());
+			IBaseTemporalCollection times = aTests.getOptimalTimes(period,
+					data.values());
 
 			// check we were able to find some times
 			if (times == null)
@@ -240,17 +240,18 @@ public class DopplerShiftBetweenTracksOperation implements
 					Geometry txLoc = aTests.locationFor(data.get(TX + "LOC"), thisTime);
 					Geometry rxLoc = aTests.locationFor(data.get(RX + "LOC"), thisTime);
 
-					double txCourseRads = aTests.valueAt(data.get(TX + "COURSE"), thisTime,
-							SI.RADIAN);
-					double rxCourseRads = aTests.valueAt(data.get(RX + "COURSE"), thisTime,
-							SI.RADIAN);
+					double txCourseRads = aTests.valueAt(data.get(TX + "COURSE"),
+							thisTime, SI.RADIAN);
+					double rxCourseRads = aTests.valueAt(data.get(RX + "COURSE"),
+							thisTime, SI.RADIAN);
 
 					double txSpeedMSec = aTests.valueAt(data.get(TX + "SPEED"), thisTime,
 							SI.METERS_PER_SECOND);
 					double rxSpeedMSec = aTests.valueAt(data.get(RX + "SPEED"), thisTime,
 							SI.METERS_PER_SECOND);
 
-					double freq = aTests.valueAt(data.get(TX + "FREQ"), thisTime, SI.HERTZ);
+					double freq = aTests.valueAt(data.get(TX + "FREQ"), thisTime,
+							SI.HERTZ);
 
 					double soundSpeed = aTests.valueAt(data.get("SOUND_SPEED"), thisTime,
 							SI.METERS_PER_SECOND);
@@ -264,20 +265,17 @@ public class DopplerShiftBetweenTracksOperation implements
 					double angleDegs = calc.getAzimuth();
 					if (angleDegs < 0)
 						angleDegs += 360;
-					
+
 					double angleRads = Math.toRadians(angleDegs);
 
 					// ok, and the calculation
 					double shifted = calcPredictedFreqSI(soundSpeed, txCourseRads,
-							rxCourseRads, txSpeedMSec, rxSpeedMSec,
-							angleRads, freq);
+							rxCourseRads, txSpeedMSec, rxSpeedMSec, angleRads, freq);
 
 					output.add(thisTime, shifted);
 				}
 			}
 		}
-
-
 
 	}
 
@@ -304,16 +302,24 @@ public class DopplerShiftBetweenTracksOperation implements
 			StoreGroup groupA = (StoreGroup) selection.get(0);
 			StoreGroup groupB = (StoreGroup) selection.get(1);
 
-			ICommand<IStoreItem> newC = new DopplerShiftOperation(null, groupA,
-					groupB, destination, "Doppler between tracks (from "
-							+ groupA.getName() + ")", "Calculate doppler between two tracks",
-					selection);
+			ICommand<IStoreItem> newC;
 
-			res.add(newC);
-			newC = new DopplerShiftOperation(null, groupB, groupA, destination,
-					"Doppler between tracks (from " + groupB.getName() + ")",
-					"Calculate doppler between two tracks", selection);
-			res.add(newC);
+			// do we have freq for groupA
+			if (aTests.someHave(groupA, Frequency.UNIT.getDimension(), true) != null)
+			{
+				newC = new DopplerShiftOperation(null, groupA, groupB, destination,
+						"Doppler between tracks (from " + groupA.getName() + ")",
+						"Calculate doppler between two tracks", selection);
+				res.add(newC);
+			}
+
+			if (aTests.someHave(groupB, Frequency.UNIT.getDimension(), true) != null)
+			{
+				newC = new DopplerShiftOperation(null, groupB, groupA, destination,
+						"Doppler between tracks (from " + groupB.getName() + ")",
+						"Calculate doppler between two tracks", selection);
+				res.add(newC);
+			}
 		}
 
 		return res;
