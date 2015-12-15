@@ -37,8 +37,8 @@ public class AddQuantityOperation<Q extends Quantity> extends
 
 		if (longest != null)
 		{
-			ICommand<IQuantityCollection<Q>> newC = new AddQuantityValues<Q>(
-					outputName + " (interpolated)", selection, destination, longest);
+			ICommand<IQuantityCollection<Q>> newC = new AddQuantityValues(outputName
+					+ " (interpolated)", selection, destination, longest);
 			res.add(newC);
 		}
 	}
@@ -46,8 +46,8 @@ public class AddQuantityOperation<Q extends Quantity> extends
 	protected void addIndexedCommands(List<IQuantityCollection<Q>> selection,
 			IStore destination, Collection<ICommand<IQuantityCollection<Q>>> res)
 	{
-		ICommand<IQuantityCollection<Q>> newC = new AddQuantityValues<Q>(
-				outputName, selection, destination);
+		ICommand<IQuantityCollection<Q>> newC = new AddQuantityValues(outputName,
+				selection, destination);
 		res.add(newC);
 	}
 
@@ -63,10 +63,8 @@ public class AddQuantityOperation<Q extends Quantity> extends
 		return (nonEmpty && allQuantity && suitableLength && equalDimensions && equalUnits);
 	}
 
-	public class AddQuantityValues<T extends Quantity> extends
-			CoreQuantityOperation<Q>.CoreQuantityCommand
+	public class AddQuantityValues extends CoreQuantityCommand
 	{
-
 		public AddQuantityValues(String outputName,
 				List<IQuantityCollection<Q>> selection, IStore store)
 		{

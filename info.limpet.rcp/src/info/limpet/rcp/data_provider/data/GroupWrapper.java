@@ -48,7 +48,6 @@ public class GroupWrapper implements IAdaptable, LimpetWrapper
 		return true;
 	}
 
-
 	@Override
 	public Object getAdapter(@SuppressWarnings("rawtypes") final Class adapter)
 	{

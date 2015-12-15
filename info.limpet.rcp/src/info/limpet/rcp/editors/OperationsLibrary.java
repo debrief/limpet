@@ -63,7 +63,7 @@ public class OperationsLibrary
 			protected boolean appliesTo(List<IStoreItem> selection)
 			{
 				return getTests().nonEmpty(selection)
-						&& getTests().allQuantity(selection);
+						&& (getTests().allQuantity(selection) || getTests().allLocation(selection));
 			}
 		});
 		analysis.add(new ShowInNamedView("Show in Time Frequency View",

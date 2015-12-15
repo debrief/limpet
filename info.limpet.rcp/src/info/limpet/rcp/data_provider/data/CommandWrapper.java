@@ -16,7 +16,22 @@ public class CommandWrapper implements IAdaptable, LimpetWrapper
 		_parent = parent;
 		_command = prec;
 	}
+
+	@Override
+	public Object getAdapter(@SuppressWarnings("rawtypes") final Class adapter)
+	{
+		if (adapter == IPropertySource.class)
+		{
+			return new CommandPropertySource(this);
+		}
+		else if (adapter == IStoreItem.class)
+		{
+			return _command;
+		}
+		return null;
+	}
 	
+
 	@Override
 	public int hashCode()
 	{
@@ -46,27 +61,12 @@ public class CommandWrapper implements IAdaptable, LimpetWrapper
 		return true;
 	}
 
-
-
-	@Override
-	public Object getAdapter(@SuppressWarnings("rawtypes") final Class adapter)
-	{
-		if (adapter == IPropertySource.class)
-		{
-			return new CommandPropertySource(this);
-		}
-		else if (adapter == IStoreItem.class)
-		{
-			return _command;
-		}
-		return null;
-	}
-
+	
 	public ICommand<?> getCommand()
 	{
 		return _command;
 	}
-
+	
 	@Override
 	public LimpetWrapper getParent()
 	{
