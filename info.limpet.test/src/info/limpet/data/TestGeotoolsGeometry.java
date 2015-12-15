@@ -412,20 +412,20 @@ public class TestGeotoolsGeometry extends TestCase
 
 		// add the missing sound speed
 		items.add(sspdK2);
-		assertEquals("not empty", 2, doppler.actionsFor(items, store).size());
+		assertEquals("not empty", 1, doppler.actionsFor(items, store).size());
 
 		// and now complete dataset (with one non temporal location)
 
 		track1.remove(loc1);
 		track1.add(loc3);
 
-		assertEquals("not empty", 2, doppler.actionsFor(items, store).size());
+		assertEquals("not empty", 1, doppler.actionsFor(items, store).size());
 
 		// and now complete dataset (with two non temporal locations)
 		track2.remove(loc2);
 		track2.add(loc4);
 
-		assertEquals("not empty", 2, doppler.actionsFor(items, store).size());
+		assertEquals("not empty", 1, doppler.actionsFor(items, store).size());
 
 		// back to original type
 		track1.remove(loc3);
@@ -433,16 +433,27 @@ public class TestGeotoolsGeometry extends TestCase
 		track2.remove(loc4);
 		track2.add(loc2);
 
-		assertEquals("not empty", 2, doppler.actionsFor(items, store).size());
+		assertEquals("not empty", 1, doppler.actionsFor(items, store).size());
+		
+		// try giving track 2 a frewquency
+		track2.add(freq2);
+
+		assertEquals("actions for both tracks", 2, doppler.actionsFor(items, store).size());
+		
+		// and remove that freq
+		track2.remove(freq2);
+
+		assertEquals("actions for just one track", 1, doppler.actionsFor(items, store).size());
 
 		// quick extra test
 		track1.remove(loc1);
 
 		assertEquals("empty", 0, doppler.actionsFor(items, store).size());
+		
 		// quick extra test
 		track1.add(loc1);
 
-		assertEquals("empty", 2, doppler.actionsFor(items, store).size());
+		assertEquals("empty", 1, doppler.actionsFor(items, store).size());
 
 		// ok, now check how the doppler handler organises its data
 		DopplerShiftOperation op1 = (DopplerShiftOperation) doppler
