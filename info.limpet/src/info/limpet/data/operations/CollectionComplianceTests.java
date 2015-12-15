@@ -563,7 +563,7 @@ public class CollectionComplianceTests
 		}
 		return res == count;
 	}
-	
+
 	public boolean allGroups(List<IStoreItem> selection)
 	{
 		boolean res = true;
@@ -580,9 +580,12 @@ public class CollectionComplianceTests
 		return res;
 	}
 
-	/** convenience test to verify if children of the supplied item can all
-	 * be treated as tracks
-	 * @param selection one or more group objects
+	/**
+	 * convenience test to verify if children of the supplied item can all be
+	 * treated as tracks
+	 * 
+	 * @param selection
+	 *          one or more group objects
 	 * @return yes/no
 	 */
 	public boolean numberOfTracks(List<IStoreItem> selection, final int number)
@@ -598,22 +601,22 @@ public class CollectionComplianceTests
 				// ok, check the contents
 				StoreGroup group = (StoreGroup) storeItem;
 				List<IStoreItem> kids = group.children();
-				
+
 				// ok, keep looping through, to check we have the right types
-				if(!isPresent(kids, METRE.divide(SECOND).getDimension()))
+				if (!isPresent(kids, METRE.divide(SECOND).getDimension()))
 				{
 					valid = false;
 					break;
 				}
-				
+
 				// ok, keep looping through, to check we have the right types
-				if(!isPresent(kids, SI.RADIAN.getDimension()))
+				if (!isPresent(kids, SI.RADIAN.getDimension()))
 				{
 					valid = false;
 					break;
 				}
-	
-				if(!hasLocation(kids))
+
+				if (!hasLocation(kids))
 				{
 					valid = false;
 					break;
@@ -623,17 +626,19 @@ public class CollectionComplianceTests
 			{
 				valid = false;
 			}
-			if(valid)
+			if (valid)
 				count++;
-			
+
 		}
 		return count == number;
 	}
 
-	
-	/** convenience test to verify if children of the supplied item can all
-	 * be treated as tracks
-	 * @param selection one or more group objects
+	/**
+	 * convenience test to verify if children of the supplied item can all be
+	 * treated as tracks
+	 * 
+	 * @param selection
+	 *          one or more group objects
 	 * @return yes/no
 	 */
 	public boolean allChildrenAreTracks(List<IStoreItem> selection)
@@ -648,27 +653,27 @@ public class CollectionComplianceTests
 				// ok, check the contents
 				StoreGroup group = (StoreGroup) storeItem;
 				List<IStoreItem> kids = group.children();
-				
+
 				// ok, keep looping through, to check we have the right types
-				if(!isPresent(kids, METRE.divide(SECOND).getDimension()))
+				if (!isPresent(kids, METRE.divide(SECOND).getDimension()))
 				{
 					res = false;
 					break;
 				}
-				
+
 				// ok, keep looping through, to check we have the right types
-				if(!isPresent(kids, SI.RADIAN.getDimension()))
+				if (!isPresent(kids, SI.RADIAN.getDimension()))
 				{
 					res = false;
 					break;
 				}
-	
-				if(!hasLocation(kids))
+
+				if (!hasLocation(kids))
 				{
 					res = false;
 					break;
 				}
-				
+
 			}
 		}
 		return res;
@@ -732,13 +737,17 @@ public class CollectionComplianceTests
 		return res;
 	}
 
-	/** check the list has a collection with the specified dimension
-	 *  
-	 * @param kids items to examine
-	 * @param dimension dimension we need to be present
+	/**
+	 * check the list has a collection with the specified dimension
+	 * 
+	 * @param kids
+	 *          items to examine
+	 * @param dimension
+	 *          dimension we need to be present
 	 * @return yes/no
 	 */
-	public IQuantityCollection<?> someHave(List<IStoreItem> kids, Dimension dimension, final boolean walkTree)
+	public IQuantityCollection<?> someHave(List<IStoreItem> kids,
+			Dimension dimension, final boolean walkTree)
 	{
 		IQuantityCollection<?> res = null;
 
@@ -746,7 +755,7 @@ public class CollectionComplianceTests
 		while (iter.hasNext())
 		{
 			IStoreItem item = iter.next();
-			if(item instanceof StoreGroup && walkTree)
+			if (item instanceof StoreGroup && walkTree)
 			{
 				StoreGroup group = (StoreGroup) item;
 				res = someHave(group.children(), dimension, walkTree);
@@ -765,11 +774,14 @@ public class CollectionComplianceTests
 
 		return res;
 	}
-	
-	/** check the list has a location collection
-	 *  
-	 * @param kids items to examine
-	 * @param dimension dimension we need to be present
+
+	/**
+	 * check the list has a location collection
+	 * 
+	 * @param kids
+	 *          items to examine
+	 * @param dimension
+	 *          dimension we need to be present
 	 * @return yes/no
 	 */
 	public IObjectCollection<?> someHaveLocation(List<IStoreItem> kids)
@@ -780,7 +792,7 @@ public class CollectionComplianceTests
 		while (iter.hasNext())
 		{
 			IStoreItem item = iter.next();
-			if(item instanceof StoreGroup)
+			if (item instanceof StoreGroup)
 			{
 				StoreGroup group = (StoreGroup) item;
 				res = someHaveLocation(group.children());
@@ -800,8 +812,9 @@ public class CollectionComplianceTests
 		return res;
 	}
 
-
-	/** find the time period that is the intersection of time series in the supplied list
+	/**
+	 * find the time period that is the intersection of time series in the
+	 * supplied list
 	 * 
 	 * @param items
 	 * @return
@@ -832,15 +845,18 @@ public class CollectionComplianceTests
 		return res;
 	}
 
-
-	/** find the best collection to use as a time-base. Which collection has the most values within
-	 * the specified time period?
+	/**
+	 * find the best collection to use as a time-base. Which collection has the
+	 * most values within the specified time period?
 	 * 
-	 * @param period  (optional) period in which we count valid times
-	 * @param items list of datasets we're examining
+	 * @param period
+	 *          (optional) period in which we count valid times
+	 * @param items
+	 *          list of datasets we're examining
 	 * @return most suited collection
 	 */
-	public IBaseTemporalCollection getOptimalTimes(TimePeriod period, Collection<ICollection> items)
+	public IBaseTemporalCollection getOptimalTimes(TimePeriod period,
+			Collection<ICollection> items)
 	{
 		IBaseTemporalCollection res = null;
 		long resScore = 0;
@@ -857,13 +873,13 @@ public class CollectionComplianceTests
 				while (times.hasNext())
 				{
 					long long1 = (long) times.next();
-					if((period == null) || period.contains(long1))
+					if ((period == null) || period.contains(long1))
 					{
 						score++;
 					}
 				}
-				
-				if((res == null) || (score > resScore))
+
+				if ((res == null) || (score > resScore))
 				{
 					res = timeC;
 					resScore = score;
@@ -873,11 +889,15 @@ public class CollectionComplianceTests
 
 		return res;
 	}
-	
-	/** retrieve the value at the specified time (even if it's a non-temporal collection)
+
+	/**
+	 * retrieve the value at the specified time (even if it's a non-temporal
+	 * collection)
 	 * 
-	 * @param iCollection set of locations to use
-	 * @param thisTime time we're need a location for
+	 * @param iCollection
+	 *          set of locations to use
+	 * @param thisTime
+	 *          time we're need a location for
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
@@ -916,20 +936,23 @@ public class CollectionComplianceTests
 		}
 		else
 		{
-			throw new RuntimeException(
-					"Tried to get value of non quantity data type");
+			throw new RuntimeException("Tried to get value of non quantity data type");
 		}
 	}
 
-	/** retrieve the location at the specified time (even if it's a non-temporal collection)
+	/**
+	 * retrieve the location at the specified time (even if it's a non-temporal
+	 * collection)
 	 * 
-	 * @param iCollection set of locations to use
-	 * @param thisTime time we're need a location for
+	 * @param iCollection
+	 *          set of locations to use
+	 * @param thisTime
+	 *          time we're need a location for
 	 * @return
 	 */
 	public Geometry locationFor(ICollection iCollection, Long thisTime)
 	{
-		Geometry res;
+		Geometry res = null;
 		if (iCollection.isTemporal())
 		{
 			TemporalLocation tLoc = (TemporalLocation) iCollection;
@@ -938,11 +961,14 @@ public class CollectionComplianceTests
 		else
 		{
 			NonTemporal.Location tLoc = (info.limpet.data.impl.samples.StockTypes.NonTemporal.Location) iCollection;
-			res = tLoc.getValues().iterator().next();
+			if (tLoc.size() > 0)
+			{
+				res = tLoc.getValues().iterator().next();
+			}
 		}
 		return res;
 	}
-	
+
 	public static class TimePeriod
 	{
 		public long startTime;
