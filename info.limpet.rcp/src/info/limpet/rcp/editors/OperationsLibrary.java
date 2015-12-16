@@ -25,6 +25,7 @@ import info.limpet.data.operations.spatial.BearingBetweenTracksOperation;
 import info.limpet.data.operations.spatial.DistanceBetweenTracksOperation;
 import info.limpet.data.operations.spatial.DopplerShiftBetweenTracksOperation;
 import info.limpet.data.operations.spatial.GenerateCourseAndSpeedOperation;
+import info.limpet.data.operations.spatial.ProplossBetweenTwoTracksOperation;
 import info.limpet.rcp.analysis_view.AnalysisView;
 import info.limpet.rcp.data_frequency.DataFrequencyView;
 import info.limpet.rcp.operations.ShowInNamedView;
@@ -104,7 +105,7 @@ public class OperationsLibrary
 		arithmetic.add(new MultiplyQuantityOperation());
 		arithmetic.add(new AddQuantityOperation<>());
 		arithmetic.add(new SubtractQuantityOperation<>());
-		arithmetic.add(new DivideQuantityOperation());
+		arithmetic.add(new DivideQuantityOperation<>());
 		arithmetic.add(new SimpleMovingAverageOperation(3));
 
 		// also our generic maths operators
@@ -145,6 +146,7 @@ public class OperationsLibrary
 		spatial.add(new BearingBetweenTracksOperation());
 		spatial.add(new GenerateCourseAndSpeedOperation());
 		spatial.add(new DopplerShiftBetweenTracksOperation());
+		spatial.add(new ProplossBetweenTwoTracksOperation());
 		return spatial;
 	}
 

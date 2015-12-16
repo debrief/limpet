@@ -23,6 +23,7 @@ import info.limpet.data.operations.spatial.DopplerShiftBetweenTracksOperation.Do
 import info.limpet.data.operations.spatial.DopplerShiftBetweenTracksOperation.DopplerShiftOperation.TimePeriod;
 import info.limpet.data.operations.spatial.GenerateCourseAndSpeedOperation;
 import info.limpet.data.operations.spatial.GeoSupport;
+import info.limpet.data.operations.spatial.ProplossBetweenTwoTracksOperation;
 import info.limpet.data.store.InMemoryStore;
 import info.limpet.data.store.InMemoryStore.StoreGroup;
 
@@ -56,7 +57,6 @@ public class TestGeotoolsGeometry extends TestCase
 {
 
 	private CollectionComplianceTests aTests = new CollectionComplianceTests();
-
 
 	public void testCreateTemporalObjectCollection()
 	{
@@ -277,7 +277,7 @@ public class TestGeotoolsGeometry extends TestCase
 
 		ops = new DistanceBetweenTracksOperation().actionsFor(selection, store);
 		assertEquals("does work collection", 1, ops.size());
-		
+
 		loc2.add(builder.createPoint(2, 1));
 
 		ops = new DistanceBetweenTracksOperation().actionsFor(selection, store);
@@ -317,29 +317,99 @@ public class TestGeotoolsGeometry extends TestCase
 
 		ops = new DistanceBetweenTracksOperation().actionsFor(selection, store);
 		assertEquals("does work collection", 2, ops.size());
-		
+
 		loc2.add(3000, builder.createPoint(2, 1));
 
 		ops = new DistanceBetweenTracksOperation().actionsFor(selection, store);
 		assertEquals("can work, since we can interpolate", 1, ops.size());
-		
+
 		// ok, run it, and see how we get on
 		Iterator<ICommand<IStoreItem>> opsIter = ops.iterator();
 		ICommand<IStoreItem> operation = opsIter.next();
 		operation.execute();
-		
+
 		Iterator<IStoreItem> oIter = operation.getOutputs().iterator();
 		IStoreItem output = oIter.next();
 		assertNotNull(output);
 		assertTrue(output instanceof IQuantityCollection<?>);
-		assertTrue("results are temporal", output instanceof ITemporalQuantityCollection<?>);
-		
+		assertTrue("results are temporal",
+				output instanceof ITemporalQuantityCollection<?>);
+
 		IQuantityCollection<?> iq = (IQuantityCollection<?>) output;
 		assertEquals("correct size", 2, iq.size());
-		
+
 	}
 
-	
+	public void testProplossCalc()
+	{
+		TemporalLocation loc1 = new TemporalLocation("loc1");
+		TemporalLocation loc2 = new TemporalLocation("loc2");
+		Location loc3 = new Location("loc2");
+		Temporal.Length_M len1 = new Temporal.Length_M("dummy2");
+
+		List<IStoreItem> selection = new ArrayList<IStoreItem>();
+		selection.add(loc1);
+
+		IStore store = new InMemoryStore();
+		;
+		Collection<ICommand<IStoreItem>> ops = new ProplossBetweenTwoTracksOperation()
+				.actionsFor(selection, store);
+		assertEquals("empty collection", 0, ops.size());
+
+		selection.add(len1);
+		ops = new ProplossBetweenTwoTracksOperation().actionsFor(selection, store);
+		assertEquals("empty collection", 0, ops.size());
+
+		selection.remove(len1);
+		selection.add(loc2);
+		ops = new ProplossBetweenTwoTracksOperation().actionsFor(selection, store);
+		assertEquals("empty collection", 0, ops.size());
+
+		// ok, try adding some data
+		GeometryBuilder builder = GeoSupport.getBuilder();
+		loc1.add(1000, builder.createPoint(4, 3));
+		loc1.add(2000, builder.createPoint(3, 4));
+		loc2.add(1000, builder.createPoint(5, 3));
+		loc2.add(1500, builder.createPoint(4, 3));
+
+		loc3.add(builder.createPoint(2, 2));
+
+		ops = new ProplossBetweenTwoTracksOperation().actionsFor(selection, store);
+		assertEquals("not empty collection", 2, ops.size());
+
+		// make hte series different lengths
+		loc2.add(2000, builder.createPoint(3, 4));
+
+		ops = new ProplossBetweenTwoTracksOperation().actionsFor(selection, store);
+		assertEquals("not empty collection", 1, ops.size());
+
+		// check how it runs
+		ICommand<IStoreItem> thisOp = ops.iterator().next();
+		thisOp.execute();
+		IStoreItem thisOut = thisOp.getOutputs().iterator().next();
+		assertNotNull(thisOut);
+		assertTrue("correct type", thisOut instanceof IQuantityCollection);
+		IQuantityCollection<?> iQ = (IQuantityCollection<?>) thisOut;
+		assertEquals("correct length", 3, iQ.size());
+
+		// try with a singleton
+		selection.remove(loc2);
+		selection.add(loc3);
+
+		ops = new ProplossBetweenTwoTracksOperation().actionsFor(selection, store);
+		assertEquals("not empty collection", 2, ops.size());
+
+		// check how it runs
+		thisOp = ops.iterator().next();
+		thisOp.execute();
+		thisOut = thisOp.getOutputs().iterator().next();
+		assertNotNull(thisOut);
+		assertTrue("correct type", thisOut instanceof IQuantityCollection);
+		iQ = (IQuantityCollection<?>) thisOut;
+		assertEquals("correct length", 2, iQ.size());
+
+	}
+
 	public void testLocationCalc()
 	{
 		TemporalLocation loc1 = new TemporalLocation("loc1");
@@ -556,21 +626,21 @@ public class TestGeotoolsGeometry extends TestCase
 		HashMap<String, ICollection> map = op1.getDataMap();
 		assertEquals("all items", 8, map.size());
 	}
-	
+
 	public void testGetOptimalTimes()
 	{
 		Collection<ICollection> items = new ArrayList<ICollection>();
-		
+
 		Speed_Kts speed1 = new Temporal.Speed_Kts("spd1");
 		Speed_Kts speed2 = new Temporal.Speed_Kts("spd2");
 		Speed_Kts speed3 = new Temporal.Speed_Kts("spd3");
-		
+
 		speed1.add(100, 5);
 		speed1.add(120, 5);
 		speed1.add(140, 5);
 		speed1.add(160, 5);
 		speed1.add(180, 5);
-		
+
 		speed2.add(130, 5);
 		speed2.add(140, 5);
 		speed2.add(141, 5);
@@ -580,36 +650,36 @@ public class TestGeotoolsGeometry extends TestCase
 		speed2.add(150, 5);
 		speed2.add(160, 5);
 		speed2.add(230, 5);
-		
+
 		speed3.add(90, 5);
 		speed3.add(120, 5);
 		speed3.add(160, 5);
-		
+
 		TimePeriod period = new TimePeriod(120, 180);
-		IBaseTemporalCollection common = aTests.getOptimalTimes(period , items);
-		assertEquals("duh, empty set",null, common);
-		
+		IBaseTemporalCollection common = aTests.getOptimalTimes(period, items);
+		assertEquals("duh, empty set", null, common);
+
 		items.add(speed1);
-		
+
 		period = aTests.getBoundingTime(items);
-		
+
 		assertEquals("correct period", 100, period.startTime);
 		assertEquals("correct period", 180, period.endTime);
-		
+
 		common = aTests.getOptimalTimes(period, items);
-		assertNotNull("duh, empty set",common);
+		assertNotNull("duh, empty set", common);
 		assertEquals("correct choice", common, speed1);
-		
+
 		items.add(speed2);
-		
+
 		common = aTests.getOptimalTimes(period, items);
-		assertNotNull("duh, empty set",common);
+		assertNotNull("duh, empty set", common);
 		assertEquals("correct choice", common, speed2);
 
 		items.add(speed3);
-		
+
 		common = aTests.getOptimalTimes(period, items);
-		assertNotNull("duh, empty set",common);
+		assertNotNull("duh, empty set", common);
 		assertEquals("still correct choice", common, speed2);
 
 	}
@@ -617,50 +687,49 @@ public class TestGeotoolsGeometry extends TestCase
 	public void testGetCommonTimePeriod()
 	{
 		Collection<ICollection> items = new ArrayList<ICollection>();
-		
+
 		Speed_Kts speed1 = new Temporal.Speed_Kts("spd1");
 		Speed_Kts speed2 = new Temporal.Speed_Kts("spd2");
 		Speed_Kts speed3 = new Temporal.Speed_Kts("spd3");
-		
+
 		speed1.add(100, 5);
 		speed1.add(120, 5);
 		speed1.add(140, 5);
 		speed1.add(160, 5);
 		speed1.add(180, 5);
-		
+
 		speed2.add(130, 5);
 		speed2.add(230, 5);
-		
+
 		speed3.add(90, 5);
 		speed3.add(120, 5);
 		speed3.add(160, 5);
-		
+
 		TimePeriod common = aTests.getBoundingTime(items);
-		assertEquals("duh, empty set",null, common); 
-		
+		assertEquals("duh, empty set", null, common);
+
 		// ok, now add the items to hte collection
 		items.add(speed1);
-		
+
 		common = aTests.getBoundingTime(items);
-		assertNotNull("duh, empty set",common);
+		assertNotNull("duh, empty set", common);
 		assertEquals("correct times", speed1.start(), common.startTime);
 		assertEquals("correct times", speed1.finish(), common.endTime);
-		
+
 		items.add(speed2);
-		
+
 		common = aTests.getBoundingTime(items);
-		assertNotNull("duh, empty set",common);
+		assertNotNull("duh, empty set", common);
 		assertEquals("correct times", speed2.start(), common.startTime);
 		assertEquals("correct times", speed1.finish(), common.endTime);
 
 		items.add(speed3);
-		
+
 		common = aTests.getBoundingTime(items);
-		assertNotNull("duh, empty set",common);
+		assertNotNull("duh, empty set", common);
 		assertEquals("correct times", speed2.start(), common.startTime);
 		assertEquals("correct times", speed3.finish(), common.endTime);
 	}
-
 
 	public void testDopplerInterpolation()
 	{
