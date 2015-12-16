@@ -11,7 +11,14 @@ then
 	touch .nojekyll
 	mkdir 1.0
 	cd 1.0
-	unzip ../../info.limpet.site/target/site-0.0.1-SNAPSHOT.zip
+	cp ../../info.limpet.product/target/repository/content.jar .
+	cp ../../info.limpet.product/target/repository/artifacts.jar .
+	mkdir binary
+	cp ../../info.limpet.product/target/repository/binary/* binary
+	mkdir features
+	cp ../../info.limpet.product/target/repository/features/info.limpet* features
+	mkdir plugins
+	cp ../../info.limpet.product/target/repository/plugin/info.limpet* plugins
 	cd ..
 	rm -rf coverage
 	mkdir coverage
