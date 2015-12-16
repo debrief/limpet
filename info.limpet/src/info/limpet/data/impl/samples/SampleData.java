@@ -1,18 +1,5 @@
 package info.limpet.data.impl.samples;
 
-import info.limpet.ICommand;
-import info.limpet.IObjectCollection;
-import info.limpet.IQuantityCollection;
-import info.limpet.IStore.IStoreItem;
-import info.limpet.QuantityRange;
-import info.limpet.data.impl.ObjectCollection;
-import info.limpet.data.impl.QuantityCollection;
-import info.limpet.data.impl.samples.StockTypes.Temporal.ElapsedTime_Sec;
-import info.limpet.data.operations.AddQuantityOperation;
-import info.limpet.data.operations.MultiplyQuantityOperation;
-import info.limpet.data.store.InMemoryStore;
-import info.limpet.data.store.InMemoryStore.StoreGroup;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -29,6 +16,20 @@ import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.primitive.Point;
 import org.opengis.referencing.operation.TransformException;
+
+import info.limpet.ICommand;
+import info.limpet.IObjectCollection;
+import info.limpet.IQuantityCollection;
+import info.limpet.IStore.IStoreItem;
+import info.limpet.IStoreGroup;
+import info.limpet.QuantityRange;
+import info.limpet.data.impl.ObjectCollection;
+import info.limpet.data.impl.QuantityCollection;
+import info.limpet.data.impl.samples.StockTypes.Temporal.ElapsedTime_Sec;
+import info.limpet.data.operations.AddQuantityOperation;
+import info.limpet.data.operations.MultiplyQuantityOperation;
+import info.limpet.data.store.InMemoryStore;
+import info.limpet.data.store.InMemoryStore.StoreGroup;
 
 public class SampleData
 {
@@ -167,7 +168,7 @@ public class SampleData
 
 		List<IStoreItem> list = new ArrayList<IStoreItem>();
 		
-		StoreGroup group1 = new StoreGroup("Speed data");
+		IStoreGroup group1 = new StoreGroup("Speed data");
 		group1.add(speedSeries1);
 		group1.add(speedSeries2);
 		group1.add(speed_irregular);

@@ -1,16 +1,16 @@
 package info.limpet.data.store;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.UUID;
+
 import info.limpet.IChangeListener;
 import info.limpet.ICollection;
 import info.limpet.IStore;
 import info.limpet.IStoreGroup;
 import info.limpet.UIProperty;
 import info.limpet.data.impl.ListenerHelper;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.UUID;
 
 public class InMemoryStore implements IStore, IChangeListener
 {
@@ -131,11 +131,6 @@ public class InMemoryStore implements IStore, IChangeListener
 		public boolean hasChildren()
 		{
 			return size() > 0;
-		}
-
-		public List<IStoreItem> children()
-		{
-			return this;
 		}
 
 		public void setName(String value)
@@ -290,9 +285,9 @@ public class InMemoryStore implements IStore, IChangeListener
 		while (iter.hasNext())
 		{
 			IStoreItem item = iter.next();
-			if (item instanceof StoreGroup)
+			if (item instanceof IStoreGroup)
 			{
-				StoreGroup group = (StoreGroup) item;
+				IStoreGroup group = (IStoreGroup) item;
 				Iterator<IStoreItem> iter2 = group.iterator();
 				while (iter2.hasNext())
 				{
@@ -322,9 +317,9 @@ public class InMemoryStore implements IStore, IChangeListener
 		while (iter.hasNext())
 		{
 			IStoreItem item = iter.next();
-			if (item instanceof StoreGroup)
+			if (item instanceof IStoreGroup)
 			{
-				StoreGroup group = (StoreGroup) item;
+				IStoreGroup group = (IStoreGroup) item;
 				Iterator<IStoreItem> iter2 = group.iterator();
 				while (iter2.hasNext())
 				{

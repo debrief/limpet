@@ -5,12 +5,25 @@ import static javax.measure.unit.SI.KILO;
 import static javax.measure.unit.SI.METRE;
 import static javax.measure.unit.SI.METRES_PER_SECOND;
 import static javax.measure.unit.SI.SECOND;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.measure.Measurable;
+import javax.measure.Measure;
+import javax.measure.quantity.Quantity;
+import javax.measure.quantity.Velocity;
+import javax.measure.unit.Unit;
+
 import info.limpet.IBaseTemporalCollection;
 import info.limpet.ICollection;
 import info.limpet.ICommand;
 import info.limpet.IQuantityCollection;
 import info.limpet.IStore;
 import info.limpet.IStore.IStoreItem;
+import info.limpet.IStoreGroup;
 import info.limpet.ITemporalObjectCollection.Doublet;
 import info.limpet.ITemporalQuantityCollection;
 import info.limpet.ITemporalQuantityCollection.InterpMethod;
@@ -30,18 +43,6 @@ import info.limpet.data.operations.SubtractQuantityOperation;
 import info.limpet.data.operations.UnitaryMathOperation;
 import info.limpet.data.store.InMemoryStore;
 import info.limpet.data.store.InMemoryStore.StoreGroup;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.measure.Measurable;
-import javax.measure.Measure;
-import javax.measure.quantity.Quantity;
-import javax.measure.quantity.Velocity;
-import javax.measure.unit.Unit;
-
 import junit.framework.TestCase;
 
 public class TestCollections extends TestCase
@@ -321,7 +322,7 @@ public class TestCollections extends TestCase
 
 		InMemoryStore store = new InMemoryStore();
 
-		StoreGroup group1 = new StoreGroup("Some group");
+		IStoreGroup group1 = new StoreGroup("Some group");
 
 		store.add(group1);
 		group1.add(tq1);

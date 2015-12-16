@@ -1,15 +1,16 @@
 package info.limpet.data.operations;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import info.limpet.ICommand;
 import info.limpet.IOperation;
 import info.limpet.IStore;
 import info.limpet.IStore.IStoreItem;
+import info.limpet.IStoreGroup;
 import info.limpet.data.commands.AbstractCommand;
 import info.limpet.data.store.InMemoryStore.StoreGroup;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 public class AddLayerOperation implements IOperation<IStoreItem>
 {
@@ -38,9 +39,9 @@ public class AddLayerOperation implements IOperation<IStoreItem>
 			if (selection.size() == 1)
 			{
 				IStoreItem first = selection.get(0);
-				if (first instanceof StoreGroup)
+				if (first instanceof IStoreGroup)
 				{
-					StoreGroup group = (StoreGroup) first;
+					IStoreGroup group = (IStoreGroup) first;
 					newC = new AddLayerCommand(thisTitle, group, destination,
 							_stringProvider);
 				}
@@ -68,7 +69,7 @@ public class AddLayerOperation implements IOperation<IStoreItem>
 	public static class AddLayerCommand extends AbstractCommand<IStoreItem>
 	{
 		final StringProvider _stringProvider;
-		private StoreGroup _group;
+		private IStoreGroup _group;
 
 		public AddLayerCommand(String title, IStore store,
 				StringProvider stringProvider)
@@ -77,7 +78,7 @@ public class AddLayerOperation implements IOperation<IStoreItem>
 			_stringProvider = stringProvider;
 		}
 
-		public AddLayerCommand(String title, StoreGroup group, IStore store,
+		public AddLayerCommand(String title, IStoreGroup group, IStore store,
 				StringProvider stringProvider)
 		{
 			this(title, store, stringProvider);
@@ -92,7 +93,7 @@ public class AddLayerOperation implements IOperation<IStoreItem>
 
 			if (string != null)
 			{
-				StoreGroup newGroup = new StoreGroup(string);
+				IStoreGroup newGroup = new StoreGroup(string);
 
 				if (_group != null)
 				{

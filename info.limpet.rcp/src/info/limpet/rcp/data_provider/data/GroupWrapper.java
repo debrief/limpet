@@ -1,17 +1,18 @@
 package info.limpet.rcp.data_provider.data;
 
-import info.limpet.IStore.IStoreItem;
-import info.limpet.data.store.InMemoryStore.StoreGroup;
-
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ui.views.properties.IPropertySource;
 
+import info.limpet.IStore.IStoreItem;
+import info.limpet.IStoreGroup;
+import info.limpet.data.store.InMemoryStore.StoreGroup;
+
 public class GroupWrapper implements IAdaptable, LimpetWrapper
 {
-	private final StoreGroup _group;
+	private final IStoreGroup _group;
 	private final LimpetWrapper _parent;
 
-	public GroupWrapper(final LimpetWrapper parent, final StoreGroup prec)
+	public GroupWrapper(final LimpetWrapper parent, final IStoreGroup prec)
 	{
 		_parent = parent;
 		_group = prec;
@@ -60,7 +61,7 @@ public class GroupWrapper implements IAdaptable, LimpetWrapper
 		return null;
 	}
 
-	public StoreGroup getGroup()
+	public IStoreGroup getGroup()
 	{
 		return _group;
 	}

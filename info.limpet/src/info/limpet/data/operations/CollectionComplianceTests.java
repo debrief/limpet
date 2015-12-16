@@ -2,14 +2,8 @@ package info.limpet.data.operations;
 
 import static javax.measure.unit.SI.METRE;
 import static javax.measure.unit.SI.SECOND;
-import info.limpet.ICollection;
-import info.limpet.IObjectCollection;
-import info.limpet.IQuantityCollection;
-import info.limpet.IStore.IStoreItem;
-import info.limpet.ITemporalQuantityCollection;
-import info.limpet.data.impl.samples.StockTypes.ILocations;
-import info.limpet.data.store.InMemoryStore.StoreGroup;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -18,6 +12,14 @@ import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 
 import org.opengis.geometry.Geometry;
+
+import info.limpet.ICollection;
+import info.limpet.IObjectCollection;
+import info.limpet.IQuantityCollection;
+import info.limpet.IStore.IStoreItem;
+import info.limpet.IStoreGroup;
+import info.limpet.ITemporalQuantityCollection;
+import info.limpet.data.impl.samples.StockTypes.ILocations;
 
 public class CollectionComplianceTests
 {
@@ -547,7 +549,7 @@ public class CollectionComplianceTests
 		while (iter.hasNext())
 		{
 			IStoreItem storeItem = iter.next();
-			if (storeItem instanceof StoreGroup)
+			if (storeItem instanceof IStoreGroup)
 			{
 				res++;
 			}
@@ -562,7 +564,7 @@ public class CollectionComplianceTests
 		while (iter.hasNext())
 		{
 			IStoreItem storeItem = iter.next();
-			if (!(storeItem instanceof StoreGroup))
+			if (!(storeItem instanceof IStoreGroup))
 			{
 				res = false;
 				break;
@@ -584,27 +586,26 @@ public class CollectionComplianceTests
 		{
 			IStoreItem storeItem = iter.next();
 			boolean valid = true;
-			if (storeItem instanceof StoreGroup)
+			if (storeItem instanceof IStoreGroup)
 			{
 				// ok, check the contents
-				StoreGroup group = (StoreGroup) storeItem;
-				List<IStoreItem> kids = group.children();
+				IStoreGroup group = (IStoreGroup) storeItem;
 				
 				// ok, keep looping through, to check we have the right types
-				if(!isPresent(kids, METRE.divide(SECOND).getDimension()))
+				if(!isPresent(group, METRE.divide(SECOND).getDimension()))
 				{
 					valid = false;
 					break;
 				}
 				
 				// ok, keep looping through, to check we have the right types
-				if(!isPresent(kids, SI.RADIAN.getDimension()))
+				if(!isPresent(group, SI.RADIAN.getDimension()))
 				{
 					valid = false;
 					break;
 				}
 	
-				if(!hasLocation(kids))
+				if(!hasLocation(group))
 				{
 					valid = false;
 					break;
@@ -634,27 +635,26 @@ public class CollectionComplianceTests
 		while (iter.hasNext())
 		{
 			IStoreItem storeItem = iter.next();
-			if (storeItem instanceof StoreGroup)
+			if (storeItem instanceof IStoreGroup)
 			{
 				// ok, check the contents
-				StoreGroup group = (StoreGroup) storeItem;
-				List<IStoreItem> kids = group.children();
+				IStoreGroup group = (IStoreGroup) storeItem;
 				
 				// ok, keep looping through, to check we have the right types
-				if(!isPresent(kids, METRE.divide(SECOND).getDimension()))
+				if(!isPresent(group, METRE.divide(SECOND).getDimension()))
 				{
 					res = false;
 					break;
 				}
 				
 				// ok, keep looping through, to check we have the right types
-				if(!isPresent(kids, SI.RADIAN.getDimension()))
+				if(!isPresent(group, SI.RADIAN.getDimension()))
 				{
 					res = false;
 					break;
 				}
 	
-				if(!hasLocation(kids))
+				if(!hasLocation(group))
 				{
 					res = false;
 					break;
@@ -674,7 +674,7 @@ public class CollectionComplianceTests
 	 *          we're looking for
 	 * @return yes/no
 	 */
-	private boolean isPresent(List<IStoreItem> kids, Dimension dim)
+	private boolean isPresent(Collection<IStoreItem> kids, Dimension dim)
 	{
 		boolean res = false;
 
@@ -705,7 +705,7 @@ public class CollectionComplianceTests
 	 *          we're looking for
 	 * @return yes/no
 	 */
-	private boolean hasLocation(List<IStoreItem> kids)
+	private boolean hasLocation(Collection<IStoreItem> kids)
 	{
 		boolean res = false;
 
@@ -729,7 +729,7 @@ public class CollectionComplianceTests
 	 * @param dimension dimension we need to be present
 	 * @return yes/no
 	 */
-	public IQuantityCollection<?> someHave(List<IStoreItem> kids, Dimension dimension, final boolean walkTree)
+	public IQuantityCollection<?> someHave(Collection<IStoreItem> kids, Dimension dimension, final boolean walkTree)
 	{
 		IQuantityCollection<?> res = null;
 
@@ -737,10 +737,10 @@ public class CollectionComplianceTests
 		while (iter.hasNext())
 		{
 			IStoreItem item = iter.next();
-			if(item instanceof StoreGroup && walkTree)
+			if(item instanceof IStoreGroup && walkTree)
 			{
-				StoreGroup group = (StoreGroup) item;
-				res = someHave(group.children(), dimension, walkTree);
+				IStoreGroup group = (IStoreGroup) item;
+				res = someHave(group, dimension, walkTree);
 				break;
 			}
 			else if (item instanceof IQuantityCollection<?>)
@@ -763,7 +763,7 @@ public class CollectionComplianceTests
 	 * @param dimension dimension we need to be present
 	 * @return yes/no
 	 */
-	public IObjectCollection<?> someHaveLocation(List<IStoreItem> kids)
+	public IObjectCollection<?> someHaveLocation(Collection<IStoreItem> kids)
 	{
 		IObjectCollection<?> res = null;
 
@@ -771,10 +771,10 @@ public class CollectionComplianceTests
 		while (iter.hasNext())
 		{
 			IStoreItem item = iter.next();
-			if(item instanceof StoreGroup)
+			if(item instanceof IStoreGroup)
 			{
-				StoreGroup group = (StoreGroup) item;
-				res = someHaveLocation(group.children());
+				IStoreGroup group = (IStoreGroup) item;
+				res = someHaveLocation(group);
 				break;
 			}
 			else if (item instanceof IObjectCollection<?>)

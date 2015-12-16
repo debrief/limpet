@@ -146,9 +146,9 @@ public class DataManagerEditor extends EditorPart
 	 */
 	private void connectUp(IStoreItem next, IStoreGroup parent, IChangeListener listener)
 	{
-		if (next instanceof StoreGroup)
+		if (next instanceof IStoreGroup)
 		{
-			StoreGroup group = (StoreGroup) next;
+			IStoreGroup group = (IStoreGroup) next;
 			Iterator<IStoreItem> iter = group.iterator();
 			while (iter.hasNext())
 			{

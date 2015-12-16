@@ -2,24 +2,6 @@ package info.limpet.data.operations.spatial;
 
 import static javax.measure.unit.SI.METRE;
 import static javax.measure.unit.SI.SECOND;
-import info.limpet.IBaseTemporalCollection;
-import info.limpet.ICollection;
-import info.limpet.ICommand;
-import info.limpet.IOperation;
-import info.limpet.IQuantityCollection;
-import info.limpet.IStore;
-import info.limpet.IStore.IStoreItem;
-import info.limpet.ITemporalQuantityCollection.InterpMethod;
-import info.limpet.data.commands.AbstractCommand;
-import info.limpet.data.impl.TemporalQuantityCollection;
-import info.limpet.data.impl.samples.StockTypes;
-import info.limpet.data.impl.samples.StockTypes.NonTemporal;
-import info.limpet.data.impl.samples.StockTypes.NonTemporal.Length_M;
-import info.limpet.data.impl.samples.StockTypes.Temporal;
-import info.limpet.data.impl.samples.StockTypes.Temporal.Frequency_Hz;
-import info.limpet.data.impl.samples.TemporalLocation;
-import info.limpet.data.operations.CollectionComplianceTests;
-import info.limpet.data.store.InMemoryStore.StoreGroup;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -39,6 +21,25 @@ import org.geotools.referencing.GeodeticCalculator;
 import org.opengis.geometry.Geometry;
 import org.opengis.geometry.primitive.Point;
 
+import info.limpet.IBaseTemporalCollection;
+import info.limpet.ICollection;
+import info.limpet.ICommand;
+import info.limpet.IOperation;
+import info.limpet.IQuantityCollection;
+import info.limpet.IStore;
+import info.limpet.IStore.IStoreItem;
+import info.limpet.IStoreGroup;
+import info.limpet.ITemporalQuantityCollection.InterpMethod;
+import info.limpet.data.commands.AbstractCommand;
+import info.limpet.data.impl.TemporalQuantityCollection;
+import info.limpet.data.impl.samples.StockTypes;
+import info.limpet.data.impl.samples.StockTypes.NonTemporal;
+import info.limpet.data.impl.samples.StockTypes.NonTemporal.Length_M;
+import info.limpet.data.impl.samples.StockTypes.Temporal;
+import info.limpet.data.impl.samples.StockTypes.Temporal.Frequency_Hz;
+import info.limpet.data.impl.samples.TemporalLocation;
+import info.limpet.data.operations.CollectionComplianceTests;
+
 public class DopplerShiftBetweenTracksOperation implements
 		IOperation<IStoreItem>
 {
@@ -49,11 +50,11 @@ public class DopplerShiftBetweenTracksOperation implements
 		private static final String RX = "RX_";
 		private static final String TX = "TX_";
 		private HashMap<String, ICollection> data;
-		private final StoreGroup _tx;
-		private final StoreGroup _rx;
+		private final IStoreGroup _tx;
+		private final IStoreGroup _rx;
 
-		public DopplerShiftOperation(String outputName, StoreGroup tx,
-				StoreGroup rx, IStore store, String title, String description,
+		public DopplerShiftOperation(String outputName, IStoreGroup tx,
+				IStoreGroup rx, IStore store, String title, String description,
 				List<IStoreItem> selection)
 		{
 			super(title, description, outputName, store, false, false, selection);
@@ -452,8 +453,8 @@ public class DopplerShiftBetweenTracksOperation implements
 		Collection<ICommand<IStoreItem>> res = new ArrayList<ICommand<IStoreItem>>();
 		if (appliesTo(selection))
 		{
-			StoreGroup groupA = (StoreGroup) selection.get(0);
-			StoreGroup groupB = (StoreGroup) selection.get(1);
+			IStoreGroup groupA = (IStoreGroup) selection.get(0);
+			IStoreGroup groupB = (IStoreGroup) selection.get(1);
 
 			ICommand<IStoreItem> newC = new DopplerShiftOperation(null, groupA,
 					groupB, destination, "Doppler between tracks (from "

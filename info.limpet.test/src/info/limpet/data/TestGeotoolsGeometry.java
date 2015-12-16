@@ -1,10 +1,34 @@
 package info.limpet.data;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+
+import javax.measure.converter.ConversionException;
+import javax.measure.quantity.Frequency;
+
+import org.geotools.factory.Hints;
+import org.geotools.geometry.DirectPosition2D;
+import org.geotools.geometry.GeometryBuilder;
+import org.geotools.geometry.GeometryFactoryFinder;
+import org.geotools.referencing.GeodeticCalculator;
+import org.geotools.referencing.crs.DefaultGeographicCRS;
+import org.junit.Assert;
+import org.opengis.geometry.DirectPosition;
+import org.opengis.geometry.Geometry;
+import org.opengis.geometry.primitive.Point;
+import org.opengis.geometry.primitive.PrimitiveFactory;
+import org.opengis.referencing.operation.TransformException;
+
 import info.limpet.IBaseTemporalCollection;
 import info.limpet.ICollection;
 import info.limpet.ICommand;
 import info.limpet.IStore;
 import info.limpet.IStore.IStoreItem;
+import info.limpet.IStoreGroup;
 import info.limpet.ITemporalQuantityCollection.InterpMethod;
 import info.limpet.data.csv.CsvParser;
 import info.limpet.data.impl.TemporalObjectCollection;
@@ -23,31 +47,7 @@ import info.limpet.data.operations.spatial.GenerateCourseAndSpeedOperation;
 import info.limpet.data.operations.spatial.GeoSupport;
 import info.limpet.data.store.InMemoryStore;
 import info.limpet.data.store.InMemoryStore.StoreGroup;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-
-import javax.measure.converter.ConversionException;
-import javax.measure.quantity.Frequency;
-
 import junit.framework.TestCase;
-
-import org.geotools.factory.Hints;
-import org.geotools.geometry.DirectPosition2D;
-import org.geotools.geometry.GeometryBuilder;
-import org.geotools.geometry.GeometryFactoryFinder;
-import org.geotools.referencing.GeodeticCalculator;
-import org.geotools.referencing.crs.DefaultGeographicCRS;
-import org.junit.Assert;
-import org.opengis.geometry.DirectPosition;
-import org.opengis.geometry.Geometry;
-import org.opengis.geometry.primitive.Point;
-import org.opengis.geometry.primitive.PrimitiveFactory;
-import org.opengis.referencing.operation.TransformException;
 
 public class TestGeotoolsGeometry extends TestCase
 {
@@ -356,8 +356,8 @@ public class TestGeotoolsGeometry extends TestCase
 		assertEquals("correct items", 6, freq1.size());
 
 		// create some incomplete input data
-		StoreGroup track1 = new StoreGroup("Track 1");
-		StoreGroup track2 = new StoreGroup("Track 1");
+		IStoreGroup track1 = new StoreGroup("Track 1");
+		IStoreGroup track2 = new StoreGroup("Track 1");
 		items.add(track1);
 		items.add(track2);
 

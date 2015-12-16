@@ -1,17 +1,17 @@
 package info.limpet.rcp.data_provider.data;
 
-import info.limpet.ICollection;
-import info.limpet.ICommand;
-import info.limpet.IStore.IStoreItem;
-import info.limpet.data.store.InMemoryStore;
-import info.limpet.data.store.InMemoryStore.StoreGroup;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
+
+import info.limpet.ICollection;
+import info.limpet.ICommand;
+import info.limpet.IStore.IStoreItem;
+import info.limpet.IStoreGroup;
+import info.limpet.data.store.InMemoryStore;
 
 /**
  * make the Limpet data store suitable for displaying in a tree control
@@ -58,9 +58,9 @@ public class DataModel implements ITreeContentProvider
 				}
 			}
 		}
-		else if (item instanceof StoreGroup)
+		else if (item instanceof IStoreGroup)
 		{
-			StoreGroup group = (StoreGroup) item;
+			IStoreGroup group = (IStoreGroup) item;
 			final NamedList dList = new NamedList(cw, group.getName());
 			final Iterator<IStoreItem> dIter = group.iterator();
 			while (dIter.hasNext())
@@ -101,9 +101,9 @@ public class DataModel implements ITreeContentProvider
 				{
 				dList.add(new CollectionWrapper(dList, (ICollection) thisI));
 				}
-				else if(thisI instanceof StoreGroup)
+				else if(thisI instanceof IStoreGroup)
 				{
-					dList.add(new GroupWrapper(dList, (StoreGroup) thisI));
+					dList.add(new GroupWrapper(dList, (IStoreGroup) thisI));
 				}
 					
 			}
@@ -126,9 +126,9 @@ public class DataModel implements ITreeContentProvider
 				{
 					dList.add(new CollectionWrapper(dList, (ICollection) thisI));
 				}
-				else if (thisI instanceof StoreGroup)
+				else if (thisI instanceof IStoreGroup)
 				{
-					dList.add(new GroupWrapper(dList, (StoreGroup) thisI));
+					dList.add(new GroupWrapper(dList, (IStoreGroup) thisI));
 				}
 			}
 			// did we find any?
@@ -141,7 +141,7 @@ public class DataModel implements ITreeContentProvider
 
 	private void addGroupItems(final List<Object> res, final GroupWrapper cw)
 	{
-		final StoreGroup coll = cw.getGroup();
+		final IStoreGroup coll = cw.getGroup();
 
 		//final NamedList dList = new NamedList(cw, coll.getName());
 		final Iterator<IStoreItem> dIter = coll.iterator();
@@ -152,9 +152,9 @@ public class DataModel implements ITreeContentProvider
 			{
 				res.add(new CollectionWrapper(cw, (ICollection) thisI));
 			}
-			else if (thisI instanceof StoreGroup)
+			else if (thisI instanceof IStoreGroup)
 			{
-				res.add(new GroupWrapper(cw, (StoreGroup) thisI));
+				res.add(new GroupWrapper(cw, (IStoreGroup) thisI));
 			}
 		}
 		// did we find any?
@@ -254,9 +254,9 @@ public class DataModel implements ITreeContentProvider
 				{
 					list.add(new CollectionWrapper(null, (ICollection) item));
 				}
-				else if (item instanceof StoreGroup)
+				else if (item instanceof IStoreGroup)
 				{
-					list.add(new GroupWrapper(null, (StoreGroup) item));
+					list.add(new GroupWrapper(null, (IStoreGroup) item));
 				}
 			}
 		}
@@ -313,7 +313,7 @@ public class DataModel implements ITreeContentProvider
 				{
 					// see if it has predecessors or successors
 					final GroupWrapper cw = (GroupWrapper) element;
-					final StoreGroup comm = cw.getGroup();
+					final IStoreGroup comm = cw.getGroup();
 
 					res = comm.size() > 0;
 				}

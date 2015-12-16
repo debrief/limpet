@@ -1,16 +1,5 @@
 package info.limpet.data.csv;
 
-import info.limpet.ICollection;
-import info.limpet.IQuantityCollection;
-import info.limpet.IStore.IStoreItem;
-import info.limpet.ITemporalQuantityCollection;
-import info.limpet.data.impl.ObjectCollection;
-import info.limpet.data.impl.samples.StockTypes.NonTemporal;
-import info.limpet.data.impl.samples.StockTypes.Temporal;
-import info.limpet.data.impl.samples.StockTypes.Temporal.Strings;
-import info.limpet.data.impl.samples.TemporalLocation;
-import info.limpet.data.store.InMemoryStore.StoreGroup;
-
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -28,6 +17,18 @@ import org.apache.commons.csv.CSVRecord;
 import org.geotools.geometry.GeometryBuilder;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.opengis.geometry.primitive.Point;
+
+import info.limpet.ICollection;
+import info.limpet.IQuantityCollection;
+import info.limpet.IStore.IStoreItem;
+import info.limpet.IStoreGroup;
+import info.limpet.ITemporalQuantityCollection;
+import info.limpet.data.impl.ObjectCollection;
+import info.limpet.data.impl.samples.StockTypes.NonTemporal;
+import info.limpet.data.impl.samples.StockTypes.Temporal;
+import info.limpet.data.impl.samples.StockTypes.Temporal.Strings;
+import info.limpet.data.impl.samples.TemporalLocation;
+import info.limpet.data.store.InMemoryStore.StoreGroup;
 
 public class CsvParser
 {
@@ -262,7 +263,7 @@ public class CsvParser
 		// ok, store the series
 		if (series.size() > 1)
 		{
-			StoreGroup target = new StoreGroup(fullFileName);
+			IStoreGroup target = new StoreGroup(fullFileName);
 			Iterator<ICollection> sIter = series.iterator();
 			while (sIter.hasNext())
 			{

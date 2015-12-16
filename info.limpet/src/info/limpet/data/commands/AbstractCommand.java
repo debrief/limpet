@@ -1,18 +1,17 @@
 package info.limpet.data.commands;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.UUID;
+
 import info.limpet.IChangeListener;
 import info.limpet.ICommand;
 import info.limpet.IQuantityCollection;
 import info.limpet.IStore;
 import info.limpet.IStore.IStoreItem;
-import info.limpet.data.store.InMemoryStore.StoreGroup;
 import info.limpet.IStoreGroup;
 import info.limpet.UIProperty;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.UUID;
 
 public abstract class AbstractCommand<T extends IStoreItem> implements
 		ICommand<T>
@@ -89,7 +88,7 @@ public abstract class AbstractCommand<T extends IStoreItem> implements
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		StoreGroup other = (StoreGroup) obj;
+		IStoreGroup other = (IStoreGroup) obj;
 		if (getUUID() == null)
 		{
 			if (other.getUUID() != null)
