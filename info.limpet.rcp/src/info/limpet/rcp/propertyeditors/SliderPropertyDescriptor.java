@@ -31,7 +31,7 @@ public class SliderPropertyDescriptor extends PropertyDescriptor
 	 */
 	public CellEditor createPropertyEditor(Composite parent)
 	{
-		CellEditor editor = new SliderCellEditor(parent, minValue, maxValue);
+		CellEditor editor = new SliderCellEditorExt(parent, minValue, maxValue);
 		if (getValidator() != null)
 		{
 			editor.setValidator(getValidator());

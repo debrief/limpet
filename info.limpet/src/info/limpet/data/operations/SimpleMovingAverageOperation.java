@@ -5,6 +5,7 @@ import info.limpet.ICommand;
 import info.limpet.IOperation;
 import info.limpet.IQuantityCollection;
 import info.limpet.IStore;
+import info.limpet.UIProperty;
 import info.limpet.IStore.IStoreItem;
 import info.limpet.data.commands.AbstractCommand;
 import info.limpet.data.impl.QuantityCollection;
@@ -67,6 +68,7 @@ public class SimpleMovingAverageOperation implements IOperation<ICollection>
 			winSize = windowSize;
 		}
 
+		@UIProperty(name="Window", category=UIProperty.CATEGORY_CALCULATION, min=1, max=20)
 		public int getWindowSize()
 		{
 			return winSize;

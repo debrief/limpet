@@ -15,6 +15,7 @@ import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 
 import info.limpet.UIProperty;
 import info.limpet.rcp.Activator;
+import info.limpet.rcp.propertyeditors.SliderPropertyDescriptor;
 
 public class ReflectivePropertySource implements IPropertySource
 {
@@ -63,20 +64,36 @@ public class ReflectivePropertySource implements IPropertySource
 				{
 
 					org.eclipse.ui.views.properties.PropertyDescriptor descriptor = null;
+					
+					String propId = beanPropertyDescriptor.getName();
 					String propName = annotation.name();
 					String propCategory = annotation.category();
+					
 					if (beanPropertyDescriptor.getWriteMethod() != null)
 					{
-						if (beanPropertyDescriptor.getPropertyType().equals(String.class))
+						Class<?> propertyType = beanPropertyDescriptor.getPropertyType();
+						if (propertyType.equals(String.class))
 						{
 							descriptor = new TextPropertyDescriptor(
-									beanPropertyDescriptor.getName(), propName);
+									propId, propName);
 						}
+						else if ("boolean".equals(propertyType.getName()))
+						{
+							descriptor = new CheckboxPropertyDescriptor(
+									propId, propName);
+						}
+						else if ("int".equals(propertyType.getName()))
+						{
+							int min = annotation.min();
+							int max = annotation.max();
+							
+							descriptor =  new SliderPropertyDescriptor(
+									propId, propName, min, max);
+						}						
 						else
 						{
 							// TODO: handle other property types, such as
-							// number, boolean,
-							// complex types, etc
+							// number, complex types, Wrapper types - Boolean, Integer, etc
 						}
 					}
 					else

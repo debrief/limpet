@@ -84,7 +84,7 @@ public class InMemoryStore implements IStore, IChangeListener
 			return res;
 		}
 
-		@UIProperty(name="Name", category="Label")
+		@UIProperty(name="Name", category=UIProperty.CATEGORY_LABEL)
 		@Override
 		public String getName()
 		{
@@ -92,7 +92,7 @@ public class InMemoryStore implements IStore, IChangeListener
 		}
 
 		
-		@UIProperty(name="Children", category="Metadata")
+		@UIProperty(name="Children", category=UIProperty.CATEGORY_METADATA)
 		public int getSize()
 		{
 			return super.size();

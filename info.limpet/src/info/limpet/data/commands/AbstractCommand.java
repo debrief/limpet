@@ -7,6 +7,7 @@ import info.limpet.IStore;
 import info.limpet.IStore.IStoreItem;
 import info.limpet.data.store.InMemoryStore.StoreGroup;
 import info.limpet.IStoreGroup;
+import info.limpet.UIProperty;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -122,7 +123,8 @@ public abstract class AbstractCommand<T extends IStoreItem> implements
 		return size;
 	}
 
-	@Override
+	@UIProperty(name="Dynamic updates", category=UIProperty.CATEGORY_LABEL)
+	@Override	
 	public boolean getDynamic()
 	{
 		return dynamic;
@@ -187,6 +189,7 @@ public abstract class AbstractCommand<T extends IStoreItem> implements
 	}
 
 	@Override
+	@UIProperty(name="Description", category=UIProperty.CATEGORY_LABEL)
 	public String getDescription()
 	{
 		return description;
@@ -246,6 +249,7 @@ public abstract class AbstractCommand<T extends IStoreItem> implements
 		outputs.add(output);
 	}
 
+	@UIProperty(name="Name", category=UIProperty.CATEGORY_LABEL)
 	@Override
 	public String getName()
 	{
