@@ -2,14 +2,16 @@ package info.limpet.data.operations;
 
 import static javax.measure.unit.SI.METRE;
 import static javax.measure.unit.SI.SECOND;
+import info.limpet.IBaseTemporalCollection;
 import info.limpet.ICollection;
 import info.limpet.IObjectCollection;
 import info.limpet.IQuantityCollection;
 import info.limpet.IStore.IStoreItem;
-import info.limpet.ITemporalQuantityCollection;
 import info.limpet.data.impl.samples.StockTypes.ILocations;
+import info.limpet.data.operations.spatial.DopplerShiftBetweenTracksOperation.DopplerShiftOperation.TimePeriod;
 import info.limpet.data.store.InMemoryStore.StoreGroup;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -196,11 +198,11 @@ public class CollectionComplianceTests
 			if (thisI instanceof ICollection)
 			{
 				ICollection thisC = (ICollection) thisI;
-				if (thisC.isQuantity())
+				if (thisC.isQuantity() || thisC instanceof ILocations)
 				{
 					if (thisC.isTemporal())
 					{
-						ITemporalQuantityCollection<?> tq = (ITemporalQuantityCollection<?>) thisC;
+						IBaseTemporalCollection tq = (IBaseTemporalCollection) thisC;
 						long thisStart = tq.start();
 						long thisEnd = tq.finish();
 
@@ -234,7 +236,7 @@ public class CollectionComplianceTests
 			}
 
 		}
-		return suitable;
+		return suitable && (startT != null);
 	}
 
 	/**
@@ -797,5 +799,133 @@ public class CollectionComplianceTests
 
 		return res;
 	}
+	
+	public IBaseTemporalCollection getLongestTemporalCollections(
+			List<IStoreItem> selection)
+	{
+		// find the longest time series.
+		Iterator<IStoreItem> iter = selection.iterator();
+		IBaseTemporalCollection longest = null;
 
+		while (iter.hasNext())
+		{
+			ICollection thisC = (ICollection) iter.next();
+			if (thisC.isTemporal() && (thisC.isQuantity() || thisC instanceof ILocations))
+			{
+				IBaseTemporalCollection tqc = (IBaseTemporalCollection) thisC;
+				if (longest == null)
+				{
+					longest = tqc;
+				}
+				else
+				{
+					// store the longest one
+					ICollection asColl = (ICollection) longest;
+					longest = thisC.size() > asColl.size() ? tqc : longest;
+				}
+			}
+		}
+		return longest;
+	}
+
+	public boolean allHaveData(List<IStoreItem> selection)
+	{
+		// are they all non location?
+		boolean allValid = true;
+
+		for (int i = 0; i < selection.size(); i++)
+		{
+			IStoreItem thisI = selection.get(i);
+			if (thisI instanceof ICollection)
+			{
+				ICollection thisC = (ICollection) thisI;
+				if(thisC.size() == 0)
+				{
+					allValid = false;
+					break;
+				}
+			}
+			else
+			{
+				allValid = false;
+				break;
+			}
+		}
+		return allValid;
+	}
+
+
+	/**
+	 * find the best collection to use as a time-base. Which collection has the
+	 * most values within the specified time period?
+	 * 
+	 * @param period
+	 * @param items
+	 * @return most suited collection
+	 */
+	public IBaseTemporalCollection getOptimalTimes(TimePeriod period,
+			Collection<ICollection> items)
+	{
+		IBaseTemporalCollection res = null;
+		long resScore = 0;
+
+		Iterator<ICollection> iter = items.iterator();
+		while (iter.hasNext())
+		{
+			ICollection iCollection = (ICollection) iter.next();
+			if (iCollection.isTemporal())
+			{
+				IBaseTemporalCollection timeC = (IBaseTemporalCollection) iCollection;
+				Iterator<Long> times = timeC.getTimes().iterator();
+				int score = 0;
+				while (times.hasNext())
+				{
+					long long1 = (long) times.next();
+					if (period.contains(long1))
+					{
+						score++;
+					}
+				}
+
+				if ((res == null) || (score > resScore))
+				{
+					res = timeC;
+					resScore = score;
+				}
+			}
+		}
+
+		return res;
+	}
+
+	/** find the time period for overlapping data
+	 * 
+	 * @param items
+	 * @return
+	 */
+	public TimePeriod getBoundingTime(final Collection<ICollection> items)
+	{
+		TimePeriod res = null;
+
+		Iterator<ICollection> iter = items.iterator();
+		while (iter.hasNext())
+		{
+			ICollection iCollection = (ICollection) iter.next();
+			if (iCollection.isTemporal())
+			{
+				IBaseTemporalCollection timeC = (IBaseTemporalCollection) iCollection;
+				if (res == null)
+				{
+					res = new TimePeriod(timeC.start(), timeC.finish());
+				}
+				else
+				{
+					res.startTime = Math.max(res.startTime, timeC.start());
+					res.endTime = Math.min(res.endTime, timeC.finish());
+				}
+			}
+		}
+
+		return res;
+	}
 }
