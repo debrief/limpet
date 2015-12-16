@@ -51,6 +51,8 @@ public class DopplerShiftBetweenTracksOperation implements
 		private HashMap<String, ICollection> data;
 		private final StoreGroup _tx;
 		private final StoreGroup _rx;
+		CollectionComplianceTests aTests = new CollectionComplianceTests();
+
 
 		public DopplerShiftOperation(String outputName, StoreGroup tx,
 				StoreGroup rx, IStore store, String title, String description,
@@ -103,47 +105,6 @@ public class DopplerShiftBetweenTracksOperation implements
 			getStore().addAll(res);
 		}
 
-		/** find the best collection to use as a time-base. Which collection has the most values within
-		 * the specified time period?
-		 * 
-		 * @param period 
-		 * @param items
-		 * @return most suited collection
-		 */
-		public IBaseTemporalCollection getOptimalTimes(TimePeriod period, Collection<ICollection> items)
-		{
-			IBaseTemporalCollection res = null;
-			long resScore = 0;
-
-			Iterator<ICollection> iter = items.iterator();
-			while (iter.hasNext())
-			{
-				ICollection iCollection = (ICollection) iter.next();
-				if (iCollection.isTemporal())
-				{
-					IBaseTemporalCollection timeC = (IBaseTemporalCollection) iCollection;
-					Iterator<Long> times = timeC.getTimes().iterator();
-					int score = 0;
-					while (times.hasNext())
-					{
-						long long1 = (long) times.next();
-						if(period.contains(long1))
-						{
-							score++;
-						}
-					}
-					
-					if((res == null) || (score > resScore))
-					{
-						res = timeC;
-						resScore = score;
-					}
-				}
-			}
-
-			return res;
-		}
-
 		public static class TimePeriod
 		{
 			public long startTime;
@@ -164,32 +125,6 @@ public class DopplerShiftBetweenTracksOperation implements
 			{
 				return ((startTime <= time) && (endTime >= time));
 			}
-		}
-
-		public TimePeriod getBoundingTime(final Collection<ICollection> items)
-		{
-			TimePeriod res = null;
-
-			Iterator<ICollection> iter = items.iterator();
-			while (iter.hasNext())
-			{
-				ICollection iCollection = (ICollection) iter.next();
-				if (iCollection.isTemporal())
-				{
-					IBaseTemporalCollection timeC = (IBaseTemporalCollection) iCollection;
-					if (res == null)
-					{
-						res = new TimePeriod(timeC.start(), timeC.finish());
-					}
-					else
-					{
-						res.startTime = Math.max(res.startTime, timeC.start());
-						res.endTime = Math.min(res.endTime, timeC.finish());
-					}
-				}
-			}
-
-			return res;
 		}
 
 		public void organiseData()
@@ -295,9 +230,9 @@ public class DopplerShiftBetweenTracksOperation implements
 		 */
 		private void performCalc(List<IStoreItem> outputs)
 		{
-			
+
 			// and the bounding period
-			TimePeriod period = getBoundingTime(data.values());
+			TimePeriod period = aTests.getBoundingTime(data.values());
 
 			// check it's valid
 			if (period.invalid())
@@ -307,7 +242,7 @@ public class DopplerShiftBetweenTracksOperation implements
 			}
 
 			// ok, let's start by finding our time sync
-			IBaseTemporalCollection times = getOptimalTimes(period, data.values());
+			IBaseTemporalCollection times = aTests.getOptimalTimes(period, data.values());
 
 			// check we were able to find some times
 			if (times == null)
@@ -358,13 +293,12 @@ public class DopplerShiftBetweenTracksOperation implements
 					double angleDegs = calc.getAzimuth();
 					if (angleDegs < 0)
 						angleDegs += 360;
-					
+
 					double angleRads = Math.toRadians(angleDegs);
 
 					// ok, and the calculation
 					double shifted = calcPredictedFreqSI(soundSpeed, txCourseRads,
-							rxCourseRads, txSpeedMSec, rxSpeedMSec,
-							angleRads, freq);
+							rxCourseRads, txSpeedMSec, rxSpeedMSec, angleRads, freq);
 
 					output.add(thisTime, shifted);
 				}

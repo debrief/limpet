@@ -38,7 +38,7 @@ public abstract class CoreQuantityOperation<Q extends Quantity>
 		{
 
 			// so, do we do our indexed commands?
-			if (aTests.allNonTemporal(selection) && aTests.allEqualLength(selection))
+			if (aTests.allEqualLength(selection))
 			{
 				addIndexedCommands(selection, destination, res);
 			}

@@ -37,7 +37,9 @@ public class TestDynamic extends TestCase
 
 		Collection<ICommand<?>> actions = new AddQuantityOperation().actionsFor(
 				selection, store);
-		ICommand<?> firstAction = actions.iterator().next();
+		Iterator<ICommand<?>> addIter = actions.iterator();
+		addIter.next();
+		ICommand<?> firstAction = addIter.next();		
 		assertEquals("correct action", "Sum of input series (interpolated)", firstAction.getName());
 
 		// run the action
@@ -84,7 +86,9 @@ public class TestDynamic extends TestCase
 
 		// ok - now for a further dependent calculation
 		actions = new AddQuantityOperation("output2").actionsFor(selection, store);
-		firstAction = actions.iterator().next();
+		addIter = actions.iterator();
+		addIter.next();
+		firstAction = addIter.next();
 		assertEquals("correct action", "output2 (interpolated)", firstAction.getName());
 
 		// ok, now create the new series
