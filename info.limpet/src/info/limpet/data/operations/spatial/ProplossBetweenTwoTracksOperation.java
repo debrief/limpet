@@ -95,8 +95,8 @@ public class ProplossBetweenTwoTracksOperation extends TwoTrackOperation
 						.getLongestTemporalCollections(selection);
 
 				ICommand<IStoreItem> newC = new DistanceBetweenOperation(null,
-						selection, destination, "Distance between tracks (interpolated)",
-						"Calculate distance between two tracks", timeProvider);
+						selection, destination, "Propagation loss between tracks (interpolated)",
+						"Propagation loss between two tracks", timeProvider);
 
 				res.add(newC);
 			}
@@ -106,7 +106,7 @@ public class ProplossBetweenTwoTracksOperation extends TwoTrackOperation
 				ICommand<IStoreItem> newC = new DistanceBetweenOperation(null,
 						selection, destination,
 						"Propagation loss between tracks (indexed)",
-						"Calculate distance between two tracks", null);
+						"Propagation loss between two tracks", null);
 
 				res.add(newC);
 			}
