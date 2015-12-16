@@ -741,7 +741,11 @@ public class CollectionComplianceTests
 			{
 				StoreGroup group = (StoreGroup) item;
 				res = someHave(group.children(), dimension, walkTree);
-				break;
+				if (res != null)
+				{
+					break;
+				}
+
 			}
 			else if (item instanceof IQuantityCollection<?>)
 			{
@@ -775,7 +779,10 @@ public class CollectionComplianceTests
 			{
 				StoreGroup group = (StoreGroup) item;
 				res = someHaveLocation(group.children());
-				break;
+				if (res != null)
+				{
+					break;
+				}
 			}
 			else if (item instanceof IObjectCollection<?>)
 			{
