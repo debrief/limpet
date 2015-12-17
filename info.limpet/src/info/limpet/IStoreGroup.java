@@ -1,7 +1,6 @@
 package info.limpet;
 
 import java.util.Collection;
-import java.util.Spliterator;
 
 import info.limpet.IStore.IStoreItem;
 
