@@ -18,7 +18,7 @@ then
 	mkdir features
 	cp ../../info.limpet.product/target/repository/features/info.limpet* features
 	mkdir plugins
-	cp ../../info.limpet.product/target/repository/plugin/info.limpet* plugins
+	cp ../../info.limpet.product/target/repository/plugins/info.limpet* plugins
 	cd ..
 	rm -rf coverage
 	mkdir coverage
