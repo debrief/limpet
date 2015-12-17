@@ -68,7 +68,8 @@ public class StockTypes
 		{
 			public Speed_Kts(String name)
 			{
-				super(name, NAUTICAL_MILE.divide(SECOND.times(3600)).asType(Velocity.class));
+				super(name, NAUTICAL_MILE.divide(SECOND.times(3600)).asType(
+						Velocity.class));
 			}
 
 			public Speed_Kts()
@@ -93,9 +94,15 @@ public class StockTypes
 
 		public static class Length_M extends TemporalQuantityCollection<Length>
 		{
+
+			public Length_M(String name, ICommand<?> precedent)
+			{
+				super(name, precedent, METRE.asType(Length.class));
+			}
+
 			public Length_M(String name)
 			{
-				super(name, METRE.asType(Length.class));
+				this(name, null);
 			}
 
 			public Length_M()
@@ -189,23 +196,34 @@ public class StockTypes
 		public static class Frequency_Hz extends
 				TemporalQuantityCollection<Frequency>
 		{
+			public Frequency_Hz(String name, ICommand<?> precedent)
+			{
+				super(name, precedent, HERTZ.asType(Frequency.class));
+			}
+
 			public Frequency_Hz(String name)
 			{
-				super(name, HERTZ.asType(Frequency.class));
+				this(name, null);
 			}
 
 			public Frequency_Hz()
 			{
 				this(null);
 			}
+
 		}
 
 		public static class AcousticStrength extends
 				TemporalQuantityCollection<Dimensionless>
 		{
+			public AcousticStrength(String name, ICommand<?> precedent)
+			{
+				super(name, precedent, Dimensionless.UNIT);
+			}
+
 			public AcousticStrength(String name)
 			{
-				super(name, Dimensionless.UNIT);
+				this(name, null);
 			}
 
 			public AcousticStrength()
@@ -267,7 +285,8 @@ public class StockTypes
 		{
 			public Speed_Kts(String name)
 			{
-				super(name, NAUTICAL_MILE.divide(SECOND.times(3600)).asType(Velocity.class));
+				super(name, NAUTICAL_MILE.divide(SECOND.times(3600)).asType(
+						Velocity.class));
 			}
 
 			public Speed_Kts()
@@ -278,9 +297,14 @@ public class StockTypes
 
 		public static class Angle_Degrees extends QuantityCollection<Angle>
 		{
+			public Angle_Degrees(String name, ICommand<?> precedent)
+			{
+				super(name, precedent, DEGREE_ANGLE.asType(Angle.class));
+			}
+
 			public Angle_Degrees(String name)
 			{
-				super(name, DEGREE_ANGLE.asType(Angle.class));
+				this(name, null);
 			}
 
 			public Angle_Degrees()
@@ -288,7 +312,7 @@ public class StockTypes
 				this(null);
 			}
 		}
-		
+
 		public static class Angle_Radians extends QuantityCollection<Angle>
 		{
 			public Angle_Radians(String name)
@@ -302,15 +326,18 @@ public class StockTypes
 			}
 		}
 
-
 		public static class AcousticStrength extends
 				QuantityCollection<Dimensionless>
 		{
-			public AcousticStrength(String name)
+			public AcousticStrength(String name, ICommand<?> precedent)
 			{
-				super(name, Dimensionless.UNIT);
+				super(name, precedent, Dimensionless.UNIT);
 			}
 
+			public AcousticStrength(String name)
+			{
+				this(name, null);
+			}
 			public AcousticStrength()
 			{
 				this(null);
@@ -332,9 +359,15 @@ public class StockTypes
 
 		public static class Length_M extends QuantityCollection<Length>
 		{
+
+			public Length_M(String name, ICommand<?> precedent)
+			{
+				super(name, precedent, METRE.asType(Length.class));
+			}
+
 			public Length_M(String name)
 			{
-				super(name, METRE.asType(Length.class));
+				this(name, null);
 			}
 
 			public Length_M()

@@ -190,7 +190,7 @@ public class DopplerShiftBetweenTracksOperation implements
 		protected IQuantityCollection<?> getOutputCollection(final String title)
 		{
 			return new StockTypes.Temporal.Frequency_Hz("Doppler shift between "
-					+ title);
+					+ title, this);
 		}
 
 		public void organiseData()

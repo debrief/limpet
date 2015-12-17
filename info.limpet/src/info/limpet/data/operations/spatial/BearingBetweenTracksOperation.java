@@ -48,13 +48,13 @@ public class BearingBetweenTracksOperation extends TwoTrackOperation
 						if (isTemporal)
 						{
 							output = new StockTypes.Temporal.Angle_Degrees("Bearing between "
-									+ title, null);
+									+ title, this);
 
 						}
 						else
 						{
 							output = new StockTypes.NonTemporal.Angle_Degrees(
-									"Bearing between " + title);
+									"Bearing between " + title, this);
 						}
 
 						return output;
@@ -97,13 +97,13 @@ public class BearingBetweenTracksOperation extends TwoTrackOperation
 						if (isTemporal)
 						{
 							output = new StockTypes.Temporal.Angle_Degrees("Bearing between "
-									+ title, null);
+									+ title, this);
 
 						}
 						else
 						{
 							output = new StockTypes.NonTemporal.Angle_Degrees(
-									"Bearing between " + title);
+									"Bearing between " + title, null);
 						}
 
 						return output;

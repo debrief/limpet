@@ -40,12 +40,12 @@ public class ProplossBetweenTwoTracksOperation extends TwoTrackOperation
 			if (isTemporal)
 			{
 				res = new StockTypes.Temporal.AcousticStrength("Acoustic loss between "
-						+ title);
+						+ title, this);
 			}
 			else
 			{
 				res = new StockTypes.NonTemporal.AcousticStrength(
-						"Acoustic loss between " + title);
+						"Acoustic loss between " + title, this);
 			}
 			return res;
 		}
@@ -60,8 +60,11 @@ public class ProplossBetweenTwoTracksOperation extends TwoTrackOperation
 					.getCentroid().getOrdinate(1));
 			calc.setDestinationGeographicPoint(locB.getCentroid().getOrdinate(0),
 					locB.getCentroid().getOrdinate(1));
-			double thisDist = calc.getOrthodromicDistance();
-			final Measure<Double, Dimensionless> thisRes = Measure.valueOf(thisDist,
+			double thisDistMetres = calc.getOrthodromicDistance();
+			
+			// ok, we've got to do 20 log R
+			double thisLoss = 20d * Math.log(thisDistMetres);
+			final Measure<Double, Dimensionless> thisRes = Measure.valueOf(thisLoss,
 					outUnits);
 
 			if (time != null)

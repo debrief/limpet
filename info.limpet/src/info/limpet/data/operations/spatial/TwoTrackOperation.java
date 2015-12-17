@@ -54,7 +54,7 @@ abstract public class TwoTrackOperation implements IOperation<IStoreItem>
 			// ok, generate the new series
 			IQuantityCollection<?> target = getOutputCollection(title,
 					_timeProvider != null);
-
+			
 			outputs.add(target);
 
 			// store the output
