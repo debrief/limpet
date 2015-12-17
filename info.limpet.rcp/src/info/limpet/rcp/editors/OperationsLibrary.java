@@ -105,7 +105,7 @@ public class OperationsLibrary
 		arithmetic.add(new MultiplyQuantityOperation());
 		arithmetic.add(new AddQuantityOperation<>());
 		arithmetic.add(new SubtractQuantityOperation<>());
-		arithmetic.add(new DivideQuantityOperation<>());
+		arithmetic.add(new DivideQuantityOperation());
 		arithmetic.add(new SimpleMovingAverageOperation(3));
 
 		// also our generic maths operators

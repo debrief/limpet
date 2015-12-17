@@ -50,7 +50,7 @@ public class MultiplyQuantityOperation implements IOperation<IStoreItem>
 			if (aTests.allTemporal(selection) || !aTests.allNonTemporal(selection)
 					&& aTests.allEqualLengthOrSingleton(selection))
 			{
-				ITemporalQuantityCollection<?> longest = (ITemporalQuantityCollection<?>) aTests.getLongestTemporalCollections(selection);
+				IBaseTemporalCollection longest = (IBaseTemporalCollection) aTests.getLongestTemporalCollections(selection);
 
 				ICommand<IStoreItem> newC = new MultiplyQuantityValues(outputName,
 						selection, destination, longest);
