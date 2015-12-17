@@ -3,6 +3,7 @@ package info.limpet.data.operations;
 import info.limpet.IBaseTemporalCollection;
 import info.limpet.ICollection;
 import info.limpet.ICommand;
+import info.limpet.IContext;
 import info.limpet.IOperation;
 import info.limpet.IQuantityCollection;
 import info.limpet.IStore;
@@ -41,7 +42,7 @@ public class DivideQuantityOperation implements IOperation<IStoreItem>
 	}
 
 	public Collection<ICommand<IStoreItem>> actionsFor(
-			List<IStoreItem> selection, IStore destination)
+			List<IStoreItem> selection, IStore destination, IContext context)
 	{
 		Collection<ICommand<IStoreItem>> res = new ArrayList<ICommand<IStoreItem>>();
 
@@ -65,12 +66,12 @@ public class DivideQuantityOperation implements IOperation<IStoreItem>
 			String oName = item1.getName() + " / " + item2.getName();
 			ICommand<IStoreItem> newC = new DivideQuantityValues("Divide "
 					+ item1.getName() + " by " + item2.getName(), oName, selection,
-					item1, item2, destination, longest);
+					item1, item2, destination, longest, context);
 			res.add(newC);
 			oName = item2.getName() + " / " + item1.getName();
 			newC = new DivideQuantityValues("Divide " + item2.getName() + " by "
 					+ item1.getName(), oName, selection, item2, item1, destination,
-					longest);
+					longest, context);
 			res.add(newC);
 		}
 
@@ -105,10 +106,10 @@ public class DivideQuantityOperation implements IOperation<IStoreItem>
 		@SuppressWarnings("unchecked")
 		public DivideQuantityValues(String title, String outputName,
 				List<IStoreItem> selection, ICollection item1, ICollection item2,
-				IStore store, IBaseTemporalCollection timeProvider)
+				IStore store, IBaseTemporalCollection timeProvider, IContext context)
 		{
 			super(title, "Divide provided series", outputName, store, false, false,
-					selection);
+					selection, context);
 			_item1 = (IQuantityCollection<Quantity>) item1;
 			_item2 = (IQuantityCollection<Quantity>) item2;
 			_timeProvider = timeProvider;

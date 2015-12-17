@@ -3,6 +3,7 @@ package info.limpet.data.operations;
 import info.limpet.IBaseTemporalCollection;
 import info.limpet.ICollection;
 import info.limpet.ICommand;
+import info.limpet.IContext;
 import info.limpet.IOperation;
 import info.limpet.IQuantityCollection;
 import info.limpet.IStore;
@@ -34,13 +35,13 @@ abstract public class UnitaryMathOperation implements IOperation<ICollection>
 	abstract public double calcFor(double val);
 
 	public Collection<ICommand<ICollection>> actionsFor(
-			List<ICollection> selection, IStore destination)
+			List<ICollection> selection, IStore destination, IContext context)
 	{
 		Collection<ICommand<ICollection>> res = new ArrayList<ICommand<ICollection>>();
 		if (appliesTo(selection))
 		{
 			ICommand<ICollection> newC = new MathCommand("Math - " + _opName, selection,
-					destination);
+					destination, context);
 			res.add(newC);
 		}
 
@@ -65,10 +66,10 @@ abstract public class UnitaryMathOperation implements IOperation<ICollection>
 	{
 
 		public MathCommand(String operationName, List<ICollection> selection,
-				IStore store)
+				IStore store, IContext context)
 		{
 			super(operationName, "Convert units of the provided series", null, store,
-					false, false, selection);
+					false, false, selection, context);
 		}
 
 		

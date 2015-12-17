@@ -2,6 +2,7 @@ package info.limpet.data.operations.spatial;
 
 import info.limpet.IBaseTemporalCollection;
 import info.limpet.ICommand;
+import info.limpet.IContext;
 import info.limpet.IQuantityCollection;
 import info.limpet.IStore;
 import info.limpet.IStore.IStoreItem;
@@ -28,16 +29,16 @@ public class DistanceBetweenTracksOperation extends TwoTrackOperation
 
 		private DistanceBetweenOperation(String outputName,
 				List<IStoreItem> selection, IStore store, String title,
-				String description)
+				String description, IContext context)
 		{
-			this(outputName, selection, store, title, description, null);
+			this(outputName, selection, store, title, description, null, context);
 		}
 
 		public DistanceBetweenOperation(String outputName,
 				List<IStoreItem> selection, IStore store, String title,
-				String description, IBaseTemporalCollection timeProvider)
+				String description, IBaseTemporalCollection timeProvider, IContext context)
 		{
-			super(outputName, selection, store, title, description, timeProvider);
+			super(outputName, selection, store, title, description, timeProvider, context);
 		}
 
 		protected IQuantityCollection<?> getOutputCollection(String title,
@@ -100,7 +101,7 @@ public class DistanceBetweenTracksOperation extends TwoTrackOperation
 	}
 
 	public Collection<ICommand<IStoreItem>> actionsFor(
-			List<IStoreItem> selection, IStore destination)
+			List<IStoreItem> selection, IStore destination, IContext context)
 	{
 		Collection<ICommand<IStoreItem>> res = new ArrayList<ICommand<IStoreItem>>();
 		if (appliesTo(selection))
@@ -116,7 +117,7 @@ public class DistanceBetweenTracksOperation extends TwoTrackOperation
 				ICommand<IStoreItem> newC = new DistanceBetweenOperation(null,
 						selection, destination, "Distance between tracks (interpolated)",
 						"Calculate distance between two tracks (interpolated)",
-						timeProvider);
+						timeProvider, context);
 				res.add(newC);
 			}
 
@@ -125,7 +126,7 @@ public class DistanceBetweenTracksOperation extends TwoTrackOperation
 				// ok, provide an indexed action
 				ICommand<IStoreItem> newC = new DistanceBetweenOperation(null,
 						selection, destination, "Distance between tracks (indexed)",
-						"Calculate distance between two tracks (indexed)");
+						"Calculate distance between two tracks (indexed)", context);
 				res.add(newC);
 			}
 		}

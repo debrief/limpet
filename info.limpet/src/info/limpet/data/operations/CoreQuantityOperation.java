@@ -2,6 +2,7 @@ package info.limpet.data.operations;
 
 import info.limpet.ICollection;
 import info.limpet.ICommand;
+import info.limpet.IContext;
 import info.limpet.IQuantityCollection;
 import info.limpet.IStore;
 import info.limpet.IStore.IStoreItem;
@@ -31,7 +32,7 @@ public abstract class CoreQuantityOperation<Q extends Quantity>
 	}
 
 	public Collection<ICommand<IQuantityCollection<Q>>> actionsFor(
-			List<IQuantityCollection<Q>> selection, IStore destination)
+			List<IQuantityCollection<Q>> selection, IStore destination, IContext context)
 	{
 		Collection<ICommand<IQuantityCollection<Q>>> res = new ArrayList<ICommand<IQuantityCollection<Q>>>();
 		if (appliesTo(selection))
@@ -40,14 +41,14 @@ public abstract class CoreQuantityOperation<Q extends Quantity>
 			// so, do we do our indexed commands?
 			if (aTests.allEqualLength(selection))
 			{
-				addIndexedCommands(selection, destination, res);
+				addIndexedCommands(selection, destination, res, context);
 			}
 
 			// aah, what about temporal (interpolated) values?
 			if (aTests.allTemporal(selection)
 					&& aTests.suitableForTimeInterpolation(selection))
 			{
-				addInterpolatedCommands(selection, destination, res);
+				addInterpolatedCommands(selection, destination, res, context);
 			}
 
 		}
@@ -99,7 +100,7 @@ public abstract class CoreQuantityOperation<Q extends Quantity>
 	 */
 	abstract protected void addIndexedCommands(
 			List<IQuantityCollection<Q>> selection, IStore destination,
-			Collection<ICommand<IQuantityCollection<Q>>> commands);
+			Collection<ICommand<IQuantityCollection<Q>>> commands, IContext context);
 
 	/**
 	 * add any commands that require temporal interpolation
@@ -110,7 +111,7 @@ public abstract class CoreQuantityOperation<Q extends Quantity>
 	 */
 	abstract protected void addInterpolatedCommands(
 			List<IQuantityCollection<Q>> selection, IStore destination,
-			Collection<ICommand<IQuantityCollection<Q>>> res);
+			Collection<ICommand<IQuantityCollection<Q>>> res, IContext context);
 
 	/**
 	 * the command that actually produces data
@@ -126,18 +127,18 @@ public abstract class CoreQuantityOperation<Q extends Quantity>
 
 		public CoreQuantityCommand(String title, String description,
 				String outputName, IStore store, boolean canUndo, boolean canRedo,
-				List<IQuantityCollection<Q>> inputs)
+				List<IQuantityCollection<Q>> inputs, IContext context)
 		{
 			this(title, description, outputName, store, canUndo, canRedo, inputs,
-					null);
+					null, context);
 		}
 
 		public CoreQuantityCommand(String title, String description,
 				String outputName, IStore store, boolean canUndo, boolean canRedo,
 				List<IQuantityCollection<Q>> inputs,
-				ITemporalQuantityCollection<Q> timeProvider)
+				ITemporalQuantityCollection<Q> timeProvider, IContext context)
 		{
-			super(title, description, outputName, store, canUndo, canRedo, inputs);
+			super(title, description, outputName, store, canUndo, canRedo, inputs, context);
 
 			_timeProvider = timeProvider;
 		}

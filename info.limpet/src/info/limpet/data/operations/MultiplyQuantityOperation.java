@@ -3,6 +3,7 @@ package info.limpet.data.operations;
 import info.limpet.IBaseTemporalCollection;
 import info.limpet.ICollection;
 import info.limpet.ICommand;
+import info.limpet.IContext;
 import info.limpet.IOperation;
 import info.limpet.IQuantityCollection;
 import info.limpet.IStore;
@@ -41,7 +42,7 @@ public class MultiplyQuantityOperation implements IOperation<IStoreItem>
 	}
 
 	public Collection<ICommand<IStoreItem>> actionsFor(
-			List<IStoreItem> selection, IStore destination)
+			List<IStoreItem> selection, IStore destination, IContext context)
 	{
 		Collection<ICommand<IStoreItem>> res = new ArrayList<ICommand<IStoreItem>>();
 		if (appliesTo(selection))
@@ -53,14 +54,14 @@ public class MultiplyQuantityOperation implements IOperation<IStoreItem>
 				IBaseTemporalCollection longest = (IBaseTemporalCollection) aTests.getLongestTemporalCollections(selection);
 
 				ICommand<IStoreItem> newC = new MultiplyQuantityValues(outputName,
-						selection, destination, longest);
+						selection, destination, longest, context);
 				res.add(newC);
 			}
 			else
 			{
 
 				ICommand<IStoreItem> newC = new MultiplyQuantityValues(outputName,
-						selection, destination);
+						selection, destination, context);
 				res.add(newC);
 			}
 
@@ -94,17 +95,17 @@ public class MultiplyQuantityOperation implements IOperation<IStoreItem>
 		private IBaseTemporalCollection _timeProvider;
 
 		public MultiplyQuantityValues(String outputName,
-				List<IStoreItem> selection, IStore store)
+				List<IStoreItem> selection, IStore store, IContext context)
 		{
-			this(outputName, selection, store, null);
+			this(outputName, selection, store, null, context);
 		}
 
 		public MultiplyQuantityValues(String outputName,
 				List<IStoreItem> selection, IStore store,
-				IBaseTemporalCollection timeProvider)
+				IBaseTemporalCollection timeProvider, IContext context)
 		{
 			super("Multiply series", "Multiply series", outputName, store, false,
-					false, selection);
+					false, selection, context);
 			_timeProvider = timeProvider;
 		}
 

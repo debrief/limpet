@@ -2,9 +2,11 @@ package info.limpet.data;
 
 import info.limpet.ICollection;
 import info.limpet.ICommand;
+import info.limpet.IContext;
 import info.limpet.IQuantityCollection;
 import info.limpet.IStore.IStoreItem;
 import info.limpet.data.impl.CoreChangeListener;
+import info.limpet.data.impl.MockContext;
 import info.limpet.data.impl.samples.SampleData;
 import info.limpet.data.operations.AddQuantityOperation;
 import info.limpet.data.store.InMemoryStore;
@@ -18,6 +20,8 @@ import junit.framework.TestCase;
 
 public class TestDynamic extends TestCase
 {
+
+	private IContext context = new MockContext();
 
 	@SuppressWarnings(
 	{ "unchecked", "rawtypes" })
@@ -36,7 +40,7 @@ public class TestDynamic extends TestCase
 		int storeSize = store.size();
 
 		Collection<ICommand<?>> actions = new AddQuantityOperation().actionsFor(
-				selection, store);
+				selection, store, context );
 		Iterator<ICommand<?>> addIter = actions.iterator();
 		addIter.next();
 		ICommand<?> firstAction = addIter.next();		
@@ -85,7 +89,7 @@ public class TestDynamic extends TestCase
 		selection.add(resSeries);
 
 		// ok - now for a further dependent calculation
-		actions = new AddQuantityOperation("output2").actionsFor(selection, store);
+		actions = new AddQuantityOperation("output2").actionsFor(selection, store, context);
 		addIter = actions.iterator();
 		addIter.next();
 		firstAction = addIter.next();

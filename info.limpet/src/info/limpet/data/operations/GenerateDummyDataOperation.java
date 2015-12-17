@@ -1,6 +1,7 @@
 package info.limpet.data.operations;
 
 import info.limpet.ICommand;
+import info.limpet.IContext;
 import info.limpet.IOperation;
 import info.limpet.IStore;
 import info.limpet.IStore.IStoreItem;
@@ -28,14 +29,14 @@ public class GenerateDummyDataOperation implements IOperation<IStoreItem>
 	}
 
 	public Collection<ICommand<IStoreItem>> actionsFor(
-			List<IStoreItem> selection, IStore destination)
+			List<IStoreItem> selection, IStore destination, IContext context)
 	{
 		Collection<ICommand<IStoreItem>> res = new ArrayList<ICommand<IStoreItem>>();
 		if (appliesTo(selection))
 		{
 			String thisTitle = "Generate " + _title + " dataset (" + _count + ")";
 			ICommand<IStoreItem> newC = new GenerateDummyDataCommand(thisTitle,
-					destination, _count);
+					destination, _count, context);
 			res.add(newC);
 		}
 
@@ -53,9 +54,9 @@ public class GenerateDummyDataOperation implements IOperation<IStoreItem>
 	{
 		final long _count;
 
-		public GenerateDummyDataCommand(String title, IStore store, long count)
+		public GenerateDummyDataCommand(String title, IStore store, long count, IContext context)
 		{
-			super(title, "Create some sample data", null, store, false, false, null);
+			super(title, "Create some sample data", null, store, false, false, null, context);
 			_count = count;
 		}
 

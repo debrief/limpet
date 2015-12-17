@@ -2,6 +2,7 @@ package info.limpet.data.operations;
 
 import info.limpet.ICollection;
 import info.limpet.ICommand;
+import info.limpet.IContext;
 import info.limpet.IOperation;
 import info.limpet.IQuantityCollection;
 import info.limpet.IStore;
@@ -33,14 +34,14 @@ public class SimpleMovingAverageOperation implements IOperation<ICollection>
 	}
 
 	public Collection<ICommand<ICollection>> actionsFor(
-			List<ICollection> selection, IStore destination)
+			List<ICollection> selection, IStore destination, IContext context)
 	{
 		Collection<ICommand<ICollection>> res = new ArrayList<ICommand<ICollection>>();
 		if (appliesTo(selection))
 		{
 			ICommand<ICollection> newC = new SimpleMovingAverageCommand(
 					SERIES_NAME_TEMPLATE, SERIES_NAME_TEMPLATE, selection, destination,
-					_windowSize);
+					_windowSize, context);
 			res.add(newC);
 		}
 
@@ -60,10 +61,10 @@ public class SimpleMovingAverageOperation implements IOperation<ICollection>
 		private int winSize;
 
 		public SimpleMovingAverageCommand(String operationName, String outputName,
-				List<ICollection> selection, IStore store, int windowSize)
+				List<ICollection> selection, IStore store, int windowSize, IContext context)
 		{
 			super(operationName, "Calculates a Simple Moving Average", outputName,
-					store, false, false, selection);
+					store, false, false, selection, context);
 			winSize = windowSize;
 		}
 

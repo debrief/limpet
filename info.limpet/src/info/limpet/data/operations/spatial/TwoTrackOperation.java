@@ -2,6 +2,7 @@ package info.limpet.data.operations.spatial;
 
 import info.limpet.IBaseTemporalCollection;
 import info.limpet.ICollection;
+import info.limpet.IContext;
 import info.limpet.IOperation;
 import info.limpet.IQuantityCollection;
 import info.limpet.IStore;
@@ -34,9 +35,9 @@ abstract public class TwoTrackOperation implements IOperation<IStoreItem>
 
 		public DistanceOperation(String outputName, List<IStoreItem> selection,
 				IStore store, String title, String description,
-				IBaseTemporalCollection timeProvider)
+				IBaseTemporalCollection timeProvider, IContext context)
 		{
-			super(title, description, outputName, store, false, false, selection);
+			super(title, description, outputName, store, false, false, selection, context);
 			_timeProvider = timeProvider;
 		}
 

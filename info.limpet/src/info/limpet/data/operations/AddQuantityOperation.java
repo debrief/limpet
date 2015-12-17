@@ -1,6 +1,7 @@
 package info.limpet.data.operations;
 
 import info.limpet.ICommand;
+import info.limpet.IContext;
 import info.limpet.IOperation;
 import info.limpet.IQuantityCollection;
 import info.limpet.IStore;
@@ -31,23 +32,24 @@ public class AddQuantityOperation<Q extends Quantity> extends
 	@Override
 	protected void addInterpolatedCommands(
 			List<IQuantityCollection<Q>> selection, IStore destination,
-			Collection<ICommand<IQuantityCollection<Q>>> res)
+			Collection<ICommand<IQuantityCollection<Q>>> res, IContext context)
 	{
 		ITemporalQuantityCollection<Q> longest = getLongestTemporalCollections(selection);
 
 		if (longest != null)
 		{
 			ICommand<IQuantityCollection<Q>> newC = new AddQuantityValues(outputName
-					+ " (interpolated)", selection, destination, longest);
+					+ " (interpolated)", selection, destination, longest, context);
 			res.add(newC);
 		}
 	}
 
 	protected void addIndexedCommands(List<IQuantityCollection<Q>> selection,
-			IStore destination, Collection<ICommand<IQuantityCollection<Q>>> res)
+			IStore destination, Collection<ICommand<IQuantityCollection<Q>>> res, 
+			IContext context)
 	{
 		ICommand<IQuantityCollection<Q>> newC = new AddQuantityValues(outputName,
-				selection, destination);
+				selection, destination, context);
 		res.add(newC);
 	}
 
@@ -66,18 +68,18 @@ public class AddQuantityOperation<Q extends Quantity> extends
 	public class AddQuantityValues extends CoreQuantityCommand
 	{
 		public AddQuantityValues(String outputName,
-				List<IQuantityCollection<Q>> selection, IStore store)
+				List<IQuantityCollection<Q>> selection, IStore store, IContext context)
 		{
 			super(outputName, "Add numeric values in provided series", outputName,
-					store, false, false, selection);
+					store, false, false, selection, context);
 		}
 
 		public AddQuantityValues(String outputName,
 				List<IQuantityCollection<Q>> selection, IStore destination,
-				ITemporalQuantityCollection<Q> timeProvider)
+				ITemporalQuantityCollection<Q> timeProvider, IContext context)
 		{
 			super(outputName, "Add numeric values in provided series", outputName,
-					destination, false, false, selection, timeProvider);
+					destination, false, false, selection, timeProvider, context);
 		}
 
 		@Override

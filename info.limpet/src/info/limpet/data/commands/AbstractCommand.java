@@ -2,6 +2,7 @@ package info.limpet.data.commands;
 
 import info.limpet.IChangeListener;
 import info.limpet.ICommand;
+import info.limpet.IContext;
 import info.limpet.IQuantityCollection;
 import info.limpet.IStore;
 import info.limpet.IStore.IStoreItem;
@@ -37,7 +38,7 @@ public abstract class AbstractCommand<T extends IStoreItem> implements
 	transient private UUID uuid;
 
 	public AbstractCommand(String title, String description, String outputName,
-			IStore store, boolean canUndo, boolean canRedo, List<T> inputs)
+			IStore store, boolean canUndo, boolean canRedo, List<T> inputs, IContext context)
 	{
 		this.title = title;
 		this.description = description;

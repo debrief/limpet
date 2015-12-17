@@ -2,6 +2,7 @@ package info.limpet.data.operations.spatial;
 
 import info.limpet.IBaseTemporalCollection;
 import info.limpet.ICommand;
+import info.limpet.IContext;
 import info.limpet.IQuantityCollection;
 import info.limpet.IStore;
 import info.limpet.IStore.IStoreItem;
@@ -29,9 +30,9 @@ public class ProplossBetweenTwoTracksOperation extends TwoTrackOperation
 	{
 		private DistanceBetweenOperation(String outputName,
 				List<IStoreItem> selection, IStore store, String title,
-				String description, IBaseTemporalCollection timeProvider)
+				String description, IBaseTemporalCollection timeProvider, IContext context)
 		{
-			super(outputName, selection, store, title, description, timeProvider);
+			super(outputName, selection, store, title, description, timeProvider, context);
 		}
 
 		protected IQuantityCollection<?> getOutputCollection(String title,
@@ -86,7 +87,7 @@ public class ProplossBetweenTwoTracksOperation extends TwoTrackOperation
 	}
 
 	public Collection<ICommand<IStoreItem>> actionsFor(
-			List<IStoreItem> selection, IStore destination)
+			List<IStoreItem> selection, IStore destination, IContext context)
 	{
 		Collection<ICommand<IStoreItem>> res = new ArrayList<ICommand<IStoreItem>>();
 		if (appliesTo(selection))
@@ -100,7 +101,7 @@ public class ProplossBetweenTwoTracksOperation extends TwoTrackOperation
 
 				ICommand<IStoreItem> newC = new DistanceBetweenOperation(null,
 						selection, destination, "Propagation loss between tracks (interpolated)",
-						"Propagation loss between two tracks", timeProvider);
+						"Propagation loss between two tracks", timeProvider, context);
 
 				res.add(newC);
 			}
@@ -110,7 +111,7 @@ public class ProplossBetweenTwoTracksOperation extends TwoTrackOperation
 				ICommand<IStoreItem> newC = new DistanceBetweenOperation(null,
 						selection, destination,
 						"Propagation loss between tracks (indexed)",
-						"Propagation loss between two tracks", null);
+						"Propagation loss between two tracks", null, context);
 
 				res.add(newC);
 			}

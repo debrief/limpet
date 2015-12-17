@@ -5,6 +5,7 @@ import static javax.measure.unit.SI.SECOND;
 import info.limpet.IBaseTemporalCollection;
 import info.limpet.ICollection;
 import info.limpet.ICommand;
+import info.limpet.IContext;
 import info.limpet.IOperation;
 import info.limpet.IQuantityCollection;
 import info.limpet.IStore;
@@ -96,9 +97,9 @@ public class DopplerShiftBetweenTracksOperation implements
 
 		public DopplerShiftOperation(final String outputName, final StoreGroup tx,
 				final StoreGroup rx, final IStore store, final String title,
-				final String description, final List<IStoreItem> selection)
+				final String description, final List<IStoreItem> selection, IContext context)
 		{
-			super(title, description, outputName, store, true, true, selection);
+			super(title, description, outputName, store, true, true, selection, context);
 			_tx = tx;
 			_rx = rx;
 		}
@@ -330,7 +331,7 @@ public class DopplerShiftBetweenTracksOperation implements
 
 	@Override
 	public Collection<ICommand<IStoreItem>> actionsFor(
-			final List<IStoreItem> selection, final IStore destination)
+			final List<IStoreItem> selection, final IStore destination, IContext context)
 	{
 		final Collection<ICommand<IStoreItem>> res = new ArrayList<ICommand<IStoreItem>>();
 		if (appliesTo(selection))
@@ -343,7 +344,7 @@ public class DopplerShiftBetweenTracksOperation implements
 			{
 				final ICommand<IStoreItem> newC = new DopplerShiftOperation(null, groupA, groupB, destination,
 						"Doppler between tracks (from " + groupA.getName() + ")",
-						"Calculate doppler between two tracks", selection);
+						"Calculate doppler between two tracks", selection, context);
 				res.add(newC);
 			}
 
@@ -351,7 +352,7 @@ public class DopplerShiftBetweenTracksOperation implements
 			{
 				final ICommand<IStoreItem> newC = new DopplerShiftOperation(null, groupB, groupA, destination,
 						"Doppler between tracks (from " + groupB.getName() + ")",
-						"Calculate doppler between two tracks", selection);
+						"Calculate doppler between two tracks", selection, context);
 				res.add(newC);
 			}
 		}

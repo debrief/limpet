@@ -2,6 +2,7 @@ package info.limpet.data.operations.spatial;
 
 import info.limpet.ICollection;
 import info.limpet.ICommand;
+import info.limpet.IContext;
 import info.limpet.IOperation;
 import info.limpet.IQuantityCollection;
 import info.limpet.IStore;
@@ -32,9 +33,9 @@ public class GenerateCourseAndSpeedOperation implements IOperation<IStoreItem>
 	{
 
 		public DistanceOperation(String outputName, List<IStoreItem> selection,
-				IStore store, String title, String description)
+				IStore store, String title, String description, IContext context)
 		{
-			super(title, description, outputName, store, false, false, selection);
+			super(title, description, outputName, store, false, false, selection, context);
 		}
 
 		@Override
@@ -153,7 +154,7 @@ public class GenerateCourseAndSpeedOperation implements IOperation<IStoreItem>
 	}
 
 	public Collection<ICommand<IStoreItem>> actionsFor(
-			List<IStoreItem> selection, IStore destination)
+			List<IStoreItem> selection, IStore destination, IContext context)
 	{
 		Collection<ICommand<IStoreItem>> res = new ArrayList<ICommand<IStoreItem>>();
 		if (appliesTo(selection))
@@ -171,7 +172,7 @@ public class GenerateCourseAndSpeedOperation implements IOperation<IStoreItem>
 			}
 
 			ICommand<IStoreItem> genCourse = new DistanceOperation(null, selection,
-					destination, "Generate calculated course", title)
+					destination, "Generate calculated course", title, context)
 			{
 
 				protected IQuantityCollection<?> getOutputCollection(String title)
@@ -200,7 +201,7 @@ public class GenerateCourseAndSpeedOperation implements IOperation<IStoreItem>
 				}
 			};
 			ICommand<IStoreItem> genSpeed = new DistanceOperation(null, selection,
-					destination, "Generate calculated speed", title)
+					destination, "Generate calculated speed", title, context)
 			{
 
 				protected IQuantityCollection<?> getOutputCollection(String title)

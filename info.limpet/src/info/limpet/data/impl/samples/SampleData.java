@@ -1,10 +1,12 @@
 package info.limpet.data.impl.samples;
 
 import info.limpet.ICommand;
+import info.limpet.IContext;
 import info.limpet.IObjectCollection;
 import info.limpet.IQuantityCollection;
 import info.limpet.IStore.IStoreItem;
 import info.limpet.QuantityRange;
+import info.limpet.data.impl.MockContext;
 import info.limpet.data.impl.ObjectCollection;
 import info.limpet.data.impl.QuantityCollection;
 import info.limpet.data.impl.samples.StockTypes.Temporal.ElapsedTime_Sec;
@@ -196,10 +198,11 @@ public class SampleData
 		List<IStoreItem> selection = new ArrayList<IStoreItem>();
 		selection.add(speedSeries1);
 		selection.add(speedSeries2);
+		IContext context = new MockContext();
 		@SuppressWarnings(
 		{ "unchecked", "rawtypes" })
 		Collection<ICommand<?>> actions = new AddQuantityOperation().actionsFor(
-				selection, res);
+				selection, res, context);
 		Iterator<ICommand<?>> addIter = actions.iterator();
 		addIter.next();
 		ICommand<?> addAction = addIter.next();
@@ -210,7 +213,7 @@ public class SampleData
 		selection.add(speedSeries1);
 		selection.add(singleton1);
 		Collection<ICommand<IStoreItem>> actions2 = new MultiplyQuantityOperation()
-				.actionsFor(selection, res);
+				.actionsFor(selection, res, context);
 		addAction = actions2.iterator().next();
 		addAction.execute();
 
@@ -219,7 +222,7 @@ public class SampleData
 		selection.add(timeIntervals);
 		selection.add(singletonRange1);
 		Collection<ICommand<IStoreItem>> actions3 = new MultiplyQuantityOperation(
-				"Calculated distance").actionsFor(selection, res);
+				"Calculated distance").actionsFor(selection, res, context);
 		addAction = actions3.iterator().next();
 		addAction.execute();
 
