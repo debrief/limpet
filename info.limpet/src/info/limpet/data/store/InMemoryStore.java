@@ -39,6 +39,8 @@ public class InMemoryStore implements IStore, IChangeListener
 			_name = name;
 		}
 
+		
+		
 		@Override
 		public UUID getUUID()
 		{

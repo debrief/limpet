@@ -50,7 +50,7 @@ public class MultiplyQuantityOperation implements IOperation<IStoreItem>
 			if (aTests.allTemporal(selection) || !aTests.allNonTemporal(selection)
 					&& aTests.allEqualLengthOrSingleton(selection))
 			{
-				ITemporalQuantityCollection<?> longest = getLongestTemporalCollections(selection);
+				ITemporalQuantityCollection<?> longest = (ITemporalQuantityCollection<?>) aTests.getLongestTemporalCollections(selection);
 
 				ICommand<IStoreItem> newC = new MultiplyQuantityValues(outputName,
 						selection, destination, longest);
@@ -69,32 +69,6 @@ public class MultiplyQuantityOperation implements IOperation<IStoreItem>
 		return res;
 	}
 
-	public static ITemporalQuantityCollection<?> getLongestTemporalCollections(
-			List<IStoreItem> selection)
-	{
-		// find the longest time series.
-		Iterator<IStoreItem> iter = selection.iterator();
-		ITemporalQuantityCollection<?> longest = null;
-
-		while (iter.hasNext())
-		{
-			ICollection thisC = (ICollection) iter.next();
-			if (thisC.isTemporal() && thisC.isQuantity())
-			{
-				ITemporalQuantityCollection<?> tqc = (ITemporalQuantityCollection<?>) thisC;
-				if (longest == null)
-				{
-					longest = tqc;
-				}
-				else
-				{
-					// store the longest one
-					longest = tqc.size() > longest.size() ? tqc : longest;
-				}
-			}
-		}
-		return longest;
-	}
 
 	private boolean appliesTo(List<IStoreItem> selection)
 	{

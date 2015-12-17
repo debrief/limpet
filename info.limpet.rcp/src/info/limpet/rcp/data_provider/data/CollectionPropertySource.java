@@ -3,6 +3,9 @@ package info.limpet.rcp.data_provider.data;
 import info.limpet.ICollection;
 import info.limpet.IQuantityCollection;
 import info.limpet.QuantityRange;
+import info.limpet.data.impl.samples.StockTypes.NonTemporal;
+import info.limpet.data.impl.samples.StockTypes.NonTemporal.Location;
+import info.limpet.data.operations.spatial.GeoSupport;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +19,9 @@ import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
 import org.eclipse.ui.views.properties.TextPropertyDescriptor;
+import org.geotools.geometry.iso.primitive.PointImpl;
+import org.opengis.geometry.Geometry;
+import org.opengis.geometry.primitive.Point;
 
 /**
  * This class provides property sheet properties for ButtonElement.
@@ -30,6 +36,8 @@ public class CollectionPropertySource implements IPropertySource
 	private static final String PROPERTY_VALUE_SLIDER = "limpet.collection.value.slider";
 	private static final String PROPERTY_UNITS = "limpet.collection.units";
 	private static final String PROPERTY_RANGE = "limpet.collection.range";
+	private static final String PROPERTY_LOC_LAT = "limpet.collection.loc.lat";
+	private static final String PROPERTY_LOC_LONG = "limpet.collection.loc.long";
 
 	private IPropertyDescriptor[] propertyDescriptors;
 	private final CollectionWrapper _collection;
@@ -76,10 +84,13 @@ public class CollectionPropertySource implements IPropertySource
 			if (coll.size() == 1)
 			{
 				// ok, just use a text editor
-				final PropertyDescriptor valueDescriptor = new TextPropertyDescriptor(
-						PROPERTY_VALUE, "Value");
-				valueDescriptor.setCategory("Value");
-				dList.add(valueDescriptor);
+				if (coll.isQuantity())
+				{
+					final PropertyDescriptor valueDescriptor = new TextPropertyDescriptor(
+							PROPERTY_VALUE, "Value");
+					valueDescriptor.setCategory("Value");
+					dList.add(valueDescriptor);
+				}
 
 				// see if the type has any units
 				if (coll instanceof IQuantityCollection)
@@ -100,7 +111,21 @@ public class CollectionPropertySource implements IPropertySource
 					rangeDescriptor.setCategory("Metadata");
 					dList.add(rangeDescriptor);
 				}
+				else if (coll instanceof NonTemporal.Location)
+				{
+					if (coll.size() == 1)
+					{
+						final PropertyDescriptor latDescriptor = new TextPropertyDescriptor(
+								PROPERTY_LOC_LAT, "Latitude");
+						latDescriptor.setCategory("Value");
+						dList.add(latDescriptor);
 
+						final PropertyDescriptor longDescriptor = new TextPropertyDescriptor(
+								PROPERTY_LOC_LONG, "Longitude");
+						longDescriptor.setCategory("Value");
+						dList.add(longDescriptor);
+					}
+				}
 			}
 
 			dList.add(textDescriptor);
@@ -184,6 +209,26 @@ public class CollectionPropertySource implements IPropertySource
 				return "" + qc.getUnits();
 			}
 		}
+		else if (prop.equals(PROPERTY_LOC_LAT))
+		{
+			if ((coll.size() > 0) && (coll instanceof NonTemporal.Location))
+			{
+				NonTemporal.Location locColl = (Location) coll;
+				Geometry loc = locColl.getValues().iterator().next();
+				PointImpl point = (PointImpl) loc;
+				return "" + point.getDirectPosition().getY();
+			}
+		}
+		else if (prop.equals(PROPERTY_LOC_LONG))
+		{
+			if ((coll.size() > 0) && (coll instanceof NonTemporal.Location))
+			{
+				NonTemporal.Location locColl = (Location) coll;
+				Geometry loc = locColl.getValues().iterator().next();
+				PointImpl point = (PointImpl) loc;
+				return "" + point.getDirectPosition().getX();
+			}
+		}
 
 		return null;
 	}
@@ -217,7 +262,8 @@ public class CollectionPropertySource implements IPropertySource
 
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings(
+	{ "unchecked", "rawtypes" })
 	@Override
 	public void setPropertyValue(final Object id, final Object value)
 	{
@@ -257,6 +303,58 @@ public class CollectionPropertySource implements IPropertySource
 				tt.fireDataChanged();
 			}
 		}
+		else if (prop.equals(PROPERTY_LOC_LAT))
+		{
+			if (coll instanceof NonTemporal.Location)
+			{
+				NonTemporal.Location locColl = (Location) coll;
+
+				// get the current location
+				if (locColl.size() > 0)
+				{
+					PointImpl loc = (PointImpl) locColl.getValues().iterator().next();
+
+					// ok, create replacement
+					double newLat = Double.parseDouble((String) value);
+
+					Point newLoc = GeoSupport.getBuilder().createPoint(
+							loc.getDirectPosition().getX(), newLat);
+
+					locColl.clear();
+
+					locColl.add(newLoc);
+
+					// ok, fire changed!
+					locColl.fireDataChanged();
+				}
+			}
+		}
+		else if (prop.equals(PROPERTY_LOC_LONG))
+		{
+			if (coll instanceof NonTemporal.Location)
+			{
+				NonTemporal.Location locColl = (Location) coll;
+
+				if (locColl.size() > 0)
+				{
+					// get the current location
+					PointImpl loc = (PointImpl) locColl.getValues().iterator().next();
+
+					// ok, create replacement
+					double newLong = Double.parseDouble((String) value);
+
+					Point newLoc = GeoSupport.getBuilder().createPoint(newLong,
+							loc.getDirectPosition().getY());
+
+					locColl.clear();
+
+					locColl.add(newLoc);
+
+					// ok, fire changed!
+					locColl.fireDataChanged();
+				}
+			}
+		}
 		else if (prop.equals(PROPERTY_RANGE))
 		{
 			if (coll instanceof IQuantityCollection<?>)
@@ -292,7 +390,8 @@ public class CollectionPropertySource implements IPropertySource
 					}
 					else
 					{
-						System.err.println("Number format string not properly constructed:" + str  + " (should be 1:10)");
+						System.err.println("Number format string not properly constructed:"
+								+ str + " (should be 1:10)");
 					}
 				}
 				// ok, fire changed!

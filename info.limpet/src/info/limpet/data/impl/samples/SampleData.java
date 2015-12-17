@@ -3,6 +3,7 @@ package info.limpet.data.impl.samples;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.measure.Measure;
@@ -33,6 +34,7 @@ import info.limpet.data.store.InMemoryStore.StoreGroup;
 
 public class SampleData
 {
+	public static final String SPEED_THREE_LONGER = "Speed Three (longer)";
 	public static final String SPEED_IRREGULAR2 = "Speed two irregular time";
 	public static final String TIME_INTERVALS = "Time intervals";
 	public static final String STRING_TWO = "String two";
@@ -61,7 +63,7 @@ public class SampleData
 		StockTypes.Temporal.Speed_MSec speedSeries2 = new StockTypes.Temporal.Speed_MSec(
 				SPEED_TWO);
 		StockTypes.Temporal.Speed_MSec speedSeries3 = new StockTypes.Temporal.Speed_MSec(
-				"Speed Three (longer)");
+				SPEED_THREE_LONGER);
 		StockTypes.Temporal.Speed_MSec speed_early_1 = new StockTypes.Temporal.Speed_MSec(
 				SPEED_EARLY);
 		StockTypes.Temporal.Speed_MSec speed_irregular = new StockTypes.Temporal.Speed_MSec(
@@ -199,7 +201,9 @@ public class SampleData
 		{ "unchecked", "rawtypes" })
 		Collection<ICommand<?>> actions = new AddQuantityOperation().actionsFor(
 				selection, res);
-		ICommand<?> addAction = actions.iterator().next();
+		Iterator<ICommand<?>> addIter = actions.iterator();
+		addIter.next();
+		ICommand<?> addAction = addIter.next();
 		addAction.execute();
 
 		// and an operation using our speed factor

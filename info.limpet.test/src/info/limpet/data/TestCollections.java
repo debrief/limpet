@@ -13,6 +13,7 @@ import java.util.List;
 
 import javax.measure.Measurable;
 import javax.measure.Measure;
+import javax.measure.quantity.Dimensionless;
 import javax.measure.quantity.Quantity;
 import javax.measure.quantity.Velocity;
 import javax.measure.unit.Unit;
@@ -358,7 +359,7 @@ public class TestCollections extends TestCase
 	{ "unchecked", "rawtypes" })
 	public void testMathOperators()
 	{
-		ITemporalQuantityCollection<?> tq1 = new StockTypes.Temporal.Speed_MSec(
+		StockTypes.Temporal.Speed_MSec tq1 = new StockTypes.Temporal.Speed_MSec(
 				"Some data1");
 		tq1.add(100, 10);
 		tq1.add(200, -20);
@@ -371,8 +372,15 @@ public class TestCollections extends TestCase
 		tq2.add(340, -17);
 		tq2.add(440, -22);
 
+		StockTypes.NonTemporal.Speed_MSec nq1 = new StockTypes.NonTemporal.Speed_MSec(
+				"Some data1");
+		nq1.add(10);
+		nq1.add(-20);
+		nq1.add(30);
+		nq1.add(-20);
+
 		List<ICollection> selection = new ArrayList<ICollection>();
-		selection.add((IQuantityCollection<Quantity>) tq1);
+		selection.add(tq1);
 		selection.add((IQuantityCollection<Quantity>) tq2);
 
 		InMemoryStore store = new InMemoryStore();
@@ -426,6 +434,65 @@ public class TestCollections extends TestCase
 				series.getValues().get(1).doubleValue((Unit) series.getUnits()));
 		assertEquals("value correct", 22d,
 				series.getValues().get(2).doubleValue((Unit) series.getUnits()));
+
+		// try to clear the units
+		UnitaryMathOperation clearU = new UnitaryMathOperation("Clear units")
+		{
+			public double calcFor(double val)
+			{
+				return val;
+			}
+
+			protected Unit getUnits(IQuantityCollection input)
+			{
+				return Dimensionless.UNIT;
+			}
+		};
+
+		assertEquals("previous type:", "[L]/[T]", tq1.getUnits().getDimension()
+				.toString());
+
+		selection.clear();
+		selection.add(tq1);
+		store.clear();
+
+		Collection<ICommand<ICollection>> ops = clearU.actionsFor(selection, store);
+		ICommand<ICollection> command = ops.iterator().next();
+		command.execute();
+
+		ITemporalQuantityCollection<Quantity> output = (ITemporalQuantityCollection<Quantity>) command
+				.getOutputs().iterator().next();
+
+		assertEquals("new type:", "", output.getUnits().getDimension()
+				.toString());
+		assertEquals("same size", output.size(), tq1.size());
+		assertEquals("first item same value", output.getValues().iterator().next()
+				.doubleValue(output.getUnits()), tq1.getValues().iterator().next()
+				.doubleValue(tq1.getUnits()));
+		assertEquals("same num times", output.getTimes().size(), tq1.getTimes().size());
+
+		// try again with a non temporal collection
+		selection.clear();
+		selection.add(nq1);
+		store.clear();
+
+		assertEquals("previous type:", "[L]/[T]", nq1.getUnits().getDimension()
+				.toString());
+
+		ops = clearU.actionsFor(selection, store);
+		command = ops.iterator().next();
+		command.execute();
+
+		IQuantityCollection<Quantity> output2 = (IQuantityCollection<Quantity>) command
+				.getOutputs().iterator().next();
+
+		assertEquals("new type:", "", output2.getUnits().getDimension()
+				.toString());
+		assertEquals("same size", output2.size(), nq1.size());
+		assertEquals("first item same value", output2.getValues().iterator().next()
+				.doubleValue(output2.getUnits()), nq1.getValues().iterator().next()
+				.doubleValue(nq1.getUnits()));
+		
 	}
 
 	@SuppressWarnings(

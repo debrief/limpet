@@ -57,7 +57,6 @@ public abstract class QuantityFrequencyBins extends CoreAnalysis
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	public static BinnedData doBins(IQuantityCollection<Quantity> collection)
 	{
 		// collate the values into an array
@@ -65,7 +64,7 @@ public abstract class QuantityFrequencyBins extends CoreAnalysis
 
 		// Add the data from the array
 		int ctr = 0;
-		Iterator<?> iterV = collection.getValues().iterator();
+		Iterator<Measurable<Quantity>> iterV = collection.getValues().iterator();
 		while (iterV.hasNext())
 		{
 			Measurable<Quantity> object = (Measurable<Quantity>) iterV.next();
