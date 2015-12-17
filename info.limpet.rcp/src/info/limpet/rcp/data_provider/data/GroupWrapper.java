@@ -1,11 +1,10 @@
 package info.limpet.rcp.data_provider.data;
 
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.ui.views.properties.IPropertySource;
-
 import info.limpet.IStore.IStoreItem;
 import info.limpet.IStoreGroup;
-import info.limpet.data.store.InMemoryStore.StoreGroup;
+
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.ui.views.properties.IPropertySource;
 
 public class GroupWrapper implements IAdaptable, LimpetWrapper
 {
