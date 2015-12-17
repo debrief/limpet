@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="Limpet" uid="Limpet" id="info.limpet.rcp.product" application="info.limpet.rcp.application" version="1.0.1" useFeatures="true" includeLaunchers="true">
+<product name="Limpet" uid="Limpet" id="info.limpet.rcp.product" application="info.limpet.rcp.application" version="1.0.2" useFeatures="true" includeLaunchers="true">
 
    <aboutInfo>
       <image path="icons/DebriefNGlogoSmall.png"/>
@@ -242,8 +242,8 @@ Library.
       <plugin id="org.eclipse.equinox.event" autoStart="true" startLevel="2" />
       <plugin id="org.eclipse.equinox.p2.reconciler.dropins" autoStart="true" startLevel="4" />
       <plugin id="org.eclipse.equinox.simpleconfigurator" autoStart="true" startLevel="1" />
+      <plugin id="org.eclipse.update.configurator" autoStart="true" startLevel="4" />
       <property name="org.eclipse.update.reconcile" value="false" />
-      <plugin id="org.eclipse.update.configurator" autoStart="true" startLevel="4"/>
    </configurations>
 
 </product>
