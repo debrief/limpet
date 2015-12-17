@@ -56,8 +56,6 @@ import org.opengis.referencing.operation.TransformException;
 public class TestGeotoolsGeometry extends TestCase
 {
 
-	private CollectionComplianceTests aTests = new CollectionComplianceTests();
-
 	public void testCreateTemporalObjectCollection()
 	{
 		TemporalObjectCollection<Geometry> locations = new TemporalObjectCollection<Geometry>(
