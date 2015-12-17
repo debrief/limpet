@@ -77,9 +77,9 @@ public class SimpleMovingAverageOperation implements IOperation<ICollection>
 		public void setWindowSize(int winSize)
 		{
 			this.winSize = winSize;
-
+			
 			// ok, we now need to update!
-			super.dataChanged(null);
+			super.dataChanged(this.getOutputs().iterator().next());
 		}
 
 		@Override
