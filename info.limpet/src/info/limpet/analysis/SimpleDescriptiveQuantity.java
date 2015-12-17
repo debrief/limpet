@@ -1,5 +1,6 @@
 package info.limpet.analysis;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -92,15 +93,15 @@ public abstract class SimpleDescriptiveQuantity extends CoreAnalysis
 
 						// output some basic overview stats
 						titles.add("Min");
-						values.add("" + stats.getMin());
+						values.add("" + format(stats.getMin()));
 						titles.add("Max");
-						values.add("" + stats.getMax());
+						values.add("" + format(stats.getMax()));
 						titles.add("Mean");
-						values.add("" + stats.getMean());
+						values.add("" + format(stats.getMean()));
 						titles.add("Std");
-						values.add("" + stats.getStandardDeviation());
+						values.add("" +format(stats.getStandardDeviation()));
 						titles.add("Median");
-						values.add("" + stats.getPercentile(50));
+						values.add("" + format(stats.getPercentile(50)));
 					}
 
 				}
@@ -110,6 +111,11 @@ public abstract class SimpleDescriptiveQuantity extends CoreAnalysis
 		if (titles.size() > 0)
 			presentResults(titles, values);
 
+	}
+	
+	private String format(double val)
+	{
+		return new DecimalFormat("0.####").format(val);
 	}
 
 	private boolean appliesTo(List<IStoreItem> selection)
