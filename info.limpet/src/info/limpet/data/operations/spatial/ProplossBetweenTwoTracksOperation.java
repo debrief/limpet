@@ -16,6 +16,7 @@ import java.util.List;
 
 import javax.measure.Measure;
 import javax.measure.quantity.Dimensionless;
+import javax.measure.unit.NonSI;
 import javax.measure.unit.Unit;
 
 import org.geotools.referencing.GeodeticCalculator;
@@ -53,7 +54,7 @@ public class ProplossBetweenTwoTracksOperation extends TwoTrackOperation
 		protected void calcAndStore(final GeodeticCalculator calc,
 				final Point locA, final Point locB, Long time)
 		{
-			final Unit<Dimensionless> outUnits = Dimensionless.UNIT;
+			final Unit<Dimensionless> outUnits = NonSI.DECIBEL;
 
 			// now find the range between them
 			calc.setStartingGeographicPoint(locA.getCentroid().getOrdinate(0), locA

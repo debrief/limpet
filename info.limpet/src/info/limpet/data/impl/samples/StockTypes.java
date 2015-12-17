@@ -24,6 +24,7 @@ import javax.measure.quantity.Frequency;
 import javax.measure.quantity.Length;
 import javax.measure.quantity.Temperature;
 import javax.measure.quantity.Velocity;
+import javax.measure.unit.NonSI;
 import javax.measure.unit.Unit;
 
 import org.opengis.geometry.Geometry;
@@ -218,7 +219,7 @@ public class StockTypes
 		{
 			public AcousticStrength(String name, ICommand<?> precedent)
 			{
-				super(name, precedent, Dimensionless.UNIT);
+				super(name, precedent, NonSI.DECIBEL);
 			}
 
 			public AcousticStrength(String name)
@@ -331,7 +332,7 @@ public class StockTypes
 		{
 			public AcousticStrength(String name, ICommand<?> precedent)
 			{
-				super(name, precedent, Dimensionless.UNIT);
+				super(name, precedent, NonSI.DECIBEL);
 			}
 
 			public AcousticStrength(String name)
