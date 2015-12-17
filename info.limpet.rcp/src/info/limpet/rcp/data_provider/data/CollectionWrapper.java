@@ -55,8 +55,13 @@ public class CollectionWrapper implements IAdaptable, LimpetWrapper
 	{
 		if (adapter == IPropertySource.class)
 		{
-			return new CollectionPropertySource(this);
+			return new ReflectivePropertySource(_collection);
 		}
+//
+//		if (adapter == IPropertySource.class)
+//		{
+//			return new CollectionPropertySource(this);
+//		}
 		else if (adapter == IStoreItem.class)
 		{
 			return _collection;
