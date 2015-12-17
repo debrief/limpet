@@ -7,14 +7,20 @@ import info.limpet.ICollection;
 import info.limpet.IObjectCollection;
 import info.limpet.IQuantityCollection;
 import info.limpet.IStore.IStoreItem;
+import info.limpet.ITemporalQuantityCollection.InterpMethod;
+import info.limpet.data.impl.TemporalQuantityCollection;
 import info.limpet.data.impl.samples.StockTypes.ILocations;
-import info.limpet.data.operations.spatial.DopplerShiftBetweenTracksOperation.DopplerShiftOperation.TimePeriod;
+import info.limpet.data.impl.samples.StockTypes.NonTemporal;
+import info.limpet.data.impl.samples.TemporalLocation;
 import info.limpet.data.store.InMemoryStore.StoreGroup;
 
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.measure.Measurable;
+import javax.measure.converter.UnitConverter;
+import javax.measure.quantity.Quantity;
 import javax.measure.unit.Dimension;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
@@ -556,7 +562,7 @@ public class CollectionComplianceTests
 		}
 		return res == count;
 	}
-	
+
 	public boolean allGroups(List<IStoreItem> selection)
 	{
 		boolean res = true;
@@ -573,9 +579,12 @@ public class CollectionComplianceTests
 		return res;
 	}
 
-	/** convenience test to verify if children of the supplied item can all
-	 * be treated as tracks
-	 * @param selection one or more group objects
+	/**
+	 * convenience test to verify if children of the supplied item can all be
+	 * treated as tracks
+	 * 
+	 * @param selection
+	 *          one or more group objects
 	 * @return yes/no
 	 */
 	public boolean numberOfTracks(List<IStoreItem> selection, final int number)
@@ -591,22 +600,22 @@ public class CollectionComplianceTests
 				// ok, check the contents
 				StoreGroup group = (StoreGroup) storeItem;
 				List<IStoreItem> kids = group.children();
-				
+
 				// ok, keep looping through, to check we have the right types
-				if(!isPresent(kids, METRE.divide(SECOND).getDimension()))
+				if (!isPresent(kids, METRE.divide(SECOND).getDimension()))
 				{
 					valid = false;
 					break;
 				}
-				
+
 				// ok, keep looping through, to check we have the right types
-				if(!isPresent(kids, SI.RADIAN.getDimension()))
+				if (!isPresent(kids, SI.RADIAN.getDimension()))
 				{
 					valid = false;
 					break;
 				}
-	
-				if(!hasLocation(kids))
+
+				if (!hasLocation(kids))
 				{
 					valid = false;
 					break;
@@ -616,17 +625,19 @@ public class CollectionComplianceTests
 			{
 				valid = false;
 			}
-			if(valid)
+			if (valid)
 				count++;
-			
+
 		}
 		return count == number;
 	}
 
-	
-	/** convenience test to verify if children of the supplied item can all
-	 * be treated as tracks
-	 * @param selection one or more group objects
+	/**
+	 * convenience test to verify if children of the supplied item can all be
+	 * treated as tracks
+	 * 
+	 * @param selection
+	 *          one or more group objects
 	 * @return yes/no
 	 */
 	public boolean allChildrenAreTracks(List<IStoreItem> selection)
@@ -641,27 +652,27 @@ public class CollectionComplianceTests
 				// ok, check the contents
 				StoreGroup group = (StoreGroup) storeItem;
 				List<IStoreItem> kids = group.children();
-				
+
 				// ok, keep looping through, to check we have the right types
-				if(!isPresent(kids, METRE.divide(SECOND).getDimension()))
+				if (!isPresent(kids, METRE.divide(SECOND).getDimension()))
 				{
 					res = false;
 					break;
 				}
-				
+
 				// ok, keep looping through, to check we have the right types
-				if(!isPresent(kids, SI.RADIAN.getDimension()))
+				if (!isPresent(kids, SI.RADIAN.getDimension()))
 				{
 					res = false;
 					break;
 				}
-	
-				if(!hasLocation(kids))
+
+				if (!hasLocation(kids))
 				{
 					res = false;
 					break;
 				}
-				
+
 			}
 		}
 		return res;
@@ -725,13 +736,17 @@ public class CollectionComplianceTests
 		return res;
 	}
 
-	/** check the list has a collection with the specified dimension
-	 *  
-	 * @param kids items to examine
-	 * @param dimension dimension we need to be present
+	/**
+	 * check the list has a collection with the specified dimension
+	 * 
+	 * @param kids
+	 *          items to examine
+	 * @param dimension
+	 *          dimension we need to be present
 	 * @return yes/no
 	 */
-	public IQuantityCollection<?> someHave(List<IStoreItem> kids, Dimension dimension, final boolean walkTree)
+	public IQuantityCollection<?> someHave(List<IStoreItem> kids,
+			Dimension dimension, final boolean walkTree)
 	{
 		IQuantityCollection<?> res = null;
 
@@ -739,7 +754,7 @@ public class CollectionComplianceTests
 		while (iter.hasNext())
 		{
 			IStoreItem item = iter.next();
-			if(item instanceof StoreGroup && walkTree)
+			if (item instanceof StoreGroup && walkTree)
 			{
 				StoreGroup group = (StoreGroup) item;
 				res = someHave(group.children(), dimension, walkTree);
@@ -762,11 +777,14 @@ public class CollectionComplianceTests
 
 		return res;
 	}
-	
-	/** check the list has a location collection
-	 *  
-	 * @param kids items to examine
-	 * @param dimension dimension we need to be present
+
+	/**
+	 * check the list has a location collection
+	 * 
+	 * @param kids
+	 *          items to examine
+	 * @param dimension
+	 *          dimension we need to be present
 	 * @return yes/no
 	 */
 	public IObjectCollection<?> someHaveLocation(List<IStoreItem> kids)
@@ -777,7 +795,7 @@ public class CollectionComplianceTests
 		while (iter.hasNext())
 		{
 			IStoreItem item = iter.next();
-			if(item instanceof StoreGroup)
+			if (item instanceof StoreGroup)
 			{
 				StoreGroup group = (StoreGroup) item;
 				res = someHaveLocation(group.children());
@@ -799,7 +817,7 @@ public class CollectionComplianceTests
 
 		return res;
 	}
-	
+
 	public IBaseTemporalCollection getLongestTemporalCollections(
 			List<IStoreItem> selection)
 	{
@@ -810,7 +828,8 @@ public class CollectionComplianceTests
 		while (iter.hasNext())
 		{
 			ICollection thisC = (ICollection) iter.next();
-			if (thisC.isTemporal() && (thisC.isQuantity() || thisC instanceof ILocations))
+			if (thisC.isTemporal()
+					&& (thisC.isQuantity() || thisC instanceof ILocations))
 			{
 				IBaseTemporalCollection tqc = (IBaseTemporalCollection) thisC;
 				if (longest == null)
@@ -839,7 +858,7 @@ public class CollectionComplianceTests
 			if (thisI instanceof ICollection)
 			{
 				ICollection thisC = (ICollection) thisI;
-				if(thisC.size() == 0)
+				if (thisC.size() == 0)
 				{
 					allValid = false;
 					break;
@@ -854,51 +873,8 @@ public class CollectionComplianceTests
 		return allValid;
 	}
 
-
 	/**
-	 * find the best collection to use as a time-base. Which collection has the
-	 * most values within the specified time period?
-	 * 
-	 * @param period
-	 * @param items
-	 * @return most suited collection
-	 */
-	public IBaseTemporalCollection getOptimalTimes(TimePeriod period,
-			Collection<ICollection> items)
-	{
-		IBaseTemporalCollection res = null;
-		long resScore = 0;
-
-		Iterator<ICollection> iter = items.iterator();
-		while (iter.hasNext())
-		{
-			ICollection iCollection = (ICollection) iter.next();
-			if (iCollection.isTemporal())
-			{
-				IBaseTemporalCollection timeC = (IBaseTemporalCollection) iCollection;
-				Iterator<Long> times = timeC.getTimes().iterator();
-				int score = 0;
-				while (times.hasNext())
-				{
-					long long1 = (long) times.next();
-					if (period.contains(long1))
-					{
-						score++;
-					}
-				}
-
-				if ((res == null) || (score > resScore))
-				{
-					res = timeC;
-					resScore = score;
-				}
-			}
-		}
-
-		return res;
-	}
-
-	/** find the time period for overlapping data
+	 * find the time period for overlapping data
 	 * 
 	 * @param items
 	 * @return
@@ -925,7 +901,153 @@ public class CollectionComplianceTests
 				}
 			}
 		}
+		
+		return res;
+	}
+
+	/**
+	 * find the best collection to use as a time-base. Which collection has the
+	 * most values within the specified time period?
+	 * 
+	 * @param period
+	 *          (optional) period in which we count valid times
+	 * @param items
+	 *          list of datasets we're examining
+	 * @return most suited collection
+	 */
+	public IBaseTemporalCollection getOptimalTimes(TimePeriod period,
+			Collection<ICollection> items)
+	{
+		IBaseTemporalCollection res = null;
+		long resScore = 0;
+
+		Iterator<ICollection> iter = items.iterator();
+		while (iter.hasNext())
+		{
+			ICollection iCollection = (ICollection) iter.next();
+			if (iCollection.isTemporal())
+			{
+				IBaseTemporalCollection timeC = (IBaseTemporalCollection) iCollection;
+				Iterator<Long> times = timeC.getTimes().iterator();
+				int score = 0;
+				while (times.hasNext())
+				{
+					long long1 = (long) times.next();
+					if ((period == null) || period.contains(long1))
+					{
+						score++;
+					}
+				}
+
+				if ((res == null) || (score > resScore))
+				{
+					res = timeC;
+					resScore = score;
+				}
+			}
+		}
 
 		return res;
+	}
+
+	/**
+	 * retrieve the value at the specified time (even if it's a non-temporal
+	 * collection)
+	 * 
+	 * @param iCollection
+	 *          set of locations to use
+	 * @param thisTime
+	 *          time we're need a location for
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public double valueAt(ICollection iCollection, long thisTime,
+			Unit<?> requiredUnits)
+	{
+		Measurable<Quantity> res;
+		if (iCollection.isQuantity())
+		{
+			IQuantityCollection<?> iQ = (IQuantityCollection<?>) iCollection;
+
+			if (iCollection.isTemporal())
+			{
+				TemporalQuantityCollection<?> tQ = (TemporalQuantityCollection<?>) iCollection;
+				res = (Measurable<Quantity>) tQ.interpolateValue(thisTime,
+						InterpMethod.Linear);
+			}
+			else
+			{
+				IQuantityCollection<?> qC = (IQuantityCollection<?>) iCollection;
+				res = (Measurable<Quantity>) qC.getValues().iterator().next();
+			}
+
+			if (res != null)
+			{
+				UnitConverter converter = iQ.getUnits().getConverterTo(requiredUnits);
+				Unit<?> sourceUnits = iQ.getUnits();
+				double doubleValue = res.doubleValue((Unit<Quantity>) sourceUnits);
+				double result = converter.convert(doubleValue);
+				return result;
+			}
+			else
+			{
+				return 0;
+			}
+		}
+		else
+		{
+			throw new RuntimeException("Tried to get value of non quantity data type");
+		}
+	}
+
+	/**
+	 * retrieve the location at the specified time (even if it's a non-temporal
+	 * collection)
+	 * 
+	 * @param iCollection
+	 *          set of locations to use
+	 * @param thisTime
+	 *          time we're need a location for
+	 * @return
+	 */
+	public Geometry locationFor(ICollection iCollection, Long thisTime)
+	{
+		Geometry res = null;
+		if (iCollection.isTemporal())
+		{
+			TemporalLocation tLoc = (TemporalLocation) iCollection;
+			res = tLoc.interpolateValue(thisTime, InterpMethod.Linear);
+		}
+		else
+		{
+			NonTemporal.Location tLoc = (info.limpet.data.impl.samples.StockTypes.NonTemporal.Location) iCollection;
+			if (tLoc.size() > 0)
+			{
+				res = tLoc.getValues().iterator().next();
+			}
+		}
+		return res;
+	}
+
+	public static class TimePeriod
+	{
+		public long startTime;
+		public long endTime;
+
+		public TimePeriod(final long tStart, final long tEnd)
+		{
+			startTime = tStart;
+			endTime = tEnd;
+		}
+
+		public boolean invalid()
+		{
+			return endTime < startTime;
+		}
+
+		public boolean contains(long time)
+		{
+			return ((startTime <= time) && (endTime >= time));
+		}
 	}
 }

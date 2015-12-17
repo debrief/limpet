@@ -12,7 +12,7 @@ import info.limpet.data.impl.samples.StockTypes.NonTemporal;
 import info.limpet.data.impl.samples.StockTypes.NonTemporal.Location;
 import info.limpet.data.impl.samples.TemporalLocation;
 import info.limpet.data.operations.CollectionComplianceTests;
-import info.limpet.data.operations.spatial.DopplerShiftBetweenTracksOperation.DopplerShiftOperation.TimePeriod;
+import info.limpet.data.operations.CollectionComplianceTests.TimePeriod;
 
 import java.util.ArrayList;
 import java.util.Collection;

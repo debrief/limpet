@@ -17,10 +17,10 @@ import info.limpet.data.impl.samples.StockTypes.Temporal;
 import info.limpet.data.impl.samples.StockTypes.Temporal.Speed_Kts;
 import info.limpet.data.impl.samples.TemporalLocation;
 import info.limpet.data.operations.CollectionComplianceTests;
+import info.limpet.data.operations.CollectionComplianceTests.TimePeriod;
 import info.limpet.data.operations.spatial.DistanceBetweenTracksOperation;
 import info.limpet.data.operations.spatial.DopplerShiftBetweenTracksOperation;
 import info.limpet.data.operations.spatial.DopplerShiftBetweenTracksOperation.DopplerShiftOperation;
-import info.limpet.data.operations.spatial.DopplerShiftBetweenTracksOperation.DopplerShiftOperation.TimePeriod;
 import info.limpet.data.operations.spatial.GenerateCourseAndSpeedOperation;
 import info.limpet.data.operations.spatial.GeoSupport;
 import info.limpet.data.operations.spatial.ProplossBetweenTwoTracksOperation;
@@ -448,7 +448,7 @@ public class TestGeotoolsGeometry extends TestCase
 	{
 		final ArrayList<IStoreItem> items = new ArrayList<IStoreItem>();
 		final DopplerShiftBetweenTracksOperation doppler = new DopplerShiftBetweenTracksOperation();
-		final IStore store = new InMemoryStore();
+		final InMemoryStore store = new InMemoryStore();
 		final CollectionComplianceTests tests = new CollectionComplianceTests();
 
 		// create datasets
@@ -584,20 +584,20 @@ public class TestGeotoolsGeometry extends TestCase
 
 		// add the missing sound speed
 		items.add(sspdK2);
-		assertEquals("not empty", 2, doppler.actionsFor(items, store).size());
+		assertEquals("not empty", 1, doppler.actionsFor(items, store).size());
 
 		// and now complete dataset (with one non temporal location)
 
 		track1.remove(loc1);
 		track1.add(loc3);
 
-		assertEquals("not empty", 2, doppler.actionsFor(items, store).size());
+		assertEquals("not empty", 1, doppler.actionsFor(items, store).size());
 
 		// and now complete dataset (with two non temporal locations)
 		track2.remove(loc2);
 		track2.add(loc4);
 
-		assertEquals("not empty", 2, doppler.actionsFor(items, store).size());
+		assertEquals("not empty", 1, doppler.actionsFor(items, store).size());
 
 		// back to original type
 		track1.remove(loc3);
@@ -605,16 +605,27 @@ public class TestGeotoolsGeometry extends TestCase
 		track2.remove(loc4);
 		track2.add(loc2);
 
-		assertEquals("not empty", 2, doppler.actionsFor(items, store).size());
+		assertEquals("not empty", 1, doppler.actionsFor(items, store).size());
+		
+		// try giving track 2 a frewquency
+		track2.add(freq2);
+
+		assertEquals("actions for both tracks", 2, doppler.actionsFor(items, store).size());
+		
+		// and remove that freq
+		track2.remove(freq2);
+
+		assertEquals("actions for just one track", 1, doppler.actionsFor(items, store).size());
 
 		// quick extra test
 		track1.remove(loc1);
 
 		assertEquals("empty", 0, doppler.actionsFor(items, store).size());
+		
 		// quick extra test
 		track1.add(loc1);
 
-		assertEquals("empty", 2, doppler.actionsFor(items, store).size());
+		assertEquals("empty", 1, doppler.actionsFor(items, store).size());
 
 		// ok, now check how the doppler handler organises its data
 		DopplerShiftOperation op1 = (DopplerShiftOperation) doppler
@@ -625,10 +636,35 @@ public class TestGeotoolsGeometry extends TestCase
 		op1.organiseData();
 		HashMap<String, ICollection> map = op1.getDataMap();
 		assertEquals("all items", 8, map.size());
+		
+		// ok, let's try undo redo
+		assertEquals("correct size store", store.size(), 0);
+		
+		op1.execute();
+		
+		assertEquals("new correct size store", store.size(), 1);
+
+		op1.undo();
+		
+		assertEquals("new correct size store", store.size(), 0);
+
+		op1.redo();
+		
+		assertEquals("new correct size store", store.size(), 1);
+
+		op1.undo();
+		
+		assertEquals("new correct size store", store.size(), 0);
+
+		op1.redo();
+		
+		assertEquals("new correct size store", store.size(), 1);
+
 	}
 
 	public void testGetOptimalTimes()
 	{
+		CollectionComplianceTests aTests = new CollectionComplianceTests();
 		Collection<ICollection> items = new ArrayList<ICollection>();
 
 		Speed_Kts speed1 = new Temporal.Speed_Kts("spd1");
@@ -671,9 +707,9 @@ public class TestGeotoolsGeometry extends TestCase
 		assertEquals("correct choice", common, speed1);
 
 		items.add(speed2);
-
+		
 		common = aTests.getOptimalTimes(period, items);
-		assertNotNull("duh, empty set", common);
+		assertNotNull("duh, empty set",common);
 		assertEquals("correct choice", common, speed2);
 
 		items.add(speed3);
@@ -682,10 +718,17 @@ public class TestGeotoolsGeometry extends TestCase
 		assertNotNull("duh, empty set", common);
 		assertEquals("still correct choice", common, speed2);
 
+		// step back, test it without the period
+		common = aTests.getOptimalTimes(null, items);
+		assertNotNull("duh, empty set",common);
+		assertEquals("correct choice", common, speed2);
+		
+
 	}
 
 	public void testGetCommonTimePeriod()
 	{
+		CollectionComplianceTests aTests = new CollectionComplianceTests();
 		Collection<ICollection> items = new ArrayList<ICollection>();
 
 		Speed_Kts speed1 = new Temporal.Speed_Kts("spd1");
@@ -704,15 +747,15 @@ public class TestGeotoolsGeometry extends TestCase
 		speed3.add(90, 5);
 		speed3.add(120, 5);
 		speed3.add(160, 5);
-
+		
 		TimePeriod common = aTests.getBoundingTime(items);
-		assertEquals("duh, empty set", null, common);
-
+		assertEquals("duh, empty set",null, common); 
+		
 		// ok, now add the items to hte collection
 		items.add(speed1);
-
+		
 		common = aTests.getBoundingTime(items);
-		assertNotNull("duh, empty set", common);
+		assertNotNull("duh, empty set",common);
 		assertEquals("correct times", speed1.start(), common.startTime);
 		assertEquals("correct times", speed1.finish(), common.endTime);
 
@@ -733,28 +776,27 @@ public class TestGeotoolsGeometry extends TestCase
 
 	public void testDopplerInterpolation()
 	{
-		DopplerShiftOperation operation = new DopplerShiftOperation(null, null,
-				null, null, null, null, null);
+		final CollectionComplianceTests aTests = new CollectionComplianceTests();
 
 		Temporal.Speed_Kts sKts = new Temporal.Speed_Kts("Speed knots");
 		sKts.add(1000, 10);
 		sKts.add(2000, 20);
 		sKts.add(4000, 30);
 
-		double val = operation.valueAt(sKts, 1500L, sKts.getUnits());
+		double val = aTests.valueAt(sKts, 1500L, sKts.getUnits());
 		assertEquals("correct value", 15.0, val);
 
-		val = operation.valueAt(sKts, 3000L, sKts.getUnits());
+		val = aTests.valueAt(sKts, 3000L, sKts.getUnits());
 		assertEquals("correct value", 25.0, val);
 
 		// try converting to m_sec
-		val = operation.valueAt(sKts, 1500L, new Temporal.Speed_MSec().getUnits());
+		val = aTests.valueAt(sKts, 1500L, new Temporal.Speed_MSec().getUnits());
 		assertEquals("correct value", 7.72, val, 0.01);
 
 		// try converting to m_sec
 		try
 		{
-			val = operation.valueAt(sKts, 1500L,
+			val = aTests.valueAt(sKts, 1500L,
 					new Temporal.Angle_Degrees().getUnits());
 		}
 		catch (ConversionException ce)
