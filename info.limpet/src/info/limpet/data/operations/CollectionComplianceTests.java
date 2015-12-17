@@ -7,7 +7,6 @@ import info.limpet.ICollection;
 import info.limpet.IObjectCollection;
 import info.limpet.IQuantityCollection;
 import info.limpet.IStore.IStoreItem;
-import info.limpet.ITemporalQuantityCollection;
 import info.limpet.ITemporalQuantityCollection.InterpMethod;
 import info.limpet.data.impl.TemporalQuantityCollection;
 import info.limpet.data.impl.samples.StockTypes.ILocations;
@@ -205,11 +204,11 @@ public class CollectionComplianceTests
 			if (thisI instanceof ICollection)
 			{
 				ICollection thisC = (ICollection) thisI;
-				if (thisC.isQuantity())
+				if (thisC.isQuantity() || thisC instanceof ILocations)
 				{
 					if (thisC.isTemporal())
 					{
-						ITemporalQuantityCollection<?> tq = (ITemporalQuantityCollection<?>) thisC;
+						IBaseTemporalCollection tq = (IBaseTemporalCollection) thisC;
 						long thisStart = tq.start();
 						long thisEnd = tq.finish();
 
@@ -243,7 +242,7 @@ public class CollectionComplianceTests
 			}
 
 		}
-		return suitable;
+		return suitable && (startT != null);
 	}
 
 	/**
@@ -759,7 +758,11 @@ public class CollectionComplianceTests
 			{
 				StoreGroup group = (StoreGroup) item;
 				res = someHave(group.children(), dimension, walkTree);
-				break;
+				if (res != null)
+				{
+					break;
+				}
+
 			}
 			else if (item instanceof IQuantityCollection<?>)
 			{
@@ -796,7 +799,10 @@ public class CollectionComplianceTests
 			{
 				StoreGroup group = (StoreGroup) item;
 				res = someHaveLocation(group.children());
-				break;
+				if (res != null)
+				{
+					break;
+				}
 			}
 			else if (item instanceof IObjectCollection<?>)
 			{
@@ -812,9 +818,63 @@ public class CollectionComplianceTests
 		return res;
 	}
 
+	public IBaseTemporalCollection getLongestTemporalCollections(
+			List<IStoreItem> selection)
+	{
+		// find the longest time series.
+		Iterator<IStoreItem> iter = selection.iterator();
+		IBaseTemporalCollection longest = null;
+
+		while (iter.hasNext())
+		{
+			ICollection thisC = (ICollection) iter.next();
+			if (thisC.isTemporal()
+					&& (thisC.isQuantity() || thisC instanceof ILocations))
+			{
+				IBaseTemporalCollection tqc = (IBaseTemporalCollection) thisC;
+				if (longest == null)
+				{
+					longest = tqc;
+				}
+				else
+				{
+					// store the longest one
+					ICollection asColl = (ICollection) longest;
+					longest = thisC.size() > asColl.size() ? tqc : longest;
+				}
+			}
+		}
+		return longest;
+	}
+
+	public boolean allHaveData(List<IStoreItem> selection)
+	{
+		// are they all non location?
+		boolean allValid = true;
+
+		for (int i = 0; i < selection.size(); i++)
+		{
+			IStoreItem thisI = selection.get(i);
+			if (thisI instanceof ICollection)
+			{
+				ICollection thisC = (ICollection) thisI;
+				if (thisC.size() == 0)
+				{
+					allValid = false;
+					break;
+				}
+			}
+			else
+			{
+				allValid = false;
+				break;
+			}
+		}
+		return allValid;
+	}
+
 	/**
-	 * find the time period that is the intersection of time series in the
-	 * supplied list
+	 * find the time period for overlapping data
 	 * 
 	 * @param items
 	 * @return
@@ -841,7 +901,7 @@ public class CollectionComplianceTests
 				}
 			}
 		}
-
+		
 		return res;
 	}
 
@@ -990,5 +1050,4 @@ public class CollectionComplianceTests
 			return ((startTime <= time) && (endTime >= time));
 		}
 	}
-
 }

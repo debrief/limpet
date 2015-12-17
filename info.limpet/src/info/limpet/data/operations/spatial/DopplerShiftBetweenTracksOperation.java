@@ -91,6 +91,8 @@ public class DopplerShiftBetweenTracksOperation implements
 		 * 
 		 */
 		private final StoreGroup _rx;
+		CollectionComplianceTests aTests = new CollectionComplianceTests();
+
 
 		public DopplerShiftOperation(final String outputName, final StoreGroup tx,
 				final StoreGroup rx, final IStore store, final String title,
@@ -185,7 +187,6 @@ public class DopplerShiftBetweenTracksOperation implements
 		{
 			return _data;
 		}
-
 		protected IQuantityCollection<?> getOutputCollection(final String title)
 		{
 			return new StockTypes.Temporal.Frequency_Hz("Doppler shift between "
