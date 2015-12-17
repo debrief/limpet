@@ -16,6 +16,7 @@ import java.util.List;
 
 import javax.measure.Measure;
 import javax.measure.quantity.Dimensionless;
+import javax.measure.unit.NonSI;
 import javax.measure.unit.Unit;
 
 import org.geotools.referencing.GeodeticCalculator;
@@ -40,12 +41,12 @@ public class ProplossBetweenTwoTracksOperation extends TwoTrackOperation
 			if (isTemporal)
 			{
 				res = new StockTypes.Temporal.AcousticStrength("Acoustic loss between "
-						+ title);
+						+ title, this);
 			}
 			else
 			{
 				res = new StockTypes.NonTemporal.AcousticStrength(
-						"Acoustic loss between " + title);
+						"Acoustic loss between " + title, this);
 			}
 			return res;
 		}
@@ -53,15 +54,18 @@ public class ProplossBetweenTwoTracksOperation extends TwoTrackOperation
 		protected void calcAndStore(final GeodeticCalculator calc,
 				final Point locA, final Point locB, Long time)
 		{
-			final Unit<Dimensionless> outUnits = Dimensionless.UNIT;
+			final Unit<Dimensionless> outUnits = NonSI.DECIBEL;
 
 			// now find the range between them
 			calc.setStartingGeographicPoint(locA.getCentroid().getOrdinate(0), locA
 					.getCentroid().getOrdinate(1));
 			calc.setDestinationGeographicPoint(locB.getCentroid().getOrdinate(0),
 					locB.getCentroid().getOrdinate(1));
-			double thisDist = calc.getOrthodromicDistance();
-			final Measure<Double, Dimensionless> thisRes = Measure.valueOf(thisDist,
+			double thisDistMetres = calc.getOrthodromicDistance();
+			
+			// ok, we've got to do 20 log R
+			double thisLoss = 20d * Math.log(thisDistMetres);
+			final Measure<Double, Dimensionless> thisRes = Measure.valueOf(thisLoss,
 					outUnits);
 
 			if (time != null)
