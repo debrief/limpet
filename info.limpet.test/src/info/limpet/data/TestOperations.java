@@ -241,7 +241,7 @@ public class TestOperations extends TestCase
 		ICollection firstItem = (ICollection) store.iterator().next();
 		ICommand<?> precedent = firstItem.getPrecedent();
 		assertNotNull("has precedent", precedent);
-		assertEquals("Correct name", "Sum of input series (indexed)",
+		assertEquals("Correct name", "Add numeric values in provided series (indexed)",
 				precedent.getName());
 
 		List<? extends IStoreItem> inputs = precedent.getInputs();

@@ -59,14 +59,12 @@ public class SubtractQuantityOperation<Q extends Quantity> extends
 			IQuantityCollection<Q> item1 = selection.get(0);
 			IQuantityCollection<Q> item2 = selection.get(1);
 
-			String oName = item2.getName() + " from " + item1.getName();
 			ICommand<IQuantityCollection<Q>> newC = new SubtractQuantityValues(
 					"Subtract " + item2.getName() + " from " + item1.getName()
 							+ " (interpolated)", selection, item1, item2, destination, longest,
 					context);
 
 			res.add(newC);
-			oName = item1.getName() + " from " + item2.getName();
 			newC = new SubtractQuantityValues("Subtract " + item1.getName()
 					+ " from " + item2.getName() + " (interpolated)", selection, item2,
 					item1, destination, longest, context);
@@ -81,13 +79,11 @@ public class SubtractQuantityOperation<Q extends Quantity> extends
 		IQuantityCollection<Q> item1 = selection.get(0);
 		IQuantityCollection<Q> item2 = selection.get(1);
 
-		String oName = item2.getName() + " from " + item1.getName();
 		ICommand<IQuantityCollection<Q>> newC = new SubtractQuantityValues(
 				"Subtract " + item2.getName() + " from " + item1.getName()
 						+ " (indexed)", selection, item1, item2, destination, context);
 
 		res.add(newC);
-		oName = item1.getName() + " from " + item2.getName();
 		newC = new SubtractQuantityValues("Subtract " + item1.getName() + " from "
 				+ item2.getName() + " (indexed)", selection, item2, item1, destination,
 				context);

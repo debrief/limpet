@@ -48,12 +48,10 @@ public class DivideQuantityOperation implements IOperation<IStoreItem>
 				longest = null;
 			}
 
-			String oName = item1.getName() + " / " + item2.getName();
 			ICommand<IStoreItem> newC = new DivideQuantityValues("Divide "
 					+ item1.getName() + " by " + item2.getName(), selection, item1,
 					item2, destination, longest, context);
 			res.add(newC);
-			oName = item2.getName() + " / " + item1.getName();
 			newC = new DivideQuantityValues("Divide " + item2.getName() + " by "
 					+ item1.getName(), selection, item2, item1, destination, longest,
 					context);

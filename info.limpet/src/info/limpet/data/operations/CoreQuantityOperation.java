@@ -118,7 +118,7 @@ public abstract class CoreQuantityOperation<Q extends Quantity>
 			AbstractCommand<IQuantityCollection<Q>>
 	{
 
-		final private ITemporalQuantityCollection<Q> _timeProvider;
+		final private ITemporalQuantityCollection<Q> timeProvider;
 
 		public CoreQuantityCommand(String title, String description,
 				IStore store, boolean canUndo, boolean canRedo, List<IQuantityCollection<Q>> inputs,
@@ -135,7 +135,7 @@ public abstract class CoreQuantityOperation<Q extends Quantity>
 		{
 			super(title, description, store, canUndo, canRedo, inputs, context);
 
-			_timeProvider = timeProvider;
+			this.timeProvider = timeProvider;
 		}
 
 		/**
@@ -170,9 +170,9 @@ public abstract class CoreQuantityOperation<Q extends Quantity>
 
 			clearOutputs(outputs);
 
-			if (_timeProvider != null)
+			if (timeProvider != null)
 			{
-				Collection<Long> times = _timeProvider.getTimes();
+				Collection<Long> times = timeProvider.getTimes();
 				Iterator<Long> iter = times.iterator();
 				while (iter.hasNext())
 				{
@@ -281,8 +281,7 @@ public abstract class CoreQuantityOperation<Q extends Quantity>
 				IQuantityCollection<Q> input, Unit<Q> unit)
 		{
 			// double check the name is ok
-			final String outName = getContext().getInput(super.getName(),
-					"Please provide a name for the new dataset", getOutputName());
+			final String outName = getOutputName();
 
 			IQuantityCollection<Q> target = null;
 

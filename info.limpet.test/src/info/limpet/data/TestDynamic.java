@@ -40,11 +40,12 @@ public class TestDynamic extends TestCase
 		int storeSize = store.size();
 
 		Collection<ICommand<?>> actions = new AddQuantityOperation().actionsFor(
-				selection, store, context );
+				selection, store, context);
 		Iterator<ICommand<?>> addIter = actions.iterator();
 		addIter.next();
-		ICommand<?> firstAction = addIter.next();		
-		assertEquals("correct action", "Sum of input series (interpolated)", firstAction.getName());
+		ICommand<?> firstAction = addIter.next();
+		assertEquals("correct action", "Add numeric values in provided series (interpolated)",
+				firstAction.getName());
 
 		// run the action
 		firstAction.execute();
@@ -53,13 +54,14 @@ public class TestDynamic extends TestCase
 		assertEquals("new data created", storeSize + 1, store.size());
 
 		// ok, get the new dataset
-		ICollection resSeries = (ICollection) store.get("Sum of Speed One Time, Speed Two Time");
+		ICollection resSeries = (ICollection) store
+				.get("Sum of Speed One Time, Speed Two Time");
 		assertNotNull(resSeries);
 
 		// remember the units
 		IQuantityCollection<?> iq = (IQuantityCollection<?>) resSeries;
 		final String resUnits = iq.getUnits().toString();
-		
+
 		// ok, play about with a change
 		final List<String> events = new ArrayList<String>();
 		CoreChangeListener listener = new CoreChangeListener()
@@ -76,7 +78,7 @@ public class TestDynamic extends TestCase
 		// ok, now make a change in one of hte input collections
 		speedOne.fireDataChanged();
 		assertEquals("change received", 1, events.size());
-		
+
 		// check the units haven't changed
 		assertEquals("units still valid", resUnits, iq.getUnits().toString());
 
@@ -89,11 +91,12 @@ public class TestDynamic extends TestCase
 		selection.add(resSeries);
 
 		// ok - now for a further dependent calculation
-		actions = new AddQuantityOperation("output2").actionsFor(selection, store, context);
+		actions = new AddQuantityOperation().actionsFor(selection, store, context);
 		addIter = actions.iterator();
 		addIter.next();
 		firstAction = addIter.next();
-		assertEquals("correct action", "output2 (interpolated)", firstAction.getName());
+		assertEquals("correct action", "Add numeric values in provided series (interpolated)",
+				firstAction.getName());
 
 		// ok, now create the new series
 		firstAction.execute();
@@ -101,7 +104,8 @@ public class TestDynamic extends TestCase
 		// now check the output changed again
 		events.clear();
 
-		ICollection newResSeries = (ICollection) store.get("Sum of Speed Two Time, Sum of Speed One Time, Speed Two Time");
+		ICollection newResSeries = (ICollection) store
+				.get("Sum of Speed Two Time, Sum of Speed One Time, Speed Two Time");
 		assertNotNull("found new series");
 		newResSeries.addChangeListener(listener);
 
@@ -117,7 +121,7 @@ public class TestDynamic extends TestCase
 
 		resSeries.fireDataChanged();
 		assertEquals("change received", 7, events.size());
-		
+
 		// switch off dynamic update
 		Iterator<ICommand<?>> cIter = resSeries.getDependents().iterator();
 		while (cIter.hasNext())
@@ -125,7 +129,7 @@ public class TestDynamic extends TestCase
 			ICommand<?> comm = (ICommand<?>) cIter.next();
 			comm.setDynamic(false);
 		}
-		
+
 		// check that only the change listener event gets fired, not
 		// the depedendent operation event.
 		resSeries.fireDataChanged();
@@ -143,18 +147,15 @@ public class TestDynamic extends TestCase
 		resSeries.fireDataChanged();
 		assertEquals("change received", 10, events.size());
 
-		
 		// check the data lengths
 		IQuantityCollection<?> newResQ = (IQuantityCollection<?>) newResSeries;
 		assertEquals("correct elements", 10, newResQ.size());
 		assertEquals("correct elements", 10, speedTwo.size());
 		assertEquals("correct elements", 10, resSeries.size());
-		
+
 		// check the units haven't changed
 		assertEquals("units still valid", resUnits, iq.getUnits().toString());
 		assertEquals("units still valid", resUnits2, iq2.getUnits().toString());
 
-
-		
 	}
 }

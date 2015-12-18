@@ -17,17 +17,6 @@ import javax.measure.quantity.Quantity;
 public class AddQuantityOperation<Q extends Quantity> extends
 		CoreQuantityOperation<Q> implements IOperation<IQuantityCollection<Q>>
 {
-	public static final String SUM_OF_INPUT_SERIES = "Sum of input series";
-
-	public AddQuantityOperation(String name)
-	{
-		super();
-	}
-
-	public AddQuantityOperation()
-	{
-		this(SUM_OF_INPUT_SERIES);
-	}
 
 	@Override
 	protected void addInterpolatedCommands(
@@ -38,7 +27,9 @@ public class AddQuantityOperation<Q extends Quantity> extends
 
 		if (longest != null)
 		{
-			ICommand<IQuantityCollection<Q>> newC = new AddQuantityValues(selection, destination, longest, context);
+			ICommand<IQuantityCollection<Q>> newC = new AddQuantityValues(
+					"Add numeric values in provided series (interpolated)", selection,
+					destination, longest, context);
 			res.add(newC);
 		}
 	}
@@ -47,7 +38,9 @@ public class AddQuantityOperation<Q extends Quantity> extends
 			IStore destination, Collection<ICommand<IQuantityCollection<Q>>> res,
 			IContext context)
 	{
-		ICommand<IQuantityCollection<Q>> newC = new AddQuantityValues(selection, destination, context);
+		ICommand<IQuantityCollection<Q>> newC = new AddQuantityValues(
+				"Add numeric values in provided series (indexed)", selection,
+				destination, context);
 		res.add(newC);
 	}
 
@@ -65,18 +58,18 @@ public class AddQuantityOperation<Q extends Quantity> extends
 
 	public class AddQuantityValues extends CoreQuantityCommand
 	{
-		public AddQuantityValues(List<IQuantityCollection<Q>> selection,
-				IStore store, IContext context)
+		public AddQuantityValues(String name,
+				List<IQuantityCollection<Q>> selection, IStore store, IContext context)
 		{
-			this(selection, store, null, context);
+			this(name, selection, store, null, context);
 		}
 
-		public AddQuantityValues(List<IQuantityCollection<Q>> selection,
-				IStore destination, ITemporalQuantityCollection<Q> timeProvider,
-				IContext context)
+		public AddQuantityValues(String name,
+				List<IQuantityCollection<Q>> selection, IStore destination,
+				ITemporalQuantityCollection<Q> timeProvider, IContext context)
 		{
-			super("Add numeric values in provided series", "Add datasets",
-					destination, false, false, selection, timeProvider, context);
+			super(name, "Add datasets", destination, false, false, selection,
+					timeProvider, context);
 		}
 
 		@Override
