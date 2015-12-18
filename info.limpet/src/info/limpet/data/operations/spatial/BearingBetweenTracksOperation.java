@@ -37,9 +37,10 @@ public class BearingBetweenTracksOperation extends TwoTrackOperation
 				final IBaseTemporalCollection timeProvider = aTests
 						.getLongestTemporalCollections(selection);
 
-				ICommand<IStoreItem> newC = new DistanceOperation(null, selection,
-						destination, "Bearing between tracks (interpolated)",
-						"Calculate bearing between two tracks (interpolated)", timeProvider, context)
+				ICommand<IStoreItem> newC = new DistanceOperation(selection, destination,
+						"Bearing between tracks (interpolated)", "Calculate bearing between two tracks (interpolated)",
+						timeProvider,
+						context)
 				{
 
 					protected IQuantityCollection<?> getOutputCollection(String title,
@@ -59,6 +60,14 @@ public class BearingBetweenTracksOperation extends TwoTrackOperation
 						}
 
 						return output;
+					}
+
+					@Override
+					protected String getOutputName()
+					{
+						return getContext().getInput("Generate bearing",
+								NEW_DATASET_MESSAGE,
+								"Bearing between " + super.getSubjectList());
 					}
 
 					protected void calcAndStore(final GeodeticCalculator calc,
@@ -86,9 +95,9 @@ public class BearingBetweenTracksOperation extends TwoTrackOperation
 
 			if (aTests.allEqualLengthOrSingleton(selection))
 			{
-				ICommand<IStoreItem> newC = new DistanceOperation(null, selection,
-						destination, "Bearing between tracks (indexed)",
-						"Calculate bearing between two tracks (indexed)", null, context)
+				ICommand<IStoreItem> newC = new DistanceOperation(selection, destination,
+						"Bearing between tracks (indexed)", "Calculate bearing between two tracks (indexed)",
+						null, context)
 				{
 
 					protected IQuantityCollection<?> getOutputCollection(String title,
@@ -109,6 +118,16 @@ public class BearingBetweenTracksOperation extends TwoTrackOperation
 
 						return output;
 					}
+					
+					@Override
+					protected String getOutputName()
+					{
+						return getContext().getInput("Generate bearing",
+								NEW_DATASET_MESSAGE,
+								"Bearing between " + super.getSubjectList());
+					}
+
+
 
 					protected void calcAndStore(final GeodeticCalculator calc,
 							final Point locA, final Point locB, Long time)

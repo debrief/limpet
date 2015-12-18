@@ -31,7 +31,7 @@ public class ShowInNamedView implements IOperation<IStoreItem>
 		_title = title;
 		theId = id;
 	}
-	
+
 	protected CollectionComplianceTests getTests()
 	{
 		return aTests;
@@ -64,9 +64,15 @@ public class ShowInNamedView implements IOperation<IStoreItem>
 		public ShowInViewOperation(String title, List<IStoreItem> selection,
 				String id, IContext context)
 		{
-			super(title, "Show selection in specified view", null, null, false,
-					false, selection, context);
+			super(title, "Show selection in specified view", null, false, false,
+					selection, context);
 			_id = id;
+		}
+
+		@Override
+		protected String getOutputName()
+		{
+			return null;
 		}
 
 		@Override

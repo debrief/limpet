@@ -40,20 +40,19 @@ abstract public class UnitaryMathOperation implements IOperation<ICollection>
 		Collection<ICommand<ICollection>> res = new ArrayList<ICommand<ICollection>>();
 		if (appliesTo(selection))
 		{
-			ICommand<ICollection> newC = new MathCommand("Math - " + _opName, selection,
-					destination, context);
+			ICommand<ICollection> newC = new MathCommand("Math - " + _opName,
+					selection, destination, context);
 			res.add(newC);
 		}
 
 		return res;
 	}
 
-
 	protected Unit<?> getUnits(IQuantityCollection<?> input)
-	{ 
+	{
 		return input.getUnits();
 	}
-	
+
 	private boolean appliesTo(List<ICollection> selection)
 	{
 		boolean notEmpty = aTests.nonEmpty(selection);
@@ -68,11 +67,18 @@ abstract public class UnitaryMathOperation implements IOperation<ICollection>
 		public MathCommand(String operationName, List<ICollection> selection,
 				IStore store, IContext context)
 		{
-			super(operationName, "Convert units of the provided series", null, store,
-					false, false, selection, context);
+			super(operationName, "Convert units of the provided series", store, false,
+					false, selection, context);
 		}
 
-		
+		@Override
+		protected String getOutputName()
+		{
+			return getContext().getInput("Calculate " + getName(),
+					NEW_DATASET_MESSAGE,
+					getName() + "(" + super.getSubjectList() + ")");
+		}
+
 		@Override
 		public void execute()
 		{
@@ -110,7 +116,8 @@ abstract public class UnitaryMathOperation implements IOperation<ICollection>
 
 		}
 
-		@SuppressWarnings({ "rawtypes", "unchecked" })
+		@SuppressWarnings(
+		{ "rawtypes", "unchecked" })
 		private void processThis(IQuantityCollection<?> thisInput,
 				IQuantityCollection<?> thisOutput)
 		{
@@ -118,14 +125,15 @@ abstract public class UnitaryMathOperation implements IOperation<ICollection>
 			while (iter.hasNext())
 			{
 				Measurable<?> thisV = (Measurable<?>) iter.next();
-				Unit theUnits =  getUnits(thisInput);
+				Unit theUnits = getUnits(thisInput);
 				double thisD = thisV.doubleValue((Unit) thisInput.getUnits());
 				double newD = calcFor(thisD);
 				thisOutput.add(Measure.valueOf(newD, theUnits));
 			}
 		}
 
-		@SuppressWarnings({ "rawtypes", "unchecked" })
+		@SuppressWarnings(
+		{ "rawtypes", "unchecked" })
 		private void processThisTemporal(IQuantityCollection<?> thisInput,
 				ITemporalQuantityCollection<?> thisOutput)
 		{

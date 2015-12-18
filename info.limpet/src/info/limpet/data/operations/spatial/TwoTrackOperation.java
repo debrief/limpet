@@ -33,11 +33,11 @@ abstract public class TwoTrackOperation implements IOperation<IStoreItem>
 		final protected IBaseTemporalCollection _timeProvider;
 		CollectionComplianceTests aTests = new CollectionComplianceTests();
 
-		public DistanceOperation(String outputName, List<IStoreItem> selection,
-				IStore store, String title, String description,
-				IBaseTemporalCollection timeProvider, IContext context)
+		public DistanceOperation(List<IStoreItem> selection, IStore store,
+				String title, String description, IBaseTemporalCollection timeProvider,
+				IContext context)
 		{
-			super(title, description, outputName, store, false, false, selection, context);
+			super(title, description, store, false, false, selection, context);
 			_timeProvider = timeProvider;
 		}
 

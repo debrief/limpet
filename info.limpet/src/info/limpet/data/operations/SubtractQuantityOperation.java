@@ -21,7 +21,7 @@ public class SubtractQuantityOperation<Q extends Quantity> extends
 
 	public SubtractQuantityOperation(String name)
 	{
-		super(name);
+		super();
 	}
 
 	public SubtractQuantityOperation()
@@ -62,14 +62,14 @@ public class SubtractQuantityOperation<Q extends Quantity> extends
 			String oName = item2.getName() + " from " + item1.getName();
 			ICommand<IQuantityCollection<Q>> newC = new SubtractQuantityValues(
 					"Subtract " + item2.getName() + " from " + item1.getName()
-							+ " (interpolated)", oName, selection, item1, item2, destination,
-					longest, context);
+							+ " (interpolated)", selection, item1, item2, destination, longest,
+					context);
 
 			res.add(newC);
 			oName = item1.getName() + " from " + item2.getName();
 			newC = new SubtractQuantityValues("Subtract " + item1.getName()
-					+ " from " + item2.getName() + " (interpolated)", oName, selection,
-					item2, item1, destination, longest, context);
+					+ " from " + item2.getName() + " (interpolated)", selection, item2,
+					item1, destination, longest, context);
 			res.add(newC);
 		}
 	}
@@ -84,14 +84,13 @@ public class SubtractQuantityOperation<Q extends Quantity> extends
 		String oName = item2.getName() + " from " + item1.getName();
 		ICommand<IQuantityCollection<Q>> newC = new SubtractQuantityValues(
 				"Subtract " + item2.getName() + " from " + item1.getName()
-						+ " (indexed)", oName, selection, item1, item2, destination,
-				context);
+						+ " (indexed)", selection, item1, item2, destination, context);
 
 		res.add(newC);
 		oName = item1.getName() + " from " + item2.getName();
 		newC = new SubtractQuantityValues("Subtract " + item1.getName() + " from "
-				+ item2.getName() + " (indexed)", oName, selection, item2, item1,
-				destination, context);
+				+ item2.getName() + " (indexed)", selection, item2, item1, destination,
+				context);
 		res.add(newC);
 	}
 
@@ -100,22 +99,30 @@ public class SubtractQuantityOperation<Q extends Quantity> extends
 		final IQuantityCollection<Q> _item1;
 		final IQuantityCollection<Q> _item2;
 
-		public SubtractQuantityValues(String title, String outputName,
-				List<IQuantityCollection<Q>> selection, IQuantityCollection<Q> item1,
-				IQuantityCollection<Q> item2, IStore store, IContext context)
+		public SubtractQuantityValues(String title, List<IQuantityCollection<Q>> selection,
+				IQuantityCollection<Q> item1, IQuantityCollection<Q> item2,
+				IStore store, IContext context)
 		{
-			this(title, outputName, selection, item1, item2, store, null, context);
+			this(title, selection, item1, item2, store, null, context);
 		}
 
-		public SubtractQuantityValues(String title, String outputName,
-				List<IQuantityCollection<Q>> selection, IQuantityCollection<Q> item1,
-				IQuantityCollection<Q> item2, IStore store,
-				ITemporalQuantityCollection<Q> timeProvider, IContext context)
+		public SubtractQuantityValues(String title, List<IQuantityCollection<Q>> selection,
+				IQuantityCollection<Q> item1, IQuantityCollection<Q> item2,
+				IStore store, ITemporalQuantityCollection<Q> timeProvider,
+				IContext context)
 		{
-			super(title, "Subtract provided series", outputName, store, false, false,
-					selection, timeProvider, context);
+			super(title, "Subtract provided series", store, false, false, selection,
+					timeProvider, context);
 			_item1 = item1;
 			_item2 = item2;
+		}
+
+		@Override
+		protected String getOutputName()
+		{
+			return getContext().getInput("Subtract dataset",
+					NEW_DATASET_MESSAGE,
+					_item2.getName() + " from " + _item1.getName());
 		}
 
 		@Override

@@ -51,7 +51,8 @@ public class TestOperations extends TestCase
 
 	private IContext context = new MockContext();
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings(
+	{ "rawtypes", "unchecked" })
 	public void testInterpolateTests()
 	{
 		// place to store results data
@@ -65,7 +66,8 @@ public class TestOperations extends TestCase
 		// ///////////////
 		ICollection speed_good_1 = (ICollection) store.get(SampleData.SPEED_ONE);
 		ICollection speed_good_2 = (ICollection) store.get(SampleData.SPEED_TWO);
-		ICollection speed_longer = (ICollection) store.get(SampleData.SPEED_THREE_LONGER);
+		ICollection speed_longer = (ICollection) store
+				.get(SampleData.SPEED_THREE_LONGER);
 
 		selection.add(speed_good_1);
 		selection.add(speed_longer);
@@ -79,16 +81,14 @@ public class TestOperations extends TestCase
 		selection.add(speed_good_1);
 		selection.add(speed_good_2);
 
-		actions = new AddQuantityOperation()
-				.actionsFor(selection, store, context);
+		actions = new AddQuantityOperation().actionsFor(selection, store, context);
 
 		assertEquals("correct number of actions returned", 2, actions.size());
 
 		ICommand<?> addAction = actions.iterator().next();
 
 		assertNotNull("found action", addAction);
-		
-		
+
 	}
 
 	public void testAppliesTo()
@@ -241,7 +241,8 @@ public class TestOperations extends TestCase
 		ICollection firstItem = (ICollection) store.iterator().next();
 		ICommand<?> precedent = firstItem.getPrecedent();
 		assertNotNull("has precedent", precedent);
-		assertEquals("Correct name", "Sum of input series", precedent.getName());
+		assertEquals("Correct name", "Sum of input series (indexed)",
+				precedent.getName());
 
 		List<? extends IStoreItem> inputs = precedent.getInputs();
 		assertEquals("Has both precedents", 2, inputs.size());
@@ -286,7 +287,8 @@ public class TestOperations extends TestCase
 		// ///////////////
 		ICollection speed_good_1 = (ICollection) store.get(SampleData.SPEED_ONE);
 		ICollection speed_good_2 = (ICollection) store.get(SampleData.SPEED_TWO);
-		ICollection speed_irregular = (ICollection) store.get(SampleData.SPEED_IRREGULAR2);
+		ICollection speed_irregular = (ICollection) store
+				.get(SampleData.SPEED_IRREGULAR2);
 		ICollection string_1 = (ICollection) store.get(SampleData.STRING_ONE);
 		ICollection len1 = (ICollection) store.get(SampleData.LENGTH_ONE);
 		ICollection factor = (ICollection) store
@@ -304,7 +306,8 @@ public class TestOperations extends TestCase
 		selection.add(speed_good_1);
 		selection.add(len1);
 
-		commands = new MultiplyQuantityOperation().actionsFor(selection, store, context);
+		commands = new MultiplyQuantityOperation().actionsFor(selection, store,
+				context);
 		assertEquals("valid collections - both quantities", 1, commands.size());
 
 		selection.clear();
@@ -312,7 +315,8 @@ public class TestOperations extends TestCase
 		selection.add(speed_good_2);
 		store.clear();
 		assertEquals("store empty", 0, store.size());
-		commands = new MultiplyQuantityOperation().actionsFor(selection, store, context);
+		commands = new MultiplyQuantityOperation().actionsFor(selection, store,
+				context);
 		assertEquals("valid collections - both speeds", 1, commands.size());
 
 		// //////////////////////////
@@ -324,7 +328,8 @@ public class TestOperations extends TestCase
 		selection.add(factor);
 
 		assertEquals("store empty", 0, store.size());
-		commands = new MultiplyQuantityOperation().actionsFor(selection, store, context);
+		commands = new MultiplyQuantityOperation().actionsFor(selection, store,
+				context);
 		assertEquals("valid collections - one is singleton", 1, commands.size());
 
 		ICommand<IStoreItem> command = commands.iterator().next();
@@ -338,8 +343,7 @@ public class TestOperations extends TestCase
 		// test store has a new item in it
 		assertEquals("store not empty", 1, store.size());
 
-		ICollection newS = (ICollection) store
-				.get(MultiplyQuantityOperation.SERIES_NAME);
+		ICollection newS = (ICollection) store.get("Product of Speed One Time, Floating point factor");
 
 		// test results is same length as thisSpeed
 		assertEquals("correct size", 10, newS.size());
@@ -349,23 +353,25 @@ public class TestOperations extends TestCase
 		selection.add(factor);
 		store.clear();
 		assertEquals("store empty", 0, store.size());
-		commands = new MultiplyQuantityOperation().actionsFor(selection, store, context);
+		commands = new MultiplyQuantityOperation().actionsFor(selection, store,
+				context);
 		assertEquals("valid collections - one is singleton", 1, commands.size());
-				
+
 		selection.clear();
 		selection.add(speed_good_1);
 		selection.add(speed_irregular);
 		store.clear();
 		assertEquals("store empty", 0, store.size());
-		commands = new MultiplyQuantityOperation().actionsFor(selection, store, context);
+		commands = new MultiplyQuantityOperation().actionsFor(selection, store,
+				context);
 		assertEquals("valid collections - one is singleton", 1, commands.size());
 		command = commands.iterator().next();
 		command.execute();
 		ICollection output = (ICollection) command.getOutputs().iterator().next();
 		assertTrue(output.isTemporal());
 		assertTrue(output.isQuantity());
-		assertEquals("Correct len", Math.max(speed_good_1.size(),  speed_irregular.size()),
-				output.size());
+		assertEquals("Correct len",
+				Math.max(speed_good_1.size(), speed_irregular.size()), output.size());
 	}
 
 	@SuppressWarnings("unchecked")
@@ -394,8 +400,7 @@ public class TestOperations extends TestCase
 		// apply action
 		command.execute();
 
-		ICollection newS = (ICollection) store.get(speed_good_1.getName()
-				+ UnitConversionOperation.CONVERTED_TO + KILOMETRES_PER_HOUR);
+		ICollection newS = (ICollection) store.get("Speed One Time converted to km/h");
 		assertNotNull(newS);
 
 		// test results is same length as thisSpeed
@@ -453,8 +458,7 @@ public class TestOperations extends TestCase
 
 		@SuppressWarnings("unchecked")
 		IQuantityCollection<Velocity> newS = (IQuantityCollection<Velocity>) store
-				.get(speed_good_1.getName() + " "
-						+ SimpleMovingAverageOperation.SERIES_NAME_TEMPLATE);
+				.get("Moving average of Speed One Time");
 		assertNotNull(newS);
 
 		// test results is same length as thisSpeed
@@ -490,7 +494,7 @@ public class TestOperations extends TestCase
 				.get(SampleData.SPEED_TWO);
 
 		IQuantityCollection<Velocity> newS = (IQuantityCollection<Velocity>) store
-				.get("Sum of input series (interpolated)");
+				.get("Sum of Speed One Time, Speed Two Time");
 
 		assertNotNull(newS);
 		assertEquals("correct size", 10, newS.size());
@@ -534,7 +538,7 @@ public class TestOperations extends TestCase
 		selection.add(speed_good_1);
 		selection.add(angle_1);
 		Collection<ICommand<ICollection>> commands = new SubtractQuantityOperation()
-				.actionsFor(selection, store, context );
+				.actionsFor(selection, store, context);
 		assertEquals("invalid collections - not same dimensions", 0,
 				commands.size());
 
@@ -544,7 +548,8 @@ public class TestOperations extends TestCase
 		ICollection string_1 = (ICollection) store.get(SampleData.STRING_ONE);
 		selection.add(speed_good_1);
 		selection.add(string_1);
-		commands = new SubtractQuantityOperation().actionsFor(selection, store, context);
+		commands = new SubtractQuantityOperation().actionsFor(selection, store,
+				context);
 		assertEquals("invalid collections - not all quantities", 0, commands.size());
 
 		selection.clear();
@@ -555,7 +560,8 @@ public class TestOperations extends TestCase
 		selection.add(speed_good_1);
 		selection.add(speed_good_2);
 
-		commands = new SubtractQuantityOperation().actionsFor(selection, store, context);
+		commands = new SubtractQuantityOperation().actionsFor(selection, store,
+				context);
 		assertEquals("valid command", 4, commands.size());
 
 		ICommand<ICollection> command = commands.iterator().next();
@@ -618,14 +624,16 @@ public class TestOperations extends TestCase
 		selection.clear();
 		selection.add(speed_good_1);
 		selection.add(string_1);
-		commands = new DivideQuantityOperation().actionsFor(selection, store, context);
+		commands = new DivideQuantityOperation().actionsFor(selection, store,
+				context);
 		assertEquals("not all quantities", 0, commands.size());
 
 		// test different size
 		selection.clear();
 		selection.add(speed_good_1);
 		selection.add(speed_good_1_bigger);
-		commands = new DivideQuantityOperation().actionsFor(selection, store, context);
+		commands = new DivideQuantityOperation().actionsFor(selection, store,
+				context);
 		assertEquals("collection not same size", 2, commands.size());
 
 		// /
@@ -636,18 +644,20 @@ public class TestOperations extends TestCase
 		selection.clear();
 		selection.add(length_1);
 		selection.add(speed_good_1);
-		commands = new DivideQuantityOperation().actionsFor(selection, store, context);
+		commands = new DivideQuantityOperation().actionsFor(selection, store,
+				context);
 		assertEquals("valid input", 2, commands.size());
 
 		ICommand<IStoreItem> command = commands.iterator().next();
 		command.execute();
-		
+
 		IStoreItem output = command.getOutputs().iterator().next();
-		
+
 		IQuantityCollection<Quantity> iQ = (IQuantityCollection<Quantity>) output;
-		
-		assertEquals("correct units", "[T]", iQ.getUnits().getDimension().toString());
-		
+
+		assertEquals("correct units", "[T]", iQ.getUnits().getDimension()
+				.toString());
+
 		store.clear();
 		command.execute();
 
@@ -669,7 +679,8 @@ public class TestOperations extends TestCase
 		selection.clear();
 		selection.add(length_1);
 		selection.add(factor);
-		commands = new DivideQuantityOperation().actionsFor(selection, store, context);
+		commands = new DivideQuantityOperation().actionsFor(selection, store,
+				context);
 		assertEquals("valid input", 2, commands.size());
 
 		Iterator<ICommand<IStoreItem>> iterator = commands.iterator();

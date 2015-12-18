@@ -21,7 +21,7 @@ public class AddQuantityOperation<Q extends Quantity> extends
 
 	public AddQuantityOperation(String name)
 	{
-		super(name);
+		super();
 	}
 
 	public AddQuantityOperation()
@@ -38,18 +38,16 @@ public class AddQuantityOperation<Q extends Quantity> extends
 
 		if (longest != null)
 		{
-			ICommand<IQuantityCollection<Q>> newC = new AddQuantityValues(outputName
-					+ " (interpolated)", selection, destination, longest, context);
+			ICommand<IQuantityCollection<Q>> newC = new AddQuantityValues(selection, destination, longest, context);
 			res.add(newC);
 		}
 	}
 
 	protected void addIndexedCommands(List<IQuantityCollection<Q>> selection,
-			IStore destination, Collection<ICommand<IQuantityCollection<Q>>> res, 
+			IStore destination, Collection<ICommand<IQuantityCollection<Q>>> res,
 			IContext context)
 	{
-		ICommand<IQuantityCollection<Q>> newC = new AddQuantityValues(outputName,
-				selection, destination, context);
+		ICommand<IQuantityCollection<Q>> newC = new AddQuantityValues(selection, destination, context);
 		res.add(newC);
 	}
 
@@ -67,18 +65,17 @@ public class AddQuantityOperation<Q extends Quantity> extends
 
 	public class AddQuantityValues extends CoreQuantityCommand
 	{
-		public AddQuantityValues(String outputName,
-				List<IQuantityCollection<Q>> selection, IStore store, IContext context)
+		public AddQuantityValues(List<IQuantityCollection<Q>> selection,
+				IStore store, IContext context)
 		{
-			super(outputName, "Add numeric values in provided series", outputName,
-					store, false, false, selection, context);
+			this(selection, store, null, context);
 		}
 
-		public AddQuantityValues(String outputName,
-				List<IQuantityCollection<Q>> selection, IStore destination,
-				ITemporalQuantityCollection<Q> timeProvider, IContext context)
+		public AddQuantityValues(List<IQuantityCollection<Q>> selection,
+				IStore destination, ITemporalQuantityCollection<Q> timeProvider,
+				IContext context)
 		{
-			super(outputName, "Add numeric values in provided series", outputName,
+			super("Add numeric values in provided series", "Add datasets",
 					destination, false, false, selection, timeProvider, context);
 		}
 
@@ -133,6 +130,14 @@ public class AddQuantityOperation<Q extends Quantity> extends
 				}
 			}
 			return thisResult;
+		}
+
+		@Override
+		protected String getOutputName()
+		{
+			return getContext().getInput("Add datasets",
+					"Please provide a name for the dataset",
+					"Sum of " + super.getSubjectList());
 		}
 	}
 

@@ -32,10 +32,10 @@ public class GenerateCourseAndSpeedOperation implements IOperation<IStoreItem>
 			AbstractCommand<IStoreItem>
 	{
 
-		public DistanceOperation(String outputName, List<IStoreItem> selection,
-				IStore store, String title, String description, IContext context)
+		public DistanceOperation(List<IStoreItem> selection, IStore store,
+				String title, String description, IContext context)
 		{
-			super(title, description, outputName, store, false, false, selection, context);
+			super(title, description, store, false, false, selection, context);
 		}
 
 		@Override
@@ -49,7 +49,7 @@ public class GenerateCourseAndSpeedOperation implements IOperation<IStoreItem>
 			{
 				IQuantityCollection<?> target = getOutputCollection(getInputs().get(i)
 						.getName());
-				
+
 				outputs.add(target);
 				// store the output
 				super.addOutput(target);
@@ -101,8 +101,7 @@ public class GenerateCourseAndSpeedOperation implements IOperation<IStoreItem>
 			final GeodeticCalculator calc = GeoSupport.getCalculator();
 
 			// do some clearing first
-			
-			
+
 			Iterator<IStoreItem> iter = inputs.iterator();
 			Iterator<IStoreItem> oIter = outputs.iterator();
 			while (iter.hasNext())
@@ -171,14 +170,22 @@ public class GenerateCourseAndSpeedOperation implements IOperation<IStoreItem>
 				title = "Generate course for tracks";
 			}
 
-			ICommand<IStoreItem> genCourse = new DistanceOperation(null, selection,
-					destination, "Generate calculated course", title, context)
+			ICommand<IStoreItem> genCourse = new DistanceOperation(selection, destination,
+					"Generate calculated course", title, context)
 			{
 
 				protected IQuantityCollection<?> getOutputCollection(String title)
 				{
 					return new StockTypes.Temporal.Angle_Degrees("Generated course for "
 							+ title, this);
+				}
+
+				@Override
+				protected String getOutputName()
+				{
+					return getContext().getInput("Generate course",
+							NEW_DATASET_MESSAGE,
+							"Generate course between " + super.getSubjectList());
 				}
 
 				protected void calcAndStore(IStoreItem output,
@@ -200,14 +207,22 @@ public class GenerateCourseAndSpeedOperation implements IOperation<IStoreItem>
 					target.add(thisTime, Measure.valueOf(angleDegs, target.getUnits()));
 				}
 			};
-			ICommand<IStoreItem> genSpeed = new DistanceOperation(null, selection,
-					destination, "Generate calculated speed", title, context)
+			ICommand<IStoreItem> genSpeed = new DistanceOperation(selection, destination,
+					"Generate calculated speed", title, context)
 			{
 
 				protected IQuantityCollection<?> getOutputCollection(String title)
 				{
 					return new StockTypes.Temporal.Speed_MSec("Generated speed for "
 							+ title, this);
+				}
+
+				@Override
+				protected String getOutputName()
+				{
+					return getContext().getInput("Generate speed",
+							NEW_DATASET_MESSAGE,
+							"Generate speed between " + super.getSubjectList());
 				}
 
 				protected void calcAndStore(IStoreItem output,

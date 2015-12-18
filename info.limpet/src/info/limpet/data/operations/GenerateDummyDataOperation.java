@@ -54,9 +54,10 @@ public class GenerateDummyDataOperation implements IOperation<IStoreItem>
 	{
 		final long _count;
 
-		public GenerateDummyDataCommand(String title, IStore store, long count, IContext context)
+		public GenerateDummyDataCommand(String title, IStore store, long count,
+				IContext context)
 		{
-			super(title, "Create some sample data", null, store, false, false, null, context);
+			super(title, "Create some sample data", store, false, false, null, context);
 			_count = count;
 		}
 
@@ -71,6 +72,13 @@ public class GenerateDummyDataOperation implements IOperation<IStoreItem>
 				getStore().add(iCollection);
 
 			}
+		}
+
+		@Override
+		protected String getOutputName()
+		{
+			// don't bother, not used
+			return null;
 		}
 
 		@Override

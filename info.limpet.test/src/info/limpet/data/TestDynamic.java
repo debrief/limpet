@@ -53,7 +53,7 @@ public class TestDynamic extends TestCase
 		assertEquals("new data created", storeSize + 1, store.size());
 
 		// ok, get the new dataset
-		ICollection resSeries = (ICollection) store.get("Sum of input series (interpolated)");
+		ICollection resSeries = (ICollection) store.get("Sum of Speed One Time, Speed Two Time");
 		assertNotNull(resSeries);
 
 		// remember the units
@@ -101,7 +101,7 @@ public class TestDynamic extends TestCase
 		// now check the output changed again
 		events.clear();
 
-		ICollection newResSeries = (ICollection) store.get("output2 (interpolated)");
+		ICollection newResSeries = (ICollection) store.get("Sum of Speed Two Time, Sum of Speed One Time, Speed Two Time");
 		assertNotNull("found new series");
 		newResSeries.addChangeListener(listener);
 

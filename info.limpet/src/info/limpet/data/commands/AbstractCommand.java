@@ -34,18 +34,18 @@ public abstract class AbstractCommand<T extends IStoreItem> implements
 	 * 
 	 */
 	private boolean dynamic = true;
-	final private String outputName;
 	transient private UUID uuid;
+	private transient final IContext context;
 
-	public AbstractCommand(String title, String description, String outputName,
-			IStore store, boolean canUndo, boolean canRedo, List<T> inputs, IContext context)
+	public AbstractCommand(String title, String description, IStore store,
+			boolean canUndo, boolean canRedo, List<T> inputs, IContext context)
 	{
 		this.title = title;
 		this.description = description;
 		this.store = store;
 		this.canUndo = canUndo;
 		this.canRedo = canRedo;
-		this.outputName = outputName;
+		this.context = context;
 
 		if (inputs != null)
 		{
@@ -59,6 +59,14 @@ public abstract class AbstractCommand<T extends IStoreItem> implements
 	}
 	
 	
+	/** provide access to the context object
+	 * 
+	 * @return the context object
+	 */
+	protected IContext getContext()
+	{
+		return context;
+	}
 
 	@Override
 	public UUID getUUID()
@@ -100,9 +108,34 @@ public abstract class AbstractCommand<T extends IStoreItem> implements
 		return true;
 	}
 
-	protected String getOutputName()
+	/** provide a name for the single output dataset
+	 * 
+	 * @return a string to use, or null to cancel the operation
+	 */
+	abstract protected String getOutputName();
+	
+	/** convenience function, to return the datasets as a comma separated list
+	 * 
+	 * @return
+	 */
+	protected String getSubjectList()
 	{
-		return outputName;
+		StringBuffer res = new StringBuffer();
+		
+		@SuppressWarnings("unchecked")
+		Iterator<IStoreItem> iter = (Iterator<IStoreItem>) getInputs().iterator();
+		int ctr = 0;
+		while (iter.hasNext())
+		{
+			IStore.IStoreItem storeItem = (IStore.IStoreItem) iter.next();
+			if(ctr++ > 0)
+			{
+				res.append(", ");
+			}
+			res.append(storeItem.getName());
+		}
+		
+		return res.toString();
 	}
 
 	protected int getNonSingletonArrayLength(List<IStoreItem> inputs)

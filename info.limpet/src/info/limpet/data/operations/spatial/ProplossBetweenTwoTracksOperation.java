@@ -28,11 +28,11 @@ public class ProplossBetweenTwoTracksOperation extends TwoTrackOperation
 
 	private final class DistanceBetweenOperation extends DistanceOperation
 	{
-		private DistanceBetweenOperation(String outputName,
-				List<IStoreItem> selection, IStore store, String title,
-				String description, IBaseTemporalCollection timeProvider, IContext context)
+		private DistanceBetweenOperation(List<IStoreItem> selection,
+				IStore store, String title, String description,
+				IBaseTemporalCollection timeProvider, IContext context)
 		{
-			super(outputName, selection, store, title, description, timeProvider, context);
+			super(selection, store, title, description, timeProvider, context);
 		}
 
 		protected IQuantityCollection<?> getOutputCollection(String title,
@@ -52,6 +52,14 @@ public class ProplossBetweenTwoTracksOperation extends TwoTrackOperation
 			return res;
 		}
 
+		@Override
+		protected String getOutputName()
+		{
+			return getContext().getInput("Generate propagation loss",
+					NEW_DATASET_MESSAGE,
+					"Proploss between " + super.getSubjectList());
+		}
+
 		protected void calcAndStore(final GeodeticCalculator calc,
 				final Point locA, final Point locB, Long time)
 		{
@@ -63,7 +71,7 @@ public class ProplossBetweenTwoTracksOperation extends TwoTrackOperation
 			calc.setDestinationGeographicPoint(locB.getCentroid().getOrdinate(0),
 					locB.getCentroid().getOrdinate(1));
 			double thisDistMetres = calc.getOrthodromicDistance();
-			
+
 			// ok, we've got to do 20 log R
 			double thisLoss = 20d * Math.log(thisDistMetres);
 			final Measure<Double, Dimensionless> thisRes = Measure.valueOf(thisLoss,
@@ -99,19 +107,20 @@ public class ProplossBetweenTwoTracksOperation extends TwoTrackOperation
 				final IBaseTemporalCollection timeProvider = aTests
 						.getLongestTemporalCollections(selection);
 
-				ICommand<IStoreItem> newC = new DistanceBetweenOperation(null,
-						selection, destination, "Propagation loss between tracks (interpolated)",
-						"Propagation loss between two tracks", timeProvider, context);
+				ICommand<IStoreItem> newC = new DistanceBetweenOperation(selection,
+						destination, "Propagation loss between tracks (interpolated)",
+						"Propagation loss between two tracks",
+						timeProvider, context);
 
 				res.add(newC);
 			}
 
 			if (aTests.allEqualLengthOrSingleton(selection))
 			{
-				ICommand<IStoreItem> newC = new DistanceBetweenOperation(null,
-						selection, destination,
-						"Propagation loss between tracks (indexed)",
-						"Propagation loss between two tracks", null, context);
+				ICommand<IStoreItem> newC = new DistanceBetweenOperation(selection,
+						destination, "Propagation loss between tracks (indexed)",
+						"Propagation loss between two tracks",
+						null, context);
 
 				res.add(newC);
 			}

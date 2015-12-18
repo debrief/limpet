@@ -52,8 +52,8 @@ public class DeleteCollectionOperation implements IOperation<IStoreItem>
 		public DeleteCollection(String title, List<IStoreItem> selection,
 				IStore store, IContext context)
 		{
-			super(title, "Delete specific collections", null, store, false, false,
-					selection, context);
+			super(title, "Delete specific collections", store, false, false, selection,
+					context);
 		}
 
 		@Override
@@ -88,6 +88,13 @@ public class DeleteCollectionOperation implements IOperation<IStoreItem>
 		protected void recalculate()
 		{
 			// don't worry
+		}
+
+		@Override
+		protected String getOutputName()
+		{
+			// special case, don't worry
+			return null;
 		}
 
 	}

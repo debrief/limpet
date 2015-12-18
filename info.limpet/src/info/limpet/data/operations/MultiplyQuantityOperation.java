@@ -25,20 +25,10 @@ import javax.measure.unit.Unit;
 
 public class MultiplyQuantityOperation implements IOperation<IStoreItem>
 {
-	public static final String SERIES_NAME = "Multiplication product";
-
 	CollectionComplianceTests aTests = new CollectionComplianceTests();
-
-	final private String outputName;
 
 	public MultiplyQuantityOperation()
 	{
-		this(SERIES_NAME);
-	}
-
-	public MultiplyQuantityOperation(final String seriesName)
-	{
-		outputName = seriesName;
 	}
 
 	public Collection<ICommand<IStoreItem>> actionsFor(
@@ -51,17 +41,18 @@ public class MultiplyQuantityOperation implements IOperation<IStoreItem>
 			if (aTests.allTemporal(selection) || !aTests.allNonTemporal(selection)
 					&& aTests.allEqualLengthOrSingleton(selection))
 			{
-				IBaseTemporalCollection longest = (IBaseTemporalCollection) aTests.getLongestTemporalCollections(selection);
+				IBaseTemporalCollection longest = (IBaseTemporalCollection) aTests
+						.getLongestTemporalCollections(selection);
 
-				ICommand<IStoreItem> newC = new MultiplyQuantityValues(outputName,
-						selection, destination, longest, context);
+				ICommand<IStoreItem> newC = new MultiplyQuantityValues(selection, destination,
+						longest, context);
 				res.add(newC);
 			}
 			else
 			{
 
-				ICommand<IStoreItem> newC = new MultiplyQuantityValues(outputName,
-						selection, destination, context);
+				ICommand<IStoreItem> newC = new MultiplyQuantityValues(selection, destination,
+						context);
 				res.add(newC);
 			}
 
@@ -69,7 +60,6 @@ public class MultiplyQuantityOperation implements IOperation<IStoreItem>
 
 		return res;
 	}
-
 
 	private boolean appliesTo(List<IStoreItem> selection)
 	{
@@ -94,18 +84,18 @@ public class MultiplyQuantityOperation implements IOperation<IStoreItem>
 
 		private IBaseTemporalCollection _timeProvider;
 
-		public MultiplyQuantityValues(String outputName,
-				List<IStoreItem> selection, IStore store, IContext context)
+		public MultiplyQuantityValues(List<IStoreItem> selection,
+				IStore store, IContext context)
 		{
-			this(outputName, selection, store, null, context);
+			this(selection, store, null, context);
 		}
 
-		public MultiplyQuantityValues(String outputName,
-				List<IStoreItem> selection, IStore store,
-				IBaseTemporalCollection timeProvider, IContext context)
+		public MultiplyQuantityValues(List<IStoreItem> selection,
+				IStore store, IBaseTemporalCollection timeProvider,
+				IContext context)
 		{
-			super("Multiply series", "Multiply series", outputName, store, false,
-					false, selection, context);
+			super("Multiply series", "Multiply series", store, false, false,
+					selection, context);
 			_timeProvider = timeProvider;
 		}
 
@@ -132,6 +122,13 @@ public class MultiplyQuantityOperation implements IOperation<IStoreItem>
 			}
 
 			return target;
+		}
+
+		@Override
+		protected String getOutputName()
+		{
+			return getContext().getInput("Multiply datasets", NEW_DATASET_MESSAGE,
+					"Product of " + super.getSubjectList());
 		}
 
 		@Override

@@ -11,4 +11,11 @@ public class MockContext implements IContext
 		return defaultText;
 	}
 
+	@Override
+	public void logError(Status status, String message, Exception e)
+	{
+		System.err.println("Logging status:" + status + " message:" + message);
+		e.printStackTrace();
+	}
+
 }
