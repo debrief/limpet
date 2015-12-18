@@ -44,10 +44,17 @@ public class GenerateCourseAndSpeedOperation implements IOperation<IStoreItem>
 			// get the unit
 			List<IStoreItem> outputs = new ArrayList<IStoreItem>();
 
+			String prefix = getOutputName();
+			
+			if(prefix == null)
+			{
+				return;
+			}
+			
 			// ok, generate the new series
 			for (int i = 0; i < getInputs().size(); i++)
 			{
-				IQuantityCollection<?> target = getOutputCollection(getInputs().get(i)
+				IQuantityCollection<?> target = getOutputCollection(prefix + getInputs().get(i)
 						.getName());
 
 				outputs.add(target);
@@ -176,16 +183,15 @@ public class GenerateCourseAndSpeedOperation implements IOperation<IStoreItem>
 
 				protected IQuantityCollection<?> getOutputCollection(String title)
 				{
-					return new StockTypes.Temporal.Angle_Degrees("Generated course for "
-							+ title, this);
+					return new StockTypes.Temporal.Angle_Degrees(title, this);
 				}
 
 				@Override
 				protected String getOutputName()
 				{
 					return getContext().getInput("Generate course",
-							NEW_DATASET_MESSAGE,
-							"Generate course between " + super.getSubjectList());
+							"Please provide a dataset prefix",
+							"Generated course for ");
 				}
 
 				protected void calcAndStore(IStoreItem output,
@@ -213,16 +219,15 @@ public class GenerateCourseAndSpeedOperation implements IOperation<IStoreItem>
 
 				protected IQuantityCollection<?> getOutputCollection(String title)
 				{
-					return new StockTypes.Temporal.Speed_MSec("Generated speed for "
-							+ title, this);
+					return new StockTypes.Temporal.Speed_MSec(title, this);
 				}
 
 				@Override
 				protected String getOutputName()
 				{
 					return getContext().getInput("Generate speed",
-							NEW_DATASET_MESSAGE,
-							"Generate speed between " + super.getSubjectList());
+							"Please provide a dataset prefix",
+							"Generated speed for ");
 				}
 
 				protected void calcAndStore(IStoreItem output,

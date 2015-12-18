@@ -88,18 +88,18 @@ abstract public class UnitaryMathOperation implements IOperation<ICollection>
 			Iterator<ICollection> iIter = getInputs().iterator();
 			while (iIter.hasNext())
 			{
+				final String outName = getOutputName();
+				
 				IQuantityCollection<?> thisInput = (IQuantityCollection<?>) iIter
 						.next();
 				final IQuantityCollection<?> thisOutput;
 				if (thisInput.isTemporal())
 				{
-					thisOutput = new TemporalQuantityCollection<>(this.getName() + " - "
-							+ thisInput.getName(), this, getUnits(thisInput));
+					thisOutput = new TemporalQuantityCollection<>(outName, this, getUnits(thisInput));
 				}
 				else
 				{
-					thisOutput = new QuantityCollection<>(this.getName() + " - "
-							+ thisInput.getName(), this, getUnits(thisInput));
+					thisOutput = new QuantityCollection<>(outName, this, getUnits(thisInput));
 				}
 
 				thisInput.addDependent(this);

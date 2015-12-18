@@ -26,9 +26,9 @@ import org.opengis.geometry.primitive.Point;
 public class ProplossBetweenTwoTracksOperation extends TwoTrackOperation
 {
 
-	private final class DistanceBetweenOperation extends DistanceOperation
+	private final class ProplossBetweenOperation extends DistanceOperation
 	{
-		private DistanceBetweenOperation(List<IStoreItem> selection,
+		private ProplossBetweenOperation(List<IStoreItem> selection,
 				IStore store, String title, String description,
 				IBaseTemporalCollection timeProvider, IContext context)
 		{
@@ -41,13 +41,11 @@ public class ProplossBetweenTwoTracksOperation extends TwoTrackOperation
 			final IQuantityCollection<?> res;
 			if (isTemporal)
 			{
-				res = new StockTypes.Temporal.AcousticStrength("Acoustic loss between "
-						+ title, this);
+				res = new StockTypes.Temporal.AcousticStrength(title, this);
 			}
 			else
 			{
-				res = new StockTypes.NonTemporal.AcousticStrength(
-						"Acoustic loss between " + title, this);
+				res = new StockTypes.NonTemporal.AcousticStrength(title, this);
 			}
 			return res;
 		}
@@ -107,7 +105,7 @@ public class ProplossBetweenTwoTracksOperation extends TwoTrackOperation
 				final IBaseTemporalCollection timeProvider = aTests
 						.getLongestTemporalCollections(selection);
 
-				ICommand<IStoreItem> newC = new DistanceBetweenOperation(selection,
+				ICommand<IStoreItem> newC = new ProplossBetweenOperation(selection,
 						destination, "Propagation loss between tracks (interpolated)",
 						"Propagation loss between two tracks",
 						timeProvider, context);
@@ -117,7 +115,7 @@ public class ProplossBetweenTwoTracksOperation extends TwoTrackOperation
 
 			if (aTests.allEqualLengthOrSingleton(selection))
 			{
-				ICommand<IStoreItem> newC = new DistanceBetweenOperation(selection,
+				ICommand<IStoreItem> newC = new ProplossBetweenOperation(selection,
 						destination, "Propagation loss between tracks (indexed)",
 						"Propagation loss between two tracks",
 						null, context);

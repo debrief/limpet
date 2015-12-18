@@ -50,7 +50,8 @@ abstract public class TwoTrackOperation implements IOperation<IStoreItem>
 			// put the names into a string
 			ICollection input0 = (ICollection) super.getInputs().get(0);
 			ICollection input1 = (ICollection) super.getInputs().get(1);
-			String title = input0.getName() + " and " + input1.getName();
+			String title = getOutputName(); 
+//					input0.getName() + " and " + input1.getName();
 
 			// ok, generate the new series
 			IQuantityCollection<?> target = getOutputCollection(title,
