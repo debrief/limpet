@@ -6,7 +6,6 @@ import info.limpet.IContext;
 import info.limpet.IQuantityCollection;
 import info.limpet.IStore;
 import info.limpet.IStore.IStoreItem;
-import info.limpet.data.store.InMemoryStore.StoreGroup;
 import info.limpet.IStoreGroup;
 
 import java.util.ArrayList;
@@ -26,7 +25,7 @@ public abstract class AbstractCommand<T extends IStoreItem> implements
 
 	final protected List<T> inputs;
 	final protected List<T> outputs;
-	
+
 	IStoreGroup _parent;
 
 	/**
@@ -57,9 +56,9 @@ public abstract class AbstractCommand<T extends IStoreItem> implements
 		}
 		this.outputs = new ArrayList<T>();
 	}
-	
-	
-	/** provide access to the context object
+
+	/**
+	 * provide access to the context object
 	 * 
 	 * @return the context object
 	 */
@@ -77,7 +76,6 @@ public abstract class AbstractCommand<T extends IStoreItem> implements
 		}
 		return uuid;
 	}
-
 
 	@Override
 	public int hashCode()
@@ -97,7 +95,7 @@ public abstract class AbstractCommand<T extends IStoreItem> implements
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		StoreGroup other = (StoreGroup) obj;
+		AbstractCommand<?> other = (AbstractCommand<?>) obj;
 		if (getUUID() == null)
 		{
 			if (other.getUUID() != null)
@@ -108,33 +106,35 @@ public abstract class AbstractCommand<T extends IStoreItem> implements
 		return true;
 	}
 
-	/** provide a name for the single output dataset
+	/**
+	 * provide a name for the single output dataset
 	 * 
 	 * @return a string to use, or null to cancel the operation
 	 */
 	abstract protected String getOutputName();
-	
-	/** convenience function, to return the datasets as a comma separated list
+
+	/**
+	 * convenience function, to return the datasets as a comma separated list
 	 * 
 	 * @return
 	 */
 	protected String getSubjectList()
 	{
 		StringBuffer res = new StringBuffer();
-		
+
 		@SuppressWarnings("unchecked")
 		Iterator<IStoreItem> iter = (Iterator<IStoreItem>) getInputs().iterator();
 		int ctr = 0;
 		while (iter.hasNext())
 		{
 			IStore.IStoreItem storeItem = (IStore.IStoreItem) iter.next();
-			if(ctr++ > 0)
+			if (ctr++ > 0)
 			{
 				res.append(", ");
 			}
 			res.append(storeItem.getName());
 		}
-		
+
 		return res.toString();
 	}
 
@@ -168,8 +168,6 @@ public abstract class AbstractCommand<T extends IStoreItem> implements
 		this.dynamic = dynamic;
 	}
 
-	
-	
 	@Override
 	public void metadataChanged(IStoreItem subject)
 	{
@@ -296,23 +294,21 @@ public abstract class AbstractCommand<T extends IStoreItem> implements
 	public void addChangeListener(IChangeListener listener)
 	{
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void removeChangeListener(IChangeListener listener)
 	{
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void fireDataChanged()
 	{
 		// TODO Auto-generated method stub
-		
+
 	}
 
-	
-	
 }
