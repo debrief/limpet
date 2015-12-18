@@ -3,6 +3,7 @@ package info.limpet.data.operations;
 import info.limpet.IBaseTemporalCollection;
 import info.limpet.ICollection;
 import info.limpet.ICommand;
+import info.limpet.IContext;
 import info.limpet.IOperation;
 import info.limpet.IQuantityCollection;
 import info.limpet.IStore;
@@ -34,25 +35,24 @@ abstract public class UnitaryMathOperation implements IOperation<ICollection>
 	abstract public double calcFor(double val);
 
 	public Collection<ICommand<ICollection>> actionsFor(
-			List<ICollection> selection, IStore destination)
+			List<ICollection> selection, IStore destination, IContext context)
 	{
 		Collection<ICommand<ICollection>> res = new ArrayList<ICommand<ICollection>>();
 		if (appliesTo(selection))
 		{
-			ICommand<ICollection> newC = new MathCommand("Math - " + _opName, selection,
-					destination);
+			ICommand<ICollection> newC = new MathCommand("Math - " + _opName,
+					selection, destination, context);
 			res.add(newC);
 		}
 
 		return res;
 	}
 
-
 	protected Unit<?> getUnits(IQuantityCollection<?> input)
-	{ 
+	{
 		return input.getUnits();
 	}
-	
+
 	private boolean appliesTo(List<ICollection> selection)
 	{
 		boolean notEmpty = aTests.nonEmpty(selection);
@@ -65,13 +65,20 @@ abstract public class UnitaryMathOperation implements IOperation<ICollection>
 	{
 
 		public MathCommand(String operationName, List<ICollection> selection,
-				IStore store)
+				IStore store, IContext context)
 		{
-			super(operationName, "Convert units of the provided series", null, store,
-					false, false, selection);
+			super(operationName, "Convert units of the provided series", store, false,
+					false, selection, context);
 		}
 
-		
+		@Override
+		protected String getOutputName()
+		{
+			return getContext().getInput("Calculate " + getName(),
+					NEW_DATASET_MESSAGE,
+					getName() + "(" + super.getSubjectList() + ")");
+		}
+
 		@Override
 		public void execute()
 		{
@@ -81,18 +88,18 @@ abstract public class UnitaryMathOperation implements IOperation<ICollection>
 			Iterator<ICollection> iIter = getInputs().iterator();
 			while (iIter.hasNext())
 			{
+				final String outName = getOutputName();
+				
 				IQuantityCollection<?> thisInput = (IQuantityCollection<?>) iIter
 						.next();
 				final IQuantityCollection<?> thisOutput;
 				if (thisInput.isTemporal())
 				{
-					thisOutput = new TemporalQuantityCollection<>(this.getName() + " - "
-							+ thisInput.getName(), this, getUnits(thisInput));
+					thisOutput = new TemporalQuantityCollection<>(outName, this, getUnits(thisInput));
 				}
 				else
 				{
-					thisOutput = new QuantityCollection<>(this.getName() + " - "
-							+ thisInput.getName(), this, getUnits(thisInput));
+					thisOutput = new QuantityCollection<>(outName, this, getUnits(thisInput));
 				}
 
 				thisInput.addDependent(this);
@@ -109,7 +116,8 @@ abstract public class UnitaryMathOperation implements IOperation<ICollection>
 
 		}
 
-		@SuppressWarnings({ "rawtypes", "unchecked" })
+		@SuppressWarnings(
+		{ "rawtypes", "unchecked" })
 		private void processThis(IQuantityCollection<?> thisInput,
 				IQuantityCollection<?> thisOutput)
 		{
@@ -117,14 +125,15 @@ abstract public class UnitaryMathOperation implements IOperation<ICollection>
 			while (iter.hasNext())
 			{
 				Measurable<?> thisV = (Measurable<?>) iter.next();
-				Unit theUnits =  getUnits(thisInput);
+				Unit theUnits = getUnits(thisInput);
 				double thisD = thisV.doubleValue((Unit) thisInput.getUnits());
 				double newD = calcFor(thisD);
 				thisOutput.add(Measure.valueOf(newD, theUnits));
 			}
 		}
 
-		@SuppressWarnings({ "rawtypes", "unchecked" })
+		@SuppressWarnings(
+		{ "rawtypes", "unchecked" })
 		private void processThisTemporal(IQuantityCollection<?> thisInput,
 				ITemporalQuantityCollection<?> thisOutput)
 		{

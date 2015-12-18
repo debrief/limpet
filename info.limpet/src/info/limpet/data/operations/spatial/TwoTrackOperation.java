@@ -2,6 +2,7 @@ package info.limpet.data.operations.spatial;
 
 import info.limpet.IBaseTemporalCollection;
 import info.limpet.ICollection;
+import info.limpet.IContext;
 import info.limpet.IOperation;
 import info.limpet.IQuantityCollection;
 import info.limpet.IStore;
@@ -32,11 +33,11 @@ abstract public class TwoTrackOperation implements IOperation<IStoreItem>
 		final protected IBaseTemporalCollection _timeProvider;
 		CollectionComplianceTests aTests = new CollectionComplianceTests();
 
-		public DistanceOperation(String outputName, List<IStoreItem> selection,
-				IStore store, String title, String description,
-				IBaseTemporalCollection timeProvider)
+		public DistanceOperation(List<IStoreItem> selection, IStore store,
+				String title, String description, IBaseTemporalCollection timeProvider,
+				IContext context)
 		{
-			super(title, description, outputName, store, false, false, selection);
+			super(title, description, store, false, false, selection, context);
 			_timeProvider = timeProvider;
 		}
 
@@ -49,7 +50,8 @@ abstract public class TwoTrackOperation implements IOperation<IStoreItem>
 			// put the names into a string
 			ICollection input0 = (ICollection) super.getInputs().get(0);
 			ICollection input1 = (ICollection) super.getInputs().get(1);
-			String title = input0.getName() + " and " + input1.getName();
+			String title = getOutputName(); 
+//					input0.getName() + " and " + input1.getName();
 
 			// ok, generate the new series
 			IQuantityCollection<?> target = getOutputCollection(title,

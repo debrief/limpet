@@ -5,6 +5,7 @@ import static javax.measure.unit.SI.SECOND;
 import info.limpet.IBaseTemporalCollection;
 import info.limpet.ICollection;
 import info.limpet.ICommand;
+import info.limpet.IContext;
 import info.limpet.IOperation;
 import info.limpet.IQuantityCollection;
 import info.limpet.IStore;
@@ -77,28 +78,31 @@ public class DopplerShiftBetweenTracksOperation implements
 			return freq;
 		}
 
-		/** let the class organise a tidy set of data, to collate the assorted datasets
+		/**
+		 * let the class organise a tidy set of data, to collate the assorted
+		 * datasets
 		 * 
 		 */
 		private transient HashMap<String, ICollection> _data;
-		
-		/** nominated transmitted
+
+		/**
+		 * nominated transmitted
 		 * 
 		 */
 		private final StoreGroup _tx;
 
-		/** nominated receiver
+		/**
+		 * nominated receiver
 		 * 
 		 */
 		private final StoreGroup _rx;
 		CollectionComplianceTests aTests = new CollectionComplianceTests();
 
-
-		public DopplerShiftOperation(final String outputName, final StoreGroup tx,
-				final StoreGroup rx, final IStore store, final String title,
-				final String description, final List<IStoreItem> selection)
+		public DopplerShiftOperation(final StoreGroup tx, final StoreGroup rx,
+				final IStore store, final String title, final String description,
+				final List<IStoreItem> selection, IContext context)
 		{
-			super(title, description, outputName, store, true, true, selection);
+			super(title, description, store, true, true, selection, context);
 			_tx = tx;
 			_rx = rx;
 		}
@@ -154,8 +158,14 @@ public class DopplerShiftBetweenTracksOperation implements
 			res.add(target);
 			getStore().addAll(res);
 		}
-		
-		
+
+		@Override
+		protected String getOutputName()
+		{
+			return getContext().getInput("Doppler shift between tracks",
+					NEW_DATASET_MESSAGE,
+					"Doppler shift between " + _tx.getName() + " and " + _rx.getName());
+		}
 
 		@Override
 		public void undo()
@@ -163,7 +173,7 @@ public class DopplerShiftBetweenTracksOperation implements
 			// ok, remove the calculated dataset
 			IStoreItem results = getOutputs().iterator().next();
 			IStore store = getStore();
-			if(store instanceof InMemoryStore)
+			if (store instanceof InMemoryStore)
 			{
 				InMemoryStore im = (InMemoryStore) store;
 				im.remove(results);
@@ -175,18 +185,18 @@ public class DopplerShiftBetweenTracksOperation implements
 		{
 			IStoreItem results = getOutputs().iterator().next();
 			IStore store = getStore();
-			if(store instanceof InMemoryStore)
+			if (store instanceof InMemoryStore)
 			{
 				InMemoryStore im = (InMemoryStore) store;
 				im.add(results);
 			}
 		}
 
-
 		public HashMap<String, ICollection> getDataMap()
 		{
 			return _data;
 		}
+
 		protected IQuantityCollection<?> getOutputCollection(final String title)
 		{
 			return new StockTypes.Temporal.Frequency_Hz("Doppler shift between "
@@ -330,7 +340,8 @@ public class DopplerShiftBetweenTracksOperation implements
 
 	@Override
 	public Collection<ICommand<IStoreItem>> actionsFor(
-			final List<IStoreItem> selection, final IStore destination)
+			final List<IStoreItem> selection, final IStore destination,
+			IContext context)
 	{
 		final Collection<ICommand<IStoreItem>> res = new ArrayList<ICommand<IStoreItem>>();
 		if (appliesTo(selection))
@@ -341,17 +352,19 @@ public class DopplerShiftBetweenTracksOperation implements
 			// do we have freq for groupA
 			if (aTests.someHave(groupA, Frequency.UNIT.getDimension(), true) != null)
 			{
-				final ICommand<IStoreItem> newC = new DopplerShiftOperation(null, groupA, groupB, destination,
-						"Doppler between tracks (from " + groupA.getName() + ")",
-						"Calculate doppler between two tracks", selection);
+				final ICommand<IStoreItem> newC = new DopplerShiftOperation(groupA,
+						groupB, destination, "Doppler between tracks (from "
+								+ groupA.getName() + ")", "Calculate doppler between two tracks",
+						selection, context);
 				res.add(newC);
 			}
 
 			if (aTests.someHave(groupB, Frequency.UNIT.getDimension(), true) != null)
 			{
-				final ICommand<IStoreItem> newC = new DopplerShiftOperation(null, groupB, groupA, destination,
-						"Doppler between tracks (from " + groupB.getName() + ")",
-						"Calculate doppler between two tracks", selection);
+				final ICommand<IStoreItem> newC = new DopplerShiftOperation(groupB,
+						groupA, destination, "Doppler between tracks (from "
+								+ groupB.getName() + ")", "Calculate doppler between two tracks",
+						selection, context);
 				res.add(newC);
 			}
 		}

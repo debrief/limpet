@@ -1,6 +1,7 @@
 package info.limpet.data.operations;
 
 import info.limpet.ICommand;
+import info.limpet.IContext;
 import info.limpet.IOperation;
 import info.limpet.IStore;
 import info.limpet.IStore.IStoreItem;
@@ -27,7 +28,7 @@ public class AddLayerOperation implements IOperation<IStoreItem>
 	}
 
 	public Collection<ICommand<IStoreItem>> actionsFor(
-			List<IStoreItem> selection, IStore destination)
+			List<IStoreItem> selection, IStore destination, IContext context)
 	{
 		Collection<ICommand<IStoreItem>> res = new ArrayList<ICommand<IStoreItem>>();
 		if (appliesTo(selection))
@@ -42,13 +43,13 @@ public class AddLayerOperation implements IOperation<IStoreItem>
 				{
 					StoreGroup group = (StoreGroup) first;
 					newC = new AddLayerCommand(thisTitle, group, destination,
-							_stringProvider);
+							_stringProvider, context);
 				}
 			}
 
 			if (newC == null)
 			{
-				newC = new AddLayerCommand(thisTitle, destination, _stringProvider);
+				newC = new AddLayerCommand(thisTitle, destination, _stringProvider, context);
 			}
 
 			if (newC != null)
@@ -67,20 +68,21 @@ public class AddLayerOperation implements IOperation<IStoreItem>
 
 	public static class AddLayerCommand extends AbstractCommand<IStoreItem>
 	{
+		// TODO - ditch concept of StringProvider
 		final StringProvider _stringProvider;
 		private StoreGroup _group;
 
 		public AddLayerCommand(String title, IStore store,
-				StringProvider stringProvider)
+				StringProvider stringProvider, IContext context)
 		{
-			super(title, "Add a new layer", null, store, false, false, null);
+			super(title, "Add a new layer", store, false, false, null, context);
 			_stringProvider = stringProvider;
 		}
 
 		public AddLayerCommand(String title, StoreGroup group, IStore store,
-				StringProvider stringProvider)
+				StringProvider stringProvider, IContext context)
 		{
-			this(title, store, stringProvider);
+			this(title, store, stringProvider, context);
 			_group = group;
 		}
 
@@ -88,7 +90,7 @@ public class AddLayerOperation implements IOperation<IStoreItem>
 		public void execute()
 		{
 			// get the String
-			String string = _stringProvider.getString("Name for new layer");
+			String string = getOutputName();
 
 			if (string != null)
 			{
@@ -110,6 +112,12 @@ public class AddLayerOperation implements IOperation<IStoreItem>
 		protected void recalculate()
 		{
 			// don't worry
+		}
+
+		@Override
+		protected String getOutputName()
+		{
+			return getContext().getInput("Add layer", NEW_DATASET_MESSAGE, "");
 		}
 
 	}

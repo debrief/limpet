@@ -2,6 +2,7 @@ package info.limpet.data.operations.spatial;
 
 import info.limpet.IBaseTemporalCollection;
 import info.limpet.ICommand;
+import info.limpet.IContext;
 import info.limpet.IQuantityCollection;
 import info.limpet.IStore;
 import info.limpet.IStore.IStoreItem;
@@ -24,7 +25,7 @@ public class BearingBetweenTracksOperation extends TwoTrackOperation
 {
 
 	public Collection<ICommand<IStoreItem>> actionsFor(
-			List<IStoreItem> selection, IStore destination)
+			List<IStoreItem> selection, IStore destination, IContext context)
 	{
 		Collection<ICommand<IStoreItem>> res = new ArrayList<ICommand<IStoreItem>>();
 		if (appliesTo(selection))
@@ -36,9 +37,10 @@ public class BearingBetweenTracksOperation extends TwoTrackOperation
 				final IBaseTemporalCollection timeProvider = aTests
 						.getLongestTemporalCollections(selection);
 
-				ICommand<IStoreItem> newC = new DistanceOperation(null, selection,
-						destination, "Bearing between tracks (interpolated)",
-						"Calculate bearing between two tracks (interpolated)", timeProvider)
+				ICommand<IStoreItem> newC = new DistanceOperation(selection, destination,
+						"Bearing between tracks (interpolated)", "Calculate bearing between two tracks (interpolated)",
+						timeProvider,
+						context)
 				{
 
 					protected IQuantityCollection<?> getOutputCollection(String title,
@@ -58,6 +60,14 @@ public class BearingBetweenTracksOperation extends TwoTrackOperation
 						}
 
 						return output;
+					}
+
+					@Override
+					protected String getOutputName()
+					{
+						return getContext().getInput("Generate bearing",
+								NEW_DATASET_MESSAGE,
+								"Bearing between " + super.getSubjectList());
 					}
 
 					protected void calcAndStore(final GeodeticCalculator calc,
@@ -85,9 +95,9 @@ public class BearingBetweenTracksOperation extends TwoTrackOperation
 
 			if (aTests.allEqualLengthOrSingleton(selection))
 			{
-				ICommand<IStoreItem> newC = new DistanceOperation(null, selection,
-						destination, "Bearing between tracks (indexed)",
-						"Calculate bearing between two tracks (indexed)", null)
+				ICommand<IStoreItem> newC = new DistanceOperation(selection, destination,
+						"Bearing between tracks (indexed)", "Calculate bearing between two tracks (indexed)",
+						null, context)
 				{
 
 					protected IQuantityCollection<?> getOutputCollection(String title,
@@ -108,6 +118,16 @@ public class BearingBetweenTracksOperation extends TwoTrackOperation
 
 						return output;
 					}
+					
+					@Override
+					protected String getOutputName()
+					{
+						return getContext().getInput("Generate bearing",
+								NEW_DATASET_MESSAGE,
+								"Bearing between " + super.getSubjectList());
+					}
+
+
 
 					protected void calcAndStore(final GeodeticCalculator calc,
 							final Point locA, final Point locB, Long time)

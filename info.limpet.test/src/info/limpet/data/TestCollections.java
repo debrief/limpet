@@ -8,6 +8,7 @@ import static javax.measure.unit.SI.SECOND;
 import info.limpet.IBaseTemporalCollection;
 import info.limpet.ICollection;
 import info.limpet.ICommand;
+import info.limpet.IContext;
 import info.limpet.IQuantityCollection;
 import info.limpet.IStore;
 import info.limpet.IStore.IStoreItem;
@@ -15,6 +16,7 @@ import info.limpet.ITemporalObjectCollection.Doublet;
 import info.limpet.ITemporalQuantityCollection;
 import info.limpet.ITemporalQuantityCollection.InterpMethod;
 import info.limpet.QuantityRange;
+import info.limpet.data.impl.MockContext;
 import info.limpet.data.impl.ObjectCollection;
 import info.limpet.data.impl.QuantityCollection;
 import info.limpet.data.impl.TemporalObjectCollection;
@@ -47,6 +49,8 @@ import junit.framework.TestCase;
 
 public class TestCollections extends TestCase
 {
+	private IContext context = new MockContext();
+
 	public void testCreateObject()
 	{
 		// the target collection
@@ -149,7 +153,7 @@ public class TestCollections extends TestCase
 
 		InMemoryStore store = new InMemoryStore();
 		Collection<ICommand<IQuantityCollection<Quantity>>> commands = new AddQuantityOperation<>()
-				.actionsFor(selection, store);
+				.actionsFor(selection, store, context);
 		ICommand<IQuantityCollection<Quantity>> firstC = commands.iterator().next();
 
 		assertEquals("store empty", 0, store.size());
@@ -159,7 +163,7 @@ public class TestCollections extends TestCase
 		assertEquals("new collection created", 1, store.size());
 
 		ICollection series = (ICollection) store
-				.get("Sum of input series (interpolated)");
+				.get("Sum of Some data1, Some data2");
 		assertTrue("non empty", series.size() > 0);
 		assertTrue("temporal", series.isTemporal());
 		assertTrue("quantity", series.isQuantity());
@@ -198,7 +202,8 @@ public class TestCollections extends TestCase
 		selection.add((IQuantityCollection<Quantity>) tq2);
 
 		store = new InMemoryStore();
-		commands = new AddQuantityOperation<>().actionsFor(selection, store);
+		commands = new AddQuantityOperation<>().actionsFor(selection, store,
+				context);
 		firstC = commands.iterator().next();
 
 		assertEquals("store empty", 0, store.size());
@@ -207,7 +212,7 @@ public class TestCollections extends TestCase
 
 		assertEquals("new collection created", 1, store.size());
 
-		series = (ICollection) store.get("Sum of input series (interpolated)");
+		series = (ICollection) store.get("Sum of Some data1, Some data2");
 		assertTrue("non empty", series.size() > 0);
 		assertTrue("temporal", series.isTemporal());
 		assertTrue("quantity", series.isQuantity());
@@ -248,7 +253,7 @@ public class TestCollections extends TestCase
 		selection.add((IQuantityCollection<Quantity>) tq2);
 
 		store = new InMemoryStore();
-		commands = new AddQuantityOperation().actionsFor(selection, store);
+		commands = new AddQuantityOperation().actionsFor(selection, store, context);
 		firstC = commands.iterator().next();
 
 		assertEquals("store empty", 0, store.size());
@@ -336,7 +341,7 @@ public class TestCollections extends TestCase
 		assertNull("can't find it", store.get(tq3.getUUID()));
 
 		Collection<ICommand<IQuantityCollection<Quantity>>> commands = new AddQuantityOperation<>()
-				.actionsFor(selection, store);
+				.actionsFor(selection, store, context);
 		ICommand<IQuantityCollection<Quantity>> firstC = commands.iterator().next();
 
 		assertEquals("store empty", 2, store.size());
@@ -346,7 +351,7 @@ public class TestCollections extends TestCase
 		assertEquals("new collection created", 3, store.size());
 
 		ICollection series = (ICollection) store
-				.get("Sum of input series (interpolated)");
+				.get("Sum of Some data1, Some data2");
 		assertTrue("non empty", series.size() > 0);
 		assertTrue("temporal", series.isTemporal());
 		assertTrue("quantity", series.isQuantity());
@@ -392,7 +397,7 @@ public class TestCollections extends TestCase
 			}
 		};
 		Collection<ICommand<ICollection>> commands = absOp.actionsFor(selection,
-				store);
+				store, context);
 		ICommand<ICollection> firstC = commands.iterator().next();
 
 		assertEquals("store empty", 0, store.size());
@@ -455,20 +460,21 @@ public class TestCollections extends TestCase
 		selection.add(tq1);
 		store.clear();
 
-		Collection<ICommand<ICollection>> ops = clearU.actionsFor(selection, store);
+		Collection<ICommand<ICollection>> ops = clearU.actionsFor(selection, store,
+				context);
 		ICommand<ICollection> command = ops.iterator().next();
 		command.execute();
 
 		ITemporalQuantityCollection<Quantity> output = (ITemporalQuantityCollection<Quantity>) command
 				.getOutputs().iterator().next();
 
-		assertEquals("new type:", "", output.getUnits().getDimension()
-				.toString());
+		assertEquals("new type:", "", output.getUnits().getDimension().toString());
 		assertEquals("same size", output.size(), tq1.size());
 		assertEquals("first item same value", output.getValues().iterator().next()
 				.doubleValue(output.getUnits()), tq1.getValues().iterator().next()
 				.doubleValue(tq1.getUnits()));
-		assertEquals("same num times", output.getTimes().size(), tq1.getTimes().size());
+		assertEquals("same num times", output.getTimes().size(), tq1.getTimes()
+				.size());
 
 		// try again with a non temporal collection
 		selection.clear();
@@ -478,20 +484,19 @@ public class TestCollections extends TestCase
 		assertEquals("previous type:", "[L]/[T]", nq1.getUnits().getDimension()
 				.toString());
 
-		ops = clearU.actionsFor(selection, store);
+		ops = clearU.actionsFor(selection, store, context);
 		command = ops.iterator().next();
 		command.execute();
 
 		IQuantityCollection<Quantity> output2 = (IQuantityCollection<Quantity>) command
 				.getOutputs().iterator().next();
 
-		assertEquals("new type:", "", output2.getUnits().getDimension()
-				.toString());
+		assertEquals("new type:", "", output2.getUnits().getDimension().toString());
 		assertEquals("same size", output2.size(), nq1.size());
 		assertEquals("first item same value", output2.getValues().iterator().next()
 				.doubleValue(output2.getUnits()), nq1.getValues().iterator().next()
 				.doubleValue(nq1.getUnits()));
-		
+
 	}
 
 	@SuppressWarnings(
@@ -517,7 +522,7 @@ public class TestCollections extends TestCase
 
 		InMemoryStore store = new InMemoryStore();
 		Collection<ICommand<IStoreItem>> commands = new MultiplyQuantityOperation()
-				.actionsFor(selection, store);
+				.actionsFor(selection, store, context);
 		ICommand<IStoreItem> firstC = commands.iterator().next();
 
 		assertEquals("store empty", 0, store.size());
@@ -566,7 +571,8 @@ public class TestCollections extends TestCase
 		selection.add((IQuantityCollection<Quantity>) tq2);
 
 		store = new InMemoryStore();
-		commands = new MultiplyQuantityOperation().actionsFor(selection, store);
+		commands = new MultiplyQuantityOperation().actionsFor(selection, store,
+				context);
 		firstC = commands.iterator().next();
 
 		assertEquals("store empty", 0, store.size());
@@ -617,7 +623,8 @@ public class TestCollections extends TestCase
 		selection.add((IQuantityCollection<Quantity>) tq2);
 
 		store = new InMemoryStore();
-		commands = new MultiplyQuantityOperation().actionsFor(selection, store);
+		commands = new MultiplyQuantityOperation().actionsFor(selection, store,
+				context);
 		firstC = commands.iterator().next();
 
 		assertEquals("store empty", 0, store.size());
@@ -974,7 +981,7 @@ public class TestCollections extends TestCase
 
 		InMemoryStore store = new InMemoryStore();
 		Collection<ICommand<IQuantityCollection<Quantity>>> commands = new SubtractQuantityOperation<>()
-				.actionsFor(selection, store);
+				.actionsFor(selection, store, context);
 		ICommand<IQuantityCollection<Quantity>> firstC = commands.iterator().next();
 
 		assertEquals("store empty", 0, store.size());
@@ -1023,7 +1030,8 @@ public class TestCollections extends TestCase
 		selection.add((IQuantityCollection<Quantity>) tq2);
 
 		store = new InMemoryStore();
-		commands = new SubtractQuantityOperation<>().actionsFor(selection, store);
+		commands = new SubtractQuantityOperation<>().actionsFor(selection, store,
+				context);
 		firstC = commands.iterator().next();
 
 		assertEquals("store empty", 0, store.size());

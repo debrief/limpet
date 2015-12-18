@@ -2,6 +2,7 @@ package info.limpet.data.operations;
 
 import info.limpet.ICollection;
 import info.limpet.ICommand;
+import info.limpet.IContext;
 import info.limpet.IQuantityCollection;
 import info.limpet.IStore;
 import info.limpet.IStore.IStoreItem;
@@ -23,15 +24,10 @@ public abstract class CoreQuantityOperation<Q extends Quantity>
 {
 
 	protected CollectionComplianceTests aTests = new CollectionComplianceTests();
-	protected final String outputName;
-
-	public CoreQuantityOperation(String outputName)
-	{
-		this.outputName = outputName;
-	}
 
 	public Collection<ICommand<IQuantityCollection<Q>>> actionsFor(
-			List<IQuantityCollection<Q>> selection, IStore destination)
+			List<IQuantityCollection<Q>> selection, IStore destination,
+			IContext context)
 	{
 		Collection<ICommand<IQuantityCollection<Q>>> res = new ArrayList<ICommand<IQuantityCollection<Q>>>();
 		if (appliesTo(selection))
@@ -40,14 +36,14 @@ public abstract class CoreQuantityOperation<Q extends Quantity>
 			// so, do we do our indexed commands?
 			if (aTests.allEqualLength(selection))
 			{
-				addIndexedCommands(selection, destination, res);
+				addIndexedCommands(selection, destination, res, context);
 			}
 
 			// aah, what about temporal (interpolated) values?
 			if (aTests.allTemporal(selection)
 					&& aTests.suitableForTimeInterpolation(selection))
 			{
-				addInterpolatedCommands(selection, destination, res);
+				addInterpolatedCommands(selection, destination, res, context);
 			}
 
 		}
@@ -55,7 +51,7 @@ public abstract class CoreQuantityOperation<Q extends Quantity>
 		return res;
 	}
 
-	protected  ITemporalQuantityCollection<Q> getLongestTemporalCollections(
+	protected ITemporalQuantityCollection<Q> getLongestTemporalCollections(
 			List<IQuantityCollection<Q>> selection)
 	{
 		// find the longest time series.
@@ -99,7 +95,7 @@ public abstract class CoreQuantityOperation<Q extends Quantity>
 	 */
 	abstract protected void addIndexedCommands(
 			List<IQuantityCollection<Q>> selection, IStore destination,
-			Collection<ICommand<IQuantityCollection<Q>>> commands);
+			Collection<ICommand<IQuantityCollection<Q>>> commands, IContext context);
 
 	/**
 	 * add any commands that require temporal interpolation
@@ -110,7 +106,7 @@ public abstract class CoreQuantityOperation<Q extends Quantity>
 	 */
 	abstract protected void addInterpolatedCommands(
 			List<IQuantityCollection<Q>> selection, IStore destination,
-			Collection<ICommand<IQuantityCollection<Q>>> res);
+			Collection<ICommand<IQuantityCollection<Q>>> res, IContext context);
 
 	/**
 	 * the command that actually produces data
@@ -122,24 +118,24 @@ public abstract class CoreQuantityOperation<Q extends Quantity>
 			AbstractCommand<IQuantityCollection<Q>>
 	{
 
-		final private ITemporalQuantityCollection<Q> _timeProvider;
+		final private ITemporalQuantityCollection<Q> timeProvider;
 
 		public CoreQuantityCommand(String title, String description,
-				String outputName, IStore store, boolean canUndo, boolean canRedo,
-				List<IQuantityCollection<Q>> inputs)
+				IStore store, boolean canUndo, boolean canRedo, List<IQuantityCollection<Q>> inputs,
+				IContext context)
 		{
-			this(title, description, outputName, store, canUndo, canRedo, inputs,
-					null);
+			this(title, description, store, canUndo, canRedo, inputs, null,
+					context);
 		}
 
 		public CoreQuantityCommand(String title, String description,
-				String outputName, IStore store, boolean canUndo, boolean canRedo,
-				List<IQuantityCollection<Q>> inputs,
-				ITemporalQuantityCollection<Q> timeProvider)
+				IStore store, boolean canUndo, boolean canRedo, List<IQuantityCollection<Q>> inputs,
+				ITemporalQuantityCollection<Q> timeProvider,
+				IContext context)
 		{
-			super(title, description, outputName, store, canUndo, canRedo, inputs);
+			super(title, description, store, canUndo, canRedo, inputs, context);
 
-			_timeProvider = timeProvider;
+			this.timeProvider = timeProvider;
 		}
 
 		/**
@@ -174,9 +170,9 @@ public abstract class CoreQuantityOperation<Q extends Quantity>
 
 			clearOutputs(outputs);
 
-			if (_timeProvider != null)
+			if (timeProvider != null)
 			{
-				Collection<Long> times = _timeProvider.getTimes();
+				Collection<Long> times = timeProvider.getTimes();
 				Iterator<Long> iter = times.iterator();
 				while (iter.hasNext())
 				{
@@ -205,7 +201,7 @@ public abstract class CoreQuantityOperation<Q extends Quantity>
 		{
 			return inputs.get(0).size();
 		}
-		
+
 		private void storeTemporalValue(IQuantityCollection<Q> target, long thisT,
 				double val)
 		{
@@ -234,7 +230,8 @@ public abstract class CoreQuantityOperation<Q extends Quantity>
 						.get(0);
 				Long[] timeData = qi.getTimes().toArray(new Long[]
 				{});
-				qc.add(timeData[count], Measure.valueOf(value, determineOutputUnit(target)));
+				qc.add(timeData[count],
+						Measure.valueOf(value, determineOutputUnit(target)));
 			}
 			else
 			{
@@ -283,14 +280,21 @@ public abstract class CoreQuantityOperation<Q extends Quantity>
 		protected IQuantityCollection<Q> createQuantityTarget(
 				IQuantityCollection<Q> input, Unit<Q> unit)
 		{
-			final IQuantityCollection<Q> target;
-			if (input.isTemporal())
+			// double check the name is ok
+			final String outName = getOutputName();
+
+			IQuantityCollection<Q> target = null;
+
+			if (outName != null)
 			{
-				target = new TemporalQuantityCollection<Q>(getOutputName(), this, unit);
-			}
-			else
-			{
-				target = new QuantityCollection<Q>(getOutputName(), this, unit);
+				if (input.isTemporal())
+				{
+					target = new TemporalQuantityCollection<Q>(outName, this, unit);
+				}
+				else
+				{
+					target = new QuantityCollection<Q>(outName, this, unit);
+				}
 			}
 
 			return target;
@@ -303,12 +307,19 @@ public abstract class CoreQuantityOperation<Q extends Quantity>
 			IQuantityCollection<Q> first = inputs.get(0);
 
 			List<IQuantityCollection<Q>> outputs = new ArrayList<IQuantityCollection<Q>>();
-			
+
 			// sort out the output unit
 			Unit<Q> unit = determineOutputUnit(first);
 
 			// ok, generate the new series
 			final IQuantityCollection<Q> target = createQuantityTarget(first, unit);
+
+			if (target == null)
+			{
+				getContext().logError(IContext.Status.WARNING,
+						"User cancelled create operation", null);
+				return;
+			}
 
 			outputs.add(target);
 

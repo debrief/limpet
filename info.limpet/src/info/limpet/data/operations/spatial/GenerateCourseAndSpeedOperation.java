@@ -2,6 +2,7 @@ package info.limpet.data.operations.spatial;
 
 import info.limpet.ICollection;
 import info.limpet.ICommand;
+import info.limpet.IContext;
 import info.limpet.IOperation;
 import info.limpet.IQuantityCollection;
 import info.limpet.IStore;
@@ -31,10 +32,10 @@ public class GenerateCourseAndSpeedOperation implements IOperation<IStoreItem>
 			AbstractCommand<IStoreItem>
 	{
 
-		public DistanceOperation(String outputName, List<IStoreItem> selection,
-				IStore store, String title, String description)
+		public DistanceOperation(List<IStoreItem> selection, IStore store,
+				String title, String description, IContext context)
 		{
-			super(title, description, outputName, store, false, false, selection);
+			super(title, description, store, false, false, selection, context);
 		}
 
 		@Override
@@ -43,12 +44,19 @@ public class GenerateCourseAndSpeedOperation implements IOperation<IStoreItem>
 			// get the unit
 			List<IStoreItem> outputs = new ArrayList<IStoreItem>();
 
+			String prefix = getOutputName();
+			
+			if(prefix == null)
+			{
+				return;
+			}
+			
 			// ok, generate the new series
 			for (int i = 0; i < getInputs().size(); i++)
 			{
-				IQuantityCollection<?> target = getOutputCollection(getInputs().get(i)
+				IQuantityCollection<?> target = getOutputCollection(prefix + getInputs().get(i)
 						.getName());
-				
+
 				outputs.add(target);
 				// store the output
 				super.addOutput(target);
@@ -100,8 +108,7 @@ public class GenerateCourseAndSpeedOperation implements IOperation<IStoreItem>
 			final GeodeticCalculator calc = GeoSupport.getCalculator();
 
 			// do some clearing first
-			
-			
+
 			Iterator<IStoreItem> iter = inputs.iterator();
 			Iterator<IStoreItem> oIter = outputs.iterator();
 			while (iter.hasNext())
@@ -153,7 +160,7 @@ public class GenerateCourseAndSpeedOperation implements IOperation<IStoreItem>
 	}
 
 	public Collection<ICommand<IStoreItem>> actionsFor(
-			List<IStoreItem> selection, IStore destination)
+			List<IStoreItem> selection, IStore destination, IContext context)
 	{
 		Collection<ICommand<IStoreItem>> res = new ArrayList<ICommand<IStoreItem>>();
 		if (appliesTo(selection))
@@ -170,14 +177,21 @@ public class GenerateCourseAndSpeedOperation implements IOperation<IStoreItem>
 				title = "Generate course for tracks";
 			}
 
-			ICommand<IStoreItem> genCourse = new DistanceOperation(null, selection,
-					destination, "Generate calculated course", title)
+			ICommand<IStoreItem> genCourse = new DistanceOperation(selection, destination,
+					"Generate calculated course", title, context)
 			{
 
 				protected IQuantityCollection<?> getOutputCollection(String title)
 				{
-					return new StockTypes.Temporal.Angle_Degrees("Generated course for "
-							+ title, this);
+					return new StockTypes.Temporal.Angle_Degrees(title, this);
+				}
+
+				@Override
+				protected String getOutputName()
+				{
+					return getContext().getInput("Generate course",
+							"Please provide a dataset prefix",
+							"Generated course for ");
 				}
 
 				protected void calcAndStore(IStoreItem output,
@@ -199,14 +213,21 @@ public class GenerateCourseAndSpeedOperation implements IOperation<IStoreItem>
 					target.add(thisTime, Measure.valueOf(angleDegs, target.getUnits()));
 				}
 			};
-			ICommand<IStoreItem> genSpeed = new DistanceOperation(null, selection,
-					destination, "Generate calculated speed", title)
+			ICommand<IStoreItem> genSpeed = new DistanceOperation(selection, destination,
+					"Generate calculated speed", title, context)
 			{
 
 				protected IQuantityCollection<?> getOutputCollection(String title)
 				{
-					return new StockTypes.Temporal.Speed_MSec("Generated speed for "
-							+ title, this);
+					return new StockTypes.Temporal.Speed_MSec(title, this);
+				}
+
+				@Override
+				protected String getOutputName()
+				{
+					return getContext().getInput("Generate speed",
+							"Please provide a dataset prefix",
+							"Generated speed for ");
 				}
 
 				protected void calcAndStore(IStoreItem output,

@@ -1,6 +1,7 @@
 package info.limpet.data.operations;
 
 import info.limpet.ICommand;
+import info.limpet.IContext;
 import info.limpet.IOperation;
 import info.limpet.IStore;
 import info.limpet.IStore.IStoreItem;
@@ -18,7 +19,7 @@ public class DeleteCollectionOperation implements IOperation<IStoreItem>
 	CollectionComplianceTests aTests = new CollectionComplianceTests();
 
 	public Collection<ICommand<IStoreItem>> actionsFor(
-			List<IStoreItem> selection, IStore destination)
+			List<IStoreItem> selection, IStore destination, IContext context)
 	{
 		Collection<ICommand<IStoreItem>> res = new ArrayList<ICommand<IStoreItem>>();
 		if (appliesTo(selection))
@@ -33,7 +34,7 @@ public class DeleteCollectionOperation implements IOperation<IStoreItem>
 				commandTitle = "Delete collections";
 			}
 			ICommand<IStoreItem> newC = new DeleteCollection(commandTitle,
-					selection, destination);
+					selection, destination, context);
 			res.add(newC);
 		}
 
@@ -49,10 +50,10 @@ public class DeleteCollectionOperation implements IOperation<IStoreItem>
 	{
 
 		public DeleteCollection(String title, List<IStoreItem> selection,
-				IStore store)
+				IStore store, IContext context)
 		{
-			super(title, "Delete specific collections", null, store, false, false,
-					selection);
+			super(title, "Delete specific collections", store, false, false, selection,
+					context);
 		}
 
 		@Override
@@ -87,6 +88,13 @@ public class DeleteCollectionOperation implements IOperation<IStoreItem>
 		protected void recalculate()
 		{
 			// don't worry
+		}
+
+		@Override
+		protected String getOutputName()
+		{
+			// special case, don't worry
+			return null;
 		}
 
 	}
