@@ -62,7 +62,14 @@ public class XStreamHandler
 		
 		
 		xstream.alias("Point", org.geotools.geometry.iso.primitive.PointImpl.class);
-		
+		xstream.alias("GeographicBoundingBox", org.geotools.metadata.iso.extent.GeographicBoundingBoxImpl.class);
+		xstream.alias("LocalName", org.geotools.util.LocalName.class);
+		xstream.alias("DefaultCoordinateSystemAxis", org.geotools.referencing.cs.DefaultCoordinateSystemAxis.class);
+		xstream.alias("SimpleInternationalString", org.geotools.util.SimpleInternationalString.class);
+		xstream.alias("ResponsibleParty", org.geotools.metadata.iso.citation.ResponsiblePartyImpl.class);
+		xstream.alias("NamedIdentifier", org.geotools.referencing.NamedIdentifier.class);
+		xstream.alias("Identifier", org.geotools.metadata.iso.IdentifierImpl.class);
+
 		// tidier names for operations
 		xstream.alias("AddQuantityValues", AddQuantityValues.class);
 		xstream.alias("MultiplyQuantityValues", MultiplyQuantityValues.class);
@@ -78,6 +85,9 @@ public class XStreamHandler
 		xstream.useAttributeFor(AbstractCommand.class, "dynamic");
 
 		xstream.addImplicitCollection(InMemoryStore.class, "_store");
+
+		// setup converter
+		xstream.registerConverter(new LimpetCollectionConverter(xstream.getMapper()), XStream.PRIORITY_VERY_HIGH);
 		xstream.setMode(XStream.ID_REFERENCES);
 	}
 
