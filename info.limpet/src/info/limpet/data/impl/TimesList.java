@@ -2,7 +2,7 @@ package info.limpet.data.impl;
 
 import java.util.ArrayList;
 
-public class LimpetList<E> extends ArrayList<E>
+public class TimesList<E> extends ArrayList<Long>
 {
 
 	private static final long serialVersionUID = 1L;

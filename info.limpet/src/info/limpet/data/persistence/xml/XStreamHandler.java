@@ -87,7 +87,8 @@ public class XStreamHandler
 		xstream.addImplicitCollection(InMemoryStore.class, "_store");
 
 		// setup converter
-		xstream.registerConverter(new LimpetCollectionConverter(xstream.getMapper()), XStream.PRIORITY_VERY_HIGH);
+		xstream.registerConverter(new LimpetCollectionConverter(xstream.getMapper()), XStream.PRIORITY_NORMAL);
+		xstream.registerConverter(new TimesCollectionConverter(xstream.getMapper()), XStream.PRIORITY_NORMAL);
 		xstream.setMode(XStream.ID_REFERENCES);
 	}
 
