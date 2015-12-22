@@ -60,7 +60,7 @@ public class XStreamHandler
 
 		xstream.alias("Folder", StoreGroup.class);
 		
-		
+
 		xstream.alias("Point", org.geotools.geometry.iso.primitive.PointImpl.class);
 		xstream.alias("GeographicBoundingBox", org.geotools.metadata.iso.extent.GeographicBoundingBoxImpl.class);
 		xstream.alias("LocalName", org.geotools.util.LocalName.class);
@@ -89,6 +89,7 @@ public class XStreamHandler
 		// setup converter
 		xstream.registerConverter(new LimpetCollectionConverter(xstream.getMapper()), XStream.PRIORITY_NORMAL);
 		xstream.registerConverter(new TimesCollectionConverter(xstream.getMapper()), XStream.PRIORITY_NORMAL);
+		xstream.registerConverter(new PointConverter(), XStream.PRIORITY_NORMAL);
 		xstream.setMode(XStream.ID_REFERENCES);
 	}
 
