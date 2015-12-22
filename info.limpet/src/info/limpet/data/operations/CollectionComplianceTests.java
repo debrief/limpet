@@ -14,6 +14,7 @@ import info.limpet.data.impl.samples.StockTypes.NonTemporal;
 import info.limpet.data.impl.samples.TemporalLocation;
 import info.limpet.data.store.InMemoryStore.StoreGroup;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -587,7 +588,7 @@ public class CollectionComplianceTests
 	 *          one or more group objects
 	 * @return yes/no
 	 */
-	public boolean numberOfTracks(List<IStoreItem> selection, final int number)
+	public boolean hasNumberOfTracks(List<IStoreItem> selection, final int number)
 	{
 		int count = 0;
 		Iterator<? extends IStoreItem> iter = selection.iterator();
@@ -605,20 +606,28 @@ public class CollectionComplianceTests
 				if (!isPresent(kids, METRE.divide(SECOND).getDimension()))
 				{
 					valid = false;
-					break;
 				}
 
 				// ok, keep looping through, to check we have the right types
 				if (!isPresent(kids, SI.RADIAN.getDimension()))
 				{
 					valid = false;
-					break;
 				}
 
 				if (!hasLocation(kids))
 				{
 					valid = false;
-					break;
+				}
+
+				// special case: we can miss out course & speed if there's just a single
+				// stationery location
+				if (!valid)
+				{
+					// is there a singleton location?
+					if (hasSingletonLocation(kids))
+					{
+						valid = true;
+					}
 				}
 			}
 			else
@@ -630,6 +639,28 @@ public class CollectionComplianceTests
 
 		}
 		return count == number;
+	}
+
+	private boolean hasSingletonLocation(List<IStoreItem> kids)
+	{
+		boolean res = false;
+
+		Iterator<IStoreItem> iter = kids.iterator();
+		while (iter.hasNext())
+		{
+			IStoreItem item = iter.next();
+			if (item instanceof ILocations)
+			{
+				ILocations locs = (ILocations) item;
+				if (locs.getLocations().size() == 1)
+				{
+					res = true;
+					break;
+				}
+			}
+		}
+
+		return res;
 	}
 
 	/**
@@ -671,6 +702,41 @@ public class CollectionComplianceTests
 				{
 					res = false;
 					break;
+				}
+
+			}
+		}
+		return res;
+	}
+
+	/**
+	 * get any layers that we contain location data
+	 * 
+	 * @param selection
+	 *          one or more group objects
+	 * @return yes/no
+	 */
+	public ArrayList<StoreGroup> getChildTrackGroups(List<IStoreItem> selection)
+	{
+		ArrayList<StoreGroup> res = new ArrayList<StoreGroup>();
+		Iterator<? extends IStoreItem> iter = selection.iterator();
+		while (iter.hasNext())
+		{
+			IStoreItem storeItem = iter.next();
+			if (storeItem instanceof StoreGroup)
+			{
+				// ok, check the contents
+				StoreGroup group = (StoreGroup) storeItem;
+				List<IStoreItem> kids = group.children();
+
+				Iterator<IStoreItem> kIter = kids.iterator();
+				while (kIter.hasNext())
+				{
+					IStoreItem storeItem2 = (IStoreItem) kIter.next();
+					if (storeItem2 instanceof ILocations)
+					{
+						res.add(group);
+					}
 				}
 
 			}
@@ -737,7 +803,7 @@ public class CollectionComplianceTests
 	}
 
 	/**
-	 * check the list has a collection with the specified dimension
+	 * find the item in the list with the specified dimension
 	 * 
 	 * @param kids
 	 *          items to examine
@@ -745,7 +811,7 @@ public class CollectionComplianceTests
 	 *          dimension we need to be present
 	 * @return yes/no
 	 */
-	public IQuantityCollection<?> someHave(List<IStoreItem> kids,
+	public IQuantityCollection<?> collectionWith(List<IStoreItem> kids,
 			Dimension dimension, final boolean walkTree)
 	{
 		IQuantityCollection<?> res = null;
@@ -757,7 +823,7 @@ public class CollectionComplianceTests
 			if (item instanceof StoreGroup && walkTree)
 			{
 				StoreGroup group = (StoreGroup) item;
-				res = someHave(group.children(), dimension, walkTree);
+				res = collectionWith(group.children(), dimension, walkTree);
 				if (res != null)
 				{
 					break;
@@ -887,21 +953,27 @@ public class CollectionComplianceTests
 		while (iter.hasNext())
 		{
 			ICollection iCollection = (ICollection) iter.next();
-			if (iCollection.isTemporal())
+
+			// allow for empty value. sometimes our logic allows null objects for some
+			// data types
+			if (iCollection != null)
 			{
-				IBaseTemporalCollection timeC = (IBaseTemporalCollection) iCollection;
-				if (res == null)
+				if (iCollection.isTemporal())
 				{
-					res = new TimePeriod(timeC.start(), timeC.finish());
-				}
-				else
-				{
-					res.startTime = Math.max(res.startTime, timeC.start());
-					res.endTime = Math.min(res.endTime, timeC.finish());
+					IBaseTemporalCollection timeC = (IBaseTemporalCollection) iCollection;
+					if (res == null)
+					{
+						res = new TimePeriod(timeC.start(), timeC.finish());
+					}
+					else
+					{
+						res.startTime = Math.max(res.startTime, timeC.start());
+						res.endTime = Math.min(res.endTime, timeC.finish());
+					}
 				}
 			}
 		}
-		
+
 		return res;
 	}
 
@@ -925,24 +997,30 @@ public class CollectionComplianceTests
 		while (iter.hasNext())
 		{
 			ICollection iCollection = (ICollection) iter.next();
-			if (iCollection.isTemporal())
+			
+			// occasionally we may store a null dataset, since it is optional in some
+			// circumstances
+			if (iCollection != null)
 			{
-				IBaseTemporalCollection timeC = (IBaseTemporalCollection) iCollection;
-				Iterator<Long> times = timeC.getTimes().iterator();
-				int score = 0;
-				while (times.hasNext())
+				if (iCollection.isTemporal())
 				{
-					long long1 = (long) times.next();
-					if ((period == null) || period.contains(long1))
+					IBaseTemporalCollection timeC = (IBaseTemporalCollection) iCollection;
+					Iterator<Long> times = timeC.getTimes().iterator();
+					int score = 0;
+					while (times.hasNext())
 					{
-						score++;
+						long long1 = (long) times.next();
+						if ((period == null) || period.contains(long1))
+						{
+							score++;
+						}
 					}
-				}
 
-				if ((res == null) || (score > resScore))
-				{
-					res = timeC;
-					resScore = score;
+					if ((res == null) || (score > resScore))
+					{
+						res = timeC;
+						resScore = score;
+					}
 				}
 			}
 		}
@@ -965,10 +1043,22 @@ public class CollectionComplianceTests
 			Unit<?> requiredUnits)
 	{
 		Measurable<Quantity> res;
-		if (iCollection.isQuantity())
+		
+		// just check it's not an empty set, since we return zero for empty dataset
+		if(iCollection == null)
+		{
+			return 0;
+		}		
+		else if (iCollection.isQuantity())
 		{
 			IQuantityCollection<?> iQ = (IQuantityCollection<?>) iCollection;
 
+			// just check it's not empty (which can happen during edits) 
+			if(iQ.size() == 0)
+			{
+				return 0;
+			}
+			
 			if (iCollection.isTemporal())
 			{
 				TemporalQuantityCollection<?> tQ = (TemporalQuantityCollection<?>) iCollection;

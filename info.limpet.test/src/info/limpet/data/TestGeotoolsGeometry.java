@@ -531,7 +531,7 @@ public class TestGeotoolsGeometry extends TestCase
 
 		// create some incomplete input data
 		StoreGroup track1 = new StoreGroup("Track 1");
-		StoreGroup track2 = new StoreGroup("Track 1");
+		StoreGroup track2 = new StoreGroup("Track 2");
 		items.add(track1);
 		items.add(track2);
 
@@ -545,28 +545,28 @@ public class TestGeotoolsGeometry extends TestCase
 
 		assertEquals("empty", 0, doppler.actionsFor(items, store, context).size());
 
-		assertFalse("valid track", tests.numberOfTracks(items, 1));
+		assertFalse("valid track", tests.hasNumberOfTracks(items, 1));
 
 		track1.add(spdK1);
 
 		assertEquals("empty", 0, doppler.actionsFor(items, store, context).size());
 
-		assertTrue("valid track", tests.numberOfTracks(items, 1));
+		assertTrue("valid track", tests.hasNumberOfTracks(items, 1));
 
 		// now for track two
 		track2.add(loc2);
 		track2.add(angR2);
 
-		assertFalse("valid track", tests.numberOfTracks(items, 2));
+		assertFalse("valid track", tests.hasNumberOfTracks(items, 2));
 
 		track2.add(spdK3);
 
-		assertTrue("valid track", tests.numberOfTracks(items, 2));
+		assertTrue("valid track", tests.hasNumberOfTracks(items, 2));
 
 		assertEquals("still empty", 0, doppler.actionsFor(items, store, context).size());
 
 		assertEquals("has freq", null,
-				tests.someHave(items, Frequency.UNIT.getDimension(), true));
+				tests.collectionWith(items, Frequency.UNIT.getDimension(), true));
 
 		// give one a freq
 		track1.add(freq1);
@@ -574,13 +574,13 @@ public class TestGeotoolsGeometry extends TestCase
 		assertEquals("still empty", 0, doppler.actionsFor(items, store, context).size());
 
 		assertEquals("has freq", null,
-				tests.someHave(items, Frequency.UNIT.getDimension(), false));
+				tests.collectionWith(items, Frequency.UNIT.getDimension(), false));
 		assertNotNull("has freq",
-				tests.someHave(items, Frequency.UNIT.getDimension(), true));
+				tests.collectionWith(items, Frequency.UNIT.getDimension(), true));
 		assertNotNull("has freq",
-				tests.someHave(track1, Frequency.UNIT.getDimension(), true));
+				tests.collectionWith(track1, Frequency.UNIT.getDimension(), true));
 		assertEquals("has freq", null,
-				tests.someHave(track2, Frequency.UNIT.getDimension(), true));
+				tests.collectionWith(track2, Frequency.UNIT.getDimension(), true));
 
 		// and now complete dataset (with temporal location)
 
@@ -594,7 +594,24 @@ public class TestGeotoolsGeometry extends TestCase
 		track1.add(loc3);
 
 		assertEquals("not empty", 1, doppler.actionsFor(items, store, context).size());
+		
+		// try to remove the course/speed for static track = check we still get it offered.
+		track1.remove(spdK1);
+		assertEquals("not empty", 1, doppler.actionsFor(items, store, context).size());
 
+		track1.remove(angD1);
+		assertEquals("not empty", 1, doppler.actionsFor(items, store, context).size());
+
+		// see if it runs
+		ICommand<IStoreItem> ops = doppler.actionsFor(items, store, context).iterator().next();
+		ops.execute();
+		IStoreItem tmpOut = ops.getOutputs().iterator().next();
+		assertNotNull("received output", tmpOut);
+		
+		// and put them back
+		track1.add(sspdK2);
+		track1.add(angD1);
+		
 		// and now complete dataset (with two non temporal locations)
 		track2.remove(loc2);
 		track2.add(loc4);
@@ -640,27 +657,27 @@ public class TestGeotoolsGeometry extends TestCase
 		assertEquals("all items", 8, map.size());
 		
 		// ok, let's try undo redo
-		assertEquals("correct size store", store.size(), 0);
+		assertEquals("correct size store", store.size(), 1);
 		
 		op1.execute();
 		
-		assertEquals("new correct size store", store.size(), 1);
+		assertEquals("new correct size store", store.size(), 2);
 
 		op1.undo();
 		
-		assertEquals("new correct size store", store.size(), 0);
+		assertEquals("new correct size store", store.size(), 1);
 
 		op1.redo();
 		
-		assertEquals("new correct size store", store.size(), 1);
+		assertEquals("new correct size store", store.size(), 2);
 
 		op1.undo();
 		
-		assertEquals("new correct size store", store.size(), 0);
+		assertEquals("new correct size store", store.size(), 1);
 
 		op1.redo();
 		
-		assertEquals("new correct size store", store.size(), 1);
+		assertEquals("new correct size store", store.size(), 2);
 
 	}
 
