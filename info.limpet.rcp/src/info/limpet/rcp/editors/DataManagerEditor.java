@@ -93,11 +93,11 @@ public class DataManagerEditor extends EditorPart
 			viewer.refresh();
 		}
 	};
-	private Action createSingleton1;
-	private Action createSingleton2;
-	private Action createSingleton3;
-	private Action createSingleton4;
-	private Action createSingleton5;
+	private Action createDimensionless;
+	private Action createFrequency;
+	private Action createDecibels;
+	private Action createSpeed;
+	private Action createLocation;
 	private IContext _context = new RCPContext();
 
 	@Override
@@ -265,7 +265,7 @@ public class DataManagerEditor extends EditorPart
 		refreshView.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
 				.getImageDescriptor(ISharedImages.IMG_TOOL_REDO));
 
-		createSingleton1 = createSingletonGenerator("dimensionless",
+		createDimensionless = createSingletonGenerator("dimensionless",
 				new ItemGenerator()
 				{
 					public QuantityCollection<?> generate(String name)
@@ -274,7 +274,7 @@ public class DataManagerEditor extends EditorPart
 					}
 				});
 
-		createSingleton2 = createSingletonGenerator("frequency",
+		createFrequency = createSingletonGenerator("frequency",
 				new ItemGenerator()
 				{
 					public QuantityCollection<?> generate(String name)
@@ -283,7 +283,7 @@ public class DataManagerEditor extends EditorPart
 					}
 				});
 
-		createSingleton3 = createSingletonGenerator("decibels", new ItemGenerator()
+		createDecibels = createSingletonGenerator("decibels", new ItemGenerator()
 		{
 			public QuantityCollection<?> generate(String name)
 			{
@@ -291,7 +291,7 @@ public class DataManagerEditor extends EditorPart
 			}
 		});
 
-		createSingleton4 = createSingletonGenerator("speed (m/s)",
+		createSpeed = createSingletonGenerator("speed (m/s)",
 				new ItemGenerator()
 				{
 					public QuantityCollection<?> generate(String name)
@@ -299,7 +299,7 @@ public class DataManagerEditor extends EditorPart
 						return new StockTypes.NonTemporal.Speed_MSec(name);
 					}
 				});
-		createSingleton5 = createLocationGenerator();
+		createLocation = createLocationGenerator();
 	}
 
 	private static interface ItemGenerator
@@ -474,11 +474,12 @@ public class DataManagerEditor extends EditorPart
 		// and the generators
 		MenuManager createMenu = new MenuManager("Create");
 		menu.add(createMenu);
-		createMenu.add(createSingleton1);
-		createMenu.add(createSingleton2);
-		createMenu.add(createSingleton3);
-		createMenu.add(createSingleton4);
-		createMenu.add(createSingleton5);
+		createMenu.add(createDimensionless);
+		createMenu.add(createFrequency);
+		createMenu.add(createDecibels);
+		createMenu.add(createSpeed);
+		createMenu.add(createLocation);
+		createMenu.add(addLayer);
 
 		menu.add(new Separator());
 		menu.add(refreshView);
