@@ -37,7 +37,7 @@ public class InMemoryStore implements IStore, IChangeListener
 		{
 			_name = name;
 		}
-
+		
 		@Override
 		public UUID getUUID()
 		{
@@ -201,6 +201,18 @@ public class InMemoryStore implements IStore, IChangeListener
 			fireDataChanged();
 		}
 	}
+	
+
+	/** just check we're correctly configured
+	 * 
+	 */
+	public void init()
+	{
+		if(_store == null)
+		{
+			_store = new ArrayList<IStoreItem>();
+		}
+	}
 
 	private Object readResolve()
 	{
@@ -247,7 +259,7 @@ public class InMemoryStore implements IStore, IChangeListener
 
 		fireModified();
 	}
-
+	
 	@Override
 	public void add(IStoreItem results)
 	{
