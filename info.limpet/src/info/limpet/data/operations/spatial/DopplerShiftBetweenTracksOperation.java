@@ -249,7 +249,8 @@ public class DopplerShiftBetweenTracksOperation implements
 		 */
 		private void performCalc(final List<IStoreItem> outputs)
 		{
-			// just check we've been organised (if we've been loaded from persistent storage)
+			// just check we've been organised (if we've been loaded from persistent
+			// storage)
 			organiseData();
 
 			// and the bounding period
@@ -345,7 +346,7 @@ public class DopplerShiftBetweenTracksOperation implements
 			while (iter.hasNext())
 			{
 				final IQuantityCollection<?> qC = (IQuantityCollection<?>) iter.next();
-				qC.getValues().clear();
+				qC.clear();
 			}
 
 			// update the results
