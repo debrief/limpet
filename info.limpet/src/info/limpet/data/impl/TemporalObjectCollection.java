@@ -1,6 +1,5 @@
 package info.limpet.data.impl;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -12,7 +11,7 @@ public class TemporalObjectCollection<T extends Object> extends
 		ObjectCollection<T> implements ITemporalObjectCollection<T>
 {
 
-	ArrayList<Long> times = new ArrayList<Long>();
+	TimesList<Long> times = new TimesList<Long>();
 	transient TimeHelper tSupport;
 
 	public TemporalObjectCollection(String name)

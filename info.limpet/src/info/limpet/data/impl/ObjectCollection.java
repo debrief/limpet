@@ -15,7 +15,7 @@ import java.util.UUID;
 public class ObjectCollection<T extends Object> implements IObjectCollection<T>
 {
 
-	ArrayList<T> values = new ArrayList<T>();
+	LimpetList<T> values = new LimpetList<T>();
 	private String name;
 	private String description = "";
 	private final ICommand<?> precedent;

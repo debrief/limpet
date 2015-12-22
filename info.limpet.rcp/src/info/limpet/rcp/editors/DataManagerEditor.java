@@ -615,7 +615,10 @@ public class DataManagerEditor extends EditorPart
 	public void dispose()
 	{
 		super.dispose();
-		_store.removeChangeListener(_changeListener);
+		if (_store != null)
+		{
+			_store.removeChangeListener(_changeListener);
+		}
 	}
 
 	private Action createLocationGenerator()
