@@ -90,31 +90,39 @@ public class XyPlotView extends CoreAnalysisView
 			// they're all the same type - check the first one
 			Iterator<IStoreItem> iter = res.iterator();
 
-			ICollection first = (ICollection) iter.next();
+			Object object = iter.next();
+			if (object instanceof ICollection)
+			{
+				ICollection first = (ICollection) object;
 
-			// sort out what type of data this is.
-			if (first.isQuantity())
-			{
-				if (aTests.allTemporal(res))
+				// sort out what type of data this is.
+				if (first.isQuantity())
 				{
-					showTemporalQuantity(res);
-				}
-				else
-				{
-					showQuantity(res);
-				}
-				chart.setVisible(true);
-			}
-			else
-			{
-				// exception - show locations
-				if (aTests.allLocation(res))
-				{
-					showLocations(res);
+					if (aTests.allTemporal(res))
+					{
+						showTemporalQuantity(res);
+					}
+					else
+					{
+						showQuantity(res);
+					}
 					chart.setVisible(true);
 				}
 				else
-					chart.setVisible(false);
+				{
+					// exception - show locations
+					if (aTests.allLocation(res))
+					{
+						showLocations(res);
+						chart.setVisible(true);
+					}
+					else
+						chart.setVisible(false);
+				}
+			}
+			else
+			{
+				chart.setVisible(false);
 			}
 		}
 	}
