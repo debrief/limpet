@@ -1,29 +1,5 @@
 package info.limpet.rcp.editors;
 
-import info.limpet.IChangeListener;
-import info.limpet.ICommand;
-import info.limpet.IContext;
-import info.limpet.IOperation;
-import info.limpet.IStore;
-import info.limpet.IStoreGroup;
-import info.limpet.IStore.IStoreItem;
-import info.limpet.data.impl.QuantityCollection;
-import info.limpet.data.impl.samples.StockTypes;
-import info.limpet.data.impl.samples.StockTypes.NonTemporal;
-import info.limpet.data.operations.AddLayerOperation;
-import info.limpet.data.operations.AddLayerOperation.StringProvider;
-import info.limpet.data.operations.GenerateDummyDataOperation;
-import info.limpet.data.operations.spatial.GeoSupport;
-import info.limpet.data.persistence.xml.XStreamHandler;
-import info.limpet.data.store.InMemoryStore;
-import info.limpet.data.store.InMemoryStore.StoreChangeListener;
-import info.limpet.data.store.InMemoryStore.StoreGroup;
-import info.limpet.rcp.Activator;
-import info.limpet.rcp.RCPContext;
-import info.limpet.rcp.data_provider.data.DataModel;
-import info.limpet.rcp.data_provider.data.GroupWrapper;
-import info.limpet.rcp.editors.dnd.DataManagerDropAdapter;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -33,9 +9,12 @@ import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -66,8 +45,34 @@ import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.SaveAsDialog;
 import org.eclipse.ui.part.EditorPart;
+import org.eclipse.ui.part.FileEditorInput;
 import org.opengis.geometry.Geometry;
+
+import info.limpet.IChangeListener;
+import info.limpet.ICommand;
+import info.limpet.IContext;
+import info.limpet.IOperation;
+import info.limpet.IStore;
+import info.limpet.IStore.IStoreItem;
+import info.limpet.IStoreGroup;
+import info.limpet.data.impl.QuantityCollection;
+import info.limpet.data.impl.samples.StockTypes;
+import info.limpet.data.impl.samples.StockTypes.NonTemporal;
+import info.limpet.data.operations.AddLayerOperation;
+import info.limpet.data.operations.AddLayerOperation.StringProvider;
+import info.limpet.data.operations.GenerateDummyDataOperation;
+import info.limpet.data.operations.spatial.GeoSupport;
+import info.limpet.data.persistence.xml.XStreamHandler;
+import info.limpet.data.store.InMemoryStore;
+import info.limpet.data.store.InMemoryStore.StoreChangeListener;
+import info.limpet.data.store.InMemoryStore.StoreGroup;
+import info.limpet.rcp.Activator;
+import info.limpet.rcp.RCPContext;
+import info.limpet.rcp.data_provider.data.DataModel;
+import info.limpet.rcp.data_provider.data.GroupWrapper;
+import info.limpet.rcp.editors.dnd.DataManagerDropAdapter;
 
 public class DataManagerEditor extends EditorPart
 {
@@ -184,8 +189,7 @@ public class DataManagerEditor extends EditorPart
 	@Override
 	public boolean isSaveAsAllowed()
 	{
-		// TODO
-		return false;
+		return true;
 	}
 
 	@Override
@@ -592,25 +596,49 @@ public class DataManagerEditor extends EditorPart
 		if (input instanceof IFileEditorInput)
 		{
 			IFile file = ((IFileEditorInput) input).getFile();
-			try
-			{
-				new XStreamHandler().save(_store, file);
-				_dirty = false;
-				file.refreshLocal(IResource.DEPTH_INFINITE, monitor);
-				firePropertyChange(PROP_DIRTY);
-			}
-			catch (CoreException | IOException e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			doSaveAs(file, monitor);
+		}
+	}
+
+	private void doSaveAs(IFile file, IProgressMonitor monitor)
+	{
+		try
+		{
+			new XStreamHandler().save(_store, file);
+			_dirty = false;
+			file.refreshLocal(IResource.DEPTH_INFINITE, monitor);
+			firePropertyChange(PROP_DIRTY);
+		}
+		catch (CoreException | IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
 	@Override
 	public void doSaveAs()
 	{
-		// TODO
+		final SaveAsDialog dialog = new SaveAsDialog(getEditorSite().getShell());
+		dialog.setTitle("Save As");
+		if (getEditorInput() instanceof IFileEditorInput)
+		{
+			IFileEditorInput input = (IFileEditorInput) getEditorInput();
+			IFile file = input.getFile();
+			dialog.setOriginalFile(file);
+		}
+		dialog.create();
+		dialog.setMessage("Save file to another location.");
+		if (dialog.open() == Window.OK)
+		{
+			final IPath path = dialog.getResult();
+			final IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
+			doSaveAs(file, new NullProgressMonitor());
+			IFileEditorInput input = new FileEditorInput(file);
+			setInput(input);
+			setPartName(input.getName());
+			viewer.refresh();
+		}
 	}
 
 	@Override
