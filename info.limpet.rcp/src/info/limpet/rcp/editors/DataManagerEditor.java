@@ -97,6 +97,7 @@ public class DataManagerEditor extends EditorPart
 	private Action createFrequency;
 	private Action createDecibels;
 	private Action createSpeed;
+	private Action createCourse;
 	private Action createLocation;
 	private IContext _context = new RCPContext();
 
@@ -120,6 +121,11 @@ public class DataManagerEditor extends EditorPart
 
 					// we need to loop down through the data, setting all of the listeners
 					InMemoryStore ms = (InMemoryStore) _store;
+					
+					// check we didn't load an empty store
+					ms.init();
+					
+					// and get hooked up
 					Iterator<IStoreItem> iter = ms.iterator();
 					while (iter.hasNext())
 					{
@@ -145,13 +151,15 @@ public class DataManagerEditor extends EditorPart
 		setPartName(input.getName());
 	}
 
-	/** walk down through the object tree, connecting listeners as appropriate
+	/**
+	 * walk down through the object tree, connecting listeners as appropriate
 	 * 
 	 * @param next
 	 * @param parent
 	 * @param listener
 	 */
-	private void connectUp(IStoreItem next, IStoreGroup parent, IChangeListener listener)
+	private void connectUp(IStoreItem next, IStoreGroup parent,
+			IChangeListener listener)
 	{
 		if (next instanceof StoreGroup)
 		{
@@ -274,14 +282,13 @@ public class DataManagerEditor extends EditorPart
 					}
 				});
 
-		createFrequency = createSingletonGenerator("frequency",
-				new ItemGenerator()
-				{
-					public QuantityCollection<?> generate(String name)
-					{
-						return new StockTypes.NonTemporal.Frequency_Hz(name);
-					}
-				});
+		createFrequency = createSingletonGenerator("frequency", new ItemGenerator()
+		{
+			public QuantityCollection<?> generate(String name)
+			{
+				return new StockTypes.NonTemporal.Frequency_Hz(name);
+			}
+		});
 
 		createDecibels = createSingletonGenerator("decibels", new ItemGenerator()
 		{
@@ -291,12 +298,19 @@ public class DataManagerEditor extends EditorPart
 			}
 		});
 
-		createSpeed = createSingletonGenerator("speed (m/s)",
+		createSpeed = createSingletonGenerator("speed (m/s)", new ItemGenerator()
+		{
+			public QuantityCollection<?> generate(String name)
+			{
+				return new StockTypes.NonTemporal.Speed_MSec(name);
+			}
+		});
+		createCourse = createSingletonGenerator("course (degs)",
 				new ItemGenerator()
 				{
 					public QuantityCollection<?> generate(String name)
 					{
-						return new StockTypes.NonTemporal.Speed_MSec(name);
+						return new StockTypes.NonTemporal.Angle_Degrees(name);
 					}
 				});
 		createLocation = createLocationGenerator();
@@ -388,7 +402,7 @@ public class DataManagerEditor extends EditorPart
 
 		Object input = viewer.getInput();
 		Collection<ICommand<IStoreItem>> commands = operation.actionsFor(
-				getSuitableObjects(), (IStore) input, _context );
+				getSuitableObjects(), (IStore) input, _context);
 		commands.iterator().next().execute();
 	}
 
@@ -478,6 +492,7 @@ public class DataManagerEditor extends EditorPart
 		createMenu.add(createFrequency);
 		createMenu.add(createDecibels);
 		createMenu.add(createSpeed);
+		createMenu.add(createCourse);
 		createMenu.add(createLocation);
 		createMenu.add(addLayer);
 
@@ -645,14 +660,16 @@ public class DataManagerEditor extends EditorPart
 
 						try
 						{
-							
-							NonTemporal.Location newData = new NonTemporal.Location(seriesName);
-							
+
+							NonTemporal.Location newData = new NonTemporal.Location(
+									seriesName);
+
 							// add the new value
 							double dblLat = Double.parseDouble(strLat);
 							double dblLong = Double.parseDouble(strLong);
-							
-							Geometry newLoc = GeoSupport.getBuilder().createPoint(dblLong, dblLat);
+
+							Geometry newLoc = GeoSupport.getBuilder().createPoint(dblLong,
+									dblLat);
 							newData.add(newLoc);
 
 							// put the new collection in to the selected folder, or into root
