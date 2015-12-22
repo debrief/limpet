@@ -32,6 +32,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -595,6 +596,7 @@ public class DataManagerEditor extends EditorPart
 			{
 				new XStreamHandler().save(_store, file);
 				_dirty = false;
+				file.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 				firePropertyChange(PROP_DIRTY);
 			}
 			catch (CoreException | IOException e)
