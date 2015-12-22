@@ -898,15 +898,20 @@ public class CollectionComplianceTests
 					&& (thisC.isQuantity() || thisC instanceof ILocations))
 			{
 				IBaseTemporalCollection tqc = (IBaseTemporalCollection) thisC;
-				if (longest == null)
+
+				// check it has some data
+				if (tqc.getTimes().size() > 0)
 				{
-					longest = tqc;
-				}
-				else
-				{
-					// store the longest one
-					ICollection asColl = (ICollection) longest;
-					longest = thisC.size() > asColl.size() ? tqc : longest;
+					if (longest == null)
+					{
+						longest = tqc;
+					}
+					else
+					{
+						// store the longest one
+						ICollection asColl = (ICollection) longest;
+						longest = thisC.size() > asColl.size() ? tqc : longest;
+					}
 				}
 			}
 		}
@@ -961,14 +966,18 @@ public class CollectionComplianceTests
 				if (iCollection.isTemporal())
 				{
 					IBaseTemporalCollection timeC = (IBaseTemporalCollection) iCollection;
-					if (res == null)
+					// check it has some data
+					if (timeC.getTimes().size() > 0)
 					{
-						res = new TimePeriod(timeC.start(), timeC.finish());
-					}
-					else
-					{
-						res.startTime = Math.max(res.startTime, timeC.start());
-						res.endTime = Math.min(res.endTime, timeC.finish());
+						if (res == null)
+						{
+							res = new TimePeriod(timeC.start(), timeC.finish());
+						}
+						else
+						{
+							res.startTime = Math.max(res.startTime, timeC.start());
+							res.endTime = Math.min(res.endTime, timeC.finish());
+						}
 					}
 				}
 			}
@@ -997,7 +1006,7 @@ public class CollectionComplianceTests
 		while (iter.hasNext())
 		{
 			ICollection iCollection = (ICollection) iter.next();
-			
+
 			// occasionally we may store a null dataset, since it is optional in some
 			// circumstances
 			if (iCollection != null)
@@ -1043,22 +1052,22 @@ public class CollectionComplianceTests
 			Unit<?> requiredUnits)
 	{
 		Measurable<Quantity> res;
-		
+
 		// just check it's not an empty set, since we return zero for empty dataset
-		if(iCollection == null)
+		if (iCollection == null)
 		{
 			return 0;
-		}		
+		}
 		else if (iCollection.isQuantity())
 		{
 			IQuantityCollection<?> iQ = (IQuantityCollection<?>) iCollection;
 
-			// just check it's not empty (which can happen during edits) 
-			if(iQ.size() == 0)
+			// just check it's not empty (which can happen during edits)
+			if (iQ.size() == 0)
 			{
 				return 0;
 			}
-			
+
 			if (iCollection.isTemporal())
 			{
 				TemporalQuantityCollection<?> tQ = (TemporalQuantityCollection<?>) iCollection;
