@@ -23,7 +23,7 @@ env:
 deploy:
   provider: releases
   skip_cleanup: true
-  api_key:
+  api_key: 
   file:
   - "/home/travis/build/debrief/limpet/info.limpet.product/target/products/Limpet-linux.gtk.x86_64.tar.gz"
   - "/home/travis/build/debrief/limpet/info.limpet.product/target/products/Limpet-macosx.cocoa.x86_64.tar.gz"
@@ -33,4 +33,4 @@ deploy:
     tags: true
     all_branches: true
   api-key:
-    secure: jC03tMiLQcd2e2i5sQdywa2FuQUADZBpJyESG4+hpfXhXhKcMFNNtgYjXJ+pipeANsVI13AuwQzUnBxkNXuyarUYPshuWWtPp3aPPTd1gnUf48tXROaqKPvXaHrfKqI3sDxFYv2oQJOHeo39FyaFkihuwowEfbW9ARsHCaWJcfEyvZJU0fTQ/vZZz68ksPaOfCoaIiiAIVCODQUuqzf/R8hCZybL0wFoL8YjtOigBgwxb8UvOE/b8zKjsjuIZ8JDIKYnHZKD1SDAE3EVQ0UgQobc3LZcQZs8Qns3H8cK/iSiHQa29X5Po/hlKVQZ95EpVB8pIDwq1eqLCI27UXVbC7ItwAbHs4KVtWxxXI9oy5PhM8ZikXdtF+lHw07hFnsNQ1igCRtPYndcUuWekm/5aMBA43hCBf3lEbCqgfDuPeY6ObBXcDvwQZRsiIMR/nBDzM0PT8BHs70+FctZoUJqiGSv61F80ze5rUS6oAch9B/dtwbEjaiFmExQQrTLLMDYrSmceu5Lx6Wf9aPk7m6FvPulXxcOnQYcqzoIRoznWJNFOOs/ih18dY1FLi3F6YIcWVSlKmrLaElm3jLgk6oTLYzTQaZOqpMRortYoDVNs4pwFgCMEzZIgCASNfmkv+ZUXXenVovHWqqqCItaTgU09YjE69MyD0FB5fud+JZCQwk=
+    secure: f44ga3+eh1LV9H++qaBgHi/xu8mKBp1x7viC0r+xKGMgug/zTN9G4wyVhkoEY9IdKg+M7Sr2uWTGACFgpiNjjfYaBRw/s3dFzkCblpmB4yLDwF/1km75655/nM2LtJfsyVMsO0ymZgw04hI23HNU8Izc21sGBUpWbgQWrpDIM2/yucdjBV94L7ioqgfJzDHyW/C12v5s3k7NX2FQf6SL8AU249OZMpWtu2EXQa06GJBDhGLNWPCof+Ina6ESaXU4Ua5FF33c7RHkeHRqd741RsuoEOL6pMjaJTmBUyVR75S4ArlxRH+297FJ3YfCmoEGPf6yYiSspGjLv2cXMOlXN0JGsS7AXKy8nHZM1CkKy3w/GGXB2GWThia9R5bcbZZikrFHt7ozVEInddhOGwIp+9eimQeD85PqnOCAanQtlyZCxBd1MvOMJkSqn+ctbyWsKL+7StvQ0MxkJl9R6hEYbmZGEjdAFqsV+waYymJ+dFkVf9/mqdfqypwcKmQ5bdC3UMrPu1p2+U7GyBgYOyoKCHomPH+C7k8/EuEiE5BNzQU6sd0xkAJAzssXNr3yNZgVFjmBeNUpnnUX/WefJmhnRJ1VJuZ1WnqOHWjdgBlfUrjitNkj2AhO44CywEuonfQHIKzbThsTn7+t4Y+ul6k/ceF4LEaUjPumSFnMaYDRy48=
