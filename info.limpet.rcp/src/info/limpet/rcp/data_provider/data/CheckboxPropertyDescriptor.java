@@ -16,8 +16,13 @@ package info.limpet.rcp.data_provider.data;
 
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.CheckboxCellEditor;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
+
+import info.limpet.rcp.Activator;
 
 /**
  * A property descriptor for boolean values that uses the CheckboxCellEditor
@@ -27,6 +32,24 @@ import org.eclipse.ui.views.properties.PropertyDescriptor;
  */
 public class CheckboxPropertyDescriptor extends PropertyDescriptor
 {
+	private static Image CHECKED = Activator.getImageDescriptor("icons/checked.gif").createImage();
+	private static Image UNCHECKED = Activator.getImageDescriptor("icons/unchecked.gif").createImage();
+	
+	/**
+	 * The checkbox is actually emulated by having a custom label provider to 
+	 * show corresponding image for each boolean state. Solution adopted from here: 
+	 * http://www.vogella.com/tutorials/EclipseJFaceTable/article.html#jfaceeditor
+	 */
+	private static LabelProvider CHECKBOX_LABEL_PROVIDER = new LabelProvider() {
+		public Image getImage(Object element) {
+			return ((Boolean)element).booleanValue() ? CHECKED : UNCHECKED;			
+		};
+		public String getText(Object element) {
+			// we don't need text here
+			return null;
+		};
+	};
+	
 	/**
 	 * @param id
 	 * @param displayName
@@ -34,7 +57,6 @@ public class CheckboxPropertyDescriptor extends PropertyDescriptor
 	public CheckboxPropertyDescriptor(Object id, String displayName)
 	{
 		super(id, displayName);
-		// TODO Auto-generated constructor stub
 	}
 
 	/*
@@ -51,4 +73,9 @@ public class CheckboxPropertyDescriptor extends PropertyDescriptor
 		return editor;
 	}
 
+	@Override
+	public ILabelProvider getLabelProvider()
+	{
+		return CHECKBOX_LABEL_PROVIDER;
+	}
 }
