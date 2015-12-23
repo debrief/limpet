@@ -150,11 +150,11 @@ public abstract class CoreAnalysisView extends ViewPart
 					IStoreItem iC = iter.next();
 					iC.addChangeListener(changeListener);
 				}
+				
+				// ok, display them
+				display(res);
 			}
 		}
-		// ok, display them
-		display(res);
-
 	}
 
 	private void clearChangeListeners()
