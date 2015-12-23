@@ -12,6 +12,7 @@ import info.limpet.data.operations.CollectionComplianceTests;
 import info.limpet.rcp.PlottingHelpers;
 import info.limpet.rcp.core_view.CoreAnalysisView;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -89,16 +90,24 @@ public class DataFrequencyView extends CoreAnalysisView
 		// they're all the same type - check the first one
 		Iterator<IStoreItem> iter = res.iterator();
 
-		ICollection first = (ICollection) iter.next();
-
-		// sort out what type of data this is.
-		if (first.isQuantity())
+		Object object = iter.next();
+		if (object instanceof ICollection)
 		{
-			showQuantity(res);
+			ICollection first = (ICollection) object;
+
+			// sort out what type of data this is.
+			if (first.isQuantity())
+			{
+				showQuantity(res);
+			}
+			else
+			{
+				showObject(res);
+			}
 		}
 		else
 		{
-			showObject(res);
+			showObject(new ArrayList<IStoreItem>());
 		}
 	}
 
