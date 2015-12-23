@@ -199,7 +199,7 @@ public class DataManagerEditor extends EditorPart
 									if (resource.equals(file) && 
 											(delta.getKind() == IResourceDelta.CHANGED && (delta.getFlags() & IResourceDelta.CONTENT) != 0))
 									{
-										// TODO reload
+										reload();
 									}
 								}
 							}
@@ -216,6 +216,26 @@ public class DataManagerEditor extends EditorPart
 		}
 	};
 
+	private void reload()
+	{
+		if (_store != null)
+		{
+			_store.removeChangeListener(_changeListener);
+		}
+		load(getEditorInput());
+		Display.getDefault().asyncExec(new Runnable()
+		{
+			
+			@Override
+			public void run()
+			{
+				viewer.setInput(_store);
+				viewer.refresh();
+			}
+		});
+		
+	}
+	
 	private void closeEditor()
 	{
 		Display.getDefault().asyncExec(new Runnable()
@@ -234,6 +254,14 @@ public class DataManagerEditor extends EditorPart
 	{
 		// FIXME we will support FileEditorInput, FileStoreEditorInput and
 		// FileRevisionEditorInput
+		load(input);
+		setSite(site);
+		setInput(input);
+		setPartName(input.getName());
+	}
+
+	private void load(IEditorInput input)
+	{
 		if (input instanceof IFileEditorInput)
 		{
 			// just check if the document is empty
@@ -272,9 +300,6 @@ public class DataManagerEditor extends EditorPart
 
 		}
 		_store.addChangeListener(_changeListener);
-		setSite(site);
-		setInput(input);
-		setPartName(input.getName());
 	}
 
 	/**
@@ -710,6 +735,7 @@ public class DataManagerEditor extends EditorPart
 	{
 		try
 		{
+			ResourcesPlugin.getWorkspace().removeResourceChangeListener(resourceChangeListener);
 			new XStreamHandler().save(_store, file);
 			_dirty = false;
 			file.refreshLocal(IResource.DEPTH_INFINITE, monitor);
@@ -718,6 +744,13 @@ public class DataManagerEditor extends EditorPart
 		catch (CoreException | IOException e)
 		{
 			log(e);
+		}
+		finally
+		{
+			ResourcesPlugin.getWorkspace().addResourceChangeListener(
+					resourceChangeListener,
+					IResourceChangeEvent.PRE_CLOSE | IResourceChangeEvent.PRE_DELETE
+							| IResourceChangeEvent.POST_CHANGE);
 		}
 	}
 
