@@ -49,7 +49,7 @@ public class AddQuantityOperation<Q extends Quantity> extends
 		boolean nonEmpty = aTests.nonEmpty(selection);
 		boolean allQuantity = aTests.allQuantity(selection);
 		boolean suitableLength = aTests.allTemporal(selection)
-				|| aTests.allNonTemporal(selection) && aTests.allEqualLength(selection);
+				|| aTests.allEqualLengthOrSingleton(selection);
 		boolean equalDimensions = aTests.allEqualDimensions(selection);
 		boolean equalUnits = aTests.allEqualUnits(selection);
 
@@ -80,8 +80,8 @@ public class AddQuantityOperation<Q extends Quantity> extends
 			for (int seriesCount = 0; seriesCount < inputs.size(); seriesCount++)
 			{
 				IQuantityCollection<Q> thisC = inputs.get(seriesCount);
-				Measurable<Q> thisV = (Measurable<Q>) thisC.getValues().get(
-						elementCount);
+				Measurable<Q> thisV = thisC.size() == 1 ? thisC.getValues().get(0)
+						: (Measurable<Q>) thisC.getValues().get(elementCount);
 
 				// is this the first field?
 				if (thisResult == null)
@@ -103,11 +103,31 @@ public class AddQuantityOperation<Q extends Quantity> extends
 
 			for (int seriesCount = 0; seriesCount < inputs.size(); seriesCount++)
 			{
-				ITemporalQuantityCollection<Q> thisC = (ITemporalQuantityCollection<Q>) inputs
+				IQuantityCollection<Q> thisC = (IQuantityCollection<Q>) inputs
 						.get(seriesCount);
+				
+				final Measurable<Q> thisV;
+				
+				if(thisC.isTemporal())
+				{
+					// find the value to use
+					ITemporalQuantityCollection<Q> tq= (ITemporalQuantityCollection<Q>) thisC;
+					thisV = tq.interpolateValue(time, InterpMethod.Linear);
+					
+				}
+				else
+				{
+					if(thisC.size() == 1)
+					{
+						// ok, it's a singleton that we're applying to all values
+						thisV = thisC.getValues().get(0);
+					}
+					else
+					{
+						throw new RuntimeException("We should not be adding a non-singleton non-temporal to a temporal");
+					}
+				}
 
-				// find the value to use
-				Measurable<Q> thisV = thisC.interpolateValue(time, InterpMethod.Linear);
 
 				if (thisV != null)
 				{

@@ -19,6 +19,7 @@ import info.limpet.data.impl.ObjectCollection;
 import info.limpet.data.impl.QuantityCollection;
 import info.limpet.data.impl.TemporalQuantityCollection;
 import info.limpet.data.impl.samples.SampleData;
+import info.limpet.data.impl.samples.StockTypes;
 import info.limpet.data.operations.AddQuantityOperation;
 import info.limpet.data.operations.CollectionComplianceTests;
 import info.limpet.data.operations.DivideQuantityOperation;
@@ -241,8 +242,8 @@ public class TestOperations extends TestCase
 		ICollection firstItem = (ICollection) store.iterator().next();
 		ICommand<?> precedent = firstItem.getPrecedent();
 		assertNotNull("has precedent", precedent);
-		assertEquals("Correct name", "Add numeric values in provided series (indexed)",
-				precedent.getName());
+		assertEquals("Correct name",
+				"Add numeric values in provided series (indexed)", precedent.getName());
 
 		List<? extends IStoreItem> inputs = precedent.getInputs();
 		assertEquals("Has both precedents", 2, inputs.size());
@@ -343,7 +344,8 @@ public class TestOperations extends TestCase
 		// test store has a new item in it
 		assertEquals("store not empty", 1, store.size());
 
-		ICollection newS = (ICollection) store.get("Product of Speed One Time, Floating point factor");
+		ICollection newS = (ICollection) store
+				.get("Product of Speed One Time, Floating point factor");
 
 		// test results is same length as thisSpeed
 		assertEquals("correct size", 10, newS.size());
@@ -400,7 +402,8 @@ public class TestOperations extends TestCase
 		// apply action
 		command.execute();
 
-		ICollection newS = (ICollection) store.get("Speed One Time converted to km/h");
+		ICollection newS = (ICollection) store
+				.get("Speed One Time converted to km/h");
 		assertNotNull(newS);
 
 		// test results is same length as thisSpeed
@@ -521,6 +524,75 @@ public class TestOperations extends TestCase
 		assertNotNull("new series has precedent", newS.getPrecedent());
 
 	}
+
+	@SuppressWarnings(
+	{ "rawtypes", "unchecked" })
+	public void testSubtractionSingleton()
+	{
+		InMemoryStore store = new SampleData().getData(10);
+		List<ICollection> selection = new ArrayList<ICollection>(3);
+
+		// test invalid dimensions
+		IQuantityCollection<Velocity> speed_good_1 = (IQuantityCollection<Velocity>) store
+				.get(SampleData.SPEED_ONE);
+		IQuantityCollection<Velocity> speedSingle = new StockTypes.NonTemporal.Speed_MSec(
+				"singleton");
+
+		speedSingle.add(2d);
+
+		selection.add(speed_good_1);
+		selection.add(speedSingle);
+		Collection<ICommand<ICollection>> commands = new SubtractQuantityOperation()
+				.actionsFor(selection, store, context);
+		assertEquals("got two commands", 4, commands.size());
+
+		// have a look
+		ICommand<ICollection> first = commands.iterator().next();
+		first.execute();
+		ICollection output = first.getOutputs().iterator().next();
+		assertNotNull("produced output", output);
+		assertEquals("correct size", speed_good_1.size(), output.size());
+
+		assertEquals("correct value", 2.3767, speed_good_1.getValues().get(0)
+				.doubleValue(Velocity.UNIT) * 2, 0.001);
+	}
+	
+
+	@SuppressWarnings(
+	{ "rawtypes", "unchecked" })
+	public void testAddSingleton()
+	{
+		InMemoryStore store = new SampleData().getData(10);
+		List<ICollection> selection = new ArrayList<ICollection>(3);
+
+		// test invalid dimensions
+		IQuantityCollection<Velocity> speed_good_1 = (IQuantityCollection<Velocity>) store
+				.get(SampleData.SPEED_ONE);
+		IQuantityCollection<Velocity> speedSingle = new StockTypes.NonTemporal.Speed_MSec(
+				"singleton");
+
+		speedSingle.add(2d);
+
+		selection.add(speed_good_1);
+		selection.add(speedSingle);
+		Collection<ICommand<ICollection>> commands = new AddQuantityOperation()
+				.actionsFor(selection, store, context);
+		assertEquals("got two commands", 2, commands.size());
+
+		// have a look
+		Iterator<ICommand<ICollection>> iter = commands.iterator();
+		iter.next();
+		ICommand<ICollection> first = iter.next();
+		first.execute();
+		IQuantityCollection<Velocity> output = (IQuantityCollection) first.getOutputs().iterator().next();
+		assertNotNull("produced output", output);
+		assertTrue("output is temporal", output.isTemporal());
+		assertEquals("correct size", speed_good_1.size(), output.size());
+
+		assertEquals("correct value", output.getValues().get(0).doubleValue(Velocity.UNIT), speed_good_1.getValues().get(0)
+				.doubleValue(Velocity.UNIT) + 2, 0.001);
+	}
+
 
 	@SuppressWarnings(
 	{ "rawtypes", "unchecked" })

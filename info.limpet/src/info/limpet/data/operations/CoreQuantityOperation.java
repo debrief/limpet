@@ -34,14 +34,16 @@ public abstract class CoreQuantityOperation<Q extends Quantity>
 		{
 
 			// so, do we do our indexed commands?
-			if (aTests.allEqualLength(selection))
+			if (aTests.allEqualLengthOrSingleton(selection))
 			{
 				addIndexedCommands(selection, destination, res, context);
 			}
 
 			// aah, what about temporal (interpolated) values?
-			if (aTests.allTemporal(selection)
-					&& aTests.suitableForTimeInterpolation(selection))
+			if ((aTests.allTemporal(selection) && aTests
+					.suitableForTimeInterpolation(selection))
+					|| (aTests.hasTemporal(selection) && aTests
+							.allEqualLengthOrSingleton(selection)))
 			{
 				addInterpolatedCommands(selection, destination, res, context);
 			}
@@ -60,16 +62,19 @@ public abstract class CoreQuantityOperation<Q extends Quantity>
 
 		while (iter.hasNext())
 		{
-			ITemporalQuantityCollection<Q> thisC = (ITemporalQuantityCollection<Q>) iter
-					.next();
-			if (longest == null)
+			IQuantityCollection<Q> thisQ = iter.next();
+			if (thisQ.isTemporal())
 			{
-				longest = thisC;
-			}
-			else
-			{
-				// store the longest one
-				longest = thisC.size() > longest.size() ? thisC : longest;
+				ITemporalQuantityCollection<Q> thisC = (ITemporalQuantityCollection<Q>) thisQ;
+				if (longest == null)
+				{
+					longest = thisC;
+				}
+				else
+				{
+					// store the longest one
+					longest = thisC.size() > longest.size() ? thisC : longest;
+				}
 			}
 		}
 		return longest;
@@ -120,18 +125,16 @@ public abstract class CoreQuantityOperation<Q extends Quantity>
 
 		final private ITemporalQuantityCollection<Q> timeProvider;
 
-		public CoreQuantityCommand(String title, String description,
-				IStore store, boolean canUndo, boolean canRedo, List<IQuantityCollection<Q>> inputs,
+		public CoreQuantityCommand(String title, String description, IStore store,
+				boolean canUndo, boolean canRedo, List<IQuantityCollection<Q>> inputs,
 				IContext context)
 		{
-			this(title, description, store, canUndo, canRedo, inputs, null,
-					context);
+			this(title, description, store, canUndo, canRedo, inputs, null, context);
 		}
 
-		public CoreQuantityCommand(String title, String description,
-				IStore store, boolean canUndo, boolean canRedo, List<IQuantityCollection<Q>> inputs,
-				ITemporalQuantityCollection<Q> timeProvider,
-				IContext context)
+		public CoreQuantityCommand(String title, String description, IStore store,
+				boolean canUndo, boolean canRedo, List<IQuantityCollection<Q>> inputs,
+				ITemporalQuantityCollection<Q> timeProvider, IContext context)
 		{
 			super(title, description, store, canUndo, canRedo, inputs, context);
 
@@ -186,7 +189,9 @@ public abstract class CoreQuantityOperation<Q extends Quantity>
 			}
 			else
 			{
-				for (int elementCount = 0; elementCount < numElements(); elementCount++)
+
+				int numItems = numElements();
+				for (int elementCount = 0; elementCount < numItems; elementCount++)
 				{
 					Double thisResult = calcThisElement(elementCount);
 
@@ -199,7 +204,18 @@ public abstract class CoreQuantityOperation<Q extends Quantity>
 
 		protected int numElements()
 		{
-			return inputs.get(0).size();
+			int res = 0;
+
+			// we may have a singleton array. select the non singleton array
+			Iterator<IQuantityCollection<Q>> iter = inputs.iterator();
+			while (iter.hasNext())
+			{
+				IQuantityCollection<Q> iQuantityCollection = (IQuantityCollection<Q>) iter
+						.next();
+				int thisSize = iQuantityCollection.size();
+				res = Math.max(res, thisSize);
+			}
+			return res;
 		}
 
 		private void storeTemporalValue(IQuantityCollection<Q> target, long thisT,
@@ -287,7 +303,7 @@ public abstract class CoreQuantityOperation<Q extends Quantity>
 
 			if (outName != null)
 			{
-				if (input.isTemporal())
+				if (timeProvider != null)
 				{
 					target = new TemporalQuantityCollection<Q>(outName, this, unit);
 				}

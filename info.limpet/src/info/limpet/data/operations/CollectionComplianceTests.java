@@ -401,6 +401,35 @@ public class CollectionComplianceTests
 		return allValid;
 	}
 
+
+	/**
+	 * check if the series are all time series datasets (temporal)
+	 * 
+	 * @param selection
+	 * @return true/false
+	 */
+	public boolean hasTemporal(List<? extends IStoreItem> selection)
+	{
+		// are they all temporal?
+		boolean allValid = false;
+
+		for (int i = 0; i < selection.size(); i++)
+		{
+			IStoreItem thisI = selection.get(i);
+			if (thisI instanceof ICollection)
+			{
+				ICollection thisC = (ICollection) thisI;
+				if (thisC.isTemporal())
+				{
+					allValid = true;
+					break;
+				}
+			}
+		}
+		return allValid;
+	}
+
+	
 	/**
 	 * check if the series are all time series datasets (temporal)
 	 * 

@@ -499,6 +499,51 @@ public class TestCollections extends TestCase
 
 	}
 
+
+	@SuppressWarnings(
+	{ "unchecked" })
+	public void testMultiplyQuantitySingleton()
+	{
+		ITemporalQuantityCollection<Velocity> tq1 = new StockTypes.Temporal.Speed_MSec(
+				"Some data1");
+		tq1.add(100, 10);
+		tq1.add(200, 20);
+		tq1.add(300, 30);
+		tq1.add(400, 40);
+
+		IQuantityCollection<Velocity> tq2 = new StockTypes.NonTemporal.Speed_MSec(
+				"Some data2");
+		tq2.add(11);
+
+		List<IStoreItem> selection = new ArrayList<IStoreItem>();
+		selection.add((IQuantityCollection<Velocity>) tq1);
+		selection.add((IQuantityCollection<Velocity>) tq2);
+
+		InMemoryStore store = new InMemoryStore();
+		Collection<ICommand<IStoreItem>> commands = new MultiplyQuantityOperation()
+				.actionsFor(selection, store, context);
+		ICommand<IStoreItem> firstC = commands.iterator().next();
+
+		assertEquals("store empty", 0, store.size());
+
+		firstC.execute();
+
+		assertEquals("new collection created", 1, store.size());
+
+		IQuantityCollection<Velocity> series = (IQuantityCollection<Velocity>) firstC.getOutputs().iterator().next();
+		assertTrue("non empty", series.size() > 0);
+		assertEquals("corrent length results", 4, series.size());
+		assertTrue("temporal", series.isTemporal());
+		assertTrue("quantity", series.isQuantity());
+		assertEquals("correct value", 110d, series.getValues().get(0).doubleValue(series.getUnits()));
+		
+		tq2.add(11);
+		commands = new MultiplyQuantityOperation()
+		.actionsFor(selection, store, context);
+		assertEquals("no commands returned", 0, commands.size());
+
+	}
+	
 	@SuppressWarnings(
 	{ "unchecked", "rawtypes" })
 	public void testMultiplyQuantityTemporalInterp()
