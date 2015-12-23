@@ -15,18 +15,6 @@ import java.util.List;
 public class AddLayerOperation implements IOperation<IStoreItem>
 {
 
-	public static interface StringProvider
-	{
-		public String getString(String title);
-	}
-
-	private final StringProvider _stringProvider;
-
-	public AddLayerOperation(StringProvider stringProvider)
-	{
-		_stringProvider = stringProvider;
-	}
-
 	public Collection<ICommand<IStoreItem>> actionsFor(
 			List<IStoreItem> selection, IStore destination, IContext context)
 	{
@@ -42,14 +30,13 @@ public class AddLayerOperation implements IOperation<IStoreItem>
 				if (first instanceof StoreGroup)
 				{
 					StoreGroup group = (StoreGroup) first;
-					newC = new AddLayerCommand(thisTitle, group, destination,
-							_stringProvider, context);
+					newC = new AddLayerCommand(thisTitle, group, destination, context);
 				}
 			}
 
 			if (newC == null)
 			{
-				newC = new AddLayerCommand(thisTitle, destination, _stringProvider, context);
+				newC = new AddLayerCommand(thisTitle, destination, context);
 			}
 
 			if (newC != null)
@@ -68,21 +55,17 @@ public class AddLayerOperation implements IOperation<IStoreItem>
 
 	public static class AddLayerCommand extends AbstractCommand<IStoreItem>
 	{
-		// TODO - ditch concept of StringProvider
-		final StringProvider _stringProvider;
 		private StoreGroup _group;
 
-		public AddLayerCommand(String title, IStore store,
-				StringProvider stringProvider, IContext context)
+		public AddLayerCommand(String title, IStore store, IContext context)
 		{
 			super(title, "Add a new layer", store, false, false, null, context);
-			_stringProvider = stringProvider;
 		}
 
 		public AddLayerCommand(String title, StoreGroup group, IStore store,
-				StringProvider stringProvider, IContext context)
+				IContext context)
 		{
-			this(title, store, stringProvider, context);
+			this(title, store, context);
 			_group = group;
 		}
 

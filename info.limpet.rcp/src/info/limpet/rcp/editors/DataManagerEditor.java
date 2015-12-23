@@ -1,5 +1,28 @@
 package info.limpet.rcp.editors;
 
+import info.limpet.IChangeListener;
+import info.limpet.ICommand;
+import info.limpet.IContext;
+import info.limpet.IOperation;
+import info.limpet.IStore;
+import info.limpet.IStore.IStoreItem;
+import info.limpet.IStoreGroup;
+import info.limpet.data.impl.QuantityCollection;
+import info.limpet.data.impl.samples.StockTypes;
+import info.limpet.data.impl.samples.StockTypes.NonTemporal;
+import info.limpet.data.operations.AddLayerOperation;
+import info.limpet.data.operations.GenerateDummyDataOperation;
+import info.limpet.data.operations.spatial.GeoSupport;
+import info.limpet.data.persistence.xml.XStreamHandler;
+import info.limpet.data.store.InMemoryStore;
+import info.limpet.data.store.InMemoryStore.StoreChangeListener;
+import info.limpet.data.store.InMemoryStore.StoreGroup;
+import info.limpet.rcp.Activator;
+import info.limpet.rcp.RCPContext;
+import info.limpet.rcp.data_provider.data.DataModel;
+import info.limpet.rcp.data_provider.data.GroupWrapper;
+import info.limpet.rcp.editors.dnd.DataManagerDropAdapter;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -61,30 +84,6 @@ import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.part.FileEditorInput;
 import org.opengis.geometry.Geometry;
 import org.osgi.framework.Bundle;
-
-import info.limpet.IChangeListener;
-import info.limpet.ICommand;
-import info.limpet.IContext;
-import info.limpet.IOperation;
-import info.limpet.IStore;
-import info.limpet.IStore.IStoreItem;
-import info.limpet.IStoreGroup;
-import info.limpet.data.impl.QuantityCollection;
-import info.limpet.data.impl.samples.StockTypes;
-import info.limpet.data.impl.samples.StockTypes.NonTemporal;
-import info.limpet.data.operations.AddLayerOperation;
-import info.limpet.data.operations.AddLayerOperation.StringProvider;
-import info.limpet.data.operations.GenerateDummyDataOperation;
-import info.limpet.data.operations.spatial.GeoSupport;
-import info.limpet.data.persistence.xml.XStreamHandler;
-import info.limpet.data.store.InMemoryStore;
-import info.limpet.data.store.InMemoryStore.StoreChangeListener;
-import info.limpet.data.store.InMemoryStore.StoreGroup;
-import info.limpet.rcp.Activator;
-import info.limpet.rcp.RCPContext;
-import info.limpet.rcp.data_provider.data.DataModel;
-import info.limpet.rcp.data_provider.data.GroupWrapper;
-import info.limpet.rcp.editors.dnd.DataManagerDropAdapter;
 
 public class DataManagerEditor extends EditorPart
 {
@@ -538,25 +537,7 @@ public class DataManagerEditor extends EditorPart
 
 	protected void addLayer()
 	{
-		IOperation<IStoreItem> operation = new AddLayerOperation(
-				new StringProvider()
-				{
-
-					@Override
-					public String getString(String title)
-					{
-						String res = null;
-						InputDialog dlg = new InputDialog(Display.getCurrent()
-								.getActiveShell(), title, null, null, null);
-						if (dlg.open() == Window.OK)
-						{
-							// User clicked OK; update the label with the input
-							res = dlg.getValue();
-						}
-
-						return res;
-					}
-				});
+		IOperation<IStoreItem> operation = new AddLayerOperation();
 
 		Object input = viewer.getInput();
 		Collection<ICommand<IStoreItem>> commands = operation.actionsFor(
