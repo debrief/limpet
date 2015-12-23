@@ -9,6 +9,6 @@
   </parent>
   <groupId>info.limpet</groupId>
   <artifactId>info.limpet.rcp</artifactId>
-  <version>1.0.1</version>
+  <version>1.0.2</version>
   <packaging>eclipse-plugin</packaging>
 </project>

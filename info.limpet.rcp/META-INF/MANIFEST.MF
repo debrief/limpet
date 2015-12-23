@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Limpet RCP
 Bundle-SymbolicName: info.limpet.rcp; singleton:=true
-Bundle-Version: 1.0.1
+Bundle-Version: 1.0.2
 Bundle-Activator: info.limpet.rcp.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
