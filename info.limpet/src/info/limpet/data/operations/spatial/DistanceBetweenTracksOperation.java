@@ -47,12 +47,12 @@ public class DistanceBetweenTracksOperation extends TwoTrackOperation
 			final IQuantityCollection<?> res;
 			if (isTemporal)
 			{
-				res = new StockTypes.Temporal.Length_M("Distance between " + title,
+				res = new StockTypes.Temporal.Length_M(title,
 						this);
 			}
 			else
 			{
-				res = new StockTypes.NonTemporal.Length_M("Distance between " + title,
+				res = new StockTypes.NonTemporal.Length_M(title,
 						this);
 
 			}
