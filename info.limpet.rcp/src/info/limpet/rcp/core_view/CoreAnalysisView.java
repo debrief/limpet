@@ -131,15 +131,15 @@ public abstract class CoreAnalysisView extends ViewPart
 			}
 		}
 
+		// ok, stop listening to the old list
+		clearChangeListeners();
+
 		// have we found any?
 		if (res.size() > 0)
 		{
 			// do they apply to me?
 			if (appliesToMe(res, aTests))
 			{
-				// ok, stop listening to the old list
-				clearChangeListeners();
-
 				// store the new list
 				curList.addAll(res);
 
@@ -150,12 +150,11 @@ public abstract class CoreAnalysisView extends ViewPart
 					IStoreItem iC = iter.next();
 					iC.addChangeListener(changeListener);
 				}
-
+				
 				// ok, display them
 				display(res);
 			}
 		}
-
 	}
 
 	private void clearChangeListeners()

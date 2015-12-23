@@ -1,29 +1,5 @@
 package info.limpet.rcp.editors;
 
-import info.limpet.IChangeListener;
-import info.limpet.ICommand;
-import info.limpet.IContext;
-import info.limpet.IOperation;
-import info.limpet.IStore;
-import info.limpet.IStoreGroup;
-import info.limpet.IStore.IStoreItem;
-import info.limpet.data.impl.QuantityCollection;
-import info.limpet.data.impl.samples.StockTypes;
-import info.limpet.data.impl.samples.StockTypes.NonTemporal;
-import info.limpet.data.operations.AddLayerOperation;
-import info.limpet.data.operations.AddLayerOperation.StringProvider;
-import info.limpet.data.operations.GenerateDummyDataOperation;
-import info.limpet.data.operations.spatial.GeoSupport;
-import info.limpet.data.persistence.xml.XStreamHandler;
-import info.limpet.data.store.InMemoryStore;
-import info.limpet.data.store.InMemoryStore.StoreChangeListener;
-import info.limpet.data.store.InMemoryStore.StoreGroup;
-import info.limpet.rcp.Activator;
-import info.limpet.rcp.RCPContext;
-import info.limpet.rcp.data_provider.data.DataModel;
-import info.limpet.rcp.data_provider.data.GroupWrapper;
-import info.limpet.rcp.editors.dnd.DataManagerDropAdapter;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -32,9 +8,24 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IResourceDeltaVisitor;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -65,8 +56,35 @@ import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.SaveAsDialog;
 import org.eclipse.ui.part.EditorPart;
+import org.eclipse.ui.part.FileEditorInput;
 import org.opengis.geometry.Geometry;
+import org.osgi.framework.Bundle;
+
+import info.limpet.IChangeListener;
+import info.limpet.ICommand;
+import info.limpet.IContext;
+import info.limpet.IOperation;
+import info.limpet.IStore;
+import info.limpet.IStore.IStoreItem;
+import info.limpet.IStoreGroup;
+import info.limpet.data.impl.QuantityCollection;
+import info.limpet.data.impl.samples.StockTypes;
+import info.limpet.data.impl.samples.StockTypes.NonTemporal;
+import info.limpet.data.operations.AddLayerOperation;
+import info.limpet.data.operations.AddLayerOperation.StringProvider;
+import info.limpet.data.operations.GenerateDummyDataOperation;
+import info.limpet.data.operations.spatial.GeoSupport;
+import info.limpet.data.persistence.xml.XStreamHandler;
+import info.limpet.data.store.InMemoryStore;
+import info.limpet.data.store.InMemoryStore.StoreChangeListener;
+import info.limpet.data.store.InMemoryStore.StoreGroup;
+import info.limpet.rcp.Activator;
+import info.limpet.rcp.RCPContext;
+import info.limpet.rcp.data_provider.data.DataModel;
+import info.limpet.rcp.data_provider.data.GroupWrapper;
+import info.limpet.rcp.editors.dnd.DataManagerDropAdapter;
 
 public class DataManagerEditor extends EditorPart
 {
@@ -100,7 +118,117 @@ public class DataManagerEditor extends EditorPart
 	private Action createCourse;
 	private Action createLocation;
 	private IContext _context = new RCPContext();
+	
+	private IResourceChangeListener resourceChangeListener = new IResourceChangeListener()
+	{
 
+		@Override
+		public void resourceChanged(IResourceChangeEvent event)
+		{
+			IResourceDelta delta = event.getDelta();
+			final int eventType = event.getType();
+			if (delta != null)
+			{
+				try
+				{
+					delta.accept(new IResourceDeltaVisitor()
+					{
+
+						@Override
+						public boolean visit(IResourceDelta delta) throws CoreException
+						{
+							IResource resource = delta.getResource();
+							if (resource instanceof IWorkspaceRoot)
+							{
+								return true;
+							}
+							if (resource instanceof IProject)
+							{
+								IEditorInput input = getEditorInput();
+								if (input instanceof IFileEditorInput)
+								{
+									IProject project = ((IFileEditorInput) input).getFile()
+											.getProject();
+									if (resource.equals(project)
+											&& (eventType == IResourceChangeEvent.PRE_DELETE || eventType == IResourceChangeEvent.PRE_CLOSE))
+									{
+										closeEditor();
+										return false;
+									}
+								}
+								return true;
+							}
+							if (resource instanceof IFolder)
+							{
+								return true;
+							}
+							if (resource instanceof IFile)
+							{
+								IEditorInput input = getEditorInput();
+								if (input instanceof IFileEditorInput)
+								{
+									IFile file = ((IFileEditorInput) input).getFile();
+									if (resource.equals(file)
+											&& delta.getKind() == IResourceDelta.REMOVED)
+									{
+										IPath movedToPath = delta.getMovedToPath();
+										if (movedToPath != null)
+										{
+											IResource path = ResourcesPlugin.getWorkspace().getRoot()
+													.findMember(movedToPath);
+											if (path instanceof IFile)
+											{
+												final FileEditorInput newInput = new FileEditorInput(
+														(IFile) path);
+												Display.getDefault().asyncExec(new Runnable()
+												{
+
+													@Override
+													public void run()
+													{
+														setInputWithNotify(newInput);
+														setPartName(newInput.getName());
+													}
+												});
+											}
+										}
+										else
+										{
+											closeEditor();
+										}
+									} 
+									if (resource.equals(file) && 
+											(delta.getKind() == IResourceDelta.CHANGED && (delta.getFlags() & IResourceDelta.CONTENT) != 0))
+									{
+										// TODO reload
+									}
+								}
+							}
+							return false;
+						}
+
+					});
+				}
+				catch (CoreException e)
+				{
+					log(e);
+				}
+			}
+		}
+	};
+
+	private void closeEditor()
+	{
+		Display.getDefault().asyncExec(new Runnable()
+		{
+
+			@Override
+			public void run()
+			{
+				getSite().getPage().closeEditor(DataManagerEditor.this, false);
+			}
+		});
+	}
 	@Override
 	public void init(IEditorSite site, IEditorInput input)
 			throws PartInitException
@@ -140,8 +268,7 @@ public class DataManagerEditor extends EditorPart
 			}
 			catch (IOException | CoreException e)
 			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				log(e);
 			}
 
 		}
@@ -183,8 +310,7 @@ public class DataManagerEditor extends EditorPart
 	@Override
 	public boolean isSaveAsAllowed()
 	{
-		// TODO
-		return false;
+		return true;
 	}
 
 	@Override
@@ -209,6 +335,10 @@ public class DataManagerEditor extends EditorPart
 
 		configureDropSupport();
 		configureDragSupport();
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(
+				resourceChangeListener,
+				IResourceChangeEvent.PRE_CLOSE | IResourceChangeEvent.PRE_DELETE
+						| IResourceChangeEvent.POST_CHANGE);
 	}
 
 	private void configureDragSupport()
@@ -591,30 +721,71 @@ public class DataManagerEditor extends EditorPart
 		if (input instanceof IFileEditorInput)
 		{
 			IFile file = ((IFileEditorInput) input).getFile();
-			try
+			doSaveAs(file, monitor);
+		}
+	}
+
+	private void doSaveAs(IFile file, IProgressMonitor monitor)
+	{
+		try
+		{
+			new XStreamHandler().save(_store, file);
+			_dirty = false;
+			file.refreshLocal(IResource.DEPTH_INFINITE, monitor);
+			firePropertyChange(PROP_DIRTY);
+		}
+		catch (CoreException | IOException e)
+		{
+			log(e);
+		}
+	}
+
+	private void log(Throwable t)
+	{
+		Bundle bundle = Platform.getBundle("info.limpet");
+		if (bundle != null)
+		{
+			ILog log = Platform.getLog(bundle);
+			if (log != null)
 			{
-				new XStreamHandler().save(_store, file);
-				_dirty = false;
-				firePropertyChange(PROP_DIRTY);
-			}
-			catch (CoreException | IOException e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				log.log(new Status(IStatus.WARNING, bundle.getSymbolicName(),
+						t.getMessage(), t));
+				return;
 			}
 		}
+		t.printStackTrace();
 	}
 
 	@Override
 	public void doSaveAs()
 	{
-		// TODO
+		final SaveAsDialog dialog = new SaveAsDialog(getEditorSite().getShell());
+		dialog.setTitle("Save As");
+		if (getEditorInput() instanceof IFileEditorInput)
+		{
+			IFileEditorInput input = (IFileEditorInput) getEditorInput();
+			IFile file = input.getFile();
+			dialog.setOriginalFile(file);
+		}
+		dialog.create();
+		dialog.setMessage("Save file to another location.");
+		if (dialog.open() == Window.OK)
+		{
+			final IPath path = dialog.getResult();
+			final IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
+			doSaveAs(file, new NullProgressMonitor());
+			IFileEditorInput input = new FileEditorInput(file);
+			setInput(input);
+			setPartName(input.getName());
+			viewer.refresh();
+		}
 	}
 
 	@Override
 	public void dispose()
 	{
 		super.dispose();
+		ResourcesPlugin.getWorkspace().removeResourceChangeListener(resourceChangeListener);
 		if (_store != null)
 		{
 			_store.removeChangeListener(_changeListener);
