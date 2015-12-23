@@ -36,8 +36,7 @@ public class SubtractQuantityOperation<Q extends Quantity> extends
 		{
 			boolean allQuantity = aTests.allQuantity(selection);
 			boolean suitableLength = aTests.allTemporal(selection)
-					|| aTests.allNonTemporal(selection)
-					&& aTests.allEqualLength(selection);
+					|| aTests.allEqualLengthOrSingleton(selection);
 			boolean equalDimensions = aTests.allEqualDimensions(selection);
 			return (allQuantity && suitableLength && equalDimensions);
 		}
@@ -61,8 +60,8 @@ public class SubtractQuantityOperation<Q extends Quantity> extends
 
 			ICommand<IQuantityCollection<Q>> newC = new SubtractQuantityValues(
 					"Subtract " + item2.getName() + " from " + item1.getName()
-							+ " (interpolated)", selection, item1, item2, destination, longest,
-					context);
+							+ " (interpolated)", selection, item1, item2, destination,
+					longest, context);
 
 			res.add(newC);
 			newC = new SubtractQuantityValues("Subtract " + item1.getName()
@@ -95,17 +94,17 @@ public class SubtractQuantityOperation<Q extends Quantity> extends
 		final IQuantityCollection<Q> _item1;
 		final IQuantityCollection<Q> _item2;
 
-		public SubtractQuantityValues(String title, List<IQuantityCollection<Q>> selection,
-				IQuantityCollection<Q> item1, IQuantityCollection<Q> item2,
-				IStore store, IContext context)
+		public SubtractQuantityValues(String title,
+				List<IQuantityCollection<Q>> selection, IQuantityCollection<Q> item1,
+				IQuantityCollection<Q> item2, IStore store, IContext context)
 		{
 			this(title, selection, item1, item2, store, null, context);
 		}
 
-		public SubtractQuantityValues(String title, List<IQuantityCollection<Q>> selection,
-				IQuantityCollection<Q> item1, IQuantityCollection<Q> item2,
-				IStore store, ITemporalQuantityCollection<Q> timeProvider,
-				IContext context)
+		public SubtractQuantityValues(String title,
+				List<IQuantityCollection<Q>> selection, IQuantityCollection<Q> item1,
+				IQuantityCollection<Q> item2, IStore store,
+				ITemporalQuantityCollection<Q> timeProvider, IContext context)
 		{
 			super(title, "Subtract provided series", store, false, false, selection,
 					timeProvider, context);
@@ -116,16 +115,17 @@ public class SubtractQuantityOperation<Q extends Quantity> extends
 		@Override
 		protected String getOutputName()
 		{
-			return getContext().getInput("Subtract dataset",
-					NEW_DATASET_MESSAGE,
+			return getContext().getInput("Subtract dataset", NEW_DATASET_MESSAGE,
 					_item2.getName() + " from " + _item1.getName());
 		}
 
 		@Override
 		protected Double calcThisElement(int elementCount)
 		{
-			final Measurable<Q> thisValue = _item1.getValues().get(elementCount);
-			final Measurable<Q> otherValue = _item2.getValues().get(elementCount);
+			final Measurable<Q> thisValue = _item1.size() == 1 ? _item1.getValues()
+					.get(0) : _item1.getValues().get(elementCount);
+			final Measurable<Q> otherValue = _item2.size() == 1 ? _item2.getValues()
+					.get(0) : _item2.getValues().get(elementCount);
 			double runningTotal = thisValue.doubleValue(_item1.getUnits())
 					- otherValue.doubleValue(_item2.getUnits());
 			return runningTotal;
@@ -134,20 +134,53 @@ public class SubtractQuantityOperation<Q extends Quantity> extends
 		@Override
 		protected Double calcThisInterpolatedElement(long time)
 		{
-			ITemporalQuantityCollection<Q> tqc1 = (ITemporalQuantityCollection<Q>) _item1;
-			ITemporalQuantityCollection<Q> tqc2 = (ITemporalQuantityCollection<Q>) _item2;
+			final Measurable<Q> thisValue;
+			final Measurable<Q> otherValue;
 
-			final Measurable<Q> thisValue = (Measurable<Q>) tqc1.interpolateValue(
-					time, InterpMethod.Linear);
+			if (_item1.isTemporal())
+			{
+				ITemporalQuantityCollection<Q> tqc1 = (ITemporalQuantityCollection<Q>) _item1;
+				thisValue = (Measurable<Q>) tqc1.interpolateValue(time,
+						InterpMethod.Linear);
+			}
+			else
+			{
+				if (!_item1.isTemporal() && _item1.size() == 1)
+				{
+					thisValue = _item1.getValues().get(0);
+				}
+				else
+				{
+					throw new RuntimeException(
+							"Can't use interpolation for non-singleton non-temporal");
+				}
+			}
+
+			if (_item2.isTemporal())
+			{
+				ITemporalQuantityCollection<Q> tqc2 = (ITemporalQuantityCollection<Q>) _item2;
+				otherValue = (Measurable<Q>) tqc2.interpolateValue(time,
+						InterpMethod.Linear);
+			}
+			else
+			{
+				if (!_item2.isTemporal() && _item2.size() == 1)
+				{
+					otherValue = _item2.getValues().get(0);
+				}
+				else
+				{
+					throw new RuntimeException(
+							"Can't use interpolation for non-singleton non-temporal");
+				}
+			}
+
 			double thisD = 0;
 			if (thisValue != null)
 				thisD = thisValue.doubleValue(_item1.getUnits());
-
-			final Measurable<Q> otherValue = (Measurable<Q>) tqc2.interpolateValue(
-					time, InterpMethod.Linear);
 			double otherD = 0;
 			if (otherValue != null)
-				otherD = otherValue.doubleValue(_item1.getUnits());
+				otherD = otherValue.doubleValue(_item2.getUnits());
 			return thisD - otherD;
 		}
 	}
