@@ -2,7 +2,7 @@ language: java
 jdk: oraclejdk7
 cache:
   directories:
-    - $HOME/.m2
+  - "$HOME/.m2"
 sudo: false
 install:
 - mvn --version
@@ -20,3 +20,16 @@ env:
   global:
   - GH_REF: github.com/debrief/limpet-update.git
   - secure: MpdxPXI7Rgpp3mjJoYNIN8R223Nu0Mbz2ST1NsI7PyUEC8qU5CqWTu9lqOIDRo8NJA8Xej4e+dwbFas3pq1l+yktOAcS7hXlJnNcgILnz45/wRSDgDmcot7ASZ0UxlN++snhUcO3Y0+xY/DmvbZooVD/YK5UfnyeZa8/ImDuPQ0GAhdr8zcV/tVEs2eYTGRT/Wh5DAEt9p3rp9gA5EB4VPvRzLlMefbdNetti+EB3SZ+FGzJOcrJgDwv25XNZMeqSyM/RUH7G/Nww85k6vC5KR4s1SD2hfp1zDpxe7xcfQfvESjOs4tHuojLyBW2vq2G5stqeOf6kj6ZUHZkUTj6TMD8TPXJ26wACA/ev9nvhu8p4C4wFvJgoN2BzG4JjWemRLrkSQYzOn3Mwu1rSmuMKTBQRnJXv5NTukDP8v/cX/9/79u3LbIKDWlSEVfGlUXSknDFFqFGa6pQ07fWuPkYFvw0GGI7mtrEGUmyIEZWoahyFfKM/sY273GSbHLrj9Aifg75nmde/p8AH/7HiA6lW3I5t56pXUVMDjI+D2FPgZ73lTz6OmuEhIZz7jqWGeZKBQel5247m0ivqPRibScjuNzETq6RND1FypWVVweEc2ByGFQOYqozonMA5ObklbE4JfH2S/S5W5oJNVodMXEDaKIXb/nUvqOeif8MWNvZHSs=
+deploy:
+  provider: releases
+  skip_cleanup: true
+  api_key:
+    secure: DeXOC5gAFAvBdajLn0v5Ofp1q1EOOVpZ4L7vkGDc5/1zfkvkDUpb09KdQlFcy2J2a+jj62Cn+ix5iLAEh4hLGd3wIpMShE4vLrNBUc9FW/48VSNpuvj1GSTjG0co42IJwI0+N4LxIfkodtO93rHql9+4rVS5uEA/U39vMFu0Mok3zmVTW1jH56G62EWJaHFdc/+POr1B6S1ataGy4KMuNWch19YjrvP1JYtiS81n1gw8SGlMX7aqWvptTBq9JrTBBl2ODe5ziRSevIWqSoEhY8BeUv5vofQ0d7uZXaaOi1xrOYtEy3/F2xCurXXsWSTkDCZ3sf9scfW3z0C9HxQ84/cFI1ShNghL51nGBzlylvkN9SipeCzlki7jvhFOZu9EhCUjZNOFVh07ta7hGtmyOfhrPY6MXW8z9u6tYKzqmHuoxCOUlnIUGa8ABVF9FYFTLH2b4l4iav/zxVudOARlEHn6oeXk/mfSnSSzSCMinnUzTzEXgnYGlFxcw8BOuaush6C3bvHL46Y1f2ZE65y6VZK1D1yEz38DtfqeKlg9ZVytj7D9E3ah1kym506mVctCUgfzjYR3lsUu5zdZZB7saCaie1+3IB7VzqR/vKQA9gm9ccn+RoBeoaxPAELLAvEUU8LTf0xDMAKhy+cLRrDgQc49Nk7Niw82dCpgvp0xYqI=
+  file:
+  - "/home/travis/build/debrief/limpet/info.limpet.product/target/products/Limpet-linux.gtk.x86_64.tar.gz"
+  - "/home/travis/build/debrief/limpet/info.limpet.product/target/products/Limpet-macosx.cocoa.x86_64.tar.gz"
+  - "/home/travis/build/debrief/limpet/info.limpet.product/target/products/Limpet-win32.win32.x86_64.zip"
+  - "/home/travis/build/debrief/limpet/info.limpet.product/target/products/Limpet-win32.win32.x86.zip"
+  on:
+    tags: true
+    all_branches: true
