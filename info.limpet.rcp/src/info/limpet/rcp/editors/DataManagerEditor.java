@@ -1,5 +1,7 @@
 package info.limpet.rcp.editors;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -49,6 +51,7 @@ import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
@@ -96,6 +99,7 @@ public class DataManagerEditor extends EditorPart
 	private IMenuListener _menuListener;
 	private Action refreshView;
 	private Action copyCsvToClipboard;
+	private Action copyCsvToFile;
 	private Action generateData;
 	private Action addLayer;
 	private boolean _dirty = false;
@@ -399,7 +403,6 @@ public class DataManagerEditor extends EditorPart
 	private String getCsvString()
 	{
 		List<IStoreItem> selection = getSuitableObjects();
-		System.out.println(selection);
 		if (selection.size() == 1 && selection.get(0) instanceof ICollection)
 		{
 			return CsvGenerator.generate((ICollection) selection.get(0));
@@ -466,6 +469,80 @@ public class DataManagerEditor extends EditorPart
 		// FIXME
 		copyCsvToClipboard.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
 				.getImageDescriptor(ISharedImages.IMG_ELCL_SYNCED));
+		
+		copyCsvToFile = new Action()
+		{
+			public void run()
+			{
+				String csv = getCsvString();
+				if (csv != null && !csv.isEmpty())
+				{
+					FileDialog dialog = new FileDialog(getSite().getShell(), SWT.SAVE);
+					String [] filterNames = new String [] {"Csv File", "All Files (*)"};
+					String [] filterExtensions = new String [] {"*.csv", "*"};
+					String filterPath = "";
+					if (SWT.getPlatform().equals("win32")) {
+						filterNames = new String [] {"Csv File", "All Files (*.*)"};
+						filterExtensions = new String [] {"*.csv", "*.*"};
+					}
+					dialog.setFilterNames (filterNames);
+					dialog.setFilterExtensions (filterExtensions);
+					dialog.setFilterPath (filterPath);
+					//dialog.setFileName ("limpet");
+					String result = dialog.open();
+					if (result == null)
+					{
+						return;
+					}
+					File file = new File(result);
+					if (file.exists())
+					{
+						if (!MessageDialog.openQuestion(getSite().getShell(), 
+								"Overwrite '" + result + "'?", "Are you sure you want to overwrite '" + result + "'?"))
+						{
+							return;
+						}
+					}
+					FileOutputStream fop = null;
+					try
+					{
+						fop = new FileOutputStream(file);
+						fop.write(csv.getBytes());
+					}
+					catch (IOException e)
+					{
+						MessageDialog.openError(getSite().getShell(),
+								"Error", "Cannot write to '" + result + "'. See log for more details");
+						Activator.log(e);
+					}
+					finally
+					{
+						if (fop != null)
+						{
+							try
+							{
+								fop.close();
+							}
+							catch (IOException e)
+							{
+								// ignore
+							}
+						}
+					}
+					
+					
+				}
+				else
+				{
+					MessageDialog.openInformation(viewer.getControl().getShell(),
+							"Data Manager Editor", "Cannot copy current selection");
+				}
+			}
+		};
+		copyCsvToFile.setText("Copy CSV to File");
+		// FIXME
+		copyCsvToFile.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
+				.getImageDescriptor(ISharedImages.IMG_ETOOL_SAVEAS_EDIT));
 
 		createDimensionless = createSingletonGenerator("dimensionless",
 				new ItemGenerator()
@@ -676,6 +753,7 @@ public class DataManagerEditor extends EditorPart
 		{
 			menu.add(new Separator());
 			menu.add(copyCsvToClipboard);
+			menu.add(copyCsvToFile);
 		}
 		
 		menu.add(new Separator());
