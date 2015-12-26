@@ -1,28 +1,65 @@
 package info.limpet.data.export.csv;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import info.limpet.ICollection;
+import info.limpet.IStore;
+import info.limpet.IStore.IStoreItem;
 import info.limpet.data.csv.CsvGenerator;
 import info.limpet.data.impl.samples.SampleData;
 import info.limpet.data.store.InMemoryStore;
+import info.limpet.data.store.InMemoryStore.StoreGroup;
 import junit.framework.TestCase;
 
 public class TestExport extends TestCase
 {
 
 	private static InMemoryStore data = new SampleData().getData(20);
-	
-	public void testExportAngleDegrees()
+
+	public void testCsvGenerate()
 	{
-		generate(SampleData.ANGLE_ONE);
-		generate(SampleData.STRING_ONE);
-		generate(SampleData.SPEED_ONE);
+		List<ICollection> collections = getCollections();
+		for (ICollection collection:collections)
+		{
+			System.out.println("Generate csv for " + collection.getName());
+			generate(collection);
+		}
 	}
 
-	private void generate(String name)
+	private void generate(ICollection collection)
 	{
-		ICollection collection = (ICollection) data.get(name);
-		String csv = new CsvGenerator().generate(collection);
-		assertTrue(name + " isn't created.", csv != null);
+		String csv = CsvGenerator.generate(collection);
+		assertTrue(collection.getName() + " isn't created.", csv != null);
+	}
+
+	private List<ICollection> getCollections()
+	{
+		List<ICollection> collections = new ArrayList<ICollection>();
+		Iterator<IStoreItem> iter = data.iterator();
+		while (iter.hasNext())
+		{
+			IStoreItem item = iter.next();
+			if (item instanceof StoreGroup)
+			{
+				StoreGroup group = (StoreGroup) item;
+				Iterator<IStoreItem> iter2 = group.iterator();
+				while (iter2.hasNext())
+				{
+					IStore.IStoreItem iStoreItem = (IStore.IStoreItem) iter2.next();
+					if (iStoreItem instanceof ICollection)
+					{
+						collections.add((ICollection) iStoreItem);
+					}
+				}
+			}
+			if (item instanceof ICollection)
+			{
+				collections.add((ICollection) item);
+			}
+		}
+		return collections;
 	}
 
 }

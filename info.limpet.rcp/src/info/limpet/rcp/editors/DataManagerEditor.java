@@ -1,28 +1,5 @@
 package info.limpet.rcp.editors;
 
-import info.limpet.IChangeListener;
-import info.limpet.ICommand;
-import info.limpet.IContext;
-import info.limpet.IOperation;
-import info.limpet.IStore;
-import info.limpet.IStore.IStoreItem;
-import info.limpet.IStoreGroup;
-import info.limpet.data.impl.QuantityCollection;
-import info.limpet.data.impl.samples.StockTypes;
-import info.limpet.data.impl.samples.StockTypes.NonTemporal;
-import info.limpet.data.operations.AddLayerOperation;
-import info.limpet.data.operations.GenerateDummyDataOperation;
-import info.limpet.data.operations.spatial.GeoSupport;
-import info.limpet.data.persistence.xml.XStreamHandler;
-import info.limpet.data.store.InMemoryStore;
-import info.limpet.data.store.InMemoryStore.StoreChangeListener;
-import info.limpet.data.store.InMemoryStore.StoreGroup;
-import info.limpet.rcp.Activator;
-import info.limpet.rcp.RCPContext;
-import info.limpet.rcp.data_provider.data.DataModel;
-import info.limpet.rcp.data_provider.data.GroupWrapper;
-import info.limpet.rcp.editors.dnd.DataManagerDropAdapter;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -65,6 +42,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.FileTransfer;
 import org.eclipse.swt.dnd.TextTransfer;
@@ -85,6 +63,31 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.opengis.geometry.Geometry;
 import org.osgi.framework.Bundle;
 
+import info.limpet.IChangeListener;
+import info.limpet.ICollection;
+import info.limpet.ICommand;
+import info.limpet.IContext;
+import info.limpet.IOperation;
+import info.limpet.IStore;
+import info.limpet.IStore.IStoreItem;
+import info.limpet.IStoreGroup;
+import info.limpet.data.csv.CsvGenerator;
+import info.limpet.data.impl.QuantityCollection;
+import info.limpet.data.impl.samples.StockTypes;
+import info.limpet.data.impl.samples.StockTypes.NonTemporal;
+import info.limpet.data.operations.AddLayerOperation;
+import info.limpet.data.operations.GenerateDummyDataOperation;
+import info.limpet.data.operations.spatial.GeoSupport;
+import info.limpet.data.persistence.xml.XStreamHandler;
+import info.limpet.data.store.InMemoryStore;
+import info.limpet.data.store.InMemoryStore.StoreChangeListener;
+import info.limpet.data.store.InMemoryStore.StoreGroup;
+import info.limpet.rcp.Activator;
+import info.limpet.rcp.RCPContext;
+import info.limpet.rcp.data_provider.data.DataModel;
+import info.limpet.rcp.data_provider.data.GroupWrapper;
+import info.limpet.rcp.editors.dnd.DataManagerDropAdapter;
+
 public class DataManagerEditor extends EditorPart
 {
 
@@ -92,6 +95,7 @@ public class DataManagerEditor extends EditorPart
 	private TreeViewer viewer;
 	private IMenuListener _menuListener;
 	private Action refreshView;
+	private Action copyCsvToClipboard;
 	private Action generateData;
 	private Action addLayer;
 	private boolean _dirty = false;
@@ -392,6 +396,17 @@ public class DataManagerEditor extends EditorPart
 		manager.add(addLayer);
 	}
 
+	private String getCsvString()
+	{
+		List<IStoreItem> selection = getSuitableObjects();
+		System.out.println(selection);
+		if (selection.size() == 1 && selection.get(0) instanceof ICollection)
+		{
+			return CsvGenerator.generate((ICollection) selection.get(0));
+		}
+		return null;
+	}
+	
 	private void makeActions()
 	{
 		generateData = new Action()
@@ -426,6 +441,31 @@ public class DataManagerEditor extends EditorPart
 		refreshView.setText("Refresh");
 		refreshView.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
 				.getImageDescriptor(ISharedImages.IMG_TOOL_REDO));
+		
+		copyCsvToClipboard = new Action()
+		{
+			public void run()
+			{
+				String csv = getCsvString();
+				if (csv != null && !csv.isEmpty())
+				{
+					final Clipboard cb = new Clipboard(Display.getCurrent());
+					TextTransfer textTransfer = TextTransfer.getInstance();
+					cb.setContents(new Object[]
+					{ csv }, new Transfer[]
+					{ textTransfer });
+				}
+				else
+				{
+					MessageDialog.openInformation(viewer.getControl().getShell(),
+							"Data Manager Editor", "Cannot copy current selection");
+				}
+			}
+		};
+		copyCsvToClipboard.setText("Copy CSV to Clipboard");
+		// FIXME
+		copyCsvToClipboard.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
+				.getImageDescriptor(ISharedImages.IMG_ELCL_SYNCED));
 
 		createDimensionless = createSingletonGenerator("dimensionless",
 				new ItemGenerator()
@@ -632,6 +672,12 @@ public class DataManagerEditor extends EditorPart
 		createMenu.add(createLocation);
 		createMenu.add(addLayer);
 
+		if (selection.size() == 1 && selection.get(0) instanceof ICollection)
+		{
+			menu.add(new Separator());
+			menu.add(copyCsvToClipboard);
+		}
+		
 		menu.add(new Separator());
 		menu.add(refreshView);
 

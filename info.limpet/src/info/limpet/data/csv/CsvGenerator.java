@@ -7,20 +7,26 @@ import java.util.List;
 import javax.measure.Measure;
 import javax.measure.quantity.Quantity;
 
+import org.opengis.geometry.primitive.Point;
+
 import info.limpet.ICollection;
 import info.limpet.IObjectCollection;
 import info.limpet.IQuantityCollection;
 import info.limpet.ITemporalObjectCollection;
+import info.limpet.data.impl.samples.StockTypes.NonTemporal.Location;
+import info.limpet.data.impl.samples.TemporalLocation;
 
 public class CsvGenerator
 {
+	private static final String LEFT_BRACKET = "[";
+	private static final String RIGHT_BRACKET = "]";
 	private static final String RIGHT_PARENTHESES = ")";
 	private static final String LEFT_PARENTHESES = "(";
 	private static final String COMMA_SEPARATOR = ",";
 	private static final String LINE_SEPARATOR = "\n";
 
 	@SuppressWarnings("unchecked")
-	public String generate(ICollection collection)
+	public static String generate(ICollection collection)
 	{
 		if (!(collection instanceof IObjectCollection))
 		{
@@ -31,22 +37,19 @@ public class CsvGenerator
 		{
 			header.append("Time,");
 		}
-		header.append(collection.getName());
-		if (collection.isQuantity())
+		if (collection instanceof TemporalLocation || collection instanceof Location)
 		{
-			header.append(LEFT_PARENTHESES);
-			String unitSymbol = ((IQuantityCollection<Quantity>) collection)
-					.getUnits().toString();
-			// DEGREE_ANGLE
-			if ("°".equals(unitSymbol))
-			{
-				header.append("Degs");
-			}
-			else
-			{
-				header.append(unitSymbol);
-			}
-			header.append(RIGHT_PARENTHESES);
+			header.append("Lat(Degs),Long(Degs)");
+		}
+		else 
+		{
+			// "(" and "(" has special meaning in CsvParser (separate unit)
+			// replace with "[" and "]"
+			String name = collection.getName();
+			name = name.replace(LEFT_PARENTHESES, LEFT_BRACKET);
+			name = name.replace(RIGHT_PARENTHESES, RIGHT_BRACKET);
+			header.append(name);
+			addUnit(header, collection);
 		}
 		header.append(LINE_SEPARATOR);
 
@@ -73,6 +76,13 @@ public class CsvGenerator
 			{
 				header.append(((Measure<?, Quantity>) value).getValue());
 			}
+			else if (value instanceof Point)
+			{
+				Point point = (Point) value;
+				header.append(point.getDirectPosition().getCoordinate()[1]);
+				header.append(COMMA_SEPARATOR);
+				header.append(point.getDirectPosition().getCoordinate()[0]);
+			}
 			else
 			{
 				header.append(value);
@@ -80,5 +90,25 @@ public class CsvGenerator
 			header.append(LINE_SEPARATOR);
 		}
 		return header.toString();
+	}
+
+	private static void addUnit(StringBuilder header, ICollection collection)
+	{
+		if (collection.isQuantity())
+		{
+			header.append(LEFT_PARENTHESES);
+			@SuppressWarnings("unchecked")
+			String unitSymbol = ((IQuantityCollection<Quantity>) collection).getUnits().toString();
+			// DEGREE_ANGLE
+			if ("°".equals(unitSymbol))
+			{
+				header.append("Degs");
+			}
+			else
+			{
+				header.append(unitSymbol);
+			}
+			header.append(RIGHT_PARENTHESES);
+		}
 	}
 }
