@@ -709,7 +709,6 @@ public class DataManagerEditor extends EditorPart
 		menuMgr.addMenuListener(getContextMenuListener());
 		Menu menu = menuMgr.createContextMenu(viewer.getControl());
 		viewer.getControl().setMenu(menu);
-		getSite().registerContextMenu(menuMgr, viewer);
 	}
 
 	@Override
