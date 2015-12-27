@@ -31,23 +31,42 @@ import info.limpet.rcp.Activator;
  * 
  */
 public class CheckboxPropertyDescriptor extends PropertyDescriptor
-{
-	private static Image CHECKED = Activator.getImageDescriptor("icons/checked.gif").createImage();
-	private static Image UNCHECKED = Activator.getImageDescriptor("icons/unchecked.gif").createImage();
-	
+{	
 	/**
 	 * The checkbox is actually emulated by having a custom label provider to 
 	 * show corresponding image for each boolean state. Solution adopted from here: 
 	 * http://www.vogella.com/tutorials/EclipseJFaceTable/article.html#jfaceeditor
 	 */
 	private static LabelProvider CHECKBOX_LABEL_PROVIDER = new LabelProvider() {
+		
+		/**
+		 * Use lazy loading for the images, since the class might be used in non-rcp (i.e. junit environment)
+		 */
+		private Image checked;
+		private Image unchecked;
+
 		public Image getImage(Object element) {
-			return ((Boolean)element).booleanValue() ? CHECKED : UNCHECKED;			
+			return ((Boolean)element).booleanValue() ? getCheckedImage() : getUncheckedImage();			
 		};
+				
 		public String getText(Object element) {
 			// we don't need text here
 			return null;
 		};
+		
+		private Image getCheckedImage() {
+			if (checked == null) {
+				checked = Activator.getImageDescriptor("icons/checked.gif").createImage();
+			}
+			return checked;
+		}
+		
+		private Image getUncheckedImage() {
+			if (unchecked == null) {
+				unchecked = Activator.getImageDescriptor("icons/unchecked.gif").createImage();
+			}
+			return unchecked;
+		}
 	};
 	
 	/**

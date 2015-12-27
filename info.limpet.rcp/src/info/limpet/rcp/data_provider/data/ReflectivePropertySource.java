@@ -11,12 +11,15 @@ import java.util.Map;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
-import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 
 import info.limpet.UIProperty;
 import info.limpet.rcp.Activator;
-import info.limpet.rcp.propertyeditors.SliderPropertyDescriptor;
 
+/**
+ * An {@link IPropertySource} that uses {@link UIProperty} annotations to 
+ * determine the set of {@link org.eclipse.ui.views.properties.PropertyDescriptor}s.
+ *  
+ */
 public class ReflectivePropertySource implements IPropertySource
 {
 
@@ -65,53 +68,24 @@ public class ReflectivePropertySource implements IPropertySource
 
 					org.eclipse.ui.views.properties.PropertyDescriptor descriptor = null;
 					
-					String propId = beanPropertyDescriptor.getName();
-					String propName = annotation.name();
-					String propCategory = annotation.category();
-					
+					String propId = beanPropertyDescriptor.getName();					
 					if (beanPropertyDescriptor.getWriteMethod() != null)
 					{
-						Class<?> propertyType = beanPropertyDescriptor.getPropertyType();
-						if (propertyType.equals(String.class))
-						{
-							descriptor = new TextPropertyDescriptor(
-									propId, propName);
-						}
-						else if ("boolean".equals(propertyType.getName()))
-						{
-							descriptor = new CheckboxPropertyDescriptor(
-									propId, propName);
-						}
-						else if ("int".equals(propertyType.getName()))
-						{
-							int min = annotation.min();
-							int max = annotation.max();
-							
-							descriptor =  new SliderPropertyDescriptor(
-									propId, propName, min, max);
-						}						
-						else
-						{
-							// TODO: handle other property types, such as
-							// number, complex types, Wrapper types - Boolean, Integer, etc
-						}
+						PropertyTypeHandler propertyTypeHandler = getPropertyTypeHandler(beanPropertyDescriptor.getPropertyType());
+						descriptor = propertyTypeHandler.createPropertyDescriptor(propId, annotation);
 					}
 					else
 					{
 						// read only descriptor
 						descriptor = new org.eclipse.ui.views.properties.PropertyDescriptor(
-								beanPropertyDescriptor.getName(), propName);
+								propId, annotation.name());
+						descriptor.setCategory(annotation.category());
 					}
 
-					if (descriptor != null)
-					{
-						descriptor.setCategory(propCategory);
-						result.add(descriptor);
+					result.add(descriptor);
 
-						descriptorPerProperty.put(beanPropertyDescriptor.getName(),
-								beanPropertyDescriptor);
-					}
-
+					descriptorPerProperty.put(propId,
+							beanPropertyDescriptor);
 				}
 			}
 		}
@@ -145,14 +119,26 @@ public class ReflectivePropertySource implements IPropertySource
 	@Override
 	public boolean isPropertySet(Object id)
 	{
-		// TODO Auto-generated method stub
+		PropertyDescriptor descriptor = descriptorPerProperty.get(id);
+		if (descriptor.getWriteMethod() != null) {
+			PropertyTypeHandler propertyTypeHandler = getPropertyTypeHandler(descriptor.getPropertyType());
+			UIProperty annotation = descriptor.getReadMethod().getAnnotation(UIProperty.class);
+			return getPropertyValue(id) != propertyTypeHandler.getDefaulValue(annotation);
+		}
 		return false;
 	}
 
 	@Override
 	public void resetPropertyValue(Object id)
 	{
-		// TODO Auto-generated method stub
+		PropertyDescriptor descriptor = descriptorPerProperty.get(id);
+		// editable property
+		if (descriptor.getWriteMethod() != null) {
+			PropertyTypeHandler propertyTypeHandler = getPropertyTypeHandler(descriptor.getPropertyType());
+			// delegate to set property
+			UIProperty annotation = descriptor.getReadMethod().getAnnotation(UIProperty.class);
+			setPropertyValue(id, propertyTypeHandler.getDefaulValue(annotation));
+		}
 
 	}
 
@@ -170,5 +156,32 @@ public class ReflectivePropertySource implements IPropertySource
 					"Could not set value for property " + id, e);
 		}
 	}
-
+	
+	/**
+	 * @param propertyType a property type obtained from the {@link PropertyDescriptor}
+	 * @return 
+	 */
+	public static PropertyTypeHandler getPropertyTypeHandler(Class<?> propertyType) {
+		
+		PropertyTypeHandler result = null;
+		if (propertyType.equals(String.class))
+		{
+			result = PropertyTypeHandler.STRING;
+		}
+		else if ("boolean".equals(propertyType.getName()))
+		{
+			result = PropertyTypeHandler.BOOLEAN;
+		}
+		else if ("int".equals(propertyType.getName()))
+		{
+			result = PropertyTypeHandler.INTEGER;
+		}						
+		else
+		{
+			// TODO: handle other property types, such as
+			// number, complex types, Wrapper types - Boolean, Integer, etc
+			throw new UnsupportedOperationException("Property type not supported: " + propertyType);
+		}
+		return result;
+	}
 }
