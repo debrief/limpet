@@ -1,28 +1,7 @@
 package info.limpet.rcp.editors;
 
-import info.limpet.IChangeListener;
-import info.limpet.ICommand;
-import info.limpet.IContext;
-import info.limpet.IOperation;
-import info.limpet.IStore;
-import info.limpet.IStore.IStoreItem;
-import info.limpet.IStoreGroup;
-import info.limpet.data.impl.QuantityCollection;
-import info.limpet.data.impl.samples.StockTypes;
-import info.limpet.data.impl.samples.StockTypes.NonTemporal;
-import info.limpet.data.operations.AddLayerOperation;
-import info.limpet.data.operations.GenerateDummyDataOperation;
-import info.limpet.data.operations.spatial.GeoSupport;
-import info.limpet.data.persistence.xml.XStreamHandler;
-import info.limpet.data.store.InMemoryStore;
-import info.limpet.data.store.InMemoryStore.StoreChangeListener;
-import info.limpet.data.store.InMemoryStore.StoreGroup;
-import info.limpet.rcp.Activator;
-import info.limpet.rcp.RCPContext;
-import info.limpet.rcp.data_provider.data.DataModel;
-import info.limpet.rcp.data_provider.data.GroupWrapper;
-import info.limpet.rcp.editors.dnd.DataManagerDropAdapter;
-
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -65,12 +44,14 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.FileTransfer;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
@@ -85,6 +66,31 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.opengis.geometry.Geometry;
 import org.osgi.framework.Bundle;
 
+import info.limpet.IChangeListener;
+import info.limpet.ICollection;
+import info.limpet.ICommand;
+import info.limpet.IContext;
+import info.limpet.IOperation;
+import info.limpet.IStore;
+import info.limpet.IStore.IStoreItem;
+import info.limpet.IStoreGroup;
+import info.limpet.data.csv.CsvGenerator;
+import info.limpet.data.impl.QuantityCollection;
+import info.limpet.data.impl.samples.StockTypes;
+import info.limpet.data.impl.samples.StockTypes.NonTemporal;
+import info.limpet.data.operations.AddLayerOperation;
+import info.limpet.data.operations.GenerateDummyDataOperation;
+import info.limpet.data.operations.spatial.GeoSupport;
+import info.limpet.data.persistence.xml.XStreamHandler;
+import info.limpet.data.store.InMemoryStore;
+import info.limpet.data.store.InMemoryStore.StoreChangeListener;
+import info.limpet.data.store.InMemoryStore.StoreGroup;
+import info.limpet.rcp.Activator;
+import info.limpet.rcp.RCPContext;
+import info.limpet.rcp.data_provider.data.DataModel;
+import info.limpet.rcp.data_provider.data.GroupWrapper;
+import info.limpet.rcp.editors.dnd.DataManagerDropAdapter;
+
 public class DataManagerEditor extends EditorPart
 {
 
@@ -92,6 +98,8 @@ public class DataManagerEditor extends EditorPart
 	private TreeViewer viewer;
 	private IMenuListener _menuListener;
 	private Action refreshView;
+	private Action copyCsvToClipboard;
+	private Action copyCsvToFile;
 	private Action generateData;
 	private Action addLayer;
 	private boolean _dirty = false;
@@ -117,7 +125,7 @@ public class DataManagerEditor extends EditorPart
 	private Action createCourse;
 	private Action createLocation;
 	private IContext _context = new RCPContext();
-	
+
 	private IResourceChangeListener resourceChangeListener = new IResourceChangeListener()
 	{
 
@@ -195,9 +203,10 @@ public class DataManagerEditor extends EditorPart
 										{
 											closeEditor();
 										}
-									} 
-									if (resource.equals(file) && 
-											(delta.getKind() == IResourceDelta.CHANGED && (delta.getFlags() & IResourceDelta.CONTENT) != 0))
+									}
+									if (resource.equals(file)
+											&& (delta.getKind() == IResourceDelta.CHANGED && (delta
+													.getFlags() & IResourceDelta.CONTENT) != 0))
 									{
 										reload();
 									}
@@ -225,7 +234,7 @@ public class DataManagerEditor extends EditorPart
 		load(getEditorInput());
 		Display.getDefault().asyncExec(new Runnable()
 		{
-			
+
 			@Override
 			public void run()
 			{
@@ -233,9 +242,9 @@ public class DataManagerEditor extends EditorPart
 				viewer.refresh();
 			}
 		});
-		
+
 	}
-	
+
 	private void closeEditor()
 	{
 		Display.getDefault().asyncExec(new Runnable()
@@ -248,6 +257,7 @@ public class DataManagerEditor extends EditorPart
 			}
 		});
 	}
+
 	@Override
 	public void init(IEditorSite site, IEditorInput input)
 			throws PartInitException
@@ -276,10 +286,10 @@ public class DataManagerEditor extends EditorPart
 
 					// we need to loop down through the data, setting all of the listeners
 					InMemoryStore ms = (InMemoryStore) _store;
-					
+
 					// check we didn't load an empty store
 					ms.init();
-					
+
 					// and get hooked up
 					Iterator<IStoreItem> iter = ms.iterator();
 					while (iter.hasNext())
@@ -392,6 +402,16 @@ public class DataManagerEditor extends EditorPart
 		manager.add(addLayer);
 	}
 
+	private String getCsvString()
+	{
+		List<IStoreItem> selection = getSuitableObjects();
+		if (selection.size() == 1 && selection.get(0) instanceof ICollection)
+		{
+			return CsvGenerator.generate((ICollection) selection.get(0));
+		}
+		return null;
+	}
+
 	private void makeActions()
 	{
 		generateData = new Action()
@@ -426,6 +446,39 @@ public class DataManagerEditor extends EditorPart
 		refreshView.setText("Refresh");
 		refreshView.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
 				.getImageDescriptor(ISharedImages.IMG_TOOL_REDO));
+
+		copyCsvToClipboard = new Action()
+		{
+			public void run()
+			{
+				String csv = getCsvString();
+				if (csv != null && !csv.isEmpty())
+				{
+					final Clipboard cb = new Clipboard(Display.getCurrent());
+					TextTransfer textTransfer = TextTransfer.getInstance();
+					cb.setContents(new Object[]
+					{ csv }, new Transfer[]
+					{ textTransfer });
+				}
+				else
+				{
+					MessageDialog.openInformation(viewer.getControl().getShell(),
+							"Data Manager Editor", "Cannot copy current selection");
+				}
+			}
+		};
+		copyCsvToClipboard.setText("Copy CSV to Clipboard");
+		// FIXME
+		copyCsvToClipboard.setImageDescriptor(PlatformUI.getWorkbench()
+				.getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_SYNCED));
+
+		copyCsvToFile = new ExportToCSVFile();
+
+		copyCsvToFile.setText("Copy CSV to File");
+		// FIXME
+		copyCsvToFile.setImageDescriptor(PlatformUI.getWorkbench()
+				.getSharedImages()
+				.getImageDescriptor(ISharedImages.IMG_ETOOL_SAVEAS_EDIT));
 
 		createDimensionless = createSingletonGenerator("dimensionless",
 				new ItemGenerator()
@@ -473,6 +526,92 @@ public class DataManagerEditor extends EditorPart
 	private static interface ItemGenerator
 	{
 		public QuantityCollection<?> generate(final String name);
+	}
+
+	/** class that provides UI & processing to export a single collection to a CSV file
+	 * 
+	 * @author ian
+	 *
+	 */
+	private class ExportToCSVFile extends Action
+	{
+		public void run()
+		{
+			String csv = getCsvString();
+			if (csv != null && !csv.isEmpty())
+			{
+				FileDialog dialog = new FileDialog(getSite().getShell(), SWT.SAVE);
+				final String[] filterNames;
+				final String[] filterExtensions;
+				String filterPath = "";
+				if (SWT.getPlatform().equals("win32"))
+				{
+					filterNames = new String[]
+					{ "Csv File", "All Files (*.*)" };
+					filterExtensions = new String[]
+					{ "*.csv", "*.*" };
+				}
+				else
+				{
+					filterNames = new String[]
+					{ "Csv File", "All Files (*)" };
+					filterExtensions = new String[]
+					{ "*.csv", "*" };
+				}
+				dialog.setFilterNames(filterNames);
+				dialog.setFilterExtensions(filterExtensions);
+				dialog.setFilterPath(filterPath);
+				dialog.setFileName("limpet_out.csv");
+				String result = dialog.open();
+				if (result == null)
+				{
+					return;
+				}
+				File file = new File(result);
+				if (file.exists())
+				{
+					if (!MessageDialog.openQuestion(getSite().getShell(), "Overwrite '"
+							+ result + "'?", "Are you sure you want to overwrite '" + result
+							+ "'?"))
+					{
+						return;
+					}
+				}
+				FileOutputStream fop = null;
+				try
+				{
+					fop = new FileOutputStream(file);
+					fop.write(csv.getBytes());
+				}
+				catch (IOException e)
+				{
+					MessageDialog.openError(getSite().getShell(), "Error",
+							"Cannot write to '" + result + "'. See log for more details");
+					Activator.log(e);
+				}
+				finally
+				{
+					if (fop != null)
+					{
+						try
+						{
+							fop.close();
+						}
+						catch (IOException e)
+						{
+							Activator.logError(Status.ERROR,
+									"Failed to close fop in DataManagerEditor export to CSV", e);
+						}
+					}
+				}
+
+			}
+			else
+			{
+				MessageDialog.openInformation(viewer.getControl().getShell(),
+						"Data Manager Editor", "Cannot copy current selection");
+			}
+		}
 	}
 
 	private Action createSingletonGenerator(final String sType,
@@ -632,6 +771,13 @@ public class DataManagerEditor extends EditorPart
 		createMenu.add(createLocation);
 		createMenu.add(addLayer);
 
+		if (selection.size() == 1 && selection.get(0) instanceof ICollection)
+		{
+			menu.add(new Separator());
+			menu.add(copyCsvToClipboard);
+			menu.add(copyCsvToFile);
+		}
+
 		menu.add(new Separator());
 		menu.add(refreshView);
 
@@ -735,7 +881,8 @@ public class DataManagerEditor extends EditorPart
 	{
 		try
 		{
-			ResourcesPlugin.getWorkspace().removeResourceChangeListener(resourceChangeListener);
+			ResourcesPlugin.getWorkspace().removeResourceChangeListener(
+					resourceChangeListener);
 			new XStreamHandler().save(_store, file);
 			_dirty = false;
 			file.refreshLocal(IResource.DEPTH_INFINITE, monitor);
@@ -762,8 +909,8 @@ public class DataManagerEditor extends EditorPart
 			ILog log = Platform.getLog(bundle);
 			if (log != null)
 			{
-				log.log(new Status(IStatus.WARNING, bundle.getSymbolicName(),
-						t.getMessage(), t));
+				log.log(new Status(IStatus.WARNING, bundle.getSymbolicName(), t
+						.getMessage(), t));
 				return;
 			}
 		}
@@ -799,7 +946,8 @@ public class DataManagerEditor extends EditorPart
 	public void dispose()
 	{
 		super.dispose();
-		ResourcesPlugin.getWorkspace().removeResourceChangeListener(resourceChangeListener);
+		ResourcesPlugin.getWorkspace().removeResourceChangeListener(
+				resourceChangeListener);
 		if (_store != null)
 		{
 			_store.removeChangeListener(_changeListener);
