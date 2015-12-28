@@ -1,5 +1,11 @@
 package info.limpet.data.csv;
 
+import info.limpet.ICollection;
+import info.limpet.IObjectCollection;
+import info.limpet.IQuantityCollection;
+import info.limpet.ITemporalObjectCollection;
+import info.limpet.data.impl.samples.StockTypes.ILocations;
+
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -8,13 +14,6 @@ import javax.measure.Measure;
 import javax.measure.quantity.Quantity;
 
 import org.opengis.geometry.primitive.Point;
-
-import info.limpet.ICollection;
-import info.limpet.IObjectCollection;
-import info.limpet.IQuantityCollection;
-import info.limpet.ITemporalObjectCollection;
-import info.limpet.data.impl.samples.StockTypes.NonTemporal.Location;
-import info.limpet.data.impl.samples.TemporalLocation;
 
 public class CsvGenerator
 {
@@ -37,7 +36,7 @@ public class CsvGenerator
 		{
 			header.append("Time,");
 		}
-		if (collection instanceof TemporalLocation || collection instanceof Location)
+		if (collection instanceof ILocations)
 		{
 			header.append("Lat(Degs),Long(Degs)");
 		}
