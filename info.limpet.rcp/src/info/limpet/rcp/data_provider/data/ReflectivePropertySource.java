@@ -5,6 +5,7 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -26,10 +27,24 @@ public class ReflectivePropertySource implements IPropertySource
 	private final Object object;
 	private IPropertyDescriptor[] propertyDescriptors;
 	private Map<String, PropertyDescriptor> descriptorPerProperty;
+	
+	/** a list of property handlers that we know about
+	 * 
+	 */
+	private ArrayList<PropertyTypeHandler> myHandlers;
 
 	public ReflectivePropertySource(Object object)
 	{
 		this.object = object;
+		
+		/** define the handlers we know about. In the future this list could be extended
+		 * by reading extensions from the plugin.xml
+		 * 
+		 */
+		myHandlers = new ArrayList<PropertyTypeHandler>();
+		myHandlers.add(PropertyTypeHandler.STRING);
+		myHandlers.add(PropertyTypeHandler.BOOLEAN);
+		myHandlers.add(PropertyTypeHandler.INTEGER);
 	}
 
 	@Override
@@ -161,22 +176,23 @@ public class ReflectivePropertySource implements IPropertySource
 	 * @param propertyType a property type obtained from the {@link PropertyDescriptor}
 	 * @return 
 	 */
-	public static PropertyTypeHandler getPropertyTypeHandler(Class<?> propertyType) {
+	public PropertyTypeHandler getPropertyTypeHandler(Class<?> propertyType) {
 		
 		PropertyTypeHandler result = null;
-		if (propertyType.equals(String.class))
+		
+		// loop through the handlers we know about
+		Iterator<PropertyTypeHandler> hIter = myHandlers.iterator();
+		while(hIter.hasNext())
 		{
-			result = PropertyTypeHandler.STRING;
+			PropertyTypeHandler thisP = hIter.next();
+			if(thisP.canHandle(propertyType))
+			{
+				result = thisP;
+				break;
+			}
 		}
-		else if ("boolean".equals(propertyType.getName()))
-		{
-			result = PropertyTypeHandler.BOOLEAN;
-		}
-		else if ("int".equals(propertyType.getName()))
-		{
-			result = PropertyTypeHandler.INTEGER;
-		}						
-		else
+		
+		if(result == null)
 		{
 			// TODO: handle other property types, such as
 			// number, complex types, Wrapper types - Boolean, Integer, etc
