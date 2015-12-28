@@ -131,31 +131,31 @@ public abstract class CoreAnalysisView extends ViewPart
 			}
 		}
 
-		// have we found any?
-		if (res.size() > 0)
+		// ok, stop listening to the old list
+		clearChangeListeners();
+
+		// have we found any, and are they suitable for us?
+		if ((res.size()) > 0 && appliesToMe(res, aTests))
 		{
-			// do they apply to me?
-			if (appliesToMe(res, aTests))
+			// store the new list
+			curList.addAll(res);
+
+			// now listen to the new list
+			Iterator<IStoreItem> iter = curList.iterator();
+			while (iter.hasNext())
 			{
-				// ok, stop listening to the old list
-				clearChangeListeners();
-
-				// store the new list
-				curList.addAll(res);
-
-				// now listen to the new list
-				Iterator<IStoreItem> iter = curList.iterator();
-				while (iter.hasNext())
-				{
-					IStoreItem iC = iter.next();
-					iC.addChangeListener(changeListener);
-				}
-
-				// ok, display them
-				display(res);
+				IStoreItem iC = iter.next();
+				iC.addChangeListener(changeListener);
 			}
-		}
 
+			// ok, display them
+			display(res);
+		}
+		else
+		{
+			// ok, nothing to display - clear the graph
+			display(new ArrayList<IStoreItem>());
+		}
 	}
 
 	private void clearChangeListeners()
@@ -165,7 +165,7 @@ public abstract class CoreAnalysisView extends ViewPart
 			Iterator<IStoreItem> iter = curList.iterator();
 			while (iter.hasNext())
 			{
-				IStoreItem iC =  iter.next();
+				IStoreItem iC = iter.next();
 				iC.removeChangeListener(changeListener);
 			}
 
@@ -178,7 +178,7 @@ public abstract class CoreAnalysisView extends ViewPart
 	{
 		return curList;
 	}
-	
+
 	/**
 	 * determine if this set of collections are suitable for displaying
 	 * 

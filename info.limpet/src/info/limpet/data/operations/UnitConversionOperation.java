@@ -2,6 +2,7 @@ package info.limpet.data.operations;
 
 import info.limpet.ICollection;
 import info.limpet.ICommand;
+import info.limpet.IContext;
 import info.limpet.IOperation;
 import info.limpet.IQuantityCollection;
 import info.limpet.IStore;
@@ -34,7 +35,7 @@ public class UnitConversionOperation implements IOperation<ICollection>
 	}
 
 	public Collection<ICommand<ICollection>> actionsFor(
-			List<ICollection> selection, IStore destination)
+			List<ICollection> selection, IStore destination, IContext context)
 	{
 		Collection<ICommand<ICollection>> res = new ArrayList<ICommand<ICollection>>();
 		if (appliesTo(selection))
@@ -43,7 +44,7 @@ public class UnitConversionOperation implements IOperation<ICollection>
 			String name = "Convert to " + unitsName;
 			String outputName = CONVERTED_TO + unitsName;
 			ICommand<ICollection> newC = new ConvertQuanityValues(name, outputName,
-					selection, destination);
+					selection, destination, context);
 			res.add(newC);
 		}
 
@@ -77,10 +78,17 @@ public class UnitConversionOperation implements IOperation<ICollection>
 	{
 
 		public ConvertQuanityValues(String operationName, String outputName,
-				List<ICollection> selection, IStore store)
+				List<ICollection> selection, IStore store, IContext context)
 		{
-			super(operationName, "Convert units of the provided series", outputName,
-					store, false, false, selection);
+			super(operationName, "Convert units of the provided series", store,
+					false, false, selection, context);
+		}
+
+		@Override
+		protected String getOutputName()
+		{
+			return getContext().getInput("Convert units", NEW_DATASET_MESSAGE,
+					super.getSubjectList() + " converted to " + targetUnit);
 		}
 
 		@Override
@@ -89,7 +97,6 @@ public class UnitConversionOperation implements IOperation<ICollection>
 			List<ICollection> outputs = new ArrayList<ICollection>();
 
 			ICollection theInput = inputs.iterator().next();
-			String seriesName = theInput.getName();
 
 			// ok, generate the new series
 			final IQuantityCollection<?> target;
@@ -97,12 +104,12 @@ public class UnitConversionOperation implements IOperation<ICollection>
 			// hmm, is it a temporal operation
 			if (theInput.isTemporal())
 			{
-				target = new TemporalQuantityCollection<>(seriesName + getOutputName(),this, targetUnit);
+				target = new TemporalQuantityCollection<>(getOutputName(), this,
+						targetUnit);
 			}
 			else
 			{
-				target = new QuantityCollection<>(seriesName + getOutputName(), this,
-						targetUnit);
+				target = new QuantityCollection<>(getOutputName(), this, targetUnit);
 			}
 
 			outputs.add(target);
@@ -168,20 +175,20 @@ public class UnitConversionOperation implements IOperation<ICollection>
 				Measurable<Quantity> thisValue = singleInputSeries.getValues().get(j);
 				double converted = converter.convert(thisValue
 						.doubleValue(singleInputSeries.getUnits()));
-				
-				if(singleInputSeries.isTemporal())
+
+				if (singleInputSeries.isTemporal())
 				{
-					TemporalQuantityCollection<Quantity> tq= (TemporalQuantityCollection<Quantity>) singleInputSeries;
+					TemporalQuantityCollection<Quantity> tq = (TemporalQuantityCollection<Quantity>) singleInputSeries;
 					Long time = (Long) tq.getTimes().get(j);
 					TemporalQuantityCollection<Quantity> tgtQ = (TemporalQuantityCollection<Quantity>) target;
-					tgtQ.add(time,  converted);
+					tgtQ.add(time, converted);
 				}
 				else
 				{
 					target.add(converted);
-					
+
 				}
-				
+
 			}
 		}
 	}

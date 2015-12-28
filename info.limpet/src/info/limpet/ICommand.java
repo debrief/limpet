@@ -22,4 +22,7 @@ public interface ICommand<T extends IStoreItem> extends IChangeListener, IStoreI
 	public List<T> getInputs();
 	boolean getDynamic();
 	void setDynamic(boolean dynamic);
+	
+	final static String NEW_DATASET_MESSAGE = "Provide name for new dataset"; 
+	
 }

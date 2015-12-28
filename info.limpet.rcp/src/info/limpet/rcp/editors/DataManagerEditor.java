@@ -1,26 +1,32 @@
 package info.limpet.rcp.editors;
 
+
 import info.limpet.IChangeListener;
+import info.limpet.ICollection;
 import info.limpet.ICommand;
+import info.limpet.IContext;
 import info.limpet.IOperation;
 import info.limpet.IStore;
 import info.limpet.IStore.IStoreItem;
 import info.limpet.IStoreGroup;
+import info.limpet.data.csv.CsvGenerator;
 import info.limpet.data.impl.QuantityCollection;
 import info.limpet.data.impl.samples.StockTypes;
 import info.limpet.data.impl.samples.StockTypes.NonTemporal;
 import info.limpet.data.operations.AddLayerOperation;
-import info.limpet.data.operations.AddLayerOperation.StringProvider;
 import info.limpet.data.operations.GenerateDummyDataOperation;
 import info.limpet.data.operations.spatial.GeoSupport;
 import info.limpet.data.persistence.xml.XStreamHandler;
 import info.limpet.data.store.InMemoryStore;
 import info.limpet.data.store.InMemoryStore.StoreChangeListener;
 import info.limpet.rcp.Activator;
+import info.limpet.rcp.RCPContext;
 import info.limpet.rcp.data_provider.data.DataModel;
 import info.limpet.rcp.data_provider.data.GroupWrapper;
 import info.limpet.rcp.editors.dnd.DataManagerDropAdapter;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -29,9 +35,24 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IResourceDeltaVisitor;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -48,12 +69,14 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.FileTransfer;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
@@ -62,8 +85,11 @@ import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.SaveAsDialog;
 import org.eclipse.ui.part.EditorPart;
+import org.eclipse.ui.part.FileEditorInput;
 import org.opengis.geometry.Geometry;
+import org.osgi.framework.Bundle;
 
 public class DataManagerEditor extends EditorPart
 {
@@ -72,6 +98,8 @@ public class DataManagerEditor extends EditorPart
 	private TreeViewer viewer;
 	private IMenuListener _menuListener;
 	private Action refreshView;
+	private Action copyCsvToClipboard;
+	private Action copyCsvToFile;
 	private Action generateData;
 	private Action addLayer;
 	private boolean _dirty = false;
@@ -90,11 +118,145 @@ public class DataManagerEditor extends EditorPart
 			viewer.refresh();
 		}
 	};
-	private Action createSingleton1;
-	private Action createSingleton2;
-	private Action createSingleton3;
-	private Action createSingleton4;
-	private Action createSingleton5;
+	private Action createDimensionless;
+	private Action createFrequency;
+	private Action createDecibels;
+	private Action createSpeed;
+	private Action createCourse;
+	private Action createLocation;
+	private IContext _context = new RCPContext();
+
+	private IResourceChangeListener resourceChangeListener = new IResourceChangeListener()
+	{
+
+		@Override
+		public void resourceChanged(IResourceChangeEvent event)
+		{
+			IResourceDelta delta = event.getDelta();
+			final int eventType = event.getType();
+			if (delta != null)
+			{
+				try
+				{
+					delta.accept(new IResourceDeltaVisitor()
+					{
+
+						@Override
+						public boolean visit(IResourceDelta delta) throws CoreException
+						{
+							IResource resource = delta.getResource();
+							if (resource instanceof IWorkspaceRoot)
+							{
+								return true;
+							}
+							if (resource instanceof IProject)
+							{
+								IEditorInput input = getEditorInput();
+								if (input instanceof IFileEditorInput)
+								{
+									IProject project = ((IFileEditorInput) input).getFile()
+											.getProject();
+									if (resource.equals(project)
+											&& (eventType == IResourceChangeEvent.PRE_DELETE || eventType == IResourceChangeEvent.PRE_CLOSE))
+									{
+										closeEditor();
+										return false;
+									}
+								}
+								return true;
+							}
+							if (resource instanceof IFolder)
+							{
+								return true;
+							}
+							if (resource instanceof IFile)
+							{
+								IEditorInput input = getEditorInput();
+								if (input instanceof IFileEditorInput)
+								{
+									IFile file = ((IFileEditorInput) input).getFile();
+									if (resource.equals(file)
+											&& delta.getKind() == IResourceDelta.REMOVED)
+									{
+										IPath movedToPath = delta.getMovedToPath();
+										if (movedToPath != null)
+										{
+											IResource path = ResourcesPlugin.getWorkspace().getRoot()
+													.findMember(movedToPath);
+											if (path instanceof IFile)
+											{
+												final FileEditorInput newInput = new FileEditorInput(
+														(IFile) path);
+												Display.getDefault().asyncExec(new Runnable()
+												{
+
+													@Override
+													public void run()
+													{
+														setInputWithNotify(newInput);
+														setPartName(newInput.getName());
+													}
+												});
+											}
+										}
+										else
+										{
+											closeEditor();
+										}
+									}
+									if (resource.equals(file)
+											&& (delta.getKind() == IResourceDelta.CHANGED && (delta
+													.getFlags() & IResourceDelta.CONTENT) != 0))
+									{
+										reload();
+									}
+								}
+							}
+							return false;
+						}
+
+					});
+				}
+				catch (CoreException e)
+				{
+					log(e);
+				}
+			}
+		}
+	};
+
+	private void reload()
+	{
+		if (_store != null)
+		{
+			_store.removeChangeListener(_changeListener);
+		}
+		load(getEditorInput());
+		Display.getDefault().asyncExec(new Runnable()
+		{
+
+			@Override
+			public void run()
+			{
+				viewer.setInput(_store);
+				viewer.refresh();
+			}
+		});
+
+	}
+
+	private void closeEditor()
+	{
+		Display.getDefault().asyncExec(new Runnable()
+		{
+
+			@Override
+			public void run()
+			{
+				getSite().getPage().closeEditor(DataManagerEditor.this, false);
+			}
+		});
+	}
 
 	@Override
 	public void init(IEditorSite site, IEditorInput input)
@@ -102,6 +264,14 @@ public class DataManagerEditor extends EditorPart
 	{
 		// FIXME we will support FileEditorInput, FileStoreEditorInput and
 		// FileRevisionEditorInput
+		load(input);
+		setSite(site);
+		setInput(input);
+		setPartName(input.getName());
+	}
+
+	private void load(IEditorInput input)
+	{
 		if (input instanceof IFileEditorInput)
 		{
 			// just check if the document is empty
@@ -116,6 +286,11 @@ public class DataManagerEditor extends EditorPart
 
 					// we need to loop down through the data, setting all of the listeners
 					InMemoryStore ms = (InMemoryStore) _store;
+
+					// check we didn't load an empty store
+					ms.init();
+
+					// and get hooked up
 					Iterator<IStoreItem> iter = ms.iterator();
 					while (iter.hasNext())
 					{
@@ -130,24 +305,22 @@ public class DataManagerEditor extends EditorPart
 			}
 			catch (IOException | CoreException e)
 			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				log(e);
 			}
 
 		}
 		_store.addChangeListener(_changeListener);
-		setSite(site);
-		setInput(input);
-		setPartName(input.getName());
 	}
 
-	/** walk down through the object tree, connecting listeners as appropriate
+	/**
+	 * walk down through the object tree, connecting listeners as appropriate
 	 * 
 	 * @param next
 	 * @param parent
 	 * @param listener
 	 */
-	private void connectUp(IStoreItem next, IStoreGroup parent, IChangeListener listener)
+	private void connectUp(IStoreItem next, IStoreGroup parent,
+			IChangeListener listener)
 	{
 		if (next instanceof IStoreGroup)
 		{
@@ -171,8 +344,7 @@ public class DataManagerEditor extends EditorPart
 	@Override
 	public boolean isSaveAsAllowed()
 	{
-		// TODO
-		return false;
+		return true;
 	}
 
 	@Override
@@ -197,6 +369,10 @@ public class DataManagerEditor extends EditorPart
 
 		configureDropSupport();
 		configureDragSupport();
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(
+				resourceChangeListener,
+				IResourceChangeEvent.PRE_CLOSE | IResourceChangeEvent.PRE_DELETE
+						| IResourceChangeEvent.POST_CHANGE);
 	}
 
 	private void configureDragSupport()
@@ -224,6 +400,16 @@ public class DataManagerEditor extends EditorPart
 		manager.add(refreshView);
 		manager.add(generateData);
 		manager.add(addLayer);
+	}
+
+	private String getCsvString()
+	{
+		List<IStoreItem> selection = getSuitableObjects();
+		if (selection.size() == 1 && selection.get(0) instanceof ICollection)
+		{
+			return CsvGenerator.generate((ICollection) selection.get(0));
+		}
+		return null;
 	}
 
 	private void makeActions()
@@ -261,7 +447,40 @@ public class DataManagerEditor extends EditorPart
 		refreshView.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
 				.getImageDescriptor(ISharedImages.IMG_TOOL_REDO));
 
-		createSingleton1 = createSingletonGenerator("dimensionless",
+		copyCsvToClipboard = new Action()
+		{
+			public void run()
+			{
+				String csv = getCsvString();
+				if (csv != null && !csv.isEmpty())
+				{
+					final Clipboard cb = new Clipboard(Display.getCurrent());
+					TextTransfer textTransfer = TextTransfer.getInstance();
+					cb.setContents(new Object[]
+					{ csv }, new Transfer[]
+					{ textTransfer });
+				}
+				else
+				{
+					MessageDialog.openInformation(viewer.getControl().getShell(),
+							"Data Manager Editor", "Cannot copy current selection");
+				}
+			}
+		};
+		copyCsvToClipboard.setText("Copy CSV to Clipboard");
+		// FIXME
+		copyCsvToClipboard.setImageDescriptor(PlatformUI.getWorkbench()
+				.getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_SYNCED));
+
+		copyCsvToFile = new ExportToCSVFile();
+
+		copyCsvToFile.setText("Copy CSV to File");
+		// FIXME
+		copyCsvToFile.setImageDescriptor(PlatformUI.getWorkbench()
+				.getSharedImages()
+				.getImageDescriptor(ISharedImages.IMG_ETOOL_SAVEAS_EDIT));
+
+		createDimensionless = createSingletonGenerator("dimensionless",
 				new ItemGenerator()
 				{
 					public QuantityCollection<?> generate(String name)
@@ -270,16 +489,15 @@ public class DataManagerEditor extends EditorPart
 					}
 				});
 
-		createSingleton2 = createSingletonGenerator("frequency",
-				new ItemGenerator()
-				{
-					public QuantityCollection<?> generate(String name)
-					{
-						return new StockTypes.NonTemporal.Frequency_Hz(name);
-					}
-				});
+		createFrequency = createSingletonGenerator("frequency", new ItemGenerator()
+		{
+			public QuantityCollection<?> generate(String name)
+			{
+				return new StockTypes.NonTemporal.Frequency_Hz(name);
+			}
+		});
 
-		createSingleton3 = createSingletonGenerator("decibels", new ItemGenerator()
+		createDecibels = createSingletonGenerator("decibels", new ItemGenerator()
 		{
 			public QuantityCollection<?> generate(String name)
 			{
@@ -287,20 +505,113 @@ public class DataManagerEditor extends EditorPart
 			}
 		});
 
-		createSingleton4 = createSingletonGenerator("speed (m/s)",
+		createSpeed = createSingletonGenerator("speed (m/s)", new ItemGenerator()
+		{
+			public QuantityCollection<?> generate(String name)
+			{
+				return new StockTypes.NonTemporal.Speed_MSec(name);
+			}
+		});
+		createCourse = createSingletonGenerator("course (degs)",
 				new ItemGenerator()
 				{
 					public QuantityCollection<?> generate(String name)
 					{
-						return new StockTypes.NonTemporal.Speed_MSec(name);
+						return new StockTypes.NonTemporal.Angle_Degrees(name);
 					}
 				});
-		createSingleton5 = createLocationGenerator();
+		createLocation = createLocationGenerator();
 	}
 
 	private static interface ItemGenerator
 	{
 		public QuantityCollection<?> generate(final String name);
+	}
+
+	/** class that provides UI & processing to export a single collection to a CSV file
+	 * 
+	 * @author ian
+	 *
+	 */
+	private class ExportToCSVFile extends Action
+	{
+		public void run()
+		{
+			String csv = getCsvString();
+			if (csv != null && !csv.isEmpty())
+			{
+				FileDialog dialog = new FileDialog(getSite().getShell(), SWT.SAVE);
+				final String[] filterNames;
+				final String[] filterExtensions;
+				String filterPath = "";
+				if (SWT.getPlatform().equals("win32"))
+				{
+					filterNames = new String[]
+					{ "Csv File", "All Files (*.*)" };
+					filterExtensions = new String[]
+					{ "*.csv", "*.*" };
+				}
+				else
+				{
+					filterNames = new String[]
+					{ "Csv File", "All Files (*)" };
+					filterExtensions = new String[]
+					{ "*.csv", "*" };
+				}
+				dialog.setFilterNames(filterNames);
+				dialog.setFilterExtensions(filterExtensions);
+				dialog.setFilterPath(filterPath);
+				dialog.setFileName("limpet_out.csv");
+				String result = dialog.open();
+				if (result == null)
+				{
+					return;
+				}
+				File file = new File(result);
+				if (file.exists())
+				{
+					if (!MessageDialog.openQuestion(getSite().getShell(), "Overwrite '"
+							+ result + "'?", "Are you sure you want to overwrite '" + result
+							+ "'?"))
+					{
+						return;
+					}
+				}
+				FileOutputStream fop = null;
+				try
+				{
+					fop = new FileOutputStream(file);
+					fop.write(csv.getBytes());
+				}
+				catch (IOException e)
+				{
+					MessageDialog.openError(getSite().getShell(), "Error",
+							"Cannot write to '" + result + "'. See log for more details");
+					Activator.log(e);
+				}
+				finally
+				{
+					if (fop != null)
+					{
+						try
+						{
+							fop.close();
+						}
+						catch (IOException e)
+						{
+							Activator.logError(Status.ERROR,
+									"Failed to close fop in DataManagerEditor export to CSV", e);
+						}
+					}
+				}
+
+			}
+			else
+			{
+				MessageDialog.openInformation(viewer.getControl().getShell(),
+						"Data Manager Editor", "Cannot copy current selection");
+			}
+		}
 	}
 
 	private Action createSingletonGenerator(final String sType,
@@ -384,35 +695,17 @@ public class DataManagerEditor extends EditorPart
 
 		Object input = viewer.getInput();
 		Collection<ICommand<IStoreItem>> commands = operation.actionsFor(
-				getSuitableObjects(), (IStore) input);
+				getSuitableObjects(), (IStore) input, _context);
 		commands.iterator().next().execute();
 	}
 
 	protected void addLayer()
 	{
-		IOperation<IStoreItem> operation = new AddLayerOperation(
-				new StringProvider()
-				{
-
-					@Override
-					public String getString(String title)
-					{
-						String res = null;
-						InputDialog dlg = new InputDialog(Display.getCurrent()
-								.getActiveShell(), title, null, null, null);
-						if (dlg.open() == Window.OK)
-						{
-							// User clicked OK; update the label with the input
-							res = dlg.getValue();
-						}
-
-						return res;
-					}
-				});
+		IOperation<IStoreItem> operation = new AddLayerOperation();
 
 		Object input = viewer.getInput();
 		Collection<ICommand<IStoreItem>> commands = operation.actionsFor(
-				getSuitableObjects(), (IStore) input);
+				getSuitableObjects(), (IStore) input, _context);
 		commands.iterator().next().execute();
 	}
 
@@ -470,11 +763,20 @@ public class DataManagerEditor extends EditorPart
 		// and the generators
 		MenuManager createMenu = new MenuManager("Create");
 		menu.add(createMenu);
-		createMenu.add(createSingleton1);
-		createMenu.add(createSingleton2);
-		createMenu.add(createSingleton3);
-		createMenu.add(createSingleton4);
-		createMenu.add(createSingleton5);
+		createMenu.add(createDimensionless);
+		createMenu.add(createFrequency);
+		createMenu.add(createDecibels);
+		createMenu.add(createSpeed);
+		createMenu.add(createCourse);
+		createMenu.add(createLocation);
+		createMenu.add(addLayer);
+
+		if (selection.size() == 1 && selection.get(0) instanceof ICollection)
+		{
+			menu.add(new Separator());
+			menu.add(copyCsvToClipboard);
+			menu.add(copyCsvToFile);
+		}
 
 		menu.add(new Separator());
 		menu.add(refreshView);
@@ -491,7 +793,7 @@ public class DataManagerEditor extends EditorPart
 			final IOperation<IStoreItem> op = (IOperation<IStoreItem>) oIter.next();
 			final IStore theStore = _store;
 			Collection<ICommand<IStoreItem>> matches = op.actionsFor(selection,
-					theStore);
+					theStore, _context);
 
 			Iterator<ICommand<IStoreItem>> mIter = matches.iterator();
 			while (mIter.hasNext())
@@ -571,31 +873,85 @@ public class DataManagerEditor extends EditorPart
 		if (input instanceof IFileEditorInput)
 		{
 			IFile file = ((IFileEditorInput) input).getFile();
-			try
+			doSaveAs(file, monitor);
+		}
+	}
+
+	private void doSaveAs(IFile file, IProgressMonitor monitor)
+	{
+		try
+		{
+			ResourcesPlugin.getWorkspace().removeResourceChangeListener(
+					resourceChangeListener);
+			new XStreamHandler().save(_store, file);
+			_dirty = false;
+			file.refreshLocal(IResource.DEPTH_INFINITE, monitor);
+			firePropertyChange(PROP_DIRTY);
+		}
+		catch (CoreException | IOException e)
+		{
+			log(e);
+		}
+		finally
+		{
+			ResourcesPlugin.getWorkspace().addResourceChangeListener(
+					resourceChangeListener,
+					IResourceChangeEvent.PRE_CLOSE | IResourceChangeEvent.PRE_DELETE
+							| IResourceChangeEvent.POST_CHANGE);
+		}
+	}
+
+	private void log(Throwable t)
+	{
+		Bundle bundle = Platform.getBundle("info.limpet");
+		if (bundle != null)
+		{
+			ILog log = Platform.getLog(bundle);
+			if (log != null)
 			{
-				new XStreamHandler().save(_store, file);
-				_dirty = false;
-				firePropertyChange(PROP_DIRTY);
-			}
-			catch (CoreException | IOException e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				log.log(new Status(IStatus.WARNING, bundle.getSymbolicName(), t
+						.getMessage(), t));
+				return;
 			}
 		}
+		t.printStackTrace();
 	}
 
 	@Override
 	public void doSaveAs()
 	{
-		// TODO
+		final SaveAsDialog dialog = new SaveAsDialog(getEditorSite().getShell());
+		dialog.setTitle("Save As");
+		if (getEditorInput() instanceof IFileEditorInput)
+		{
+			IFileEditorInput input = (IFileEditorInput) getEditorInput();
+			IFile file = input.getFile();
+			dialog.setOriginalFile(file);
+		}
+		dialog.create();
+		dialog.setMessage("Save file to another location.");
+		if (dialog.open() == Window.OK)
+		{
+			final IPath path = dialog.getResult();
+			final IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
+			doSaveAs(file, new NullProgressMonitor());
+			IFileEditorInput input = new FileEditorInput(file);
+			setInput(input);
+			setPartName(input.getName());
+			viewer.refresh();
+		}
 	}
 
 	@Override
 	public void dispose()
 	{
 		super.dispose();
-		_store.removeChangeListener(_changeListener);
+		ResourcesPlugin.getWorkspace().removeResourceChangeListener(
+				resourceChangeListener);
+		if (_store != null)
+		{
+			_store.removeChangeListener(_changeListener);
+		}
 	}
 
 	private Action createLocationGenerator()
@@ -640,14 +996,16 @@ public class DataManagerEditor extends EditorPart
 
 						try
 						{
-							
-							NonTemporal.Location newData = new NonTemporal.Location(seriesName);
-							
+
+							NonTemporal.Location newData = new NonTemporal.Location(
+									seriesName);
+
 							// add the new value
 							double dblLat = Double.parseDouble(strLat);
 							double dblLong = Double.parseDouble(strLong);
-							
-							Geometry newLoc = GeoSupport.getBuilder().createPoint(dblLong, dblLat);
+
+							Geometry newLoc = GeoSupport.getBuilder().createPoint(dblLong,
+									dblLat);
 							newData.add(newLoc);
 
 							// put the new collection in to the selected folder, or into root

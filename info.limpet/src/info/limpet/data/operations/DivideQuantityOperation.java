@@ -3,6 +3,7 @@ package info.limpet.data.operations;
 import info.limpet.IBaseTemporalCollection;
 import info.limpet.ICollection;
 import info.limpet.ICommand;
+import info.limpet.IContext;
 import info.limpet.IOperation;
 import info.limpet.IQuantityCollection;
 import info.limpet.IStore;
@@ -26,22 +27,8 @@ public class DivideQuantityOperation implements IOperation<IStoreItem>
 {
 	CollectionComplianceTests aTests = new CollectionComplianceTests();
 
-	public static final String SUM_OF_DIVISION_SERIES = "Product of division of series";
-
-	final protected String outputName;
-
-	public DivideQuantityOperation(String name)
-	{
-		outputName = name;
-	}
-
-	public DivideQuantityOperation()
-	{
-		this(SUM_OF_DIVISION_SERIES);
-	}
-
 	public Collection<ICommand<IStoreItem>> actionsFor(
-			List<IStoreItem> selection, IStore destination)
+			List<IStoreItem> selection, IStore destination, IContext context)
 	{
 		Collection<ICommand<IStoreItem>> res = new ArrayList<ICommand<IStoreItem>>();
 
@@ -54,23 +41,20 @@ public class DivideQuantityOperation implements IOperation<IStoreItem>
 
 			if (aTests.allTemporal(selection))
 			{
-				longest = aTests
-						.getLongestTemporalCollections(selection);
+				longest = aTests.getLongestTemporalCollections(selection);
 			}
 			else
 			{
 				longest = null;
 			}
 
-			String oName = item1.getName() + " / " + item2.getName();
 			ICommand<IStoreItem> newC = new DivideQuantityValues("Divide "
-					+ item1.getName() + " by " + item2.getName(), oName, selection,
-					item1, item2, destination, longest);
+					+ item1.getName() + " by " + item2.getName(), selection, item1,
+					item2, destination, longest, context);
 			res.add(newC);
-			oName = item2.getName() + " / " + item1.getName();
 			newC = new DivideQuantityValues("Divide " + item2.getName() + " by "
-					+ item1.getName(), oName, selection, item2, item1, destination,
-					longest);
+					+ item1.getName(), selection, item2, item1, destination, longest,
+					context);
 			res.add(newC);
 		}
 
@@ -89,7 +73,8 @@ public class DivideQuantityOperation implements IOperation<IStoreItem>
 				// length,
 				// or
 				// singletons
-				res = aTests.allTemporal(selection) || aTests.allEqualLengthOrSingleton(selection);
+				res = aTests.allTemporal(selection)
+						|| aTests.allEqualLengthOrSingleton(selection);
 			}
 		}
 
@@ -103,12 +88,12 @@ public class DivideQuantityOperation implements IOperation<IStoreItem>
 		private IBaseTemporalCollection _timeProvider;
 
 		@SuppressWarnings("unchecked")
-		public DivideQuantityValues(String title, String outputName,
-				List<IStoreItem> selection, ICollection item1, ICollection item2,
-				IStore store, IBaseTemporalCollection timeProvider)
+		public DivideQuantityValues(String title, List<IStoreItem> selection,
+				ICollection item1, ICollection item2, IStore store,
+				IBaseTemporalCollection timeProvider, IContext context)
 		{
-			super(title, "Divide provided series", outputName, store, false, false,
-					selection);
+			super(title, "Divide provided series", store, false, false, selection,
+					context);
 			_item1 = (IQuantityCollection<Quantity>) item1;
 			_item2 = (IQuantityCollection<Quantity>) item2;
 			_timeProvider = timeProvider;
@@ -265,11 +250,10 @@ public class DivideQuantityOperation implements IOperation<IStoreItem>
 
 					// first value?
 					runningTotal = thisValue / otherValue;
-					
+
 					ITemporalQuantityCollection<?> itq = (ITemporalQuantityCollection<?>) target;
 					itq.add(thisTime, runningTotal);
 				}
-
 
 			}
 			else
@@ -309,6 +293,13 @@ public class DivideQuantityOperation implements IOperation<IStoreItem>
 					target.add(res);
 				}
 			}
+		}
+
+		@Override
+		protected String getOutputName()
+		{
+			return getContext().getInput("Divide datasets", NEW_DATASET_MESSAGE,
+					_item1 + " div by " + _item2);
 		}
 	}
 

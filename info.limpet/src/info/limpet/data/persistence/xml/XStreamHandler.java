@@ -6,7 +6,10 @@ import info.limpet.data.impl.ObjectCollection;
 import info.limpet.data.impl.QuantityCollection;
 import info.limpet.data.impl.TemporalObjectCollection;
 import info.limpet.data.impl.TemporalQuantityCollection;
+import info.limpet.data.operations.AddQuantityOperation.AddQuantityValues;
+import info.limpet.data.operations.MultiplyQuantityOperation.MultiplyQuantityValues;
 import info.limpet.data.store.InMemoryStore;
+import info.limpet.data.store.InMemoryStore.StoreGroup;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -55,15 +58,38 @@ public class XStreamHandler
 		xstream.alias("QuantityCollection", QuantityCollection.class);
 		xstream.alias("TemporalQuantityCollection", TemporalQuantityCollection.class);
 
+		xstream.alias("Folder", StoreGroup.class);
 		
+
+		xstream.alias("Point", org.geotools.geometry.iso.primitive.PointImpl.class);
+		xstream.alias("GeographicBoundingBox", org.geotools.metadata.iso.extent.GeographicBoundingBoxImpl.class);
+		xstream.alias("LocalName", org.geotools.util.LocalName.class);
+		xstream.alias("DefaultCoordinateSystemAxis", org.geotools.referencing.cs.DefaultCoordinateSystemAxis.class);
+		xstream.alias("SimpleInternationalString", org.geotools.util.SimpleInternationalString.class);
+		xstream.alias("ResponsibleParty", org.geotools.metadata.iso.citation.ResponsiblePartyImpl.class);
+		xstream.alias("NamedIdentifier", org.geotools.referencing.NamedIdentifier.class);
+		xstream.alias("Identifier", org.geotools.metadata.iso.IdentifierImpl.class);
+
+		// tidier names for operations
+		xstream.alias("AddQuantityValues", AddQuantityValues.class);
+		xstream.alias("MultiplyQuantityValues", MultiplyQuantityValues.class);
+		
+		// TODO: KUMAR: create equivalent alias operations (as above) for other defined operations 
+		
+
+		// and force some objects to be represnted as attributes, rather than child objects
 		xstream.useAttributeFor(ObjectCollection.class, "name");
 		xstream.useAttributeFor(AbstractCommand.class, "title");
 		xstream.useAttributeFor(AbstractCommand.class, "canUndo");
 		xstream.useAttributeFor(AbstractCommand.class, "canRedo");
 		xstream.useAttributeFor(AbstractCommand.class, "dynamic");
-		xstream.useAttributeFor(AbstractCommand.class, "outputName");
 
 		xstream.addImplicitCollection(InMemoryStore.class, "_store");
+
+		// setup converter
+		xstream.registerConverter(new LimpetCollectionConverter(xstream.getMapper()), XStream.PRIORITY_NORMAL);
+		xstream.registerConverter(new TimesCollectionConverter(xstream.getMapper()), XStream.PRIORITY_NORMAL);
+		xstream.registerConverter(new PointConverter(), XStream.PRIORITY_NORMAL);
 		xstream.setMode(XStream.ID_REFERENCES);
 	}
 

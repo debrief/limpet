@@ -35,6 +35,8 @@ public class RangeSliderView extends CoreAnalysisView implements
 		IChangeListener
 {
 
+	private static final String PENDING_TEXT = "     ====== pending  ====== ";
+
 	/**
 	 * The ID of the view as specified by the extension.
 	 */
@@ -81,7 +83,7 @@ public class RangeSliderView extends CoreAnalysisView implements
 		gd = new GridData(SWT.CENTER, SWT.FILL, true, false);
 		gd.horizontalSpan = 3;
 		label.setLayoutData(gd);
-		label.setText("     ====== pending  ====== ");
+		label.setText(PENDING_TEXT);
 
 		slider = new Slider(holder, SWT.NONE);
 		gd = new GridData(SWT.FILL, SWT.FILL, true, false);
@@ -119,14 +121,14 @@ public class RangeSliderView extends CoreAnalysisView implements
 
 	protected void setValue(double val)
 	{
-		if(_currentColl != null)
+		if (_currentColl != null)
 		{
 			_currentColl.replaceSingleton(val);
 			_currentColl.fireDataChanged();
 		}
-		else if(_command != null)
+		else if (_command != null)
 		{
-			_command.setWindowSize((int)val);
+			_command.setWindowSize((int) val);
 			_command.recalculate();
 		}
 	}
@@ -135,24 +137,32 @@ public class RangeSliderView extends CoreAnalysisView implements
 	@Override
 	public void display(List<IStoreItem> res)
 	{
-		if(res.size() != 1)
-			return;
-		
-		if(_currentColl != null)
+		if (_currentColl != null)
 		{
 			// ok, stop listening
 			_currentColl.removeChangeListener(this);
-			
+
 		}
-		
-		if(_command != null)
+
+		if (_command != null)
 		{
-			
+
 		}
-		
-		
+
+		if (res.size() != 1)
+		{
+			if (_currentColl != null)
+			{
+				_currentColl.removeChangeListener(this);
+				_currentColl = null;
+			}
+			slider.setEnabled(false);
+			label.setText(PENDING_TEXT);
+			return;
+		}
+
 		IStoreItem first = res.get(0);
-		if(first instanceof ICollection)
+		if (first instanceof ICollection)
 		{
 			ICollection newColl = (ICollection) res.get(0);
 
@@ -160,35 +170,35 @@ public class RangeSliderView extends CoreAnalysisView implements
 
 			showData(_currentColl);
 		}
-		else if(first instanceof ICommand<?>)
+		else if (first instanceof ICommand<?>)
 		{
 
-			if(first instanceof SimpleMovingAverageCommand)
+			if (first instanceof SimpleMovingAverageCommand)
 			{
 				SimpleMovingAverageCommand command = (SimpleMovingAverageCommand) first;
 
-			// is this different?
-			if (_command != command)
-			{
-				// are we showing anything?
-				if (_command != null)
+				// is this different?
+				if (_command != command)
 				{
-					_command = null;
+					// are we showing anything?
+					if (_command != null)
+					{
+						_command = null;
+					}
 				}
-			}
 
-			_command = command;
+				_command = command;
 
-			showData(_command);
+				showData(_command);
 
 			}
 		}
-		
+
 	}
 
 	private void showData(SimpleMovingAverageCommand command)
 	{
-		int curVal = (int)command.getWindowSize();
+		int curVal = (int) command.getWindowSize();
 
 		label.setText(command.getName());
 
@@ -211,11 +221,10 @@ public class RangeSliderView extends CoreAnalysisView implements
 
 		QuantityRange<Quantity> rng = qc.getRange();
 		Unit<Quantity> theUnits = qc.getUnits();
-		int curVal = (int) qc.getValues().iterator().next()
-				.doubleValue(theUnits);
+		int curVal = (int) qc.getValues().iterator().next().doubleValue(theUnits);
 
 		final String unitStr;
-		if(theUnits != null && theUnits.toString().length()>0)
+		if (theUnits != null && theUnits.toString().length() > 0)
 		{
 			unitStr = theUnits.toString();
 		}
@@ -223,8 +232,8 @@ public class RangeSliderView extends CoreAnalysisView implements
 		{
 			unitStr = "n/a";
 		}
-		
-		label.setText(qc.getName() + " (" + unitStr	+ ")");
+
+		label.setText(qc.getName() + " (" + unitStr + ")");
 
 		Object min = rng.getMinimum();
 		Object max = rng.getMaximum();
@@ -277,16 +286,16 @@ public class RangeSliderView extends CoreAnalysisView implements
 			{
 				ICommand<?> coll = (ICommand<?>) item;
 
-				if(coll instanceof SimpleMovingAverageCommand)
+				if (coll instanceof SimpleMovingAverageCommand)
 				{
-						res = true;
+					res = true;
 				}
 			}
-			
+
 		}
-		
+
 		slider.setEnabled(res);
-		
+
 		return res;
 	}
 

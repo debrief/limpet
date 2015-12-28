@@ -2,6 +2,7 @@ package info.limpet.data.operations.spatial;
 
 import info.limpet.IBaseTemporalCollection;
 import info.limpet.ICommand;
+import info.limpet.IContext;
 import info.limpet.IQuantityCollection;
 import info.limpet.IStore;
 import info.limpet.IStore.IStoreItem;
@@ -25,13 +26,13 @@ import org.opengis.geometry.primitive.Point;
 public class ProplossBetweenTwoTracksOperation extends TwoTrackOperation
 {
 
-	private final class DistanceBetweenOperation extends DistanceOperation
+	private final class ProplossBetweenOperation extends DistanceOperation
 	{
-		private DistanceBetweenOperation(String outputName,
-				List<IStoreItem> selection, IStore store, String title,
-				String description, IBaseTemporalCollection timeProvider)
+		private ProplossBetweenOperation(List<IStoreItem> selection,
+				IStore store, String title, String description,
+				IBaseTemporalCollection timeProvider, IContext context)
 		{
-			super(outputName, selection, store, title, description, timeProvider);
+			super(selection, store, title, description, timeProvider, context);
 		}
 
 		protected IQuantityCollection<?> getOutputCollection(String title,
@@ -40,15 +41,21 @@ public class ProplossBetweenTwoTracksOperation extends TwoTrackOperation
 			final IQuantityCollection<?> res;
 			if (isTemporal)
 			{
-				res = new StockTypes.Temporal.AcousticStrength("Acoustic loss between "
-						+ title, this);
+				res = new StockTypes.Temporal.AcousticStrength(title, this);
 			}
 			else
 			{
-				res = new StockTypes.NonTemporal.AcousticStrength(
-						"Acoustic loss between " + title, this);
+				res = new StockTypes.NonTemporal.AcousticStrength(title, this);
 			}
 			return res;
+		}
+
+		@Override
+		protected String getOutputName()
+		{
+			return getContext().getInput("Generate propagation loss",
+					NEW_DATASET_MESSAGE,
+					"Proploss between " + super.getSubjectList());
 		}
 
 		protected void calcAndStore(final GeodeticCalculator calc,
@@ -62,7 +69,7 @@ public class ProplossBetweenTwoTracksOperation extends TwoTrackOperation
 			calc.setDestinationGeographicPoint(locB.getCentroid().getOrdinate(0),
 					locB.getCentroid().getOrdinate(1));
 			double thisDistMetres = calc.getOrthodromicDistance();
-			
+
 			// ok, we've got to do 20 log R
 			double thisLoss = 20d * Math.log(thisDistMetres);
 			final Measure<Double, Dimensionless> thisRes = Measure.valueOf(thisLoss,
@@ -86,7 +93,7 @@ public class ProplossBetweenTwoTracksOperation extends TwoTrackOperation
 	}
 
 	public Collection<ICommand<IStoreItem>> actionsFor(
-			List<IStoreItem> selection, IStore destination)
+			List<IStoreItem> selection, IStore destination, IContext context)
 	{
 		Collection<ICommand<IStoreItem>> res = new ArrayList<ICommand<IStoreItem>>();
 		if (appliesTo(selection))
@@ -98,19 +105,20 @@ public class ProplossBetweenTwoTracksOperation extends TwoTrackOperation
 				final IBaseTemporalCollection timeProvider = aTests
 						.getLongestTemporalCollections(selection);
 
-				ICommand<IStoreItem> newC = new DistanceBetweenOperation(null,
-						selection, destination, "Propagation loss between tracks (interpolated)",
-						"Propagation loss between two tracks", timeProvider);
+				ICommand<IStoreItem> newC = new ProplossBetweenOperation(selection,
+						destination, "Propagation loss between tracks (interpolated)",
+						"Propagation loss between two tracks",
+						timeProvider, context);
 
 				res.add(newC);
 			}
 
 			if (aTests.allEqualLengthOrSingleton(selection))
 			{
-				ICommand<IStoreItem> newC = new DistanceBetweenOperation(null,
-						selection, destination,
-						"Propagation loss between tracks (indexed)",
-						"Propagation loss between two tracks", null);
+				ICommand<IStoreItem> newC = new ProplossBetweenOperation(selection,
+						destination, "Propagation loss between tracks (indexed)",
+						"Propagation loss between two tracks",
+						null, context);
 
 				res.add(newC);
 			}

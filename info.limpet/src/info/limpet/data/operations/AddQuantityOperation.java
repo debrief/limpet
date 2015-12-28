@@ -1,6 +1,7 @@
 package info.limpet.data.operations;
 
 import info.limpet.ICommand;
+import info.limpet.IContext;
 import info.limpet.IOperation;
 import info.limpet.IQuantityCollection;
 import info.limpet.IStore;
@@ -16,38 +17,30 @@ import javax.measure.quantity.Quantity;
 public class AddQuantityOperation<Q extends Quantity> extends
 		CoreQuantityOperation<Q> implements IOperation<IQuantityCollection<Q>>
 {
-	public static final String SUM_OF_INPUT_SERIES = "Sum of input series";
-
-	public AddQuantityOperation(String name)
-	{
-		super(name);
-	}
-
-	public AddQuantityOperation()
-	{
-		this(SUM_OF_INPUT_SERIES);
-	}
 
 	@Override
 	protected void addInterpolatedCommands(
 			List<IQuantityCollection<Q>> selection, IStore destination,
-			Collection<ICommand<IQuantityCollection<Q>>> res)
+			Collection<ICommand<IQuantityCollection<Q>>> res, IContext context)
 	{
 		ITemporalQuantityCollection<Q> longest = getLongestTemporalCollections(selection);
 
 		if (longest != null)
 		{
-			ICommand<IQuantityCollection<Q>> newC = new AddQuantityValues(outputName
-					+ " (interpolated)", selection, destination, longest);
+			ICommand<IQuantityCollection<Q>> newC = new AddQuantityValues(
+					"Add numeric values in provided series (interpolated)", selection,
+					destination, longest, context);
 			res.add(newC);
 		}
 	}
 
 	protected void addIndexedCommands(List<IQuantityCollection<Q>> selection,
-			IStore destination, Collection<ICommand<IQuantityCollection<Q>>> res)
+			IStore destination, Collection<ICommand<IQuantityCollection<Q>>> res,
+			IContext context)
 	{
-		ICommand<IQuantityCollection<Q>> newC = new AddQuantityValues(outputName,
-				selection, destination);
+		ICommand<IQuantityCollection<Q>> newC = new AddQuantityValues(
+				"Add numeric values in provided series (indexed)", selection,
+				destination, context);
 		res.add(newC);
 	}
 
@@ -56,7 +49,7 @@ public class AddQuantityOperation<Q extends Quantity> extends
 		boolean nonEmpty = aTests.nonEmpty(selection);
 		boolean allQuantity = aTests.allQuantity(selection);
 		boolean suitableLength = aTests.allTemporal(selection)
-				|| aTests.allNonTemporal(selection) && aTests.allEqualLength(selection);
+				|| aTests.allEqualLengthOrSingleton(selection);
 		boolean equalDimensions = aTests.allEqualDimensions(selection);
 		boolean equalUnits = aTests.allEqualUnits(selection);
 
@@ -65,19 +58,18 @@ public class AddQuantityOperation<Q extends Quantity> extends
 
 	public class AddQuantityValues extends CoreQuantityCommand
 	{
-		public AddQuantityValues(String outputName,
-				List<IQuantityCollection<Q>> selection, IStore store)
+		public AddQuantityValues(String name,
+				List<IQuantityCollection<Q>> selection, IStore store, IContext context)
 		{
-			super(outputName, "Add numeric values in provided series", outputName,
-					store, false, false, selection);
+			this(name, selection, store, null, context);
 		}
 
-		public AddQuantityValues(String outputName,
+		public AddQuantityValues(String name,
 				List<IQuantityCollection<Q>> selection, IStore destination,
-				ITemporalQuantityCollection<Q> timeProvider)
+				ITemporalQuantityCollection<Q> timeProvider, IContext context)
 		{
-			super(outputName, "Add numeric values in provided series", outputName,
-					destination, false, false, selection, timeProvider);
+			super(name, "Add datasets", destination, false, false, selection,
+					timeProvider, context);
 		}
 
 		@Override
@@ -88,8 +80,8 @@ public class AddQuantityOperation<Q extends Quantity> extends
 			for (int seriesCount = 0; seriesCount < inputs.size(); seriesCount++)
 			{
 				IQuantityCollection<Q> thisC = inputs.get(seriesCount);
-				Measurable<Q> thisV = (Measurable<Q>) thisC.getValues().get(
-						elementCount);
+				Measurable<Q> thisV = thisC.size() == 1 ? thisC.getValues().get(0)
+						: (Measurable<Q>) thisC.getValues().get(elementCount);
 
 				// is this the first field?
 				if (thisResult == null)
@@ -111,11 +103,31 @@ public class AddQuantityOperation<Q extends Quantity> extends
 
 			for (int seriesCount = 0; seriesCount < inputs.size(); seriesCount++)
 			{
-				ITemporalQuantityCollection<Q> thisC = (ITemporalQuantityCollection<Q>) inputs
+				IQuantityCollection<Q> thisC = (IQuantityCollection<Q>) inputs
 						.get(seriesCount);
+				
+				final Measurable<Q> thisV;
+				
+				if(thisC.isTemporal())
+				{
+					// find the value to use
+					ITemporalQuantityCollection<Q> tq= (ITemporalQuantityCollection<Q>) thisC;
+					thisV = tq.interpolateValue(time, InterpMethod.Linear);
+					
+				}
+				else
+				{
+					if(thisC.size() == 1)
+					{
+						// ok, it's a singleton that we're applying to all values
+						thisV = thisC.getValues().get(0);
+					}
+					else
+					{
+						throw new RuntimeException("We should not be adding a non-singleton non-temporal to a temporal");
+					}
+				}
 
-				// find the value to use
-				Measurable<Q> thisV = thisC.interpolateValue(time, InterpMethod.Linear);
 
 				if (thisV != null)
 				{
@@ -131,6 +143,14 @@ public class AddQuantityOperation<Q extends Quantity> extends
 				}
 			}
 			return thisResult;
+		}
+
+		@Override
+		protected String getOutputName()
+		{
+			return getContext().getInput("Add datasets",
+					"Please provide a name for the dataset",
+					"Sum of " + super.getSubjectList());
 		}
 	}
 

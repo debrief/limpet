@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 
 import info.limpet.ICommand;
+import info.limpet.IContext;
 import info.limpet.IOperation;
 import info.limpet.IStore;
 import info.limpet.IStore.IStoreItem;
@@ -15,20 +16,8 @@ import info.limpet.data.store.InMemoryStore.StoreGroup;
 public class AddLayerOperation implements IOperation<IStoreItem>
 {
 
-	public static interface StringProvider
-	{
-		public String getString(String title);
-	}
-
-	private final StringProvider _stringProvider;
-
-	public AddLayerOperation(StringProvider stringProvider)
-	{
-		_stringProvider = stringProvider;
-	}
-
 	public Collection<ICommand<IStoreItem>> actionsFor(
-			List<IStoreItem> selection, IStore destination)
+			List<IStoreItem> selection, IStore destination, IContext context)
 	{
 		Collection<ICommand<IStoreItem>> res = new ArrayList<ICommand<IStoreItem>>();
 		if (appliesTo(selection))
@@ -41,15 +30,14 @@ public class AddLayerOperation implements IOperation<IStoreItem>
 				IStoreItem first = selection.get(0);
 				if (first instanceof IStoreGroup)
 				{
-					IStoreGroup group = (IStoreGroup) first;
-					newC = new AddLayerCommand(thisTitle, group, destination,
-							_stringProvider);
+					StoreGroup group = (StoreGroup) first;
+					newC = new AddLayerCommand(thisTitle, group, destination, context);
 				}
 			}
 
 			if (newC == null)
 			{
-				newC = new AddLayerCommand(thisTitle, destination, _stringProvider);
+				newC = new AddLayerCommand(thisTitle, destination, context);
 			}
 
 			if (newC != null)
@@ -68,20 +56,17 @@ public class AddLayerOperation implements IOperation<IStoreItem>
 
 	public static class AddLayerCommand extends AbstractCommand<IStoreItem>
 	{
-		final StringProvider _stringProvider;
-		private IStoreGroup _group;
+		private StoreGroup _group;
 
-		public AddLayerCommand(String title, IStore store,
-				StringProvider stringProvider)
+		public AddLayerCommand(String title, IStore store, IContext context)
 		{
-			super(title, "Add a new layer", null, store, false, false, null);
-			_stringProvider = stringProvider;
+			super(title, "Add a new layer", store, false, false, null, context);
 		}
 
-		public AddLayerCommand(String title, IStoreGroup group, IStore store,
-				StringProvider stringProvider)
+		public AddLayerCommand(String title, StoreGroup group, IStore store,
+				IContext context)
 		{
-			this(title, store, stringProvider);
+			this(title, store, context);
 			_group = group;
 		}
 
@@ -89,7 +74,7 @@ public class AddLayerOperation implements IOperation<IStoreItem>
 		public void execute()
 		{
 			// get the String
-			String string = _stringProvider.getString("Name for new layer");
+			String string = getOutputName();
 
 			if (string != null)
 			{
@@ -111,6 +96,12 @@ public class AddLayerOperation implements IOperation<IStoreItem>
 		protected void recalculate()
 		{
 			// don't worry
+		}
+
+		@Override
+		protected String getOutputName()
+		{
+			return getContext().getInput("Add layer", NEW_DATASET_MESSAGE, "");
 		}
 
 	}

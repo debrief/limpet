@@ -3,6 +3,7 @@ package info.limpet.data;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
+import info.limpet.data.export.csv.TestExport;
 import junit.framework.TestSuite;
 
 @Suite.SuiteClasses(
@@ -14,6 +15,7 @@ import junit.framework.TestSuite;
 	TestGeotoolsGeometry.class,
 	TestPersistence.class,
 	TestCsvParser.class,
+	TestExport.class,
 })
 
 @RunWith(Suite.class)

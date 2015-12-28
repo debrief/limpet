@@ -1,5 +1,21 @@
 package info.limpet.data.impl.samples;
 
+
+import info.limpet.ICommand;
+import info.limpet.IContext;
+import info.limpet.IObjectCollection;
+import info.limpet.IQuantityCollection;
+import info.limpet.IStore.IStoreItem;
+import info.limpet.QuantityRange;
+import info.limpet.data.impl.MockContext;
+import info.limpet.data.impl.ObjectCollection;
+import info.limpet.data.impl.QuantityCollection;
+import info.limpet.data.impl.samples.StockTypes.Temporal.ElapsedTime_Sec;
+import info.limpet.data.operations.AddQuantityOperation;
+import info.limpet.data.operations.MultiplyQuantityOperation;
+import info.limpet.data.store.InMemoryStore;
+import info.limpet.data.store.InMemoryStore.StoreGroup;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -17,20 +33,6 @@ import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.primitive.Point;
 import org.opengis.referencing.operation.TransformException;
-
-import info.limpet.ICommand;
-import info.limpet.IObjectCollection;
-import info.limpet.IQuantityCollection;
-import info.limpet.IStore.IStoreItem;
-import info.limpet.IStoreGroup;
-import info.limpet.QuantityRange;
-import info.limpet.data.impl.ObjectCollection;
-import info.limpet.data.impl.QuantityCollection;
-import info.limpet.data.impl.samples.StockTypes.Temporal.ElapsedTime_Sec;
-import info.limpet.data.operations.AddQuantityOperation;
-import info.limpet.data.operations.MultiplyQuantityOperation;
-import info.limpet.data.store.InMemoryStore;
-import info.limpet.data.store.InMemoryStore.StoreGroup;
 
 public class SampleData
 {
@@ -86,14 +88,13 @@ public class SampleData
 		TemporalLocation track_2 = new TemporalLocation(TRACK_TWO);
 
 		long thisTime = 0;
-		
+
 		// get ready for the track generation
-		GeometryBuilder builder = new GeometryBuilder( DefaultGeographicCRS.WGS84 );
-		GeodeticCalculator geoCalc = new GeodeticCalculator(DefaultGeographicCRS.WGS84);
-		DirectPosition pos_1 = new DirectPosition2D(-4,  55.8);
-		DirectPosition pos_2 = new DirectPosition2D(-4.2,  54.9);
-		
-		
+		GeometryBuilder builder = new GeometryBuilder(DefaultGeographicCRS.WGS84);
+		GeodeticCalculator geoCalc = new GeodeticCalculator(
+				DefaultGeographicCRS.WGS84);
+		DirectPosition pos_1 = new DirectPosition2D(-4, 55.8);
+		DirectPosition pos_2 = new DirectPosition2D(-4.2, 54.9);
 
 		for (int i = 1; i <= count; i++)
 		{
@@ -125,25 +126,29 @@ public class SampleData
 			length2.add((double) i % 5);
 			string1.add("item " + i);
 			string2.add("item " + (i % 3));
-			timeIntervals.add(thisTime, (4 + Math.sin(Math.toRadians(i) + 3.4 * Math.random())));
-			
+			timeIntervals.add(thisTime,
+					(4 + Math.sin(Math.toRadians(i) + 3.4 * Math.random())));
+
 			// sort out the tracks
 			try
 			{
-				geoCalc.setStartingGeographicPoint(pos_1.getOrdinate(0), pos_1.getOrdinate(1));
+				geoCalc.setStartingGeographicPoint(pos_1.getOrdinate(0),
+						pos_1.getOrdinate(1));
 				geoCalc.setDirection(Math.toRadians(77 - (i * 4)), 554);
-				pos_1 = geoCalc.getDestinationPosition();				
-				Point p1 = builder.createPoint(pos_1.getOrdinate(0), pos_1.getOrdinate(1));
+				pos_1 = geoCalc.getDestinationPosition();
+				Point p1 = builder.createPoint(pos_1.getOrdinate(0),
+						pos_1.getOrdinate(1));
 
-				
-				geoCalc.setStartingGeographicPoint(pos_2.getOrdinate(0), pos_2.getOrdinate(1));
+				geoCalc.setStartingGeographicPoint(pos_2.getOrdinate(0),
+						pos_2.getOrdinate(1));
 				geoCalc.setDirection(Math.toRadians(54 + (i * 5)), 133);
 				pos_2 = geoCalc.getDestinationPosition();
-				Point p2 = builder.createPoint(pos_2.getOrdinate(0), pos_2.getOrdinate(1));
+				Point p2 = builder.createPoint(pos_2.getOrdinate(0),
+						pos_2.getOrdinate(1));
 
 				track_1.add(thisTime, p1);
 				track_2.add(thisTime, p2);
-				
+
 			}
 			catch (TransformException e)
 			{
@@ -151,7 +156,6 @@ public class SampleData
 				e.printStackTrace();
 			}
 
-		
 		}
 
 		// add an extra item to speedSeries3
@@ -160,23 +164,23 @@ public class SampleData
 		// give the singleton a value
 		singleton1.add(4d);
 		singletonRange1.add(998);
-		Measure<Double, Velocity> minR = Measure.valueOf(940d, singletonRange1.getUnits());
-		Measure<Double, Velocity> maxR = Measure.valueOf(1050d, singletonRange1.getUnits()); 
-		QuantityRange<Velocity> speedRange = new QuantityRange<Velocity>(
-				minR, maxR);
+		Measure<Double, Velocity> minR = Measure.valueOf(940d,
+				singletonRange1.getUnits());
+		Measure<Double, Velocity> maxR = Measure.valueOf(1050d,
+				singletonRange1.getUnits());
+		QuantityRange<Velocity> speedRange = new QuantityRange<Velocity>(minR, maxR);
 		singletonRange1.setRange(speedRange);
 
 		singletonLength.add(12d);
 
 		List<IStoreItem> list = new ArrayList<IStoreItem>();
-		
-		IStoreGroup group1 = new StoreGroup("Speed data");
+		StoreGroup group1 = new StoreGroup("Speed data");
 		group1.add(speedSeries1);
 		group1.add(speedSeries2);
 		group1.add(speed_irregular);
 		group1.add(speed_early_1);
 		group1.add(speedSeries3);
-		
+
 		list.add(group1);
 
 		list.add(angle1);
@@ -197,10 +201,11 @@ public class SampleData
 		List<IStoreItem> selection = new ArrayList<IStoreItem>();
 		selection.add(speedSeries1);
 		selection.add(speedSeries2);
+		IContext context = new MockContext();
 		@SuppressWarnings(
 		{ "unchecked", "rawtypes" })
 		Collection<ICommand<?>> actions = new AddQuantityOperation().actionsFor(
-				selection, res);
+				selection, res, context);
 		Iterator<ICommand<?>> addIter = actions.iterator();
 		addIter.next();
 		ICommand<?> addAction = addIter.next();
@@ -211,7 +216,7 @@ public class SampleData
 		selection.add(speedSeries1);
 		selection.add(singleton1);
 		Collection<ICommand<IStoreItem>> actions2 = new MultiplyQuantityOperation()
-				.actionsFor(selection, res);
+				.actionsFor(selection, res, context);
 		addAction = actions2.iterator().next();
 		addAction.execute();
 
@@ -219,8 +224,8 @@ public class SampleData
 		selection.clear();
 		selection.add(timeIntervals);
 		selection.add(singletonRange1);
-		Collection<ICommand<IStoreItem>> actions3 = new MultiplyQuantityOperation(
-				"Calculated distance").actionsFor(selection, res);
+		Collection<ICommand<IStoreItem>> actions3 = new MultiplyQuantityOperation()
+				.actionsFor(selection, res, context);
 		addAction = actions3.iterator().next();
 		addAction.execute();
 
