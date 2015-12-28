@@ -75,6 +75,7 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.SaveAsDialog;
+import org.eclipse.ui.internal.ObjectActionContributorManager;
 import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.part.FileEditorInput;
 import org.opengis.geometry.Geometry;
@@ -106,6 +107,7 @@ import info.limpet.rcp.data_provider.data.DataModel;
 import info.limpet.rcp.data_provider.data.GroupWrapper;
 import info.limpet.rcp.editors.dnd.DataManagerDropAdapter;
 
+@SuppressWarnings("restriction")
 public class DataManagerEditor extends EditorPart
 {
 
@@ -737,6 +739,9 @@ public class DataManagerEditor extends EditorPart
 			public void menuAboutToShow(IMenuManager menu)
 			{
 				setFocus();
+				// remove Run as/Debug as/Profile as actions
+				ObjectActionContributorManager manager = ObjectActionContributorManager.getManager();
+				manager.unregisterContributors("java.lang.Object");
 				editorContextMenuAboutToShow(menu);
 			}
 		};
