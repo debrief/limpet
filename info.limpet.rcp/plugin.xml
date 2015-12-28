@@ -256,6 +256,10 @@
             id="info.limpet.rcp.create.createDimensionless" 
             name="Create single dimensionless value">
         </command>
+        <command defaultHandler="info.limpet.rcp.actions.CreateFrequencyCommand"
+            id="info.limpet.rcp.create.createFrequency" 
+            name="Create single frequency value">
+        </command>
     </extension>
     
     <extension point="org.eclipse.ui.menus">
@@ -284,7 +288,14 @@
                icon="icons/variable.png"
                tooltip="Create single dimensionless value"
                style="push">
-         </command>
+          </command>
+          <command
+               commandId="info.limpet.rcp.create.createFrequency"
+               label="Create single frequency value"
+               icon="icons/variable.png"
+               tooltip="Create single frequency value"
+               style="push">
+          </command>
           
         </menuContribution>
         
