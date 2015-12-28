@@ -252,6 +252,10 @@
             id="info.limpet.rcp.sampleProject" 
             name="Create Sample Project">
         </command>
+        <command defaultHandler="info.limpet.rcp.actions.CreateDimensionlessCommand"
+            id="info.limpet.rcp.create.createDimensionless" 
+            name="Create single dimensionless value">
+        </command>
     </extension>
     
     <extension point="org.eclipse.ui.menus">
@@ -265,6 +269,25 @@
             </command>
           </toolbar>
         </menuContribution>
+        <menuContribution locationURI="popup:info.limpet.rcp.editors.dataManagerEditor?after=create">
+          <menu id="info.limpet.rcp.create" label="Create">
+            <separator
+                  name="additions"
+                  visible="false">
+            </separator>
+          </menu>
+        </menuContribution>
+        <menuContribution locationURI="popup:info.limpet.rcp.create?after=additions">
+          <command
+               commandId="info.limpet.rcp.create.createDimensionless"
+               label="Create single dimensionless value"
+               icon="icons/variable.png"
+               tooltip="Create single dimensionless value"
+               style="push">
+         </command>
+          
+        </menuContribution>
+        
     </extension>
 
 </plugin>

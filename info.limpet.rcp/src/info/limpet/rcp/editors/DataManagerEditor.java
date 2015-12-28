@@ -43,6 +43,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -784,6 +785,8 @@ public class DataManagerEditor extends EditorPart
 			showThisList(selection, newM, values);
 		}
 
+		menu.add(new GroupMarker("create"));
+
 		// and the generators
 		MenuManager createMenu = new MenuManager("Create");
 		menu.add(createMenu);
@@ -1068,4 +1071,13 @@ public class DataManagerEditor extends EditorPart
 		return res;
 	}
 
+	public IStore getStore()
+	{
+		return _store;
+	}
+
+	public IContext getContext()
+	{
+		return _context;
+	}
 }
