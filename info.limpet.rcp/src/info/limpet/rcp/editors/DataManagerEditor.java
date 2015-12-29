@@ -69,7 +69,6 @@ import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.SaveAsDialog;
-import org.eclipse.ui.internal.ObjectActionContributorManager;
 import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.part.FileEditorInput;
 import org.osgi.framework.Bundle;
@@ -102,7 +101,6 @@ import info.limpet.rcp.actions.RefreshViewAction;
 import info.limpet.rcp.data_provider.data.DataModel;
 import info.limpet.rcp.editors.dnd.DataManagerDropAdapter;
 
-@SuppressWarnings("restriction")
 public class DataManagerEditor extends EditorPart
 {
 
