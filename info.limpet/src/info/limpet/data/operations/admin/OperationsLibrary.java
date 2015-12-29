@@ -1,4 +1,4 @@
-package info.limpet.rcp.editors;
+package info.limpet.data.operations.admin;
 
 import static javax.measure.unit.NonSI.MINUTE;
 import static javax.measure.unit.NonSI.NAUTICAL_MILE;
@@ -8,11 +8,12 @@ import static javax.measure.unit.SI.METRES_PER_SECOND;
 import static javax.measure.unit.SI.METRES_PER_SQUARE_SECOND;
 import static javax.measure.unit.SI.RADIAN;
 import static javax.measure.unit.SI.SECOND;
+import info.limpet.ICollection;
 import info.limpet.IOperation;
 import info.limpet.IQuantityCollection;
-import info.limpet.IStore.IStoreItem;
 import info.limpet.data.impl.samples.StockTypes;
 import info.limpet.data.operations.AddQuantityOperation;
+import info.limpet.data.operations.CollectionComplianceTests;
 import info.limpet.data.operations.DeleteCollectionOperation;
 import info.limpet.data.operations.DivideQuantityOperation;
 import info.limpet.data.operations.GenerateDummyDataOperation;
@@ -26,12 +27,6 @@ import info.limpet.data.operations.spatial.DistanceBetweenTracksOperation;
 import info.limpet.data.operations.spatial.DopplerShiftBetweenTracksOperation;
 import info.limpet.data.operations.spatial.GenerateCourseAndSpeedOperation;
 import info.limpet.data.operations.spatial.ProplossBetweenTwoTracksOperation;
-import info.limpet.rcp.analysis_view.AnalysisView;
-import info.limpet.rcp.data_frequency.DataFrequencyView;
-import info.limpet.rcp.operations.ShowInNamedView;
-import info.limpet.rcp.range_slider.RangeSliderView;
-import info.limpet.rcp.time_frequency.TimeFrequencyView;
-import info.limpet.rcp.xy_plot.XyPlotView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,10 +34,13 @@ import java.util.List;
 
 import javax.measure.quantity.Dimensionless;
 import javax.measure.quantity.Velocity;
+import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 
 public class OperationsLibrary
 {
+	final static CollectionComplianceTests aTests = new CollectionComplianceTests();
+	
 	public static HashMap<String, List<IOperation<?>>> getOperations()
 	{
 		HashMap<String, List<IOperation<?>>> res = new HashMap<String, List<IOperation<?>>>();
@@ -50,30 +48,8 @@ public class OperationsLibrary
 		res.put("Arithmetic", getArithmetic());
 		res.put("Conversions", getConversions());
 		res.put("Administration", getAdmin());
-		res.put("Analysis", getAnalysis());
 		res.put("Spatial", getSpatial());
 		return res;
-
-	}
-
-	private static List<IOperation<?>> getAnalysis()
-	{
-		List<IOperation<?>> analysis = new ArrayList<IOperation<?>>();
-		analysis.add(new ShowInNamedView("Show in XY Plot View", XyPlotView.ID)
-		{
-			protected boolean appliesTo(List<IStoreItem> selection)
-			{
-				return getTests().nonEmpty(selection)
-						&& (getTests().allQuantity(selection) || getTests().allLocation(selection));
-			}
-		});
-		analysis.add(new ShowInNamedView("Show in Time Frequency View",
-				TimeFrequencyView.ID));
-		analysis.add(new ShowInNamedView("Show in Data Frequency View",
-				DataFrequencyView.ID));
-		analysis.add(new ShowInNamedView("Show in Analysis View", AnalysisView.ID));
-		analysis.add(new ShowInNamedView("Show in Range Slider", RangeSliderView.ID));
-		return analysis;
 	}
 
 	public static List<IOperation<?>> getTopLevel()
@@ -113,8 +89,17 @@ public class OperationsLibrary
 		{  public double calcFor(double val)
 			{	return Math.abs(val);}});
 		arithmetic.add(new UnitaryMathOperation("Sin")
-		{  public double calcFor(double val)
-			{	return Math.sin(val);}});
+		{ 
+			@Override
+			protected boolean appliesTo(List<ICollection> selection)
+			{
+				// TODO Auto-generated method stub
+				return super.appliesTo(selection) && aTests.allHaveDimension(selection, SI.RADIAN.getDimension());
+			}
+
+			public double calcFor(double val)
+			{	return Math.sin(val);}
+		});
 		arithmetic.add(new UnitaryMathOperation("Cos")
 		{  public double calcFor(double val)
 			{	return Math.sin(val);}});

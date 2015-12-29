@@ -80,6 +80,7 @@ import info.limpet.data.impl.samples.StockTypes;
 import info.limpet.data.impl.samples.StockTypes.NonTemporal;
 import info.limpet.data.operations.AddLayerOperation;
 import info.limpet.data.operations.GenerateDummyDataOperation;
+import info.limpet.data.operations.admin.OperationsLibrary;
 import info.limpet.data.operations.spatial.GeoSupport;
 import info.limpet.data.persistence.xml.XStreamHandler;
 import info.limpet.data.store.InMemoryStore;
@@ -741,6 +742,10 @@ public class DataManagerEditor extends EditorPart
 		// get the list of operations
 		HashMap<String, List<IOperation<?>>> ops = OperationsLibrary
 				.getOperations();
+		
+		// and the RCP-specific operations
+		HashMap<String, List<IOperation<?>>> rcpOps = RCPOperationsLibrary.getOperations();
+		ops.putAll(rcpOps);
 
 		// did we find anything?
 		Iterator<String> hIter = ops.keySet().iterator();
