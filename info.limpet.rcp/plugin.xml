@@ -280,6 +280,14 @@
             id="info.limpet.rcp.create.addLayer" 
             name="Add Layer">
         </command>
+        <command defaultHandler="info.limpet.rcp.actions.CopyCsvToClipboardCommand"
+            id="info.limpet.rcp.copycsv.CopyCsvToClipboard" 
+            name="Copy CSV to Clipboard">
+        </command>
+        <command defaultHandler="info.limpet.rcp.actions.CopyCsvToFileCommand"
+            id="info.limpet.rcp.copycsv.CopyCsvToFile" 
+            name="Copy CSV to File">
+        </command>
     </extension>
     
     <extension point="org.eclipse.ui.menus">
@@ -300,6 +308,50 @@
                   visible="false">
             </separator>
           </menu>
+        </menuContribution>
+        <menuContribution locationURI="popup:info.limpet.rcp.editors.dataManagerEditor?after=copycsv">
+          <command
+               commandId="info.limpet.rcp.copycsv.CopyCsvToClipboard"
+               label="Copy CSV to Clipboard"
+               icon="icons/export_wiz.gif"
+               tooltip="Copy CSV to Clipboard"
+               style="push">
+               <visibleWhen
+                     checkEnabled="false">
+               <with
+                     variable="activeMenuSelection">
+                  <count
+                        value="1">
+                  </count>
+                  <iterate ifEmpty="false">
+                  	<adapt
+                         type="info.limpet.rcp.data_provider.data.CollectionWrapper">
+                  	</adapt>
+                  </iterate>
+               </with>
+            </visibleWhen>
+          </command>
+          <command
+               commandId="info.limpet.rcp.copycsv.CopyCsvToFile"
+               label="Copy CSV to File"
+               icon="icons/export_wiz.gif"
+               tooltip="Copy CSV to File"
+               style="push">
+               <visibleWhen
+                     checkEnabled="false">
+               <with
+                     variable="activeMenuSelection">
+                  <count
+                        value="1">
+                  </count>
+                  <iterate ifEmpty="false">
+                  	<adapt
+                         type="info.limpet.rcp.data_provider.data.CollectionWrapper">
+                  	</adapt>
+                  </iterate>
+               </with>
+            </visibleWhen>
+          </command>
         </menuContribution>
         <menuContribution locationURI="popup:info.limpet.rcp.create?after=additions">
           <command
