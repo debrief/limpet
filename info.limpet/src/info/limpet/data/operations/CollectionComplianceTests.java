@@ -815,6 +815,37 @@ public class CollectionComplianceTests
 	}
 
 	/**
+	 * see if all the collections have the specified dimension
+	 * 
+	 * @param items
+	 *          to check
+	 * @param dimension
+	 *          we're looking for
+	 * @return yes/no
+	 */
+	public boolean allHaveDimension(List<ICollection> kids, Dimension dim)
+	{
+		boolean res = true;
+
+		Iterator<ICollection> iter = kids.iterator();
+		while (iter.hasNext())
+		{
+			IStoreItem item = iter.next();
+			if (item instanceof IQuantityCollection<?>)
+			{
+				IQuantityCollection<?> coll = (IQuantityCollection<?>) item;
+				if (!coll.getDimension().equals(dim))
+				{
+					res = false;
+					break;
+				}
+			}
+		}
+
+		return res;
+	}
+	
+	/**
 	 * see if a collection of the specified dimension is present
 	 * 
 	 * @param items
