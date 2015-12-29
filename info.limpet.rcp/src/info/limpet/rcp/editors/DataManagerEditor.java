@@ -442,9 +442,6 @@ public class DataManagerEditor extends EditorPart
 			public void menuAboutToShow(IMenuManager menu)
 			{
 				setFocus();
-				// remove Run as/Debug as/Profile as actions
-				ObjectActionContributorManager manager = ObjectActionContributorManager.getManager();
-				manager.unregisterContributors("java.lang.Object");
 				editorContextMenuAboutToShow(menu);
 			}
 		};
@@ -582,7 +579,9 @@ public class DataManagerEditor extends EditorPart
 		menuMgr.addMenuListener(getContextMenuListener());
 		Menu menu = menuMgr.createContextMenu(viewer.getControl());
 		viewer.getControl().setMenu(menu);
-		getSite().registerContextMenu(menuMgr, viewer);
+		// We shouldn't register menu because we will contribute menus
+		// using separate extension point
+		//getSite().registerContextMenu(menuMgr, viewer);
 	}
 
 	@Override
