@@ -6,17 +6,18 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 
 import info.limpet.ICommand;
-import info.limpet.IOperation;
 import info.limpet.IStore.IStoreItem;
-import info.limpet.data.operations.AddLayerOperation;
+import info.limpet.data.operations.GenerateDummyDataOperation;
 
-public class AddLayerCommand extends AbstractLimpetHandler
+public class GenerateDataCommand extends AbstractLimpetHandler
 {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException
 	{
-		IOperation<IStoreItem> operation = new AddLayerOperation();
+		GenerateDummyDataOperation operation = new GenerateDummyDataOperation(
+				"small", 20);
+
 		Collection<ICommand<IStoreItem>> commands = operation.actionsFor(
 				getSuitableObjects(), getStore(), getContext());
 		commands.iterator().next().execute();

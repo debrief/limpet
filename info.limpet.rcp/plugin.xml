@@ -288,6 +288,14 @@
             id="info.limpet.rcp.copycsv.CopyCsvToFile" 
             name="Copy CSV to File">
         </command>
+        <command defaultHandler="info.limpet.rcp.actions.RefreshViewCommand"
+            id="info.limpet.rcp.refresh.RefreshView" 
+            name="Refresh">
+        </command>
+        <command defaultHandler="info.limpet.rcp.actions.GenerateDataCommand"
+            id="info.limpet.rcp.refresh.GenerateData" 
+            name="Generate Data">
+        </command>
     </extension>
     
     <extension point="org.eclipse.ui.menus">
@@ -351,6 +359,15 @@
                   </iterate>
                </with>
             </visibleWhen>
+          </command>
+        </menuContribution>
+        <menuContribution locationURI="popup:info.limpet.rcp.editors.dataManagerEditor?after=refresh">
+          <command
+               commandId="info.limpet.rcp.refresh.RefreshView"
+               label="Refresh"
+               icon="icons/refresh.gif"
+               tooltip="Refresh"
+               style="push">
           </command>
         </menuContribution>
         <menuContribution locationURI="popup:info.limpet.rcp.create?after=additions">

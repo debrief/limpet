@@ -789,6 +789,9 @@ public class DataManagerEditor extends EditorPart
 		menu.add(new Separator());
 		menu.add(new GroupMarker("copycsv"));
 		menu.add(new Separator());
+		menu.add(new GroupMarker("refresh"));
+		menu.add(new Separator());
+		menu.add(new GroupMarker("additions"));
 		
 		// and the generators
 		MenuManager createMenu = new MenuManager("Create");
@@ -1082,5 +1085,13 @@ public class DataManagerEditor extends EditorPart
 	public IContext getContext()
 	{
 		return _context;
+	}
+
+	public void refresh()
+	{
+		if (!viewer.getControl().isDisposed())
+		{
+			viewer.refresh();
+		}
 	}
 }
