@@ -131,6 +131,9 @@ public class XyPlotView extends CoreAnalysisView
 
 		Unit<Quantity> existingUnits = null;
 
+		// get the longest collection length (used for plotting singletons)
+		int longestColl = aTests.getLongestCollectionLength(res);
+
 		while (iter.hasNext())
 		{
 			ICollection coll = (ICollection) iter.next();
@@ -148,30 +151,47 @@ public class XyPlotView extends CoreAnalysisView
 						ILineSeries newSeries = (ILineSeries) chart.getSeriesSet()
 								.createSeries(SeriesType.LINE, seriesName);
 
-						// if it's a singleton, show the symbol
 						final PlotSymbolType theSym;
-						if (thisQ.size() == 1)
+						// if it's a singleton, show the symbol
+						// markers
+						if (thisQ.size() > 1000 || thisQ.size() == 1)
 						{
-							theSym = PlotSymbolType.CIRCLE;
+							theSym = PlotSymbolType.NONE;
 						}
 						else
 						{
-							theSym = PlotSymbolType.NONE;
+							theSym = PlotSymbolType.CIRCLE;
 						}
 
 						newSeries.setSymbolType(theSym);
 						newSeries.setLineColor(PlottingHelpers.colorFor(seriesName));
 						newSeries.setSymbolColor(PlottingHelpers.colorFor(seriesName));
 
-						double[] yData = new double[thisQ.size()];
+						final double[] yData;
 
-						Iterator<?> values = thisQ.getValues().iterator();
-						int ctr = 0;
-						while (values.hasNext())
+						if (coll.size() == 1)
 						{
-							Measurable<Quantity> tQ = (Measurable<Quantity>) values.next();
-							yData[ctr++] = tQ.doubleValue(thisQ.getUnits());
+							// singleton = insert it's value at every point
+							yData = new double[longestColl];
+							Measurable<Quantity> thisValue = thisQ.getValues().iterator().next();
+							double dVal = thisValue.doubleValue(thisQ.getUnits());
+							for(int i=0;i<longestColl;i++)
+							{
+								yData[i] = dVal;
+							}
 						}
+						else
+						{
+							yData = new double[thisQ.size()];
+							Iterator<?> values = thisQ.getValues().iterator();
+							int ctr = 0;
+							while (values.hasNext())
+							{
+								Measurable<Quantity> tQ = (Measurable<Quantity>) values.next();
+								yData[ctr++] = tQ.doubleValue(thisQ.getUnits());
+							}
+						}
+
 
 						// ok, do we have existing data?
 						if ((existingUnits != null) && !(existingUnits.equals(theseUnits)))
