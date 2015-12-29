@@ -109,10 +109,11 @@ public class TestOperations extends TestCase
 		angleData.add(200d);
 		angleData.add(123d);
 
-		StockTypes.Temporal.Angle_Degrees temporalAngleData = new StockTypes.Temporal.Angle_Degrees("degs", null);
+		StockTypes.Temporal.Angle_Degrees temporalAngleData = new StockTypes.Temporal.Angle_Degrees(
+				"degs", null);
 		temporalAngleData.add(1000, 200d);
 		temporalAngleData.add(3000, 123d);
-
+		temporalAngleData.add(4000, 13d);
 
 		List<ICollection> selection = new ArrayList<ICollection>();
 		InMemoryStore store = new InMemoryStore();
@@ -161,12 +162,11 @@ public class TestOperations extends TestCase
 		validOps = sinOp.actionsFor(selection, store, null);
 		assertEquals("empty for invalid selection", 0, validOps.size());
 
-
 		// ok, try it with empty data
 		validOps = cosOp.actionsFor(selection, store, null);
 		assertEquals(" cos also empty for invalid selection", 0, validOps.size());
 
-// and remove the speed data
+		// and remove the speed data
 		selection.remove(speedData);
 
 		// ok, try it with empty data
@@ -175,13 +175,36 @@ public class TestOperations extends TestCase
 
 		ICommand<ICollection> theOp = validOps.iterator().next();
 		theOp.execute();
-		
+
 		assertEquals("has new dataset", 1, store.size());
 		ICollection output = theOp.getOutputs().iterator().next();
-		
+
 		// check the size
 		assertEquals("correct size", 2, output.size());
+
+		// check data type
+		assertTrue("isn't temporal", !output.isTemporal());
+		assertTrue("is quantity", output.isQuantity());
+
+		// ok, try it temporal data
+		selection.remove(angleData);
+		selection.add(temporalAngleData);
 		
+		validOps = sinOp.actionsFor(selection, store, context);
+		assertEquals("non-empty for valid selection", 1, validOps.size());
+
+		theOp = validOps.iterator().next();
+		theOp.execute();
+
+		assertEquals("has new dataset", 2, store.size());
+		output = theOp.getOutputs().iterator().next();
+
+		// check the size
+		assertEquals("correct size", 3, output.size());
+
+		// check data type
+		assertTrue("isn't temporal", output.isTemporal());
+
 	}
 
 	public void testAppliesTo()
