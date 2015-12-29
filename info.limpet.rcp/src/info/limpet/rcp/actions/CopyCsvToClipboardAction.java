@@ -5,9 +5,18 @@ import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
 
 public class CopyCsvToClipboardAction extends AbstractLimpetAction
 {
+
+	public CopyCsvToClipboardAction()
+	{
+		setText("Copy CSV to Clipboard");
+		setImageDescriptor(PlatformUI.getWorkbench()
+				.getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_SYNCED));
+	}
 
 	@Override
 	public void run()

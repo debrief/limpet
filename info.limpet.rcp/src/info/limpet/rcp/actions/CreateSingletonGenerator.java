@@ -9,10 +9,18 @@ import org.eclipse.swt.widgets.Display;
 import info.limpet.IContext.Status;
 import info.limpet.IStore;
 import info.limpet.data.impl.QuantityCollection;
+import info.limpet.rcp.Activator;
 import info.limpet.rcp.data_provider.data.GroupWrapper;
 
 public abstract class CreateSingletonGenerator extends AbstractLimpetAction
 {
+
+	public CreateSingletonGenerator()
+	{
+		setText("Create single " + getName() + " value");
+		setImageDescriptor(Activator.getImageDescriptor("icons/variable.png"));
+
+	}
 
 	@Override
 	public void run()

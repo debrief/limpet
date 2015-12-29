@@ -43,7 +43,6 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -59,7 +58,6 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.FileTransfer;
 import org.eclipse.swt.dnd.TextTransfer;
@@ -72,7 +70,6 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.SaveAsDialog;
@@ -92,7 +89,6 @@ import info.limpet.IStore.IStoreItem;
 import info.limpet.IStoreGroup;
 import info.limpet.data.csv.CsvGenerator;
 import info.limpet.data.impl.QuantityCollection;
-import info.limpet.data.impl.samples.StockTypes;
 import info.limpet.data.impl.samples.StockTypes.NonTemporal;
 import info.limpet.data.operations.AddLayerOperation;
 import info.limpet.data.operations.GenerateDummyDataOperation;
@@ -104,6 +100,17 @@ import info.limpet.data.store.InMemoryStore.StoreChangeListener;
 import info.limpet.data.store.InMemoryStore.StoreGroup;
 import info.limpet.rcp.Activator;
 import info.limpet.rcp.RCPContext;
+import info.limpet.rcp.actions.AddLayerAction;
+import info.limpet.rcp.actions.CopyCsvToClipboardAction;
+import info.limpet.rcp.actions.CreateCourseAction;
+import info.limpet.rcp.actions.CreateDecibelsAction;
+import info.limpet.rcp.actions.CreateDimensionlessAction;
+import info.limpet.rcp.actions.CreateFrequencyAction;
+import info.limpet.rcp.actions.CreateLocationAction;
+import info.limpet.rcp.actions.CreateSpeedAction;
+import info.limpet.rcp.actions.ExportCsvToFileAction;
+import info.limpet.rcp.actions.GenerateDataAction;
+import info.limpet.rcp.actions.RefreshViewAction;
 import info.limpet.rcp.data_provider.data.DataModel;
 import info.limpet.rcp.data_provider.data.GroupWrapper;
 import info.limpet.rcp.editors.dnd.DataManagerDropAdapter;
@@ -432,113 +439,17 @@ public class DataManagerEditor extends EditorPart
 
 	private void makeActions()
 	{
-		generateData = new Action()
-		{
-			public void run()
-			{
-				generateData();
-			}
-		};
-		generateData.setText("Generate data");
-		generateData.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
-				.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD));
-
-		addLayer = new Action()
-		{
-			public void run()
-			{
-				addLayer();
-			}
-		};
-		addLayer.setText("Add Layer");
-		addLayer.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
-				.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE));
-
-		refreshView = new Action()
-		{
-			public void run()
-			{
-				viewer.refresh();
-			}
-		};
-		refreshView.setText("Refresh");
-		refreshView.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
-				.getImageDescriptor(ISharedImages.IMG_TOOL_REDO));
-
-		copyCsvToClipboard = new Action()
-		{
-			public void run()
-			{
-				String csv = getCsvString();
-				if (csv != null && !csv.isEmpty())
-				{
-					final Clipboard cb = new Clipboard(Display.getCurrent());
-					TextTransfer textTransfer = TextTransfer.getInstance();
-					cb.setContents(new Object[]
-					{ csv }, new Transfer[]
-					{ textTransfer });
-				}
-				else
-				{
-					MessageDialog.openInformation(viewer.getControl().getShell(),
-							"Data Manager Editor", "Cannot copy current selection");
-				}
-			}
-		};
-		copyCsvToClipboard.setText("Copy CSV to Clipboard");
-		// FIXME
-		copyCsvToClipboard.setImageDescriptor(PlatformUI.getWorkbench()
-				.getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_SYNCED));
-
-		copyCsvToFile = new ExportToCSVFile();
-
-		copyCsvToFile.setText("Copy CSV to File");
-		// FIXME
-		copyCsvToFile.setImageDescriptor(PlatformUI.getWorkbench()
-				.getSharedImages()
-				.getImageDescriptor(ISharedImages.IMG_ETOOL_SAVEAS_EDIT));
-
-		createDimensionless = createSingletonGenerator("dimensionless",
-				new ItemGenerator()
-				{
-					public QuantityCollection<?> generate(String name)
-					{
-						return new StockTypes.NonTemporal.DimensionlessDouble(name);
-					}
-				});
-
-		createFrequency = createSingletonGenerator("frequency", new ItemGenerator()
-		{
-			public QuantityCollection<?> generate(String name)
-			{
-				return new StockTypes.NonTemporal.Frequency_Hz(name);
-			}
-		});
-
-		createDecibels = createSingletonGenerator("decibels", new ItemGenerator()
-		{
-			public QuantityCollection<?> generate(String name)
-			{
-				return new StockTypes.NonTemporal.AcousticStrength(name);
-			}
-		});
-
-		createSpeed = createSingletonGenerator("speed (m/s)", new ItemGenerator()
-		{
-			public QuantityCollection<?> generate(String name)
-			{
-				return new StockTypes.NonTemporal.Speed_MSec(name);
-			}
-		});
-		createCourse = createSingletonGenerator("course (degs)",
-				new ItemGenerator()
-				{
-					public QuantityCollection<?> generate(String name)
-					{
-						return new StockTypes.NonTemporal.Angle_Degrees(name);
-					}
-				});
-		createLocation = createLocationGenerator();
+		generateData = new GenerateDataAction();
+		addLayer = new AddLayerAction();
+		refreshView = new RefreshViewAction();
+		copyCsvToClipboard = new CopyCsvToClipboardAction();
+		copyCsvToFile = new ExportCsvToFileAction();
+		createDimensionless = new CreateDimensionlessAction();
+		createFrequency = new CreateFrequencyAction();
+		createDecibels = new CreateDecibelsAction();
+		createSpeed = new CreateSpeedAction();
+		createCourse = new CreateCourseAction();
+		createLocation = new CreateLocationAction();
 	}
 
 	private static interface ItemGenerator

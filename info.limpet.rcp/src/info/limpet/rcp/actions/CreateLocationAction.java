@@ -11,10 +11,17 @@ import info.limpet.IContext.Status;
 import info.limpet.IStore;
 import info.limpet.data.impl.samples.StockTypes.NonTemporal;
 import info.limpet.data.operations.spatial.GeoSupport;
+import info.limpet.rcp.Activator;
 import info.limpet.rcp.data_provider.data.GroupWrapper;
 
 public class CreateLocationAction extends AbstractLimpetAction
 {
+
+	public CreateLocationAction()
+	{
+		setText("Create single location");
+		setImageDescriptor(Activator.getImageDescriptor("icons/variable.png"));
+	}
 
 	@Override
 	public void run()
