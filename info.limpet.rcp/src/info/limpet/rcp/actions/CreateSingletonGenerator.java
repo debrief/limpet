@@ -1,6 +1,5 @@
 package info.limpet.rcp.actions;
 
-import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.jface.dialogs.InputDialog;
@@ -8,20 +7,13 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
 
-import info.limpet.IContext;
 import info.limpet.IContext.Status;
 import info.limpet.IStore;
 import info.limpet.data.impl.QuantityCollection;
-import info.limpet.rcp.RCPContext;
 import info.limpet.rcp.data_provider.data.GroupWrapper;
-import info.limpet.rcp.editors.DataManagerEditor;
 
-public abstract class CreateSingletonGenerator extends AbstractHandler
+public abstract class CreateSingletonGenerator extends AbstractLimpetHandler
 {
 
 	@Override
@@ -91,42 +83,6 @@ public abstract class CreateSingletonGenerator extends AbstractHandler
 			}
 		}
 		return null;
-	}
-
-	private IStore getStore()
-	{
-		IEditorPart activeEditor = getActiveEditor();
-		if (activeEditor instanceof DataManagerEditor)
-		{
-			return ((DataManagerEditor) activeEditor).getStore();
-		}
-		return null;
-	}
-
-	private IContext getContext()
-	{
-		IEditorPart activeEditor = getActiveEditor();
-		if (activeEditor instanceof DataManagerEditor)
-		{
-			return ((DataManagerEditor) activeEditor).getContext();
-		}
-		return new RCPContext();
-	}
-
-	private IEditorPart getActiveEditor()
-	{
-		IWorkbenchWindow window = PlatformUI.getWorkbench()
-				.getActiveWorkbenchWindow();
-		IWorkbenchPage activePage = window.getActivePage();
-		return activePage.getActiveEditor();
-	}
-
-	private ISelection getSelection()
-	{
-		IWorkbenchWindow window = PlatformUI.getWorkbench()
-				.getActiveWorkbenchWindow();
-		IWorkbenchPage activePage = window.getActivePage();
-		return activePage.getSelection();
 	}
 
 	protected abstract String getName();

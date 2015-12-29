@@ -260,6 +260,26 @@
             id="info.limpet.rcp.create.createFrequency" 
             name="Create single frequency value">
         </command>
+        <command defaultHandler="info.limpet.rcp.actions.CreateDecibelsCommand"
+            id="info.limpet.rcp.create.createDecibels" 
+            name="Create single decibels value">
+        </command>
+        <command defaultHandler="info.limpet.rcp.actions.CreateSpeedCommand"
+            id="info.limpet.rcp.create.createSpeed" 
+            name="Create single speed (m/s) value">
+        </command>
+        <command defaultHandler="info.limpet.rcp.actions.CreateCourseCommand"
+            id="info.limpet.rcp.create.createCourse" 
+            name="Create single course (degs) value">
+        </command>
+        <command defaultHandler="info.limpet.rcp.actions.CreateLocationCommand"
+            id="info.limpet.rcp.create.createLocation" 
+            name="Create single location">
+        </command>
+        <command defaultHandler="info.limpet.rcp.actions.AddLayerCommand"
+            id="info.limpet.rcp.create.addLayer" 
+            name="Add Layer">
+        </command>
     </extension>
     
     <extension point="org.eclipse.ui.menus">
@@ -296,7 +316,41 @@
                tooltip="Create single frequency value"
                style="push">
           </command>
-          
+          <command
+               commandId="info.limpet.rcp.create.createDecibels"
+               label="Create single decibels value"
+               icon="icons/variable.png"
+               tooltip="Create single decibels value"
+               style="push">
+          </command>
+          <command
+               commandId="info.limpet.rcp.create.createSpeed"
+               label="Create single speed (m/s) value"
+               icon="icons/variable.png"
+               tooltip="Create single speed (m/s) value"
+               style="push">
+          </command>
+          <command
+               commandId="info.limpet.rcp.create.createCourse"
+               label="Create single course (degs) value"
+               icon="icons/variable.png"
+               tooltip="Create single course (degs) value"
+               style="push">
+          </command>
+          <command
+               commandId="info.limpet.rcp.create.createLocation"
+               label="Create single location"
+               icon="icons/variable.png"
+               tooltip="Create single location"
+               style="push">
+          </command>
+          <command
+               commandId="info.limpet.rcp.create.addLayer"
+               label="Add layer"
+               icon="icons/paste_edit.gif"
+               tooltip="Add Layer"
+               style="push">
+          </command>
         </menuContribution>
         
     </extension>
