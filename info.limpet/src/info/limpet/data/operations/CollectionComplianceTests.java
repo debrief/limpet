@@ -954,6 +954,22 @@ public class CollectionComplianceTests
 		return res;
 	}
 
+
+	public int getLongestCollectionLength(
+			List<IStoreItem> selection)
+	{
+		// find the longest time series.
+		Iterator<IStoreItem> iter = selection.iterator();
+		int longest = -1;
+
+		while (iter.hasNext())
+		{
+			ICollection thisC = (ICollection) iter.next();
+			longest = Math.max(longest, thisC.size());
+		}
+		return longest;
+	}
+
 	public IBaseTemporalCollection getLongestTemporalCollections(
 			List<IStoreItem> selection)
 	{
