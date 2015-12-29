@@ -53,7 +53,7 @@ abstract public class UnitaryMathOperation implements IOperation<ICollection>
 		return input.getUnits();
 	}
 
-	private boolean appliesTo(List<ICollection> selection)
+	protected boolean appliesTo(List<ICollection> selection)
 	{
 		boolean notEmpty = aTests.nonEmpty(selection);
 		boolean allQuantity = aTests.allQuantity(selection);

@@ -92,6 +92,10 @@ public class TestOperations extends TestCase
 
 	}
 
+	public void testTrig()
+	{
+	}
+	
 	public void testAppliesTo()
 	{
 		// the units for this measurement
