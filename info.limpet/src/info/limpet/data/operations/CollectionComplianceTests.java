@@ -401,7 +401,6 @@ public class CollectionComplianceTests
 		return allValid;
 	}
 
-
 	/**
 	 * check if the series are all time series datasets (temporal)
 	 * 
@@ -429,7 +428,6 @@ public class CollectionComplianceTests
 		return allValid;
 	}
 
-	
 	/**
 	 * check if the series are all time series datasets (temporal)
 	 * 
@@ -455,6 +453,49 @@ public class CollectionComplianceTests
 					// oops, no
 					allValid = false;
 					break;
+				}
+			}
+			else
+			{
+				// oops, no
+				allValid = false;
+				break;
+			}
+		}
+		return allValid;
+	}
+
+	/**
+	 * check if the series are at least one temporal dataset,
+	 * plus one or more singletons
+	 * 
+	 * @param selection
+	 * @return true/false
+	 */
+	public boolean allTemporalOrSingleton(List<? extends IStoreItem> selection)
+	{
+		// are they all temporal?
+		boolean allValid = false;
+
+		for (int i = 0; i < selection.size(); i++)
+		{
+			IStoreItem thisI = selection.get(i);
+			if (thisI instanceof ICollection)
+			{
+				ICollection thisC = (ICollection) thisI;
+				if (thisC.isTemporal())
+				{
+					allValid = true;
+				}
+				else
+				{
+					// check if it's not a singleton
+					if (thisC.size() != 1)
+					{
+						// oops, no
+						allValid = false;
+						break;
+					}
 				}
 			}
 			else
