@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
@@ -13,11 +11,11 @@ import org.eclipse.swt.widgets.FileDialog;
 
 import info.limpet.rcp.Activator;
 
-public class CopyCsvToFileCommand extends AbstractLimpetHandler
+public class Action extends AbstractLimpetAction
 {
 
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException
+	public void run()
 	{
 		String csv = getCsvString();
 		if (csv != null && !csv.isEmpty())
@@ -47,7 +45,7 @@ public class CopyCsvToFileCommand extends AbstractLimpetHandler
 			String result = dialog.open();
 			if (result == null)
 			{
-				return null;
+				return;
 			}
 			File file = new File(result);
 			if (file.exists())
@@ -56,7 +54,7 @@ public class CopyCsvToFileCommand extends AbstractLimpetHandler
 						"Overwrite '" + result + "'?",
 						"Are you sure you want to overwrite '" + result + "'?"))
 				{
-					return null;
+					return;
 				}
 			}
 			FileOutputStream fop = null;
@@ -93,7 +91,6 @@ public class CopyCsvToFileCommand extends AbstractLimpetHandler
 			MessageDialog.openInformation(getShell(), "Data Manager Editor",
 					"Cannot copy current selection");
 		}
-		return null;
 	}
 
 }

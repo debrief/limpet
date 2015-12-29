@@ -1,7 +1,5 @@
 package info.limpet.rcp.actions;
 
-import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -15,16 +13,11 @@ import info.limpet.data.impl.samples.StockTypes.NonTemporal;
 import info.limpet.data.operations.spatial.GeoSupport;
 import info.limpet.rcp.data_provider.data.GroupWrapper;
 
-public class CreateLocationCommand extends AbstractLimpetHandler
+public class CreateLocationAction extends AbstractLimpetAction
 {
 
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException
-	{
-		return createLocationGenerator();
-	}
-
-	private Object createLocationGenerator()
+	public void run()
 	{
 		// get the name
 		String seriesName = "new single location";
@@ -38,7 +31,7 @@ public class CreateLocationCommand extends AbstractLimpetHandler
 		}
 		else
 		{
-			return null;
+			return;
 		}
 
 		InputDialog dlgValue = new InputDialog(
@@ -96,12 +89,10 @@ public class CreateLocationCommand extends AbstractLimpetHandler
 				{
 					getContext().logError(Status.WARNING, "Failed to parse initial value",
 							e);
-					return null;
+					return;
 				}
 			}
-
 		}
-		return null;
 	}
 
 }

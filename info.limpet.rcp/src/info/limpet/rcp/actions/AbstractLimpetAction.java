@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
@@ -22,7 +22,7 @@ import info.limpet.data.csv.CsvGenerator;
 import info.limpet.rcp.RCPContext;
 import info.limpet.rcp.editors.DataManagerEditor;
 
-public abstract class AbstractLimpetHandler extends AbstractHandler
+public abstract class AbstractLimpetAction extends Action
 {
 
 	protected ISelection getSelection()

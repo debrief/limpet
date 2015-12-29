@@ -1,18 +1,16 @@
 package info.limpet.rcp.actions;
 
-import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Display;
 
-public class CopyCsvToClipboardCommand extends AbstractLimpetHandler
+public class CopyCsvToClipboardAction extends AbstractLimpetAction
 {
 
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException
+	public void run()
 	{
 		String csv = getCsvString();
 		if (csv != null && !csv.isEmpty())
@@ -28,7 +26,6 @@ public class CopyCsvToClipboardCommand extends AbstractLimpetHandler
 			MessageDialog.openInformation(getShell(), "Data Manager Editor",
 					"Cannot copy current selection");
 		}
-		return null;
 	}
 
 }

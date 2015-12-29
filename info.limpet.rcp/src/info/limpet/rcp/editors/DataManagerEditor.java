@@ -784,14 +784,6 @@ public class DataManagerEditor extends EditorPart
 
 			showThisList(selection, newM, values);
 		}
-
-		menu.add(new GroupMarker("create"));
-		menu.add(new Separator());
-		menu.add(new GroupMarker("copycsv"));
-		menu.add(new Separator());
-		menu.add(new GroupMarker("refresh"));
-		menu.add(new Separator());
-		menu.add(new GroupMarker("additions"));
 		
 		// and the generators
 		MenuManager createMenu = new MenuManager("Create");

@@ -3,18 +3,18 @@ package info.limpet.rcp.actions;
 import info.limpet.data.impl.QuantityCollection;
 import info.limpet.data.impl.samples.StockTypes;
 
-public class CreateSpeedCommand extends CreateSingletonGenerator
+public class CreateDimensionlessAction extends CreateSingletonGenerator
 {
 	@Override
 	protected String getName()
 	{
-		return "speed (m/s)";
+		return "dimensionless";
 	}
 
 	@Override
 	protected QuantityCollection<?> generate(String name)
 	{
-		return new StockTypes.NonTemporal.Speed_MSec(name);
+		return new StockTypes.NonTemporal.DimensionlessDouble(name);
 	}
 	
 }
