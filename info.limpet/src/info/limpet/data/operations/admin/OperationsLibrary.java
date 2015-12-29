@@ -8,7 +8,6 @@ import static javax.measure.unit.SI.METRES_PER_SECOND;
 import static javax.measure.unit.SI.METRES_PER_SQUARE_SECOND;
 import static javax.measure.unit.SI.RADIAN;
 import static javax.measure.unit.SI.SECOND;
-import info.limpet.ICollection;
 import info.limpet.IOperation;
 import info.limpet.IQuantityCollection;
 import info.limpet.data.impl.samples.StockTypes;
@@ -21,6 +20,7 @@ import info.limpet.data.operations.MultiplyQuantityOperation;
 import info.limpet.data.operations.SimpleMovingAverageOperation;
 import info.limpet.data.operations.SubtractQuantityOperation;
 import info.limpet.data.operations.UnitConversionOperation;
+import info.limpet.data.operations.UnitaryAngleOperation;
 import info.limpet.data.operations.UnitaryMathOperation;
 import info.limpet.data.operations.spatial.BearingBetweenTracksOperation;
 import info.limpet.data.operations.spatial.DistanceBetweenTracksOperation;
@@ -34,21 +34,24 @@ import java.util.List;
 
 import javax.measure.quantity.Dimensionless;
 import javax.measure.quantity.Velocity;
-import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 
 public class OperationsLibrary
 {
+	public static final String SPATIAL = "Spatial";
+	public static final String ADMINISTRATION = "Administration";
+	public static final String CONVERSIONS = "Conversions";
+	public static final String ARITHMETIC = "Arithmetic";
 	final static CollectionComplianceTests aTests = new CollectionComplianceTests();
-	
+
 	public static HashMap<String, List<IOperation<?>>> getOperations()
 	{
 		HashMap<String, List<IOperation<?>>> res = new HashMap<String, List<IOperation<?>>>();
 
-		res.put("Arithmetic", getArithmetic());
-		res.put("Conversions", getConversions());
-		res.put("Administration", getAdmin());
-		res.put("Spatial", getSpatial());
+		res.put(ARITHMETIC, getArithmetic());
+		res.put(CONVERSIONS, getConversions());
+		res.put(ADMINISTRATION, getAdmin());
+		res.put(SPATIAL, getSpatial());
 		return res;
 	}
 
@@ -66,11 +69,17 @@ public class OperationsLibrary
 		admin.add(new GenerateDummyDataOperation("large", 1000));
 		admin.add(new GenerateDummyDataOperation("monster", 1000000));
 		admin.add(new UnitaryMathOperation("Clear units")
-		{  public double calcFor(double val)
-			{	return val;}
-		protected Unit<?> getUnits(IQuantityCollection<?> input)
-		{return Dimensionless.UNIT;}});
+		{
+			public double calcFor(double val)
+			{
+				return val;
+			}
 
+			protected Unit<?> getUnits(IQuantityCollection<?> input)
+			{
+				return Dimensionless.UNIT;
+			}
+		});
 
 		return admin;
 	}
@@ -86,40 +95,61 @@ public class OperationsLibrary
 
 		// also our generic maths operators
 		arithmetic.add(new UnitaryMathOperation("Abs")
-		{  public double calcFor(double val)
-			{	return Math.abs(val);}});
-		arithmetic.add(new UnitaryMathOperation("Sin")
-		{ 
-			@Override
-			protected boolean appliesTo(List<ICollection> selection)
-			{
-				// TODO Auto-generated method stub
-				return super.appliesTo(selection) && aTests.allHaveDimension(selection, SI.RADIAN.getDimension());
-			}
-
+		{
 			public double calcFor(double val)
-			{	return Math.sin(val);}
+			{
+				return Math.abs(val);
+			}
 		});
-		arithmetic.add(new UnitaryMathOperation("Cos")
-		{  public double calcFor(double val)
-			{	return Math.sin(val);}});
-		arithmetic.add(new UnitaryMathOperation("Tan")
-		{  public double calcFor(double val)
-			{	return Math.tan(val);}});
+		arithmetic.add(new UnitaryAngleOperation("Sin")
+		{
+			public double calcFor(double val)
+			{
+				return Math.sin(val);
+			}
+		});
+		arithmetic.add(new UnitaryAngleOperation("Cos")
+		{
+			public double calcFor(double val)
+			{
+				return Math.sin(val);
+			}
+		});
+		arithmetic.add(new UnitaryAngleOperation("Tan")
+		{
+			public double calcFor(double val)
+			{
+				return Math.tan(val);
+			}
+		});
 		arithmetic.add(new UnitaryMathOperation("Inv")
-		{  public double calcFor(double val)
-			{	return -val;}});
+		{
+			public double calcFor(double val)
+			{
+				return -val;
+			}
+		});
 		arithmetic.add(new UnitaryMathOperation("Sqrt")
-		{  public double calcFor(double val)
-			{	return Math.sqrt(val);}});
+		{
+			public double calcFor(double val)
+			{
+				return Math.sqrt(val);
+			}
+		});
 		arithmetic.add(new UnitaryMathOperation("Sqr")
-		{  public double calcFor(double val)
-			{	return val * val;}});
+		{
+			public double calcFor(double val)
+			{
+				return val * val;
+			}
+		});
 		arithmetic.add(new UnitaryMathOperation("Log")
-		{  public double calcFor(double val)
-			{	return Math.log(val);}});
-		
-		
+		{
+			public double calcFor(double val)
+			{
+				return Math.log(val);
+			}
+		});
 
 		return arithmetic;
 	}
@@ -148,7 +178,8 @@ public class OperationsLibrary
 
 		// Speed
 		conversions.add(new UnitConversionOperation(METRES_PER_SECOND));
-		conversions.add(new UnitConversionOperation(NAUTICAL_MILE.divide(SECOND.times(3600)).asType(Velocity.class)));
+		conversions.add(new UnitConversionOperation(NAUTICAL_MILE.divide(
+				SECOND.times(3600)).asType(Velocity.class)));
 
 		// Acceleration
 		conversions.add(new UnitConversionOperation(METRES_PER_SQUARE_SECOND));

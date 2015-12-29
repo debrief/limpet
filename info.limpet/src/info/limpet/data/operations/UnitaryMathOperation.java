@@ -31,6 +31,11 @@ abstract public class UnitaryMathOperation implements IOperation<ICollection>
 	{
 		_opName = opName;
 	}
+	
+	public String getName()
+	{
+		return _opName;
+	}
 
 	abstract public double calcFor(double val);
 
