@@ -13,6 +13,12 @@ import org.eclipse.ui.PlatformUI;
 
 import info.limpet.rcp.Activator;
 
+/**
+ *  Provides UI & processing to export a single collection to a CSV file
+ *  
+ * @author ian
+ *
+ */
 public class ExportCsvToFileAction extends AbstractLimpetAction
 {
 
