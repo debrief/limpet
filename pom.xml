@@ -223,6 +223,25 @@
 </plugin>
     </plugins>
   </build>
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>findbugs-maven-plugin</artifactId>
+				<version>3.0.3</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-pmd-plugin</artifactId>
+				<version>3.6</version>
+			</plugin>
+			<plugin>
+        			<groupId>org.apache.maven.plugins</groupId>
+        			<artifactId>maven-checkstyle-plugin</artifactId>
+        			<version>2.17</version>
+      			</plugin>
+		</plugins>
+	</reporting>
   <profiles> 
     <profile> 
       <id>mac</id>
