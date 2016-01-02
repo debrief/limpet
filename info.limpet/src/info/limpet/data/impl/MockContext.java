@@ -14,7 +14,11 @@
  *******************************************************************************/
 package info.limpet.data.impl;
 
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.ISelection;
+
 import info.limpet.IContext;
+import info.limpet.IStore;
 
 public class MockContext implements IContext
 {
@@ -30,6 +34,76 @@ public class MockContext implements IContext
 	{
 		System.err.println("Logging status:" + status + " message:" + message);
 		e.printStackTrace();
+	}
+
+	@Override
+	public ISelection getSelection()
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IStore getStore()
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ImageDescriptor getImageDescriptor(String actionName)
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void openWarning(String title, String message)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void openInformation(String title, String message)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public String getCsvFilename()
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean openQuestion(String title, String message)
+	{
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void openError(String title, String message)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void log(Exception e)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void refresh()
+	{
+		// TODO Auto-generated method stub
+		
 	}
 
 }

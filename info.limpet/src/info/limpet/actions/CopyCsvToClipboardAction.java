@@ -1,21 +1,20 @@
-package info.limpet.rcp.actions;
+package info.limpet.actions;
 
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.PlatformUI;
+
+import info.limpet.IContext;
 
 public class CopyCsvToClipboardAction extends AbstractLimpetAction
 {
 
-	public CopyCsvToClipboardAction()
+	public CopyCsvToClipboardAction(IContext context)
 	{
+		super(context);
 		setText("Copy CSV to Clipboard");
-		setImageDescriptor(PlatformUI.getWorkbench()
-				.getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_SYNCED));
+		setImageDescriptor(context.getImageDescriptor(IContext.COPY_CSV_TO_CLIPBOARD));
 	}
 
 	@Override
@@ -32,7 +31,7 @@ public class CopyCsvToClipboardAction extends AbstractLimpetAction
 		}
 		else
 		{
-			MessageDialog.openInformation(getShell(), "Data Manager Editor",
+			getContext().openInformation("Data Manager Editor",
 					"Cannot copy current selection");
 		}
 	}

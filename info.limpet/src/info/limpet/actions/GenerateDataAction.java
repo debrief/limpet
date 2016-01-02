@@ -1,23 +1,20 @@
-package info.limpet.rcp.actions;
+package info.limpet.actions;
 
 import java.util.Collection;
 
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.PlatformUI;
-
 import info.limpet.ICommand;
+import info.limpet.IContext;
 import info.limpet.IStore.IStoreItem;
 import info.limpet.data.operations.GenerateDummyDataOperation;
 
 public class GenerateDataAction extends AbstractLimpetAction
 {
 
-	public GenerateDataAction()
+	public GenerateDataAction(IContext context)
 	{
+		super(context);
 		setText("Generate data");
-		setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
-				.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD));
+		setImageDescriptor(context.getImageDescriptor(IContext.GENERATE_DATA));
 	}
 
 	@Override
@@ -30,8 +27,7 @@ public class GenerateDataAction extends AbstractLimpetAction
 				.actionsFor(getSuitableObjects(), getStore(), getContext());
 		if (commands.size() < 1)
 		{
-			MessageDialog.openWarning(getShell(), "Error",
-					"Cannot run the action for current selection");
+			getContext().openWarning("Error", "Cannot run the action for current selection");
 		}
 		else
 		{

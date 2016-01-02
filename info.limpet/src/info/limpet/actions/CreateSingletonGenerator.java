@@ -1,4 +1,4 @@
-package info.limpet.rcp.actions;
+package info.limpet.actions;
 
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.viewers.ISelection;
@@ -6,19 +6,20 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Display;
 
+import info.limpet.IContext;
 import info.limpet.IContext.Status;
 import info.limpet.IStore;
 import info.limpet.data.impl.QuantityCollection;
-import info.limpet.rcp.Activator;
-import info.limpet.rcp.data_provider.data.GroupWrapper;
+import info.limpet.data.store.IGroupWrapper;
 
 public abstract class CreateSingletonGenerator extends AbstractLimpetAction
 {
 
-	public CreateSingletonGenerator()
+	public CreateSingletonGenerator(IContext context)
 	{
+		super(context);
 		setText("Create single " + getName() + " value");
-		setImageDescriptor(Activator.getImageDescriptor("icons/variable.png"));
+		setImageDescriptor(context.getImageDescriptor("icons/variable.png"));
 
 	}
 
@@ -29,6 +30,7 @@ public abstract class CreateSingletonGenerator extends AbstractLimpetAction
 			String name = "new " + getName();
 			double value;
 
+			
 			InputDialog dlgName = new InputDialog(Display.getCurrent().getActiveShell(),
 					"New variable", "Enter name for variable", "", null);
 			if (dlgName.open() == Window.OK)
@@ -61,9 +63,9 @@ public abstract class CreateSingletonGenerator extends AbstractLimpetAction
 					ISelection selection = getSelection();
 					IStructuredSelection stru = (IStructuredSelection) selection;
 					Object first = stru.getFirstElement();
-					if (first instanceof GroupWrapper)
+					if (first instanceof IGroupWrapper)
 					{
-						GroupWrapper gW = (GroupWrapper) first;
+						IGroupWrapper gW = (IGroupWrapper) first;
 						gW.getGroup().add(newData);
 					}
 					else

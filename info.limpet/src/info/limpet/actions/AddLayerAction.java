@@ -1,12 +1,9 @@
-package info.limpet.rcp.actions;
+package info.limpet.actions;
 
 import java.util.Collection;
 
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.PlatformUI;
-
 import info.limpet.ICommand;
+import info.limpet.IContext;
 import info.limpet.IOperation;
 import info.limpet.IStore.IStoreItem;
 import info.limpet.data.operations.AddLayerOperation;
@@ -14,11 +11,11 @@ import info.limpet.data.operations.AddLayerOperation;
 public class AddLayerAction extends AbstractLimpetAction
 {
 
-	public AddLayerAction()
+	public AddLayerAction(IContext context)
 	{
+		super(context);
 		setText("Add Layer");
-		setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
-				.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE));
+		setImageDescriptor(context.getImageDescriptor(IContext.ADD_LAYER_ACTION_NAME));
 	}
 
 	@Override
@@ -29,8 +26,7 @@ public class AddLayerAction extends AbstractLimpetAction
 				.actionsFor(getSuitableObjects(), getStore(), getContext());
 		if (commands.size() < 1)
 		{
-			MessageDialog.openWarning(getShell(), "Error",
-					"Cannot run the action for current selection");
+			getContext().openWarning("Error", "Cannot run the action for current selection");
 		}
 		else
 		{

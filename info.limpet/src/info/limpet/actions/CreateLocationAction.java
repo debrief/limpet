@@ -1,4 +1,4 @@
-package info.limpet.rcp.actions;
+package info.limpet.actions;
 
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.viewers.ISelection;
@@ -7,20 +7,21 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Display;
 import org.opengis.geometry.Geometry;
 
+import info.limpet.IContext;
 import info.limpet.IContext.Status;
 import info.limpet.IStore;
 import info.limpet.data.impl.samples.StockTypes.NonTemporal;
 import info.limpet.data.operations.spatial.GeoSupport;
-import info.limpet.rcp.Activator;
-import info.limpet.rcp.data_provider.data.GroupWrapper;
+import info.limpet.data.store.IGroupWrapper;
 
 public class CreateLocationAction extends AbstractLimpetAction
 {
 
-	public CreateLocationAction()
+	public CreateLocationAction(IContext context)
 	{
+		super(context);
 		setText("Create single location");
-		setImageDescriptor(Activator.getImageDescriptor("icons/variable.png"));
+		setImageDescriptor(context.getImageDescriptor("icons/variable.png"));
 	}
 
 	@Override
@@ -76,9 +77,9 @@ public class CreateLocationAction extends AbstractLimpetAction
 					ISelection selection = getSelection();
 					IStructuredSelection stru = (IStructuredSelection) selection;
 					Object first = stru.getFirstElement();
-					if (first instanceof GroupWrapper)
+					if (first instanceof IGroupWrapper)
 					{
-						GroupWrapper gW = (GroupWrapper) first;
+						IGroupWrapper gW = (IGroupWrapper) first;
 						gW.getGroup().add(newData);
 					}
 					else

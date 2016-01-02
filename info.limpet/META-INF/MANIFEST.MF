@@ -27,6 +27,7 @@ Export-Package: com.thoughtworks.xstream,
  com.thoughtworks.xstream.persistence,
  com.thoughtworks.xstream.security,
  info.limpet,
+ info.limpet.actions,
  info.limpet.analysis,
  info.limpet.data.commands,
  info.limpet.data.csv,
@@ -45,7 +46,8 @@ Require-Bundle: info.limpet.libs;bundle-version="1.0.0";visibility:=reexport,
  info.limpet.geotools;bundle-version="1.0.0";visibility:=reexport,
  org.eclipse.core.resources,
  org.eclipse.core.runtime;bundle-version="3.8.0",
- org.eclipse.core.filesystem
+ org.eclipse.core.filesystem,
+ org.eclipse.jface
 Bundle-Vendor: MWC
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ClassPath: libs/xmlpull-1.1.3.1.jar,

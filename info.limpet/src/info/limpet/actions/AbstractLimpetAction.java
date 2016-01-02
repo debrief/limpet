@@ -1,4 +1,4 @@
-package info.limpet.rcp.actions;
+package info.limpet.actions;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -8,57 +8,37 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
 
 import info.limpet.ICollection;
 import info.limpet.IContext;
 import info.limpet.IStore;
 import info.limpet.IStore.IStoreItem;
 import info.limpet.data.csv.CsvGenerator;
-import info.limpet.rcp.RCPContext;
-import info.limpet.rcp.editors.DataManagerEditor;
 
 public abstract class AbstractLimpetAction extends Action
 {
 
+	private IContext context;
+	
+	public AbstractLimpetAction(IContext context)
+	{
+		super();
+		this.context = context;
+	}
+	
 	protected ISelection getSelection()
 	{
-		IWorkbenchWindow window = PlatformUI.getWorkbench()
-				.getActiveWorkbenchWindow();
-		IWorkbenchPage activePage = window.getActivePage();
-		return activePage.getSelection();
+		return context.getSelection();
 	}
 
 	protected IStore getStore()
 	{
-		IEditorPart activeEditor = getActiveEditor();
-		if (activeEditor instanceof DataManagerEditor)
-		{
-			return ((DataManagerEditor) activeEditor).getStore();
-		}
-		return null;
+		return context.getStore();
 	}
 
 	protected IContext getContext()
 	{
-		IEditorPart activeEditor = getActiveEditor();
-		if (activeEditor instanceof DataManagerEditor)
-		{
-			return ((DataManagerEditor) activeEditor).getContext();
-		}
-		return new RCPContext();
-	}
-
-	protected IEditorPart getActiveEditor()
-	{
-		IWorkbenchWindow window = PlatformUI.getWorkbench()
-				.getActiveWorkbenchWindow();
-		IWorkbenchPage activePage = window.getActivePage();
-		return activePage.getActiveEditor();
+		return context;
 	}
 
 	protected List<IStoreItem> getSuitableObjects()
@@ -92,13 +72,6 @@ public abstract class AbstractLimpetAction extends Action
 		}
 
 		return matches;
-	}
-
-	protected Shell getShell()
-	{
-		IWorkbenchWindow window = PlatformUI.getWorkbench()
-				.getActiveWorkbenchWindow();
-		return window.getShell();
 	}
 
 	protected String getCsvString()

@@ -14,12 +14,24 @@
  *******************************************************************************/
 package info.limpet;
 
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.ISelection;
+
 public interface IContext
 {
 	public static enum Status
 	{
 		INFO, WARNING, ERROR;
 	}
+
+	/**
+	 * action names
+	 */
+	public static final String ADD_LAYER_ACTION_NAME = "addLayer";
+	public static final String COPY_CSV_TO_CLIPBOARD = "copyScvToClipboard";
+	public static final String COPY_CSV_TO_FILE = "copyScvToFile";
+	public static final String GENERATE_DATA = "generateData";
+	public static final String REFRESH_VIEW = "refreshView";
 	
 	/** get a string from the user, or null if the user cancelled the operation
 	 * 
@@ -35,4 +47,40 @@ public interface IContext
 	 * @param string
 	 */
 	public void logError(Status status, String message, Exception e);
+
+	/**
+	 * returns current selection
+	 * 
+	 * @return selection
+	 */
+	public ISelection getSelection();
+
+	/**
+	 * returns storage container for collections
+	 * 
+	 * @return store
+	 */
+	public IStore getStore();
+	
+	/**
+	 * returns image descriptor for action
+	 * 
+	 * @param actionName - action name
+	 * @return image descriptor
+	 */
+	public ImageDescriptor getImageDescriptor(String actionName);
+
+	public void openWarning(String title, String message);
+
+	public void openInformation(String title, String message);
+
+	public String getCsvFilename();
+
+	public boolean openQuestion(String title, String message);
+
+	public void openError(String title, String message);
+
+	public void log(Exception e);
+
+	public void refresh();
 }

@@ -81,23 +81,23 @@ import info.limpet.IOperation;
 import info.limpet.IStore;
 import info.limpet.IStore.IStoreItem;
 import info.limpet.IStoreGroup;
+import info.limpet.actions.AddLayerAction;
+import info.limpet.actions.CopyCsvToClipboardAction;
+import info.limpet.actions.CreateCourseAction;
+import info.limpet.actions.CreateDecibelsAction;
+import info.limpet.actions.CreateDimensionlessAction;
+import info.limpet.actions.CreateFrequencyAction;
+import info.limpet.actions.CreateLocationAction;
+import info.limpet.actions.CreateSpeedAction;
+import info.limpet.actions.ExportCsvToFileAction;
+import info.limpet.actions.GenerateDataAction;
+import info.limpet.actions.RefreshViewAction;
 import info.limpet.data.operations.admin.OperationsLibrary;
 import info.limpet.data.persistence.xml.XStreamHandler;
 import info.limpet.data.store.InMemoryStore;
 import info.limpet.data.store.InMemoryStore.StoreChangeListener;
 import info.limpet.data.store.InMemoryStore.StoreGroup;
 import info.limpet.rcp.RCPContext;
-import info.limpet.rcp.actions.AddLayerAction;
-import info.limpet.rcp.actions.CopyCsvToClipboardAction;
-import info.limpet.rcp.actions.CreateCourseAction;
-import info.limpet.rcp.actions.CreateDecibelsAction;
-import info.limpet.rcp.actions.CreateDimensionlessAction;
-import info.limpet.rcp.actions.CreateFrequencyAction;
-import info.limpet.rcp.actions.CreateLocationAction;
-import info.limpet.rcp.actions.CreateSpeedAction;
-import info.limpet.rcp.actions.ExportCsvToFileAction;
-import info.limpet.rcp.actions.GenerateDataAction;
-import info.limpet.rcp.actions.RefreshViewAction;
 import info.limpet.rcp.data_provider.data.DataModel;
 import info.limpet.rcp.editors.dnd.DataManagerDropAdapter;
 
@@ -414,17 +414,17 @@ public class DataManagerEditor extends EditorPart
 
 	private void makeActions()
 	{
-		generateData = new GenerateDataAction();
-		addLayer = new AddLayerAction();
-		refreshView = new RefreshViewAction();
-		copyCsvToClipboard = new CopyCsvToClipboardAction();
-		copyCsvToFile = new ExportCsvToFileAction();
-		createDimensionless = new CreateDimensionlessAction();
-		createFrequency = new CreateFrequencyAction();
-		createDecibels = new CreateDecibelsAction();
-		createSpeed = new CreateSpeedAction();
-		createCourse = new CreateCourseAction();
-		createLocation = new CreateLocationAction();
+		generateData = new GenerateDataAction(_context);
+		addLayer = new AddLayerAction(_context);
+		refreshView = new RefreshViewAction(_context);
+		copyCsvToClipboard = new CopyCsvToClipboardAction(_context);
+		copyCsvToFile = new ExportCsvToFileAction(_context);
+		createDimensionless = new CreateDimensionlessAction(_context);
+		createFrequency = new CreateFrequencyAction(_context);
+		createDecibels = new CreateDecibelsAction(_context);
+		createSpeed = new CreateSpeedAction(_context);
+		createCourse = new CreateCourseAction(_context);
+		createLocation = new CreateLocationAction(_context);
 	}
 
 	public void showMessage(String message)
