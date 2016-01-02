@@ -114,7 +114,7 @@ public class ObjectCollection<T extends Object> implements IObjectCollection<T>
 	}
 
 	@UIProperty(name="Children", category=UIProperty.CATEGORY_METADATA)
-	public int getSize()
+	public int getValuesCount()
 	{
 		return size();
 	}

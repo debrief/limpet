@@ -179,4 +179,13 @@ public class QuantityHelper<T extends Quantity> implements IBaseQuantityCollecti
 	{
 		return _range;
 	}
+
+	public double getValue()
+	{
+		if(_values.size() != 1)
+		{
+			throw new RuntimeException("We only call this on singletons");
+		}
+		return _values.iterator().next().doubleValue(getUnits());
+	}
 }

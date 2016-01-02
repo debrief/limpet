@@ -139,7 +139,7 @@ public class TemporalQuantityCollection<T extends Quantity> extends
 		return _qHelper.getDimension();
 	}
 
-	@UIProperty(name="Units", category=UIProperty.CATEGORY_METADATA)
+	@UIProperty(name="Units", category=UIProperty.CATEGORY_VALUE)
 	@Override
 	public Unit<T> getUnits()
 	{
@@ -249,5 +249,16 @@ public class TemporalQuantityCollection<T extends Quantity> extends
 		}
 
 		return res;
+	}
+	
+	@UIProperty(name="Value", category=UIProperty.CATEGORY_VALUE, visibleWhen="valuesCount == 1")
+	public double getSingletonValue() {
+		initQHelper();
+		return _qHelper.getValue();
+	}
+
+	public void setSingletonValue(double newValue) {
+		replaceSingleton(newValue);
+		fireDataChanged();
 	}
 }

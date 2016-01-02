@@ -8,7 +8,14 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import org.apache.commons.jexl3.JexlBuilder;
+import org.apache.commons.jexl3.JexlContext;
+import org.apache.commons.jexl3.JexlEngine;
+import org.apache.commons.jexl3.JexlExpression;
+import org.apache.commons.jexl3.MapContext;
+import org.apache.commons.jexl3.internal.Script;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
@@ -45,6 +52,8 @@ public class ReflectivePropertySource implements IPropertySource
 		myHandlers.add(PropertyTypeHandler.STRING);
 		myHandlers.add(PropertyTypeHandler.BOOLEAN);
 		myHandlers.add(PropertyTypeHandler.INTEGER);
+		myHandlers.add(PropertyTypeHandler.DOUBLE);
+		myHandlers.add(PropertyTypeHandler.UNIT);
 	}
 
 	@Override
@@ -58,12 +67,12 @@ public class ReflectivePropertySource implements IPropertySource
 	{
 		if (propertyDescriptors == null)
 		{
-			initPropertyDescriptors(object.getClass());
+			initPropertyDescriptors(object);
 		}
 		return propertyDescriptors;
 	}
 
-	private void initPropertyDescriptors(Class<?> cls)
+	private void initPropertyDescriptors(Object object)
 	{
 
 		descriptorPerProperty = new HashMap<String, PropertyDescriptor>();
@@ -73,7 +82,7 @@ public class ReflectivePropertySource implements IPropertySource
 		try
 		{
 			PropertyDescriptor[] beanPropertyDescriptors = Introspector.getBeanInfo(
-					cls).getPropertyDescriptors();
+					object.getClass()).getPropertyDescriptors();
 			for (PropertyDescriptor beanPropertyDescriptor : beanPropertyDescriptors)
 			{
 				UIProperty annotation = beanPropertyDescriptor.getReadMethod()
@@ -81,6 +90,11 @@ public class ReflectivePropertySource implements IPropertySource
 				if (annotation != null)
 				{
 
+					// skip descriptor if not visible
+					if (!annotation.visibleWhen().isEmpty() && !evaluateVisibility(object, beanPropertyDescriptors, annotation.visibleWhen())) {
+						continue;
+					}
+					
 					org.eclipse.ui.views.properties.PropertyDescriptor descriptor = null;
 					
 					String propId = beanPropertyDescriptor.getName();					
@@ -107,7 +121,7 @@ public class ReflectivePropertySource implements IPropertySource
 		catch (IntrospectionException e)
 		{
 			Activator.logError(Status.ERROR,
-					"Could not load property descriptors for class " + cls.getName(), e);
+					"Could not load property descriptors for class " + object.getClass().getName(), e);
 
 		}
 
@@ -115,17 +129,67 @@ public class ReflectivePropertySource implements IPropertySource
 				.toArray(new IPropertyDescriptor[result.size()]);
 	}
 
+	private boolean evaluateVisibility(Object object,
+		PropertyDescriptor[] beanPropertyDescriptors, String visibleWhen)
+	{
+		Map<String, PropertyDescriptor> descriptorsMap = new HashMap<String, PropertyDescriptor>();
+		for (PropertyDescriptor pd : beanPropertyDescriptors) {
+			descriptorsMap.put(pd.getName(), pd);
+		}
+		
+		JexlEngine jexl = new JexlBuilder().create();
+		JexlExpression expression = jexl.createExpression(visibleWhen);
+    JexlContext context = new MapContext();
+    
+    Set<List<String>> vars = ((Script)expression).getVariables();
+    for (List<String> varList : vars) {
+			for (String varName : varList) {
+				PropertyDescriptor propertyDescriptor = descriptorsMap.get(varName);
+				if (propertyDescriptor != null) {
+					try {
+						Object value = propertyDescriptor.getReadMethod().invoke(object);
+						context.set(varName, value);
+					} catch (Exception e) {
+						Activator.logError(Status.ERROR,
+								"Could not retrieve value for property " + varName, e);
+					}
+				}
+			}
+		}
+    
+		return (boolean) expression.evaluate(context);
+	}
+
+	public static void main(String[] args)
+	{
+		JexlEngine jexl = new JexlBuilder().create();
+		JexlExpression expression = jexl.createExpression("test == 1");
+		Set<List<String>> variables = ((Script)expression).getVariables();
+		
+		Object rs = expression.evaluate(new MapContext());
+		System.out.println(rs);
+	}
+	
 	@Override
 	public Object getPropertyValue(Object id)
 	{
 		PropertyDescriptor descriptor = descriptorPerProperty.get(id);
+		
 		try
 		{
-			return descriptor.getReadMethod().invoke(object);
+			Object value = descriptor.getReadMethod().invoke(object);
+			
+			// editable properties use custom cell editor, thus value needs conversion
+			if (descriptor.getWriteMethod() != null) {
+				PropertyTypeHandler propertyTypeHandler = getPropertyTypeHandler(descriptor.getPropertyType());
+				value = propertyTypeHandler.toCellEditorValue(value);				
+			}
+			
+			return value;
 		}
 		catch (Exception e)
 		{
-			Activator.logError(Status.ERROR, "Could not retrive value for property "
+			Activator.logError(Status.ERROR, "Could not retrieve value for property "
 					+ id, e);
 			return null;
 		}
@@ -161,6 +225,8 @@ public class ReflectivePropertySource implements IPropertySource
 	public void setPropertyValue(Object id, Object value)
 	{
 		PropertyDescriptor descriptor = descriptorPerProperty.get(id);
+		PropertyTypeHandler propertyTypeHandler = getPropertyTypeHandler(descriptor.getPropertyType());
+		value = propertyTypeHandler.toModelValue(value);
 		try
 		{
 			descriptor.getWriteMethod().invoke(object, value);
