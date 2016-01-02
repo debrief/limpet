@@ -4,6 +4,7 @@ import info.limpet.ICommand;
 import info.limpet.IQuantityCollection;
 import info.limpet.ITemporalQuantityCollection;
 import info.limpet.QuantityRange;
+import info.limpet.UIProperty;
 import info.limpet.data.impl.helpers.QuantityHelper;
 
 import java.util.ArrayList;
@@ -138,6 +139,7 @@ public class TemporalQuantityCollection<T extends Quantity> extends
 		return _qHelper.getDimension();
 	}
 
+	@UIProperty(name="Units", category=UIProperty.CATEGORY_METADATA)
 	@Override
 	public Unit<T> getUnits()
 	{

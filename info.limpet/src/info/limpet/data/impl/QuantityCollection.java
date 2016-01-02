@@ -10,6 +10,7 @@ import javax.measure.unit.Unit;
 import info.limpet.ICommand;
 import info.limpet.IQuantityCollection;
 import info.limpet.QuantityRange;
+import info.limpet.UIProperty;
 import info.limpet.data.impl.helpers.QuantityHelper;
 
 
@@ -79,6 +80,7 @@ public class QuantityCollection<T extends Quantity> extends
 		return _qHelper.getDimension();
 	}
 	
+	@UIProperty(name="Units", category=UIProperty.CATEGORY_METADATA)
 	@Override
 	public Unit<T> getUnits()
 	{
