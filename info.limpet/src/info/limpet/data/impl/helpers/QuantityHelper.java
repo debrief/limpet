@@ -161,7 +161,7 @@ public class QuantityHelper<T extends Quantity> implements IBaseQuantityCollecti
 		}
 
 		// create a new value
-		Measurable<T> newVal = Measure.valueOf((Double)newValue, getUnits());
+		Measurable<T> newVal = Measure.valueOf(newValue.doubleValue(), getUnits());
 		
 		// drop the existing value
 		_values.clear();

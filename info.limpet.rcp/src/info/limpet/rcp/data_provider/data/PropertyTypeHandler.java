@@ -150,7 +150,7 @@ abstract class PropertyTypeHandler
 	};
 	
 	/**
-	 * A handler for double type properties
+	 * A handler for double primitive type and Number type properties.
 	 */
 	static final PropertyTypeHandler DOUBLE = new PropertyTypeHandler()
 	{
@@ -170,7 +170,7 @@ abstract class PropertyTypeHandler
 		@Override
 		public boolean canHandle(Class<?> propertyType)
 		{
-			return "double".equals(propertyType.getName());
+			return Number.class == propertyType || "double".equals(propertyType.getName());
 		}
 		
 		protected Object toModelValue(Object propertyValue) {

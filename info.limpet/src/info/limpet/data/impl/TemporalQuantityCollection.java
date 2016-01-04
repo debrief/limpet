@@ -257,7 +257,7 @@ public class TemporalQuantityCollection<T extends Quantity> extends
 		return _qHelper.getValue();
 	}
 
-	public void setSingletonValue(double newValue) {
+	public void setSingletonValue(Number newValue) {
 		replaceSingleton(newValue);
 		fireDataChanged();
 	}
