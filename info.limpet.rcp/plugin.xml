@@ -115,7 +115,8 @@
          point="org.eclipse.ui.intro">
       <intro
             class="org.eclipse.ui.intro.config.CustomizableIntroPart"
-            id="info.limpet.product.intro">
+            id="info.limpet.product.intro"
+            label="Welcome to Limpet">
       </intro>
       <introProductBinding
             introId="info.limpet.product.intro"
