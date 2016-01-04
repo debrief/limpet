@@ -153,7 +153,7 @@ public class QuantityHelper<T extends Quantity> implements IBaseQuantityCollecti
 		return _myUnits;
 	}
 
-	public void replace(double newValue)
+	public void replace(Number newValue)
 	{
 		if(_values.size() != 1)
 		{
@@ -161,7 +161,7 @@ public class QuantityHelper<T extends Quantity> implements IBaseQuantityCollecti
 		}
 
 		// create a new value
-		Measurable<T> newVal = Measure.valueOf(newValue, getUnits());
+		Measurable<T> newVal = Measure.valueOf((Double)newValue, getUnits());
 		
 		// drop the existing value
 		_values.clear();

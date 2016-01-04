@@ -24,14 +24,14 @@ public interface IQuantityCollection<Q extends Quantity> extends
 	 * 
 	 * @param newValue
 	 */
-	public void replaceSingleton(double newValue);
+	public void replaceSingleton(Number newValue);
 	
 	/** if this collection just contains a single value, we allow
 	 * that value to be retrieved
 	 * 
 	 * @return the single value
 	 */
-	public double getSingletonValue();
+	public Number getSingletonValue();
 
 	/** allow the range of this collection to be specified
 	 * 

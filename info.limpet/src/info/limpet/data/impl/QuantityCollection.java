@@ -144,13 +144,13 @@ public class QuantityCollection<T extends Quantity> extends
 	}
 
 	@Override
-	public void replaceSingleton(double newValue)
+	public void replaceSingleton(Number newValue)
 	{
 		_qHelper.replace(newValue);
 	}
 
 	@UIProperty(name="Value", category=UIProperty.CATEGORY_VALUE, visibleWhen="valuesCount == 1")
-	public double getSingletonValue() {
+	public Number getSingletonValue() {
 		initQHelper();
 		return _qHelper.getValue();
 	}

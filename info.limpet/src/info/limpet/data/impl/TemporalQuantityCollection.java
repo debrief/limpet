@@ -148,7 +148,7 @@ public class TemporalQuantityCollection<T extends Quantity> extends
 	}
 
 	@Override
-	public void replaceSingleton(double newValue)
+	public void replaceSingleton(Number newValue)
 	{
 		initQHelper();
 		_qHelper.replace(newValue);
@@ -252,7 +252,7 @@ public class TemporalQuantityCollection<T extends Quantity> extends
 	}
 	
 	@UIProperty(name="Value", category=UIProperty.CATEGORY_VALUE, visibleWhen="valuesCount == 1")
-	public double getSingletonValue() {
+	public Number getSingletonValue() {
 		initQHelper();
 		return _qHelper.getValue();
 	}
