@@ -12,9 +12,9 @@ before_script:
 - sleep 3
 script:
 - cd info.limpet.targetplatforms
-- mvn clean install site
+- mvn clean install
 - cd ..
-- mvn clean verify -U -B -fae
+- mvn clean verify site -U -B -fae
 - "./deploy_ghpages.sh"
 env:
   global:
