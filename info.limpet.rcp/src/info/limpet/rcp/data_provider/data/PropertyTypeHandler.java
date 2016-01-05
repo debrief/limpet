@@ -1,13 +1,17 @@
 package info.limpet.rcp.data_provider.data;
 
+import info.limpet.IQuantityCollection;
+import info.limpet.QuantityRange;
+import info.limpet.UIProperty;
+import info.limpet.rcp.propertyeditors.SliderPropertyDescriptor;
+
+import javax.measure.Measure;
+import javax.measure.quantity.Quantity;
 import javax.measure.unit.Unit;
 
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
 import org.eclipse.ui.views.properties.TextPropertyDescriptor;
-
-import info.limpet.UIProperty;
-import info.limpet.rcp.propertyeditors.SliderPropertyDescriptor;
 
 /**
  * A helper class that encapsulates some logic about certain property types.
@@ -29,9 +33,10 @@ abstract class PropertyTypeHandler
 	 * Some {@link CellEditor}s represent the model property with different 
 	 * type in the UI, for example String for double values.
 	 * @param cellEditorValue the cell editor value
+	 * @param propertyOwner the object that owns the property
 	 * @return the model value
 	 */
-	protected Object toModelValue(Object cellEditorValue) {
+	protected Object toModelValue(Object cellEditorValue, Object propertyOwner) {
 		return cellEditorValue;
 	}
 	
@@ -39,9 +44,10 @@ abstract class PropertyTypeHandler
 	 * Some {@link CellEditor}s represent the model property with different 
 	 * type in the UI, for example String for double values.
 	 * @param modelValue the model value
+	 * @param propertyOwner the object that owns the property
 	 * @return the cell editor value
 	 */
-	protected Object toCellEditorValue(Object modelValue) {
+	protected Object toCellEditorValue(Object modelValue, Object properyOwner) {
 		return modelValue;
 	}
 	/**
@@ -173,11 +179,11 @@ abstract class PropertyTypeHandler
 			return Number.class == propertyType || "double".equals(propertyType.getName());
 		}
 		
-		protected Object toModelValue(Object propertyValue) {
-			return Double.parseDouble((String) propertyValue);
+		protected Object toModelValue(Object cellEditorValue, Object propertyOwner) {
+			return Double.parseDouble((String) cellEditorValue);
 		};
 		
-		protected Object toCellEditorValue(Object modelValue) {
+		protected Object toCellEditorValue(Object modelValue, Object propertyOwner) {
 			return modelValue + "";
 		};
 	};
@@ -208,14 +214,99 @@ abstract class PropertyTypeHandler
 			return propertyType == Unit.class;
 		}
 		
-		protected Object toModelValue(Object propertyValue) {
+		protected Object toModelValue(Object cellEditorValue, Object propertyOwner) {
 			// TODO: here we should have some form of conversion from string to Unit 
 			// (perhaps reuse the logic already in CsvParser class) 
-			return propertyValue;
+			return cellEditorValue;
 		};
 		
-		protected Object toCellEditorValue(Object modelValue) {
+		protected Object toCellEditorValue(Object modelValue, Object propertyOwner) {
 			return modelValue + "";
+		};
+	};
+
+	/**
+	 * A handler for {@link QuantityRange} typed properties
+	 */
+	static final PropertyTypeHandler QUANTITY_RANGE = new PropertyTypeHandler()
+	{
+
+		@Override
+		public Object getDefaulValue(UIProperty metadata)
+		{
+			return null;
+		}
+
+		protected PropertyDescriptor doCreatePropertyDescriptor(String propertyId,
+				UIProperty metadata)
+		{
+			return new TextPropertyDescriptor(propertyId, metadata.name());
+		}
+
+		@Override
+		public boolean canHandle(Class<?> propertyType)
+		{
+			return propertyType == QuantityRange.class;
+		}
+		
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		protected Object toModelValue(Object cellEditorValue, Object propertyOwner) {
+			
+			QuantityRange newR = null;
+			
+			IQuantityCollection<?> tt = (IQuantityCollection<?>) propertyOwner;
+			// try to get a range from the string
+			String str = (String) cellEditorValue;
+			if (str.length() > 0)
+			{
+				// ok, split it up
+				String[] bits = str.split(":");
+				if (bits.length == 2)
+				{
+					String min = bits[0].trim();
+					String max = bits[1].trim();
+					try
+					{
+						double minV = Double.parseDouble(min);
+						double maxV = Double.parseDouble(max);
+						if (maxV > minV)
+						{
+							Unit<?> collUnits = tt.getUnits();
+							newR = new QuantityRange(Measure.valueOf(minV,
+									collUnits), Measure.valueOf(maxV, collUnits));
+						}
+					}
+					catch (NumberFormatException fe)
+					{
+						System.err.println("Failed to extract number range: fe");
+					}
+				}
+				else
+				{
+					System.err.println("Number format string not properly constructed:"
+							+ str + " (should be 1:10)");
+				}
+			}
+			
+			return newR; 
+		};
+		
+		@SuppressWarnings("unchecked")
+		protected Object toCellEditorValue(Object modelValue, Object propertyOwner) {
+			final String str;
+			QuantityRange<Quantity> range = (QuantityRange<Quantity>) modelValue;
+			IQuantityCollection<Quantity> qc = (IQuantityCollection<Quantity>) propertyOwner; 
+			if (range != null)
+			{
+				str = "" + range.getMinimum().longValue(qc.getUnits()) + " : "
+						+ range.getMaximum().longValue(qc.getUnits());
+			}
+			else
+			{
+				str = " : ";
+			}
+
+			return str;
 		};
 	};
 

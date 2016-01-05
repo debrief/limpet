@@ -160,8 +160,13 @@ public class TemporalQuantityCollection<T extends Quantity> extends
 		initQHelper();
 		_range = range;
 		_qHelper.setRange(range);
+		
+		// tell anyone that wants to know
+		super.fireMetadataChanged();
+
 	}
 
+	@UIProperty(name="Range", category=UIProperty.CATEGORY_METADATA, visibleWhen="valuesCount == 1")
 	@Override
 	public QuantityRange<T> getRange()
 	{

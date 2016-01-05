@@ -54,6 +54,7 @@ public class ReflectivePropertySource implements IPropertySource
 		myHandlers.add(PropertyTypeHandler.INTEGER);
 		myHandlers.add(PropertyTypeHandler.DOUBLE);
 		myHandlers.add(PropertyTypeHandler.UNIT);
+		myHandlers.add(PropertyTypeHandler.QUANTITY_RANGE);
 	}
 
 	@Override
@@ -182,7 +183,7 @@ public class ReflectivePropertySource implements IPropertySource
 			// editable properties use custom cell editor, thus value needs conversion
 			if (descriptor.getWriteMethod() != null) {
 				PropertyTypeHandler propertyTypeHandler = getPropertyTypeHandler(descriptor.getPropertyType());
-				value = propertyTypeHandler.toCellEditorValue(value);				
+				value = propertyTypeHandler.toCellEditorValue(value, object);				
 			}
 			
 			return value;
@@ -226,7 +227,7 @@ public class ReflectivePropertySource implements IPropertySource
 	{
 		PropertyDescriptor descriptor = descriptorPerProperty.get(id);
 		PropertyTypeHandler propertyTypeHandler = getPropertyTypeHandler(descriptor.getPropertyType());
-		value = propertyTypeHandler.toModelValue(value);
+		value = propertyTypeHandler.toModelValue(value, object);
 		try
 		{
 			descriptor.getWriteMethod().invoke(object, value);
