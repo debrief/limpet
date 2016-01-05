@@ -239,9 +239,13 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-checkstyle-plugin</artifactId>
 				<version>2.17</version>
-			</plugin>
-		</plugins>
-	</reporting>
+				<configuration>
+					<configLocation>sun_checks_test.xml</configLocation>
+					<encoding>UTF-8</encoding>
+				</configuration>
+		</plugin>
+	</plugins>
+  </reporting>
   <profiles> 
     <profile> 
       <id>mac</id>
