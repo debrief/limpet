@@ -3,6 +3,7 @@ package info.limpet.rcp.data_provider.data;
 import info.limpet.IQuantityCollection;
 import info.limpet.QuantityRange;
 import info.limpet.UIProperty;
+import info.limpet.data.operations.spatial.GeoSupport;
 import info.limpet.rcp.propertyeditors.SliderPropertyDescriptor;
 
 import javax.measure.Measure;
@@ -12,6 +13,9 @@ import javax.measure.unit.Unit;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
 import org.eclipse.ui.views.properties.TextPropertyDescriptor;
+import org.geotools.geometry.iso.primitive.PointImpl;
+import org.opengis.geometry.Geometry;
+import org.opengis.geometry.primitive.Point;
 
 /**
  * A helper class that encapsulates some logic about certain property types.
@@ -278,7 +282,7 @@ abstract class PropertyTypeHandler
 					}
 					catch (NumberFormatException fe)
 					{
-						System.err.println("Failed to extract number range: fe");
+						System.err.println("Failed to extract number range: " + fe.getMessage());
 					}
 				}
 				else
@@ -310,4 +314,69 @@ abstract class PropertyTypeHandler
 		};
 	};
 
+	/**
+	 * A handler for {@link Geometry} typed properties
+	 */
+	static final PropertyTypeHandler GEOMETRY = new PropertyTypeHandler()
+	{
+
+		@Override
+		public Object getDefaulValue(UIProperty metadata)
+		{
+			return null;
+		}
+
+		protected PropertyDescriptor doCreatePropertyDescriptor(String propertyId,
+				UIProperty metadata)
+		{
+			return new TextPropertyDescriptor(propertyId, metadata.name());
+		}
+
+		@Override
+		public boolean canHandle(Class<?> propertyType)
+		{
+			return propertyType == Geometry.class;
+		}
+		
+		protected Object toModelValue(Object cellEditorValue, Object propertyOwner) {
+			
+			Point newL = null;
+			
+			// try to get a location from the string
+			String str = (String) cellEditorValue;
+			if (str.length() > 0)
+			{
+				// ok, split it up
+				String[] bits = str.split(":");
+				if (bits.length == 2)
+				{
+					String lat = bits[0].trim();
+					String lng = bits[1].trim();
+					try
+					{
+						double latV = Double.parseDouble(lat);
+						double lngV = Double.parseDouble(lng);
+						
+						newL = GeoSupport.getBuilder().createPoint(lngV,latV);
+					}
+					catch (NumberFormatException fe)
+					{
+						System.err.println("Failed to extract number location: " + fe.getMessage());
+					}
+				}
+				else
+				{
+					System.err.println("Number format string not properly constructed:"
+							+ str + " (should be 1:10)");
+				}
+			}
+			
+			return newL; 
+		};
+		
+		protected Object toCellEditorValue(Object modelValue, Object propertyOwner) {
+			PointImpl location = (PointImpl) modelValue;
+			return location.getDirectPosition().getY() + " : " + location.getDirectPosition().getX();					
+		};
+	};
 }

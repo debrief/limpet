@@ -8,6 +8,7 @@ import static javax.measure.unit.SI.METRE;
 import static javax.measure.unit.SI.RADIAN;
 import static javax.measure.unit.SI.SECOND;
 import info.limpet.ICommand;
+import info.limpet.UIProperty;
 import info.limpet.data.impl.ObjectCollection;
 import info.limpet.data.impl.QuantityCollection;
 import info.limpet.data.impl.TemporalObjectCollection;
@@ -425,6 +426,31 @@ public class StockTypes
 			public List<Geometry> getLocations()
 			{
 				return super.getValues();
+			}
+			
+			@UIProperty(name="Location (lat:long)", category=UIProperty.CATEGORY_VALUE, visibleWhen="valuesCount==1")
+			public Geometry getSingletonLocation() {
+				List<Geometry> locations = getLocations();
+				if(locations.size() != 1)
+				{
+					throw new RuntimeException("We only call this on singletons");
+				}
+				return locations.iterator().next();
+			}
+			
+			public void setSingletonLocation(Geometry location) {
+				List<Geometry> locations = getLocations();
+				if(locations.size() != 1)
+				{
+					throw new RuntimeException("We only call this on singletons");
+				}
+				clear();
+
+				add(location);
+
+				// ok, fire changed!
+				fireDataChanged();
+
 			}
 		}
 

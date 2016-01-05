@@ -55,6 +55,10 @@ public class ReflectivePropertySource implements IPropertySource
 		myHandlers.add(PropertyTypeHandler.DOUBLE);
 		myHandlers.add(PropertyTypeHandler.UNIT);
 		myHandlers.add(PropertyTypeHandler.QUANTITY_RANGE);
+		myHandlers.add(PropertyTypeHandler.GEOMETRY);
+		//TODO: consider that some UI properties would like to provide custom handler 
+		// or one that is not the default. Perhaps make the UIProperty annotation 
+		// provide the handler class as well if needed    
 	}
 
 	@Override
