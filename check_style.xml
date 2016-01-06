@@ -58,9 +58,11 @@
     <!-- Following interprets the header file as regular expressions. -->
     <!-- <module name="RegexpHeader"/>                                -->
 
+	<!-- we're allowing TABS
     <module name="FileTabCharacter">
         <property name="eachLine" value="true"/>
     </module>
+     -->
 
     <module name="RegexpSingleline">
         <!-- \s matches whitespace character, $ matches end of line. -->
@@ -78,10 +80,13 @@
 
         <!-- Checks for Javadoc comments.                     -->
         <!-- See http://checkstyle.sf.net/config_javadoc.html -->
+        
+        <!--  TODO: reinstate these javadoc tests
         <module name="JavadocMethod"/>
         <module name="JavadocType"/>
         <module name="JavadocVariable"/>
         <module name="JavadocStyle"/>
+         -->
 
 
         <!-- Checks for Naming Conventions.                  -->
@@ -150,7 +155,9 @@
         <!-- See http://checkstyle.sf.net/config_blocks.html -->
         <module name="AvoidNestedBlocks"/>
         <module name="EmptyBlock"/>
-        <module name="LeftCurly"/>
+        <module name="LeftCurly">
+        	<property name="option" value="nl"/>
+        </module>
         <module name="NeedBraces"/>
         <module name="RightCurly"/>
 
