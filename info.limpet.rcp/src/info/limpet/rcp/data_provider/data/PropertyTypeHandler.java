@@ -4,12 +4,14 @@ import info.limpet.IQuantityCollection;
 import info.limpet.QuantityRange;
 import info.limpet.UIProperty;
 import info.limpet.data.operations.spatial.GeoSupport;
+import info.limpet.rcp.Activator;
 import info.limpet.rcp.propertyeditors.SliderPropertyDescriptor;
 
 import javax.measure.Measure;
 import javax.measure.quantity.Quantity;
 import javax.measure.unit.Unit;
 
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
 import org.eclipse.ui.views.properties.TextPropertyDescriptor;
@@ -282,13 +284,15 @@ abstract class PropertyTypeHandler
 					}
 					catch (NumberFormatException fe)
 					{
-						System.err.println("Failed to extract number range: " + fe.getMessage());
+						Activator.logError(Status.ERROR,
+								"Failed to extract number range", fe);						
 					}
 				}
 				else
 				{
-					System.err.println("Number format string not properly constructed:"
-							+ str + " (should be 1:10)");
+					Activator.logError(Status.ERROR,
+							"Number format string not properly constructed:"
+									+ str + " (should be 1:10)", null);
 				}
 			}
 			
@@ -361,13 +365,15 @@ abstract class PropertyTypeHandler
 					}
 					catch (NumberFormatException fe)
 					{
-						System.err.println("Failed to extract number location: " + fe.getMessage());
+						Activator.logError(Status.ERROR,
+								"Failed to extract number location", fe);
 					}
 				}
 				else
 				{
-					System.err.println("Number format string not properly constructed:"
-							+ str + " (should be 1:10)");
+					Activator.logError(Status.ERROR,
+							"Number format string not properly constructed:"
+									+ str + " (should be 1:10)", null);
 				}
 			}
 			
