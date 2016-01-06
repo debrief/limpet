@@ -14,11 +14,11 @@
  *******************************************************************************/
 package info.limpet.data.impl;
 
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.ISelection;
+import java.util.List;
 
 import info.limpet.IContext;
 import info.limpet.IStore;
+import info.limpet.IStore.IStoreItem;
 
 public class MockContext implements IContext
 {
@@ -37,21 +37,7 @@ public class MockContext implements IContext
 	}
 
 	@Override
-	public ISelection getSelection()
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public IStore getStore()
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ImageDescriptor getImageDescriptor(String actionName)
 	{
 		// TODO Auto-generated method stub
 		return null;
@@ -101,6 +87,20 @@ public class MockContext implements IContext
 
 	@Override
 	public void refresh()
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public List<IStoreItem> getSelection()
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void placeOnClipboard(String text)
 	{
 		// TODO Auto-generated method stub
 		

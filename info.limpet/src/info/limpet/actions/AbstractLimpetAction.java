@@ -1,13 +1,20 @@
+/*******************************************************************************
+ *  Limpet - the Lightweight InforMation ProcEssing Toolkit
+ *  http://limpet.info
+ *
+ *  (C) 2015-2016, Deep Blue C Technologies Ltd
+ *
+ *  This library is free software; you can redistribute it and/or
+ *  modify it under the terms of the Eclipse Public License v1.0
+ *  (http://www.eclipse.org/legal/epl-v10.html)
+ *
+ *  This library is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *******************************************************************************/
 package info.limpet.actions;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
 
 import info.limpet.ICollection;
 import info.limpet.IContext;
@@ -15,10 +22,12 @@ import info.limpet.IStore;
 import info.limpet.IStore.IStoreItem;
 import info.limpet.data.csv.CsvGenerator;
 
-public abstract class AbstractLimpetAction extends Action
+public abstract class AbstractLimpetAction 
 {
 
 	private IContext context;
+	private String text;
+	private String imageName;
 	
 	public AbstractLimpetAction(IContext context)
 	{
@@ -26,7 +35,7 @@ public abstract class AbstractLimpetAction extends Action
 		this.context = context;
 	}
 	
-	protected ISelection getSelection()
+	protected List<IStoreItem> getSelection()
 	{
 		return context.getSelection();
 	}
@@ -41,47 +50,36 @@ public abstract class AbstractLimpetAction extends Action
 		return context;
 	}
 
-	protected List<IStoreItem> getSuitableObjects()
-	{
-		ArrayList<IStoreItem> matches = new ArrayList<IStoreItem>();
-
-		// ok, find the applicable operations
-		ISelection sel = getSelection();
-		if (!(sel instanceof IStructuredSelection))
-		{
-			return matches;
-		}
-		IStructuredSelection str = (IStructuredSelection) sel;
-		Iterator<?> iter = str.iterator();
-		while (iter.hasNext())
-		{
-			Object object = (Object) iter.next();
-			if (object instanceof IStoreItem)
-			{
-				matches.add((IStoreItem) object);
-			}
-			else if (object instanceof IAdaptable)
-			{
-				IAdaptable ada = (IAdaptable) object;
-				Object match = ada.getAdapter(IStoreItem.class);
-				if (match != null)
-				{
-					matches.add((IStoreItem) match);
-				}
-			}
-		}
-
-		return matches;
-	}
-
 	protected String getCsvString()
 	{
-		List<IStoreItem> selection = getSuitableObjects();
+		List<IStoreItem> selection = getSelection();
 		if (selection.size() == 1 && selection.get(0) instanceof ICollection)
 		{
 			return CsvGenerator.generate((ICollection) selection.get(0));
 		}
 		return null;
 	}
+	
+	public void setText(String text)
+	{
+		this.text = text;
+	}
 
+	public String getText()
+	{
+		return text;
+	}
+
+	public abstract void run();
+
+	public String getImageName()
+	{
+		return imageName;
+	}
+
+	public void setImageName(String imageName)
+	{
+		this.imageName = imageName;
+	}
+	
 }

@@ -14,23 +14,31 @@
  *******************************************************************************/
 package info.limpet.rcp;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
 import info.limpet.IContext;
 import info.limpet.IStore;
+import info.limpet.IStore.IStoreItem;
 import info.limpet.rcp.editors.DataManagerEditor;
 
 public class RCPContext implements IContext
@@ -78,15 +86,6 @@ public class RCPContext implements IContext
 		Activator.logError(statCode, message, e);
 	}
 
-	@Override
-	public ISelection getSelection()
-	{
-		IWorkbenchWindow window = PlatformUI.getWorkbench()
-				.getActiveWorkbenchWindow();
-		IWorkbenchPage activePage = window.getActivePage();
-		return activePage.getSelection();
-	}
-
 	private IEditorPart getActiveEditor()
 	{
 		IWorkbenchWindow window = PlatformUI.getWorkbench()
@@ -113,32 +112,7 @@ public class RCPContext implements IContext
 		return null;
 	}
 
-	@Override
-	public ImageDescriptor getImageDescriptor(String actionName)
-	{
-		switch (actionName)
-		{
-		case ADD_LAYER_ACTION_NAME:
-			return PlatformUI.getWorkbench().getSharedImages()
-					.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE);
-		case COPY_CSV_TO_CLIPBOARD:
-			return PlatformUI.getWorkbench().getSharedImages()
-					.getImageDescriptor(ISharedImages.IMG_ELCL_SYNCED);
-		case COPY_CSV_TO_FILE:
-			return PlatformUI.getWorkbench().getSharedImages()
-					.getImageDescriptor(ISharedImages.IMG_ETOOL_SAVEAS_EDIT);
-		case GENERATE_DATA:
-			return PlatformUI.getWorkbench().getSharedImages()
-					.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD);
-		case REFRESH_VIEW:
-			return PlatformUI.getWorkbench().getSharedImages()
-					.getImageDescriptor(ISharedImages.IMG_TOOL_REDO);
-		default:
-			break;
-		}
-		return Activator.getImageDescriptor(actionName);
-	}
-
+	
 	@Override
 	public void openWarning(String title, String message)
 	{
@@ -205,6 +179,54 @@ public class RCPContext implements IContext
 		{
 			((DataManagerEditor)editor).refresh();
 		}
+	}
+
+	@Override
+	public void placeOnClipboard(String text)
+	{
+		final Clipboard cb = new Clipboard(Display.getCurrent());
+		TextTransfer textTransfer = TextTransfer.getInstance();
+		cb.setContents(new Object[]
+		{ text }, new Transfer[]
+		{ textTransfer });
+	}
+
+	// suitable objects
+	@Override
+	public List<IStoreItem> getSelection()
+	{
+		List<IStoreItem> matches = new ArrayList<IStoreItem>();
+
+		// ok, find the applicable operations
+		IWorkbenchWindow window = PlatformUI.getWorkbench()
+				.getActiveWorkbenchWindow();
+		IWorkbenchPage activePage = window.getActivePage();
+		ISelection sel = activePage.getSelection();
+		if (!(sel instanceof IStructuredSelection))
+		{
+			return matches;
+		}
+		IStructuredSelection str = (IStructuredSelection) sel;
+		Iterator<?> iter = str.iterator();
+		while (iter.hasNext())
+		{
+			Object object = (Object) iter.next();
+			if (object instanceof IStoreItem)
+			{
+				matches.add((IStoreItem) object);
+			}
+			else if (object instanceof IAdaptable)
+			{
+				IAdaptable ada = (IAdaptable) object;
+				Object match = ada.getAdapter(IStoreItem.class);
+				if (match != null)
+				{
+					matches.add((IStoreItem) match);
+				}
+			}
+		}
+
+		return matches;
 	}
 
 }

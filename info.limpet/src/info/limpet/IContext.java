@@ -14,8 +14,9 @@
  *******************************************************************************/
 package info.limpet;
 
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.ISelection;
+import java.util.List;
+
+import info.limpet.IStore.IStoreItem;
 
 public interface IContext
 {
@@ -53,7 +54,7 @@ public interface IContext
 	 * 
 	 * @return selection
 	 */
-	public ISelection getSelection();
+	public List<IStoreItem> getSelection();
 
 	/**
 	 * returns storage container for collections
@@ -62,14 +63,6 @@ public interface IContext
 	 */
 	public IStore getStore();
 	
-	/**
-	 * returns image descriptor for action
-	 * 
-	 * @param actionName - action name
-	 * @return image descriptor
-	 */
-	public ImageDescriptor getImageDescriptor(String actionName);
-
 	public void openWarning(String title, String message);
 
 	public void openInformation(String title, String message);
@@ -83,4 +76,6 @@ public interface IContext
 	public void log(Exception e);
 
 	public void refresh();
+
+	public void placeOnClipboard(String text);
 }

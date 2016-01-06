@@ -414,17 +414,17 @@ public class DataManagerEditor extends EditorPart
 
 	private void makeActions()
 	{
-		generateData = new GenerateDataAction(_context);
-		addLayer = new AddLayerAction(_context);
-		refreshView = new RefreshViewAction(_context);
-		copyCsvToClipboard = new CopyCsvToClipboardAction(_context);
-		copyCsvToFile = new ExportCsvToFileAction(_context);
-		createDimensionless = new CreateDimensionlessAction(_context);
-		createFrequency = new CreateFrequencyAction(_context);
-		createDecibels = new CreateDecibelsAction(_context);
-		createSpeed = new CreateSpeedAction(_context);
-		createCourse = new CreateCourseAction(_context);
-		createLocation = new CreateLocationAction(_context);
+		generateData = new ActionWrapper(new GenerateDataAction(_context));
+		addLayer = new ActionWrapper(new AddLayerAction(_context));
+		refreshView = new ActionWrapper(new RefreshViewAction(_context));
+		copyCsvToClipboard = new ActionWrapper(new CopyCsvToClipboardAction(_context));
+		copyCsvToFile = new ActionWrapper(new ExportCsvToFileAction(_context));
+		createDimensionless = new ActionWrapper(new CreateDimensionlessAction(_context));
+		createFrequency = new ActionWrapper(new CreateFrequencyAction(_context));
+		createDecibels = new ActionWrapper(new CreateDecibelsAction(_context));
+		createSpeed = new ActionWrapper(new CreateSpeedAction(_context));
+		createCourse = new ActionWrapper(new CreateCourseAction(_context));
+		createLocation = new ActionWrapper(new CreateLocationAction(_context));
 	}
 
 	public void showMessage(String message)
