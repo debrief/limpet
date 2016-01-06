@@ -138,7 +138,7 @@ public class ExportCsvToFileAction implements IOperation<IStoreItem>
 			ICommand<IStoreItem> newC = null;
 			if (selection.size() == 1)
 			{
-				newC = new ExportCsvToFileCommand("Export to CSV", selection,
+				newC = new ExportCsvToFileCommand("Export to CSV file", selection,
 						destination, context);
 				res.add(newC);
 			}

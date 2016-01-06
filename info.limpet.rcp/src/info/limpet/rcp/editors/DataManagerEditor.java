@@ -15,27 +15,19 @@
 package info.limpet.rcp.editors;
 
 import info.limpet.IChangeListener;
-import info.limpet.ICollection;
 import info.limpet.ICommand;
 import info.limpet.IContext;
 import info.limpet.IOperation;
 import info.limpet.IStore;
 import info.limpet.IStore.IStoreItem;
 import info.limpet.IStoreGroup;
-import info.limpet.data.impl.QuantityCollection;
-import info.limpet.data.impl.samples.StockTypes;
 import info.limpet.data.operations.AddLayerOperation;
 import info.limpet.data.operations.GenerateDummyDataOperation;
-import info.limpet.data.operations.admin.CopyCsvToClipboardAction;
-import info.limpet.data.operations.admin.CreateLocationAction;
-import info.limpet.data.operations.admin.CreateSingletonGenerator;
-import info.limpet.data.operations.admin.ExportCsvToFileAction;
 import info.limpet.data.operations.admin.OperationsLibrary;
 import info.limpet.data.persistence.xml.XStreamHandler;
 import info.limpet.data.store.InMemoryStore;
 import info.limpet.data.store.InMemoryStore.StoreChangeListener;
 import info.limpet.data.store.InMemoryStore.StoreGroup;
-import info.limpet.rcp.Activator;
 import info.limpet.rcp.RCPContext;
 import info.limpet.rcp.data_provider.data.DataModel;
 import info.limpet.rcp.editors.dnd.DataManagerDropAdapter;
@@ -107,8 +99,6 @@ public class DataManagerEditor extends EditorPart
 	private TreeViewer viewer;
 	private IMenuListener _menuListener;
 	private Action refreshView;
-	private Action copyCsvToClipboard;
-	private Action copyCsvToFile;
 	private Action generateData;
 	private Action addFolder;
 	private boolean _dirty = false;
@@ -127,12 +117,6 @@ public class DataManagerEditor extends EditorPart
 			viewer.refresh();
 		}
 	};
-	private Action createDimensionless;
-	private Action createFrequency;
-	private Action createDecibels;
-	private Action createSpeed;
-	private Action createCourse;
-	private Action createLocation;
 	private IContext _context = new RCPContext();
 
 	private IResourceChangeListener resourceChangeListener = new IResourceChangeListener()
@@ -423,68 +407,6 @@ public class DataManagerEditor extends EditorPart
 			}
 		};
 
-		createDimensionless = new OperationWrapper(new CreateSingletonGenerator(
-				"dimensionless")
-		{
-			protected QuantityCollection<?> generate(String name)
-			{
-				return new StockTypes.NonTemporal.DimensionlessDouble(name);
-			}
-		}, "Create dimensionless singleton",
-				Activator.getImageDescriptor("dimesionless"), _context, _store,
-				provider);
-
-		createFrequency = new OperationWrapper(new CreateSingletonGenerator(
-				"frequency")
-		{
-			protected QuantityCollection<?> generate(String name)
-			{
-				return new StockTypes.NonTemporal.Frequency_Hz(name);
-			}
-		}, "Create frequency singleton", Activator.getImageDescriptor("frequency"),
-				_context, _store, provider);
-
-		createDecibels = new OperationWrapper(new CreateSingletonGenerator(
-				"decibels")
-		{
-			protected QuantityCollection<?> generate(String name)
-			{
-				return new StockTypes.NonTemporal.AcousticStrength(name);
-			}
-		}, "Create decibels singleton", Activator.getImageDescriptor("decibels"),
-				_context, _store, provider);
-
-		createSpeed = new OperationWrapper(new CreateSingletonGenerator(
-				"speed (m/s)")
-		{
-			protected QuantityCollection<?> generate(String name)
-			{
-				return new StockTypes.NonTemporal.Speed_MSec(name);
-			}
-		}, "Create speed singleton (m/s)",
-				Activator.getImageDescriptor("speed (m/s)"), _context, _store, provider);
-
-		createCourse = new OperationWrapper(new CreateSingletonGenerator(
-				"course (degs)")
-		{
-			protected QuantityCollection<?> generate(String name)
-			{
-				return new StockTypes.NonTemporal.Speed_MSec(name);
-			}
-		}, "Create course singleton (degs)",
-				Activator.getImageDescriptor("course (degs)"), _context, _store,
-				provider);
-
-		copyCsvToFile = new OperationWrapper(new ExportCsvToFileAction(),
-				"Export CSV to file", PlatformUI.getWorkbench().getSharedImages()
-						.getImageDescriptor(ISharedImages.IMG_ETOOL_SAVEAS_EDIT), _context,
-				_store, provider);
-
-		copyCsvToClipboard = new OperationWrapper(new CopyCsvToClipboardAction(),
-				"Copy CSV to clipboard", PlatformUI.getWorkbench().getSharedImages()
-						.getImageDescriptor(ISharedImages.IMG_ELCL_SYNCED), _context,
-				_store, provider);
-
 		addFolder = new OperationWrapper(new AddLayerOperation(), "Add folder",
 				PlatformUI.getWorkbench().getSharedImages()
 						.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE), _context,
@@ -493,11 +415,6 @@ public class DataManagerEditor extends EditorPart
 		generateData = new OperationWrapper(new GenerateDummyDataOperation("Small",
 				20), "Create dummy data", PlatformUI.getWorkbench().getSharedImages()
 				.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD), _context,
-				_store, provider);
-
-		createLocation = new OperationWrapper(new CreateLocationAction(),
-				"Create location", PlatformUI.getWorkbench().getSharedImages()
-						.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD), _context,
 				_store, provider);
 
 		// refresh view is purely UI. So, we can implement it here
@@ -568,25 +485,6 @@ public class DataManagerEditor extends EditorPart
 			List<IOperation<?>> values = ops.get(name);
 
 			showThisList(selection, newM, values);
-		}
-
-		// and the generators
-		// TODO: move these actions to the operations library
-		MenuManager createMenu = new MenuManager("Create");
-		menu.add(createMenu);
-		createMenu.add(createDimensionless);
-		createMenu.add(createFrequency);
-		createMenu.add(createDecibels);
-		createMenu.add(createSpeed);
-		createMenu.add(createCourse);
-		createMenu.add(createLocation);
-		createMenu.add(addFolder);
-
-		if (selection.size() == 1 && selection.get(0) instanceof ICollection)
-		{
-			menu.add(new Separator());
-			menu.add(copyCsvToClipboard);
-			menu.add(copyCsvToFile);
 		}
 
 		menu.add(new Separator());

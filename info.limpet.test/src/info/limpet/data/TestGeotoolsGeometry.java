@@ -100,7 +100,8 @@ public class TestGeotoolsGeometry extends TestCase
 
 		InMemoryStore store = new InMemoryStore();
 
-		Collection<ICommand<IStoreItem>> ops = genny.actionsFor(sel, store, context);
+		Collection<ICommand<IStoreItem>> ops = genny
+				.actionsFor(sel, store, context);
 		assertNotNull("created command", ops);
 		assertEquals("created operatoins", 2, ops.size());
 		ICommand<IStoreItem> firstOp = ops.iterator().next();
@@ -264,7 +265,7 @@ public class TestGeotoolsGeometry extends TestCase
 	{
 		Location loc1 = new Location("loc1");
 		Location loc2 = new Location("loc2");
-		Temporal.Length_M len1 = new Temporal.Length_M("dummy2");
+		Temporal.Length_M len1 = new Temporal.Length_M("dummy2", null);
 
 		List<IStoreItem> selection = new ArrayList<IStoreItem>();
 		selection.add(loc1);
@@ -276,12 +277,14 @@ public class TestGeotoolsGeometry extends TestCase
 		assertEquals("empty collection", 0, ops.size());
 
 		selection.add(len1);
-		ops = new DistanceBetweenTracksOperation().actionsFor(selection, store, context);
+		ops = new DistanceBetweenTracksOperation().actionsFor(selection, store,
+				context);
 		assertEquals("empty collection", 0, ops.size());
 
 		selection.remove(len1);
 		selection.add(loc2);
-		ops = new DistanceBetweenTracksOperation().actionsFor(selection, store, context);
+		ops = new DistanceBetweenTracksOperation().actionsFor(selection, store,
+				context);
 		assertEquals("empty collection", 0, ops.size());
 
 		// ok, try adding some data
@@ -291,12 +294,14 @@ public class TestGeotoolsGeometry extends TestCase
 		loc2.add(builder.createPoint(3, 4));
 		loc2.add(builder.createPoint(2, 4));
 
-		ops = new DistanceBetweenTracksOperation().actionsFor(selection, store, context);
+		ops = new DistanceBetweenTracksOperation().actionsFor(selection, store,
+				context);
 		assertEquals("does work collection", 1, ops.size());
 
 		loc2.add(builder.createPoint(2, 1));
 
-		ops = new DistanceBetweenTracksOperation().actionsFor(selection, store, context);
+		ops = new DistanceBetweenTracksOperation().actionsFor(selection, store,
+				context);
 		assertEquals("can't work, since we can't interpolate", 0, ops.size());
 	}
 
@@ -304,7 +309,7 @@ public class TestGeotoolsGeometry extends TestCase
 	{
 		TemporalLocation loc1 = new TemporalLocation("loc1");
 		TemporalLocation loc2 = new TemporalLocation("loc2");
-		Temporal.Length_M len1 = new Temporal.Length_M("dummy2");
+		Temporal.Length_M len1 = new Temporal.Length_M("dummy2", null);
 
 		List<IStoreItem> selection = new ArrayList<IStoreItem>();
 		selection.add(loc1);
@@ -316,12 +321,14 @@ public class TestGeotoolsGeometry extends TestCase
 		assertEquals("empty collection", 0, ops.size());
 
 		selection.add(len1);
-		ops = new DistanceBetweenTracksOperation().actionsFor(selection, store, context);
+		ops = new DistanceBetweenTracksOperation().actionsFor(selection, store,
+				context);
 		assertEquals("empty collection", 0, ops.size());
 
 		selection.remove(len1);
 		selection.add(loc2);
-		ops = new DistanceBetweenTracksOperation().actionsFor(selection, store, context);
+		ops = new DistanceBetweenTracksOperation().actionsFor(selection, store,
+				context);
 		assertEquals("empty collection", 0, ops.size());
 
 		// ok, try adding some data
@@ -331,12 +338,14 @@ public class TestGeotoolsGeometry extends TestCase
 		loc2.add(1000, builder.createPoint(3, 4));
 		loc2.add(2000, builder.createPoint(2, 4));
 
-		ops = new DistanceBetweenTracksOperation().actionsFor(selection, store, context);
+		ops = new DistanceBetweenTracksOperation().actionsFor(selection, store,
+				context);
 		assertEquals("does work collection", 2, ops.size());
 
 		loc2.add(3000, builder.createPoint(2, 1));
 
-		ops = new DistanceBetweenTracksOperation().actionsFor(selection, store, context);
+		ops = new DistanceBetweenTracksOperation().actionsFor(selection, store,
+				context);
 		assertEquals("can work, since we can interpolate", 1, ops.size());
 
 		// ok, run it, and see how we get on
@@ -361,7 +370,7 @@ public class TestGeotoolsGeometry extends TestCase
 		TemporalLocation loc1 = new TemporalLocation("loc1");
 		TemporalLocation loc2 = new TemporalLocation("loc2");
 		Location loc3 = new Location("loc2");
-		Temporal.Length_M len1 = new Temporal.Length_M("dummy2");
+		Temporal.Length_M len1 = new Temporal.Length_M("dummy2", null);
 
 		List<IStoreItem> selection = new ArrayList<IStoreItem>();
 		selection.add(loc1);
@@ -373,12 +382,14 @@ public class TestGeotoolsGeometry extends TestCase
 		assertEquals("empty collection", 0, ops.size());
 
 		selection.add(len1);
-		ops = new ProplossBetweenTwoTracksOperation().actionsFor(selection, store, context);
+		ops = new ProplossBetweenTwoTracksOperation().actionsFor(selection, store,
+				context);
 		assertEquals("empty collection", 0, ops.size());
 
 		selection.remove(len1);
 		selection.add(loc2);
-		ops = new ProplossBetweenTwoTracksOperation().actionsFor(selection, store, context);
+		ops = new ProplossBetweenTwoTracksOperation().actionsFor(selection, store,
+				context);
 		assertEquals("empty collection", 0, ops.size());
 
 		// ok, try adding some data
@@ -390,13 +401,15 @@ public class TestGeotoolsGeometry extends TestCase
 
 		loc3.add(builder.createPoint(2, 2));
 
-		ops = new ProplossBetweenTwoTracksOperation().actionsFor(selection, store, context);
+		ops = new ProplossBetweenTwoTracksOperation().actionsFor(selection, store,
+				context);
 		assertEquals("not empty collection", 2, ops.size());
 
 		// make hte series different lengths
 		loc2.add(2000, builder.createPoint(3, 4));
 
-		ops = new ProplossBetweenTwoTracksOperation().actionsFor(selection, store, context);
+		ops = new ProplossBetweenTwoTracksOperation().actionsFor(selection, store,
+				context);
 		assertEquals("not empty collection", 1, ops.size());
 
 		// check how it runs
@@ -412,7 +425,8 @@ public class TestGeotoolsGeometry extends TestCase
 		selection.remove(loc2);
 		selection.add(loc3);
 
-		ops = new ProplossBetweenTwoTracksOperation().actionsFor(selection, store, context);
+		ops = new ProplossBetweenTwoTracksOperation().actionsFor(selection, store,
+				context);
 		assertEquals("not empty collection", 2, ops.size());
 
 		// check how it runs
@@ -430,7 +444,7 @@ public class TestGeotoolsGeometry extends TestCase
 	{
 		TemporalLocation loc1 = new TemporalLocation("loc1");
 		TemporalLocation loc2 = new TemporalLocation("loc2");
-		Temporal.Length_M len1 = new Temporal.Length_M("dummy2");
+		Temporal.Length_M len1 = new Temporal.Length_M("dummy2", null);
 
 		List<IStoreItem> selection = new ArrayList<IStoreItem>();
 		selection.add(loc1);
@@ -442,12 +456,14 @@ public class TestGeotoolsGeometry extends TestCase
 		assertEquals("empty collection", 0, ops.size());
 
 		selection.add(len1);
-		ops = new DistanceBetweenTracksOperation().actionsFor(selection, store, context);
+		ops = new DistanceBetweenTracksOperation().actionsFor(selection, store,
+				context);
 		assertEquals("empty collection", 0, ops.size());
 
 		selection.remove(len1);
 		selection.add(loc2);
-		ops = new DistanceBetweenTracksOperation().actionsFor(selection, store, context);
+		ops = new DistanceBetweenTracksOperation().actionsFor(selection, store,
+				context);
 		assertEquals("empty collection", 0, ops.size());
 
 		// ok, try adding some data
@@ -455,7 +471,8 @@ public class TestGeotoolsGeometry extends TestCase
 		loc1.add(1000, builder.createPoint(4, 3));
 		loc2.add(2000, builder.createPoint(3, 4));
 
-		ops = new DistanceBetweenTracksOperation().actionsFor(selection, store, context);
+		ops = new DistanceBetweenTracksOperation().actionsFor(selection, store,
+				context);
 		assertEquals("not empty collection", 1, ops.size());
 	}
 
@@ -474,21 +491,26 @@ public class TestGeotoolsGeometry extends TestCase
 		NonTemporal.Location loc4 = new NonTemporal.Location("loc 4");
 
 		Temporal.Angle_Degrees angD1 = new Temporal.Angle_Degrees("ang D 1", null);
-		Temporal.Angle_Radians angR2 = new Temporal.Angle_Radians("ang R 2");
-		NonTemporal.Angle_Radians angR3 = new NonTemporal.Angle_Radians("ang R 3");
-		NonTemporal.Angle_Degrees angD4 = new NonTemporal.Angle_Degrees("ang D 4");
+		Temporal.Angle_Radians angR2 = new Temporal.Angle_Radians("ang R 2", null);
+		NonTemporal.Angle_Radians angR3 = new NonTemporal.Angle_Radians("ang R 3",
+				null);
+		NonTemporal.Angle_Degrees angD4 = new NonTemporal.Angle_Degrees("ang D 4",
+				null);
 
-		Temporal.Speed_Kts spdK1 = new Temporal.Speed_Kts("speed kts 1");
-		Temporal.Speed_MSec spdM2 = new Temporal.Speed_MSec("speed M 2");
-		NonTemporal.Speed_Kts spdK3 = new NonTemporal.Speed_Kts("speed kts 1");
-		NonTemporal.Speed_MSec spdM4 = new NonTemporal.Speed_MSec("speed kts 1");
+		Temporal.Speed_Kts spdK1 = new Temporal.Speed_Kts("speed kts 1", null);
+		Temporal.Speed_MSec spdM2 = new Temporal.Speed_MSec("speed M 2", null);
+		NonTemporal.Speed_Kts spdK3 = new NonTemporal.Speed_Kts("speed kts 1", null);
+		NonTemporal.Speed_MSec spdM4 = new NonTemporal.Speed_MSec("speed kts 1",
+				null);
 
-		Temporal.Frequency_Hz freq1 = new Temporal.Frequency_Hz("freq 1");
-		NonTemporal.Frequency_Hz freq2 = new NonTemporal.Frequency_Hz("freq 2");
+		Temporal.Frequency_Hz freq1 = new Temporal.Frequency_Hz("freq 1", null);
+		NonTemporal.Frequency_Hz freq2 = new NonTemporal.Frequency_Hz("freq 2",
+				null);
 
-		Temporal.Speed_MSec sspdM1 = new Temporal.Speed_MSec("sound speed M 1");
+		Temporal.Speed_MSec sspdM1 = new Temporal.Speed_MSec("sound speed M 1",
+				null);
 		NonTemporal.Speed_Kts sspdK2 = new NonTemporal.Speed_Kts(
-				"sound speed kts 2");
+				"sound speed kts 2", null);
 
 		// populate the datasets
 		for (int i = 10000; i <= 90000; i += 5000)
@@ -577,7 +599,8 @@ public class TestGeotoolsGeometry extends TestCase
 
 		assertTrue("valid track", tests.hasNumberOfTracks(items, 2));
 
-		assertEquals("still empty", 0, doppler.actionsFor(items, store, context).size());
+		assertEquals("still empty", 0, doppler.actionsFor(items, store, context)
+				.size());
 
 		assertEquals("has freq", null,
 				tests.collectionWith(items, Frequency.UNIT.getDimension(), true));
@@ -585,7 +608,8 @@ public class TestGeotoolsGeometry extends TestCase
 		// give one a freq
 		track1.add(freq1);
 
-		assertEquals("still empty", 0, doppler.actionsFor(items, store, context).size());
+		assertEquals("still empty", 0, doppler.actionsFor(items, store, context)
+				.size());
 
 		assertEquals("has freq", null,
 				tests.collectionWith(items, Frequency.UNIT.getDimension(), false));
@@ -600,37 +624,44 @@ public class TestGeotoolsGeometry extends TestCase
 
 		// add the missing sound speed
 		items.add(sspdK2);
-		assertEquals("not empty", 1, doppler.actionsFor(items, store, context).size());
+		assertEquals("not empty", 1, doppler.actionsFor(items, store, context)
+				.size());
 
 		// and now complete dataset (with one non temporal location)
 
 		track1.remove(loc1);
 		track1.add(loc3);
 
-		assertEquals("not empty", 1, doppler.actionsFor(items, store, context).size());
-		
-		// try to remove the course/speed for static track = check we still get it offered.
+		assertEquals("not empty", 1, doppler.actionsFor(items, store, context)
+				.size());
+
+		// try to remove the course/speed for static track = check we still get it
+		// offered.
 		track1.remove(spdK1);
-		assertEquals("not empty", 1, doppler.actionsFor(items, store, context).size());
+		assertEquals("not empty", 1, doppler.actionsFor(items, store, context)
+				.size());
 
 		track1.remove(angD1);
-		assertEquals("not empty", 1, doppler.actionsFor(items, store, context).size());
+		assertEquals("not empty", 1, doppler.actionsFor(items, store, context)
+				.size());
 
 		// see if it runs
-		ICommand<IStoreItem> ops = doppler.actionsFor(items, store, context).iterator().next();
+		ICommand<IStoreItem> ops = doppler.actionsFor(items, store, context)
+				.iterator().next();
 		ops.execute();
 		IStoreItem tmpOut = ops.getOutputs().iterator().next();
 		assertNotNull("received output", tmpOut);
-		
+
 		// and put them back
 		track1.add(sspdK2);
 		track1.add(angD1);
-		
+
 		// and now complete dataset (with two non temporal locations)
 		track2.remove(loc2);
 		track2.add(loc4);
 
-		assertEquals("not empty", 1, doppler.actionsFor(items, store, context).size());
+		assertEquals("not empty", 1, doppler.actionsFor(items, store, context)
+				.size());
 
 		// back to original type
 		track1.remove(loc3);
@@ -638,23 +669,26 @@ public class TestGeotoolsGeometry extends TestCase
 		track2.remove(loc4);
 		track2.add(loc2);
 
-		assertEquals("not empty", 1, doppler.actionsFor(items, store, context).size());
-		
+		assertEquals("not empty", 1, doppler.actionsFor(items, store, context)
+				.size());
+
 		// try giving track 2 a frewquency
 		track2.add(freq2);
 
-		assertEquals("actions for both tracks", 2, doppler.actionsFor(items, store, context).size());
-		
+		assertEquals("actions for both tracks", 2,
+				doppler.actionsFor(items, store, context).size());
+
 		// and remove that freq
 		track2.remove(freq2);
 
-		assertEquals("actions for just one track", 1, doppler.actionsFor(items, store, context).size());
+		assertEquals("actions for just one track", 1,
+				doppler.actionsFor(items, store, context).size());
 
 		// quick extra test
 		track1.remove(loc1);
 
 		assertEquals("empty", 0, doppler.actionsFor(items, store, context).size());
-		
+
 		// quick extra test
 		track1.add(loc1);
 
@@ -669,28 +703,28 @@ public class TestGeotoolsGeometry extends TestCase
 		op1.organiseData();
 		HashMap<String, ICollection> map = op1.getDataMap();
 		assertEquals("all items", 8, map.size());
-		
+
 		// ok, let's try undo redo
 		assertEquals("correct size store", store.size(), 1);
-		
+
 		op1.execute();
-		
+
 		assertEquals("new correct size store", store.size(), 2);
 
 		op1.undo();
-		
+
 		assertEquals("new correct size store", store.size(), 1);
 
 		op1.redo();
-		
+
 		assertEquals("new correct size store", store.size(), 2);
 
 		op1.undo();
-		
+
 		assertEquals("new correct size store", store.size(), 1);
 
 		op1.redo();
-		
+
 		assertEquals("new correct size store", store.size(), 2);
 
 	}
@@ -700,9 +734,9 @@ public class TestGeotoolsGeometry extends TestCase
 		CollectionComplianceTests aTests = new CollectionComplianceTests();
 		Collection<ICollection> items = new ArrayList<ICollection>();
 
-		Speed_Kts speed1 = new Temporal.Speed_Kts("spd1");
-		Speed_Kts speed2 = new Temporal.Speed_Kts("spd2");
-		Speed_Kts speed3 = new Temporal.Speed_Kts("spd3");
+		Speed_Kts speed1 = new Temporal.Speed_Kts("spd1", null);
+		Speed_Kts speed2 = new Temporal.Speed_Kts("spd2", null);
+		Speed_Kts speed3 = new Temporal.Speed_Kts("spd3", null);
 
 		speed1.add(100, 5);
 		speed1.add(120, 5);
@@ -740,9 +774,9 @@ public class TestGeotoolsGeometry extends TestCase
 		assertEquals("correct choice", common, speed1);
 
 		items.add(speed2);
-		
+
 		common = aTests.getOptimalTimes(period, items);
-		assertNotNull("duh, empty set",common);
+		assertNotNull("duh, empty set", common);
 		assertEquals("correct choice", common, speed2);
 
 		items.add(speed3);
@@ -753,9 +787,8 @@ public class TestGeotoolsGeometry extends TestCase
 
 		// step back, test it without the period
 		common = aTests.getOptimalTimes(null, items);
-		assertNotNull("duh, empty set",common);
+		assertNotNull("duh, empty set", common);
 		assertEquals("correct choice", common, speed2);
-		
 
 	}
 
@@ -764,9 +797,9 @@ public class TestGeotoolsGeometry extends TestCase
 		CollectionComplianceTests aTests = new CollectionComplianceTests();
 		Collection<ICollection> items = new ArrayList<ICollection>();
 
-		Speed_Kts speed1 = new Temporal.Speed_Kts("spd1");
-		Speed_Kts speed2 = new Temporal.Speed_Kts("spd2");
-		Speed_Kts speed3 = new Temporal.Speed_Kts("spd3");
+		Speed_Kts speed1 = new Temporal.Speed_Kts("spd1", null);
+		Speed_Kts speed2 = new Temporal.Speed_Kts("spd2", null);
+		Speed_Kts speed3 = new Temporal.Speed_Kts("spd3", null);
 
 		speed1.add(100, 5);
 		speed1.add(120, 5);
@@ -780,15 +813,15 @@ public class TestGeotoolsGeometry extends TestCase
 		speed3.add(90, 5);
 		speed3.add(120, 5);
 		speed3.add(160, 5);
-		
+
 		TimePeriod common = aTests.getBoundingTime(items);
-		assertEquals("duh, empty set",null, common); 
-		
+		assertEquals("duh, empty set", null, common);
+
 		// ok, now add the items to hte collection
 		items.add(speed1);
-		
+
 		common = aTests.getBoundingTime(items);
-		assertNotNull("duh, empty set",common);
+		assertNotNull("duh, empty set", common);
 		assertEquals("correct times", speed1.start(), common.startTime);
 		assertEquals("correct times", speed1.finish(), common.endTime);
 
@@ -811,7 +844,7 @@ public class TestGeotoolsGeometry extends TestCase
 	{
 		final CollectionComplianceTests aTests = new CollectionComplianceTests();
 
-		Temporal.Speed_Kts sKts = new Temporal.Speed_Kts("Speed knots");
+		Temporal.Speed_Kts sKts = new Temporal.Speed_Kts("Speed knots", null);
 		sKts.add(1000, 10);
 		sKts.add(2000, 20);
 		sKts.add(4000, 30);
@@ -829,8 +862,8 @@ public class TestGeotoolsGeometry extends TestCase
 		// try converting to m_sec
 		try
 		{
-			val = aTests.valueAt(sKts, 1500L,
-					new Temporal.Angle_Degrees().getUnits());
+			val = aTests
+					.valueAt(sKts, 1500L, new Temporal.Angle_Degrees().getUnits());
 		}
 		catch (ConversionException ce)
 		{

@@ -60,15 +60,14 @@ public abstract class AbstractCommand<T extends IStoreItem> implements
 		this.canRedo = canRedo;
 		this.context = context;
 
+		this.inputs = new ArrayList<T>();
+		this.outputs = new ArrayList<T>();
+
+		// store any inputs, if we have any
 		if (inputs != null)
 		{
-			this.inputs = new ArrayList<T>(inputs);
+			this.inputs.addAll(inputs);
 		}
-		else
-		{
-			this.inputs = null;
-		}
-		this.outputs = new ArrayList<T>();
 	}
 
 	/**

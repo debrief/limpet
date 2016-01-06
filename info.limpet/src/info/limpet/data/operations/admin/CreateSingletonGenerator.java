@@ -53,7 +53,7 @@ public abstract class CreateSingletonGenerator implements
 		public CreateSingletonCommand(String title, StoreGroup group, IStore store,
 				IContext context)
 		{
-			super(title, "Create single location", store, false, false, null, context);
+			super(title, "Create single " + _name, store, false, false, null, context);
 			_targetGroup = group;
 		}
 
@@ -80,11 +80,14 @@ public abstract class CreateSingletonGenerator implements
 			try
 			{
 				// get the new collection
-				QuantityCollection<?> newData = generate(name);
+				QuantityCollection<?> newData = generate(name, this);
 
 				// add the new value
 				value = Double.parseDouble(str);
 				newData.add(value);
+				
+				// and remember it as an output
+				super.addOutput(newData);
 
 				// put the new collection in to the selected folder, or into root
 				if (_targetGroup != null)
@@ -118,7 +121,7 @@ public abstract class CreateSingletonGenerator implements
 		@Override
 		protected String getOutputName()
 		{
-			return getContext().getInput("Create location", NEW_DATASET_MESSAGE, "");
+			return getContext().getInput("Create new " + _name, NEW_DATASET_MESSAGE, "");
 		}
 
 	}
@@ -129,7 +132,7 @@ public abstract class CreateSingletonGenerator implements
 		Collection<ICommand<IStoreItem>> res = new ArrayList<ICommand<IStoreItem>>();
 		if (appliesTo(selection))
 		{
-			final String thisTitle = "Add new layer";
+			final String thisTitle = "Add single " + _name;
 			// hmm, see if a group has been selected
 			ICommand<IStoreItem> newC = null;
 			if (selection.size() == 1)
@@ -138,14 +141,13 @@ public abstract class CreateSingletonGenerator implements
 				if (first instanceof StoreGroup)
 				{
 					StoreGroup group = (StoreGroup) first;
-					newC = new CreateSingletonCommand(thisTitle, group, destination,
-							context);
+					newC = getCommand(destination, context, thisTitle, group);
 				}
 			}
 
 			if (newC == null)
 			{
-				newC = new CreateSingletonCommand(thisTitle, null, destination, context);
+				newC = getCommand(destination, context, thisTitle, null);
 			}
 
 			if (newC != null)
@@ -157,6 +159,15 @@ public abstract class CreateSingletonGenerator implements
 		return res;
 	}
 
+
+	protected AbstractCommand<IStoreItem> getCommand(IStore destination,
+			IContext context, final String thisTitle, StoreGroup group)
+	{
+		return new CreateSingletonCommand(thisTitle, group, destination,
+				context);
+	}
+	
+
 	private boolean appliesTo(List<IStoreItem> selection)
 	{
 		// we can apply this either to a group, or at the top level
@@ -164,6 +175,6 @@ public abstract class CreateSingletonGenerator implements
 				1) && aTests.allGroups(selection))));
 	}
 
-	protected abstract QuantityCollection<?> generate(String name);
+	protected abstract QuantityCollection<?> generate(String name, ICommand<?> precedent);
 
 }

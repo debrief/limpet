@@ -17,46 +17,47 @@ package info.limpet.data.operations.admin;
 import info.limpet.ICommand;
 import info.limpet.IContext;
 import info.limpet.IContext.Status;
-import info.limpet.IOperation;
 import info.limpet.IStore;
 import info.limpet.IStore.IStoreItem;
 import info.limpet.data.commands.AbstractCommand;
+import info.limpet.data.impl.QuantityCollection;
 import info.limpet.data.impl.samples.StockTypes.NonTemporal;
 import info.limpet.data.operations.CollectionComplianceTests;
 import info.limpet.data.operations.spatial.GeoSupport;
 import info.limpet.data.store.InMemoryStore.StoreGroup;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 import org.opengis.geometry.Geometry;
 
-public class CreateLocationAction implements IOperation<IStoreItem>
+public class CreateLocationAction extends CreateSingletonGenerator
 {
+	public CreateLocationAction()
+	{
+		super("location");
+	}
+
 	CollectionComplianceTests aTests = new CollectionComplianceTests();
 
-
-	/** encapsulate creating a location into a command
+	/**
+	 * encapsulate creating a location into a command
 	 * 
 	 * @author ian
-	 *
+	 * 
 	 */
 	public static class CreateLocationCommand extends AbstractCommand<IStoreItem>
 	{
 		private StoreGroup _targetGroup;
-				
+
 		public CreateLocationCommand(String title, StoreGroup group, IStore store,
 				IContext context)
 		{
 			super(title, "Create single location", store, false, false, null, context);
 			_targetGroup = group;
 		}
-		
+
 		@Override
 		public void execute()
 		{
-		// get the name
+			// get the name
 			String seriesName = getContext().getInput("New fixed location",
 					"Enter name for location", "");
 
@@ -106,7 +107,8 @@ public class CreateLocationAction implements IOperation<IStoreItem>
 			}
 			catch (NumberFormatException e)
 			{
-				getContext().logError(Status.WARNING, "Failed to parse initial value", e);
+				getContext().logError(Status.WARNING, "Failed to parse initial value",
+						e);
 				return;
 			}
 		}
@@ -122,47 +124,23 @@ public class CreateLocationAction implements IOperation<IStoreItem>
 		{
 			return getContext().getInput("Create location", NEW_DATASET_MESSAGE, "");
 		}
-		
+
 	}
 
-
-	public Collection<ICommand<IStoreItem>> actionsFor(
-			List<IStoreItem> selection, IStore destination, IContext context)
+	@Override
+	protected AbstractCommand<IStoreItem> getCommand(IStore destination,
+			IContext context, String thisTitle, StoreGroup group)
 	{
-		Collection<ICommand<IStoreItem>> res = new ArrayList<ICommand<IStoreItem>>();
-		if (appliesTo(selection))
-		{
-			final String thisTitle = "Add new layer";
-			// hmm, see if a group has been selected
-			ICommand<IStoreItem> newC = null;
-			if (selection.size() == 1)
-			{
-				IStoreItem first = selection.get(0);
-				if (first instanceof StoreGroup)
-				{
-					StoreGroup group = (StoreGroup) first;
-					newC = new CreateLocationCommand(thisTitle, group, destination, context);
-				}
-			}
-
-			if (newC == null)
-			{
-				newC = new CreateLocationCommand(thisTitle, null, destination, context);
-			}
-
-			if (newC != null)
-			{
-				res.add(newC);
-			}
-		}
-
-		return res;
+		// TODO Auto-generated method stub
+		return new CreateLocationCommand(thisTitle, group, destination, context);
 	}
 
-	private boolean appliesTo(List<IStoreItem> selection)
+	@Override
+	protected QuantityCollection<?> generate(String name, ICommand<?> precedent)
 	{
-		// we can apply this either to a group, or at the top level
-		return (aTests.exactNumber(selection, 0) || ((aTests.exactNumber(selection, 1) && aTests.allGroups(selection))));
-	}	
+		// we shouldn't be using this
+		throw new RuntimeException(
+				"we shouldn't call this, our command knows it's working with a location");
+	}
 
 }

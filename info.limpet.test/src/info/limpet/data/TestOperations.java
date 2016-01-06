@@ -115,11 +115,11 @@ public class TestOperations extends TestCase
 	public void testTrig()
 	{
 		// prepare some data
-		Speed_Kts speedData = new StockTypes.Temporal.Speed_Kts("speed");
+		Speed_Kts speedData = new StockTypes.Temporal.Speed_Kts("speed", null);
 		speedData.add(100, 23);
 		speedData.add(200, 44);
 
-		Angle_Degrees angleData = new StockTypes.NonTemporal.Angle_Degrees("degs");
+		Angle_Degrees angleData = new StockTypes.NonTemporal.Angle_Degrees("degs", null);
 		angleData.add(200d);
 		angleData.add(123d);
 
@@ -230,19 +230,19 @@ public class TestOperations extends TestCase
 
 		// the target collection
 		QuantityCollection<Velocity> speed_good_1 = new QuantityCollection<Velocity>(
-				"Speed 1", kmh);
+				"Speed 1",null, kmh);
 		QuantityCollection<Velocity> speed_good_2 = new QuantityCollection<Velocity>(
-				"Speed 2", kmh);
+				"Speed 2",null, kmh);
 		QuantityCollection<Velocity> speed_longer = new QuantityCollection<Velocity>(
-				"Speed 3", kmh);
+				"Speed 3",null, kmh);
 		QuantityCollection<Velocity> speed_diff_units = new QuantityCollection<Velocity>(
-				"Speed 4", kmm);
+				"Speed 4",null, kmm);
 		QuantityCollection<Length> len1 = new QuantityCollection<Length>(
-				"Length 1", m);
+				"Length 1",null, m);
 		TemporalQuantityCollection<Velocity> temporal_speed_1 = new TemporalQuantityCollection<Velocity>(
-				"Speed 5", kmh);
+				"Speed 5",null, kmh);
 		TemporalQuantityCollection<Velocity> temporal_speed_2 = new TemporalQuantityCollection<Velocity>(
-				"Speed 6", kmh);
+				"Speed 6",null, kmh);
 		ObjectCollection<String> string_1 = new ObjectCollection<>("strings 1");
 		ObjectCollection<String> string_2 = new ObjectCollection<>("strings 2");
 
@@ -665,7 +665,7 @@ public class TestOperations extends TestCase
 		IQuantityCollection<Velocity> speed_good_1 = (IQuantityCollection<Velocity>) store
 				.get(SampleData.SPEED_ONE);
 		IQuantityCollection<Velocity> speedSingle = new StockTypes.NonTemporal.Speed_MSec(
-				"singleton");
+				"singleton", null);
 
 		speedSingle.add(2d);
 
@@ -697,7 +697,7 @@ public class TestOperations extends TestCase
 		IQuantityCollection<Velocity> speed_good_1 = (IQuantityCollection<Velocity>) store
 				.get(SampleData.SPEED_ONE);
 		IQuantityCollection<Velocity> speedSingle = new StockTypes.NonTemporal.Speed_MSec(
-				"singleton");
+				"singleton", null);
 
 		speedSingle.add(2d);
 
