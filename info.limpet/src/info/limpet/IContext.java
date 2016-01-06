@@ -14,9 +14,6 @@
  *******************************************************************************/
 package info.limpet;
 
-import java.util.List;
-
-import info.limpet.IStore.IStoreItem;
 
 public interface IContext
 {
@@ -49,20 +46,6 @@ public interface IContext
 	 */
 	public void logError(Status status, String message, Exception e);
 
-	/**
-	 * returns current selection
-	 * 
-	 * @return selection
-	 */
-	public List<IStoreItem> getSelection();
-
-	/**
-	 * returns storage container for collections
-	 * TODO: remove this object, we'll always pass a store
-	 * @return store
-	 */
-	public IStore getStore();
-	
 	public void openWarning(String title, String message);
 
 	public void openInformation(String title, String message);

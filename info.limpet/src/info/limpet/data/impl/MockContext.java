@@ -14,11 +14,7 @@
  *******************************************************************************/
 package info.limpet.data.impl;
 
-import java.util.List;
-
 import info.limpet.IContext;
-import info.limpet.IStore;
-import info.limpet.IStore.IStoreItem;
 
 public class MockContext implements IContext
 {
@@ -34,13 +30,6 @@ public class MockContext implements IContext
 	{
 		System.err.println("Logging status:" + status + " message:" + message);
 		e.printStackTrace();
-	}
-
-	@Override
-	public IStore getStore()
-	{
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override
@@ -83,13 +72,6 @@ public class MockContext implements IContext
 	{
 		// TODO Auto-generated method stub
 		
-	}
-
-	@Override
-	public List<IStoreItem> getSelection()
-	{
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override

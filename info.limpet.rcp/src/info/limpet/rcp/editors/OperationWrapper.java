@@ -30,12 +30,16 @@ public class OperationWrapper extends Action
 	private IOperation<IStoreItem> limpetAction;
 	private IContext context;
 	private IStore store;
+	private SelectionProvider provider;
 
-	public OperationWrapper(IOperation<IStoreItem> limpetAction, String title, ImageDescriptor imageDescriptor, IContext context, IStore store)
+	public OperationWrapper(IOperation<IStoreItem> limpetAction, String title,
+			ImageDescriptor imageDescriptor, IContext context, IStore store,
+			SelectionProvider provider)
 	{
 		this.limpetAction = limpetAction;
 		this.context = context;
 		this.store = store;
+		this.provider = provider;
 		setText(title);
 		setImageDescriptor(imageDescriptor);
 	}
@@ -43,15 +47,17 @@ public class OperationWrapper extends Action
 	@Override
 	public void run()
 	{
-		Collection<ICommand<IStoreItem>> ops = limpetAction.actionsFor(context.getSelection(), store, context);
-		if((ops != null) && (ops.size() == 1))
+		Collection<ICommand<IStoreItem>> ops = limpetAction.actionsFor(
+				provider.getSelection(), store, context);
+		if ((ops != null) && (ops.size() == 1))
 		{
 			ICommand<IStoreItem> first = ops.iterator().next();
 			first.execute();
 		}
 		else
 		{
-			context.openWarning("Error", "Cannot run the action for current selection");
+			context.openWarning("Error",
+					"Cannot run the action for current selection");
 		}
 	}
 }

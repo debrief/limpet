@@ -414,6 +414,15 @@ public class DataManagerEditor extends EditorPart
 	private void makeActions()
 	{
 
+		// our operation wrapper needs to be able to get the selection, help it out
+		final SelectionProvider provider = new SelectionProvider()
+		{
+			public List<IStoreItem> getSelection()
+			{
+				return getSuitableObjects();
+			}
+		};
+
 		createDimensionless = new OperationWrapper(new CreateSingletonGenerator(
 				"dimensionless")
 		{
@@ -422,7 +431,8 @@ public class DataManagerEditor extends EditorPart
 				return new StockTypes.NonTemporal.DimensionlessDouble(name);
 			}
 		}, "Create dimensionless singleton",
-				Activator.getImageDescriptor("dimesionless"), _context, _store);
+				Activator.getImageDescriptor("dimesionless"), _context, _store,
+				provider);
 
 		createFrequency = new OperationWrapper(new CreateSingletonGenerator(
 				"frequency")
@@ -432,7 +442,7 @@ public class DataManagerEditor extends EditorPart
 				return new StockTypes.NonTemporal.Frequency_Hz(name);
 			}
 		}, "Create frequency singleton", Activator.getImageDescriptor("frequency"),
-				_context, _store);
+				_context, _store, provider);
 
 		createDecibels = new OperationWrapper(new CreateSingletonGenerator(
 				"decibels")
@@ -442,7 +452,7 @@ public class DataManagerEditor extends EditorPart
 				return new StockTypes.NonTemporal.AcousticStrength(name);
 			}
 		}, "Create decibels singleton", Activator.getImageDescriptor("decibels"),
-				_context, _store);
+				_context, _store, provider);
 
 		createSpeed = new OperationWrapper(new CreateSingletonGenerator(
 				"speed (m/s)")
@@ -452,7 +462,7 @@ public class DataManagerEditor extends EditorPart
 				return new StockTypes.NonTemporal.Speed_MSec(name);
 			}
 		}, "Create speed singleton (m/s)",
-				Activator.getImageDescriptor("speed (m/s)"), _context, _store);
+				Activator.getImageDescriptor("speed (m/s)"), _context, _store, provider);
 
 		createCourse = new OperationWrapper(new CreateSingletonGenerator(
 				"course (degs)")
@@ -462,31 +472,33 @@ public class DataManagerEditor extends EditorPart
 				return new StockTypes.NonTemporal.Speed_MSec(name);
 			}
 		}, "Create course singleton (degs)",
-				Activator.getImageDescriptor("course (degs)"), _context, _store);
+				Activator.getImageDescriptor("course (degs)"), _context, _store,
+				provider);
 
 		copyCsvToFile = new OperationWrapper(new ExportCsvToFileAction(),
 				"Export CSV to file", PlatformUI.getWorkbench().getSharedImages()
 						.getImageDescriptor(ISharedImages.IMG_ETOOL_SAVEAS_EDIT), _context,
-				_store);
+				_store, provider);
 
 		copyCsvToClipboard = new OperationWrapper(new CopyCsvToClipboardAction(),
 				"Copy CSV to clipboard", PlatformUI.getWorkbench().getSharedImages()
 						.getImageDescriptor(ISharedImages.IMG_ELCL_SYNCED), _context,
-				_store);
+				_store, provider);
 
 		addLayer = new OperationWrapper(new AddLayerOperation(), "Add folder",
 				PlatformUI.getWorkbench().getSharedImages()
-						.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE), _context, _store);
+						.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE), _context,
+				_store, provider);
 
 		generateData = new OperationWrapper(new GenerateDummyDataOperation("Small",
 				20), "Create dummy data", PlatformUI.getWorkbench().getSharedImages()
 				.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD), _context,
-				_store);
+				_store, provider);
 
 		createLocation = new OperationWrapper(new CreateLocationAction(),
 				"Create location", PlatformUI.getWorkbench().getSharedImages()
 						.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD), _context,
-				_store);
+				_store, provider);
 
 		// refresh view is purely UI. So, we can implement it here
 		refreshView = new Action("Refresh View", PlatformUI.getWorkbench()
