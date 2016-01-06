@@ -22,9 +22,12 @@ import static javax.measure.unit.SI.METRES_PER_SECOND;
 import static javax.measure.unit.SI.METRES_PER_SQUARE_SECOND;
 import static javax.measure.unit.SI.RADIAN;
 import static javax.measure.unit.SI.SECOND;
+import info.limpet.ICommand;
 import info.limpet.IOperation;
 import info.limpet.IQuantityCollection;
+import info.limpet.data.impl.QuantityCollection;
 import info.limpet.data.impl.samples.StockTypes;
+import info.limpet.data.operations.AddLayerOperation;
 import info.limpet.data.operations.CollectionComplianceTests;
 import info.limpet.data.operations.GenerateDummyDataOperation;
 import info.limpet.data.operations.UnitConversionOperation;
@@ -56,6 +59,7 @@ public class OperationsLibrary
 	public static final String ADMINISTRATION = "Administration";
 	public static final String CONVERSIONS = "Conversions";
 	public static final String ARITHMETIC = "Arithmetic";
+	public static final String CREATE = "Create";
 	final static CollectionComplianceTests aTests = new CollectionComplianceTests();
 
 	public static HashMap<String, List<IOperation<?>>> getOperations()
@@ -66,6 +70,7 @@ public class OperationsLibrary
 		res.put(CONVERSIONS, getConversions());
 		res.put(ADMINISTRATION, getAdmin());
 		res.put(SPATIAL, getSpatial());
+		res.put(CREATE, getCreate());
 		return res;
 	}
 
@@ -94,6 +99,10 @@ public class OperationsLibrary
 				return Dimensionless.UNIT;
 			}
 		});
+
+		// and the export operations
+		admin.add(new ExportCsvToFileAction());
+		admin.add(new CopyCsvToClipboardAction());
 
 		return admin;
 	}
@@ -205,5 +214,61 @@ public class OperationsLibrary
 		conversions.add(new UnitConversionOperation(RADIAN));
 		conversions.add(new UnitConversionOperation(StockTypes.DEGREE_ANGLE));
 		return conversions;
+	}
+
+	private static List<IOperation<?>> getCreate()
+	{
+		List<IOperation<?>> create = new ArrayList<IOperation<?>>();
+
+		create.add(new AddLayerOperation());
+
+		create.add(new CreateSingletonGenerator("dimensionless")
+		{
+
+			@Override
+			protected QuantityCollection<?> generate(String name, ICommand<?> precedent)
+			{
+				return new StockTypes.NonTemporal.DimensionlessDouble(name, precedent);
+			}
+		});
+
+		create.add(new CreateSingletonGenerator("frequency")
+		{
+			@Override
+			protected QuantityCollection<?> generate(String name, ICommand<?> precedent)
+			{
+				return new StockTypes.NonTemporal.Frequency_Hz(name, precedent);
+			}
+		});
+
+		create.add(new CreateSingletonGenerator("decibels")
+		{
+			@Override
+			protected QuantityCollection<?> generate(String name, ICommand<?> precedent)
+			{
+				return new StockTypes.NonTemporal.AcousticStrength(name, precedent);
+			}
+		});
+
+		create.add(new CreateSingletonGenerator("speed (m/s)")
+		{
+			@Override
+			protected QuantityCollection<?> generate(String name, ICommand<?> precedent)
+			{
+				return new StockTypes.NonTemporal.Speed_MSec(name, precedent);
+			}
+		});
+
+		create.add(new CreateSingletonGenerator("course (degs)")
+		{
+			@Override
+			protected QuantityCollection<?> generate(String name, ICommand<?> precedent)
+			{
+				return new StockTypes.NonTemporal.Angle_Degrees(name, precedent);
+			}
+		});
+		create.add(new CreateLocationAction());
+
+		return create;
 	}
 }

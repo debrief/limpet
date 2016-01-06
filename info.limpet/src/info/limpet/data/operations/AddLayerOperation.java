@@ -35,7 +35,7 @@ public class AddLayerOperation implements IOperation<IStoreItem>
 		Collection<ICommand<IStoreItem>> res = new ArrayList<ICommand<IStoreItem>>();
 		if (appliesTo(selection))
 		{
-			final String thisTitle = "Add new layer";
+			final String thisTitle = "Add new folder";
 			// hmm, see if a group has been selected
 			ICommand<IStoreItem> newC = null;
 			if (selection.size() == 1)

@@ -287,12 +287,17 @@ public class StockTypes
 		{
 			public Speed_MSec(String name)
 			{
-				super(name, METRE.divide(SECOND).asType(Velocity.class));
+				this(name, null);
 			}
 
 			public Speed_MSec()
 			{
 				this(null);
+			}
+
+			public Speed_MSec(String name, ICommand<?> precedent)
+			{
+				super(name, precedent, METRE.divide(SECOND).asType(Velocity.class));
 			}
 		}
 
@@ -353,6 +358,7 @@ public class StockTypes
 			{
 				this(name, null);
 			}
+
 			public AcousticStrength()
 			{
 				this(null);
@@ -363,12 +369,17 @@ public class StockTypes
 		{
 			public Frequency_Hz(String name)
 			{
-				super(name, HERTZ.asType(Frequency.class));
+				this(name, null);
 			}
 
 			public Frequency_Hz()
 			{
 				this(null);
+			}
+
+			public Frequency_Hz(String name, ICommand<?> precedent)
+			{
+				super(name, precedent, HERTZ.asType(Frequency.class));
 			}
 		}
 
@@ -397,12 +408,12 @@ public class StockTypes
 		{
 			public DimensionlessDouble(String name)
 			{
-				super(name, Dimensionless.UNIT);
+				this(name, null);
 			}
 
-			public DimensionlessDouble()
+			public DimensionlessDouble(String name, ICommand<?> precedent)
 			{
-				this(null);
+				super(name, precedent, Dimensionless.UNIT);
 			}
 		}
 
