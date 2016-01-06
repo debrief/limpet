@@ -14,87 +14,155 @@
  *******************************************************************************/
 package info.limpet.actions;
 
+import info.limpet.ICommand;
+import info.limpet.IContext;
+import info.limpet.IContext.Status;
+import info.limpet.IOperation;
+import info.limpet.IStore;
+import info.limpet.IStore.IStoreItem;
+import info.limpet.data.commands.AbstractCommand;
+import info.limpet.data.impl.samples.StockTypes.NonTemporal;
+import info.limpet.data.operations.CollectionComplianceTests;
+import info.limpet.data.operations.spatial.GeoSupport;
+import info.limpet.data.store.InMemoryStore.StoreGroup;
+
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.opengis.geometry.Geometry;
 
-import info.limpet.IContext;
-import info.limpet.IContext.Status;
-import info.limpet.IStore;
-import info.limpet.IStore.IStoreItem;
-import info.limpet.data.impl.samples.StockTypes.NonTemporal;
-import info.limpet.data.operations.spatial.GeoSupport;
-import info.limpet.data.store.IGroupWrapper;
-
-public class CreateLocationAction extends AbstractLimpetAction
+public class CreateLocationAction implements IOperation<IStoreItem>
 {
+	CollectionComplianceTests aTests = new CollectionComplianceTests();
 
-	public CreateLocationAction(IContext context)
+
+	/** encapsulate creating a location into a command
+	 * 
+	 * @author ian
+	 *
+	 */
+	public static class CreateLocationCommand extends AbstractCommand<IStoreItem>
 	{
-		super(context);
-		setText("Create single location");
-		setImageName("icons/variable.png");
+		private StoreGroup _targetGroup;
+				
+		public CreateLocationCommand(String title, StoreGroup group, IStore store,
+				IContext context)
+		{
+			super(title, "Create single location", store, false, false, null, context);
+			_targetGroup = group;
+		}
+		
+		@Override
+		public void execute()
+		{
+		// get the name
+			String seriesName = getContext().getInput("New fixed location",
+					"Enter name for location", "");
+
+			if (seriesName == null || seriesName.isEmpty())
+			{
+				return;
+			}
+			String strLat = getContext().getInput("New location",
+					"Enter initial value for latitude", "");
+			if (strLat == null || strLat.isEmpty())
+			{
+				return;
+			}
+			String strLong = getContext().getInput("New location",
+					"Enter initial value for longitude", "");
+			if (strLong == null || strLong.isEmpty())
+			{
+				return;
+			}
+			try
+			{
+
+				NonTemporal.Location newData = new NonTemporal.Location(seriesName);
+
+				// add the new value
+				double dblLat = Double.parseDouble(strLat);
+				double dblLong = Double.parseDouble(strLong);
+
+				Geometry newLoc = GeoSupport.getBuilder().createPoint(dblLong, dblLat);
+				newData.add(newLoc);
+
+				// put the new collection in to the selected folder, or into root
+				if (_targetGroup != null)
+				{
+					_targetGroup.add(newData);
+				}
+				else
+				{
+					// just store it at the top level
+					IStore store = getStore();
+					if (store != null)
+					{
+						store.add(newData);
+					}
+				}
+
+			}
+			catch (NumberFormatException e)
+			{
+				getContext().logError(Status.WARNING, "Failed to parse initial value", e);
+				return;
+			}
+		}
+
+		@Override
+		protected void recalculate()
+		{
+			// don't worry
+		}
+
+		@Override
+		protected String getOutputName()
+		{
+			return getContext().getInput("Create location", NEW_DATASET_MESSAGE, "");
+		}
+		
 	}
 
-	@Override
-	public void run()
+
+	public Collection<ICommand<IStoreItem>> actionsFor(
+			List<IStoreItem> selection, IStore destination, IContext context)
 	{
-		// get the name
-		String seriesName = getContext().getInput("New fixed location",
-				"Enter name for location", "");
-
-		if (seriesName == null || seriesName.isEmpty())
+		Collection<ICommand<IStoreItem>> res = new ArrayList<ICommand<IStoreItem>>();
+		if (appliesTo(selection))
 		{
-			return;
-		}
-		String strLat = getContext().getInput("New location",
-				"Enter initial value for latitude", "");
-		if (strLat == null || strLat.isEmpty())
-		{
-			return;
-		}
-		String strLong = getContext().getInput("New location",
-				"Enter initial value for longitude", "");
-		if (strLong == null || strLong.isEmpty())
-		{
-			return;
-		}
-		try
-		{
-
-			NonTemporal.Location newData = new NonTemporal.Location(seriesName);
-
-			// add the new value
-			double dblLat = Double.parseDouble(strLat);
-			double dblLong = Double.parseDouble(strLong);
-
-			Geometry newLoc = GeoSupport.getBuilder().createPoint(dblLong, dblLat);
-			newData.add(newLoc);
-
-			// put the new collection in to the selected folder, or into root
-			List<IStoreItem> selection = getSelection();
-			if (selection != null && selection.size() > 0
-					&& selection.get(0) instanceof IGroupWrapper)
+			final String thisTitle = "Add new layer";
+			// hmm, see if a group has been selected
+			ICommand<IStoreItem> newC = null;
+			if (selection.size() == 1)
 			{
-				IGroupWrapper gW = (IGroupWrapper) selection.get(0);
-				gW.getGroup().add(newData);
-			}
-			else
-			{
-				// just store it at the top level
-				IStore store = getStore();
-				if (store != null)
+				IStoreItem first = selection.get(0);
+				if (first instanceof StoreGroup)
 				{
-					store.add(newData);
+					StoreGroup group = (StoreGroup) first;
+					newC = new CreateLocationCommand(thisTitle, group, destination, context);
 				}
 			}
 
+			if (newC == null)
+			{
+				newC = new CreateLocationCommand(thisTitle, null, destination, context);
+			}
+
+			if (newC != null)
+			{
+				res.add(newC);
+			}
 		}
-		catch (NumberFormatException e)
-		{
-			getContext().logError(Status.WARNING, "Failed to parse initial value", e);
-			return;
-		}
+
+		return res;
 	}
+
+	private boolean appliesTo(List<IStoreItem> selection)
+	{
+		// we can apply this either to a group, or at the top level
+		return (aTests.exactNumber(selection, 0) || ((aTests.exactNumber(selection, 1) && aTests.allGroups(selection))));
+	}	
 
 }

@@ -66,6 +66,7 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.SaveAsDialog;
@@ -417,14 +418,18 @@ public class DataManagerEditor extends EditorPart
 		generateData = new ActionWrapper(new GenerateDataAction(_context));
 		addLayer = new ActionWrapper(new AddLayerAction(_context));
 		refreshView = new ActionWrapper(new RefreshViewAction(_context));
-		copyCsvToClipboard = new ActionWrapper(new CopyCsvToClipboardAction(_context));
+		copyCsvToClipboard = new ActionWrapper(new CopyCsvToClipboardAction(
+				_context));
 		copyCsvToFile = new ActionWrapper(new ExportCsvToFileAction(_context));
-		createDimensionless = new ActionWrapper(new CreateDimensionlessAction(_context));
+		createDimensionless = new ActionWrapper(new CreateDimensionlessAction(
+				_context));
 		createFrequency = new ActionWrapper(new CreateFrequencyAction(_context));
 		createDecibels = new ActionWrapper(new CreateDecibelsAction(_context));
 		createSpeed = new ActionWrapper(new CreateSpeedAction(_context));
 		createCourse = new ActionWrapper(new CreateCourseAction(_context));
-		createLocation = new ActionWrapper(new CreateLocationAction(_context));
+		createLocation = new OperationWrapper(new CreateLocationAction(),
+				"Create location", PlatformUI.getWorkbench().getSharedImages()
+						.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD), _context);
 	}
 
 	public void showMessage(String message)
@@ -459,9 +464,10 @@ public class DataManagerEditor extends EditorPart
 		// get the list of operations
 		HashMap<String, List<IOperation<?>>> ops = OperationsLibrary
 				.getOperations();
-		
+
 		// and the RCP-specific operations
-		HashMap<String, List<IOperation<?>>> rcpOps = RCPOperationsLibrary.getOperations();
+		HashMap<String, List<IOperation<?>>> rcpOps = RCPOperationsLibrary
+				.getOperations();
 		ops.putAll(rcpOps);
 
 		// did we find anything?
@@ -481,7 +487,7 @@ public class DataManagerEditor extends EditorPart
 
 			showThisList(selection, newM, values);
 		}
-		
+
 		// and the generators
 		MenuManager createMenu = new MenuManager("Create");
 		menu.add(createMenu);
@@ -579,7 +585,7 @@ public class DataManagerEditor extends EditorPart
 		viewer.getControl().setMenu(menu);
 		// We shouldn't register menu because we will contribute menus
 		// using separate extension point
-		//getSite().registerContextMenu(menuMgr, viewer);
+		// getSite().registerContextMenu(menuMgr, viewer);
 	}
 
 	@Override
