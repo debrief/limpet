@@ -14,81 +14,142 @@
  *******************************************************************************/
 package info.limpet.actions;
 
+import info.limpet.ICollection;
+import info.limpet.ICommand;
+import info.limpet.IContext;
+import info.limpet.IContext.Status;
+import info.limpet.IOperation;
+import info.limpet.IStore;
+import info.limpet.IStore.IStoreItem;
+import info.limpet.actions.CopyCsvToClipboardAction.CopyCsvToClipboardCommand;
+import info.limpet.data.commands.AbstractCommand;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-
-import info.limpet.IContext;
-import info.limpet.IContext.Status;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
- *  Provides UI & processing to export a single collection to a CSV file
- *  
+ * Provides UI & processing to export a single collection to a CSV file
+ * 
  * @author ian
- *
+ * 
  */
-public class ExportCsvToFileAction extends AbstractLimpetAction
+public class ExportCsvToFileAction implements IOperation<IStoreItem>
 {
 
-	public ExportCsvToFileAction(IContext context)
+	/**
+	 * encapsulate command
+	 * 
+	 * @author ian
+	 * 
+	 */
+	public static class ExportCsvToFileCommand extends
+			AbstractCommand<IStoreItem>
 	{
-		super(context);
-		setText("Copy CSV to File");
-		setImageName(IContext.COPY_CSV_TO_FILE);
-	}
+		private List<IStoreItem> _selection;
 
-	@Override
-	public void run()
-	{
-		String csv = getCsvString();
-		if (csv != null && !csv.isEmpty())
+		public ExportCsvToFileCommand(String title, List<IStoreItem> selection,
+				IStore store, IContext context)
 		{
-			String result = getContext().getCsvFilename();
-			if (result == null)
+			super(title, "Export selection to CSV file", store, false, false, null,
+					context);
+			_selection = selection;
+		}
+
+		@Override
+		public void execute()
+		{
+			String csv = CopyCsvToClipboardCommand.getCsvString(_selection);
+			if (csv != null && !csv.isEmpty())
 			{
-				return;
-			}
-			File file = new File(result);
-			if (file.exists())
-			{
-				if (!getContext().openQuestion("Overwrite '" + result + "'?",
-						"Are you sure you want to overwrite '" + result + "'?"))
+				String result = getContext().getCsvFilename();
+				if (result == null)
 				{
 					return;
 				}
-			}
-			FileOutputStream fop = null;
-			try
-			{
-				fop = new FileOutputStream(file);
-				fop.write(csv.getBytes());
-			}
-			catch (IOException e)
-			{
-				getContext().openError("Error", "Cannot write to '" + result + "'. See log for more details");
-				getContext().log(e);
-			}
-			finally
-			{
-				if (fop != null)
+				File file = new File(result);
+				if (file.exists())
 				{
-					try
+					if (!getContext().openQuestion("Overwrite '" + result + "'?",
+							"Are you sure you want to overwrite '" + result + "'?"))
 					{
-						fop.close();
+						return;
 					}
-					catch (IOException e)
+				}
+				FileOutputStream fop = null;
+				try
+				{
+					fop = new FileOutputStream(file);
+					fop.write(csv.getBytes());
+				}
+				catch (IOException e)
+				{
+					getContext().openError("Error",
+							"Cannot write to '" + result + "'. See log for more details");
+					getContext().log(e);
+				}
+				finally
+				{
+					if (fop != null)
 					{
-						getContext().logError(Status.ERROR,
-								"Failed to close fop in DataManagerEditor export to CSV", e);
+						try
+						{
+							fop.close();
+						}
+						catch (IOException e)
+						{
+							getContext().logError(Status.ERROR,
+									"Failed to close fop in DataManagerEditor export to CSV", e);
+						}
 					}
 				}
 			}
+			else
+			{
+				getContext().openInformation("Data Manager Editor",
+						"Cannot copy current selection");
+			}
 		}
-		else
+
+		@Override
+		protected void recalculate()
 		{
-			getContext().openInformation("Data Manager Editor",
-					"Cannot copy current selection");
+			// don't worry
 		}
+
+		@Override
+		protected String getOutputName()
+		{
+			// we don't actually use this
+			return null;
+		}
+	}
+
+	public Collection<ICommand<IStoreItem>> actionsFor(
+			List<IStoreItem> selection, IStore destination, IContext context)
+	{
+		Collection<ICommand<IStoreItem>> res = new ArrayList<ICommand<IStoreItem>>();
+		if (appliesTo(selection))
+		{
+			// hmm, see if we have a single collection selected
+			ICommand<IStoreItem> newC = null;
+			if (selection.size() == 1)
+			{
+				newC = new ExportCsvToFileCommand("Export to CSV", selection,
+						destination, context);
+				res.add(newC);
+			}
+		}
+
+		return res;
+	}
+
+	private boolean appliesTo(List<IStoreItem> selection)
+	{
+		return (selection.size() == 1 && selection.get(0) instanceof ICollection);
 	}
 
 }

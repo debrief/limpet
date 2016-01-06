@@ -415,7 +415,6 @@ public class DataManagerEditor extends EditorPart
 	private void makeActions()
 	{
 
-		copyCsvToFile = new ActionWrapper(new ExportCsvToFileAction(_context));
 		createDimensionless = new ActionWrapper(new CreateDimensionlessAction(
 				_context));
 		createFrequency = new ActionWrapper(new CreateFrequencyAction(_context));
@@ -424,6 +423,11 @@ public class DataManagerEditor extends EditorPart
 		createCourse = new ActionWrapper(new CreateCourseAction(_context));
 
 		// tmp: within operations wrapper
+		copyCsvToFile = new OperationWrapper(new ExportCsvToFileAction(),
+				"Export CSV to file", PlatformUI.getWorkbench().getSharedImages()
+						.getImageDescriptor(ISharedImages.IMG_ETOOL_SAVEAS_EDIT), _context,
+				_store);
+
 		copyCsvToClipboard = new OperationWrapper(new CopyCsvToClipboardAction(),
 				"Copy CSV to clipboard", PlatformUI.getWorkbench().getSharedImages()
 						.getImageDescriptor(ISharedImages.IMG_ELCL_SYNCED), _context,

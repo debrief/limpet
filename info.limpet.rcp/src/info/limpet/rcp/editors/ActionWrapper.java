@@ -44,15 +44,6 @@ public class ActionWrapper extends Action
 	{
 		switch (actionName)
 		{
-		case IContext.ADD_LAYER_ACTION_NAME:
-			return PlatformUI.getWorkbench().getSharedImages()
-					.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE);
-		case IContext.COPY_CSV_TO_CLIPBOARD:
-			return PlatformUI.getWorkbench().getSharedImages()
-					.getImageDescriptor(ISharedImages.IMG_ELCL_SYNCED);
-		case IContext.COPY_CSV_TO_FILE:
-			return PlatformUI.getWorkbench().getSharedImages()
-					.getImageDescriptor(ISharedImages.IMG_ETOOL_SAVEAS_EDIT);
 		case IContext.GENERATE_DATA:
 			return PlatformUI.getWorkbench().getSharedImages()
 					.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD);

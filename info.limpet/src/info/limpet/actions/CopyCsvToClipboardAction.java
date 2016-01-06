@@ -31,7 +31,7 @@ public class CopyCsvToClipboardAction implements IOperation<IStoreItem>
 {
 
 
-	/** encapsulate creating a location into a command
+	/** encapsulate command
 	 * 
 	 * @author ian
 	 *
@@ -81,7 +81,8 @@ public class CopyCsvToClipboardAction implements IOperation<IStoreItem>
 		@Override
 		protected String getOutputName()
 		{
-			return getContext().getInput("Create location", NEW_DATASET_MESSAGE, "");
+			// we don't actually use this
+			return null;
 		}
 		
 	}
@@ -96,7 +97,7 @@ public class CopyCsvToClipboardAction implements IOperation<IStoreItem>
 			ICommand<IStoreItem> newC = null;
 			if (selection.size() == 1)
 			{
-					newC = new CopyCsvToClipboardCommand("Export to CSV", selection, destination, context);
+					newC = new CopyCsvToClipboardCommand("Copy CSV to clipboard", selection, destination, context);
 					res.add(newC);
 			}
 		}
