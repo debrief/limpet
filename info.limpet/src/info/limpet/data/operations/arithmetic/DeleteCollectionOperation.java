@@ -12,7 +12,7 @@
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  *******************************************************************************/
-package info.limpet.data.operations;
+package info.limpet.data.operations.arithmetic;
 
 import info.limpet.ICommand;
 import info.limpet.IContext;
@@ -21,6 +21,7 @@ import info.limpet.IStore;
 import info.limpet.IStore.IStoreItem;
 import info.limpet.IStoreGroup;
 import info.limpet.data.commands.AbstractCommand;
+import info.limpet.data.operations.CollectionComplianceTests;
 import info.limpet.data.store.InMemoryStore;
 
 import java.util.ArrayList;

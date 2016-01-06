@@ -1,4 +1,4 @@
-package info.limpet.data.operations;
+package info.limpet.data.operations.arithmetic;
 
 import info.limpet.ICollection;
 

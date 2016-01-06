@@ -12,100 +12,58 @@
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  *******************************************************************************/
-package info.limpet.actions;
+package info.limpet.data.operations.admin;
 
 import info.limpet.ICollection;
 import info.limpet.ICommand;
 import info.limpet.IContext;
-import info.limpet.IContext.Status;
 import info.limpet.IOperation;
 import info.limpet.IStore;
 import info.limpet.IStore.IStoreItem;
-import info.limpet.actions.CopyCsvToClipboardAction.CopyCsvToClipboardCommand;
 import info.limpet.data.commands.AbstractCommand;
+import info.limpet.data.csv.CsvGenerator;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-/**
- * Provides UI & processing to export a single collection to a CSV file
- * 
- * @author ian
- * 
- */
-public class ExportCsvToFileAction implements IOperation<IStoreItem>
+public class CopyCsvToClipboardAction implements IOperation<IStoreItem>
 {
 
-	/**
-	 * encapsulate command
+
+	/** encapsulate command
 	 * 
 	 * @author ian
-	 * 
+	 *
 	 */
-	public static class ExportCsvToFileCommand extends
-			AbstractCommand<IStoreItem>
+	public static class CopyCsvToClipboardCommand extends AbstractCommand<IStoreItem>
 	{
 		private List<IStoreItem> _selection;
-
-		public ExportCsvToFileCommand(String title, List<IStoreItem> selection,
-				IStore store, IContext context)
+		
+		public static String getCsvString(List<IStoreItem> selection)
 		{
-			super(title, "Export selection to CSV file", store, false, false, null,
-					context);
+			if (selection.size() == 1 && selection.get(0) instanceof ICollection)
+			{
+				return CsvGenerator.generate((ICollection) selection.get(0));
+			}
+			return null;
+		}
+		
+				
+		public CopyCsvToClipboardCommand(String title, List<IStoreItem> selection, IStore store,
+				IContext context)
+		{
+			super(title, "Export selection to clipboard as CSV", store, false, false, null, context);
 			_selection = selection;
 		}
-
+		
 		@Override
 		public void execute()
 		{
-			String csv = CopyCsvToClipboardCommand.getCsvString(_selection);
+			String csv = getCsvString(_selection);
 			if (csv != null && !csv.isEmpty())
 			{
-				String result = getContext().getCsvFilename();
-				if (result == null)
-				{
-					return;
-				}
-				File file = new File(result);
-				if (file.exists())
-				{
-					if (!getContext().openQuestion("Overwrite '" + result + "'?",
-							"Are you sure you want to overwrite '" + result + "'?"))
-					{
-						return;
-					}
-				}
-				FileOutputStream fop = null;
-				try
-				{
-					fop = new FileOutputStream(file);
-					fop.write(csv.getBytes());
-				}
-				catch (IOException e)
-				{
-					getContext().openError("Error",
-							"Cannot write to '" + result + "'. See log for more details");
-					getContext().log(e);
-				}
-				finally
-				{
-					if (fop != null)
-					{
-						try
-						{
-							fop.close();
-						}
-						catch (IOException e)
-						{
-							getContext().logError(Status.ERROR,
-									"Failed to close fop in DataManagerEditor export to CSV", e);
-						}
-					}
-				}
+				getContext().placeOnClipboard(csv); 
 			}
 			else
 			{
@@ -126,6 +84,7 @@ public class ExportCsvToFileAction implements IOperation<IStoreItem>
 			// we don't actually use this
 			return null;
 		}
+		
 	}
 
 	public Collection<ICommand<IStoreItem>> actionsFor(
@@ -138,9 +97,8 @@ public class ExportCsvToFileAction implements IOperation<IStoreItem>
 			ICommand<IStoreItem> newC = null;
 			if (selection.size() == 1)
 			{
-				newC = new ExportCsvToFileCommand("Export to CSV", selection,
-						destination, context);
-				res.add(newC);
+					newC = new CopyCsvToClipboardCommand("Copy CSV to clipboard", selection, destination, context);
+					res.add(newC);
 			}
 		}
 
@@ -150,6 +108,6 @@ public class ExportCsvToFileAction implements IOperation<IStoreItem>
 	private boolean appliesTo(List<IStoreItem> selection)
 	{
 		return (selection.size() == 1 && selection.get(0) instanceof ICollection);
-	}
-
+	}	
+	
 }

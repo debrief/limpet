@@ -20,8 +20,8 @@ import info.limpet.data.impl.ObjectCollection;
 import info.limpet.data.impl.QuantityCollection;
 import info.limpet.data.impl.TemporalObjectCollection;
 import info.limpet.data.impl.TemporalQuantityCollection;
-import info.limpet.data.operations.AddQuantityOperation.AddQuantityValues;
-import info.limpet.data.operations.MultiplyQuantityOperation.MultiplyQuantityValues;
+import info.limpet.data.operations.arithmetic.AddQuantityOperation.AddQuantityValues;
+import info.limpet.data.operations.arithmetic.MultiplyQuantityOperation.MultiplyQuantityValues;
 import info.limpet.data.store.InMemoryStore;
 import info.limpet.data.store.InMemoryStore.StoreGroup;
 

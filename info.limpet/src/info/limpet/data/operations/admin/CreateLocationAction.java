@@ -12,7 +12,7 @@
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  *******************************************************************************/
-package info.limpet.actions;
+package info.limpet.data.operations.admin;
 
 import info.limpet.ICommand;
 import info.limpet.IContext;
@@ -21,70 +21,72 @@ import info.limpet.IOperation;
 import info.limpet.IStore;
 import info.limpet.IStore.IStoreItem;
 import info.limpet.data.commands.AbstractCommand;
-import info.limpet.data.impl.QuantityCollection;
+import info.limpet.data.impl.samples.StockTypes.NonTemporal;
 import info.limpet.data.operations.CollectionComplianceTests;
+import info.limpet.data.operations.spatial.GeoSupport;
 import info.limpet.data.store.InMemoryStore.StoreGroup;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public abstract class CreateSingletonGenerator implements
-		IOperation<IStoreItem>
+import org.opengis.geometry.Geometry;
+
+public class CreateLocationAction implements IOperation<IStoreItem>
 {
 	CollectionComplianceTests aTests = new CollectionComplianceTests();
-	private final String _name;
-	
-	public CreateSingletonGenerator(String name)
-	{
-		_name = name;
-	}
 
-	/**
-	 * encapsulate creating a location into a command
+
+	/** encapsulate creating a location into a command
 	 * 
 	 * @author ian
-	 * 
+	 *
 	 */
-	public class CreateSingletonCommand extends AbstractCommand<IStoreItem>
+	public static class CreateLocationCommand extends AbstractCommand<IStoreItem>
 	{
 		private StoreGroup _targetGroup;
-
-		public CreateSingletonCommand(String title, StoreGroup group, IStore store,
+				
+		public CreateLocationCommand(String title, StoreGroup group, IStore store,
 				IContext context)
 		{
 			super(title, "Create single location", store, false, false, null, context);
 			_targetGroup = group;
 		}
-
+		
 		@Override
 		public void execute()
 		{
-			// get the name
-			String name = "new " + _name;
-			double value;
+		// get the name
+			String seriesName = getContext().getInput("New fixed location",
+					"Enter name for location", "");
 
-			name = getContext().getInput("New variable", "Enter name for variable",
-					"");
-			if (name == null || name.isEmpty())
+			if (seriesName == null || seriesName.isEmpty())
 			{
 				return;
 			}
-
-			String str = getContext().getInput("New variable",
-					"Enter initial value for variable", "");
-			if (str == null || str.isEmpty())
+			String strLat = getContext().getInput("New location",
+					"Enter initial value for latitude", "");
+			if (strLat == null || strLat.isEmpty())
+			{
+				return;
+			}
+			String strLong = getContext().getInput("New location",
+					"Enter initial value for longitude", "");
+			if (strLong == null || strLong.isEmpty())
 			{
 				return;
 			}
 			try
 			{
-				// get the new collection
-				QuantityCollection<?> newData = generate(name);
+
+				NonTemporal.Location newData = new NonTemporal.Location(seriesName);
 
 				// add the new value
-				value = Double.parseDouble(str);
-				newData.add(value);
+				double dblLat = Double.parseDouble(strLat);
+				double dblLong = Double.parseDouble(strLong);
+
+				Geometry newLoc = GeoSupport.getBuilder().createPoint(dblLong, dblLat);
+				newData.add(newLoc);
 
 				// put the new collection in to the selected folder, or into root
 				if (_targetGroup != null)
@@ -104,8 +106,8 @@ public abstract class CreateSingletonGenerator implements
 			}
 			catch (NumberFormatException e)
 			{
-				getContext().logError(Status.WARNING, "Failed to parse initial value",
-						e);
+				getContext().logError(Status.WARNING, "Failed to parse initial value", e);
+				return;
 			}
 		}
 
@@ -120,8 +122,9 @@ public abstract class CreateSingletonGenerator implements
 		{
 			return getContext().getInput("Create location", NEW_DATASET_MESSAGE, "");
 		}
-
+		
 	}
+
 
 	public Collection<ICommand<IStoreItem>> actionsFor(
 			List<IStoreItem> selection, IStore destination, IContext context)
@@ -138,14 +141,13 @@ public abstract class CreateSingletonGenerator implements
 				if (first instanceof StoreGroup)
 				{
 					StoreGroup group = (StoreGroup) first;
-					newC = new CreateSingletonCommand(thisTitle, group, destination,
-							context);
+					newC = new CreateLocationCommand(thisTitle, group, destination, context);
 				}
 			}
 
 			if (newC == null)
 			{
-				newC = new CreateSingletonCommand(thisTitle, null, destination, context);
+				newC = new CreateLocationCommand(thisTitle, null, destination, context);
 			}
 
 			if (newC != null)
@@ -160,10 +162,7 @@ public abstract class CreateSingletonGenerator implements
 	private boolean appliesTo(List<IStoreItem> selection)
 	{
 		// we can apply this either to a group, or at the top level
-		return (aTests.exactNumber(selection, 0) || ((aTests.exactNumber(selection,
-				1) && aTests.allGroups(selection))));
-	}
-
-	protected abstract QuantityCollection<?> generate(String name);
+		return (aTests.exactNumber(selection, 0) || ((aTests.exactNumber(selection, 1) && aTests.allGroups(selection))));
+	}	
 
 }
