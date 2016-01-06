@@ -27,14 +27,14 @@ import org.eclipse.jface.resource.ImageDescriptor;
 
 public class OperationWrapper extends Action
 {
-	private IOperation<IStoreItem> limpetAction;
-	private IContext context;
-	private IStore store;
-	private SelectionProvider provider;
+	private final IOperation<IStoreItem> limpetAction;
+	private final IContext context;
+	private final IStore store;
+	private final ISelectionProvider provider;
 
 	public OperationWrapper(IOperation<IStoreItem> limpetAction, String title,
 			ImageDescriptor imageDescriptor, IContext context, IStore store,
-			SelectionProvider provider)
+			ISelectionProvider provider)
 	{
 		this.limpetAction = limpetAction;
 		this.context = context;

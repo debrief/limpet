@@ -110,7 +110,7 @@ public class DataManagerEditor extends EditorPart
 	private Action copyCsvToClipboard;
 	private Action copyCsvToFile;
 	private Action generateData;
-	private Action addLayer;
+	private Action addFolder;
 	private boolean _dirty = false;
 	private DataModel _model;
 	private StoreChangeListener _changeListener = new StoreChangeListener()
@@ -408,14 +408,14 @@ public class DataManagerEditor extends EditorPart
 	{
 		manager.add(refreshView);
 		manager.add(generateData);
-		manager.add(addLayer);
+		manager.add(addFolder);
 	}
 
 	private void makeActions()
 	{
 
 		// our operation wrapper needs to be able to get the selection, help it out
-		final SelectionProvider provider = new SelectionProvider()
+		final ISelectionProvider provider = new ISelectionProvider()
 		{
 			public List<IStoreItem> getSelection()
 			{
@@ -485,7 +485,7 @@ public class DataManagerEditor extends EditorPart
 						.getImageDescriptor(ISharedImages.IMG_ELCL_SYNCED), _context,
 				_store, provider);
 
-		addLayer = new OperationWrapper(new AddLayerOperation(), "Add folder",
+		addFolder = new OperationWrapper(new AddLayerOperation(), "Add folder",
 				PlatformUI.getWorkbench().getSharedImages()
 						.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE), _context,
 				_store, provider);
@@ -571,6 +571,7 @@ public class DataManagerEditor extends EditorPart
 		}
 
 		// and the generators
+		// TODO: move these actions to the operations library
 		MenuManager createMenu = new MenuManager("Create");
 		menu.add(createMenu);
 		createMenu.add(createDimensionless);
@@ -579,7 +580,7 @@ public class DataManagerEditor extends EditorPart
 		createMenu.add(createSpeed);
 		createMenu.add(createCourse);
 		createMenu.add(createLocation);
-		createMenu.add(addLayer);
+		createMenu.add(addFolder);
 
 		if (selection.size() == 1 && selection.get(0) instanceof ICollection)
 		{
