@@ -23,13 +23,11 @@ import info.limpet.IStore;
 import info.limpet.IStore.IStoreItem;
 import info.limpet.IStoreGroup;
 import info.limpet.actions.CopyCsvToClipboardAction;
-import info.limpet.actions.CreateCourseAction;
-import info.limpet.actions.CreateDecibelsAction;
-import info.limpet.actions.CreateDimensionlessAction;
-import info.limpet.actions.CreateFrequencyAction;
 import info.limpet.actions.CreateLocationAction;
-import info.limpet.actions.CreateSpeedAction;
+import info.limpet.actions.CreateSingletonGenerator;
 import info.limpet.actions.ExportCsvToFileAction;
+import info.limpet.data.impl.QuantityCollection;
+import info.limpet.data.impl.samples.StockTypes;
 import info.limpet.data.operations.AddLayerOperation;
 import info.limpet.data.operations.GenerateDummyDataOperation;
 import info.limpet.data.operations.admin.OperationsLibrary;
@@ -37,6 +35,7 @@ import info.limpet.data.persistence.xml.XStreamHandler;
 import info.limpet.data.store.InMemoryStore;
 import info.limpet.data.store.InMemoryStore.StoreChangeListener;
 import info.limpet.data.store.InMemoryStore.StoreGroup;
+import info.limpet.rcp.Activator;
 import info.limpet.rcp.RCPContext;
 import info.limpet.rcp.data_provider.data.DataModel;
 import info.limpet.rcp.editors.dnd.DataManagerDropAdapter;
@@ -415,14 +414,56 @@ public class DataManagerEditor extends EditorPart
 	private void makeActions()
 	{
 
-		createDimensionless = new ActionWrapper(new CreateDimensionlessAction(
-				_context));
-		createFrequency = new ActionWrapper(new CreateFrequencyAction(_context));
-		createDecibels = new ActionWrapper(new CreateDecibelsAction(_context));
-		createSpeed = new ActionWrapper(new CreateSpeedAction(_context));
-		createCourse = new ActionWrapper(new CreateCourseAction(_context));
+		createDimensionless = new OperationWrapper(new CreateSingletonGenerator(
+				"dimensionless")
+		{
+			protected QuantityCollection<?> generate(String name)
+			{
+				return new StockTypes.NonTemporal.DimensionlessDouble(name);
+			}
+		}, "Create dimensionless singleton",
+				Activator.getImageDescriptor("dimesionless"), _context, _store);
 
-		// tmp: within operations wrapper
+		createFrequency = new OperationWrapper(new CreateSingletonGenerator(
+				"frequency")
+		{
+			protected QuantityCollection<?> generate(String name)
+			{
+				return new StockTypes.NonTemporal.Frequency_Hz(name);
+			}
+		}, "Create frequency singleton", Activator.getImageDescriptor("frequency"),
+				_context, _store);
+
+		createDecibels = new OperationWrapper(new CreateSingletonGenerator(
+				"decibels")
+		{
+			protected QuantityCollection<?> generate(String name)
+			{
+				return new StockTypes.NonTemporal.AcousticStrength(name);
+			}
+		}, "Create decibels singleton", Activator.getImageDescriptor("decibels"),
+				_context, _store);
+
+		createSpeed = new OperationWrapper(new CreateSingletonGenerator(
+				"speed (m/s)")
+		{
+			protected QuantityCollection<?> generate(String name)
+			{
+				return new StockTypes.NonTemporal.Speed_MSec(name);
+			}
+		}, "Create speed singleton (m/s)",
+				Activator.getImageDescriptor("speed (m/s)"), _context, _store);
+
+		createCourse = new OperationWrapper(new CreateSingletonGenerator(
+				"course (degs)")
+		{
+			protected QuantityCollection<?> generate(String name)
+			{
+				return new StockTypes.NonTemporal.Speed_MSec(name);
+			}
+		}, "Create course singleton (degs)",
+				Activator.getImageDescriptor("course (degs)"), _context, _store);
+
 		copyCsvToFile = new OperationWrapper(new ExportCsvToFileAction(),
 				"Export CSV to file", PlatformUI.getWorkbench().getSharedImages()
 						.getImageDescriptor(ISharedImages.IMG_ETOOL_SAVEAS_EDIT), _context,
