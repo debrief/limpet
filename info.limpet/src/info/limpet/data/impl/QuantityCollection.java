@@ -41,10 +41,10 @@ public class QuantityCollection<T extends Quantity> extends
 	// Q Helper is transient
 	private QuantityRange<T> _range;
 	
-	public QuantityCollection(String name, Unit<T> units)
-	{
-		this(name, null, units);
-	}
+//	public QuantityCollection(String name, Unit<T> units)
+//	{
+//		this(name, null, units);
+//	}
 
 	public QuantityCollection(String name, ICommand<?> precedent, Unit<T> units)
 	{

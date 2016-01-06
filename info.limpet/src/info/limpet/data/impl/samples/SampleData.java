@@ -74,29 +74,29 @@ public class SampleData
 		StockTypes.Temporal.Angle_Degrees angle1 = new StockTypes.Temporal.Angle_Degrees(
 				ANGLE_ONE, null);
 		StockTypes.Temporal.Speed_MSec speedSeries1 = new StockTypes.Temporal.Speed_MSec(
-				SPEED_ONE);
+				SPEED_ONE, null);
 		StockTypes.Temporal.Speed_MSec speedSeries2 = new StockTypes.Temporal.Speed_MSec(
-				SPEED_TWO);
+				SPEED_TWO, null);
 		StockTypes.Temporal.Speed_MSec speedSeries3 = new StockTypes.Temporal.Speed_MSec(
-				SPEED_THREE_LONGER);
+				SPEED_THREE_LONGER, null);
 		StockTypes.Temporal.Speed_MSec speed_early_1 = new StockTypes.Temporal.Speed_MSec(
-				SPEED_EARLY);
+				SPEED_EARLY, null);
 		StockTypes.Temporal.Speed_MSec speed_irregular = new StockTypes.Temporal.Speed_MSec(
-				SPEED_IRREGULAR2);
+				SPEED_IRREGULAR2, null);
 		StockTypes.NonTemporal.Length_M length1 = new StockTypes.NonTemporal.Length_M(
-				LENGTH_ONE);
+				LENGTH_ONE, null);
 		StockTypes.NonTemporal.Length_M length2 = new StockTypes.NonTemporal.Length_M(
-				LENGTH_TWO);
+				LENGTH_TWO, null);
 		IObjectCollection<String> string1 = new ObjectCollection<String>(STRING_ONE);
 		IObjectCollection<String> string2 = new ObjectCollection<String>(STRING_TWO);
 		IQuantityCollection<Dimensionless> singleton1 = new QuantityCollection<Dimensionless>(
-				FLOATING_POINT_FACTOR, Dimensionless.UNIT);
+				FLOATING_POINT_FACTOR, null, Dimensionless.UNIT);
 		StockTypes.NonTemporal.Speed_MSec singletonRange1 = new StockTypes.NonTemporal.Speed_MSec(
-				RANGED_SPEED_SINGLETON);
+				RANGED_SPEED_SINGLETON, null);
 		StockTypes.NonTemporal.Length_M singletonLength = new StockTypes.NonTemporal.Length_M(
-				LENGTH_SINGLETON);
+				LENGTH_SINGLETON, null);
 		ElapsedTime_Sec timeIntervals = new StockTypes.Temporal.ElapsedTime_Sec(
-				TIME_INTERVALS);
+				TIME_INTERVALS, null);
 		TemporalLocation track_1 = new TemporalLocation(TRACK_ONE);
 		TemporalLocation track_2 = new TemporalLocation(TRACK_TWO);
 

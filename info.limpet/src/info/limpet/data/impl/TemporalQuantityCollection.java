@@ -45,10 +45,10 @@ public class TemporalQuantityCollection<T extends Quantity> extends
 
 	private Unit<T> units;
 
-	public TemporalQuantityCollection(String name, Unit<T> units)
-	{
-		this(name, null, units);
-	}
+//	public TemporalQuantityCollection(String name, Unit<T> units)
+//	{
+//		this(name, null, units);
+//	}
 
 	public TemporalQuantityCollection(String name, ICommand<?> precedent,
 			Unit<T> units)
