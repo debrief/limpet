@@ -415,8 +415,6 @@ public class DataManagerEditor extends EditorPart
 	private void makeActions()
 	{
 
-		copyCsvToClipboard = new ActionWrapper(new CopyCsvToClipboardAction(
-				_context));
 		copyCsvToFile = new ActionWrapper(new ExportCsvToFileAction(_context));
 		createDimensionless = new ActionWrapper(new CreateDimensionlessAction(
 				_context));
@@ -426,6 +424,11 @@ public class DataManagerEditor extends EditorPart
 		createCourse = new ActionWrapper(new CreateCourseAction(_context));
 
 		// tmp: within operations wrapper
+		copyCsvToClipboard = new OperationWrapper(new CopyCsvToClipboardAction(),
+				"Copy CSV to clipboard", PlatformUI.getWorkbench().getSharedImages()
+						.getImageDescriptor(ISharedImages.IMG_ELCL_SYNCED), _context,
+				_store);
+
 		addLayer = new OperationWrapper(new AddLayerOperation(), "Add folder",
 				PlatformUI.getWorkbench().getSharedImages()
 						.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE), _context, _store);
