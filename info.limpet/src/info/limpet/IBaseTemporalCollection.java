@@ -24,14 +24,14 @@ public interface IBaseTemporalCollection
 	 * 
 	 * @return
 	 */
-	public long start();
+	long start();
 
 	/**
 	 * time of the last observation
 	 * 
 	 * @return
 	 */
-	public long finish();
+	long finish();
 
 	/**
 	 * time period between first & last measurement. 0 if just one observation, -1
@@ -39,19 +39,19 @@ public interface IBaseTemporalCollection
 	 * 
 	 * @return
 	 */
-	public long duration();
+	long duration();
 
 	/**
 	 * number of observations per milli, across the whole collection
 	 * 
 	 * @return
 	 */
-	public double rate();
+	double rate();
 	
 	/** retrieve the times
 	 * 
 	 * @return
 	 */
-	public List<Long> getTimes();
+	List<Long> getTimes();
 	
 }

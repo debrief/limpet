@@ -179,6 +179,6 @@ public abstract class TimeFrequencyBins extends CoreAnalysis
 		return aTests.allCollections(selection) && aTests.allTemporal(selection);
 	}
 
-	abstract protected void presentResults(List<String> titles,
+	protected abstract void presentResults(List<String> titles,
 			List<String> values);
 }

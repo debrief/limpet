@@ -164,7 +164,7 @@ public class MultiplyQuantityOperation implements IOperation<IStoreItem>
 			performCalc(unit, outputs);
 
 			// tell each series that we're a dependent
-			Iterator<IStoreItem> iter = inputs.iterator();
+			Iterator<IStoreItem> iter = getInputs().iterator();
 			while (iter.hasNext())
 			{
 				ICollection iCollection = (ICollection) iter.next();
@@ -179,7 +179,7 @@ public class MultiplyQuantityOperation implements IOperation<IStoreItem>
 
 		private Unit<?> calculateOutputUnit()
 		{
-			Iterator<IStoreItem> inputsIterator = inputs.iterator();
+			Iterator<IStoreItem> inputsIterator = getInputs().iterator();
 			IQuantityCollection<?> firstItem = (IQuantityCollection<?>) inputsIterator
 					.next();
 			Unit<?> unit = firstItem.getUnits();
@@ -199,7 +199,7 @@ public class MultiplyQuantityOperation implements IOperation<IStoreItem>
 			Unit<?> unit = calculateOutputUnit();
 
 			// update the results
-			performCalc(unit, outputs);
+			performCalc(unit, getOutputs());
 		}
 
 		/**
@@ -228,10 +228,10 @@ public class MultiplyQuantityOperation implements IOperation<IStoreItem>
 					final Long thisTime = tIter.next();
 					Double runningTotal = null;
 
-					for (int i = 0; i < inputs.size(); i++)
+					for (int i = 0; i < getInputs().size(); i++)
 					{
 						@SuppressWarnings("unchecked")
-						IQuantityCollection<Quantity> thisC = (IQuantityCollection<Quantity>) inputs
+						IQuantityCollection<Quantity> thisC = (IQuantityCollection<Quantity>) getInputs()
 								.get(i);
 
 						final double thisValue;
@@ -275,17 +275,17 @@ public class MultiplyQuantityOperation implements IOperation<IStoreItem>
 			else
 			{
 				// find the (non-singleton) array length
-				int length = getNonSingletonArrayLength(inputs);
+				int length = getNonSingletonArrayLength(getInputs());
 
 				// start adding values.
 				for (int j = 0; j < length; j++)
 				{
 					Double runningTotal = null;
 
-					for (int i = 0; i < inputs.size(); i++)
+					for (int i = 0; i < getInputs().size(); i++)
 					{
 						@SuppressWarnings("unchecked")
-						IQuantityCollection<Quantity> thisC = (IQuantityCollection<Quantity>) inputs
+						IQuantityCollection<Quantity> thisC = (IQuantityCollection<Quantity>) getInputs()
 								.get(i);
 
 						final double thisValue;

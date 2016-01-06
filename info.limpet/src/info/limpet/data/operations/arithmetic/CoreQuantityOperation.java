@@ -101,7 +101,7 @@ public abstract class CoreQuantityOperation<Q extends Quantity>
 	 * @param selection
 	 * @return
 	 */
-	abstract protected boolean appliesTo(List<IQuantityCollection<Q>> selection);
+	protected abstract boolean appliesTo(List<IQuantityCollection<Q>> selection);
 
 	/**
 	 * produce any new commands for this s election
@@ -113,7 +113,7 @@ public abstract class CoreQuantityOperation<Q extends Quantity>
 	 * @param commands
 	 *          the list of commands
 	 */
-	abstract protected void addIndexedCommands(
+	protected abstract void addIndexedCommands(
 			List<IQuantityCollection<Q>> selection, IStore destination,
 			Collection<ICommand<IQuantityCollection<Q>>> commands, IContext context);
 
@@ -124,7 +124,7 @@ public abstract class CoreQuantityOperation<Q extends Quantity>
 	 * @param destination
 	 * @param res
 	 */
-	abstract protected void addInterpolatedCommands(
+	protected abstract void addInterpolatedCommands(
 			List<IQuantityCollection<Q>> selection, IStore destination,
 			Collection<ICommand<IQuantityCollection<Q>>> res, IContext context);
 
@@ -134,11 +134,11 @@ public abstract class CoreQuantityOperation<Q extends Quantity>
 	 * @author ian
 	 * 
 	 */
-	abstract public class CoreQuantityCommand extends
+	public abstract class CoreQuantityCommand extends
 			AbstractCommand<IQuantityCollection<Q>>
 	{
 
-		final private ITemporalQuantityCollection<Q> timeProvider;
+		private final ITemporalQuantityCollection<Q> timeProvider;
 
 		public CoreQuantityCommand(String title, String description, IStore store,
 				boolean canUndo, boolean canRedo, List<IQuantityCollection<Q>> inputs,
@@ -222,7 +222,7 @@ public abstract class CoreQuantityOperation<Q extends Quantity>
 			int res = 0;
 
 			// we may have a singleton array. select the non singleton array
-			Iterator<IQuantityCollection<Q>> iter = inputs.iterator();
+			Iterator<IQuantityCollection<Q>> iter = getInputs().iterator();
 			while (iter.hasNext())
 			{
 				IQuantityCollection<Q> iQuantityCollection = (IQuantityCollection<Q>) iter
@@ -257,7 +257,7 @@ public abstract class CoreQuantityOperation<Q extends Quantity>
 			{
 				// ok, the input and output arrays must be temporal.
 				ITemporalQuantityCollection<Q> qc = (ITemporalQuantityCollection<Q>) target;
-				ITemporalQuantityCollection<Q> qi = (ITemporalQuantityCollection<Q>) inputs
+				ITemporalQuantityCollection<Q> qi = (ITemporalQuantityCollection<Q>) getInputs()
 						.get(0);
 				Long[] timeData = qi.getTimes().toArray(new Long[]
 				{});
@@ -277,7 +277,7 @@ public abstract class CoreQuantityOperation<Q extends Quantity>
 		 * @param elementCount
 		 * @return
 		 */
-		abstract protected Double calcThisElement(int elementCount);
+		protected abstract Double calcThisElement(int elementCount);
 
 		/**
 		 * produce a calculated value for the relevant index of the first input
@@ -286,17 +286,17 @@ public abstract class CoreQuantityOperation<Q extends Quantity>
 		 * @param elementCount
 		 * @return
 		 */
-		abstract protected Double calcThisInterpolatedElement(long time);
+		protected abstract Double calcThisInterpolatedElement(long time);
 
 		@Override
 		protected void recalculate()
 		{
 			// get the unit
-			IQuantityCollection<Q> first = inputs.get(0);
+			IQuantityCollection<Q> first = getInputs().get(0);
 			Unit<Q> unit = determineOutputUnit(first);
 
 			// update the results
-			performCalc(unit, outputs);
+			performCalc(unit, getOutputs());
 		}
 
 		/**
@@ -335,7 +335,7 @@ public abstract class CoreQuantityOperation<Q extends Quantity>
 		public void execute()
 		{
 			// get the unit
-			IQuantityCollection<Q> first = inputs.get(0);
+			IQuantityCollection<Q> first = getInputs().get(0);
 
 			List<IQuantityCollection<Q>> outputs = new ArrayList<IQuantityCollection<Q>>();
 
@@ -361,7 +361,7 @@ public abstract class CoreQuantityOperation<Q extends Quantity>
 			performCalc(unit, outputs);
 
 			// tell each series that we're a dependent
-			Iterator<IQuantityCollection<Q>> iter = inputs.iterator();
+			Iterator<IQuantityCollection<Q>> iter = getInputs().iterator();
 			while (iter.hasNext())
 			{
 				ICollection iCollection = iter.next();

@@ -38,13 +38,13 @@ import org.geotools.referencing.GeodeticCalculator;
 import org.opengis.geometry.Geometry;
 import org.opengis.geometry.primitive.Point;
 
-abstract public class TwoTrackOperation implements IOperation<IStoreItem>
+public abstract class TwoTrackOperation implements IOperation<IStoreItem>
 {
 
-	abstract public static class DistanceOperation extends
+	public abstract static class DistanceOperation extends
 			AbstractCommand<IStoreItem>
 	{
-		final protected IBaseTemporalCollection _timeProvider;
+		protected final IBaseTemporalCollection _timeProvider;
 		CollectionComplianceTests aTests = new CollectionComplianceTests();
 
 		public DistanceOperation(List<IStoreItem> selection, IStore store,
@@ -90,7 +90,7 @@ abstract public class TwoTrackOperation implements IOperation<IStoreItem>
 			getStore().addAll(res);
 		}
 
-		abstract protected IQuantityCollection<?> getOutputCollection(
+		protected abstract IQuantityCollection<?> getOutputCollection(
 				String trackList, boolean isTemporal);
 
 		@Override
@@ -157,7 +157,7 @@ abstract public class TwoTrackOperation implements IOperation<IStoreItem>
 				{
 					long thisTime = (long) tIter.next();
 
-					if ((thisTime >= period.startTime) && (thisTime <= period.endTime))
+					if ((thisTime >= period.getStartTime()) && (thisTime <= period.getEndTime()))
 					{
 
 						Geometry locA = locationFor(track1, thisTime);
@@ -229,7 +229,7 @@ abstract public class TwoTrackOperation implements IOperation<IStoreItem>
 			return locOne;
 		}
 
-		abstract protected void calcAndStore(final GeodeticCalculator calc,
+		protected abstract void calcAndStore(final GeodeticCalculator calc,
 				final Point locA, final Point locB, Long time);
 	}
 

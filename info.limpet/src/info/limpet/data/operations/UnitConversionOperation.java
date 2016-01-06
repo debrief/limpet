@@ -41,7 +41,7 @@ public class UnitConversionOperation implements IOperation<ICollection>
 
 	CollectionComplianceTests aTests = new CollectionComplianceTests();
 
-	final protected Unit<?> targetUnit;
+	protected final Unit<?> targetUnit;
 
 	public UnitConversionOperation(Unit<?> targetUnit)
 	{
@@ -110,7 +110,7 @@ public class UnitConversionOperation implements IOperation<ICollection>
 		{
 			List<ICollection> outputs = new ArrayList<ICollection>();
 
-			ICollection theInput = inputs.iterator().next();
+			ICollection theInput = getInputs().iterator().next();
 
 			// ok, generate the new series
 			final IQuantityCollection<?> target;
@@ -135,7 +135,7 @@ public class UnitConversionOperation implements IOperation<ICollection>
 			performCalc(outputs);
 
 			// tell each series that we're a dependent
-			Iterator<ICollection> iter = inputs.iterator();
+			Iterator<ICollection> iter = getInputs().iterator();
 			while (iter.hasNext())
 			{
 				ICollection iCollection = iter.next();
@@ -152,7 +152,7 @@ public class UnitConversionOperation implements IOperation<ICollection>
 		protected void recalculate()
 		{
 			// update the results
-			performCalc(outputs);
+			performCalc(getOutputs());
 		}
 
 		/**
@@ -177,7 +177,7 @@ public class UnitConversionOperation implements IOperation<ICollection>
 				qC.clearQuiet();
 			}
 
-			IQuantityCollection<Quantity> singleInputSeries = (IQuantityCollection<Quantity>) inputs
+			IQuantityCollection<Quantity> singleInputSeries = (IQuantityCollection<Quantity>) getInputs()
 					.get(0);
 
 			UnitConverter converter = singleInputSeries.getUnits().getConverterTo(

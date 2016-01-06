@@ -90,6 +90,6 @@ public abstract class SimpleDescriptiveObject extends CoreAnalysis
 		return aTests.allCollections(selection) && aTests.allNonQuantity(selection);
 	}
 
-	abstract protected void presentResults(List<String> titles,
+	protected abstract void presentResults(List<String> titles,
 			List<String> values);
 }

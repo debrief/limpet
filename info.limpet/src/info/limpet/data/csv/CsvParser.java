@@ -348,10 +348,10 @@ public class CsvParser
 	 * @author ian
 	 * 
 	 */
-	public static abstract class DataImporter
+	public abstract static class DataImporter
 	{
-		final private String _units;
-		final private String _colName;
+		private final String _units;
+		private final String _colName;
 		private Class<?> _classType;
 
 		/**
@@ -413,7 +413,7 @@ public class CsvParser
 		 * @param row
 		 *          current row of data
 		 */
-		abstract public void consume(ICollection series, long thisTime,
+		public abstract void consume(ICollection series, long thisTime,
 				int colStart, CSVRecord row);
 
 		/**
@@ -422,7 +422,7 @@ public class CsvParser
 		 * @param colName
 		 * @return
 		 */
-		final public boolean handleName(String colName)
+		public final boolean handleName(String colName)
 		{
 			if (_colName == null)
 				return false;
@@ -436,7 +436,7 @@ public class CsvParser
 		 * @param units
 		 * @return
 		 */
-		final public boolean handleUnits(String units)
+		public final boolean handleUnits(String units)
 		{
 			if (_units == null)
 				return false;

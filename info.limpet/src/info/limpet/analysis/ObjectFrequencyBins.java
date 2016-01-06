@@ -52,8 +52,8 @@ public abstract class ObjectFrequencyBins extends CoreAnalysis
 
 	public static class Bin
 	{
-		final public Object indexVal;
-		final public long freqVal;
+		public final Object indexVal;
+		public final long freqVal;
 
 		public Bin(Object index, long freq)
 		{
@@ -143,6 +143,6 @@ public abstract class ObjectFrequencyBins extends CoreAnalysis
 		return aTests.allCollections(selection) && aTests.allNonQuantity(selection)  && aTests.allNonLocation(selection);
 	}
 
-	abstract protected void presentResults(List<String> titles,
+	protected abstract void presentResults(List<String> titles,
 			List<String> values);
 }

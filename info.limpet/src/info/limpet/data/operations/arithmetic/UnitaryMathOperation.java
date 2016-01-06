@@ -37,7 +37,7 @@ import javax.measure.Measurable;
 import javax.measure.Measure;
 import javax.measure.unit.Unit;
 
-abstract public class UnitaryMathOperation implements IOperation<ICollection>
+public abstract class UnitaryMathOperation implements IOperation<ICollection>
 {
 	CollectionComplianceTests aTests = new CollectionComplianceTests();
 	private final String _opName;
@@ -52,7 +52,7 @@ abstract public class UnitaryMathOperation implements IOperation<ICollection>
 		return _opName;
 	}
 
-	abstract public double calcFor(double val);
+	public abstract double calcFor(double val);
 
 	public Collection<ICommand<ICollection>> actionsFor(
 			List<ICollection> selection, IStore destination, IContext context)
@@ -183,7 +183,7 @@ abstract public class UnitaryMathOperation implements IOperation<ICollection>
 		 * from the core "execute" operation in order to support dynamic updates
 		 * 
 		 * @param unit
-		 * @param outputs
+		 * @param _outputs
 		 */
 		private void performCalc()
 		{

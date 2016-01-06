@@ -17,7 +17,7 @@ package info.limpet;
 
 public interface IContext
 {
-	public static enum Status
+	enum Status
 	{
 		INFO, WARNING, ERROR;
 	}
@@ -25,11 +25,11 @@ public interface IContext
 	/**
 	 * action names
 	 */
-	public static final String ADD_LAYER_ACTION_NAME = "addLayer";
-	public static final String COPY_CSV_TO_CLIPBOARD = "copyScvToClipboard";
-	public static final String COPY_CSV_TO_FILE = "copyScvToFile";
-	public static final String GENERATE_DATA = "generateData";
-	public static final String REFRESH_VIEW = "refreshView";
+	String ADD_LAYER_ACTION_NAME = "addLayer";
+	String COPY_CSV_TO_CLIPBOARD = "copyScvToClipboard";
+	String COPY_CSV_TO_FILE = "copyScvToFile";
+	String GENERATE_DATA = "generateData";
+	String REFRESH_VIEW = "refreshView";
 	
 	/** get a string from the user, or null if the user cancelled the operation
 	 * 
@@ -38,25 +38,25 @@ public interface IContext
 	 * @param defaultText the text to pre-populate the input box
 	 * @return user-entered string, or null for cancel
 	 */
-	public String getInput(String title, String description, String defaultText);
+	String getInput(String title, String description, String defaultText);
 
 	/** indicate this warning
 	 * 
 	 * @param string
 	 */
-	public void logError(Status status, String message, Exception e);
+	void logError(Status status, String message, Exception e);
 
-	public void openWarning(String title, String message);
+	void openWarning(String title, String message);
 
-	public void openInformation(String title, String message);
+	void openInformation(String title, String message);
 
-	public String getCsvFilename();
+	String getCsvFilename();
 
-	public boolean openQuestion(String title, String message);
+	boolean openQuestion(String title, String message);
 
-	public void openError(String title, String message);
+	void openError(String title, String message);
 
-	public void log(Exception e);
+	void log(Exception e);
 
-	public void placeOnClipboard(String text);
+	void placeOnClipboard(String text);
 }

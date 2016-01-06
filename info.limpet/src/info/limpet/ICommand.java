@@ -26,17 +26,17 @@ import java.util.List;
  */
 public interface ICommand<T extends IStoreItem> extends IChangeListener, IStoreItem
 {
-	public String getDescription();
-	public void execute();
-	public void undo();
-	public void redo();
-	public boolean canUndo();
-	public boolean canRedo();
-	public List<T> getOutputs();
-	public List<T> getInputs();
+	String getDescription();
+	void execute();
+	void undo();
+	void redo();
+	boolean canUndo();
+	boolean canRedo();
+	List<T> getOutputs();
+	List<T> getInputs();
 	boolean getDynamic();
 	void setDynamic(boolean dynamic);
 	
-	final static String NEW_DATASET_MESSAGE = "Provide name for new dataset"; 
+	String NEW_DATASET_MESSAGE = "Provide name for new dataset"; 
 	
 }

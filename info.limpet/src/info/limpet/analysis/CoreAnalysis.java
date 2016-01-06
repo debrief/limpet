@@ -15,7 +15,7 @@
 package info.limpet.analysis;
 
 
-abstract public class CoreAnalysis implements IAnalysis
+public abstract class CoreAnalysis implements IAnalysis
 {
 	private final String _name;
 

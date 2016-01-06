@@ -48,378 +48,347 @@ import org.geotools.referencing.GeodeticCalculator;
 import org.opengis.geometry.Geometry;
 import org.opengis.geometry.primitive.Point;
 
-public class DopplerShiftBetweenTracksOperation implements
-		IOperation<IStoreItem>
+public class DopplerShiftBetweenTracksOperation implements IOperation<IStoreItem>
 {
-	public static class DopplerShiftOperation extends AbstractCommand<IStoreItem>
-	{
+  public static class DopplerShiftOperation extends AbstractCommand<IStoreItem>
+  {
 
-		private static final String SOUND_SPEED = "SOUND_SPEED";
-		private static final String LOC = "LOC";
-		private static final String SPEED = "SPEED";
-		private static final String COURSE = "COURSE";
-		private static final String FREQ = "FREQ";
-		private static final String RX = "RX_";
-		private static final String TX = "TX_";
+    private static final String SOUND_SPEED = "SOUND_SPEED";
+    private static final String LOC = "LOC";
+    private static final String SPEED = "SPEED";
+    private static final String COURSE = "COURSE";
+    private static final String FREQ = "FREQ";
+    private static final String RX = "RX_";
+    private static final String TX = "TX_";
 
-		/**
-		 * 
-		 * @param SpeedOfSound
-		 * @param osHeadingRads
-		 * @param tgtHeadingRads
-		 * @param osSpeed
-		 * @param tgtSpeed
-		 * @param bearing
-		 * @param fNought
-		 * @return
-		 */
-		private double calcPredictedFreqSI(final double SpeedOfSound,
-				final double osHeadingRads, final double tgtHeadingRads,
-				final double osSpeed, final double tgtSpeed, final double bearing,
-				final double fNought)
-		{
-			final double relB = bearing - osHeadingRads;
+    /**
+     * 
+     * @param SpeedOfSound
+     * @param osHeadingRads
+     * @param tgtHeadingRads
+     * @param osSpeed
+     * @param tgtSpeed
+     * @param bearing
+     * @param fNought
+     * @return
+     */
+    private double calcPredictedFreqSI(final double SpeedOfSound, final double osHeadingRads,
+        final double tgtHeadingRads, final double osSpeed, final double tgtSpeed, final double bearing,
+        final double fNought)
+    {
+      final double relB = bearing - osHeadingRads;
 
-			// note - contrary to some publications TSL uses the
-			// angle along the bearing, not the angle back down the bearing (ATB).
-			final double AngleOffTheOtherB = tgtHeadingRads - bearing;
+      // note - contrary to some publications TSL uses the
+      // angle along the bearing, not the angle back down the bearing (ATB).
+      final double angleOffTheOtherB = tgtHeadingRads - bearing;
 
-			final double OSL = Math.cos(relB) * osSpeed;
-			final double TSL = Math.cos(AngleOffTheOtherB) * tgtSpeed;
+      final double valOSL = Math.cos(relB) * osSpeed;
+      final double valTSL = Math.cos(angleOffTheOtherB) * tgtSpeed;
 
-			final double freq = fNought * (SpeedOfSound + OSL) / (SpeedOfSound + TSL);
+      final double freq = fNought * (SpeedOfSound + valOSL) / (SpeedOfSound + valTSL);
 
-			return freq;
-		}
+      return freq;
+    }
 
-		/**
-		 * let the class organise a tidy set of data, to collate the assorted
-		 * datasets
-		 * 
-		 */
-		private transient HashMap<String, ICollection> _data;
+    /**
+     * let the class organise a tidy set of data, to collate the assorted datasets
+     * 
+     */
+    private transient HashMap<String, ICollection> _data;
 
-		/**
-		 * nominated transmitted
-		 * 
-		 */
-		private final StoreGroup _tx;
+    /**
+     * nominated transmitted
+     * 
+     */
+    private final StoreGroup _tx;
 
-		/**
-		 * nominated receiver
-		 * 
-		 */
-		private final StoreGroup _rx;
-		CollectionComplianceTests aTests = new CollectionComplianceTests();
+    /**
+     * nominated receiver
+     * 
+     */
+    private final StoreGroup _rx;
+    CollectionComplianceTests aTests = new CollectionComplianceTests();
 
-		public DopplerShiftOperation(final StoreGroup tx, final StoreGroup rx,
-				final IStore store, final String title, final String description,
-				final List<IStoreItem> selection, IContext context)
-		{
-			super(title, description, store, true, true, selection, context);
-			_tx = tx;
-			_rx = rx;
-		}
+    public DopplerShiftOperation(final StoreGroup tx, final StoreGroup rx, final IStore store,
+        final String title, final String description, final List<IStoreItem> selection, IContext context)
+    {
+      super(title, description, store, true, true, selection, context);
+      _tx = tx;
+      _rx = rx;
+    }
 
-		protected void calcAndStore(final GeodeticCalculator calc,
-				final Point locA, final Point locB)
-		{
-			// get the output dataset
-			final Length_M target = (Length_M) getOutputs().get(0);
+    protected void calcAndStore(final GeodeticCalculator calc, final Point locA, final Point locB)
+    {
+      // get the output dataset
+      final Length_M target = (Length_M) getOutputs().get(0);
 
-			// now find the range between them
-			calc.setStartingGeographicPoint(locA.getCentroid().getOrdinate(0), locA
-					.getCentroid().getOrdinate(1));
-			calc.setDestinationGeographicPoint(locB.getCentroid().getOrdinate(0),
-					locB.getCentroid().getOrdinate(1));
-			final double thisDist = calc.getOrthodromicDistance();
-			target.add(Measure.valueOf(thisDist, target.getUnits()));
-		}
+      // now find the range between them
+      calc.setStartingGeographicPoint(locA.getCentroid().getOrdinate(0), locA.getCentroid().getOrdinate(1));
+      calc.setDestinationGeographicPoint(locB.getCentroid().getOrdinate(0), locB.getCentroid().getOrdinate(1));
+      final double thisDist = calc.getOrthodromicDistance();
+      target.add(Measure.valueOf(thisDist, target.getUnits()));
+    }
 
-		@Override
-		public void execute()
-		{
-			// store the data in an accessible way
-			organiseData();
+    @Override
+    public void execute()
+    {
+      // store the data in an accessible way
+      organiseData();
 
-			// get the unit
-			final List<IStoreItem> outputs = new ArrayList<IStoreItem>();
+      // get the unit
+      final List<IStoreItem> outputs = new ArrayList<IStoreItem>();
 
-			// put the names into a string
-			final String title = _tx.getName() + " and " + _rx.getName();
+      // put the names into a string
+      final String title = _tx.getName() + " and " + _rx.getName();
 
-			// ok, generate the new series
-			final IQuantityCollection<?> target = getOutputCollection(title);
+      // ok, generate the new series
+      final IQuantityCollection<?> target = getOutputCollection(title);
 
-			outputs.add(target);
+      outputs.add(target);
 
-			// store the output
-			super.addOutput(target);
+      // store the output
+      super.addOutput(target);
 
-			// start adding values.
-			performCalc(outputs);
+      // start adding values.
+      performCalc(outputs);
 
-			// tell each series that we're a dependent
-			final Iterator<ICollection> iter = _data.values().iterator();
-			while (iter.hasNext())
-			{
-				final ICollection iCollection = iter.next();
+      // tell each series that we're a dependent
+      final Iterator<ICollection> iter = _data.values().iterator();
+      while (iter.hasNext())
+      {
+        final ICollection iCollection = iter.next();
 
-				// sometimes a dataset is optional, so double-check we aren't
-				// looking at a null dataset
-				if (iCollection != null)
-				{
-					iCollection.addDependent(this);
-				}
-			}
+        // sometimes a dataset is optional, so double-check we aren't
+        // looking at a null dataset
+        if (iCollection != null)
+        {
+          iCollection.addDependent(this);
+        }
+      }
 
-			// ok, done
-			final List<IStoreItem> res = new ArrayList<IStoreItem>();
-			res.add(target);
-			getStore().addAll(res);
-		}
+      // ok, done
+      final List<IStoreItem> res = new ArrayList<IStoreItem>();
+      res.add(target);
+      getStore().addAll(res);
+    }
 
-		@Override
-		protected String getOutputName()
-		{
-			return getContext().getInput("Doppler shift between tracks",
-					NEW_DATASET_MESSAGE,
-					"Doppler shift between " + _tx.getName() + " and " + _rx.getName());
-		}
+    @Override
+    protected String getOutputName()
+    {
+      return getContext().getInput("Doppler shift between tracks", NEW_DATASET_MESSAGE,
+          "Doppler shift between " + _tx.getName() + " and " + _rx.getName());
+    }
 
-		@Override
-		public void undo()
-		{
-			// ok, remove the calculated dataset
-			IStoreItem results = getOutputs().iterator().next();
-			IStore store = getStore();
-			if (store instanceof InMemoryStore)
-			{
-				InMemoryStore im = (InMemoryStore) store;
-				im.remove(results);
-			}
-		}
+    @Override
+    public void undo()
+    {
+      // ok, remove the calculated dataset
+      IStoreItem results = getOutputs().iterator().next();
+      IStore store = getStore();
+      if (store instanceof InMemoryStore)
+      {
+        InMemoryStore im = (InMemoryStore) store;
+        im.remove(results);
+      }
+    }
 
-		@Override
-		public void redo()
-		{
-			IStoreItem results = getOutputs().iterator().next();
-			IStore store = getStore();
-			if (store instanceof InMemoryStore)
-			{
-				InMemoryStore im = (InMemoryStore) store;
-				im.add(results);
-			}
-		}
+    @Override
+    public void redo()
+    {
+      IStoreItem results = getOutputs().iterator().next();
+      IStore store = getStore();
+      if (store instanceof InMemoryStore)
+      {
+        InMemoryStore im = (InMemoryStore) store;
+        im.add(results);
+      }
+    }
 
-		public HashMap<String, ICollection> getDataMap()
-		{
-			return _data;
-		}
+    public HashMap<String, ICollection> getDataMap()
+    {
+      return _data;
+    }
 
-		protected IQuantityCollection<?> getOutputCollection(final String title)
-		{
-			return new StockTypes.Temporal.Frequency_Hz("Doppler shift between "
-					+ title, this);
-		}
+    protected IQuantityCollection<?> getOutputCollection(final String title)
+    {
+      return new StockTypes.Temporal.Frequency_Hz("Doppler shift between " + title, this);
+    }
 
-		public void organiseData()
-		{
-			if (_data == null)
-			{
-				// ok, we need to collate the data
-				_data = new HashMap<String, ICollection>();
+    public void organiseData()
+    {
+      if (_data == null)
+      {
+        // ok, we need to collate the data
+        _data = new HashMap<String, ICollection>();
 
-				final CollectionComplianceTests tests = new CollectionComplianceTests();
+        final CollectionComplianceTests tests = new CollectionComplianceTests();
 
-				// ok, transmitter data
-				_data.put(TX + FREQ,
-						tests.collectionWith(_tx, Frequency.UNIT.getDimension(), true));
-				_data.put(TX + COURSE,
-						tests.collectionWith(_tx, SI.RADIAN.getDimension(), true));
-				_data.put(TX + SPEED, tests.collectionWith(_tx, METRE.divide(SECOND)
-						.getDimension(), true));
-				_data.put(TX + LOC, tests.someHaveLocation(_tx));
+        // ok, transmitter data
+        _data.put(TX + FREQ, tests.collectionWith(_tx, Frequency.UNIT.getDimension(), true));
+        _data.put(TX + COURSE, tests.collectionWith(_tx, SI.RADIAN.getDimension(), true));
+        _data.put(TX + SPEED, tests.collectionWith(_tx, METRE.divide(SECOND).getDimension(), true));
+        _data.put(TX + LOC, tests.someHaveLocation(_tx));
 
-				// and the receiver
-				_data.put(RX + COURSE,
-						tests.collectionWith(_rx, SI.RADIAN.getDimension(), true));
-				_data.put(RX + SPEED, tests.collectionWith(_rx, METRE.divide(SECOND)
-						.getDimension(), true));
-				_data.put(RX + LOC, tests.someHaveLocation(_rx));
+        // and the receiver
+        _data.put(RX + COURSE, tests.collectionWith(_rx, SI.RADIAN.getDimension(), true));
+        _data.put(RX + SPEED, tests.collectionWith(_rx, METRE.divide(SECOND).getDimension(), true));
+        _data.put(RX + LOC, tests.someHaveLocation(_rx));
 
-				// and the sound speed
-				_data.put(SOUND_SPEED, tests.collectionWith(getInputs(),
-						METRE.divide(SECOND).getDimension(), false));
-			}
-		}
+        // and the sound speed
+        _data.put(SOUND_SPEED, tests.collectionWith(getInputs(), METRE.divide(SECOND).getDimension(), false));
+      }
+    }
 
-		/**
-		 * wrap the actual operation. We're doing this since we need to separate it
-		 * from the core "execute" operation in order to support dynamic updates
-		 * 
-		 * @param unit
-		 * @param outputs
-		 */
-		private void performCalc(final List<IStoreItem> outputs)
-		{
-			// just check we've been organised (if we've been loaded from persistent
-			// storage)
-			organiseData();
+    /**
+     * wrap the actual operation. We're doing this since we need to separate it from the core "execute"
+     * operation in order to support dynamic updates
+     * 
+     * @param unit
+     * @param outputs
+     */
+    private void performCalc(final List<IStoreItem> outputs)
+    {
+      // just check we've been organised (if we've been loaded from persistent
+      // storage)
+      organiseData();
 
-			// and the bounding period
-			final TimePeriod period = aTests.getBoundingTime(_data.values());
+      // and the bounding period
+      final TimePeriod period = aTests.getBoundingTime(_data.values());
 
-			// check it's valid
-			if (period.invalid())
-			{
-				System.err.println("Insufficient coverage for datasets");
-				return;
-			}
+      // check it's valid
+      if (period.invalid())
+      {
+        System.err.println("Insufficient coverage for datasets");
+        return;
+      }
 
-			// ok, let's start by finding our time sync
-			final IBaseTemporalCollection times = aTests.getOptimalTimes(period,
-					_data.values());
+      // ok, let's start by finding our time sync
+      final IBaseTemporalCollection times = aTests.getOptimalTimes(period, _data.values());
 
-			// check we were able to find some times
-			if (times == null)
-			{
-				System.err.println("Unable to find time source dataset");
-				return;
-			}
+      // check we were able to find some times
+      if (times == null)
+      {
+        System.err.println("Unable to find time source dataset");
+        return;
+      }
 
-			// get the output dataset
-			final Temporal.Frequency_Hz output = (Frequency_Hz) outputs.iterator()
-					.next();
+      // get the output dataset
+      final Temporal.Frequency_Hz output = (Frequency_Hz) outputs.iterator().next();
 
-			final GeodeticCalculator calc = GeoSupport.getCalculator();
+      final GeodeticCalculator calc = GeoSupport.getCalculator();
 
-			// and now we can start looping through
-			final Iterator<Long> tIter = times.getTimes().iterator();
-			while (tIter.hasNext())
-			{
-				final long thisTime = tIter.next();
+      // and now we can start looping through
+      final Iterator<Long> tIter = times.getTimes().iterator();
+      while (tIter.hasNext())
+      {
+        final long thisTime = tIter.next();
 
-				if ((thisTime >= period.startTime) && (thisTime <= period.endTime))
-				{
-					// ok, now collate our data
-					final Geometry txLoc = aTests.locationFor(_data.get(TX + LOC),
-							thisTime);
-					final Geometry rxLoc = aTests.locationFor(_data.get(RX + LOC),
-							thisTime);
+        if ((thisTime >= period.getStartTime()) && (thisTime <= period.getEndTime()))
+        {
+          // ok, now collate our data
+          final Geometry txLoc = aTests.locationFor(_data.get(TX + LOC), thisTime);
+          final Geometry rxLoc = aTests.locationFor(_data.get(RX + LOC), thisTime);
 
-					final double txCourseRads = aTests.valueAt(_data.get(TX + COURSE),
-							thisTime, SI.RADIAN);
-					final double rxCourseRads = aTests.valueAt(_data.get(RX + COURSE),
-							thisTime, SI.RADIAN);
+          final double txCourseRads = aTests.valueAt(_data.get(TX + COURSE), thisTime, SI.RADIAN);
+          final double rxCourseRads = aTests.valueAt(_data.get(RX + COURSE), thisTime, SI.RADIAN);
 
-					final double txSpeedMSec = aTests.valueAt(_data.get(TX + SPEED),
-							thisTime, SI.METERS_PER_SECOND);
-					final double rxSpeedMSec = aTests.valueAt(_data.get(RX + SPEED),
-							thisTime, SI.METERS_PER_SECOND);
+          final double txSpeedMSec = aTests.valueAt(_data.get(TX + SPEED), thisTime, SI.METERS_PER_SECOND);
+          final double rxSpeedMSec = aTests.valueAt(_data.get(RX + SPEED), thisTime, SI.METERS_PER_SECOND);
 
-					final double freq = aTests.valueAt(_data.get(TX + FREQ), thisTime,
-							SI.HERTZ);
+          final double freq = aTests.valueAt(_data.get(TX + FREQ), thisTime, SI.HERTZ);
 
-					final double soundSpeed = aTests.valueAt(_data.get(SOUND_SPEED),
-							thisTime, SI.METERS_PER_SECOND);
+          final double soundSpeed = aTests.valueAt(_data.get(SOUND_SPEED), thisTime, SI.METERS_PER_SECOND);
 
-					// check we have locations. During some property editing we receive
-					// recalc call
-					// after old value is removed, and before new value is added.
-					if ((txLoc != null) && (rxLoc != null))
-					{
-						// now find the bearing between them
-						calc.setStartingGeographicPoint(txLoc.getCentroid().getOrdinate(0),
-								txLoc.getCentroid().getOrdinate(1));
-						calc.setDestinationGeographicPoint(
-								rxLoc.getCentroid().getOrdinate(0), rxLoc.getCentroid()
-										.getOrdinate(1));
-						double angleDegs = calc.getAzimuth();
-						if (angleDegs < 0)
-							angleDegs += 360;
+          // check we have locations. During some property editing we receive
+          // recalc call
+          // after old value is removed, and before new value is added.
+          if ((txLoc != null) && (rxLoc != null))
+          {
+            // now find the bearing between them
+            calc.setStartingGeographicPoint(txLoc.getCentroid().getOrdinate(0), txLoc.getCentroid()
+                .getOrdinate(1));
+            calc.setDestinationGeographicPoint(rxLoc.getCentroid().getOrdinate(0), rxLoc.getCentroid()
+                .getOrdinate(1));
+            double angleDegs = calc.getAzimuth();
+            if (angleDegs < 0)
+            {
+              angleDegs += 360;
+            }
 
-						final double angleRads = Math.toRadians(angleDegs);
+            final double angleRads = Math.toRadians(angleDegs);
 
-						// ok, and the calculation
-						final double shifted = calcPredictedFreqSI(soundSpeed,
-								txCourseRads, rxCourseRads, txSpeedMSec, rxSpeedMSec,
-								angleRads, freq);
+            // ok, and the calculation
+            final double shifted = calcPredictedFreqSI(soundSpeed, txCourseRads, rxCourseRads, txSpeedMSec,
+                rxSpeedMSec, angleRads, freq);
 
-						output.add(thisTime, shifted);
-					}
-				}
-			}
-		}
+            output.add(thisTime, shifted);
+          }
+        }
+      }
+    }
 
-		@Override
-		protected void recalculate()
-		{
-			// clear out the lists, first
-			final Iterator<IStoreItem> iter = getOutputs().iterator();
-			while (iter.hasNext())
-			{
-				final IQuantityCollection<?> qC = (IQuantityCollection<?>) iter.next();
-				qC.clear();
-			}
+    @Override
+    protected void recalculate()
+    {
+      // clear out the lists, first
+      final Iterator<IStoreItem> iter = getOutputs().iterator();
+      while (iter.hasNext())
+      {
+        final IQuantityCollection<?> qC = (IQuantityCollection<?>) iter.next();
+        qC.clear();
+      }
 
-			// update the results
-			performCalc(getOutputs());
-		}
+      // update the results
+      performCalc(getOutputs());
+    }
 
-	}
+  }
 
-	final private static CollectionComplianceTests aTests = new CollectionComplianceTests();
+  private static final CollectionComplianceTests aTests = new CollectionComplianceTests();
 
-	@Override
-	public Collection<ICommand<IStoreItem>> actionsFor(
-			final List<IStoreItem> selection, final IStore destination,
-			IContext context)
-	{
-		final Collection<ICommand<IStoreItem>> res = new ArrayList<ICommand<IStoreItem>>();
-		if (appliesTo(selection))
-		{
+  @Override
+  public Collection<ICommand<IStoreItem>> actionsFor(final List<IStoreItem> selection,
+      final IStore destination, IContext context)
+  {
+    final Collection<ICommand<IStoreItem>> res = new ArrayList<ICommand<IStoreItem>>();
+    if (appliesTo(selection))
+    {
 
-			// get the list of tracks
-			ArrayList<StoreGroup> trackList = aTests.getChildTrackGroups(selection);
+      // get the list of tracks
+      ArrayList<StoreGroup> trackList = aTests.getChildTrackGroups(selection);
 
-			final StoreGroup groupA = (StoreGroup) trackList.get(0);
-			final StoreGroup groupB = (StoreGroup) trackList.get(1);
+      final StoreGroup groupA = (StoreGroup) trackList.get(0);
+      final StoreGroup groupB = (StoreGroup) trackList.get(1);
 
-			// do we have freq for groupA
-			if (aTests.collectionWith(groupA, Frequency.UNIT.getDimension(), true) != null)
-			{
-				final ICommand<IStoreItem> newC = new DopplerShiftOperation(groupA,
-						groupB, destination, "Doppler between tracks (from "
-								+ groupA.getName() + ")",
-						"Calculate doppler between two tracks", selection, context);
-				res.add(newC);
-			}
+      // do we have freq for groupA
+      if (aTests.collectionWith(groupA, Frequency.UNIT.getDimension(), true) != null)
+      {
+        final ICommand<IStoreItem> newC = new DopplerShiftOperation(groupA, groupB, destination,
+            "Doppler between tracks (from " + groupA.getName() + ")", "Calculate doppler between two tracks",
+            selection, context);
+        res.add(newC);
+      }
 
-			if (aTests.collectionWith(groupB, Frequency.UNIT.getDimension(), true) != null)
-			{
-				final ICommand<IStoreItem> newC = new DopplerShiftOperation(groupB,
-						groupA, destination, "Doppler between tracks (from "
-								+ groupB.getName() + ")",
-						"Calculate doppler between two tracks", selection, context);
-				res.add(newC);
-			}
-		}
+      if (aTests.collectionWith(groupB, Frequency.UNIT.getDimension(), true) != null)
+      {
+        final ICommand<IStoreItem> newC = new DopplerShiftOperation(groupB, groupA, destination,
+            "Doppler between tracks (from " + groupB.getName() + ")", "Calculate doppler between two tracks",
+            selection, context);
+        res.add(newC);
+      }
+    }
 
-		return res;
-	}
+    return res;
+  }
 
-	protected boolean appliesTo(final List<IStoreItem> selection)
-	{
-		// ok, check we have two collections
-		final boolean allGroups = aTests.numberOfGroups(selection, 2);
-		final boolean allTracks = aTests.hasNumberOfTracks(selection, 2);
-		final boolean someHaveFreq = aTests.collectionWith(selection,
-				Frequency.UNIT.getDimension(), true) != null;
-		final boolean topLevelSpeed = aTests.collectionWith(selection, METRE
-				.divide(SECOND).getDimension(), true) != null;
+  protected boolean appliesTo(final List<IStoreItem> selection)
+  {
+    // ok, check we have two collections
+    final boolean allGroups = aTests.numberOfGroups(selection, 2);
+    final boolean allTracks = aTests.hasNumberOfTracks(selection, 2);
+    final boolean someHaveFreq = aTests.collectionWith(selection, Frequency.UNIT.getDimension(), true) != null;
+    final boolean topLevelSpeed = aTests.collectionWith(selection, METRE.divide(SECOND).getDimension(), true) != null;
 
-		return (aTests.exactNumber(selection, 3) && allGroups && allTracks
-				&& someHaveFreq && topLevelSpeed);
-	}
+    return (aTests.exactNumber(selection, 3) && allGroups && allTracks && someHaveFreq && topLevelSpeed);
+  }
 }

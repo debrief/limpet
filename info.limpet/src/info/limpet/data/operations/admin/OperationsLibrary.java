@@ -60,7 +60,7 @@ public class OperationsLibrary
 	public static final String CONVERSIONS = "Conversions";
 	public static final String ARITHMETIC = "Arithmetic";
 	public static final String CREATE = "Create";
-	final static CollectionComplianceTests aTests = new CollectionComplianceTests();
+	static final CollectionComplianceTests aTests = new CollectionComplianceTests();
 
 	public static HashMap<String, List<IOperation<?>>> getOperations()
 	{

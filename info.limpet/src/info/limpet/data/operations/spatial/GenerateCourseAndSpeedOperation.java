@@ -42,7 +42,7 @@ import org.opengis.geometry.primitive.Point;
 public class GenerateCourseAndSpeedOperation implements IOperation<IStoreItem>
 {
 
-	protected static abstract class DistanceOperation extends
+	protected abstract static class DistanceOperation extends
 			AbstractCommand<IStoreItem>
 	{
 
@@ -91,7 +91,7 @@ public class GenerateCourseAndSpeedOperation implements IOperation<IStoreItem>
 			getStore().addAll(outputs);
 		}
 
-		abstract protected IQuantityCollection<?> getOutputCollection(
+		protected abstract IQuantityCollection<?> getOutputCollection(
 				String trackList);
 
 		@Override
@@ -123,7 +123,7 @@ public class GenerateCourseAndSpeedOperation implements IOperation<IStoreItem>
 
 			// do some clearing first
 
-			Iterator<IStoreItem> iter = inputs.iterator();
+			Iterator<IStoreItem> iter = getInputs().iterator();
 			Iterator<IStoreItem> oIter = outputs.iterator();
 			while (iter.hasNext())
 			{
@@ -157,7 +157,7 @@ public class GenerateCourseAndSpeedOperation implements IOperation<IStoreItem>
 			}
 		}
 
-		abstract protected void calcAndStore(IStoreItem thisOut,
+		protected abstract void calcAndStore(IStoreItem thisOut,
 				final GeodeticCalculator calc, final long timeA, final Point locA,
 				final long timeB, final Point locB);
 	}

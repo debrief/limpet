@@ -20,11 +20,12 @@ import java.util.List;
 
 public interface IAnalysis
 {
-	/** perform some analysis on the specified collections
-	 * 
-	 * @param selection
-	 */
-	public void analyse(List<IStoreItem> selection);
+  /**
+   * perform some analysis on the specified collections
+   * 
+   * @param selection
+   */
+  void analyse(List<IStoreItem> selection);
 
-	public String getName();
+  String getName();
 }

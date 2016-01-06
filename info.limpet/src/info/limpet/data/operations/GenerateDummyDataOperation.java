@@ -32,9 +32,9 @@ public class GenerateDummyDataOperation implements IOperation<IStoreItem>
 {
 	CollectionComplianceTests aTests = new CollectionComplianceTests();
 
-	final private String _title;
+	private final String _title;
 
-	final private long _count;
+	private final long _count;
 
 	public GenerateDummyDataOperation(String title, long count)
 	{

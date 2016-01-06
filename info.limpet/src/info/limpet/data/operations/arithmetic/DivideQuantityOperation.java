@@ -98,8 +98,8 @@ public class DivideQuantityOperation implements IOperation<IStoreItem>
 
 	public class DivideQuantityValues extends AbstractCommand<IStoreItem>
 	{
-		final IQuantityCollection<Quantity> _item1;
-		final IQuantityCollection<Quantity> _item2;
+		private final IQuantityCollection<Quantity> _item1;
+		private final IQuantityCollection<Quantity> _item2;
 		private IBaseTemporalCollection _timeProvider;
 
 		@SuppressWarnings("unchecked")
@@ -160,7 +160,7 @@ public class DivideQuantityOperation implements IOperation<IStoreItem>
 			performCalc(unit, outputs, _item1, _item2);
 
 			// tell each series that we're a dependent
-			Iterator<IStoreItem> iter = inputs.iterator();
+			Iterator<IStoreItem> iter = getInputs().iterator();
 			while (iter.hasNext())
 			{
 				ICollection iCollection = (ICollection) iter.next();
@@ -185,7 +185,7 @@ public class DivideQuantityOperation implements IOperation<IStoreItem>
 			Unit<Quantity> unit = calculateOutputUnit();
 
 			// update the results
-			performCalc(unit, outputs, _item1, _item2);
+			performCalc(unit, getOutputs(), _item1, _item2);
 		}
 
 		/**
@@ -275,7 +275,7 @@ public class DivideQuantityOperation implements IOperation<IStoreItem>
 			{
 
 				// find the (non-singleton) array length
-				final int length = getNonSingletonArrayLength(inputs);
+				final int length = getNonSingletonArrayLength(getInputs());
 
 				for (int j = 0; j < length; j++)
 				{

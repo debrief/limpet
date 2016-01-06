@@ -35,7 +35,7 @@ public class TemporalQuantityCollection<T extends Quantity> extends
 		TemporalObjectCollection<Measurable<T>> implements
 		ITemporalQuantityCollection<T>, IQuantityCollection<T>
 {
-	transient private QuantityHelper<T> _qHelper;
+	private transient QuantityHelper<T> _qHelper;
 
 	// TODO: we're duplicating range in this class and the helper, because the
 	// helper

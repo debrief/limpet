@@ -186,6 +186,6 @@ public abstract class QuantityFrequencyBins extends CoreAnalysis
 		return aTests.allCollections(selection) && aTests.allQuantity(selection) && aTests.allEqualUnits(selection);
 	}
 
-	abstract protected void presentResults(List<String> titles,
+	protected abstract void presentResults(List<String> titles,
 			List<String> values);
 }
