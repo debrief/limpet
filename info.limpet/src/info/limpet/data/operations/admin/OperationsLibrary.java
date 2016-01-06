@@ -28,7 +28,6 @@ import info.limpet.IQuantityCollection;
 import info.limpet.data.impl.QuantityCollection;
 import info.limpet.data.impl.samples.StockTypes;
 import info.limpet.data.operations.AddLayerOperation;
-import info.limpet.data.operations.CollectionComplianceTests;
 import info.limpet.data.operations.GenerateDummyDataOperation;
 import info.limpet.data.operations.UnitConversionOperation;
 import info.limpet.data.operations.arithmetic.AddQuantityOperation;
@@ -55,12 +54,19 @@ import javax.measure.unit.Unit;
 
 public class OperationsLibrary
 {
+  /** use protected constructor to prevent accidental declaration
+   * 
+   */
+  protected OperationsLibrary()
+  {
+    
+  }
+  
 	public static final String SPATIAL = "Spatial";
 	public static final String ADMINISTRATION = "Administration";
 	public static final String CONVERSIONS = "Conversions";
 	public static final String ARITHMETIC = "Arithmetic";
 	public static final String CREATE = "Create";
-	static final CollectionComplianceTests aTests = new CollectionComplianceTests();
 
 	public static HashMap<String, List<IOperation<?>>> getOperations()
 	{
@@ -237,7 +243,7 @@ public class OperationsLibrary
 			@Override
 			protected QuantityCollection<?> generate(String name, ICommand<?> precedent)
 			{
-				return new StockTypes.NonTemporal.Frequency_Hz(name, precedent);
+				return new StockTypes.NonTemporal.FrequencyHz(name, precedent);
 			}
 		});
 
@@ -255,7 +261,7 @@ public class OperationsLibrary
 			@Override
 			protected QuantityCollection<?> generate(String name, ICommand<?> precedent)
 			{
-				return new StockTypes.NonTemporal.Speed_MSec(name, precedent);
+				return new StockTypes.NonTemporal.SpeedMSec(name, precedent);
 			}
 		});
 
@@ -264,7 +270,7 @@ public class OperationsLibrary
 			@Override
 			protected QuantityCollection<?> generate(String name, ICommand<?> precedent)
 			{
-				return new StockTypes.NonTemporal.Angle_Degrees(name, precedent);
+				return new StockTypes.NonTemporal.AngleDegrees(name, precedent);
 			}
 		});
 		create.add(new CreateLocationAction());

@@ -60,12 +60,12 @@ public class AddQuantityOperation<Q extends Quantity> extends
 
   protected boolean appliesTo(List<IQuantityCollection<Q>> selection)
   {
-    boolean nonEmpty = aTests.nonEmpty(selection);
-    boolean allQuantity = aTests.allQuantity(selection);
-    boolean suitableLength = aTests.allTemporal(selection)
-        || aTests.allEqualLengthOrSingleton(selection);
-    boolean equalDimensions = aTests.allEqualDimensions(selection);
-    boolean equalUnits = aTests.allEqualUnits(selection);
+    boolean nonEmpty = getATests().nonEmpty(selection);
+    boolean allQuantity = getATests().allQuantity(selection);
+    boolean suitableLength = getATests().allTemporal(selection)
+        || getATests().allEqualLengthOrSingleton(selection);
+    boolean equalDimensions = getATests().allEqualDimensions(selection);
+    boolean equalUnits = getATests().allEqualUnits(selection);
 
     return (nonEmpty && allQuantity && suitableLength && equalDimensions && equalUnits);
   }

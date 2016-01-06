@@ -29,275 +29,285 @@ import java.util.UUID;
 public class ObjectCollection<T extends Object> implements IObjectCollection<T>
 {
 
-	LimpetList<T> values = new LimpetList<T>();
-	private String name;
-	private String description = "";
-	private final ICommand<?> precedent;
-	private final List<ICommand<?>> dependents;
-	private transient UUID uuid;
+  private final LimpetList<T> values = new LimpetList<T>();
+  private String name;
+  private String description = "";
+  private final ICommand<?> precedent;
+  private final List<ICommand<?>> dependents;
+  private transient UUID uuid;
 
-	// note: we make the change support listeners transient, since
-	// they refer to UI elements that we don't persist
-	private transient ListenerHelper _changeSupport;
-	private IStoreGroup parent;
-	
+  // note: we make the change support listeners transient, since
+  // they refer to UI elements that we don't persist
+  private transient ListenerHelper _changeSupport;
+  private IStoreGroup parent;
 
-	public ObjectCollection(String name)
-	{
-		this(name, null);
-	}
+  public ObjectCollection(String name)
+  {
+    this(name, null);
+  }
 
-	public ObjectCollection(String name, ICommand<?> precedent)
-	{
-		this.name = name;
-		this.precedent = precedent;
-		dependents = new ArrayList<ICommand<?>>();
+  public ObjectCollection(String name, ICommand<?> precedent)
+  {
+    this.name = name;
+    this.precedent = precedent;
+    dependents = new ArrayList<ICommand<?>>();
 
-		// setup helpers
-		initListeners();
-	}
+    // setup helpers
+    initListeners();
+  }
 
-	
-	
-	@Override
-	public int hashCode()
-	{
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((getUUID() == null) ? 0 : getUUID().hashCode());
-		return result;
-	}
+  @Override
+  public int hashCode()
+  {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((getUUID() == null) ? 0 : getUUID().hashCode());
+    return result;
+  }
 
-	@Override
-	public boolean equals(Object obj)
-	{
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		ObjectCollection<?> other = (ObjectCollection<?>) obj;
-		if (getUUID() == null)
-		{
-			if (other.getUUID() != null)
-				return false;
-		}
-		else if (!getUUID().equals(other.getUUID()))
-			return false;
-		return true;
-	}
+  @Override
+  public boolean equals(Object obj)
+  {
+    if (this == obj)
+    {
+      return true;
+    }
+    if (obj == null)
+    {
+      return false;
+    }
+    if (getClass() != obj.getClass())
+    {
+      return false;
+    }
+    ObjectCollection<?> other = (ObjectCollection<?>) obj;
+    if (getUUID() == null)
+    {
+      if (other.getUUID() != null)
+      {
+        return false;
+      }
+    }
+    else if (!getUUID().equals(other.getUUID()))
+    {
+      return false;
+    }
+    return true;
+  }
 
-	@Override
-	public UUID getUUID()
-	{
-		if (uuid == null)
-		{
-			uuid = UUID.randomUUID();
-		}
-		return uuid;
-	}
+  @Override
+  public UUID getUUID()
+  {
+    if (uuid == null)
+    {
+      uuid = UUID.randomUUID();
+    }
+    return uuid;
+  }
 
-	@Override
-	public String getDescription()
-	{
-		return description;
-	}
+  @Override
+  public String getDescription()
+  {
+    return description;
+  }
 
-	@Override
-	public void setDescription(String description)
-	{
-		this.description = description;
-		
-		// tell anyone that wants to know
-		_changeSupport.fireMetadataChange(this);
-	}
+  @Override
+  public void setDescription(String description)
+  {
+    this.description = description;
 
-	@Override
-	public List<T> getValues()
-	{
-		return values;
-	}
+    // tell anyone that wants to know
+    _changeSupport.fireMetadataChange(this);
+  }
 
-	@Override
-	public void add(T value)
-	{
-		values.add(value);
-	}
+  @Override
+  public List<T> getValues()
+  {
+    return values;
+  }
 
-	@Override
-	public int size()
-	{
-		return values.size();
-	}
+  @Override
+  public void add(T value)
+  {
+    values.add(value);
+  }
 
-	@Override
-	public String getName()
-	{
-		return name;
-	}
+  @Override
+  public int size()
+  {
+    return values.size();
+  }
 
-	@Override
-	public boolean isQuantity()
-	{
-		return false;
-	}
+  @Override
+  public String getName()
+  {
+    return name;
+  }
 
-	@Override
-	public boolean isTemporal()
-	{
-		return false;
-	}
+  @Override
+  public boolean isQuantity()
+  {
+    return false;
+  }
 
-	@Override
-	public ICommand<?> getPrecedent()
-	{
-		return precedent;
-	}
+  @Override
+  public boolean isTemporal()
+  {
+    return false;
+  }
 
-	@Override
-	public List<ICommand<?>> getDependents()
-	{
-		return dependents;
-	}
+  @Override
+  public ICommand<?> getPrecedent()
+  {
+    return precedent;
+  }
 
-	@Override
-	public void addDependent(ICommand<?> command)
-	{
-		dependents.add(command);
-	}
+  @Override
+  public List<ICommand<?>> getDependents()
+  {
+    return dependents;
+  }
 
-	@Override
-	public void setName(String name)
-	{
-		this.name = name;
-		
-		// tell anyone that wants to know
-		_changeSupport.fireMetadataChange(this);
-	}
+  @Override
+  public void addDependent(ICommand<?> command)
+  {
+    dependents.add(command);
+  }
 
-	protected void initListeners()
-	{
-		if (_changeSupport == null)
-		{
-			_changeSupport = new ListenerHelper();
-		}
-	}
+  @Override
+  public void setName(String name)
+  {
+    this.name = name;
 
-	@Override
-	public void addChangeListener(IChangeListener listener)
-	{
-		initListeners();
+    // tell anyone that wants to know
+    _changeSupport.fireMetadataChange(this);
+  }
 
-		_changeSupport.add(listener);
-	}
+  protected void initListeners()
+  {
+    if (_changeSupport == null)
+    {
+      _changeSupport = new ListenerHelper();
+    }
+  }
 
-	@Override
-	public void removeChangeListener(IChangeListener listener)
-	{
-		initListeners();
+  @Override
+  public void addChangeListener(IChangeListener listener)
+  {
+    initListeners();
 
-		_changeSupport.remove(listener);
-	}
+    _changeSupport.add(listener);
+  }
 
-	@Override
-	public IStoreGroup getParent()
-	{
-		return parent;
-	}
+  @Override
+  public void removeChangeListener(IChangeListener listener)
+  {
+    initListeners();
 
-	@Override
-	public void setParent(IStoreGroup parent)
-	{
-		this.parent = parent;
-	}
+    _changeSupport.remove(listener);
+  }
 
+  @Override
+  public IStoreGroup getParent()
+  {
+    return parent;
+  }
 
-	
-	@Override
-	public void fireDataChanged()
-	{
-		if (_changeSupport != null)
-		{
-			// tell any standard listeners
-			_changeSupport.fireDataChange(this);
-		}
+  @Override
+  public void setParent(IStoreGroup parent)
+  {
+    this.parent = parent;
+  }
 
-		// now tell the dependents
-		Iterator<ICommand<?>> iter = dependents.iterator();
-		while (iter.hasNext())
-		{
-			ICommand<?> iC = (ICommand<?>) iter.next();
-			iC.dataChanged(this);
-		}
-	}
+  @Override
+  public void fireDataChanged()
+  {
+    if (_changeSupport != null)
+    {
+      // tell any standard listeners
+      _changeSupport.fireDataChange(this);
+    }
 
-	@Override
-	public Class<?> storedClass()
-	{
-		@SuppressWarnings("unchecked")
-		final Class<? extends ObjectCollection<?>> thisClass = (Class<? extends ObjectCollection<?>>) getClass();
-		final Type superType = thisClass.getGenericSuperclass();
-		if (superType instanceof ParameterizedType)
-		{
-			final ParameterizedType parameterizedType = (ParameterizedType) superType;
-			Type theItem = parameterizedType.getActualTypeArguments()[0];
-			if(theItem instanceof Class<?>)
-				return (Class<?>) theItem;
-			else
-				return null;
-		}
-		else
-		{
-			return null;
-		}
-	}
+    // now tell the dependents
+    Iterator<ICommand<?>> iter = dependents.iterator();
+    while (iter.hasNext())
+    {
+      ICommand<?> iC = (ICommand<?>) iter.next();
+      iC.dataChanged(this);
+    }
+  }
 
-	@Override
-	public boolean hasChildren()
-	{
-		return size() > 0;
-	}
+  @Override
+  public Class<?> storedClass()
+  {
+    @SuppressWarnings("unchecked")
+    final Class<? extends ObjectCollection<?>> thisClass =
+        (Class<? extends ObjectCollection<?>>) getClass();
+    final Type superType = thisClass.getGenericSuperclass();
+    if (superType instanceof ParameterizedType)
+    {
+      final ParameterizedType parameterizedType = (ParameterizedType) superType;
+      Type theItem = parameterizedType.getActualTypeArguments()[0];
+      if (theItem instanceof Class<?>)
+      {
+        return (Class<?>) theItem;
+      }
+      else
+      {
+        return null;
+      }
+    }
+    else
+    {
+      return null;
+    }
+  }
 
-	@Override
-	public void beingDeleted()
-	{
-		if (_changeSupport != null)
-		{
-			// tell any standard listeners
-			_changeSupport.beingDeleted(this);
-		}
+  @Override
+  public boolean hasChildren()
+  {
+    return size() > 0;
+  }
 
-		// now tell the dependents
-		Iterator<ICommand<?>> iter = dependents.iterator();
-		while (iter.hasNext())
-		{
-			ICommand<?> iC = (ICommand<?>) iter.next();
-			iC.collectionDeleted(this);
-		}
+  @Override
+  public void beingDeleted()
+  {
+    if (_changeSupport != null)
+    {
+      // tell any standard listeners
+      _changeSupport.beingDeleted(this);
+    }
 
-	}
+    // now tell the dependents
+    Iterator<ICommand<?>> iter = dependents.iterator();
+    while (iter.hasNext())
+    {
+      ICommand<?> iC = (ICommand<?>) iter.next();
+      iC.collectionDeleted(this);
+    }
 
-	public void fireMetadataChanged()
-	{
-		if (_changeSupport != null)
-		{
-			// tell any standard listeners
-			_changeSupport.fireMetadataChange(this);
-		}		
-	}
+  }
 
-	@Override
-	public void clear()
-	{
-		clearQuiet();
-		fireDataChanged();
-	}
+  public void fireMetadataChanged()
+  {
+    if (_changeSupport != null)
+    {
+      // tell any standard listeners
+      _changeSupport.fireMetadataChange(this);
+    }
+  }
 
-	@Override
-	public void clearQuiet()
-	{
-		values.clear();
-	}
+  @Override
+  public void clear()
+  {
+    clearQuiet();
+    fireDataChanged();
+  }
+
+  @Override
+  public void clearQuiet()
+  {
+    values.clear();
+  }
 
 }

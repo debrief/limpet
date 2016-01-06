@@ -45,386 +45,396 @@ import org.opengis.geometry.Geometry;
 
 public class StockTypes
 {
+  
+  /** protected static class, to prevent accidental declaration
+   * 
+   */
+  protected StockTypes()
+  {
+    
+  }
 
-	public static Unit<?> DEGREE_ANGLE = RADIAN.times(Math.PI / 180d);
+  public static final Unit<?> DEGREE_ANGLE = RADIAN.times(Math.PI / 180d);
 
-	public static interface ILocations
-	{
-		public List<Geometry> getLocations();
-	}
+  public interface ILocations
+  {
+    List<Geometry> getLocations();
+  }
 
-	/**
-	 * time series (temporal) collections
-	 * 
-	 * @author ian
-	 * 
-	 */
-	public static class Temporal
-	{
-		public static class Speed_MSec extends TemporalQuantityCollection<Velocity>
-		{
-			public Speed_MSec(String name, ICommand<?> precedent)
-			{
-				super(name, precedent, METRE.divide(SECOND).asType(Velocity.class));
-			}
+  /**
+   * time series (temporal) collections
+   * 
+   * @author ian
+   * 
+   */
+  public static class Temporal
+  {
+    public static class SpeedMSec extends TemporalQuantityCollection<Velocity>
+    {
+      public SpeedMSec(String name, ICommand<?> precedent)
+      {
+        super(name, precedent, METRE.divide(SECOND).asType(Velocity.class));
+      }
 
-			public Speed_MSec()
-			{
-				this(null, null);
-			}
-		}
+      public SpeedMSec()
+      {
+        this(null, null);
+      }
+    }
 
-		public static class Speed_Kts extends TemporalQuantityCollection<Velocity>
-		{
-			public Speed_Kts(String name, ICommand<?>  prededent)
-			{
-				super(name, prededent, NAUTICAL_MILE.divide(SECOND.times(3600)).asType(
-						Velocity.class));
-			}
+    public static class SpeedKts extends TemporalQuantityCollection<Velocity>
+    {
+      public SpeedKts(String name, ICommand<?> prededent)
+      {
+        super(name, prededent, NAUTICAL_MILE.divide(SECOND.times(3600)).asType(
+            Velocity.class));
+      }
 
-			public Speed_Kts()
-			{
-				this(null, null);
-			}
-		}
+      public SpeedKts()
+      {
+        this(null, null);
+      }
+    }
 
-		public static class DimensionlessDouble extends
-				TemporalQuantityCollection<Dimensionless>
-		{
-			public DimensionlessDouble(String name, ICommand<?> precedent)
-			{
-				super(name, precedent, Dimensionless.UNIT);
-			}
+    public static class DimensionlessDouble extends
+        TemporalQuantityCollection<Dimensionless>
+    {
+      public DimensionlessDouble(String name, ICommand<?> precedent)
+      {
+        super(name, precedent, Dimensionless.UNIT);
+      }
 
-			public DimensionlessDouble()
-			{
-				this(null, null);
-			}
-		}
+      public DimensionlessDouble()
+      {
+        this(null, null);
+      }
+    }
 
-		public static class Length_M extends TemporalQuantityCollection<Length>
-		{
+    public static class LengthM extends TemporalQuantityCollection<Length>
+    {
 
-			public Length_M(String name, ICommand<?> precedent)
-			{
-				super(name, precedent, METRE.asType(Length.class));
-			}
+      public LengthM(String name, ICommand<?> precedent)
+      {
+        super(name, precedent, METRE.asType(Length.class));
+      }
 
-			public Length_M()
-			{
-				this(null, null);
-			}
-		}
+      public LengthM()
+      {
+        this(null, null);
+      }
+    }
 
-		public static class Length_Yd extends TemporalQuantityCollection<Length>
-		{
-			public Length_Yd(String name, ICommand<?> precedent)
-			{
-				super(name,precedent, YARD.asType(Length.class));
-			}
+    public static class LengthYd extends TemporalQuantityCollection<Length>
+    {
+      public LengthYd(String name, ICommand<?> precedent)
+      {
+        super(name, precedent, YARD.asType(Length.class));
+      }
 
-			public Length_Yd()
-			{
-				this(null, null);
-			}
-		}
+      public LengthYd()
+      {
+        this(null, null);
+      }
+    }
 
-		public static class Temp_C extends TemporalQuantityCollection<Temperature>
-		{
-			public Temp_C(String name, ICommand<?> precedent)
-			{
-				super(name, precedent, KELVIN.asType(Temperature.class));
-			}
+    public static class TemperatureC extends
+        TemporalQuantityCollection<Temperature>
+    {
+      public TemperatureC(String name, ICommand<?> precedent)
+      {
+        super(name, precedent, KELVIN.asType(Temperature.class));
+      }
 
-			public Temp_C()
-			{
-				this(null, null);
-			}
-		}
+      public TemperatureC()
+      {
+        this(null, null);
+      }
+    }
 
-		public static class TurnRate extends
-				TemporalQuantityCollection<AngularVelocity>
-		{
-			public TurnRate(String name, ICommand<?> precedent)
-			{
-				super(null,precedent, DEGREE_ANGLE.divide(SECOND).asType(AngularVelocity.class));
-			}
+    public static class TurnRate extends
+        TemporalQuantityCollection<AngularVelocity>
+    {
+      public TurnRate(String name, ICommand<?> precedent)
+      {
+        super(null, precedent, DEGREE_ANGLE.divide(SECOND).asType(
+            AngularVelocity.class));
+      }
 
-			public TurnRate()
-			{
-				this(null, null);
-			}
-		}
+      public TurnRate()
+      {
+        this(null, null);
+      }
+    }
 
-		public static class Strings extends TemporalObjectCollection<String>
-		{
-			public Strings(String name)
-			{
-				super(name);
-			}
+    public static class Strings extends TemporalObjectCollection<String>
+    {
+      public Strings(String name)
+      {
+        super(name);
+      }
 
-			public Strings()
-			{
-				this(null);
-			}
-		}
+      public Strings()
+      {
+        this(null);
+      }
+    }
 
-		public static class Acceleration_MSecSec extends
-				TemporalQuantityCollection<Acceleration>
-		{
-			public Acceleration_MSecSec(String name, ICommand<?> precedent)
-			{
-				super(name,precedent, METRE.divide(SECOND).divide(SECOND)
-						.asType(Acceleration.class));
-			}
+    public static class AccelerationMSecSec extends
+        TemporalQuantityCollection<Acceleration>
+    {
+      public AccelerationMSecSec(String name, ICommand<?> precedent)
+      {
+        super(name, precedent, METRE.divide(SECOND).divide(SECOND)
+            .asType(Acceleration.class));
+      }
 
-			public Acceleration_MSecSec()
-			{
-				this(null, null);
-			}
-		}
+      public AccelerationMSecSec()
+      {
+        this(null, null);
+      }
+    }
 
-		public static class ElapsedTime_Sec extends
-				TemporalQuantityCollection<Duration>
-		{
-			public ElapsedTime_Sec(String name, ICommand<?> precedent)
-			{
-				super(name,precedent, SECOND.asType(Duration.class));
-			}
+    public static class ElapsedTimeSec extends
+        TemporalQuantityCollection<Duration>
+    {
+      public ElapsedTimeSec(String name, ICommand<?> precedent)
+      {
+        super(name, precedent, SECOND.asType(Duration.class));
+      }
 
-			public ElapsedTime_Sec()
-			{
-				this(null, null);
-			}
-		}
+      public ElapsedTimeSec()
+      {
+        this(null, null);
+      }
+    }
 
-		public static class Frequency_Hz extends
-				TemporalQuantityCollection<Frequency>
-		{
-			public Frequency_Hz(String name, ICommand<?> precedent)
-			{
-				super(name, precedent, HERTZ.asType(Frequency.class));
-			}
+    public static class FrequencyHz extends
+        TemporalQuantityCollection<Frequency>
+    {
+      public FrequencyHz(String name, ICommand<?> precedent)
+      {
+        super(name, precedent, HERTZ.asType(Frequency.class));
+      }
 
-			public Frequency_Hz()
-			{
-				this(null, null);
-			}
+      public FrequencyHz()
+      {
+        this(null, null);
+      }
 
-		}
+    }
 
-		public static class AcousticStrength extends
-				TemporalQuantityCollection<Dimensionless>
-		{
-			public AcousticStrength(String name, ICommand<?> precedent)
-			{
-				super(name, precedent, NonSI.DECIBEL);
-			}
+    public static class AcousticStrength extends
+        TemporalQuantityCollection<Dimensionless>
+    {
+      public AcousticStrength(String name, ICommand<?> precedent)
+      {
+        super(name, precedent, NonSI.DECIBEL);
+      }
 
-			public AcousticStrength(String name)
-			{
-				this(name, null);
-			}
+      public AcousticStrength(String name)
+      {
+        this(name, null);
+      }
 
-			public AcousticStrength()
-			{
-				this(null);
-			}
-		}
+      public AcousticStrength()
+      {
+        this(null);
+      }
+    }
 
-		public static class Angle_Radians extends TemporalQuantityCollection<Angle>
-		{
-			public Angle_Radians(String name, ICommand<?> precedent)
-			{
-				super(name, precedent, RADIAN.asType(Angle.class));
-			}
+    public static class AngleRadians extends TemporalQuantityCollection<Angle>
+    {
+      public AngleRadians(String name, ICommand<?> precedent)
+      {
+        super(name, precedent, RADIAN.asType(Angle.class));
+      }
 
-			public Angle_Radians()
-			{
-				this(null, null);
-			}
-		}
+      public AngleRadians()
+      {
+        this(null, null);
+      }
+    }
 
-		public static class Angle_Degrees extends TemporalQuantityCollection<Angle>
-		{
-			public Angle_Degrees(String name, ICommand<?> precedent)
-			{
-				super(name, precedent, DEGREE_ANGLE.asType(Angle.class));
-			}
+    public static class AngleDegrees extends TemporalQuantityCollection<Angle>
+    {
+      public AngleDegrees(String name, ICommand<?> precedent)
+      {
+        super(name, precedent, DEGREE_ANGLE.asType(Angle.class));
+      }
 
-			public Angle_Degrees()
-			{
-				this(null, null);
-			}
-		}
+      public AngleDegrees()
+      {
+        this(null, null);
+      }
+    }
 
-	}
+  }
 
-	/**
-	 * non-time series types
-	 * 
-	 * @author ian
-	 * 
-	 */
-	public static class NonTemporal
-	{
-		public static class Speed_MSec extends QuantityCollection<Velocity>
-		{
-			public Speed_MSec()
-			{
-				this(null, null);
-			}
+  /**
+   * non-time series types
+   * 
+   * @author ian
+   * 
+   */
+  public static class NonTemporal
+  {
+    public static class SpeedMSec extends QuantityCollection<Velocity>
+    {
+      public SpeedMSec()
+      {
+        this(null, null);
+      }
 
-			public Speed_MSec(String name, ICommand<?> precedent)
-			{
-				super(name, precedent, METRE.divide(SECOND).asType(Velocity.class));
-			}
-		}
+      public SpeedMSec(String name, ICommand<?> precedent)
+      {
+        super(name, precedent, METRE.divide(SECOND).asType(Velocity.class));
+      }
+    }
 
-		public static class Speed_Kts extends QuantityCollection<Velocity>
-		{
-			public Speed_Kts(String name, ICommand<?>  precedent)
-			{
-				super(name, precedent, NAUTICAL_MILE.divide(SECOND.times(3600)).asType(
-						Velocity.class));
-			}
+    public static class SpeedKts extends QuantityCollection<Velocity>
+    {
+      public SpeedKts(String name, ICommand<?> precedent)
+      {
+        super(name, precedent, NAUTICAL_MILE.divide(SECOND.times(3600)).asType(
+            Velocity.class));
+      }
 
-			public Speed_Kts()
-			{
-				this(null, null);
-			}
-		}
+      public SpeedKts()
+      {
+        this(null, null);
+      }
+    }
 
-		public static class Angle_Degrees extends QuantityCollection<Angle>
-		{
-			public Angle_Degrees(String name, ICommand<?> precedent)
-			{
-				super(name, precedent, DEGREE_ANGLE.asType(Angle.class));
-			}
+    public static class AngleDegrees extends QuantityCollection<Angle>
+    {
+      public AngleDegrees(String name, ICommand<?> precedent)
+      {
+        super(name, precedent, DEGREE_ANGLE.asType(Angle.class));
+      }
 
-			public Angle_Degrees()
-			{
-				this(null, null);
-			}
-		}
+      public AngleDegrees()
+      {
+        this(null, null);
+      }
+    }
 
-		public static class Angle_Radians extends QuantityCollection<Angle>
-		{
-			public Angle_Radians(String name, ICommand<?> precedent)
-			{
-				super(name, precedent, RADIAN.asType(Angle.class));
-			}
+    public static class AngleRadians extends QuantityCollection<Angle>
+    {
+      public AngleRadians(String name, ICommand<?> precedent)
+      {
+        super(name, precedent, RADIAN.asType(Angle.class));
+      }
 
-			public Angle_Radians()
-			{
-				this(null, null);
-			}
-		}
+      public AngleRadians()
+      {
+        this(null, null);
+      }
+    }
 
-		public static class AcousticStrength extends
-				QuantityCollection<Dimensionless>
-		{
-			public AcousticStrength(String name, ICommand<?> precedent)
-			{
-				super(name, precedent, NonSI.DECIBEL);
-			}
+    public static class AcousticStrength extends
+        QuantityCollection<Dimensionless>
+    {
+      public AcousticStrength(String name, ICommand<?> precedent)
+      {
+        super(name, precedent, NonSI.DECIBEL);
+      }
 
-			public AcousticStrength(String name)
-			{
-				this(name, null);
-			}
+      public AcousticStrength(String name)
+      {
+        this(name, null);
+      }
 
-			public AcousticStrength()
-			{
-				this(null);
-			}
-		}
+      public AcousticStrength()
+      {
+        this(null);
+      }
+    }
 
-		public static class Frequency_Hz extends QuantityCollection<Frequency>
-		{
-			public Frequency_Hz()
-			{
-				this(null, null);
-			}
+    public static class FrequencyHz extends QuantityCollection<Frequency>
+    {
+      public FrequencyHz()
+      {
+        this(null, null);
+      }
 
-			public Frequency_Hz(String name, ICommand<?> precedent)
-			{
-				super(name, precedent, HERTZ.asType(Frequency.class));
-			}
-		}
+      public FrequencyHz(String name, ICommand<?> precedent)
+      {
+        super(name, precedent, HERTZ.asType(Frequency.class));
+      }
+    }
 
-		public static class Length_M extends QuantityCollection<Length>
-		{
+    public static class LengthM extends QuantityCollection<Length>
+    {
 
-			public Length_M(String name, ICommand<?> precedent)
-			{
-				super(name, precedent, METRE.asType(Length.class));
-			}
+      public LengthM(String name, ICommand<?> precedent)
+      {
+        super(name, precedent, METRE.asType(Length.class));
+      }
 
-			public Length_M()
-			{
-				this(null, null);
-			}
+      public LengthM()
+      {
+        this(null, null);
+      }
 
-		}
+    }
 
-		public static class DimensionlessDouble extends
-				QuantityCollection<Dimensionless>
-		{
-			public DimensionlessDouble(String name, ICommand<?> precedent)
-			{
-				super(name, precedent, Dimensionless.UNIT);
-			}
-		}
+    public static class DimensionlessDouble extends
+        QuantityCollection<Dimensionless>
+    {
+      public DimensionlessDouble(String name, ICommand<?> precedent)
+      {
+        super(name, precedent, Dimensionless.UNIT);
+      }
+    }
 
-		public static class Acceleration_MSecSec extends
-				QuantityCollection<Acceleration>
-		{
-			public Acceleration_MSecSec(String name, ICommand<?> precedent)
-			{
-				super(name,precedent, METRE.divide(SECOND).divide(SECOND)
-						.asType(Acceleration.class));
-			}
+    public static class AccelerationMSecSec extends
+        QuantityCollection<Acceleration>
+    {
+      public AccelerationMSecSec(String name, ICommand<?> precedent)
+      {
+        super(name, precedent, METRE.divide(SECOND).divide(SECOND)
+            .asType(Acceleration.class));
+      }
 
-			public Acceleration_MSecSec()
-			{
-				this(null, null);
-			}
+      public AccelerationMSecSec()
+      {
+        this(null, null);
+      }
 
-		}
+    }
 
-		public static class Location extends ObjectCollection<Geometry> implements
-				ILocations
-		{
-			public Location(String name)
-			{
-				super(name);
-			}
+    public static class Location extends ObjectCollection<Geometry> implements
+        ILocations
+    {
+      public Location(String name)
+      {
+        super(name);
+      }
 
-			public Location()
-			{
-				this(null);
-			}
+      public Location()
+      {
+        this(null);
+      }
 
-			@Override
-			public List<Geometry> getLocations()
-			{
-				return super.getValues();
-			}
-		}
+      @Override
+      public List<Geometry> getLocations()
+      {
+        return super.getValues();
+      }
+    }
 
-		public static class Strings extends ObjectCollection<String>
-		{
-			public Strings(String name)
-			{
-				super(name);
-			}
+    public static class Strings extends ObjectCollection<String>
+    {
+      public Strings(String name)
+      {
+        super(name);
+      }
 
-			public Strings()
-			{
-				this(null);
-			}
+      public Strings()
+      {
+        this(null);
+      }
 
-		}
-	}
+    }
+  }
 }

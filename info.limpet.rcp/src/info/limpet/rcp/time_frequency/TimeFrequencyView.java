@@ -144,10 +144,10 @@ public class TimeFrequencyView extends CoreAnalysisView
 						while (iter2.hasNext())
 						{
 							Bin bin = (TimeFrequencyBins.Bin) iter2.next();
-							xData[ctr] = new Date(bin.lowerVal);
-							yData[ctr++] = bin.freqVal;
-							xData[ctr] = new Date(bin.upperVal);
-							yData[ctr++] = bin.freqVal;
+							xData[ctr] = new Date(bin.getLowerVal());
+							yData[ctr++] = bin.getFreqVal();
+							xData[ctr] = new Date(bin.getUpperVal());
+							yData[ctr++] = bin.getFreqVal();
 						}
 
 						newSeries.setXDateSeries(xData);

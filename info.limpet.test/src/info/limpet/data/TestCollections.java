@@ -38,7 +38,7 @@ import info.limpet.data.impl.TemporalQuantityCollection;
 import info.limpet.data.impl.samples.SampleData;
 import info.limpet.data.impl.samples.StockTypes;
 import info.limpet.data.impl.samples.StockTypes.NonTemporal;
-import info.limpet.data.impl.samples.StockTypes.NonTemporal.Speed_MSec;
+import info.limpet.data.impl.samples.StockTypes.NonTemporal.SpeedMSec;
 import info.limpet.data.impl.samples.StockTypes.Temporal;
 import info.limpet.data.operations.arithmetic.AddQuantityOperation;
 import info.limpet.data.operations.arithmetic.MultiplyQuantityOperation;
@@ -100,7 +100,7 @@ public class TestCollections extends TestCase
 	{ "rawtypes", "unchecked" })
 	public void testTemporalQuantityInterp()
 	{
-		ITemporalQuantityCollection<?> tq = new StockTypes.Temporal.Speed_MSec(
+		ITemporalQuantityCollection<?> tq = new StockTypes.Temporal.SpeedMSec(
 				"Some data", null);
 		tq.add(100, 10);
 		tq.add(200, 20);
@@ -148,14 +148,14 @@ public class TestCollections extends TestCase
 	{ "unchecked", "rawtypes" })
 	public void testAddQuantityTemporalInterp()
 	{
-		ITemporalQuantityCollection<?> tq1 = new StockTypes.Temporal.Speed_MSec(
+		ITemporalQuantityCollection<?> tq1 = new StockTypes.Temporal.SpeedMSec(
 				"Some data1", null);
 		tq1.add(100, 10);
 		tq1.add(200, 20);
 		tq1.add(300, 30);
 		tq1.add(400, 40);
 
-		ITemporalQuantityCollection<?> tq2 = new StockTypes.Temporal.Speed_MSec(
+		ITemporalQuantityCollection<?> tq2 = new StockTypes.Temporal.SpeedMSec(
 				"Some data2", null);
 		tq2.add(220, 11);
 		tq2.add(340, 17);
@@ -206,7 +206,7 @@ public class TestCollections extends TestCase
 						(Unit) tq.getUnits()));
 
 		// ok, mangle the second array a bit more
-		tq2 = new StockTypes.Temporal.Speed_MSec("Some data2", null);
+		tq2 = new StockTypes.Temporal.SpeedMSec("Some data2", null);
 		tq2.add(20, 11);
 		tq2.add(340, 17);
 		tq2.add(440, 22);
@@ -255,7 +255,7 @@ public class TestCollections extends TestCase
 						(Unit) tq.getUnits()));
 
 		// ok, make the second array longer
-		tq2 = new StockTypes.Temporal.Speed_MSec("Some data2", null);
+		tq2 = new StockTypes.Temporal.SpeedMSec("Some data2", null);
 		tq2.add(200, 11);
 		tq2.add(250, 13);
 		tq2.add(330, 17);
@@ -316,20 +316,20 @@ public class TestCollections extends TestCase
 	@SuppressWarnings("unchecked")
 	public void testUUID()
 	{
-		ITemporalQuantityCollection<?> tq1 = new StockTypes.Temporal.Speed_MSec(
+		ITemporalQuantityCollection<?> tq1 = new StockTypes.Temporal.SpeedMSec(
 				"Some data1", null);
 		tq1.add(100, 10);
 		tq1.add(200, 20);
 		tq1.add(300, 30);
 		tq1.add(400, 40);
 
-		ITemporalQuantityCollection<?> tq2 = new StockTypes.Temporal.Speed_MSec(
+		ITemporalQuantityCollection<?> tq2 = new StockTypes.Temporal.SpeedMSec(
 				"Some data2", null);
 		tq2.add(220, 11);
 		tq2.add(340, 17);
 		tq2.add(440, 22);
 
-		ITemporalQuantityCollection<?> tq3 = new StockTypes.Temporal.Speed_MSec(
+		ITemporalQuantityCollection<?> tq3 = new StockTypes.Temporal.SpeedMSec(
 				"Some data3", null);
 		tq3.add(220, 11);
 		tq3.add(340, 17);
@@ -377,20 +377,20 @@ public class TestCollections extends TestCase
 	{ "unchecked", "rawtypes" })
 	public void testMathOperators()
 	{
-		StockTypes.Temporal.Speed_MSec tq1 = new StockTypes.Temporal.Speed_MSec(
+		StockTypes.Temporal.SpeedMSec tq1 = new StockTypes.Temporal.SpeedMSec(
 				"Some data1", null);
 		tq1.add(100, 10);
 		tq1.add(200, -20);
 		tq1.add(300, 30);
 		tq1.add(400, -20);
 
-		ITemporalQuantityCollection<?> tq2 = new StockTypes.Temporal.Speed_MSec(
+		ITemporalQuantityCollection<?> tq2 = new StockTypes.Temporal.SpeedMSec(
 				"Some data2", null);
 		tq2.add(220, -11);
 		tq2.add(340, -17);
 		tq2.add(440, -22);
 
-		StockTypes.NonTemporal.Speed_MSec nq1 = new StockTypes.NonTemporal.Speed_MSec(
+		StockTypes.NonTemporal.SpeedMSec nq1 = new StockTypes.NonTemporal.SpeedMSec(
 				"Some data1", null);
 		nq1.add(10);
 		nq1.add(-20);
@@ -518,14 +518,14 @@ public class TestCollections extends TestCase
 	{ "unchecked" })
 	public void testMultiplyQuantitySingleton()
 	{
-		ITemporalQuantityCollection<Velocity> tq1 = new StockTypes.Temporal.Speed_MSec(
+		ITemporalQuantityCollection<Velocity> tq1 = new StockTypes.Temporal.SpeedMSec(
 				"Some data1", null);
 		tq1.add(100, 10);
 		tq1.add(200, 20);
 		tq1.add(300, 30);
 		tq1.add(400, 40);
 
-		IQuantityCollection<Velocity> tq2 = new StockTypes.NonTemporal.Speed_MSec(
+		IQuantityCollection<Velocity> tq2 = new StockTypes.NonTemporal.SpeedMSec(
 				"Some data2", null);
 		tq2.add(11);
 
@@ -562,14 +562,14 @@ public class TestCollections extends TestCase
 	{ "unchecked", "rawtypes" })
 	public void testMultiplyQuantityTemporalInterp()
 	{
-		ITemporalQuantityCollection<?> tq1 = new StockTypes.Temporal.Speed_MSec(
+		ITemporalQuantityCollection<?> tq1 = new StockTypes.Temporal.SpeedMSec(
 				"Some data1", null);
 		tq1.add(100, 10);
 		tq1.add(200, 20);
 		tq1.add(300, 30);
 		tq1.add(400, 40);
 
-		ITemporalQuantityCollection<?> tq2 = new StockTypes.Temporal.Speed_MSec(
+		ITemporalQuantityCollection<?> tq2 = new StockTypes.Temporal.SpeedMSec(
 				"Some data2", null);
 		tq2.add(220, 11);
 		tq2.add(340, 17);
@@ -620,7 +620,7 @@ public class TestCollections extends TestCase
 						(Unit) tq.getUnits()));
 
 		// ok, mangle the second array a bit more
-		tq2 = new StockTypes.Temporal.Speed_MSec("Some data2", null);
+		tq2 = new StockTypes.Temporal.SpeedMSec("Some data2", null);
 		tq2.add(20, 11);
 		tq2.add(340, 17);
 		tq2.add(440, 22);
@@ -670,7 +670,7 @@ public class TestCollections extends TestCase
 						(Unit) tq.getUnits()));
 
 		// ok, make the second array longer
-		tq2 = new StockTypes.Temporal.Speed_MSec("Some data2", null);
+		tq2 = new StockTypes.Temporal.SpeedMSec("Some data2", null);
 		tq2.add(200, 11);
 		tq2.add(250, 13);
 		tq2.add(330, 17);
@@ -802,7 +802,7 @@ public class TestCollections extends TestCase
 		Unit<Velocity> kmh = KILO(METRE).divide(HOUR).asType(Velocity.class);
 
 		// the target collection
-		Speed_MSec speedCollection = new StockTypes.NonTemporal.Speed_MSec("Speed", null);
+		SpeedMSec speedCollection = new StockTypes.NonTemporal.SpeedMSec("Speed", null);
 
 		for (int i = 1; i <= 10; i++)
 		{
@@ -827,7 +827,7 @@ public class TestCollections extends TestCase
 		Unit<Velocity> ms = METRE.divide(SECOND).asType(Velocity.class);
 
 		// the target collection
-		Speed_MSec speedCollection = new StockTypes.NonTemporal.Speed_MSec("Speed", null);
+		SpeedMSec speedCollection = new StockTypes.NonTemporal.SpeedMSec("Speed", null);
 
 		for (int i = 1; i <= 10; i++)
 		{
@@ -1021,14 +1021,14 @@ public class TestCollections extends TestCase
 	{ "unchecked", "rawtypes" })
 	public void testSubtractQuantityTemporalInterp()
 	{
-		ITemporalQuantityCollection<?> tq1 = new StockTypes.Temporal.Speed_MSec(
+		ITemporalQuantityCollection<?> tq1 = new StockTypes.Temporal.SpeedMSec(
 				"Some data1", null);
 		tq1.add(100, 10);
 		tq1.add(200, 20);
 		tq1.add(300, 30);
 		tq1.add(400, 40);
 
-		ITemporalQuantityCollection<?> tq2 = new StockTypes.Temporal.Speed_MSec(
+		ITemporalQuantityCollection<?> tq2 = new StockTypes.Temporal.SpeedMSec(
 				"Some data2", null);
 		tq2.add(220, 11);
 		tq2.add(340, 17);
@@ -1079,7 +1079,7 @@ public class TestCollections extends TestCase
 						(Unit) tq.getUnits()));
 
 		// ok, mangle the second array a bit more
-		tq2 = new StockTypes.Temporal.Speed_MSec("Some data2", null);
+		tq2 = new StockTypes.Temporal.SpeedMSec("Some data2", null);
 		tq2.add(20, 11);
 		tq2.add(340, 17);
 		tq2.add(440, 22);

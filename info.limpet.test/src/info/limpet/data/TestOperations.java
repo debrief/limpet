@@ -35,8 +35,8 @@ import info.limpet.data.impl.QuantityCollection;
 import info.limpet.data.impl.TemporalQuantityCollection;
 import info.limpet.data.impl.samples.SampleData;
 import info.limpet.data.impl.samples.StockTypes;
-import info.limpet.data.impl.samples.StockTypes.NonTemporal.Angle_Degrees;
-import info.limpet.data.impl.samples.StockTypes.Temporal.Speed_Kts;
+import info.limpet.data.impl.samples.StockTypes.NonTemporal.AngleDegrees;
+import info.limpet.data.impl.samples.StockTypes.Temporal.SpeedKts;
 import info.limpet.data.operations.CollectionComplianceTests;
 import info.limpet.data.operations.UnitConversionOperation;
 import info.limpet.data.operations.admin.OperationsLibrary;
@@ -115,15 +115,15 @@ public class TestOperations extends TestCase
 	public void testTrig()
 	{
 		// prepare some data
-		Speed_Kts speedData = new StockTypes.Temporal.Speed_Kts("speed", null);
+		SpeedKts speedData = new StockTypes.Temporal.SpeedKts("speed", null);
 		speedData.add(100, 23);
 		speedData.add(200, 44);
 
-		Angle_Degrees angleData = new StockTypes.NonTemporal.Angle_Degrees("degs", null);
+		AngleDegrees angleData = new StockTypes.NonTemporal.AngleDegrees("degs", null);
 		angleData.add(200d);
 		angleData.add(123d);
 
-		StockTypes.Temporal.Angle_Degrees temporalAngleData = new StockTypes.Temporal.Angle_Degrees(
+		StockTypes.Temporal.AngleDegrees temporalAngleData = new StockTypes.Temporal.AngleDegrees(
 				"degs", null);
 		temporalAngleData.add(1000, 200d);
 		temporalAngleData.add(3000, 123d);
@@ -664,7 +664,7 @@ public class TestOperations extends TestCase
 		// test invalid dimensions
 		IQuantityCollection<Velocity> speed_good_1 = (IQuantityCollection<Velocity>) store
 				.get(SampleData.SPEED_ONE);
-		IQuantityCollection<Velocity> speedSingle = new StockTypes.NonTemporal.Speed_MSec(
+		IQuantityCollection<Velocity> speedSingle = new StockTypes.NonTemporal.SpeedMSec(
 				"singleton", null);
 
 		speedSingle.add(2d);
@@ -696,7 +696,7 @@ public class TestOperations extends TestCase
 		// test invalid dimensions
 		IQuantityCollection<Velocity> speed_good_1 = (IQuantityCollection<Velocity>) store
 				.get(SampleData.SPEED_ONE);
-		IQuantityCollection<Velocity> speedSingle = new StockTypes.NonTemporal.Speed_MSec(
+		IQuantityCollection<Velocity> speedSingle = new StockTypes.NonTemporal.SpeedMSec(
 				"singleton", null);
 
 		speedSingle.add(2d);

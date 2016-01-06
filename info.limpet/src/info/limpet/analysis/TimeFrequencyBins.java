@@ -29,156 +29,172 @@ import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
 public abstract class TimeFrequencyBins extends CoreAnalysis
 {
-	private static final int MAX_SIZE = 10000;
-	private static final double THRESHOLD_VALUE = 0.001;
-	final CollectionComplianceTests aTests;
+  private static final int MAX_SIZE = 10000;
+  private static final double THRESHOLD_VALUE = 0.001;
+  private final CollectionComplianceTests aTests = new CollectionComplianceTests();
 
-	public TimeFrequencyBins()
-	{
-		super("Time Frequency Bins");
-		aTests = new CollectionComplianceTests();
-	}
+  public TimeFrequencyBins()
+  {
+    super("Time Frequency Bins");
+  }
 
-	public static class BinnedData extends ArrayList<Bin>
-	{
-		/**
+  public static class BinnedData extends ArrayList<Bin>
+  {
+    /**
 		 * 
 		 */
-		private static final long serialVersionUID = 1L;
-		final ICollection collection;
+    private static final long serialVersionUID = 1L;
 
-		public BinnedData(ICollection collection, int number)
-		{
-			this.collection = collection;
-		}
-	}
+    public BinnedData()
+    {
+    }
+  }
 
-	public static class Bin
-	{
-		public final long lowerVal;
-		public final long upperVal;
-		public final long freqVal;
+  public static class Bin
+  {
+    private final long lowerVal;
+    private final long upperVal;
+    private final long freqVal;
 
-		public Bin(final long lower, final long upper, long freq)
-		{
-			upperVal = upper;
-			lowerVal = lower;
-			freqVal = freq;
-		}
-	}
+    public Bin(final long lower, final long upper, long freq)
+    {
+      upperVal = upper;
+      lowerVal = lower;
+      freqVal = freq;
+    }
 
-	public static BinnedData doBins(ICollection c, IBaseTemporalCollection o)
-	{
-		// collate the values into an array
-		double[] data = new double[c.size()];
+    public long getLowerVal()
+    {
+      return lowerVal;
+    }
 
-		// Add the data from the array
-		int ctr = 0;
-		Iterator<Long> iterV = o.getTimes().iterator();
-		while (iterV.hasNext())
-		{
-			long time = iterV.next();
-			data[ctr++] = time;
-		}
+    public long getUpperVal()
+    {
+      return upperVal;
+    }
 
-		// Get a DescriptiveStatistics instance
-		DescriptiveStatistics stats = new DescriptiveStatistics(data);
+    public long getFreqVal()
+    {
+      return freqVal;
+    }
+  }
 
-		// also do some frequency binning
-		double range = stats.getMax() - stats.getMin();
+  public static BinnedData doBins(ICollection c, IBaseTemporalCollection o)
+  {
+    // collate the values into an array
+    double[] data = new double[c.size()];
 
-		// aah, double-check we don't have zero range
-		final int BIN_COUNT;
-		final int maxRange = 30;
-		if (range > maxRange)
-			BIN_COUNT = maxRange;
-		else
-			BIN_COUNT = (int) Math.max(2, range);
+    // Add the data from the array
+    int ctr = 0;
+    Iterator<Long> iterV = o.getTimes().iterator();
+    while (iterV.hasNext())
+    {
+      long time = iterV.next();
+      data[ctr++] = time;
+    }
 
-		BinnedData res = new BinnedData(c, BIN_COUNT);
+    // Get a DescriptiveStatistics instance
+    DescriptiveStatistics stats = new DescriptiveStatistics(data);
 
-		if (range > THRESHOLD_VALUE)
-		{
+    // also do some frequency binning
+    double range = stats.getMax() - stats.getMin();
 
-			long[] histogram = new long[BIN_COUNT];
-			EmpiricalDistribution distribution = new EmpiricalDistribution(BIN_COUNT);
-			distribution.load(data);
+    // aah, double-check we don't have zero range
+    final int binCount;
+    final int maxRange = 30;
+    if (range > maxRange)
+    {
+      binCount = maxRange;
+    }
+    else
+    {
+      binCount = (int) Math.max(2, range);
+    }
 
-			int k = 0;
-			for (SummaryStatistics sStats : distribution.getBinStats())
-			{
-				histogram[k++] = sStats.getN();
-			}
+    BinnedData res = new BinnedData();
 
-			long rangeSoFar = (long) stats.getMin();
-			long rangeStep = (long) (range / BIN_COUNT);
-			for (int i = 0; i < histogram.length; i++)
-			{
-				long l = histogram[i];
-				res.add(new Bin(rangeSoFar, rangeSoFar + rangeStep, l));
-				rangeSoFar += rangeStep;
-			}
-		}
-		return res;
-	}
+    if (range > THRESHOLD_VALUE)
+    {
 
-	@Override
-	public void analyse(List<IStoreItem> selection)
-	{
-		List<String> titles = new ArrayList<String>();
-		List<String> values = new ArrayList<String>();
+      long[] histogram = new long[binCount];
+      EmpiricalDistribution distribution = new EmpiricalDistribution(binCount);
+      distribution.load(data);
 
-		// check compatibility
-		if (appliesTo(selection))
-		{
-			if (selection.size() == 1)
-			{
-				// ok, let's go for it.
-				for (Iterator<IStoreItem> iter = selection.iterator(); iter.hasNext();)
-				{
-					ICollection thisC = (ICollection) iter.next();
-					IBaseTemporalCollection o = (IBaseTemporalCollection) thisC;
+      int k = 0;
+      for (SummaryStatistics sStats : distribution.getBinStats())
+      {
+        histogram[k++] = sStats.getN();
+      }
 
-					if (thisC.size() > 1)
-					{
-						if (thisC.size() < MAX_SIZE)
-						{
-							BinnedData res = doBins(thisC, o);
+      long rangeSoFar = (long) stats.getMin();
+      long rangeStep = (long) (range / binCount);
+      for (int i = 0; i < histogram.length; i++)
+      {
+        long l = histogram[i];
+        res.add(new Bin(rangeSoFar, rangeSoFar + rangeStep, l));
+        rangeSoFar += rangeStep;
+      }
+    }
+    return res;
+  }
 
-							// now output the bins
-							StringBuffer freqBins = new StringBuffer();
+  @Override
+  public void analyse(List<IStoreItem> selection)
+  {
+    List<String> titles = new ArrayList<String>();
+    List<String> values = new ArrayList<String>();
 
-							Iterator<Bin> bIter = res.iterator();
-							while (bIter.hasNext())
-							{
-								TimeFrequencyBins.Bin bin = (TimeFrequencyBins.Bin) bIter
-										.next();
-								freqBins.append((int) bin.lowerVal);
-								freqBins.append("-");
-								freqBins.append((int) bin.upperVal);
-								freqBins.append(": ");
-								freqBins.append(bin.freqVal);
-								freqBins.append(", ");
-							}
+    // check compatibility
+    if (appliesTo(selection))
+    {
+      if (selection.size() == 1)
+      {
+        // ok, let's go for it.
+        for (Iterator<IStoreItem> iter = selection.iterator(); iter.hasNext();)
+        {
+          ICollection thisC = (ICollection) iter.next();
+          IBaseTemporalCollection o = (IBaseTemporalCollection) thisC;
 
-							titles.add("Frequency bins");
-							values.add(freqBins.toString());
-						}
-					}
-				}
-			}
-		}
+          if (thisC.size() > 1)
+          {
+            if (thisC.size() < MAX_SIZE)
+            {
+              BinnedData res = doBins(thisC, o);
 
-		if (titles.size() > 0)
-			presentResults(titles, values);
+              // now output the bins
+              StringBuffer freqBins = new StringBuffer();
 
-	}
+              Iterator<Bin> bIter = res.iterator();
+              while (bIter.hasNext())
+              {
+                TimeFrequencyBins.Bin bin = (TimeFrequencyBins.Bin) bIter.next();
+                freqBins.append((int) bin.getLowerVal());
+                freqBins.append("-");
+                freqBins.append((int) bin.getUpperVal());
+                freqBins.append(": ");
+                freqBins.append(bin.getFreqVal());
+                freqBins.append(", ");
+              }
 
-	private boolean appliesTo(List<IStoreItem> selection)
-	{
-		return aTests.allCollections(selection) && aTests.allTemporal(selection);
-	}
+              titles.add("Frequency bins");
+              values.add(freqBins.toString());
+            }
+          }
+        }
+      }
+    }
 
-	protected abstract void presentResults(List<String> titles,
-			List<String> values);
+    if (titles.size() > 0)
+    {
+      presentResults(titles, values);
+    }
+
+  }
+
+  private boolean appliesTo(List<IStoreItem> selection)
+  {
+    return aTests.allCollections(selection) && aTests.allTemporal(selection);
+  }
+
+  protected abstract void presentResults(List<String> titles, List<String> values);
 }

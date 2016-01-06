@@ -45,607 +45,617 @@ import org.opengis.geometry.primitive.Point;
 
 public class CsvParser
 {
-	// 21/09/2015 07:00:31
-	public static final DateFormat DATE_FORMAT = new SimpleDateFormat(
-			"dd/MM/yyyy hh:mm:ss");
-	public static final DateFormat TIME_FORMAT = new SimpleDateFormat(
-			"hh:mm:ss");
-	private ArrayList<DataImporter> _candidates;
+  // 21/09/2015 07:00:31
+  public static final DateFormat DATE_FORMAT = new SimpleDateFormat(
+      "dd/MM/yyyy hh:mm:ss");
+  public static final DateFormat TIME_FORMAT = new SimpleDateFormat("hh:mm:ss");
+  private ArrayList<DataImporter> _candidates;
 
-	public List<IStoreItem> parse(String filePath) throws IOException
-	{
-		final List<IStoreItem> res = new ArrayList<IStoreItem>();
-		final File inFile = new File(filePath);
-		final Reader in = new FileReader(inFile);
-		final String fullFileName = inFile.getName();
-		final String fileName = filePrefix(fullFileName);
-		final Iterable<CSVRecord> records = CSVFormat.DEFAULT.parse(in);
-		boolean first = true;
+  public List<IStoreItem> parse(String filePath) throws IOException
+  {
+    final List<IStoreItem> res = new ArrayList<IStoreItem>();
+    final File inFile = new File(filePath);
+    final Reader in = new FileReader(inFile);
+    final String fullFileName = inFile.getName();
+    final String fileName = filePrefix(fullFileName);
+    final Iterable<CSVRecord> records = CSVFormat.DEFAULT.parse(in);
+    boolean first = true;
 
-		// generate our list of importers
-		createImporters();
+    // generate our list of importers
+    createImporters();
 
-		final DataImporter temporalDimensionless = new TemporalSeriesSupporter<Temporal.DimensionlessDouble>(
-				Temporal.DimensionlessDouble.class, null, null);
-		final DataImporter temporalStrings = new TemporalStringImporter();
-		final DataImporter strings = new StringImporter();
-		final DataImporter dimensionless = new SeriesSupporter<NonTemporal.DimensionlessDouble>(
-				NonTemporal.DimensionlessDouble.class, null, null);
+    final DataImporter temporalDimensionless =
+        new TemporalSeriesSupporter<Temporal.DimensionlessDouble>(
+            Temporal.DimensionlessDouble.class, null, null);
+    final DataImporter temporalStrings = new TemporalStringImporter();
+    final DataImporter strings = new StringImporter();
+    final DataImporter dimensionless =
+        new SeriesSupporter<NonTemporal.DimensionlessDouble>(
+            NonTemporal.DimensionlessDouble.class, null, null);
 
-		// store one importer per column-set
-		List<DataImporter> importers = new ArrayList<DataImporter>();
+    // store one importer per column-set
+    List<DataImporter> importers = new ArrayList<DataImporter>();
 
-		// and store one series per column-set
-		List<ICollection> series = new ArrayList<ICollection>();
+    // and store one series per column-set
+    List<ICollection> series = new ArrayList<ICollection>();
 
-		boolean isTime = false;
+    boolean isTime = false;
 
-		for (CSVRecord record : records)
-		{
-			if (first)
-			{
-				first = false;
-				String time = record.get(0);
-				int ctr = 0;;
+    for (CSVRecord record : records)
+    {
+      if (first)
+      {
+        first = false;
+        String time = record.get(0);
+        int ctr = 0;
 
-				if (time != null && time.toLowerCase().equals("time"))
-				{
-					isTime = true;
-					ctr = 1;
-				}
-				else
-				{
-					ctr = 0;
-				}
+        if (time != null && time.toLowerCase().equals("time"))
+        {
+          isTime = true;
+          ctr = 1;
+        }
+        else
+        {
+          ctr = 0;
+        }
 
-				while (ctr < record.size())
-				{
-					String nextVal = record.get(ctr);
-					// have a look at it.
-					int i1 = nextVal.indexOf("(");
+        while (ctr < record.size())
+        {
+          String nextVal = record.get(ctr);
+          // have a look at it.
+          int i1 = nextVal.indexOf("(");
 
-					String colName;
+          String colName;
 
-					if (i1 > 0)
-					{
-						// ok, we have units
-						colName = nextVal.substring(0, i1).trim();
-					}
-					else
-					{
-						// no, no units
-						colName = nextVal.trim();
-					}
+          if (i1 > 0)
+          {
+            // ok, we have units
+            colName = nextVal.substring(0, i1).trim();
+          }
+          else
+          {
+            // no, no units
+            colName = nextVal.trim();
+          }
 
-					// see if anybody can handle this name
-					boolean handled = false;
-					Iterator<DataImporter> cIter = _candidates.iterator();
-					while (cIter.hasNext())
-					{
-						DataImporter thisI = cIter.next();
-						if (thisI.handleName(colName))
-						{
-							importers.add(thisI);
-							series
-									.add(thisI.create(fileName + "-" + thisI.nameFor(colName)));
-							handled = true;
-							ctr += thisI.numCols();
-							break;
-						}
-					}
+          // see if anybody can handle this name
+          boolean handled = false;
+          Iterator<DataImporter> cIter = _candidates.iterator();
+          while (cIter.hasNext())
+          {
+            DataImporter thisI = cIter.next();
+            if (thisI.handleName(colName))
+            {
+              importers.add(thisI);
+              series.add(thisI.create(fileName + "-" + thisI.nameFor(colName)));
+              handled = true;
+              ctr += thisI.numCols();
+              break;
+            }
+          }
 
-					if (!handled)
-					{
-						// String units = nextVal.substring(0, i1 - 1);
+          if (!handled)
+          {
+            // String units = nextVal.substring(0, i1 - 1);
 
-						int i2 = nextVal.indexOf(")");
-						if (i2 > 0 && i2 > i1 + 1)
-						{
-							final String units = nextVal.substring(i1 + 1, i2).trim();
+            int i2 = nextVal.indexOf(")");
+            if (i2 > 0 && i2 > i1 + 1)
+            {
+              final String units = nextVal.substring(i1 + 1, i2).trim();
 
-							Iterator<DataImporter> cIter2 = _candidates.iterator();
-							while (cIter2.hasNext())
-							{
-								DataImporter thisI = cIter2.next();
-								if (thisI.handleUnits(units))
-								{
-									importers.add(thisI);
-									series.add(thisI.create(fileName + "-" + thisI.nameFor(colName)));
-									ctr += thisI.numCols();
-									handled = true;
-									break;
-								}
-							}
-						}
-					}
+              Iterator<DataImporter> cIter2 = _candidates.iterator();
+              while (cIter2.hasNext())
+              {
+                DataImporter thisI = cIter2.next();
+                if (thisI.handleUnits(units))
+                {
+                  importers.add(thisI);
+                  series.add(thisI.create(fileName + "-"
+                      + thisI.nameFor(colName)));
+                  ctr += thisI.numCols();
+                  handled = true;
+                  break;
+                }
+              }
+            }
+          }
 
-					// have we managed it?
-					if (!handled)
-					{
-						// ok, in that case we don't know. Let's introduce a deferred
-						// decision
-						// maker, so we can make a decision once we've read in some data
-						importers.add(new DeferredLoadSupporter(colName));
-						series.add(new ObjectCollection<String>("null"));
-						ctr += 1;
-					}
-				}
-			}
-			else
-			{
+          // have we managed it?
+          if (!handled)
+          {
+            // ok, in that case we don't know. Let's introduce a deferred
+            // decision
+            // maker, so we can make a decision once we've read in some data
+            importers.add(new DeferredLoadSupporter(colName));
+            series.add(new ObjectCollection<String>("null"));
+            ctr += 1;
+          }
+        }
+      }
+      else
+      {
 
-				String firstRow = record.get(0);
-				long theTime = -1;
-				int thisCol = 0;
+        String firstRow = record.get(0);
+        long theTime = -1;
+        int thisCol = 0;
 
-				// ok, we're out of the first row
-				if (isTime)
-				{
-					// ok, get the time field
-					try
-					{
-						int len = firstRow.length();
-						final DateFormat format;
-						if(len < 10)
-						{
-							format = TIME_FORMAT;
-						}
-						else
-						{
-							format = DATE_FORMAT;
-						}
-						Date date = format.parse(firstRow);
-						theTime = date.getTime();
-						thisCol = 1;
-					}
-					catch (ParseException e)
-					{
-						e.printStackTrace();
-					}
-				}
-				else
-				{
-					// not temporal, use this field
-					thisCol = 0;
-				}
+        // ok, we're out of the first row
+        if (isTime)
+        {
+          // ok, get the time field
+          try
+          {
+            int len = firstRow.length();
+            final DateFormat format;
+            if (len < 10)
+            {
+              format = TIME_FORMAT;
+            }
+            else
+            {
+              format = DATE_FORMAT;
+            }
+            Date date = format.parse(firstRow);
+            theTime = date.getTime();
+            thisCol = 1;
+          }
+          catch (ParseException e)
+          {
+            e.printStackTrace();
+          }
+        }
+        else
+        {
+          // not temporal, use this field
+          thisCol = 0;
+        }
 
-				// now move through the other cols
-				int numImporters = importers.size();
-				for (int i = 0; i < numImporters; i++)
-				{
-					DataImporter thisI = importers.get(i);
+        // now move through the other cols
+        int numImporters = importers.size();
+        for (int i = 0; i < numImporters; i++)
+        {
+          DataImporter thisI = importers.get(i);
 
-					// ok, just check if this is a deferred importer
-					if (thisI instanceof DeferredLoadSupporter)
-					{
-						DeferredLoadSupporter dl = (DeferredLoadSupporter) thisI;
-						String seriesName = dl.getName();
+          // ok, just check if this is a deferred importer
+          if (thisI instanceof DeferredLoadSupporter)
+          {
+            DeferredLoadSupporter dl = (DeferredLoadSupporter) thisI;
+            String seriesName = dl.getName();
 
-						// ok, have a look at the next field
-						String nextVal = record.get(thisCol);
+            // ok, have a look at the next field
+            String nextVal = record.get(thisCol);
 
-						// is it numeric?
-						DataImporter importer = null;
-						// ok, treat it as string data
-						if (isTime)
-						{
-							if (isNumeric(nextVal))
-							{
-								// ok, we've got dimensionless quantity data
-								importer = temporalDimensionless;
-							}
-							else
-							{
-								importer = temporalStrings;
-							}
-						}
-						else
-						{
-							if (isNumeric(nextVal))
-							{
-								// ok, we've got dimensionless quantity data
-								importer = dimensionless;
-							}
-							else
-							{
-								importer = strings;
-							}
-						}
-						
-						if(importer != null)
-						{
-							int index =importers.indexOf(dl);
-							importers.set(index, importer);
-							
-							series.set(index, importer.create(fileName + "-" + seriesName));
-							
-							thisI = importer;
-						}
-						
-					}
+            // is it numeric?
+            DataImporter importer = null;
+            // ok, treat it as string data
+            if (isTime)
+            {
+              if (isNumeric(nextVal))
+              {
+                // ok, we've got dimensionless quantity data
+                importer = temporalDimensionless;
+              }
+              else
+              {
+                importer = temporalStrings;
+              }
+            }
+            else
+            {
+              if (isNumeric(nextVal))
+              {
+                // ok, we've got dimensionless quantity data
+                importer = dimensionless;
+              }
+              else
+              {
+                importer = strings;
+              }
+            }
 
-					ICollection thisS = series.get(i);
+            if (importer != null)
+            {
+              int index = importers.indexOf(dl);
+              importers.set(index, importer);
 
-					thisI.consume(thisS, theTime, thisCol, record);
+              series.set(index, importer.create(fileName + "-" + seriesName));
 
-					thisCol += thisI.numCols();
-				}
-			}
-		}
+              thisI = importer;
+            }
 
-		// ok, store the series
-		if (series.size() > 1)
-		{
-			StoreGroup target = new StoreGroup(fullFileName);
-			Iterator<ICollection> sIter = series.iterator();
-			while (sIter.hasNext())
-			{
-				ICollection coll = (ICollection) sIter.next();
-				target.add(coll);
-			}
-			res.add(target);
-		}
-		else
-		{
-			Iterator<ICollection> sIter = series.iterator();
-			while (sIter.hasNext())
-			{
-				ICollection coll = (ICollection) sIter.next();
-				res.add(coll);
-			}
-		}
+          }
 
-		return res;
-	}
-	
-  private String filePrefix(String fullPath) { // gets filename without extension
-  	return fullPath.split("\\.(?=[^\\.]+$)")[0];
+          ICollection thisS = series.get(i);
 
+          thisI.consume(thisS, theTime, thisCol, record);
+
+          thisCol += thisI.numCols();
+        }
+      }
+    }
+
+    // ok, store the series
+    if (series.size() > 1)
+    {
+      StoreGroup target = new StoreGroup(fullFileName);
+      Iterator<ICollection> sIter = series.iterator();
+      while (sIter.hasNext())
+      {
+        ICollection coll = (ICollection) sIter.next();
+        target.add(coll);
+      }
+      res.add(target);
+    }
+    else
+    {
+      Iterator<ICollection> sIter = series.iterator();
+      while (sIter.hasNext())
+      {
+        ICollection coll = (ICollection) sIter.next();
+        res.add(coll);
+      }
+    }
+
+    return res;
   }
 
-	private void createImporters()
-	{
-		if(_candidates != null)
-			return; 
-		
-		_candidates = new ArrayList<DataImporter>();
-		_candidates.add(new LocationImporter());
-		_candidates.add(new TemporalSeriesSupporter<Temporal.ElapsedTime_Sec>(
-				Temporal.ElapsedTime_Sec.class, null, "secs"));
-		_candidates.add(new TemporalSeriesSupporter<Temporal.Frequency_Hz>(
-				Temporal.Frequency_Hz.class, null, "Hz"));
-		_candidates.add(new TemporalSeriesSupporter<Temporal.TurnRate>(
-				Temporal.TurnRate.class, null, "Degs/sec"));
-		_candidates.add(new TemporalSeriesSupporter<Temporal.Length_M>(
-				Temporal.Length_M.class, null, "m"));
-		_candidates.add(new TemporalSeriesSupporter<Temporal.Angle_Degrees>(
-				Temporal.Angle_Degrees.class, null, "Degs"));
-		_candidates.add(new TemporalSeriesSupporter<Temporal.Speed_MSec>(
-				Temporal.Speed_MSec.class, null, "kts"));
-		_candidates.add(new TemporalSeriesSupporter<Temporal.Speed_MSec>(
-				Temporal.Speed_MSec.class, null, "M/Sec"));
-		_candidates.add(new TemporalSeriesSupporter<Temporal.Temp_C>(
-				Temporal.Temp_C.class, null, "C"));
-	}
+  private String filePrefix(String fullPath)
+  {
+    // gets filename without extension
+    return fullPath.split("\\.(?=[^\\.]+$)")[0];
+  }
 
-	public static boolean isNumeric(String str)
-	{
-		try
-		{
-			@SuppressWarnings("unused")
-			double d = Double.parseDouble(str);
-		}
-		catch (NumberFormatException nfe)
-		{
-			return false;
-		}
-		return true;
-	}
+  private void createImporters()
+  {
+    if (_candidates != null)
+    {
+      return;
+    }
 
-	/**
-	 * base helper class, to help importing series of data
-	 * 
-	 * @author ian
-	 * 
-	 */
-	public abstract static class DataImporter
-	{
-		private final String _units;
-		private final String _colName;
-		private Class<?> _classType;
+    _candidates = new ArrayList<DataImporter>();
+    _candidates.add(new LocationImporter());
+    _candidates.add(new TemporalSeriesSupporter<Temporal.ElapsedTimeSec>(
+        Temporal.ElapsedTimeSec.class, null, "secs"));
+    _candidates.add(new TemporalSeriesSupporter<Temporal.FrequencyHz>(
+        Temporal.FrequencyHz.class, null, "Hz"));
+    _candidates.add(new TemporalSeriesSupporter<Temporal.TurnRate>(
+        Temporal.TurnRate.class, null, "Degs/sec"));
+    _candidates.add(new TemporalSeriesSupporter<Temporal.LengthM>(
+        Temporal.LengthM.class, null, "m"));
+    _candidates.add(new TemporalSeriesSupporter<Temporal.AngleDegrees>(
+        Temporal.AngleDegrees.class, null, "Degs"));
+    _candidates.add(new TemporalSeriesSupporter<Temporal.SpeedMSec>(
+        Temporal.SpeedMSec.class, null, "kts"));
+    _candidates.add(new TemporalSeriesSupporter<Temporal.SpeedMSec>(
+        Temporal.SpeedMSec.class, null, "M/Sec"));
+    _candidates.add(new TemporalSeriesSupporter<Temporal.TemperatureC>(
+        Temporal.TemperatureC.class, null, "C"));
+  }
 
-		/**
-		 * constructor
-		 * 
-		 * @param classType
-		 *          the type of series we represent (used for default constructor)
-		 * @param colName
-		 *          name of the column we store
-		 * @param units
-		 *          name of the units we store
-		 */
-		protected DataImporter(Class<?> classType, String colName, String units)
-		{
-			_units = units;
-			_colName = colName;
-			_classType = classType;
-		}
+  public static boolean isNumeric(String str)
+  {
+    try
+    {
+      @SuppressWarnings("unused")
+      double d = Double.parseDouble(str);
+    }
+    catch (NumberFormatException nfe)
+    {
+      return false;
+    }
+    return true;
+  }
 
-		/**
-		 * create an instance of this series, using the specified name
-		 * 
-		 * @param name
-		 * @return
-		 */
-		public ICollection create(String name)
-		{
-			ICollection res = null;
-			try
-			{
-				res = (ICollection) _classType.newInstance();
-				res.setName(name);
-			}
-			catch (InstantiationException | IllegalAccessException e)
-			{
-				e.printStackTrace();
-			}
-			return res;
-		}
+  /**
+   * base helper class, to help importing series of data
+   * 
+   * @author ian
+   * 
+   */
+  public abstract static class DataImporter
+  {
+    private final String _units;
+    private final String _colName;
+    private Class<?> _classType;
 
-		/**
-		 * what should this series be called, if the supplied column name is found
-		 * 
-		 */
-		public String nameFor(String colName)
-		{
-			return colName;
-		}
+    /**
+     * constructor
+     * 
+     * @param classType
+     *          the type of series we represent (used for default constructor)
+     * @param colName
+     *          name of the column we store
+     * @param units
+     *          name of the units we store
+     */
+    protected DataImporter(Class<?> classType, String colName, String units)
+    {
+      _units = units;
+      _colName = colName;
+      _classType = classType;
+    }
 
-		/**
-		 * read some data from this record
-		 * 
-		 * @param series
-		 *          target series
-		 * @param thisTime
-		 *          this time stamp
-		 * @param colStart
-		 *          column to start reading from
-		 * @param row
-		 *          current row of data
-		 */
-		public abstract void consume(ICollection series, long thisTime,
-				int colStart, CSVRecord row);
+    /**
+     * create an instance of this series, using the specified name
+     * 
+     * @param name
+     * @return
+     */
+    public ICollection create(String name)
+    {
+      ICollection res = null;
+      try
+      {
+        res = (ICollection) _classType.newInstance();
+        res.setName(name);
+      }
+      catch (InstantiationException | IllegalAccessException e)
+      {
+        e.printStackTrace();
+      }
+      return res;
+    }
 
-		/**
-		 * can we handle this column name?
-		 * 
-		 * @param colName
-		 * @return
-		 */
-		public final boolean handleName(String colName)
-		{
-			if (_colName == null)
-				return false;
-			else
-				return _colName.equals(colName);
-		}
+    /**
+     * what should this series be called, if the supplied column name is found
+     * 
+     */
+    public String nameFor(String colName)
+    {
+      return colName;
+    }
 
-		/**
-		 * can we handle this units type?
-		 * 
-		 * @param units
-		 * @return
-		 */
-		public final boolean handleUnits(String units)
-		{
-			if (_units == null)
-				return false;
-			else
-				return _units.equals(units);
-		}
+    /**
+     * read some data from this record
+     * 
+     * @param series
+     *          target series
+     * @param thisTime
+     *          this time stamp
+     * @param colStart
+     *          column to start reading from
+     * @param row
+     *          current row of data
+     */
+    public abstract void consume(ICollection series, long thisTime,
+        int colStart, CSVRecord row);
 
-		/**
-		 * how many columns do we consume?
-		 * 
-		 * @return
-		 */
-		public int numCols()
-		{
-			return 1;
-		}
-	}
+    /**
+     * can we handle this column name?
+     * 
+     * @param colName
+     * @return
+     */
+    public final boolean handleName(String colName)
+    {
+      if (_colName == null)
+      {
+        return false;
+      }
+      else
+      {
+        return _colName.equals(colName);
+      }
+    }
 
-	/**
-	 * class to handle importing time-related strings
-	 * 
-	 * @author ian
-	 * 
-	 */
-	protected static class TemporalStringImporter extends DataImporter
-	{
-		protected TemporalStringImporter()
-		{
-			super(Temporal.Strings.class, null, null);
-		}
+    /**
+     * can we handle this units type?
+     * 
+     * @param units
+     * @return
+     */
+    public final boolean handleUnits(String units)
+    {
+      if (_units == null)
+      {
+        return false;
+      }
+      else
+      {
+        return _units.equals(units);
+      }
+    }
 
-		@Override
-		public void consume(ICollection series, long thisTime, int colStart,
-				CSVRecord row)
-		{
-			String thisVal = row.get(colStart);
-			Temporal.Strings thisS = (Strings) series;
-			thisS.add(thisTime, thisVal);
-		}
-	}
+    /**
+     * how many columns do we consume?
+     * 
+     * @return
+     */
+    public int numCols()
+    {
+      return 1;
+    }
+  }
 
-	/**
-	 * class to handle importing time-related strings
-	 * 
-	 * @author ian
-	 * 
-	 */
-	protected static class StringImporter extends DataImporter
-	{
-		protected StringImporter()
-		{
-			super(NonTemporal.Strings.class, null, null);
-		}
+  /**
+   * class to handle importing time-related strings
+   * 
+   * @author ian
+   * 
+   */
+  protected static class TemporalStringImporter extends DataImporter
+  {
+    protected TemporalStringImporter()
+    {
+      super(Temporal.Strings.class, null, null);
+    }
 
-		@Override
-		public void consume(ICollection series, long thisTime, int colStart,
-				CSVRecord row)
-		{
-			String thisVal = row.get(colStart);
-			NonTemporal.Strings thisS = (NonTemporal.Strings) series;
-			thisS.add(thisVal);
-		}
-	}
+    @Override
+    public void consume(ICollection series, long thisTime, int colStart,
+        CSVRecord row)
+    {
+      String thisVal = row.get(colStart);
+      Temporal.Strings thisS = (Strings) series;
+      thisS.add(thisTime, thisVal);
+    }
+  }
 
-	
-	/**
-	 * class to handle importing two columns of location data
-	 * 
-	 * @author ian
-	 * 
-	 */
-	protected static class LocationImporter extends DataImporter
-	{
-		protected LocationImporter()
-		{
-			super(TemporalLocation.class, "Lat", null);
-		}
+  /**
+   * class to handle importing time-related strings
+   * 
+   * @author ian
+   * 
+   */
+  protected static class StringImporter extends DataImporter
+  {
+    protected StringImporter()
+    {
+      super(NonTemporal.Strings.class, null, null);
+    }
 
-		public String nameFor(String colName)
-		{
-			return "Location";
-		}
+    @Override
+    public void consume(ICollection series, long thisTime, int colStart,
+        CSVRecord row)
+    {
+      String thisVal = row.get(colStart);
+      NonTemporal.Strings thisS = (NonTemporal.Strings) series;
+      thisS.add(thisVal);
+    }
+  }
 
-		public TemporalLocation create(String name)
-		{
-			return new TemporalLocation(name);
-		}
+  /**
+   * class to handle importing two columns of location data
+   * 
+   * @author ian
+   * 
+   */
+  protected static class LocationImporter extends DataImporter
+  {
+    protected LocationImporter()
+    {
+      super(TemporalLocation.class, "Lat", null);
+    }
 
-		public void consume(ICollection series, long thisTime, int colStart,
-				CSVRecord row)
-		{
-			final TemporalLocation locS = (TemporalLocation) series;
+    public String nameFor(String colName)
+    {
+      return "Location";
+    }
 
-			String latVal = row.get(colStart);
-			Double valLat = Double.parseDouble(latVal);
-			String longVal = row.get(colStart + 1);
-			Double valLong = Double.parseDouble(longVal);
+    public TemporalLocation create(String name)
+    {
+      return new TemporalLocation(name);
+    }
 
-			GeometryBuilder builder = new GeometryBuilder(DefaultGeographicCRS.WGS84);
-			Point point = builder.createPoint(valLong, valLat);
+    public void consume(ICollection series, long thisTime, int colStart,
+        CSVRecord row)
+    {
+      final TemporalLocation locS = (TemporalLocation) series;
 
-			locS.add(thisTime, point);
-		}
+      String latVal = row.get(colStart);
+      Double valLat = Double.parseDouble(latVal);
+      String longVal = row.get(colStart + 1);
+      Double valLong = Double.parseDouble(longVal);
 
-		public int numCols()
-		{
-			return 2;
-		}
-	}
+      GeometryBuilder builder = new GeometryBuilder(DefaultGeographicCRS.WGS84);
+      Point point = builder.createPoint(valLong, valLat);
 
-	
-	/**
-	 * generic class to handle importing series of data
-	 * 
-	 * @author ian
-	 * 
-	 * @param <T>
-	 */
-	protected static class SeriesSupporter<T extends IQuantityCollection<?>>
-			extends DataImporter
-	{
-		protected SeriesSupporter(Class<?> classType, String colName,
-				String units)
-		{
-			super(classType, colName, units);
-		}
+      locS.add(thisTime, point);
+    }
 
-		protected void add(ICollection series, long time, Number quantity)
-		{
-			IQuantityCollection<?> target = (IQuantityCollection<?>) series;
-			target.add(quantity);
-		}
+    public int numCols()
+    {
+      return 2;
+    }
+  }
 
-		@Override
-		public void consume(ICollection series, long thisTime, int colStart,
-				CSVRecord row)
-		{
-			String thisVal = row.get(colStart);
-			Double val = Double.parseDouble(thisVal);
-			add(series, thisTime, val);
-		}
+  /**
+   * generic class to handle importing series of data
+   * 
+   * @author ian
+   * 
+   * @param <T>
+   */
+  protected static class SeriesSupporter<T extends IQuantityCollection<?>>
+      extends DataImporter
+  {
+    protected SeriesSupporter(Class<?> classType, String colName, String units)
+    {
+      super(classType, colName, units);
+    }
 
-		@Override
-		public int numCols()
-		{
-			return 1;
-		}
-	}
+    protected void add(ICollection series, long time, Number quantity)
+    {
+      IQuantityCollection<?> target = (IQuantityCollection<?>) series;
+      target.add(quantity);
+    }
 
-	/**
-	 * generic class to handle importing series of data
-	 * 
-	 * @author ian
-	 * 
-	 * @param <T>
-	 */
-	protected static class TemporalSeriesSupporter<T extends ITemporalQuantityCollection<?>>
-			extends DataImporter
-	{
-		protected TemporalSeriesSupporter(Class<?> classType, String colName,
-				String units)
-		{
-			super(classType, colName, units);
-		}
+    @Override
+    public void consume(ICollection series, long thisTime, int colStart,
+        CSVRecord row)
+    {
+      String thisVal = row.get(colStart);
+      Double val = Double.parseDouble(thisVal);
+      add(series, thisTime, val);
+    }
 
-		protected void add(ICollection series, long time, Number quantity)
-		{
-			ITemporalQuantityCollection<?> target = (ITemporalQuantityCollection<?>) series;
-			target.add(time, quantity);
-		}
+    @Override
+    public int numCols()
+    {
+      return 1;
+    }
+  }
 
-		@Override
-		public void consume(ICollection series, long thisTime, int colStart,
-				CSVRecord row)
-		{
-			String thisVal = row.get(colStart);
-			Double val = Double.parseDouble(thisVal);
-			add(series, thisTime, val);
-		}
+  /**
+   * generic class to handle importing series of data
+   * 
+   * @author ian
+   * 
+   * @param <T>
+   */
+  protected static class TemporalSeriesSupporter<T extends ITemporalQuantityCollection<?>>
+      extends DataImporter
+  {
+    protected TemporalSeriesSupporter(Class<?> classType, String colName,
+        String units)
+    {
+      super(classType, colName, units);
+    }
 
-		@Override
-		public int numCols()
-		{
-			return 1;
-		}
-	}
+    protected void add(ICollection series, long time, Number quantity)
+    {
+      ITemporalQuantityCollection<?> target =
+          (ITemporalQuantityCollection<?>) series;
+      target.add(time, quantity);
+    }
 
-	protected static class DeferredLoadSupporter extends DataImporter
-	{
-		String _name;
+    @Override
+    public void consume(ICollection series, long thisTime, int colStart,
+        CSVRecord row)
+    {
+      String thisVal = row.get(colStart);
+      Double val = Double.parseDouble(thisVal);
+      add(series, thisTime, val);
+    }
 
-		public DeferredLoadSupporter(String name)
-		{
-			super(null, null, null);
-			_name = name;
-		}
+    @Override
+    public int numCols()
+    {
+      return 1;
+    }
+  }
 
-		public String getName()
-		{
-			return _name;
-		}
+  protected static class DeferredLoadSupporter extends DataImporter
+  {
+    private final String name;
 
-		@Override
-		public void consume(ICollection series, long thisTime, int colStart,
-				CSVRecord row)
-		{
-			throw new RuntimeException(
-					"We're just temporary - we should never actually be called!");
-		}
+    public DeferredLoadSupporter(String name)
+    {
+      super(null, null, null);
+      this.name = name;
+    }
 
-	}
+    public String getName()
+    {
+      return name;
+    }
+
+    @Override
+    public void consume(ICollection series, long thisTime, int colStart,
+        CSVRecord row)
+    {
+      throw new RuntimeException(
+          "We're just temporary - we should never actually be called!");
+    }
+
+  }
 }

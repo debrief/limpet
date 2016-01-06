@@ -30,7 +30,7 @@ import java.util.List;
 
 public class GenerateDummyDataOperation implements IOperation<IStoreItem>
 {
-	CollectionComplianceTests aTests = new CollectionComplianceTests();
+	private final CollectionComplianceTests aTests = new CollectionComplianceTests();
 
 	private final String _title;
 
@@ -66,7 +66,7 @@ public class GenerateDummyDataOperation implements IOperation<IStoreItem>
 	public static class GenerateDummyDataCommand extends
 			AbstractCommand<IStoreItem>
 	{
-		final long _count;
+		private final long _count;
 
 		public GenerateDummyDataCommand(String title, IStore store, long count,
 				IContext context)

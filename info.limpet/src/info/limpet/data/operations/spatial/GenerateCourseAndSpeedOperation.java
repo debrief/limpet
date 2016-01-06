@@ -24,7 +24,7 @@ import info.limpet.IStore.IStoreItem;
 import info.limpet.data.commands.AbstractCommand;
 import info.limpet.data.impl.samples.StockTypes;
 import info.limpet.data.impl.samples.StockTypes.Temporal;
-import info.limpet.data.impl.samples.StockTypes.Temporal.Angle_Degrees;
+import info.limpet.data.impl.samples.StockTypes.Temporal.AngleDegrees;
 import info.limpet.data.impl.samples.TemporalLocation;
 import info.limpet.data.operations.CollectionComplianceTests;
 
@@ -42,232 +42,240 @@ import org.opengis.geometry.primitive.Point;
 public class GenerateCourseAndSpeedOperation implements IOperation<IStoreItem>
 {
 
-	protected abstract static class DistanceOperation extends
-			AbstractCommand<IStoreItem>
-	{
+  protected abstract static class DistanceOperation extends
+      AbstractCommand<IStoreItem>
+  {
 
-		public DistanceOperation(List<IStoreItem> selection, IStore store,
-				String title, String description, IContext context)
-		{
-			super(title, description, store, false, false, selection, context);
-		}
+    public DistanceOperation(List<IStoreItem> selection, IStore store,
+        String title, String description, IContext context)
+    {
+      super(title, description, store, false, false, selection, context);
+    }
 
-		@Override
-		public void execute()
-		{
-			// get the unit
-			List<IStoreItem> outputs = new ArrayList<IStoreItem>();
+    @Override
+    public void execute()
+    {
+      // get the unit
+      List<IStoreItem> outputs = new ArrayList<IStoreItem>();
 
-			String prefix = getOutputName();
-			
-			if(prefix == null)
-			{
-				return;
-			}
-			
-			// ok, generate the new series
-			for (int i = 0; i < getInputs().size(); i++)
-			{
-				IQuantityCollection<?> target = getOutputCollection(prefix + getInputs().get(i)
-						.getName());
+      String prefix = getOutputName();
 
-				outputs.add(target);
-				// store the output
-				super.addOutput(target);
-			}
+      if (prefix == null)
+      {
+        return;
+      }
 
-			// start adding values.
-			performCalc(outputs);
+      // ok, generate the new series
+      for (int i = 0; i < getInputs().size(); i++)
+      {
+        IQuantityCollection<?> target =
+            getOutputCollection(prefix + getInputs().get(i).getName());
 
-			// tell each series that we're a dependent
-			Iterator<IStoreItem> iter = getInputs().iterator();
-			while (iter.hasNext())
-			{
-				ICollection iCollection = (ICollection) iter.next();
-				iCollection.addDependent(this);
-			}
+        outputs.add(target);
+        // store the output
+        super.addOutput(target);
+      }
 
-			// ok, done
-			getStore().addAll(outputs);
-		}
+      // start adding values.
+      performCalc(outputs);
 
-		protected abstract IQuantityCollection<?> getOutputCollection(
-				String trackList);
+      // tell each series that we're a dependent
+      Iterator<IStoreItem> iter = getInputs().iterator();
+      while (iter.hasNext())
+      {
+        ICollection iCollection = (ICollection) iter.next();
+        iCollection.addDependent(this);
+      }
 
-		@Override
-		protected void recalculate()
-		{
-			// clear out the lists, first
-			Iterator<IStoreItem> iter = getOutputs().iterator();
-			while (iter.hasNext())
-			{
-				IQuantityCollection<?> qC = (IQuantityCollection<?>) iter.next();
-				qC.getValues().clear();
-			}
+      // ok, done
+      getStore().addAll(outputs);
+    }
 
-			// update the results
-			performCalc(getOutputs());
-		}
+    protected abstract IQuantityCollection<?> getOutputCollection(
+        String trackList);
 
-		/**
-		 * wrap the actual operation. We're doing this since we need to separate it
-		 * from the core "execute" operation in order to support dynamic updates
-		 * 
-		 * @param unit
-		 * @param outputs
-		 */
-		private void performCalc(List<IStoreItem> outputs)
-		{
-			// get a calculator to use
-			final GeodeticCalculator calc = GeoSupport.getCalculator();
+    @Override
+    protected void recalculate()
+    {
+      // clear out the lists, first
+      Iterator<IStoreItem> iter = getOutputs().iterator();
+      while (iter.hasNext())
+      {
+        IQuantityCollection<?> qC = (IQuantityCollection<?>) iter.next();
+        qC.getValues().clear();
+      }
 
-			// do some clearing first
+      // update the results
+      performCalc(getOutputs());
+    }
 
-			Iterator<IStoreItem> iter = getInputs().iterator();
-			Iterator<IStoreItem> oIter = outputs.iterator();
-			while (iter.hasNext())
-			{
-				TemporalLocation thisTrack = (TemporalLocation) iter.next();
-				IStoreItem thisOut = oIter.next();
+    /**
+     * wrap the actual operation. We're doing this since we need to separate it from the core
+     * "execute" operation in order to support dynamic updates
+     * 
+     * @param unit
+     * @param outputs
+     */
+    private void performCalc(List<IStoreItem> outputs)
+    {
+      // get a calculator to use
+      final GeodeticCalculator calc = GeoSupport.getCalculator();
 
-				// ok, walk through it
-				Iterator<Geometry> pITer = thisTrack.getLocations().iterator();
-				Iterator<Long> tIter = thisTrack.getTimes().iterator();
+      // do some clearing first
 
-				// remember the last value
-				long lastTime = 0;
-				Point lastLocation = null;
+      Iterator<IStoreItem> iter = getInputs().iterator();
+      Iterator<IStoreItem> oIter = outputs.iterator();
+      while (iter.hasNext())
+      {
+        TemporalLocation thisTrack = (TemporalLocation) iter.next();
+        IStoreItem thisOut = oIter.next();
 
-				while (pITer.hasNext())
-				{
-					Point geometry = (Point) pITer.next();
-					long thisTime = tIter.next();
+        // ok, walk through it
+        Iterator<Geometry> pITer = thisTrack.getLocations().iterator();
+        Iterator<Long> tIter = thisTrack.getTimes().iterator();
 
-					if (lastLocation != null)
-					{
-						calcAndStore(thisOut, calc, lastTime, lastLocation, thisTime,
-								geometry);
-					}
+        // remember the last value
+        long lastTime = 0;
+        Point lastLocation = null;
 
-					// and remember the values
-					lastLocation = geometry;
-					lastTime = thisTime;
+        while (pITer.hasNext())
+        {
+          Point geometry = (Point) pITer.next();
+          long thisTime = tIter.next();
 
-				}
-			}
-		}
+          if (lastLocation != null)
+          {
+            calcAndStore(thisOut, calc, lastTime, lastLocation, thisTime,
+                geometry);
+          }
 
-		protected abstract void calcAndStore(IStoreItem thisOut,
-				final GeodeticCalculator calc, final long timeA, final Point locA,
-				final long timeB, final Point locB);
-	}
+          // and remember the values
+          lastLocation = geometry;
+          lastTime = thisTime;
 
-	CollectionComplianceTests aTests = new CollectionComplianceTests();
+        }
+      }
+    }
 
-	protected boolean appliesTo(List<IStoreItem> selection)
-	{
-		boolean nonEmpty = aTests.nonEmpty(selection);
-		boolean allTemporal = aTests.allTemporal(selection);
+    protected abstract void calcAndStore(IStoreItem thisOut,
+        final GeodeticCalculator calc, final long timeA, final Point locA,
+        final long timeB, final Point locB);
+  }
 
-		return (nonEmpty && allTemporal && aTests.allNonQuantity(selection) && aTests
-				.allLocation(selection));
-	}
+  private final CollectionComplianceTests aTests =
+      new CollectionComplianceTests();
 
-	public Collection<ICommand<IStoreItem>> actionsFor(
-			List<IStoreItem> selection, IStore destination, IContext context)
-	{
-		Collection<ICommand<IStoreItem>> res = new ArrayList<ICommand<IStoreItem>>();
-		if (appliesTo(selection))
-		{
+  protected boolean appliesTo(List<IStoreItem> selection)
+  {
+    boolean nonEmpty = aTests.nonEmpty(selection);
+    boolean allTemporal = aTests.allTemporal(selection);
 
-			int len = selection.size();
-			final String title;
-			if (len > 1)
-			{
-				title = "Generate course for track";
-			}
-			else
-			{
-				title = "Generate course for tracks";
-			}
+    return (nonEmpty && allTemporal && aTests.allNonQuantity(selection) && aTests
+        .allLocation(selection));
+  }
 
-			ICommand<IStoreItem> genCourse = new DistanceOperation(selection, destination,
-					"Generate calculated course", title, context)
-			{
+  public Collection<ICommand<IStoreItem>> actionsFor(
+      List<IStoreItem> selection, IStore destination, IContext context)
+  {
+    Collection<ICommand<IStoreItem>> res =
+        new ArrayList<ICommand<IStoreItem>>();
+    if (appliesTo(selection))
+    {
 
-				protected IQuantityCollection<?> getOutputCollection(String title)
-				{
-					return new StockTypes.Temporal.Angle_Degrees(title, this);
-				}
+      int len = selection.size();
+      final String title;
+      if (len > 1)
+      {
+        title = "Generate course for track";
+      }
+      else
+      {
+        title = "Generate course for tracks";
+      }
 
-				@Override
-				protected String getOutputName()
-				{
-					return getContext().getInput("Generate course",
-							"Please provide a dataset prefix",
-							"Generated course for ");
-				}
+      ICommand<IStoreItem> genCourse =
+          new DistanceOperation(selection, destination,
+              "Generate calculated course", title, context)
+          {
 
-				protected void calcAndStore(IStoreItem output,
-						final GeodeticCalculator calc, long lastTime, final Point locA,
-						long thisTime, final Point locB)
-				{
-					// get the output dataset
-					Temporal.Angle_Degrees target = (Angle_Degrees) output;
+            protected IQuantityCollection<?> getOutputCollection(String title)
+            {
+              return new StockTypes.Temporal.AngleDegrees(title, this);
+            }
 
-					// now find the bearing between them
-					calc.setStartingGeographicPoint(locA.getCentroid().getOrdinate(0),
-							locA.getCentroid().getOrdinate(1));
-					calc.setDestinationGeographicPoint(locB.getCentroid().getOrdinate(0),
-							locB.getCentroid().getOrdinate(1));
-					double angleDegs = calc.getAzimuth();
-					if (angleDegs < 0)
-						angleDegs += 360;
+            @Override
+            protected String getOutputName()
+            {
+              return getContext().getInput("Generate course",
+                  "Please provide a dataset prefix", "Generated course for ");
+            }
 
-					target.add(thisTime, Measure.valueOf(angleDegs, target.getUnits()));
-				}
-			};
-			ICommand<IStoreItem> genSpeed = new DistanceOperation(selection, destination,
-					"Generate calculated speed", title, context)
-			{
+            protected void calcAndStore(IStoreItem output,
+                final GeodeticCalculator calc, long lastTime, final Point locA,
+                long thisTime, final Point locB)
+            {
+              // get the output dataset
+              Temporal.AngleDegrees target = (AngleDegrees) output;
 
-				protected IQuantityCollection<?> getOutputCollection(String title)
-				{
-					return new StockTypes.Temporal.Speed_MSec(title, this);
-				}
+              // now find the bearing between them
+              calc.setStartingGeographicPoint(
+                  locA.getCentroid().getOrdinate(0), locA.getCentroid()
+                      .getOrdinate(1));
+              calc.setDestinationGeographicPoint(locB.getCentroid()
+                  .getOrdinate(0), locB.getCentroid().getOrdinate(1));
+              double angleDegs = calc.getAzimuth();
+              if (angleDegs < 0)
+              {
+                angleDegs += 360;
+              }
 
-				@Override
-				protected String getOutputName()
-				{
-					return getContext().getInput("Generate speed",
-							"Please provide a dataset prefix",
-							"Generated speed for ");
-				}
+              target.add(thisTime,
+                  Measure.valueOf(angleDegs, target.getUnits()));
+            }
+          };
+      ICommand<IStoreItem> genSpeed =
+          new DistanceOperation(selection, destination,
+              "Generate calculated speed", title, context)
+          {
 
-				protected void calcAndStore(IStoreItem output,
-						final GeodeticCalculator calc, long lastTime, final Point locA,
-						long thisTime, final Point locB)
-				{
-					// get the output dataset
-					Temporal.Speed_MSec target = (Temporal.Speed_MSec) output;
+            protected IQuantityCollection<?> getOutputCollection(String title)
+            {
+              return new StockTypes.Temporal.SpeedMSec(title, this);
+            }
 
-					// now find the range between them
-					calc.setStartingGeographicPoint(locA.getCentroid().getOrdinate(0),
-							locA.getCentroid().getOrdinate(1));
-					calc.setDestinationGeographicPoint(locB.getCentroid().getOrdinate(0),
-							locB.getCentroid().getOrdinate(1));
-					double thisDist = calc.getOrthodromicDistance();
-					double calcTime = thisTime - lastTime;
-					double thisSpeed = thisDist / (calcTime / 1000d);
-					target.add(thisTime, Measure.valueOf(thisSpeed, target.getUnits()));
-				}
-			};
+            @Override
+            protected String getOutputName()
+            {
+              return getContext().getInput("Generate speed",
+                  "Please provide a dataset prefix", "Generated speed for ");
+            }
 
-			res.add(genCourse);
-			res.add(genSpeed);
-		}
+            protected void calcAndStore(IStoreItem output,
+                final GeodeticCalculator calc, long lastTime, final Point locA,
+                long thisTime, final Point locB)
+            {
+              // get the output dataset
+              Temporal.SpeedMSec target = (Temporal.SpeedMSec) output;
 
-		return res;
-	}
+              // now find the range between them
+              calc.setStartingGeographicPoint(
+                  locA.getCentroid().getOrdinate(0), locA.getCentroid()
+                      .getOrdinate(1));
+              calc.setDestinationGeographicPoint(locB.getCentroid()
+                  .getOrdinate(0), locB.getCentroid().getOrdinate(1));
+              double thisDist = calc.getOrthodromicDistance();
+              double calcTime = thisTime - lastTime;
+              double thisSpeed = thisDist / (calcTime / 1000d);
+              target.add(thisTime,
+                  Measure.valueOf(thisSpeed, target.getUnits()));
+            }
+          };
+
+      res.add(genCourse);
+      res.add(genSpeed);
+    }
+
+    return res;
+  }
 
 }

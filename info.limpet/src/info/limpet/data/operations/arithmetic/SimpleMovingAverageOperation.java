@@ -38,9 +38,9 @@ public class SimpleMovingAverageOperation implements IOperation<ICollection>
 {
 	public static final String SERIES_NAME_TEMPLATE = "Simple Moving Average";
 
-	CollectionComplianceTests aTests = new CollectionComplianceTests();
+	private final CollectionComplianceTests aTests = new CollectionComplianceTests();
 
-	protected final int _windowSize;
+	private final int _windowSize;
 
 	public SimpleMovingAverageOperation(int windowSize)
 	{

@@ -30,7 +30,7 @@ import info.limpet.data.impl.samples.StockTypes;
 import info.limpet.data.impl.samples.StockTypes.NonTemporal;
 import info.limpet.data.impl.samples.StockTypes.NonTemporal.Location;
 import info.limpet.data.impl.samples.StockTypes.Temporal;
-import info.limpet.data.impl.samples.StockTypes.Temporal.Speed_Kts;
+import info.limpet.data.impl.samples.StockTypes.Temporal.SpeedKts;
 import info.limpet.data.impl.samples.TemporalLocation;
 import info.limpet.data.operations.CollectionComplianceTests;
 import info.limpet.data.operations.CollectionComplianceTests.TimePeriod;
@@ -265,7 +265,7 @@ public class TestGeotoolsGeometry extends TestCase
 	{
 		Location loc1 = new Location("loc1");
 		Location loc2 = new Location("loc2");
-		Temporal.Length_M len1 = new Temporal.Length_M("dummy2", null);
+		Temporal.LengthM len1 = new Temporal.LengthM("dummy2", null);
 
 		List<IStoreItem> selection = new ArrayList<IStoreItem>();
 		selection.add(loc1);
@@ -309,7 +309,7 @@ public class TestGeotoolsGeometry extends TestCase
 	{
 		TemporalLocation loc1 = new TemporalLocation("loc1");
 		TemporalLocation loc2 = new TemporalLocation("loc2");
-		Temporal.Length_M len1 = new Temporal.Length_M("dummy2", null);
+		Temporal.LengthM len1 = new Temporal.LengthM("dummy2", null);
 
 		List<IStoreItem> selection = new ArrayList<IStoreItem>();
 		selection.add(loc1);
@@ -370,7 +370,7 @@ public class TestGeotoolsGeometry extends TestCase
 		TemporalLocation loc1 = new TemporalLocation("loc1");
 		TemporalLocation loc2 = new TemporalLocation("loc2");
 		Location loc3 = new Location("loc2");
-		Temporal.Length_M len1 = new Temporal.Length_M("dummy2", null);
+		Temporal.LengthM len1 = new Temporal.LengthM("dummy2", null);
 
 		List<IStoreItem> selection = new ArrayList<IStoreItem>();
 		selection.add(loc1);
@@ -444,7 +444,7 @@ public class TestGeotoolsGeometry extends TestCase
 	{
 		TemporalLocation loc1 = new TemporalLocation("loc1");
 		TemporalLocation loc2 = new TemporalLocation("loc2");
-		Temporal.Length_M len1 = new Temporal.Length_M("dummy2", null);
+		Temporal.LengthM len1 = new Temporal.LengthM("dummy2", null);
 
 		List<IStoreItem> selection = new ArrayList<IStoreItem>();
 		selection.add(loc1);
@@ -490,26 +490,26 @@ public class TestGeotoolsGeometry extends TestCase
 		NonTemporal.Location loc3 = new NonTemporal.Location("loc 3");
 		NonTemporal.Location loc4 = new NonTemporal.Location("loc 4");
 
-		Temporal.Angle_Degrees angD1 = new Temporal.Angle_Degrees("ang D 1", null);
-		Temporal.Angle_Radians angR2 = new Temporal.Angle_Radians("ang R 2", null);
-		NonTemporal.Angle_Radians angR3 = new NonTemporal.Angle_Radians("ang R 3",
+		Temporal.AngleDegrees angD1 = new Temporal.AngleDegrees("ang D 1", null);
+		Temporal.AngleRadians angR2 = new Temporal.AngleRadians("ang R 2", null);
+		NonTemporal.AngleRadians angR3 = new NonTemporal.AngleRadians("ang R 3",
 				null);
-		NonTemporal.Angle_Degrees angD4 = new NonTemporal.Angle_Degrees("ang D 4",
-				null);
-
-		Temporal.Speed_Kts spdK1 = new Temporal.Speed_Kts("speed kts 1", null);
-		Temporal.Speed_MSec spdM2 = new Temporal.Speed_MSec("speed M 2", null);
-		NonTemporal.Speed_Kts spdK3 = new NonTemporal.Speed_Kts("speed kts 1", null);
-		NonTemporal.Speed_MSec spdM4 = new NonTemporal.Speed_MSec("speed kts 1",
+		NonTemporal.AngleDegrees angD4 = new NonTemporal.AngleDegrees("ang D 4",
 				null);
 
-		Temporal.Frequency_Hz freq1 = new Temporal.Frequency_Hz("freq 1", null);
-		NonTemporal.Frequency_Hz freq2 = new NonTemporal.Frequency_Hz("freq 2",
+		Temporal.SpeedKts spdK1 = new Temporal.SpeedKts("speed kts 1", null);
+		Temporal.SpeedMSec spdM2 = new Temporal.SpeedMSec("speed M 2", null);
+		NonTemporal.SpeedKts spdK3 = new NonTemporal.SpeedKts("speed kts 1", null);
+		NonTemporal.SpeedMSec spdM4 = new NonTemporal.SpeedMSec("speed kts 1",
 				null);
 
-		Temporal.Speed_MSec sspdM1 = new Temporal.Speed_MSec("sound speed M 1",
+		Temporal.FrequencyHz freq1 = new Temporal.FrequencyHz("freq 1", null);
+		NonTemporal.FrequencyHz freq2 = new NonTemporal.FrequencyHz("freq 2",
 				null);
-		NonTemporal.Speed_Kts sspdK2 = new NonTemporal.Speed_Kts(
+
+		Temporal.SpeedMSec sspdM1 = new Temporal.SpeedMSec("sound speed M 1",
+				null);
+		NonTemporal.SpeedKts sspdK2 = new NonTemporal.SpeedKts(
 				"sound speed kts 2", null);
 
 		// populate the datasets
@@ -734,9 +734,9 @@ public class TestGeotoolsGeometry extends TestCase
 		CollectionComplianceTests aTests = new CollectionComplianceTests();
 		Collection<ICollection> items = new ArrayList<ICollection>();
 
-		Speed_Kts speed1 = new Temporal.Speed_Kts("spd1", null);
-		Speed_Kts speed2 = new Temporal.Speed_Kts("spd2", null);
-		Speed_Kts speed3 = new Temporal.Speed_Kts("spd3", null);
+		SpeedKts speed1 = new Temporal.SpeedKts("spd1", null);
+		SpeedKts speed2 = new Temporal.SpeedKts("spd2", null);
+		SpeedKts speed3 = new Temporal.SpeedKts("spd3", null);
 
 		speed1.add(100, 5);
 		speed1.add(120, 5);
@@ -797,9 +797,9 @@ public class TestGeotoolsGeometry extends TestCase
 		CollectionComplianceTests aTests = new CollectionComplianceTests();
 		Collection<ICollection> items = new ArrayList<ICollection>();
 
-		Speed_Kts speed1 = new Temporal.Speed_Kts("spd1", null);
-		Speed_Kts speed2 = new Temporal.Speed_Kts("spd2", null);
-		Speed_Kts speed3 = new Temporal.Speed_Kts("spd3", null);
+		SpeedKts speed1 = new Temporal.SpeedKts("spd1", null);
+		SpeedKts speed2 = new Temporal.SpeedKts("spd2", null);
+		SpeedKts speed3 = new Temporal.SpeedKts("spd3", null);
 
 		speed1.add(100, 5);
 		speed1.add(120, 5);
@@ -844,7 +844,7 @@ public class TestGeotoolsGeometry extends TestCase
 	{
 		final CollectionComplianceTests aTests = new CollectionComplianceTests();
 
-		Temporal.Speed_Kts sKts = new Temporal.Speed_Kts("Speed knots", null);
+		Temporal.SpeedKts sKts = new Temporal.SpeedKts("Speed knots", null);
 		sKts.add(1000, 10);
 		sKts.add(2000, 20);
 		sKts.add(4000, 30);
@@ -856,14 +856,14 @@ public class TestGeotoolsGeometry extends TestCase
 		assertEquals("correct value", 25.0, val);
 
 		// try converting to m_sec
-		val = aTests.valueAt(sKts, 1500L, new Temporal.Speed_MSec().getUnits());
+		val = aTests.valueAt(sKts, 1500L, new Temporal.SpeedMSec().getUnits());
 		assertEquals("correct value", 7.72, val, 0.01);
 
 		// try converting to m_sec
 		try
 		{
 			val = aTests
-					.valueAt(sKts, 1500L, new Temporal.Angle_Degrees().getUnits());
+					.valueAt(sKts, 1500L, new Temporal.AngleDegrees().getUnits());
 		}
 		catch (ConversionException ce)
 		{

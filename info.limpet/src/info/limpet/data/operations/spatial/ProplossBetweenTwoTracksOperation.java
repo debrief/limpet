@@ -40,103 +40,103 @@ import org.opengis.geometry.primitive.Point;
 public class ProplossBetweenTwoTracksOperation extends TwoTrackOperation
 {
 
-	private final class ProplossBetweenOperation extends DistanceOperation
-	{
-		private ProplossBetweenOperation(List<IStoreItem> selection,
-				IStore store, String title, String description,
-				IBaseTemporalCollection timeProvider, IContext context)
-		{
-			super(selection, store, title, description, timeProvider, context);
-		}
+  private final class ProplossBetweenOperation extends DistanceOperation
+  {
+    private ProplossBetweenOperation(List<IStoreItem> selection, IStore store,
+        String title, String description, IBaseTemporalCollection timeProvider,
+        IContext context)
+    {
+      super(selection, store, title, description, timeProvider, context);
+    }
 
-		protected IQuantityCollection<?> getOutputCollection(String title,
-				boolean isTemporal)
-		{
-			final IQuantityCollection<?> res;
-			if (isTemporal)
-			{
-				res = new StockTypes.Temporal.AcousticStrength(title, this);
-			}
-			else
-			{
-				res = new StockTypes.NonTemporal.AcousticStrength(title, this);
-			}
-			return res;
-		}
+    protected IQuantityCollection<?> getOutputCollection(String title,
+        boolean isTemporal)
+    {
+      final IQuantityCollection<?> res;
+      if (isTemporal)
+      {
+        res = new StockTypes.Temporal.AcousticStrength(title, this);
+      }
+      else
+      {
+        res = new StockTypes.NonTemporal.AcousticStrength(title, this);
+      }
+      return res;
+    }
 
-		@Override
-		protected String getOutputName()
-		{
-			return getContext().getInput("Generate propagation loss",
-					NEW_DATASET_MESSAGE,
-					"Proploss between " + super.getSubjectList());
-		}
+    @Override
+    protected String getOutputName()
+    {
+      return getContext().getInput("Generate propagation loss",
+          NEW_DATASET_MESSAGE, "Proploss between " + super.getSubjectList());
+    }
 
-		protected void calcAndStore(final GeodeticCalculator calc,
-				final Point locA, final Point locB, Long time)
-		{
-			final Unit<Dimensionless> outUnits = NonSI.DECIBEL;
+    protected void calcAndStore(final GeodeticCalculator calc,
+        final Point locA, final Point locB, Long time)
+    {
+      final Unit<Dimensionless> outUnits = NonSI.DECIBEL;
 
-			// now find the range between them
-			calc.setStartingGeographicPoint(locA.getCentroid().getOrdinate(0), locA
-					.getCentroid().getOrdinate(1));
-			calc.setDestinationGeographicPoint(locB.getCentroid().getOrdinate(0),
-					locB.getCentroid().getOrdinate(1));
-			double thisDistMetres = calc.getOrthodromicDistance();
+      // now find the range between them
+      calc.setStartingGeographicPoint(locA.getCentroid().getOrdinate(0), locA
+          .getCentroid().getOrdinate(1));
+      calc.setDestinationGeographicPoint(locB.getCentroid().getOrdinate(0),
+          locB.getCentroid().getOrdinate(1));
+      double thisDistMetres = calc.getOrthodromicDistance();
 
-			// ok, we've got to do 20 log R
-			double thisLoss = 20d * Math.log(thisDistMetres);
-			final Measure<Double, Dimensionless> thisRes = Measure.valueOf(thisLoss,
-					outUnits);
+      // ok, we've got to do 20 log R
+      double thisLoss = 20d * Math.log(thisDistMetres);
+      final Measure<Double, Dimensionless> thisRes =
+          Measure.valueOf(thisLoss, outUnits);
 
-			if (time != null)
-			{
-				// get the output dataset
-				AcousticStrength target2 = (Temporal.AcousticStrength) getOutputs()
-						.get(0);
-				target2.add(time, thisRes);
-			}
-			else
-			{
-				// get the output dataset
-				NonTemporal.AcousticStrength target2 = (NonTemporal.AcousticStrength) getOutputs()
-						.get(0);
-				target2.add(thisRes);
-			}
-		}
-	}
+      if (time != null)
+      {
+        // get the output dataset
+        AcousticStrength target2 =
+            (Temporal.AcousticStrength) getOutputs().get(0);
+        target2.add(time, thisRes);
+      }
+      else
+      {
+        // get the output dataset
+        NonTemporal.AcousticStrength target2 =
+            (NonTemporal.AcousticStrength) getOutputs().get(0);
+        target2.add(thisRes);
+      }
+    }
+  }
 
-	public Collection<ICommand<IStoreItem>> actionsFor(
-			List<IStoreItem> selection, IStore destination, IContext context)
-	{
-		Collection<ICommand<IStoreItem>> res = new ArrayList<ICommand<IStoreItem>>();
-		if (appliesTo(selection))
-		{
-			// ok, are we doing a tempoarl opeartion?
-			if (aTests.suitableForTimeInterpolation(selection))
-			{
-				// hmm, find the time provider
-				final IBaseTemporalCollection timeProvider = aTests
-						.getLongestTemporalCollections(selection);
+  public Collection<ICommand<IStoreItem>> actionsFor(
+      List<IStoreItem> selection, IStore destination, IContext context)
+  {
+    Collection<ICommand<IStoreItem>> res =
+        new ArrayList<ICommand<IStoreItem>>();
+    if (appliesTo(selection))
+    {
+      // ok, are we doing a tempoarl opeartion?
+      if (getATests().suitableForTimeInterpolation(selection))
+      {
+        // hmm, find the time provider
+        final IBaseTemporalCollection timeProvider =
+            getATests().getLongestTemporalCollections(selection);
 
-				ICommand<IStoreItem> newC = new ProplossBetweenOperation(selection,
-						destination, "Propagation loss between tracks (interpolated)",
-						"Propagation loss between two tracks",
-						timeProvider, context);
+        ICommand<IStoreItem> newC =
+            new ProplossBetweenOperation(selection, destination,
+                "Propagation loss between tracks (interpolated)",
+                "Propagation loss between two tracks", timeProvider, context);
 
-				res.add(newC);
-			}
+        res.add(newC);
+      }
 
-			if (aTests.allEqualLengthOrSingleton(selection))
-			{
-				ICommand<IStoreItem> newC = new ProplossBetweenOperation(selection,
-						destination, "Propagation loss between tracks (indexed)",
-						"Propagation loss between two tracks",
-						null, context);
+      if (getATests().allEqualLengthOrSingleton(selection))
+      {
+        ICommand<IStoreItem> newC =
+            new ProplossBetweenOperation(selection, destination,
+                "Propagation loss between tracks (indexed)",
+                "Propagation loss between two tracks", null, context);
 
-				res.add(newC);
-			}
-		}
-		return res;
-	}
+        res.add(newC);
+      }
+    }
+    return res;
+  }
 }

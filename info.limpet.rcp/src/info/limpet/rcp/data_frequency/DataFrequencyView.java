@@ -151,8 +151,8 @@ public class DataFrequencyView extends CoreAnalysisView
 				while (iter2.hasNext())
 				{
 					ObjectFrequencyBins.Bin bin = (ObjectFrequencyBins.Bin) iter2.next();
-					xData[ctr] = (String) bin.indexVal;
-					yData[ctr++] = bin.freqVal;
+					xData[ctr] = (String) bin.getIndexVal();
+					yData[ctr++] = bin.getFreqVal();
 				}
 
 				IAxis xAxis = chart.getAxisSet().getXAxis(0);
@@ -213,10 +213,10 @@ public class DataFrequencyView extends CoreAnalysisView
 						while (iter2.hasNext())
 						{
 							Bin bin = (QuantityFrequencyBins.Bin) iter2.next();
-							xData[ctr] = bin.lowerVal;
-							yData[ctr++] = bin.freqVal;
-							xData[ctr] = bin.upperVal;
-							yData[ctr++] = bin.freqVal;
+							xData[ctr] = bin.getLowerVal();
+							yData[ctr++] = bin.getFreqVal();
+							xData[ctr] = bin.getUpperVal();
+							yData[ctr++] = bin.getFreqVal();
 						}
 
 						newSeries.setXSeries(xData);

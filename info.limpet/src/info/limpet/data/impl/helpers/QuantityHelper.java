@@ -60,7 +60,8 @@ public class QuantityHelper<T extends Quantity> implements IBaseQuantityCollecti
 		if (_min == null)
 		{
 			// ok, store the first value
-			_min = _max = quantity;
+			_min = quantity;
+			_max = quantity;
 		}
 		else
 		{
@@ -169,7 +170,7 @@ public class QuantityHelper<T extends Quantity> implements IBaseQuantityCollecti
 
 	public void replace(double newValue)
 	{
-		if(_values.size() != 1)
+		if (_values.size() != 1)
 		{
 			throw new RuntimeException("We only call this on singletons");
 		}

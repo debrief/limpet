@@ -443,10 +443,7 @@ public class CollectionComplianceTests
       if (thisI instanceof ICollection)
       {
         ICollection thisC = (ICollection) thisI;
-        if (thisC.isTemporal())
-        {
-        }
-        else
+        if (!thisC.isTemporal())
         {
           // oops, no
           allValid = false;

@@ -21,7 +21,6 @@ import info.limpet.IStore;
 import info.limpet.IStore.IStoreItem;
 import info.limpet.IStoreGroup;
 import info.limpet.data.commands.AbstractCommand;
-import info.limpet.data.operations.CollectionComplianceTests;
 import info.limpet.data.store.InMemoryStore;
 
 import java.util.ArrayList;
@@ -31,8 +30,6 @@ import java.util.List;
 
 public class DeleteCollectionOperation implements IOperation<IStoreItem>
 {
-	CollectionComplianceTests aTests = new CollectionComplianceTests();
-
 	public Collection<ICommand<IStoreItem>> actionsFor(
 			List<IStoreItem> selection, IStore destination, IContext context)
 	{
@@ -82,7 +79,7 @@ public class DeleteCollectionOperation implements IOperation<IStoreItem>
 				
 				// do we know the parent?
 				IStoreGroup parent = iCollection.getParent();
-				if(parent != null)
+				if (parent != null)
 				{
 					parent.remove(iCollection);
 				}

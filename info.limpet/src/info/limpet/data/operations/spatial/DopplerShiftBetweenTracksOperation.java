@@ -26,9 +26,9 @@ import info.limpet.IStore;
 import info.limpet.IStore.IStoreItem;
 import info.limpet.data.commands.AbstractCommand;
 import info.limpet.data.impl.samples.StockTypes;
-import info.limpet.data.impl.samples.StockTypes.NonTemporal.Length_M;
+import info.limpet.data.impl.samples.StockTypes.NonTemporal.LengthM;
 import info.limpet.data.impl.samples.StockTypes.Temporal;
-import info.limpet.data.impl.samples.StockTypes.Temporal.Frequency_Hz;
+import info.limpet.data.impl.samples.StockTypes.Temporal.FrequencyHz;
 import info.limpet.data.operations.CollectionComplianceTests;
 import info.limpet.data.operations.CollectionComplianceTests.TimePeriod;
 import info.limpet.data.store.InMemoryStore;
@@ -48,7 +48,8 @@ import org.geotools.referencing.GeodeticCalculator;
 import org.opengis.geometry.Geometry;
 import org.opengis.geometry.primitive.Point;
 
-public class DopplerShiftBetweenTracksOperation implements IOperation<IStoreItem>
+public class DopplerShiftBetweenTracksOperation implements
+    IOperation<IStoreItem>
 {
   public static class DopplerShiftOperation extends AbstractCommand<IStoreItem>
   {
@@ -63,7 +64,7 @@ public class DopplerShiftBetweenTracksOperation implements IOperation<IStoreItem
 
     /**
      * 
-     * @param SpeedOfSound
+     * @param speedOfSound
      * @param osHeadingRads
      * @param tgtHeadingRads
      * @param osSpeed
@@ -72,8 +73,9 @@ public class DopplerShiftBetweenTracksOperation implements IOperation<IStoreItem
      * @param fNought
      * @return
      */
-    private double calcPredictedFreqSI(final double SpeedOfSound, final double osHeadingRads,
-        final double tgtHeadingRads, final double osSpeed, final double tgtSpeed, final double bearing,
+    private double calcPredictedFreqSI(final double speedOfSound,
+        final double osHeadingRads, final double tgtHeadingRads,
+        final double osSpeed, final double tgtSpeed, final double bearing,
         final double fNought)
     {
       final double relB = bearing - osHeadingRads;
@@ -85,7 +87,8 @@ public class DopplerShiftBetweenTracksOperation implements IOperation<IStoreItem
       final double valOSL = Math.cos(relB) * osSpeed;
       final double valTSL = Math.cos(angleOffTheOtherB) * tgtSpeed;
 
-      final double freq = fNought * (SpeedOfSound + valOSL) / (SpeedOfSound + valTSL);
+      final double freq =
+          fNought * (speedOfSound + valOSL) / (speedOfSound + valTSL);
 
       return freq;
     }
@@ -107,24 +110,29 @@ public class DopplerShiftBetweenTracksOperation implements IOperation<IStoreItem
      * 
      */
     private final StoreGroup _rx;
-    CollectionComplianceTests aTests = new CollectionComplianceTests();
+    private final CollectionComplianceTests aTests =
+        new CollectionComplianceTests();
 
-    public DopplerShiftOperation(final StoreGroup tx, final StoreGroup rx, final IStore store,
-        final String title, final String description, final List<IStoreItem> selection, IContext context)
+    public DopplerShiftOperation(final StoreGroup tx, final StoreGroup rx,
+        final IStore store, final String title, final String description,
+        final List<IStoreItem> selection, IContext context)
     {
       super(title, description, store, true, true, selection, context);
       _tx = tx;
       _rx = rx;
     }
 
-    protected void calcAndStore(final GeodeticCalculator calc, final Point locA, final Point locB)
+    protected void calcAndStore(final GeodeticCalculator calc,
+        final Point locA, final Point locB)
     {
       // get the output dataset
-      final Length_M target = (Length_M) getOutputs().get(0);
+      final LengthM target = (LengthM) getOutputs().get(0);
 
       // now find the range between them
-      calc.setStartingGeographicPoint(locA.getCentroid().getOrdinate(0), locA.getCentroid().getOrdinate(1));
-      calc.setDestinationGeographicPoint(locB.getCentroid().getOrdinate(0), locB.getCentroid().getOrdinate(1));
+      calc.setStartingGeographicPoint(locA.getCentroid().getOrdinate(0), locA
+          .getCentroid().getOrdinate(1));
+      calc.setDestinationGeographicPoint(locB.getCentroid().getOrdinate(0),
+          locB.getCentroid().getOrdinate(1));
       final double thisDist = calc.getOrthodromicDistance();
       target.add(Measure.valueOf(thisDist, target.getUnits()));
     }
@@ -175,7 +183,8 @@ public class DopplerShiftBetweenTracksOperation implements IOperation<IStoreItem
     @Override
     protected String getOutputName()
     {
-      return getContext().getInput("Doppler shift between tracks", NEW_DATASET_MESSAGE,
+      return getContext().getInput("Doppler shift between tracks",
+          NEW_DATASET_MESSAGE,
           "Doppler shift between " + _tx.getName() + " and " + _rx.getName());
     }
 
@@ -211,7 +220,8 @@ public class DopplerShiftBetweenTracksOperation implements IOperation<IStoreItem
 
     protected IQuantityCollection<?> getOutputCollection(final String title)
     {
-      return new StockTypes.Temporal.Frequency_Hz("Doppler shift between " + title, this);
+      return new StockTypes.Temporal.FrequencyHz("Doppler shift between "
+          + title, this);
     }
 
     public void organiseData()
@@ -224,24 +234,30 @@ public class DopplerShiftBetweenTracksOperation implements IOperation<IStoreItem
         final CollectionComplianceTests tests = new CollectionComplianceTests();
 
         // ok, transmitter data
-        _data.put(TX + FREQ, tests.collectionWith(_tx, Frequency.UNIT.getDimension(), true));
-        _data.put(TX + COURSE, tests.collectionWith(_tx, SI.RADIAN.getDimension(), true));
-        _data.put(TX + SPEED, tests.collectionWith(_tx, METRE.divide(SECOND).getDimension(), true));
+        _data.put(TX + FREQ,
+            tests.collectionWith(_tx, Frequency.UNIT.getDimension(), true));
+        _data.put(TX + COURSE,
+            tests.collectionWith(_tx, SI.RADIAN.getDimension(), true));
+        _data.put(TX + SPEED, tests.collectionWith(_tx, METRE.divide(SECOND)
+            .getDimension(), true));
         _data.put(TX + LOC, tests.someHaveLocation(_tx));
 
         // and the receiver
-        _data.put(RX + COURSE, tests.collectionWith(_rx, SI.RADIAN.getDimension(), true));
-        _data.put(RX + SPEED, tests.collectionWith(_rx, METRE.divide(SECOND).getDimension(), true));
+        _data.put(RX + COURSE,
+            tests.collectionWith(_rx, SI.RADIAN.getDimension(), true));
+        _data.put(RX + SPEED, tests.collectionWith(_rx, METRE.divide(SECOND)
+            .getDimension(), true));
         _data.put(RX + LOC, tests.someHaveLocation(_rx));
 
         // and the sound speed
-        _data.put(SOUND_SPEED, tests.collectionWith(getInputs(), METRE.divide(SECOND).getDimension(), false));
+        _data.put(SOUND_SPEED, tests.collectionWith(getInputs(),
+            METRE.divide(SECOND).getDimension(), false));
       }
     }
 
     /**
-     * wrap the actual operation. We're doing this since we need to separate it from the core "execute"
-     * operation in order to support dynamic updates
+     * wrap the actual operation. We're doing this since we need to separate it from the core
+     * "execute" operation in order to support dynamic updates
      * 
      * @param unit
      * @param outputs
@@ -263,7 +279,8 @@ public class DopplerShiftBetweenTracksOperation implements IOperation<IStoreItem
       }
 
       // ok, let's start by finding our time sync
-      final IBaseTemporalCollection times = aTests.getOptimalTimes(period, _data.values());
+      final IBaseTemporalCollection times =
+          aTests.getOptimalTimes(period, _data.values());
 
       // check we were able to find some times
       if (times == null)
@@ -273,7 +290,8 @@ public class DopplerShiftBetweenTracksOperation implements IOperation<IStoreItem
       }
 
       // get the output dataset
-      final Temporal.Frequency_Hz output = (Frequency_Hz) outputs.iterator().next();
+      final Temporal.FrequencyHz output =
+          (FrequencyHz) outputs.iterator().next();
 
       final GeodeticCalculator calc = GeoSupport.getCalculator();
 
@@ -283,21 +301,33 @@ public class DopplerShiftBetweenTracksOperation implements IOperation<IStoreItem
       {
         final long thisTime = tIter.next();
 
-        if ((thisTime >= period.getStartTime()) && (thisTime <= period.getEndTime()))
+        if ((thisTime >= period.getStartTime())
+            && (thisTime <= period.getEndTime()))
         {
           // ok, now collate our data
-          final Geometry txLoc = aTests.locationFor(_data.get(TX + LOC), thisTime);
-          final Geometry rxLoc = aTests.locationFor(_data.get(RX + LOC), thisTime);
+          final Geometry txLoc =
+              aTests.locationFor(_data.get(TX + LOC), thisTime);
+          final Geometry rxLoc =
+              aTests.locationFor(_data.get(RX + LOC), thisTime);
 
-          final double txCourseRads = aTests.valueAt(_data.get(TX + COURSE), thisTime, SI.RADIAN);
-          final double rxCourseRads = aTests.valueAt(_data.get(RX + COURSE), thisTime, SI.RADIAN);
+          final double txCourseRads =
+              aTests.valueAt(_data.get(TX + COURSE), thisTime, SI.RADIAN);
+          final double rxCourseRads =
+              aTests.valueAt(_data.get(RX + COURSE), thisTime, SI.RADIAN);
 
-          final double txSpeedMSec = aTests.valueAt(_data.get(TX + SPEED), thisTime, SI.METERS_PER_SECOND);
-          final double rxSpeedMSec = aTests.valueAt(_data.get(RX + SPEED), thisTime, SI.METERS_PER_SECOND);
+          final double txSpeedMSec =
+              aTests.valueAt(_data.get(TX + SPEED), thisTime,
+                  SI.METERS_PER_SECOND);
+          final double rxSpeedMSec =
+              aTests.valueAt(_data.get(RX + SPEED), thisTime,
+                  SI.METERS_PER_SECOND);
 
-          final double freq = aTests.valueAt(_data.get(TX + FREQ), thisTime, SI.HERTZ);
+          final double freq =
+              aTests.valueAt(_data.get(TX + FREQ), thisTime, SI.HERTZ);
 
-          final double soundSpeed = aTests.valueAt(_data.get(SOUND_SPEED), thisTime, SI.METERS_PER_SECOND);
+          final double soundSpeed =
+              aTests.valueAt(_data.get(SOUND_SPEED), thisTime,
+                  SI.METERS_PER_SECOND);
 
           // check we have locations. During some property editing we receive
           // recalc call
@@ -305,10 +335,11 @@ public class DopplerShiftBetweenTracksOperation implements IOperation<IStoreItem
           if ((txLoc != null) && (rxLoc != null))
           {
             // now find the bearing between them
-            calc.setStartingGeographicPoint(txLoc.getCentroid().getOrdinate(0), txLoc.getCentroid()
-                .getOrdinate(1));
-            calc.setDestinationGeographicPoint(rxLoc.getCentroid().getOrdinate(0), rxLoc.getCentroid()
-                .getOrdinate(1));
+            calc.setStartingGeographicPoint(txLoc.getCentroid().getOrdinate(0),
+                txLoc.getCentroid().getOrdinate(1));
+            calc.setDestinationGeographicPoint(
+                rxLoc.getCentroid().getOrdinate(0), rxLoc.getCentroid()
+                    .getOrdinate(1));
             double angleDegs = calc.getAzimuth();
             if (angleDegs < 0)
             {
@@ -318,8 +349,9 @@ public class DopplerShiftBetweenTracksOperation implements IOperation<IStoreItem
             final double angleRads = Math.toRadians(angleDegs);
 
             // ok, and the calculation
-            final double shifted = calcPredictedFreqSI(soundSpeed, txCourseRads, rxCourseRads, txSpeedMSec,
-                rxSpeedMSec, angleRads, freq);
+            final double shifted =
+                calcPredictedFreqSI(soundSpeed, txCourseRads, rxCourseRads,
+                    txSpeedMSec, rxSpeedMSec, angleRads, freq);
 
             output.add(thisTime, shifted);
           }
@@ -344,13 +376,16 @@ public class DopplerShiftBetweenTracksOperation implements IOperation<IStoreItem
 
   }
 
-  private static final CollectionComplianceTests aTests = new CollectionComplianceTests();
+  private final CollectionComplianceTests aTests =
+      new CollectionComplianceTests();
 
   @Override
-  public Collection<ICommand<IStoreItem>> actionsFor(final List<IStoreItem> selection,
-      final IStore destination, IContext context)
+  public Collection<ICommand<IStoreItem>> actionsFor(
+      final List<IStoreItem> selection, final IStore destination,
+      IContext context)
   {
-    final Collection<ICommand<IStoreItem>> res = new ArrayList<ICommand<IStoreItem>>();
+    final Collection<ICommand<IStoreItem>> res =
+        new ArrayList<ICommand<IStoreItem>>();
     if (appliesTo(selection))
     {
 
@@ -363,17 +398,19 @@ public class DopplerShiftBetweenTracksOperation implements IOperation<IStoreItem
       // do we have freq for groupA
       if (aTests.collectionWith(groupA, Frequency.UNIT.getDimension(), true) != null)
       {
-        final ICommand<IStoreItem> newC = new DopplerShiftOperation(groupA, groupB, destination,
-            "Doppler between tracks (from " + groupA.getName() + ")", "Calculate doppler between two tracks",
-            selection, context);
+        final ICommand<IStoreItem> newC =
+            new DopplerShiftOperation(groupA, groupB, destination,
+                "Doppler between tracks (from " + groupA.getName() + ")",
+                "Calculate doppler between two tracks", selection, context);
         res.add(newC);
       }
 
       if (aTests.collectionWith(groupB, Frequency.UNIT.getDimension(), true) != null)
       {
-        final ICommand<IStoreItem> newC = new DopplerShiftOperation(groupB, groupA, destination,
-            "Doppler between tracks (from " + groupB.getName() + ")", "Calculate doppler between two tracks",
-            selection, context);
+        final ICommand<IStoreItem> newC =
+            new DopplerShiftOperation(groupB, groupA, destination,
+                "Doppler between tracks (from " + groupB.getName() + ")",
+                "Calculate doppler between two tracks", selection, context);
         res.add(newC);
       }
     }
@@ -386,9 +423,13 @@ public class DopplerShiftBetweenTracksOperation implements IOperation<IStoreItem
     // ok, check we have two collections
     final boolean allGroups = aTests.numberOfGroups(selection, 2);
     final boolean allTracks = aTests.hasNumberOfTracks(selection, 2);
-    final boolean someHaveFreq = aTests.collectionWith(selection, Frequency.UNIT.getDimension(), true) != null;
-    final boolean topLevelSpeed = aTests.collectionWith(selection, METRE.divide(SECOND).getDimension(), true) != null;
+    final boolean someHaveFreq =
+        aTests.collectionWith(selection, Frequency.UNIT.getDimension(), true) != null;
+    final boolean topLevelSpeed =
+        aTests.collectionWith(selection, METRE.divide(SECOND).getDimension(),
+            true) != null;
 
-    return (aTests.exactNumber(selection, 3) && allGroups && allTracks && someHaveFreq && topLevelSpeed);
+    return (aTests.exactNumber(selection, 3) && allGroups && allTracks
+        && someHaveFreq && topLevelSpeed);
   }
 }

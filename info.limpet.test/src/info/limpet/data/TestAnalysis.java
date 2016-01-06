@@ -48,7 +48,7 @@ public class TestAnalysis extends TestCase
 		
 		// collate the data
 		List<IStoreItem> selection = new ArrayList<IStoreItem>();
-		StockTypes.NonTemporal.Length_M len_1 = new StockTypes.NonTemporal.Length_M("lengths 1", null); 
+		StockTypes.NonTemporal.LengthM len_1 = new StockTypes.NonTemporal.LengthM("lengths 1", null); 
 		selection.add(len_1);
 		
 		len_1.add(12d);

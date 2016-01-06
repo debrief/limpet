@@ -35,7 +35,7 @@ public class CreateLocationAction extends CreateSingletonGenerator
 		super("location");
 	}
 
-	CollectionComplianceTests aTests = new CollectionComplianceTests();
+	private final CollectionComplianceTests aTests = new CollectionComplianceTests();
 
 	/**
 	 * encapsulate creating a location into a command
@@ -142,5 +142,10 @@ public class CreateLocationAction extends CreateSingletonGenerator
 		throw new RuntimeException(
 				"we shouldn't call this, our command knows it's working with a location");
 	}
+
+  public CollectionComplianceTests getATests()
+  {
+    return aTests;
+  }
 
 }

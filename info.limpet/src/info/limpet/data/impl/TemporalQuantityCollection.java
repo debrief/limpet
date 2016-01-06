@@ -55,7 +55,7 @@ public class TemporalQuantityCollection<T extends Quantity> extends
 	{
 		super(name, precedent);
 		this.units = units;
-		_qHelper = new QuantityHelper<T>((ArrayList<Measurable<T>>) values, units);
+		_qHelper = new QuantityHelper<T>((ArrayList<Measurable<T>>) getValues(), units);
 	}
 
 	@Override
@@ -141,7 +141,7 @@ public class TemporalQuantityCollection<T extends Quantity> extends
 	{
 		if (_qHelper == null)
 		{
-			_qHelper = new QuantityHelper<T>((ArrayList<Measurable<T>>) values, units);
+			_qHelper = new QuantityHelper<T>((ArrayList<Measurable<T>>) getValues(), units);
 		}
 	}
 

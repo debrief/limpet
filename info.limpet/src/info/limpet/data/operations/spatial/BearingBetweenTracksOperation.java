@@ -21,7 +21,7 @@ import info.limpet.IQuantityCollection;
 import info.limpet.IStore;
 import info.limpet.IStore.IStoreItem;
 import info.limpet.data.impl.samples.StockTypes;
-import info.limpet.data.impl.samples.StockTypes.NonTemporal.Angle_Degrees;
+import info.limpet.data.impl.samples.StockTypes.NonTemporal.AngleDegrees;
 import info.limpet.data.impl.samples.StockTypes.Temporal;
 
 import java.util.ArrayList;
@@ -45,10 +45,10 @@ public class BearingBetweenTracksOperation extends TwoTrackOperation
     if (appliesTo(selection))
     {
       // ok, are we doing a tempoarl opeartion?
-      if (aTests.suitableForTimeInterpolation(selection))
+      if (getATests().suitableForTimeInterpolation(selection))
       {
         // hmm, find the time provider
-        final IBaseTemporalCollection timeProvider = aTests
+        final IBaseTemporalCollection timeProvider = getATests()
             .getLongestTemporalCollections(selection);
 
         ICommand<IStoreItem> newC = new DistanceOperation(selection,
@@ -63,12 +63,12 @@ public class BearingBetweenTracksOperation extends TwoTrackOperation
             final IQuantityCollection<?> output;
             if (isTemporal)
             {
-              output = new StockTypes.Temporal.Angle_Degrees(title, this);
+              output = new StockTypes.Temporal.AngleDegrees(title, this);
 
             }
             else
             {
-              output = new StockTypes.NonTemporal.Angle_Degrees(title, this);
+              output = new StockTypes.NonTemporal.AngleDegrees(title, this);
             }
 
             return output;
@@ -86,7 +86,7 @@ public class BearingBetweenTracksOperation extends TwoTrackOperation
               final Point locA, final Point locB, Long time)
           {
             // get the output dataset
-            Temporal.Angle_Degrees target2 = (Temporal.Angle_Degrees) getOutputs()
+            Temporal.AngleDegrees target2 = (Temporal.AngleDegrees) getOutputs()
                 .get(0);
             Unit<Angle> outUnits = target2.getUnits();
 
@@ -105,7 +105,7 @@ public class BearingBetweenTracksOperation extends TwoTrackOperation
         res.add(newC);
       }
 
-      if (aTests.allEqualLengthOrSingleton(selection))
+      if (getATests().allEqualLengthOrSingleton(selection))
       {
         ICommand<IStoreItem> newC = new DistanceOperation(selection,
             destination, "Bearing between tracks (indexed)",
@@ -118,12 +118,12 @@ public class BearingBetweenTracksOperation extends TwoTrackOperation
             final IQuantityCollection<?> output;
             if (isTemporal)
             {
-              output = new StockTypes.Temporal.Angle_Degrees(title, this);
+              output = new StockTypes.Temporal.AngleDegrees(title, this);
 
             }
             else
             {
-              output = new StockTypes.NonTemporal.Angle_Degrees(title, null);
+              output = new StockTypes.NonTemporal.AngleDegrees(title, null);
             }
 
             return output;
@@ -141,7 +141,7 @@ public class BearingBetweenTracksOperation extends TwoTrackOperation
               final Point locA, final Point locB, Long time)
           {
             // get the output dataset
-            Angle_Degrees target2 = (Angle_Degrees) getOutputs().get(0);
+            AngleDegrees target2 = (AngleDegrees) getOutputs().get(0);
             Unit<Angle> outUnits = target2.getUnits();
 
             // now find the range between them

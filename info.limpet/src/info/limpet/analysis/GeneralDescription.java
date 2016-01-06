@@ -30,7 +30,7 @@ public abstract class GeneralDescription extends CoreAnalysis
     super("General Description");
   }
 
-  CollectionComplianceTests aTests = new CollectionComplianceTests();
+  private final CollectionComplianceTests aTests = new CollectionComplianceTests();
 
   @Override
   public void analyse(List<IStoreItem> selection)

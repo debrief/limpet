@@ -72,9 +72,13 @@ public class TimeHelper implements IBaseTemporalCollection
   public double rate()
   {
     if (size() > 1)
+    {
       return size() / duration();
+    }
     else
+    {
       return -1;
+    }
   }
 
   @Override

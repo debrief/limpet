@@ -19,14 +19,14 @@ import info.limpet.IStore.IStoreItem;
 public interface IStoreGroup extends IChangeListener
 {
 
-	public boolean hasChildren();
+	boolean hasChildren();
 
-	public boolean add(IStoreItem item);
+	boolean add(IStoreItem item);
 	
-	public boolean remove(Object item);
+	boolean remove(Object item);
 	
-	public void addChangeListener(IChangeListener listener);
+	void addChangeListener(IChangeListener listener);
 
-	public void removeChangeListener(IChangeListener listener);
+	void removeChangeListener(IChangeListener listener);
 
 }

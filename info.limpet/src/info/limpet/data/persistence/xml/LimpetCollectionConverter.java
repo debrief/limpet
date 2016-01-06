@@ -56,7 +56,8 @@ public class LimpetCollectionConverter extends CollectionConverter
 			return;
 		}
 		Object object = list.get(0);
-		if (! (object instanceof Measure)) {
+		if (!(object instanceof Measure)) 
+		{
 			super.marshal(source, writer, context);
 			return;
 		}

@@ -41,12 +41,12 @@ public class TimesCollectionConverter extends CollectionConverter
 	private static final String XML_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
 	private static final String TIME_NODE = "time";
 	private static final String INFO_LIMPET_PLUGIN_ID = "info.limpet";
-	private static SimpleDateFormat _XMLDateFormat;
+	private static SimpleDateFormat xmlDateFormat;
 
 	static
 	{
-		_XMLDateFormat = new SimpleDateFormat(XML_TIME_FORMAT);
-		_XMLDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+		xmlDateFormat = new SimpleDateFormat(XML_TIME_FORMAT);
+		xmlDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
 	}
 
 	public TimesCollectionConverter(Mapper mapper)
@@ -69,7 +69,7 @@ public class TimesCollectionConverter extends CollectionConverter
 		TimesList<Long> times = (TimesList<Long>) source;
 		for (Long time : times)
 		{
-			String value = _XMLDateFormat.format(new Date(time));
+			String value = xmlDateFormat.format(new Date(time));
 			writer.startNode(TIME_NODE);
 			context.convertAnother(value);
 			writer.endNode();
@@ -88,7 +88,7 @@ public class TimesCollectionConverter extends CollectionConverter
 			Long value;
 			try
 			{
-				value = _XMLDateFormat.parse(item).getTime();
+				value = xmlDateFormat.parse(item).getTime();
 			}
 			catch (ParseException e)
 			{

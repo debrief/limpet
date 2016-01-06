@@ -48,116 +48,134 @@ import com.thoughtworks.xstream.XStream;
 public class XStreamHandler
 {
 
-	private static final XStream xstream;
-	
-	static 
-	{
-		xstream = new XStream();
-		xstream.alias("store", InMemoryStore.class);
-		xstream.alias("TransformedUnit", TransformedUnit.class);
-		xstream.alias("ProductUnit", ProductUnit.class);
-		xstream.alias("AlternateUnit", AlternateUnit.class);
-		xstream.alias("MultiplyConverter", MultiplyConverter.class);
-		xstream.alias("BaseUnit", BaseUnit.class);
-		xstream.alias("Temporal.Speed_MSec", info.limpet.data.impl.samples.StockTypes.Temporal.Speed_MSec.class);
-		xstream.alias("Temporal.Angle_Degs", info.limpet.data.impl.samples.StockTypes.Temporal.Angle_Degrees.class);
-		xstream.alias("Temporal.Angle_Rads", info.limpet.data.impl.samples.StockTypes.Temporal.Angle_Radians.class);
-		xstream.alias("Temporal.Elapsed_Time", info.limpet.data.impl.samples.StockTypes.Temporal.ElapsedTime_Sec.class);
-		xstream.alias("Temporal.Location", info.limpet.data.impl.samples.TemporalLocation.class);
+  private static final XStream XSTREAM;
 
-		xstream.alias("NonTemporal.Length_m", info.limpet.data.impl.samples.StockTypes.NonTemporal.Length_M.class);
-		xstream.alias("NonTemporal.Speed_msec", info.limpet.data.impl.samples.StockTypes.NonTemporal.Speed_MSec.class);
-		xstream.alias("ObjectCollection", ObjectCollection.class);
-		xstream.alias("TemporalObjectCollection", TemporalObjectCollection.class);
-		xstream.alias("QuantityCollection", QuantityCollection.class);
-		xstream.alias("TemporalQuantityCollection", TemporalQuantityCollection.class);
+  static
+  {
+    XSTREAM = new XStream();
+    XSTREAM.alias("store", InMemoryStore.class);
+    XSTREAM.alias("TransformedUnit", TransformedUnit.class);
+    XSTREAM.alias("ProductUnit", ProductUnit.class);
+    XSTREAM.alias("AlternateUnit", AlternateUnit.class);
+    XSTREAM.alias("MultiplyConverter", MultiplyConverter.class);
+    XSTREAM.alias("BaseUnit", BaseUnit.class);
+    XSTREAM.alias("Temporal.Speed_MSec",
+        info.limpet.data.impl.samples.StockTypes.Temporal.SpeedMSec.class);
+    XSTREAM.alias("Temporal.Angle_Degs",
+        info.limpet.data.impl.samples.StockTypes.Temporal.AngleDegrees.class);
+    XSTREAM.alias("Temporal.Angle_Rads",
+        info.limpet.data.impl.samples.StockTypes.Temporal.AngleRadians.class);
+    XSTREAM.alias("Temporal.Elapsed_Time",
+        info.limpet.data.impl.samples.StockTypes.Temporal.ElapsedTimeSec.class);
+    XSTREAM.alias("Temporal.Location",
+        info.limpet.data.impl.samples.TemporalLocation.class);
 
-		xstream.alias("Folder", StoreGroup.class);
-		
+    XSTREAM.alias("NonTemporal.Length_m",
+        info.limpet.data.impl.samples.StockTypes.NonTemporal.LengthM.class);
+    XSTREAM.alias("NonTemporal.Speed_msec",
+        info.limpet.data.impl.samples.StockTypes.NonTemporal.SpeedMSec.class);
+    XSTREAM.alias("ObjectCollection", ObjectCollection.class);
+    XSTREAM.alias("TemporalObjectCollection", TemporalObjectCollection.class);
+    XSTREAM.alias("QuantityCollection", QuantityCollection.class);
+    XSTREAM.alias("TemporalQuantityCollection",
+        TemporalQuantityCollection.class);
 
-		xstream.alias("Point", org.geotools.geometry.iso.primitive.PointImpl.class);
-		xstream.alias("GeographicBoundingBox", org.geotools.metadata.iso.extent.GeographicBoundingBoxImpl.class);
-		xstream.alias("LocalName", org.geotools.util.LocalName.class);
-		xstream.alias("DefaultCoordinateSystemAxis", org.geotools.referencing.cs.DefaultCoordinateSystemAxis.class);
-		xstream.alias("SimpleInternationalString", org.geotools.util.SimpleInternationalString.class);
-		xstream.alias("ResponsibleParty", org.geotools.metadata.iso.citation.ResponsiblePartyImpl.class);
-		xstream.alias("NamedIdentifier", org.geotools.referencing.NamedIdentifier.class);
-		xstream.alias("Identifier", org.geotools.metadata.iso.IdentifierImpl.class);
+    XSTREAM.alias("Folder", StoreGroup.class);
 
-		// tidier names for operations
-		xstream.alias("AddQuantityValues", AddQuantityValues.class);
-		xstream.alias("MultiplyQuantityValues", MultiplyQuantityValues.class);
-		
-		// TODO: KUMAR: create equivalent alias operations (as above) for other defined operations 
-		
+    XSTREAM.alias("Point", org.geotools.geometry.iso.primitive.PointImpl.class);
+    XSTREAM.alias("GeographicBoundingBox",
+        org.geotools.metadata.iso.extent.GeographicBoundingBoxImpl.class);
+    XSTREAM.alias("LocalName", org.geotools.util.LocalName.class);
+    XSTREAM.alias("DefaultCoordinateSystemAxis",
+        org.geotools.referencing.cs.DefaultCoordinateSystemAxis.class);
+    XSTREAM.alias("SimpleInternationalString",
+        org.geotools.util.SimpleInternationalString.class);
+    XSTREAM.alias("ResponsibleParty",
+        org.geotools.metadata.iso.citation.ResponsiblePartyImpl.class);
+    XSTREAM.alias("NamedIdentifier",
+        org.geotools.referencing.NamedIdentifier.class);
+    XSTREAM.alias("Identifier", org.geotools.metadata.iso.IdentifierImpl.class);
 
-		// and force some objects to be represnted as attributes, rather than child objects
-		xstream.useAttributeFor(ObjectCollection.class, "name");
-		xstream.useAttributeFor(AbstractCommand.class, "title");
-		xstream.useAttributeFor(AbstractCommand.class, "canUndo");
-		xstream.useAttributeFor(AbstractCommand.class, "canRedo");
-		xstream.useAttributeFor(AbstractCommand.class, "dynamic");
+    // tidier names for operations
+    XSTREAM.alias("AddQuantityValues", AddQuantityValues.class);
+    XSTREAM.alias("MultiplyQuantityValues", MultiplyQuantityValues.class);
 
-		xstream.addImplicitCollection(InMemoryStore.class, "_store");
+    // TODO: KUMAR: create equivalent alias operations (as above) for other defined operations
 
-		// setup converter
-		xstream.registerConverter(new LimpetCollectionConverter(xstream.getMapper()), XStream.PRIORITY_NORMAL);
-		xstream.registerConverter(new TimesCollectionConverter(xstream.getMapper()), XStream.PRIORITY_NORMAL);
-		xstream.registerConverter(new PointConverter(), XStream.PRIORITY_NORMAL);
-		xstream.setMode(XStream.ID_REFERENCES);
-	}
+    // and force some objects to be represnted as attributes, rather than child objects
+    XSTREAM.useAttributeFor(ObjectCollection.class, "name");
+    XSTREAM.useAttributeFor(AbstractCommand.class, "title");
+    XSTREAM.useAttributeFor(AbstractCommand.class, "canUndo");
+    XSTREAM.useAttributeFor(AbstractCommand.class, "canRedo");
+    XSTREAM.useAttributeFor(AbstractCommand.class, "dynamic");
 
-	public IStore load(String fileName)
-	{
-		IStore store = (IStore) xstream.fromXML(new File(fileName));
-		return store;
-	}
+    XSTREAM.addImplicitCollection(InMemoryStore.class, "_store");
 
-	public void save(IStore store, String fileName) throws FileNotFoundException, IOException
-	{
-		save(store, new File(fileName));
-	}
+    // setup converter
+    XSTREAM.registerConverter(
+        new LimpetCollectionConverter(XSTREAM.getMapper()),
+        XStream.PRIORITY_NORMAL);
+    XSTREAM.registerConverter(
+        new TimesCollectionConverter(XSTREAM.getMapper()),
+        XStream.PRIORITY_NORMAL);
+    XSTREAM.registerConverter(new PointConverter(), XStream.PRIORITY_NORMAL);
+    XSTREAM.setMode(XStream.ID_REFERENCES);
+  }
 
-	private void save(IStore store, File file) throws FileNotFoundException, IOException
-	{
-		try (OutputStream out = new FileOutputStream(file))
-		{
-			xstream.toXML(store, out);
-		}
-	}
+  public IStore load(String fileName)
+  {
+    IStore store = (IStore) XSTREAM.fromXML(new File(fileName));
+    return store;
+  }
 
-	public IStore load(IFile iFile) throws CoreException
-	{
-		File file = getFile(iFile);
-		IStore store = (IStore) xstream.fromXML(file);
-		return store;
-	}
+  public void save(IStore store, String fileName) throws FileNotFoundException,
+      IOException
+  {
+    save(store, new File(fileName));
+  }
 
-	private File getFile(IFile iFile) throws CoreException
-	{
-		URI uri = iFile.getLocationURI();
-		if(iFile.isLinked())
-		{
-			uri = iFile.getRawLocationURI();
-		}
-		File file = EFS.getStore(uri).toLocalFile(0, new NullProgressMonitor());
-		return file;
-	}
+  private void save(IStore store, File file) throws FileNotFoundException,
+      IOException
+  {
+    try (OutputStream out = new FileOutputStream(file))
+    {
+      XSTREAM.toXML(store, out);
+    }
+  }
 
-	public void save(IStore store, IFile iFile) throws CoreException, FileNotFoundException, IOException
-	{
-		File file = getFile(iFile);
-		save(store, file);
-	}
-	
-	public IStore fromXML(String xml)
-	{
-		return (IStore) xstream.fromXML(xml);
-	}
-	
-	public String toXML(IStore store)
-	{
-		return xstream.toXML(store);
-	}
+  public IStore load(IFile iFile) throws CoreException
+  {
+    File file = getFile(iFile);
+    IStore store = (IStore) XSTREAM.fromXML(file);
+    return store;
+  }
+
+  private File getFile(IFile iFile) throws CoreException
+  {
+    URI uri = iFile.getLocationURI();
+    if (iFile.isLinked())
+    {
+      uri = iFile.getRawLocationURI();
+    }
+    File file = EFS.getStore(uri).toLocalFile(0, new NullProgressMonitor());
+    return file;
+  }
+
+  public void save(IStore store, IFile iFile) throws CoreException,
+      FileNotFoundException, IOException
+  {
+    File file = getFile(iFile);
+    save(store, file);
+  }
+
+  public IStore fromXML(String xml)
+  {
+    return (IStore) XSTREAM.fromXML(xml);
+  }
+
+  public String toXML(IStore store)
+  {
+    return XSTREAM.toXML(store);
+  }
 
 }

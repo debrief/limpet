@@ -32,7 +32,7 @@ public class QuantityCollection<T extends Quantity> extends
 		ObjectCollection<Measurable<T>> implements IQuantityCollection<T>
 {
 
-	Unit<T> units;
+	private Unit<T> units;
 	
 	private transient QuantityHelper<T> _qHelper;
 
@@ -55,9 +55,9 @@ public class QuantityCollection<T extends Quantity> extends
 	
 	protected void initQHelper()
 	{
-		if(_qHelper == null)
+		if (_qHelper == null)
 		{
-			_qHelper = new QuantityHelper<T>((ArrayList<Measurable<T>>) values, units);
+			_qHelper = new QuantityHelper<T>((ArrayList<Measurable<T>>) getValues(), units);
 		}
 	}
 	
