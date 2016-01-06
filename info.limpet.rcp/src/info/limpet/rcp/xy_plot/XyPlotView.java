@@ -309,9 +309,9 @@ public class XyPlotView extends CoreAnalysisView
 									.next();
 
 							// create the marker line
-							xTimeData[0] = new Date(outerPeriod.startTime);
+							xTimeData[0] = new Date(outerPeriod.getStartTime());
 							yData[0] = theValue.doubleValue(thisQ.getUnits());
-							xTimeData[1] = new Date(outerPeriod.endTime);
+							xTimeData[1] = new Date(outerPeriod.getEndTime());
 							yData[1] = theValue.doubleValue(thisQ.getUnits());
 
 						}

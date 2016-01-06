@@ -766,8 +766,8 @@ public class TestGeotoolsGeometry extends TestCase
 
 		period = aTests.getBoundingTime(items);
 
-		assertEquals("correct period", 100, period.startTime);
-		assertEquals("correct period", 180, period.endTime);
+		assertEquals("correct period", 100, period.getStartTime());
+		assertEquals("correct period", 180, period.getEndTime());
 
 		common = aTests.getOptimalTimes(period, items);
 		assertNotNull("duh, empty set", common);
@@ -822,22 +822,22 @@ public class TestGeotoolsGeometry extends TestCase
 
 		common = aTests.getBoundingTime(items);
 		assertNotNull("duh, empty set", common);
-		assertEquals("correct times", speed1.start(), common.startTime);
-		assertEquals("correct times", speed1.finish(), common.endTime);
+		assertEquals("correct times", speed1.start(), common.getStartTime());
+		assertEquals("correct times", speed1.finish(), common.getEndTime());
 
 		items.add(speed2);
 
 		common = aTests.getBoundingTime(items);
 		assertNotNull("duh, empty set", common);
-		assertEquals("correct times", speed2.start(), common.startTime);
-		assertEquals("correct times", speed1.finish(), common.endTime);
+		assertEquals("correct times", speed2.start(), common.getStartTime());
+		assertEquals("correct times", speed1.finish(), common.getEndTime());
 
 		items.add(speed3);
 
 		common = aTests.getBoundingTime(items);
 		assertNotNull("duh, empty set", common);
-		assertEquals("correct times", speed2.start(), common.startTime);
-		assertEquals("correct times", speed3.finish(), common.endTime);
+		assertEquals("correct times", speed2.start(), common.getStartTime());
+		assertEquals("correct times", speed3.finish(), common.getEndTime());
 	}
 
 	public void testDopplerInterpolation()

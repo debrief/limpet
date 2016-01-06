@@ -92,7 +92,7 @@ public class ShowInNamedView implements IOperation<IStoreItem>
 		@Override
 		public void execute()
 		{
-			String secId = inputs.toString();
+			String secId = getInputs().toString();
 
 			// create a new instance of the specified view
 			IWorkbenchWindow window = PlatformUI.getWorkbench()
@@ -119,7 +119,7 @@ public class ShowInNamedView implements IOperation<IStoreItem>
 				CoreAnalysisView cv = (CoreAnalysisView) theView;
 
 				// set follow selection to off
-				cv.follow(inputs);
+				cv.follow(getInputs());
 
 			}
 		}
