@@ -85,6 +85,9 @@ public abstract class CreateSingletonGenerator implements
 				// add the new value
 				value = Double.parseDouble(str);
 				newData.add(value);
+				
+				// and remember it as an output
+				super.addOutput(newData);
 
 				// put the new collection in to the selected folder, or into root
 				if (_targetGroup != null)
