@@ -14,6 +14,33 @@
  *******************************************************************************/
 package info.limpet.rcp.editors;
 
+import info.limpet.IChangeListener;
+import info.limpet.ICollection;
+import info.limpet.ICommand;
+import info.limpet.IContext;
+import info.limpet.IOperation;
+import info.limpet.IStore;
+import info.limpet.IStore.IStoreItem;
+import info.limpet.IStoreGroup;
+import info.limpet.actions.AddLayerAction;
+import info.limpet.actions.CopyCsvToClipboardAction;
+import info.limpet.actions.CreateCourseAction;
+import info.limpet.actions.CreateDecibelsAction;
+import info.limpet.actions.CreateDimensionlessAction;
+import info.limpet.actions.CreateFrequencyAction;
+import info.limpet.actions.CreateLocationAction;
+import info.limpet.actions.CreateSpeedAction;
+import info.limpet.actions.ExportCsvToFileAction;
+import info.limpet.actions.GenerateDataAction;
+import info.limpet.data.operations.admin.OperationsLibrary;
+import info.limpet.data.persistence.xml.XStreamHandler;
+import info.limpet.data.store.InMemoryStore;
+import info.limpet.data.store.InMemoryStore.StoreChangeListener;
+import info.limpet.data.store.InMemoryStore.StoreGroup;
+import info.limpet.rcp.RCPContext;
+import info.limpet.rcp.data_provider.data.DataModel;
+import info.limpet.rcp.editors.dnd.DataManagerDropAdapter;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -73,34 +100,6 @@ import org.eclipse.ui.dialogs.SaveAsDialog;
 import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.part.FileEditorInput;
 import org.osgi.framework.Bundle;
-
-import info.limpet.IChangeListener;
-import info.limpet.ICollection;
-import info.limpet.ICommand;
-import info.limpet.IContext;
-import info.limpet.IOperation;
-import info.limpet.IStore;
-import info.limpet.IStore.IStoreItem;
-import info.limpet.IStoreGroup;
-import info.limpet.actions.AddLayerAction;
-import info.limpet.actions.CopyCsvToClipboardAction;
-import info.limpet.actions.CreateCourseAction;
-import info.limpet.actions.CreateDecibelsAction;
-import info.limpet.actions.CreateDimensionlessAction;
-import info.limpet.actions.CreateFrequencyAction;
-import info.limpet.actions.CreateLocationAction;
-import info.limpet.actions.CreateSpeedAction;
-import info.limpet.actions.ExportCsvToFileAction;
-import info.limpet.actions.GenerateDataAction;
-import info.limpet.actions.RefreshViewAction;
-import info.limpet.data.operations.admin.OperationsLibrary;
-import info.limpet.data.persistence.xml.XStreamHandler;
-import info.limpet.data.store.InMemoryStore;
-import info.limpet.data.store.InMemoryStore.StoreChangeListener;
-import info.limpet.data.store.InMemoryStore.StoreGroup;
-import info.limpet.rcp.RCPContext;
-import info.limpet.rcp.data_provider.data.DataModel;
-import info.limpet.rcp.editors.dnd.DataManagerDropAdapter;
 
 public class DataManagerEditor extends EditorPart
 {
@@ -417,7 +416,6 @@ public class DataManagerEditor extends EditorPart
 	{
 		generateData = new ActionWrapper(new GenerateDataAction(_context));
 		addLayer = new ActionWrapper(new AddLayerAction(_context));
-		refreshView = new ActionWrapper(new RefreshViewAction(_context));
 		copyCsvToClipboard = new ActionWrapper(new CopyCsvToClipboardAction(
 				_context));
 		copyCsvToFile = new ActionWrapper(new ExportCsvToFileAction(_context));
@@ -429,7 +427,20 @@ public class DataManagerEditor extends EditorPart
 		createCourse = new ActionWrapper(new CreateCourseAction(_context));
 		createLocation = new OperationWrapper(new CreateLocationAction(),
 				"Create location", PlatformUI.getWorkbench().getSharedImages()
-						.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD), _context);
+						.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD), _context, _store);
+
+		// refresh view is purely UI. So, we can implement it here
+		refreshView = new Action("Refresh View", PlatformUI.getWorkbench()
+				.getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_REDO))
+		{
+
+			@Override
+			public void run()
+			{
+				refresh();
+			}
+		};
+
 	}
 
 	public void showMessage(String message)

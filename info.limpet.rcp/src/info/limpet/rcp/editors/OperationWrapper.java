@@ -17,6 +17,7 @@ package info.limpet.rcp.editors;
 import info.limpet.ICommand;
 import info.limpet.IContext;
 import info.limpet.IOperation;
+import info.limpet.IStore;
 import info.limpet.IStore.IStoreItem;
 
 import java.util.Collection;
@@ -28,11 +29,13 @@ public class OperationWrapper extends Action
 {
 	private IOperation<IStoreItem> limpetAction;
 	private IContext context;
+	private IStore store;
 
-	public OperationWrapper(IOperation<IStoreItem> limpetAction, String title, ImageDescriptor imageDescriptor, IContext context)
+	public OperationWrapper(IOperation<IStoreItem> limpetAction, String title, ImageDescriptor imageDescriptor, IContext context, IStore store)
 	{
 		this.limpetAction = limpetAction;
 		this.context = context;
+		this.store = store;
 		setText(title);
 		setImageDescriptor(imageDescriptor);
 	}
@@ -40,7 +43,7 @@ public class OperationWrapper extends Action
 	@Override
 	public void run()
 	{
-		Collection<ICommand<IStoreItem>> ops = limpetAction.actionsFor(context.getSelection(), context.getStore(), context);
+		Collection<ICommand<IStoreItem>> ops = limpetAction.actionsFor(context.getSelection(), store, context);
 		if((ops != null) && (ops.size() == 1))
 		{
 			ICommand<IStoreItem> first = ops.iterator().next();

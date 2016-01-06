@@ -56,9 +56,6 @@ public class ActionWrapper extends Action
 		case IContext.GENERATE_DATA:
 			return PlatformUI.getWorkbench().getSharedImages()
 					.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD);
-		case IContext.REFRESH_VIEW:
-			return PlatformUI.getWorkbench().getSharedImages()
-					.getImageDescriptor(ISharedImages.IMG_TOOL_REDO);
 		default:
 			break;
 		}

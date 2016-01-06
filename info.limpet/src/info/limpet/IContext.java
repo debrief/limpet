@@ -58,7 +58,7 @@ public interface IContext
 
 	/**
 	 * returns storage container for collections
-	 * 
+	 * TODO: remove this object, we'll always pass a store
 	 * @return store
 	 */
 	public IStore getStore();
@@ -74,8 +74,6 @@ public interface IContext
 	public void openError(String title, String message);
 
 	public void log(Exception e);
-
-	public void refresh();
 
 	public void placeOnClipboard(String text);
 }

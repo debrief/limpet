@@ -172,16 +172,6 @@ public class RCPContext implements IContext
 	}
 
 	@Override
-	public void refresh()
-	{
-		IEditorPart editor = getActiveEditor();
-		if (editor instanceof DataManagerEditor)
-		{
-			((DataManagerEditor)editor).refresh();
-		}
-	}
-
-	@Override
 	public void placeOnClipboard(String text)
 	{
 		final Clipboard cb = new Clipboard(Display.getCurrent());

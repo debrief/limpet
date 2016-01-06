@@ -86,13 +86,6 @@ public class MockContext implements IContext
 	}
 
 	@Override
-	public void refresh()
-	{
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public List<IStoreItem> getSelection()
 	{
 		// TODO Auto-generated method stub
