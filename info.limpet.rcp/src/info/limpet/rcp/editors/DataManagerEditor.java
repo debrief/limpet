@@ -22,7 +22,6 @@ import info.limpet.IOperation;
 import info.limpet.IStore;
 import info.limpet.IStore.IStoreItem;
 import info.limpet.IStoreGroup;
-import info.limpet.actions.AddLayerAction;
 import info.limpet.actions.CopyCsvToClipboardAction;
 import info.limpet.actions.CreateCourseAction;
 import info.limpet.actions.CreateDecibelsAction;
@@ -31,7 +30,8 @@ import info.limpet.actions.CreateFrequencyAction;
 import info.limpet.actions.CreateLocationAction;
 import info.limpet.actions.CreateSpeedAction;
 import info.limpet.actions.ExportCsvToFileAction;
-import info.limpet.actions.GenerateDataAction;
+import info.limpet.data.operations.AddLayerOperation;
+import info.limpet.data.operations.GenerateDummyDataOperation;
 import info.limpet.data.operations.admin.OperationsLibrary;
 import info.limpet.data.persistence.xml.XStreamHandler;
 import info.limpet.data.store.InMemoryStore;
@@ -414,8 +414,7 @@ public class DataManagerEditor extends EditorPart
 
 	private void makeActions()
 	{
-		generateData = new ActionWrapper(new GenerateDataAction(_context));
-		addLayer = new ActionWrapper(new AddLayerAction(_context));
+
 		copyCsvToClipboard = new ActionWrapper(new CopyCsvToClipboardAction(
 				_context));
 		copyCsvToFile = new ActionWrapper(new ExportCsvToFileAction(_context));
@@ -425,9 +424,21 @@ public class DataManagerEditor extends EditorPart
 		createDecibels = new ActionWrapper(new CreateDecibelsAction(_context));
 		createSpeed = new ActionWrapper(new CreateSpeedAction(_context));
 		createCourse = new ActionWrapper(new CreateCourseAction(_context));
+
+		// tmp: within operations wrapper
+		addLayer = new OperationWrapper(new AddLayerOperation(), "Add folder",
+				PlatformUI.getWorkbench().getSharedImages()
+						.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE), _context, _store);
+
+		generateData = new OperationWrapper(new GenerateDummyDataOperation("Small",
+				20), "Create dummy data", PlatformUI.getWorkbench().getSharedImages()
+				.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD), _context,
+				_store);
+
 		createLocation = new OperationWrapper(new CreateLocationAction(),
 				"Create location", PlatformUI.getWorkbench().getSharedImages()
-						.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD), _context, _store);
+						.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD), _context,
+				_store);
 
 		// refresh view is purely UI. So, we can implement it here
 		refreshView = new Action("Refresh View", PlatformUI.getWorkbench()

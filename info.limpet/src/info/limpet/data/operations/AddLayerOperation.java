@@ -114,7 +114,7 @@ public class AddLayerOperation implements IOperation<IStoreItem>
 		@Override
 		protected String getOutputName()
 		{
-			return getContext().getInput("Add layer", NEW_DATASET_MESSAGE, "");
+			return getContext().getInput("Add layer", "Provide name for new folder", "");
 		}
 
 	}

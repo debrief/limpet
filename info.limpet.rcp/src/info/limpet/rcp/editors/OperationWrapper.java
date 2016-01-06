@@ -49,5 +49,9 @@ public class OperationWrapper extends Action
 			ICommand<IStoreItem> first = ops.iterator().next();
 			first.execute();
 		}
+		else
+		{
+			context.openWarning("Error", "Cannot run the action for current selection");
+		}
 	}
 }
