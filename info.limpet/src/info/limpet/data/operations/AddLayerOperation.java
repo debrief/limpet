@@ -67,7 +67,7 @@ public class AddLayerOperation implements IOperation<IStoreItem>
 		return true;
 	}
 
-	public static class AddLayerCommand extends AbstractCommand<IStoreItem>
+	protected static class AddLayerCommand extends AbstractCommand<IStoreItem>
 	{
 		private StoreGroup _group;
 
