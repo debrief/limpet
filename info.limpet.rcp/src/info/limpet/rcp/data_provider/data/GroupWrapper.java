@@ -1,12 +1,27 @@
+/*******************************************************************************
+ *  Limpet - the Lightweight InforMation ProcEssing Toolkit
+ *  http://limpet.info
+ *
+ *  (C) 2015-2016, Deep Blue C Technologies Ltd
+ *
+ *  This library is free software; you can redistribute it and/or
+ *  modify it under the terms of the Eclipse Public License v1.0
+ *  (http://www.eclipse.org/legal/epl-v10.html)
+ *
+ *  This library is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *******************************************************************************/
 package info.limpet.rcp.data_provider.data;
 
 import info.limpet.IStore.IStoreItem;
 import info.limpet.IStoreGroup;
+import info.limpet.data.store.IGroupWrapper;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ui.views.properties.IPropertySource;
 
-public class GroupWrapper implements IAdaptable, LimpetWrapper
+public class GroupWrapper implements IAdaptable, LimpetWrapper, IGroupWrapper
 {
 	private final IStoreGroup _group;
 	private final LimpetWrapper _parent;

@@ -24,7 +24,15 @@ then
 	rm -rf coverage
 	mkdir coverage
 	cp -r ../target/jacoco/report/ coverage
+	rm -rf static
+	mkdir static
+        mkdir static/report
+	cp ../info.limpet.site/index.html static/report
+	cp ../info.limpet.site/*.css static/report
+	cp -r ../info.limpet/target/site static/report/info.limpet
+	cp -r ../info.limpet.rcp/target/site static/report/info.limpet.rcp
+	cp -r ../info.limpet.test/target/site static/report/info.limpet.rcp.test
 	git add .
-	git commit -m "Deploy Limpet Update Site"
+	git commit -m "Deploy Limpet Artifacts"
 	git push --force --quiet "https://${GH_TOKEN}@${GH_REF}" master:gh-pages > /dev/null 2>&1
 fi

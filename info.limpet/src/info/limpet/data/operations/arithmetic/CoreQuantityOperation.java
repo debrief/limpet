@@ -1,4 +1,18 @@
-package info.limpet.data.operations;
+/*******************************************************************************
+ *  Limpet - the Lightweight InforMation ProcEssing Toolkit
+ *  http://limpet.info
+ *
+ *  (C) 2015-2016, Deep Blue C Technologies Ltd
+ *
+ *  This library is free software; you can redistribute it and/or
+ *  modify it under the terms of the Eclipse Public License v1.0
+ *  (http://www.eclipse.org/legal/epl-v10.html)
+ *
+ *  This library is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *******************************************************************************/
+package info.limpet.data.operations.arithmetic;
 
 import info.limpet.ICollection;
 import info.limpet.ICommand;
@@ -10,6 +24,7 @@ import info.limpet.ITemporalQuantityCollection;
 import info.limpet.data.commands.AbstractCommand;
 import info.limpet.data.impl.QuantityCollection;
 import info.limpet.data.impl.TemporalQuantityCollection;
+import info.limpet.data.operations.CollectionComplianceTests;
 
 import java.util.ArrayList;
 import java.util.Collection;

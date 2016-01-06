@@ -1,3 +1,17 @@
+/*******************************************************************************
+ *  Limpet - the Lightweight InforMation ProcEssing Toolkit
+ *  http://limpet.info
+ *
+ *  (C) 2015-2016, Deep Blue C Technologies Ltd
+ *
+ *  This library is free software; you can redistribute it and/or
+ *  modify it under the terms of the Eclipse Public License v1.0
+ *  (http://www.eclipse.org/legal/epl-v10.html)
+ *
+ *  This library is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *******************************************************************************/
 package info.limpet.data.impl.samples;
 
 
@@ -11,8 +25,8 @@ import info.limpet.data.impl.MockContext;
 import info.limpet.data.impl.ObjectCollection;
 import info.limpet.data.impl.QuantityCollection;
 import info.limpet.data.impl.samples.StockTypes.Temporal.ElapsedTime_Sec;
-import info.limpet.data.operations.AddQuantityOperation;
-import info.limpet.data.operations.MultiplyQuantityOperation;
+import info.limpet.data.operations.arithmetic.AddQuantityOperation;
+import info.limpet.data.operations.arithmetic.MultiplyQuantityOperation;
 import info.limpet.data.store.InMemoryStore;
 import info.limpet.data.store.InMemoryStore.StoreGroup;
 
@@ -61,29 +75,29 @@ public class SampleData
 		StockTypes.Temporal.Angle_Degrees angle1 = new StockTypes.Temporal.Angle_Degrees(
 				ANGLE_ONE, null);
 		StockTypes.Temporal.Speed_MSec speedSeries1 = new StockTypes.Temporal.Speed_MSec(
-				SPEED_ONE);
+				SPEED_ONE, null);
 		StockTypes.Temporal.Speed_MSec speedSeries2 = new StockTypes.Temporal.Speed_MSec(
-				SPEED_TWO);
+				SPEED_TWO, null);
 		StockTypes.Temporal.Speed_MSec speedSeries3 = new StockTypes.Temporal.Speed_MSec(
-				SPEED_THREE_LONGER);
+				SPEED_THREE_LONGER, null);
 		StockTypes.Temporal.Speed_MSec speed_early_1 = new StockTypes.Temporal.Speed_MSec(
-				SPEED_EARLY);
+				SPEED_EARLY, null);
 		StockTypes.Temporal.Speed_MSec speed_irregular = new StockTypes.Temporal.Speed_MSec(
-				SPEED_IRREGULAR2);
+				SPEED_IRREGULAR2, null);
 		StockTypes.NonTemporal.Length_M length1 = new StockTypes.NonTemporal.Length_M(
-				LENGTH_ONE);
+				LENGTH_ONE, null);
 		StockTypes.NonTemporal.Length_M length2 = new StockTypes.NonTemporal.Length_M(
-				LENGTH_TWO);
+				LENGTH_TWO, null);
 		IObjectCollection<String> string1 = new ObjectCollection<String>(STRING_ONE);
 		IObjectCollection<String> string2 = new ObjectCollection<String>(STRING_TWO);
 		IQuantityCollection<Dimensionless> singleton1 = new QuantityCollection<Dimensionless>(
-				FLOATING_POINT_FACTOR, Dimensionless.UNIT);
+				FLOATING_POINT_FACTOR, null, Dimensionless.UNIT);
 		StockTypes.NonTemporal.Speed_MSec singletonRange1 = new StockTypes.NonTemporal.Speed_MSec(
-				RANGED_SPEED_SINGLETON);
+				RANGED_SPEED_SINGLETON, null);
 		StockTypes.NonTemporal.Length_M singletonLength = new StockTypes.NonTemporal.Length_M(
-				LENGTH_SINGLETON);
+				LENGTH_SINGLETON, null);
 		ElapsedTime_Sec timeIntervals = new StockTypes.Temporal.ElapsedTime_Sec(
-				TIME_INTERVALS);
+				TIME_INTERVALS, null);
 		TemporalLocation track_1 = new TemporalLocation(TRACK_ONE);
 		TemporalLocation track_2 = new TemporalLocation(TRACK_TWO);
 

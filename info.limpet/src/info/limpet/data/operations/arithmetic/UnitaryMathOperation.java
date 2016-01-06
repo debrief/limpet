@@ -1,4 +1,18 @@
-package info.limpet.data.operations;
+/*******************************************************************************
+ *  Limpet - the Lightweight InforMation ProcEssing Toolkit
+ *  http://limpet.info
+ *
+ *  (C) 2015-2016, Deep Blue C Technologies Ltd
+ *
+ *  This library is free software; you can redistribute it and/or
+ *  modify it under the terms of the Eclipse Public License v1.0
+ *  (http://www.eclipse.org/legal/epl-v10.html)
+ *
+ *  This library is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *******************************************************************************/
+package info.limpet.data.operations.arithmetic;
 
 import info.limpet.IBaseTemporalCollection;
 import info.limpet.ICollection;
@@ -12,6 +26,7 @@ import info.limpet.ITemporalQuantityCollection;
 import info.limpet.data.commands.AbstractCommand;
 import info.limpet.data.impl.QuantityCollection;
 import info.limpet.data.impl.TemporalQuantityCollection;
+import info.limpet.data.operations.CollectionComplianceTests;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,6 +45,11 @@ abstract public class UnitaryMathOperation implements IOperation<ICollection>
 	public UnitaryMathOperation(String opName)
 	{
 		_opName = opName;
+	}
+	
+	public String getName()
+	{
+		return _opName;
 	}
 
 	abstract public double calcFor(double val);
@@ -53,7 +73,7 @@ abstract public class UnitaryMathOperation implements IOperation<ICollection>
 		return input.getUnits();
 	}
 
-	private boolean appliesTo(List<ICollection> selection)
+	protected boolean appliesTo(List<ICollection> selection)
 	{
 		boolean notEmpty = aTests.nonEmpty(selection);
 		boolean allQuantity = aTests.allQuantity(selection);

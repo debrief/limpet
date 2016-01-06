@@ -1,3 +1,17 @@
+/*******************************************************************************
+ *  Limpet - the Lightweight InforMation ProcEssing Toolkit
+ *  http://limpet.info
+ *
+ *  (C) 2015-2016, Deep Blue C Technologies Ltd
+ *
+ *  This library is free software; you can redistribute it and/or
+ *  modify it under the terms of the Eclipse Public License v1.0
+ *  (http://www.eclipse.org/legal/epl-v10.html)
+ *
+ *  This library is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *******************************************************************************/
 package info.limpet.data.operations;
 
 import static javax.measure.unit.SI.METRE;
@@ -402,7 +416,6 @@ public class CollectionComplianceTests
 		return allValid;
 	}
 
-
 	/**
 	 * check if the series are all time series datasets (temporal)
 	 * 
@@ -430,7 +443,6 @@ public class CollectionComplianceTests
 		return allValid;
 	}
 
-	
 	/**
 	 * check if the series are all time series datasets (temporal)
 	 * 
@@ -456,6 +468,49 @@ public class CollectionComplianceTests
 					// oops, no
 					allValid = false;
 					break;
+				}
+			}
+			else
+			{
+				// oops, no
+				allValid = false;
+				break;
+			}
+		}
+		return allValid;
+	}
+
+	/**
+	 * check if the series are at least one temporal dataset,
+	 * plus one or more singletons
+	 * 
+	 * @param selection
+	 * @return true/false
+	 */
+	public boolean allTemporalOrSingleton(List<? extends IStoreItem> selection)
+	{
+		// are they all temporal?
+		boolean allValid = false;
+
+		for (int i = 0; i < selection.size(); i++)
+		{
+			IStoreItem thisI = selection.get(i);
+			if (thisI instanceof ICollection)
+			{
+				ICollection thisC = (ICollection) thisI;
+				if (thisC.isTemporal())
+				{
+					allValid = true;
+				}
+				else
+				{
+					// check if it's not a singleton
+					if (thisC.size() != 1)
+					{
+						// oops, no
+						allValid = false;
+						break;
+					}
 				}
 			}
 			else
@@ -772,6 +827,37 @@ public class CollectionComplianceTests
 	}
 
 	/**
+	 * see if all the collections have the specified dimension
+	 * 
+	 * @param items
+	 *          to check
+	 * @param dimension
+	 *          we're looking for
+	 * @return yes/no
+	 */
+	public boolean allHaveDimension(List<ICollection> kids, Dimension dim)
+	{
+		boolean res = true;
+
+		Iterator<ICollection> iter = kids.iterator();
+		while (iter.hasNext())
+		{
+			IStoreItem item = iter.next();
+			if (item instanceof IQuantityCollection<?>)
+			{
+				IQuantityCollection<?> coll = (IQuantityCollection<?>) item;
+				if (!coll.getDimension().equals(dim))
+				{
+					res = false;
+					break;
+				}
+			}
+		}
+
+		return res;
+	}
+	
+	/**
 	 * see if a collection of the specified dimension is present
 	 * 
 	 * @param items
@@ -908,6 +994,22 @@ public class CollectionComplianceTests
 		}
 
 		return res;
+	}
+
+
+	public int getLongestCollectionLength(
+			List<IStoreItem> selection)
+	{
+		// find the longest time series.
+		Iterator<IStoreItem> iter = selection.iterator();
+		int longest = -1;
+
+		while (iter.hasNext())
+		{
+			ICollection thisC = (ICollection) iter.next();
+			longest = Math.max(longest, thisC.size());
+		}
+		return longest;
 	}
 
 	public IBaseTemporalCollection getLongestTemporalCollections(

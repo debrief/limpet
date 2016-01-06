@@ -1,3 +1,17 @@
+/*******************************************************************************
+ *  Limpet - the Lightweight InforMation ProcEssing Toolkit
+ *  http://limpet.info
+ *
+ *  (C) 2015-2016, Deep Blue C Technologies Ltd
+ *
+ *  This library is free software; you can redistribute it and/or
+ *  modify it under the terms of the Eclipse Public License v1.0
+ *  (http://www.eclipse.org/legal/epl-v10.html)
+ *
+ *  This library is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *******************************************************************************/
 package info.limpet.data;
 
 import static javax.measure.unit.NonSI.HOUR;
@@ -10,6 +24,7 @@ import static javax.measure.unit.SI.METRES_PER_SECOND;
 import info.limpet.ICollection;
 import info.limpet.ICommand;
 import info.limpet.IContext;
+import info.limpet.IOperation;
 import info.limpet.IQuantityCollection;
 import info.limpet.IStore;
 import info.limpet.IStore.IStoreItem;
@@ -20,17 +35,22 @@ import info.limpet.data.impl.QuantityCollection;
 import info.limpet.data.impl.TemporalQuantityCollection;
 import info.limpet.data.impl.samples.SampleData;
 import info.limpet.data.impl.samples.StockTypes;
-import info.limpet.data.operations.AddQuantityOperation;
+import info.limpet.data.impl.samples.StockTypes.NonTemporal.Angle_Degrees;
+import info.limpet.data.impl.samples.StockTypes.Temporal.Speed_Kts;
 import info.limpet.data.operations.CollectionComplianceTests;
-import info.limpet.data.operations.DivideQuantityOperation;
-import info.limpet.data.operations.MultiplyQuantityOperation;
-import info.limpet.data.operations.SimpleMovingAverageOperation;
-import info.limpet.data.operations.SubtractQuantityOperation;
 import info.limpet.data.operations.UnitConversionOperation;
+import info.limpet.data.operations.admin.OperationsLibrary;
+import info.limpet.data.operations.arithmetic.AddQuantityOperation;
+import info.limpet.data.operations.arithmetic.DivideQuantityOperation;
+import info.limpet.data.operations.arithmetic.MultiplyQuantityOperation;
+import info.limpet.data.operations.arithmetic.SimpleMovingAverageOperation;
+import info.limpet.data.operations.arithmetic.SubtractQuantityOperation;
+import info.limpet.data.operations.arithmetic.UnitaryMathOperation;
 import info.limpet.data.store.InMemoryStore;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -92,6 +112,115 @@ public class TestOperations extends TestCase
 
 	}
 
+	public void testTrig()
+	{
+		// prepare some data
+		Speed_Kts speedData = new StockTypes.Temporal.Speed_Kts("speed", null);
+		speedData.add(100, 23);
+		speedData.add(200, 44);
+
+		Angle_Degrees angleData = new StockTypes.NonTemporal.Angle_Degrees("degs", null);
+		angleData.add(200d);
+		angleData.add(123d);
+
+		StockTypes.Temporal.Angle_Degrees temporalAngleData = new StockTypes.Temporal.Angle_Degrees(
+				"degs", null);
+		temporalAngleData.add(1000, 200d);
+		temporalAngleData.add(3000, 123d);
+		temporalAngleData.add(4000, 13d);
+
+		List<ICollection> selection = new ArrayList<ICollection>();
+		InMemoryStore store = new InMemoryStore();
+
+		HashMap<String, List<IOperation<?>>> ops = OperationsLibrary
+				.getOperations();
+		List<IOperation<?>> arith = ops.get(OperationsLibrary.ARITHMETIC);
+		// ok, now find the trig op
+		Iterator<IOperation<?>> iter = arith.iterator();
+		IOperation<ICollection> sinOp = null;
+		IOperation<ICollection> cosOp = null;
+		while (iter.hasNext())
+		{
+			IOperation<?> thisO = (IOperation<?>) iter.next();
+			if (thisO instanceof UnitaryMathOperation)
+			{
+				UnitaryMathOperation umo = (UnitaryMathOperation) thisO;
+				if (umo.getName().equals("Sin"))
+				{
+					sinOp = umo;
+				}
+				if (umo.getName().equals("Cos"))
+				{
+					cosOp = umo;
+				}
+			}
+		}
+
+		assertNotNull("check we found it", sinOp);
+
+		// ok, try it with empty data
+		Collection<ICommand<ICollection>> validOps = sinOp.actionsFor(selection,
+				null, null);
+		assertEquals("null for empty selection", 0, validOps.size());
+
+		// add some speed data
+		selection.add(speedData);
+		// ok, try it with empty data
+		validOps = sinOp.actionsFor(selection, store, null);
+		assertEquals("empty for invalid selection", 0, validOps.size());
+
+		// add some valid data
+		selection.add(angleData);
+
+		// ok, try it with empty data
+		validOps = sinOp.actionsFor(selection, store, null);
+		assertEquals("empty for invalid selection", 0, validOps.size());
+
+		// ok, try it with empty data
+		validOps = cosOp.actionsFor(selection, store, null);
+		assertEquals(" cos also empty for invalid selection", 0, validOps.size());
+
+		// and remove the speed data
+		selection.remove(speedData);
+
+		// ok, try it with empty data
+		validOps = sinOp.actionsFor(selection, store, context);
+		assertEquals("non-empty for valid selection", 1, validOps.size());
+
+		ICommand<ICollection> theOp = validOps.iterator().next();
+		theOp.execute();
+
+		assertEquals("has new dataset", 1, store.size());
+		ICollection output = theOp.getOutputs().iterator().next();
+
+		// check the size
+		assertEquals("correct size", 2, output.size());
+
+		// check data type
+		assertTrue("isn't temporal", !output.isTemporal());
+		assertTrue("is quantity", output.isQuantity());
+
+		// ok, try it temporal data
+		selection.remove(angleData);
+		selection.add(temporalAngleData);
+		
+		validOps = sinOp.actionsFor(selection, store, context);
+		assertEquals("non-empty for valid selection", 1, validOps.size());
+
+		theOp = validOps.iterator().next();
+		theOp.execute();
+
+		assertEquals("has new dataset", 2, store.size());
+		output = theOp.getOutputs().iterator().next();
+
+		// check the size
+		assertEquals("correct size", 3, output.size());
+
+		// check data type
+		assertTrue("isn't temporal", output.isTemporal());
+
+	}
+
 	public void testAppliesTo()
 	{
 		// the units for this measurement
@@ -101,19 +230,19 @@ public class TestOperations extends TestCase
 
 		// the target collection
 		QuantityCollection<Velocity> speed_good_1 = new QuantityCollection<Velocity>(
-				"Speed 1", kmh);
+				"Speed 1",null, kmh);
 		QuantityCollection<Velocity> speed_good_2 = new QuantityCollection<Velocity>(
-				"Speed 2", kmh);
+				"Speed 2",null, kmh);
 		QuantityCollection<Velocity> speed_longer = new QuantityCollection<Velocity>(
-				"Speed 3", kmh);
+				"Speed 3",null, kmh);
 		QuantityCollection<Velocity> speed_diff_units = new QuantityCollection<Velocity>(
-				"Speed 4", kmm);
+				"Speed 4",null, kmm);
 		QuantityCollection<Length> len1 = new QuantityCollection<Length>(
-				"Length 1", m);
+				"Length 1",null, m);
 		TemporalQuantityCollection<Velocity> temporal_speed_1 = new TemporalQuantityCollection<Velocity>(
-				"Speed 5", kmh);
+				"Speed 5",null, kmh);
 		TemporalQuantityCollection<Velocity> temporal_speed_2 = new TemporalQuantityCollection<Velocity>(
-				"Speed 6", kmh);
+				"Speed 6",null, kmh);
 		ObjectCollection<String> string_1 = new ObjectCollection<>("strings 1");
 		ObjectCollection<String> string_2 = new ObjectCollection<>("strings 2");
 
@@ -536,7 +665,7 @@ public class TestOperations extends TestCase
 		IQuantityCollection<Velocity> speed_good_1 = (IQuantityCollection<Velocity>) store
 				.get(SampleData.SPEED_ONE);
 		IQuantityCollection<Velocity> speedSingle = new StockTypes.NonTemporal.Speed_MSec(
-				"singleton");
+				"singleton", null);
 
 		speedSingle.add(2d);
 
@@ -556,7 +685,6 @@ public class TestOperations extends TestCase
 		assertEquals("correct value", 2.3767, speed_good_1.getValues().get(0)
 				.doubleValue(Velocity.UNIT) * 2, 0.001);
 	}
-	
 
 	@SuppressWarnings(
 	{ "rawtypes", "unchecked" })
@@ -569,7 +697,7 @@ public class TestOperations extends TestCase
 		IQuantityCollection<Velocity> speed_good_1 = (IQuantityCollection<Velocity>) store
 				.get(SampleData.SPEED_ONE);
 		IQuantityCollection<Velocity> speedSingle = new StockTypes.NonTemporal.Speed_MSec(
-				"singleton");
+				"singleton", null);
 
 		speedSingle.add(2d);
 
@@ -584,15 +712,16 @@ public class TestOperations extends TestCase
 		iter.next();
 		ICommand<ICollection> first = iter.next();
 		first.execute();
-		IQuantityCollection<Velocity> output = (IQuantityCollection) first.getOutputs().iterator().next();
+		IQuantityCollection<Velocity> output = (IQuantityCollection) first
+				.getOutputs().iterator().next();
 		assertNotNull("produced output", output);
 		assertTrue("output is temporal", output.isTemporal());
 		assertEquals("correct size", speed_good_1.size(), output.size());
 
-		assertEquals("correct value", output.getValues().get(0).doubleValue(Velocity.UNIT), speed_good_1.getValues().get(0)
-				.doubleValue(Velocity.UNIT) + 2, 0.001);
+		assertEquals("correct value",
+				output.getValues().get(0).doubleValue(Velocity.UNIT), speed_good_1
+						.getValues().get(0).doubleValue(Velocity.UNIT) + 2, 0.001);
 	}
-
 
 	@SuppressWarnings(
 	{ "rawtypes", "unchecked" })

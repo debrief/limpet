@@ -1,3 +1,17 @@
+/*******************************************************************************
+ *  Limpet - the Lightweight InforMation ProcEssing Toolkit
+ *  http://limpet.info
+ *
+ *  (C) 2015-2016, Deep Blue C Technologies Ltd
+ *
+ *  This library is free software; you can redistribute it and/or
+ *  modify it under the terms of the Eclipse Public License v1.0
+ *  (http://www.eclipse.org/legal/epl-v10.html)
+ *
+ *  This library is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *******************************************************************************/
 package info.limpet.data.operations;
 
 import java.util.ArrayList;
@@ -22,7 +36,7 @@ public class AddLayerOperation implements IOperation<IStoreItem>
 		Collection<ICommand<IStoreItem>> res = new ArrayList<ICommand<IStoreItem>>();
 		if (appliesTo(selection))
 		{
-			final String thisTitle = "Add new layer";
+			final String thisTitle = "Add new folder";
 			// hmm, see if a group has been selected
 			ICommand<IStoreItem> newC = null;
 			if (selection.size() == 1)
@@ -54,7 +68,7 @@ public class AddLayerOperation implements IOperation<IStoreItem>
 		return true;
 	}
 
-	public static class AddLayerCommand extends AbstractCommand<IStoreItem>
+	protected static class AddLayerCommand extends AbstractCommand<IStoreItem>
 	{
 		private StoreGroup _group;
 
@@ -101,7 +115,7 @@ public class AddLayerOperation implements IOperation<IStoreItem>
 		@Override
 		protected String getOutputName()
 		{
-			return getContext().getInput("Add layer", NEW_DATASET_MESSAGE, "");
+			return getContext().getInput("Add layer", "Provide name for new folder", "");
 		}
 
 	}

@@ -1,3 +1,17 @@
+/*******************************************************************************
+ *  Limpet - the Lightweight InforMation ProcEssing Toolkit
+ *  http://limpet.info
+ *
+ *  (C) 2015-2016, Deep Blue C Technologies Ltd
+ *
+ *  This library is free software; you can redistribute it and/or
+ *  modify it under the terms of the Eclipse Public License v1.0
+ *  (http://www.eclipse.org/legal/epl-v10.html)
+ *
+ *  This library is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *******************************************************************************/
 package info.limpet.data.persistence.xml;
 
 import info.limpet.IStore;
@@ -6,8 +20,8 @@ import info.limpet.data.impl.ObjectCollection;
 import info.limpet.data.impl.QuantityCollection;
 import info.limpet.data.impl.TemporalObjectCollection;
 import info.limpet.data.impl.TemporalQuantityCollection;
-import info.limpet.data.operations.AddQuantityOperation.AddQuantityValues;
-import info.limpet.data.operations.MultiplyQuantityOperation.MultiplyQuantityValues;
+import info.limpet.data.operations.arithmetic.AddQuantityOperation.AddQuantityValues;
+import info.limpet.data.operations.arithmetic.MultiplyQuantityOperation.MultiplyQuantityValues;
 import info.limpet.data.store.InMemoryStore;
 import info.limpet.data.store.InMemoryStore.StoreGroup;
 
