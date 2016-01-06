@@ -20,5 +20,7 @@ import info.limpet.IStore.IStoreItem;
 
 public interface IStoreGroup extends IStoreItem, Collection<IStoreItem>, IChangeListener
 {
+
+	void setName(String value);
   
 }

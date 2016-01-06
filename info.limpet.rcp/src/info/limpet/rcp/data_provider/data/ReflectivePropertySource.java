@@ -24,9 +24,10 @@ import info.limpet.UIProperty;
 import info.limpet.rcp.Activator;
 
 /**
- * An {@link IPropertySource} that uses {@link UIProperty} annotations to 
- * determine the set of {@link org.eclipse.ui.views.properties.PropertyDescriptor}s.
- *  
+ * An {@link IPropertySource} that uses {@link UIProperty} annotations to
+ * determine the set of
+ * {@link org.eclipse.ui.views.properties.PropertyDescriptor}s.
+ * 
  */
 public class ReflectivePropertySource implements IPropertySource
 {
@@ -34,8 +35,9 @@ public class ReflectivePropertySource implements IPropertySource
 	private final Object object;
 	private IPropertyDescriptor[] propertyDescriptors;
 	private Map<String, PropertyDescriptor> descriptorPerProperty;
-	
-	/** a list of property handlers that we know about
+
+	/**
+	 * a list of property handlers that we know about
 	 * 
 	 */
 	private ArrayList<PropertyTypeHandler> myHandlers;
@@ -43,9 +45,10 @@ public class ReflectivePropertySource implements IPropertySource
 	public ReflectivePropertySource(Object object)
 	{
 		this.object = object;
-		
-		/** define the handlers we know about. In the future this list could be extended
-		 * by reading extensions from the plugin.xml
+
+		/**
+		 * define the handlers we know about. In the future this list could be
+		 * extended by reading extensions from the plugin.xml
 		 * 
 		 */
 		myHandlers = new ArrayList<PropertyTypeHandler>();
@@ -56,9 +59,10 @@ public class ReflectivePropertySource implements IPropertySource
 		myHandlers.add(PropertyTypeHandler.UNIT);
 		myHandlers.add(PropertyTypeHandler.QUANTITY_RANGE);
 		myHandlers.add(PropertyTypeHandler.GEOMETRY);
-		//TODO: consider that some UI properties would like to provide custom handler 
-		// or one that is not the default. Perhaps make the UIProperty annotation 
-		// provide the handler class as well if needed    
+		// TODO: consider that some UI properties would like to provide custom
+		// handler
+		// or one that is not the default. Perhaps make the UIProperty annotation
+		// provide the handler class as well if needed
 	}
 
 	@Override
@@ -96,17 +100,22 @@ public class ReflectivePropertySource implements IPropertySource
 				{
 
 					// skip descriptor if not visible
-					if (!annotation.visibleWhen().isEmpty() && !evaluateVisibility(object, beanPropertyDescriptors, annotation.visibleWhen())) {
+					if (!annotation.visibleWhen().isEmpty()
+							&& !evaluateVisibility(object, beanPropertyDescriptors,
+									annotation.visibleWhen()))
+					{
 						continue;
 					}
-					
+
 					org.eclipse.ui.views.properties.PropertyDescriptor descriptor = null;
-					
-					String propId = beanPropertyDescriptor.getName();					
+
+					String propId = beanPropertyDescriptor.getName();
 					if (beanPropertyDescriptor.getWriteMethod() != null)
 					{
-						PropertyTypeHandler propertyTypeHandler = getPropertyTypeHandler(beanPropertyDescriptor.getPropertyType());
-						descriptor = propertyTypeHandler.createPropertyDescriptor(propId, annotation);
+						PropertyTypeHandler propertyTypeHandler = getPropertyTypeHandler(beanPropertyDescriptor
+								.getPropertyType());
+						descriptor = propertyTypeHandler.createPropertyDescriptor(propId,
+								annotation);
 					}
 					else
 					{
@@ -118,15 +127,15 @@ public class ReflectivePropertySource implements IPropertySource
 
 					result.add(descriptor);
 
-					descriptorPerProperty.put(propId,
-							beanPropertyDescriptor);
+					descriptorPerProperty.put(propId, beanPropertyDescriptor);
 				}
 			}
 		}
 		catch (IntrospectionException e)
 		{
 			Activator.logError(Status.ERROR,
-					"Could not load property descriptors for class " + object.getClass().getName(), e);
+					"Could not load property descriptors for class "
+							+ object.getClass().getName(), e);
 
 		}
 
@@ -135,33 +144,40 @@ public class ReflectivePropertySource implements IPropertySource
 	}
 
 	private boolean evaluateVisibility(Object object,
-		PropertyDescriptor[] beanPropertyDescriptors, String visibleWhen)
+			PropertyDescriptor[] beanPropertyDescriptors, String visibleWhen)
 	{
 		Map<String, PropertyDescriptor> descriptorsMap = new HashMap<String, PropertyDescriptor>();
-		for (PropertyDescriptor pd : beanPropertyDescriptors) {
+		for (PropertyDescriptor pd : beanPropertyDescriptors)
+		{
 			descriptorsMap.put(pd.getName(), pd);
 		}
-		
+
 		JexlEngine jexl = new JexlBuilder().create();
 		JexlExpression expression = jexl.createExpression(visibleWhen);
-    JexlContext context = new MapContext();
-    
-    Set<List<String>> vars = ((Script)expression).getVariables();
-    for (List<String> varList : vars) {
-			for (String varName : varList) {
+		JexlContext context = new MapContext();
+
+		Set<List<String>> vars = ((Script) expression).getVariables();
+		for (List<String> varList : vars)
+		{
+			for (String varName : varList)
+			{
 				PropertyDescriptor propertyDescriptor = descriptorsMap.get(varName);
-				if (propertyDescriptor != null) {
-					try {
+				if (propertyDescriptor != null)
+				{
+					try
+					{
 						Object value = propertyDescriptor.getReadMethod().invoke(object);
 						context.set(varName, value);
-					} catch (Exception e) {
+					}
+					catch (Exception e)
+					{
 						Activator.logError(Status.ERROR,
 								"Could not retrieve value for property " + varName, e);
 					}
 				}
 			}
 		}
-    
+
 		return (boolean) expression.evaluate(context);
 	}
 
@@ -169,27 +185,28 @@ public class ReflectivePropertySource implements IPropertySource
 	{
 		JexlEngine jexl = new JexlBuilder().create();
 		JexlExpression expression = jexl.createExpression("test == 1");
-		Set<List<String>> variables = ((Script)expression).getVariables();
-		
+
 		Object rs = expression.evaluate(new MapContext());
 		System.out.println(rs);
 	}
-	
+
 	@Override
 	public Object getPropertyValue(Object id)
 	{
 		PropertyDescriptor descriptor = descriptorPerProperty.get(id);
-		
+
 		try
 		{
 			Object value = descriptor.getReadMethod().invoke(object);
-			
+
 			// editable properties use custom cell editor, thus value needs conversion
-			if (descriptor.getWriteMethod() != null) {
-				PropertyTypeHandler propertyTypeHandler = getPropertyTypeHandler(descriptor.getPropertyType());
-				value = propertyTypeHandler.toCellEditorValue(value, object);				
+			if (descriptor.getWriteMethod() != null)
+			{
+				PropertyTypeHandler propertyTypeHandler = getPropertyTypeHandler(descriptor
+						.getPropertyType());
+				value = propertyTypeHandler.toCellEditorValue(value, object);
 			}
-			
+
 			return value;
 		}
 		catch (Exception e)
@@ -204,10 +221,14 @@ public class ReflectivePropertySource implements IPropertySource
 	public boolean isPropertySet(Object id)
 	{
 		PropertyDescriptor descriptor = descriptorPerProperty.get(id);
-		if (descriptor.getWriteMethod() != null) {
-			PropertyTypeHandler propertyTypeHandler = getPropertyTypeHandler(descriptor.getPropertyType());
-			UIProperty annotation = descriptor.getReadMethod().getAnnotation(UIProperty.class);
-			return getPropertyValue(id) != propertyTypeHandler.getDefaulValue(annotation);
+		if (descriptor.getWriteMethod() != null)
+		{
+			PropertyTypeHandler propertyTypeHandler = getPropertyTypeHandler(descriptor
+					.getPropertyType());
+			UIProperty annotation = descriptor.getReadMethod().getAnnotation(
+					UIProperty.class);
+			return getPropertyValue(id) != propertyTypeHandler
+					.getDefaulValue(annotation);
 		}
 		return false;
 	}
@@ -217,10 +238,13 @@ public class ReflectivePropertySource implements IPropertySource
 	{
 		PropertyDescriptor descriptor = descriptorPerProperty.get(id);
 		// editable property
-		if (descriptor.getWriteMethod() != null) {
-			PropertyTypeHandler propertyTypeHandler = getPropertyTypeHandler(descriptor.getPropertyType());
+		if (descriptor.getWriteMethod() != null)
+		{
+			PropertyTypeHandler propertyTypeHandler = getPropertyTypeHandler(descriptor
+					.getPropertyType());
 			// delegate to set property
-			UIProperty annotation = descriptor.getReadMethod().getAnnotation(UIProperty.class);
+			UIProperty annotation = descriptor.getReadMethod().getAnnotation(
+					UIProperty.class);
 			setPropertyValue(id, propertyTypeHandler.getDefaulValue(annotation));
 		}
 
@@ -230,7 +254,8 @@ public class ReflectivePropertySource implements IPropertySource
 	public void setPropertyValue(Object id, Object value)
 	{
 		PropertyDescriptor descriptor = descriptorPerProperty.get(id);
-		PropertyTypeHandler propertyTypeHandler = getPropertyTypeHandler(descriptor.getPropertyType());
+		PropertyTypeHandler propertyTypeHandler = getPropertyTypeHandler(descriptor
+				.getPropertyType());
 		value = propertyTypeHandler.toModelValue(value, object);
 		try
 		{
@@ -242,32 +267,35 @@ public class ReflectivePropertySource implements IPropertySource
 					"Could not set value for property " + id, e);
 		}
 	}
-	
+
 	/**
-	 * @param propertyType a property type obtained from the {@link PropertyDescriptor}
-	 * @return 
+	 * @param propertyType
+	 *          a property type obtained from the {@link PropertyDescriptor}
+	 * @return
 	 */
-	public PropertyTypeHandler getPropertyTypeHandler(Class<?> propertyType) {
-		
+	public PropertyTypeHandler getPropertyTypeHandler(Class<?> propertyType)
+	{
+
 		PropertyTypeHandler result = null;
-		
+
 		// loop through the handlers we know about
 		Iterator<PropertyTypeHandler> hIter = myHandlers.iterator();
-		while(hIter.hasNext())
+		while (hIter.hasNext())
 		{
 			PropertyTypeHandler thisP = hIter.next();
-			if(thisP.canHandle(propertyType))
+			if (thisP.canHandle(propertyType))
 			{
 				result = thisP;
 				break;
 			}
 		}
-		
-		if(result == null)
+
+		if (result == null)
 		{
 			// TODO: handle other property types, such as
 			// number, complex types, Wrapper types - Boolean, Integer, etc
-			throw new UnsupportedOperationException("Property type not supported: " + propertyType);
+			throw new UnsupportedOperationException("Property type not supported: "
+					+ propertyType);
 		}
 		return result;
 	}

@@ -14,7 +14,7 @@
  *******************************************************************************/
 package info.limpet.rcp.data_provider.data;
 
-import info.limpet.data.store.InMemoryStore.StoreGroup;
+import info.limpet.IStoreGroup;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -102,7 +102,7 @@ public class GroupPropertySource implements IPropertySource
 	public void setPropertyValue(final Object prop, final Object value)
 	{
 		
-		final StoreGroup coll = _group.getGroup();
+		final IStoreGroup coll = _group.getGroup();
 
 		if (prop.equals(GROUP_NAME))
 			coll.setName((String) value);
