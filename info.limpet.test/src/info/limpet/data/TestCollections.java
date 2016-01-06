@@ -40,10 +40,10 @@ import info.limpet.data.impl.samples.StockTypes;
 import info.limpet.data.impl.samples.StockTypes.NonTemporal;
 import info.limpet.data.impl.samples.StockTypes.NonTemporal.Speed_MSec;
 import info.limpet.data.impl.samples.StockTypes.Temporal;
-import info.limpet.data.operations.AddQuantityOperation;
-import info.limpet.data.operations.MultiplyQuantityOperation;
-import info.limpet.data.operations.SubtractQuantityOperation;
-import info.limpet.data.operations.UnitaryMathOperation;
+import info.limpet.data.operations.arithmetic.AddQuantityOperation;
+import info.limpet.data.operations.arithmetic.MultiplyQuantityOperation;
+import info.limpet.data.operations.arithmetic.SubtractQuantityOperation;
+import info.limpet.data.operations.arithmetic.UnitaryMathOperation;
 import info.limpet.data.store.InMemoryStore;
 import info.limpet.data.store.InMemoryStore.StoreGroup;
 

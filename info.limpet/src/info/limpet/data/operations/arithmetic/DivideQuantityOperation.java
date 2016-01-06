@@ -12,7 +12,7 @@
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  *******************************************************************************/
-package info.limpet.data.operations;
+package info.limpet.data.operations.arithmetic;
 
 import info.limpet.IBaseTemporalCollection;
 import info.limpet.ICollection;
@@ -27,6 +27,7 @@ import info.limpet.ITemporalQuantityCollection.InterpMethod;
 import info.limpet.data.commands.AbstractCommand;
 import info.limpet.data.impl.QuantityCollection;
 import info.limpet.data.impl.TemporalQuantityCollection;
+import info.limpet.data.operations.CollectionComplianceTests;
 
 import java.util.ArrayList;
 import java.util.Collection;

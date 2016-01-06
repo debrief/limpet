@@ -14,8 +14,32 @@
  *******************************************************************************/
 package info.limpet.rcp.editors;
 
-import java.io.File;
-import java.io.FileOutputStream;
+import info.limpet.IChangeListener;
+import info.limpet.ICollection;
+import info.limpet.ICommand;
+import info.limpet.IContext;
+import info.limpet.IOperation;
+import info.limpet.IStore;
+import info.limpet.IStore.IStoreItem;
+import info.limpet.IStoreGroup;
+import info.limpet.data.impl.QuantityCollection;
+import info.limpet.data.impl.samples.StockTypes;
+import info.limpet.data.operations.AddLayerOperation;
+import info.limpet.data.operations.GenerateDummyDataOperation;
+import info.limpet.data.operations.admin.CopyCsvToClipboardAction;
+import info.limpet.data.operations.admin.CreateLocationAction;
+import info.limpet.data.operations.admin.CreateSingletonGenerator;
+import info.limpet.data.operations.admin.ExportCsvToFileAction;
+import info.limpet.data.operations.admin.OperationsLibrary;
+import info.limpet.data.persistence.xml.XStreamHandler;
+import info.limpet.data.store.InMemoryStore;
+import info.limpet.data.store.InMemoryStore.StoreChangeListener;
+import info.limpet.data.store.InMemoryStore.StoreGroup;
+import info.limpet.rcp.Activator;
+import info.limpet.rcp.RCPContext;
+import info.limpet.rcp.data_provider.data.DataModel;
+import info.limpet.rcp.editors.dnd.DataManagerDropAdapter;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -48,7 +72,6 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.DecoratingLabelProvider;
 import org.eclipse.jface.viewers.ILabelDecorator;
@@ -58,14 +81,12 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.FileTransfer;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
@@ -77,34 +98,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.SaveAsDialog;
 import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.part.FileEditorInput;
-import org.opengis.geometry.Geometry;
 import org.osgi.framework.Bundle;
-
-import info.limpet.IChangeListener;
-import info.limpet.ICollection;
-import info.limpet.ICommand;
-import info.limpet.IContext;
-import info.limpet.IOperation;
-import info.limpet.IStore;
-import info.limpet.IStore.IStoreItem;
-import info.limpet.IStoreGroup;
-import info.limpet.data.csv.CsvGenerator;
-import info.limpet.data.impl.QuantityCollection;
-import info.limpet.data.impl.samples.StockTypes;
-import info.limpet.data.impl.samples.StockTypes.NonTemporal;
-import info.limpet.data.operations.AddLayerOperation;
-import info.limpet.data.operations.GenerateDummyDataOperation;
-import info.limpet.data.operations.admin.OperationsLibrary;
-import info.limpet.data.operations.spatial.GeoSupport;
-import info.limpet.data.persistence.xml.XStreamHandler;
-import info.limpet.data.store.InMemoryStore;
-import info.limpet.data.store.InMemoryStore.StoreChangeListener;
-import info.limpet.data.store.InMemoryStore.StoreGroup;
-import info.limpet.rcp.Activator;
-import info.limpet.rcp.RCPContext;
-import info.limpet.rcp.data_provider.data.DataModel;
-import info.limpet.rcp.data_provider.data.GroupWrapper;
-import info.limpet.rcp.editors.dnd.DataManagerDropAdapter;
 
 public class DataManagerEditor extends EditorPart
 {
@@ -116,7 +110,7 @@ public class DataManagerEditor extends EditorPart
 	private Action copyCsvToClipboard;
 	private Action copyCsvToFile;
 	private Action generateData;
-	private Action addLayer;
+	private Action addFolder;
 	private boolean _dirty = false;
 	private DataModel _model;
 	private StoreChangeListener _changeListener = new StoreChangeListener()
@@ -414,314 +408,110 @@ public class DataManagerEditor extends EditorPart
 	{
 		manager.add(refreshView);
 		manager.add(generateData);
-		manager.add(addLayer);
-	}
-
-	private String getCsvString()
-	{
-		List<IStoreItem> selection = getSuitableObjects();
-		if (selection.size() == 1 && selection.get(0) instanceof ICollection)
-		{
-			return CsvGenerator.generate((ICollection) selection.get(0));
-		}
-		return null;
+		manager.add(addFolder);
 	}
 
 	private void makeActions()
 	{
-		generateData = new Action()
+
+		// our operation wrapper needs to be able to get the selection, help it out
+		final ISelectionProvider provider = new ISelectionProvider()
 		{
-			public void run()
+			public List<IStoreItem> getSelection()
 			{
-				generateData();
+				return getSuitableObjects();
 			}
 		};
-		generateData.setText("Generate data");
-		generateData.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
-				.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD));
 
-		addLayer = new Action()
+		createDimensionless = new OperationWrapper(new CreateSingletonGenerator(
+				"dimensionless")
 		{
-			public void run()
+			protected QuantityCollection<?> generate(String name)
 			{
-				addLayer();
+				return new StockTypes.NonTemporal.DimensionlessDouble(name);
 			}
-		};
-		addLayer.setText("Add Layer");
-		addLayer.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
-				.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE));
+		}, "Create dimensionless singleton",
+				Activator.getImageDescriptor("dimesionless"), _context, _store,
+				provider);
 
-		refreshView = new Action()
+		createFrequency = new OperationWrapper(new CreateSingletonGenerator(
+				"frequency")
 		{
-			public void run()
-			{
-				viewer.refresh();
-			}
-		};
-		refreshView.setText("Refresh");
-		refreshView.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
-				.getImageDescriptor(ISharedImages.IMG_TOOL_REDO));
-
-		copyCsvToClipboard = new Action()
-		{
-			public void run()
-			{
-				String csv = getCsvString();
-				if (csv != null && !csv.isEmpty())
-				{
-					final Clipboard cb = new Clipboard(Display.getCurrent());
-					TextTransfer textTransfer = TextTransfer.getInstance();
-					cb.setContents(new Object[]
-					{ csv }, new Transfer[]
-					{ textTransfer });
-				}
-				else
-				{
-					MessageDialog.openInformation(viewer.getControl().getShell(),
-							"Data Manager Editor", "Cannot copy current selection");
-				}
-			}
-		};
-		copyCsvToClipboard.setText("Copy CSV to Clipboard");
-		// FIXME
-		copyCsvToClipboard.setImageDescriptor(PlatformUI.getWorkbench()
-				.getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_SYNCED));
-
-		copyCsvToFile = new ExportToCSVFile();
-
-		copyCsvToFile.setText("Copy CSV to File");
-		// FIXME
-		copyCsvToFile.setImageDescriptor(PlatformUI.getWorkbench()
-				.getSharedImages()
-				.getImageDescriptor(ISharedImages.IMG_ETOOL_SAVEAS_EDIT));
-
-		createDimensionless = createSingletonGenerator("dimensionless",
-				new ItemGenerator()
-				{
-					public QuantityCollection<?> generate(String name)
-					{
-						return new StockTypes.NonTemporal.DimensionlessDouble(name);
-					}
-				});
-
-		createFrequency = createSingletonGenerator("frequency", new ItemGenerator()
-		{
-			public QuantityCollection<?> generate(String name)
+			protected QuantityCollection<?> generate(String name)
 			{
 				return new StockTypes.NonTemporal.Frequency_Hz(name);
 			}
-		});
+		}, "Create frequency singleton", Activator.getImageDescriptor("frequency"),
+				_context, _store, provider);
 
-		createDecibels = createSingletonGenerator("decibels", new ItemGenerator()
+		createDecibels = new OperationWrapper(new CreateSingletonGenerator(
+				"decibels")
 		{
-			public QuantityCollection<?> generate(String name)
+			protected QuantityCollection<?> generate(String name)
 			{
 				return new StockTypes.NonTemporal.AcousticStrength(name);
 			}
-		});
+		}, "Create decibels singleton", Activator.getImageDescriptor("decibels"),
+				_context, _store, provider);
 
-		createSpeed = createSingletonGenerator("speed (m/s)", new ItemGenerator()
+		createSpeed = new OperationWrapper(new CreateSingletonGenerator(
+				"speed (m/s)")
 		{
-			public QuantityCollection<?> generate(String name)
+			protected QuantityCollection<?> generate(String name)
 			{
 				return new StockTypes.NonTemporal.Speed_MSec(name);
 			}
-		});
-		createCourse = createSingletonGenerator("course (degs)",
-				new ItemGenerator()
-				{
-					public QuantityCollection<?> generate(String name)
-					{
-						return new StockTypes.NonTemporal.Angle_Degrees(name);
-					}
-				});
-		createLocation = createLocationGenerator();
-	}
+		}, "Create speed singleton (m/s)",
+				Activator.getImageDescriptor("speed (m/s)"), _context, _store, provider);
 
-	private static interface ItemGenerator
-	{
-		public QuantityCollection<?> generate(final String name);
-	}
-
-	/** class that provides UI & processing to export a single collection to a CSV file
-	 * 
-	 * @author ian
-	 *
-	 */
-	private class ExportToCSVFile extends Action
-	{
-		public void run()
+		createCourse = new OperationWrapper(new CreateSingletonGenerator(
+				"course (degs)")
 		{
-			String csv = getCsvString();
-			if (csv != null && !csv.isEmpty())
+			protected QuantityCollection<?> generate(String name)
 			{
-				FileDialog dialog = new FileDialog(getSite().getShell(), SWT.SAVE);
-				final String[] filterNames;
-				final String[] filterExtensions;
-				String filterPath = "";
-				if (SWT.getPlatform().equals("win32"))
-				{
-					filterNames = new String[]
-					{ "Csv File", "All Files (*.*)" };
-					filterExtensions = new String[]
-					{ "*.csv", "*.*" };
-				}
-				else
-				{
-					filterNames = new String[]
-					{ "Csv File", "All Files (*)" };
-					filterExtensions = new String[]
-					{ "*.csv", "*" };
-				}
-				dialog.setFilterNames(filterNames);
-				dialog.setFilterExtensions(filterExtensions);
-				dialog.setFilterPath(filterPath);
-				dialog.setFileName("limpet_out.csv");
-				String result = dialog.open();
-				if (result == null)
-				{
-					return;
-				}
-				File file = new File(result);
-				if (file.exists())
-				{
-					if (!MessageDialog.openQuestion(getSite().getShell(), "Overwrite '"
-							+ result + "'?", "Are you sure you want to overwrite '" + result
-							+ "'?"))
-					{
-						return;
-					}
-				}
-				FileOutputStream fop = null;
-				try
-				{
-					fop = new FileOutputStream(file);
-					fop.write(csv.getBytes());
-				}
-				catch (IOException e)
-				{
-					MessageDialog.openError(getSite().getShell(), "Error",
-							"Cannot write to '" + result + "'. See log for more details");
-					Activator.log(e);
-				}
-				finally
-				{
-					if (fop != null)
-					{
-						try
-						{
-							fop.close();
-						}
-						catch (IOException e)
-						{
-							Activator.logError(Status.ERROR,
-									"Failed to close fop in DataManagerEditor export to CSV", e);
-						}
-					}
-				}
-
+				return new StockTypes.NonTemporal.Speed_MSec(name);
 			}
-			else
-			{
-				MessageDialog.openInformation(viewer.getControl().getShell(),
-						"Data Manager Editor", "Cannot copy current selection");
-			}
-		}
-	}
+		}, "Create course singleton (degs)",
+				Activator.getImageDescriptor("course (degs)"), _context, _store,
+				provider);
 
-	private Action createSingletonGenerator(final String sType,
-			final ItemGenerator generator)
-	{
-		final Action res = new Action()
+		copyCsvToFile = new OperationWrapper(new ExportCsvToFileAction(),
+				"Export CSV to file", PlatformUI.getWorkbench().getSharedImages()
+						.getImageDescriptor(ISharedImages.IMG_ETOOL_SAVEAS_EDIT), _context,
+				_store, provider);
+
+		copyCsvToClipboard = new OperationWrapper(new CopyCsvToClipboardAction(),
+				"Copy CSV to clipboard", PlatformUI.getWorkbench().getSharedImages()
+						.getImageDescriptor(ISharedImages.IMG_ELCL_SYNCED), _context,
+				_store, provider);
+
+		addFolder = new OperationWrapper(new AddLayerOperation(), "Add folder",
+				PlatformUI.getWorkbench().getSharedImages()
+						.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE), _context,
+				_store, provider);
+
+		generateData = new OperationWrapper(new GenerateDummyDataOperation("Small",
+				20), "Create dummy data", PlatformUI.getWorkbench().getSharedImages()
+				.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD), _context,
+				_store, provider);
+
+		createLocation = new OperationWrapper(new CreateLocationAction(),
+				"Create location", PlatformUI.getWorkbench().getSharedImages()
+						.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD), _context,
+				_store, provider);
+
+		// refresh view is purely UI. So, we can implement it here
+		refreshView = new Action("Refresh View", PlatformUI.getWorkbench()
+				.getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_REDO))
 		{
+
+			@Override
 			public void run()
 			{
-				// get the name
-				String name = "new " + sType;
-				double value;
-
-				InputDialog dlgName = new InputDialog(Display.getCurrent()
-						.getActiveShell(), "New variable", "Enter name for variable", "",
-						null);
-				if (dlgName.open() == Window.OK)
-				{
-					// User clicked OK; update the label with the input
-					name = dlgName.getValue();
-				}
-				else
-				{
-					return;
-				}
-
-				InputDialog dlgValue = new InputDialog(Display.getCurrent()
-						.getActiveShell(), "New variable",
-						"Enter initial value for variable", "", null);
-				if (dlgValue.open() == Window.OK)
-				{
-					// User clicked OK; update the label with the input
-					String str = dlgValue.getValue();
-					try
-					{
-						// get the new collection
-						QuantityCollection<?> newData = generator.generate(name);
-
-						// add the new value
-						value = Double.parseDouble(str);
-						newData.add(value);
-
-						// put the new collection in to the selected folder, or into root
-						ISelection selection = viewer.getSelection();
-						IStructuredSelection stru = (IStructuredSelection) selection;
-						Object first = stru.getFirstElement();
-						if (first instanceof GroupWrapper)
-						{
-							GroupWrapper gW = (GroupWrapper) first;
-							gW.getGroup().add(newData);
-						}
-						else
-						{
-							// just store it at the top level
-							_store.add(newData);
-						}
-
-					}
-					catch (NumberFormatException e)
-					{
-						System.err.println("Failed to parse initial value");
-						e.printStackTrace();
-					}
-				}
-				else
-				{
-					return;
-				}
+				refresh();
 			}
 		};
-		res.setText("Create single " + sType + " value");
-		res.setImageDescriptor(Activator.getImageDescriptor("icons/variable.png"));
 
-		return res;
-	}
-
-	protected void generateData()
-	{
-		GenerateDummyDataOperation operation = new GenerateDummyDataOperation(
-				"small", 20);
-
-		Object input = viewer.getInput();
-		Collection<ICommand<IStoreItem>> commands = operation.actionsFor(
-				getSuitableObjects(), (IStore) input, _context);
-		commands.iterator().next().execute();
-	}
-
-	protected void addLayer()
-	{
-		IOperation<IStoreItem> operation = new AddLayerOperation();
-
-		Object input = viewer.getInput();
-		Collection<ICommand<IStoreItem>> commands = operation.actionsFor(
-				getSuitableObjects(), (IStore) input, _context);
-		commands.iterator().next().execute();
 	}
 
 	public void showMessage(String message)
@@ -756,9 +546,10 @@ public class DataManagerEditor extends EditorPart
 		// get the list of operations
 		HashMap<String, List<IOperation<?>>> ops = OperationsLibrary
 				.getOperations();
-		
+
 		// and the RCP-specific operations
-		HashMap<String, List<IOperation<?>>> rcpOps = RCPOperationsLibrary.getOperations();
+		HashMap<String, List<IOperation<?>>> rcpOps = RCPOperationsLibrary
+				.getOperations();
 		ops.putAll(rcpOps);
 
 		// did we find anything?
@@ -780,6 +571,7 @@ public class DataManagerEditor extends EditorPart
 		}
 
 		// and the generators
+		// TODO: move these actions to the operations library
 		MenuManager createMenu = new MenuManager("Create");
 		menu.add(createMenu);
 		createMenu.add(createDimensionless);
@@ -788,7 +580,7 @@ public class DataManagerEditor extends EditorPart
 		createMenu.add(createSpeed);
 		createMenu.add(createCourse);
 		createMenu.add(createLocation);
-		createMenu.add(addLayer);
+		createMenu.add(addFolder);
 
 		if (selection.size() == 1 && selection.get(0) instanceof ICollection)
 		{
@@ -874,7 +666,9 @@ public class DataManagerEditor extends EditorPart
 		menuMgr.addMenuListener(getContextMenuListener());
 		Menu menu = menuMgr.createContextMenu(viewer.getControl());
 		viewer.getControl().setMenu(menu);
-		getSite().registerContextMenu(menuMgr, viewer);
+		// We shouldn't register menu because we will contribute menus
+		// using separate extension point
+		// getSite().registerContextMenu(menuMgr, viewer);
 	}
 
 	@Override
@@ -973,94 +767,21 @@ public class DataManagerEditor extends EditorPart
 		}
 	}
 
-	private Action createLocationGenerator()
+	public IStore getStore()
 	{
-		final Action res = new Action()
-		{
-			public void run()
-			{
-				// get the name
-				String seriesName = "new single location";
-
-				InputDialog dlgName = new InputDialog(Display.getCurrent()
-						.getActiveShell(), "New fixed location", "Enter name for location",
-						"", null);
-				if (dlgName.open() == Window.OK)
-				{
-					// User clicked OK; update the label with the input
-					seriesName = dlgName.getValue();
-				}
-				else
-				{
-					return;
-				}
-
-				InputDialog dlgValue = new InputDialog(Display.getCurrent()
-						.getActiveShell(), "New location",
-						"Enter initial value for latitude", "", null);
-				if (dlgValue.open() == Window.OK)
-				{
-					// User clicked OK; update the label with the input
-					String strLat = dlgValue.getValue();
-
-					// ok, now the second one
-					dlgValue = new InputDialog(Display.getCurrent().getActiveShell(),
-							"New location", "Enter initial value for longitude", "", null);
-					if (dlgValue.open() == Window.OK)
-					{
-						// User clicked OK; update the label with the input
-						String strLong = dlgValue.getValue();
-
-						// ok, now the second one
-
-						try
-						{
-
-							NonTemporal.Location newData = new NonTemporal.Location(
-									seriesName);
-
-							// add the new value
-							double dblLat = Double.parseDouble(strLat);
-							double dblLong = Double.parseDouble(strLong);
-
-							Geometry newLoc = GeoSupport.getBuilder().createPoint(dblLong,
-									dblLat);
-							newData.add(newLoc);
-
-							// put the new collection in to the selected folder, or into root
-							ISelection selection = viewer.getSelection();
-							IStructuredSelection stru = (IStructuredSelection) selection;
-							Object first = stru.getFirstElement();
-							if (first instanceof GroupWrapper)
-							{
-								GroupWrapper gW = (GroupWrapper) first;
-								gW.getGroup().add(newData);
-							}
-							else
-							{
-								// just store it at the top level
-								_store.add(newData);
-							}
-
-						}
-						catch (NumberFormatException e)
-						{
-							System.err.println("Failed to parse initial value");
-							e.printStackTrace();
-							return;
-						}
-					}
-				}
-				else
-				{
-					return;
-				}
-			}
-		};
-		res.setText("Create single location");
-		res.setImageDescriptor(Activator.getImageDescriptor("icons/variable.png"));
-
-		return res;
+		return _store;
 	}
 
+	public IContext getContext()
+	{
+		return _context;
+	}
+
+	public void refresh()
+	{
+		if (!viewer.getControl().isDisposed())
+		{
+			viewer.refresh();
+		}
+	}
 }

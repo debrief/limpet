@@ -14,7 +14,7 @@
  *******************************************************************************/
 package info.limpet.rcp.data_provider.data;
 
-import info.limpet.data.operations.SimpleMovingAverageOperation.SimpleMovingAverageCommand;
+import info.limpet.data.operations.arithmetic.SimpleMovingAverageOperation.SimpleMovingAverageCommand;
 import info.limpet.rcp.propertyeditors.SliderPropertyDescriptor;
 
 import java.util.ArrayList;

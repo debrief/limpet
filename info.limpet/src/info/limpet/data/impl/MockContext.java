@@ -32,4 +32,53 @@ public class MockContext implements IContext
 		e.printStackTrace();
 	}
 
+	@Override
+	public void openWarning(String title, String message)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void openInformation(String title, String message)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public String getCsvFilename()
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean openQuestion(String title, String message)
+	{
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void openError(String title, String message)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void log(Exception e)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void placeOnClipboard(String text)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
 }

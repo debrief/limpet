@@ -67,7 +67,7 @@ public class AddLayerOperation implements IOperation<IStoreItem>
 		return true;
 	}
 
-	public static class AddLayerCommand extends AbstractCommand<IStoreItem>
+	protected static class AddLayerCommand extends AbstractCommand<IStoreItem>
 	{
 		private StoreGroup _group;
 
@@ -114,7 +114,7 @@ public class AddLayerOperation implements IOperation<IStoreItem>
 		@Override
 		protected String getOutputName()
 		{
-			return getContext().getInput("Add layer", NEW_DATASET_MESSAGE, "");
+			return getContext().getInput("Add layer", "Provide name for new folder", "");
 		}
 
 	}

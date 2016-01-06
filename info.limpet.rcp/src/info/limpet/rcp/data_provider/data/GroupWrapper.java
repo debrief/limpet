@@ -15,12 +15,13 @@
 package info.limpet.rcp.data_provider.data;
 
 import info.limpet.IStore.IStoreItem;
+import info.limpet.data.store.IGroupWrapper;
 import info.limpet.data.store.InMemoryStore.StoreGroup;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ui.views.properties.IPropertySource;
 
-public class GroupWrapper implements IAdaptable, LimpetWrapper
+public class GroupWrapper implements IAdaptable, LimpetWrapper, IGroupWrapper
 {
 	private final StoreGroup _group;
 	private final LimpetWrapper _parent;

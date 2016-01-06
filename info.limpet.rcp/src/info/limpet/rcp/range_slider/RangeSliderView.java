@@ -21,7 +21,7 @@ import info.limpet.IQuantityCollection;
 import info.limpet.IStore.IStoreItem;
 import info.limpet.QuantityRange;
 import info.limpet.data.operations.CollectionComplianceTests;
-import info.limpet.data.operations.SimpleMovingAverageOperation.SimpleMovingAverageCommand;
+import info.limpet.data.operations.arithmetic.SimpleMovingAverageOperation.SimpleMovingAverageCommand;
 import info.limpet.rcp.core_view.CoreAnalysisView;
 
 import java.util.List;

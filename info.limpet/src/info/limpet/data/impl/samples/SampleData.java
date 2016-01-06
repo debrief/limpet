@@ -24,8 +24,8 @@ import info.limpet.data.impl.MockContext;
 import info.limpet.data.impl.ObjectCollection;
 import info.limpet.data.impl.QuantityCollection;
 import info.limpet.data.impl.samples.StockTypes.Temporal.ElapsedTime_Sec;
-import info.limpet.data.operations.AddQuantityOperation;
-import info.limpet.data.operations.MultiplyQuantityOperation;
+import info.limpet.data.operations.arithmetic.AddQuantityOperation;
+import info.limpet.data.operations.arithmetic.MultiplyQuantityOperation;
 import info.limpet.data.store.InMemoryStore;
 import info.limpet.data.store.InMemoryStore.StoreGroup;
 

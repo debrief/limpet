@@ -22,7 +22,7 @@ import info.limpet.IStore.IStoreItem;
 import info.limpet.data.impl.CoreChangeListener;
 import info.limpet.data.impl.MockContext;
 import info.limpet.data.impl.samples.SampleData;
-import info.limpet.data.operations.AddQuantityOperation;
+import info.limpet.data.operations.arithmetic.AddQuantityOperation;
 import info.limpet.data.store.InMemoryStore;
 
 import java.util.ArrayList;
