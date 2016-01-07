@@ -288,7 +288,6 @@ public class RangeSliderView extends CoreAnalysisView implements
           res = true;
         }
       }
-
     }
 
     slider.setEnabled(res);
