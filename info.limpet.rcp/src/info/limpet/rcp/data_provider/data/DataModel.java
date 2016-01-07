@@ -41,54 +41,25 @@ public class DataModel implements ITreeContentProvider
   private void addCollectionItems(final List<Object> res,
       final CollectionWrapper cw)
   {
-    final IStoreItem item = cw.getCollection();
+    final ICollection item = cw.getCollection();
 
-    if (item instanceof ICollection)
+    final ICommand<?> prec = item.getPrecedent();
+    if (prec != null)
     {
-      ICollection coll = (ICollection) item;
-      final ICommand<?> prec = coll.getPrecedent();
-      if (prec != null)
-      {
-        final NamedList dList = new NamedList(cw, PRECEDENTS);
-        dList.add(new CommandWrapper(dList, prec));
-        res.add(dList);
-      }
-
-      final List<ICommand<?>> dep = coll.getDependents();
-      if (dep != null)
-      {
-        final NamedList dList = new NamedList(cw, DEPENDENTS);
-        final Iterator<ICommand<?>> dIter = dep.iterator();
-        while (dIter.hasNext())
-        {
-          final ICommand<?> thisI = dIter.next();
-          dList.add(new CommandWrapper(dList, thisI));
-        }
-
-        // did we find any?
-        if (dList.size() > 0)
-        {
-          res.add(dList);
-        }
-      }
+      final NamedList dList = new NamedList(cw, PRECEDENTS);
+      dList.add(new CommandWrapper(dList, prec));
+      res.add(dList);
     }
-    else if (item instanceof StoreGroup)
+
+    final List<ICommand<?>> dep = item.getDependents();
+    if (dep != null)
     {
-      StoreGroup group = (StoreGroup) item;
-      final NamedList dList = new NamedList(cw, group.getName());
-      final Iterator<IStoreItem> dIter = group.iterator();
+      final NamedList dList = new NamedList(cw, DEPENDENTS);
+      final Iterator<ICommand<?>> dIter = dep.iterator();
       while (dIter.hasNext())
       {
-        final IStoreItem thisI = dIter.next();
-        if (thisI instanceof CommandWrapper)
-        {
-          dList.add(new CommandWrapper(dList, (ICommand<?>) thisI));
-
-        }
-        else if (thisI instanceof CollectionWrapper)
-        {
-          dList.add(new CollectionWrapper(dList, (ICollection) thisI));
-        }
+        final ICommand<?> thisI = dIter.next();
+        dList.add(new CommandWrapper(dList, thisI));
       }
 
       // did we find any?
@@ -171,11 +142,6 @@ public class DataModel implements ITreeContentProvider
         res.add(new GroupWrapper(cw, (StoreGroup) thisI));
       }
     }
-    // did we find any?
-    // if (dList.size() > 0)
-    // {
-    // res.add(dList);
-    // }
   }
 
   /**
