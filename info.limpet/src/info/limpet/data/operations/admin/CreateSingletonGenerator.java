@@ -163,8 +163,9 @@ public abstract class CreateSingletonGenerator implements IOperation<IStoreItem>
   private boolean appliesTo(List<IStoreItem> selection)
   {
     // we can apply this either to a group, or at the top level
-    return (getATests().exactNumber(selection, 0) || ((getATests().exactNumber(selection, 1) && getATests()
-        .allGroups(selection))));
+    boolean singleGroupSelected = getATests().exactNumber(selection, 1) && getATests()
+        .allGroups(selection);
+    return getATests().exactNumber(selection, 0) || singleGroupSelected;
   }
 
   protected abstract QuantityCollection<?> generate(String name, ICommand<?> precedent);

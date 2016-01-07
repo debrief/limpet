@@ -301,8 +301,8 @@ public class DopplerShiftBetweenTracksOperation implements
       {
         final long thisTime = tIter.next();
 
-        if ((thisTime >= period.getStartTime())
-            && (thisTime <= period.getEndTime()))
+        if (thisTime >= period.getStartTime()
+            && thisTime <= period.getEndTime())
         {
           // ok, now collate our data
           final Geometry txLoc =
@@ -332,7 +332,7 @@ public class DopplerShiftBetweenTracksOperation implements
           // check we have locations. During some property editing we receive
           // recalc call
           // after old value is removed, and before new value is added.
-          if ((txLoc != null) && (rxLoc != null))
+          if (txLoc != null && rxLoc != null)
           {
             // now find the bearing between them
             calc.setStartingGeographicPoint(txLoc.getCentroid().getOrdinate(0),
@@ -429,7 +429,7 @@ public class DopplerShiftBetweenTracksOperation implements
         aTests.collectionWith(selection, METRE.divide(SECOND).getDimension(),
             true) != null;
 
-    return (aTests.exactNumber(selection, 3) && allGroups && allTracks
-        && someHaveFreq && topLevelSpeed);
+    return aTests.exactNumber(selection, 3) && allGroups && allTracks
+        && someHaveFreq && topLevelSpeed;
   }
 }

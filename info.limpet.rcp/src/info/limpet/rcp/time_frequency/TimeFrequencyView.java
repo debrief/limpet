@@ -118,57 +118,51 @@ public class TimeFrequencyView extends CoreAnalysisView
     {
       ICollection iCollection = (ICollection) iter.next();
       TimeFrequencyBins.BinnedData bins = null;
-      if (iCollection.isTemporal())
+      if (iCollection.isTemporal() && iCollection.size() > 1
+          && iCollection.size() <= MAX_SIZE)
       {
-        if (iCollection.size() > 1)
+        IBaseTemporalCollection thisQ = (IBaseTemporalCollection) iCollection;
+        bins = TimeFrequencyBins.doBins(iCollection, thisQ);
+
+        String seriesName = iCollection.getName();
+        ILineSeries newSeries =
+            (ILineSeries) chart.getSeriesSet().createSeries(SeriesType.LINE,
+                seriesName);
+        newSeries.setSymbolType(PlotSymbolType.NONE);
+        newSeries.enableArea(true);
+        newSeries.setLineColor(PlottingHelpers.colorFor(seriesName));
+
+        Date[] xData = new Date[bins.size() * 2];
+        double[] yData = new double[bins.size() * 2];
+
+        // put the data into series
+        int ctr = 0;
+        Iterator<Bin> iter2 = bins.iterator();
+        while (iter2.hasNext())
         {
-          if (iCollection.size() <= MAX_SIZE)
-          {
-            IBaseTemporalCollection thisQ =
-                (IBaseTemporalCollection) iCollection;
-            bins = TimeFrequencyBins.doBins(iCollection, thisQ);
-
-            String seriesName = iCollection.getName();
-            ILineSeries newSeries =
-                (ILineSeries) chart.getSeriesSet().createSeries(
-                    SeriesType.LINE, seriesName);
-            newSeries.setSymbolType(PlotSymbolType.NONE);
-            newSeries.enableArea(true);
-            newSeries.setLineColor(PlottingHelpers.colorFor(seriesName));
-
-            Date[] xData = new Date[bins.size() * 2];
-            double[] yData = new double[bins.size() * 2];
-
-            // put the data into series
-            int ctr = 0;
-            Iterator<Bin> iter2 = bins.iterator();
-            while (iter2.hasNext())
-            {
-              Bin bin = (TimeFrequencyBins.Bin) iter2.next();
-              xData[ctr] = new Date(bin.getLowerVal());
-              yData[ctr++] = bin.getFreqVal();
-              xData[ctr] = new Date(bin.getUpperVal());
-              yData[ctr++] = bin.getFreqVal();
-            }
-
-            newSeries.setXDateSeries(xData);
-            newSeries.setYSeries(yData);
-
-            newSeries.enableStack(true);
-            newSeries.enableArea(true);
-
-            // adjust the axis range
-            chart.getAxisSet().adjustRange();
-            IAxis xAxis = chart.getAxisSet().getXAxis(0);
-            xAxis.enableCategory(false);
-
-            // set the y axis min to be zero
-            Range yRange = chart.getAxisSet().getYAxis(0).getRange();
-            chart.getAxisSet().getYAxis(0).setRange(new Range(0, yRange.upper));
-
-            chart.redraw();
-          }
+          Bin bin = (TimeFrequencyBins.Bin) iter2.next();
+          xData[ctr] = new Date(bin.getLowerVal());
+          yData[ctr++] = bin.getFreqVal();
+          xData[ctr] = new Date(bin.getUpperVal());
+          yData[ctr++] = bin.getFreqVal();
         }
+
+        newSeries.setXDateSeries(xData);
+        newSeries.setYSeries(yData);
+
+        newSeries.enableStack(true);
+        newSeries.enableArea(true);
+
+        // adjust the axis range
+        chart.getAxisSet().adjustRange();
+        IAxis xAxis = chart.getAxisSet().getXAxis(0);
+        xAxis.enableCategory(false);
+
+        // set the y axis min to be zero
+        Range yRange = chart.getAxisSet().getYAxis(0).getRange();
+        chart.getAxisSet().getYAxis(0).setRange(new Range(0, yRange.upper));
+
+        chart.redraw();
       }
     }
   }

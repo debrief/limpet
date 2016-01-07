@@ -72,7 +72,7 @@ public class UnitConversionOperation implements IOperation<ICollection>
     boolean allQuantity = aTests.allQuantity(selection);
     boolean sameDimension = false;
     boolean sameUnits = true;
-    if ((selection.size() > 0) && (allQuantity))
+    if (selection.size() > 0 && allQuantity)
     {
       Unit<?> units = ((IQuantityCollection<?>) selection.get(0)).getUnits();
       sameDimension = units.getDimension().equals(targetUnit.getDimension());
@@ -83,7 +83,7 @@ public class UnitConversionOperation implements IOperation<ICollection>
       // they're already in the same units
       sameUnits = units.equals(targetUnit);
     }
-    return (singleSeries && allQuantity && sameDimension && !sameUnits);
+    return singleSeries && allQuantity && sameDimension && !sameUnits;
   }
 
   public class ConvertQuanityValues extends AbstractCommand<ICollection>

@@ -127,20 +127,17 @@ public class CollectionPropertySource implements IPropertySource
           rangeDescriptor.setCategory("Metadata");
           dList.add(rangeDescriptor);
         }
-        else if (coll instanceof NonTemporal.Location)
+        else if (coll instanceof NonTemporal.Location && coll.size() == 1)
         {
-          if (coll.size() == 1)
-          {
-            final PropertyDescriptor latDescriptor =
-                new TextPropertyDescriptor(PROPERTY_LOC_LAT, "Latitude");
-            latDescriptor.setCategory("Value");
-            dList.add(latDescriptor);
+          final PropertyDescriptor latDescriptor =
+              new TextPropertyDescriptor(PROPERTY_LOC_LAT, "Latitude");
+          latDescriptor.setCategory("Value");
+          dList.add(latDescriptor);
 
-            final PropertyDescriptor longDescriptor =
-                new TextPropertyDescriptor(PROPERTY_LOC_LONG, "Longitude");
-            longDescriptor.setCategory("Value");
-            dList.add(longDescriptor);
-          }
+          final PropertyDescriptor longDescriptor =
+              new TextPropertyDescriptor(PROPERTY_LOC_LONG, "Longitude");
+          longDescriptor.setCategory("Value");
+          dList.add(longDescriptor);
         }
       }
 
@@ -234,7 +231,7 @@ public class CollectionPropertySource implements IPropertySource
     }
     else if (prop.equals(PROPERTY_LOC_LAT))
     {
-      if ((coll.size() > 0) && (coll instanceof NonTemporal.Location))
+      if (coll.size() > 0 && coll instanceof NonTemporal.Location)
       {
         NonTemporal.Location locColl = (Location) coll;
         Geometry loc = locColl.getValues().iterator().next();
@@ -242,9 +239,9 @@ public class CollectionPropertySource implements IPropertySource
         return "" + point.getDirectPosition().getY();
       }
     }
-    else if (prop.equals(PROPERTY_LOC_LONG))
+    else if (prop.equals(PROPERTY_LOC_LONG)) 
     {
-      if ((coll.size() > 0) && (coll instanceof NonTemporal.Location))
+      if (coll.size() > 0 && coll instanceof NonTemporal.Location)
       {
         NonTemporal.Location locColl = (Location) coll;
         Geometry loc = locColl.getValues().iterator().next();
@@ -262,11 +259,7 @@ public class CollectionPropertySource implements IPropertySource
     @SuppressWarnings("unchecked")
     final IQuantityCollection<Quantity> tt =
         (IQuantityCollection<Quantity>) _collection.getCollection();
-    if (tt instanceof IQuantityCollection)
-    {
-      IQuantityCollection<Quantity> iq = (IQuantityCollection<Quantity>) tt;
-      res = iq.getValues().iterator().next();
-    }
+    res = tt.getValues().iterator().next();
 
     return res;
   }
@@ -410,8 +403,8 @@ public class CollectionPropertySource implements IPropertySource
               {
                 Unit<?> collUnits = tt.getUnits();
                 QuantityRange newR =
-                    new QuantityRange(Measure.valueOf(minV, collUnits),
-                        Measure.valueOf(maxV, collUnits));
+                    new QuantityRange(Measure.valueOf(minV, collUnits), Measure
+                        .valueOf(maxV, collUnits));
                 tt.setRange(newR);
               }
             }

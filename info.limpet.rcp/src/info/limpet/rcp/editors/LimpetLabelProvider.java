@@ -86,21 +86,21 @@ public class LimpetLabelProvider extends LabelProvider
 					res = Activator.getImageFromRegistry(Activator
 							.getImageDescriptor("icons/density.png"));
 				}
-				else if (dim.equals(SI.HERTZ))
-				{
-					res = Activator.getImageFromRegistry(Activator
-							.getImageDescriptor("icons/frequency.png"));
-				}
 				else if (dim.equals(Dimension.TIME))
 				{
 					res = Activator.getImageFromRegistry(Activator
 							.getImageDescriptor("icons/time.png"));
 				}
-				else if (dim.equals(Dimensionless.UNIT))
+				else if (dim.equals(Dimensionless.UNIT.getDimension()))
 				{
 					res = Activator.getImageFromRegistry(Activator
 							.getImageDescriptor("icons/numbers.png"));
 				}
+        else if (dim.equals(SI.HERTZ.getDimension()))
+        {
+          res = Activator.getImageFromRegistry(Activator
+              .getImageDescriptor("icons/frequency.png"));
+        }
 				else if (dim.equals(Dimension.LENGTH.divide(Dimension.TIME)))
 				{
 					res = Activator.getImageFromRegistry(Activator

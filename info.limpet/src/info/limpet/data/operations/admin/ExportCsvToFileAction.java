@@ -72,13 +72,11 @@ public class ExportCsvToFileAction implements IOperation<IStoreItem>
           return;
         }
         File file = new File(result);
-        if (file.exists())
+        if (file.exists()
+            && !getContext().openQuestion("Overwrite '" + result + "'?",
+                "Are you sure you want to overwrite '" + result + "'?"))
         {
-          if (!getContext().openQuestion("Overwrite '" + result + "'?",
-              "Are you sure you want to overwrite '" + result + "'?"))
-          {
-            return;
-          }
+          return;
         }
         FileOutputStream fop = null;
         try
@@ -152,7 +150,7 @@ public class ExportCsvToFileAction implements IOperation<IStoreItem>
 
   private boolean appliesTo(List<IStoreItem> selection)
   {
-    return (selection.size() == 1 && selection.get(0) instanceof ICollection);
+    return selection.size() == 1 && selection.get(0) instanceof ICollection;
   }
 
 }

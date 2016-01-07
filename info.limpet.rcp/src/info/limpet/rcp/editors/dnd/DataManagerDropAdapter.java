@@ -53,7 +53,7 @@ public class DataManagerDropAdapter extends ViewerDropAdapter
   public boolean performDrop(Object data)
   {
     if (!(data instanceof String[]) && !(data instanceof List[])
-        && (!(data instanceof String)))
+        && !(data instanceof String))
     {
       return false;
     }
@@ -182,7 +182,7 @@ public class DataManagerDropAdapter extends ViewerDropAdapter
   public boolean validateDrop(Object target, int operation,
       TransferData transferType)
   {
-    boolean validTarget = (target == null) || (target instanceof GroupWrapper);
+    boolean validTarget = target == null || target instanceof GroupWrapper;
 
     return FileTransfer.getInstance().isSupportedType(transferType)
         || TextTransfer.getInstance().isSupportedType(transferType)

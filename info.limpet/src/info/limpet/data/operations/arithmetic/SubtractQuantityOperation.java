@@ -47,7 +47,7 @@ public class SubtractQuantityOperation<Q extends Quantity> extends
           getATests().allTemporal(selection)
               || getATests().allEqualLengthOrSingleton(selection);
       boolean equalDimensions = getATests().allEqualDimensions(selection);
-      return (allQuantity && suitableLength && equalDimensions);
+      return allQuantity && suitableLength && equalDimensions;
     }
     else
     {

@@ -63,7 +63,7 @@ public class TestAnalysis extends TestCase
 //		assertEquals("enough titles", 0, tList.size());
 //		assertEquals("enough values", 0, tList.size());
 		
-		outList("Quantity descriptive", tList, vList);
+		outList(tList, vList);
 
 	}
 	
@@ -102,7 +102,7 @@ public class TestAnalysis extends TestCase
 //		assertEquals("enough titles", 1, tList.size());
 //		assertEquals("enough values", 1, vList.size());
 		
-		outList("Object descriptive", tList, vList);
+		outList(tList, vList);
 	}
 	
 	public void testTimeFrequencyStats()
@@ -141,10 +141,10 @@ public class TestAnalysis extends TestCase
 //		assertEquals("enough titles", 1, tList.size());
 //		assertEquals("enough values", 1, vList.size());
 		
-		outList("Object descriptive", tList, vList);
+		outList(tList, vList);
 	}
 	
-	private void outList(String title, List<String> list, List<String> values)
+	private void outList(List<String> list, List<String> values)
 	{
 		System.out.println("================");
 		Iterator<String> tIter = list.iterator();

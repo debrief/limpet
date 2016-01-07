@@ -227,7 +227,7 @@ public class TestOperations extends TestCase
     // the units for this measurement
     Unit<Velocity> kmh = KILO(METRE).divide(HOUR).asType(Velocity.class);
     Unit<Velocity> kmm = KILO(METRE).divide(MINUTE).asType(Velocity.class);
-    Unit<Length> m = (METRE).asType(Length.class);
+    Unit<Length> m = METRE.asType(Length.class);
 
     // the target collection
     QuantityCollection<Velocity> speedGood1 =

@@ -334,7 +334,7 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor
       private boolean currentHighContrast = Display.getCurrent()
           .getHighContrast();
 
-      public void handleEvent(org.eclipse.swt.widgets.Event event)
+      public void handleEvent(Event event)
       {
         if (Display.getCurrent().getHighContrast() == currentHighContrast)
         {

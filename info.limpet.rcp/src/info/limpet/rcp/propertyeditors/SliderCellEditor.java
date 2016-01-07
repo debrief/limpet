@@ -103,7 +103,7 @@ public class SliderCellEditor extends CellEditor
     Object res = null;
     if (_theSlider != null)
     {
-      res = new Integer(_theSlider.getSelection()).toString();
+      res = _theSlider.getSelection() + "";
     }
     return res;
   }

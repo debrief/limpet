@@ -25,6 +25,7 @@ import info.limpet.ITemporalQuantityCollection.InterpMethod;
 import info.limpet.data.impl.TemporalQuantityCollection;
 import info.limpet.data.impl.samples.StockTypes.ILocations;
 import info.limpet.data.impl.samples.StockTypes.NonTemporal;
+import info.limpet.data.impl.samples.StockTypes.NonTemporal.Location;
 import info.limpet.data.impl.samples.TemporalLocation;
 import info.limpet.data.store.InMemoryStore.StoreGroup;
 
@@ -52,7 +53,8 @@ public class CollectionComplianceTests
    * @param num
    * @return
    */
-  public boolean exactNumber(final List<? extends IStoreItem> selection, final int num)
+  public boolean exactNumber(final List<? extends IStoreItem> selection,
+      final int num)
   {
     return selection.size() == num;
   }
@@ -191,12 +193,14 @@ public class CollectionComplianceTests
   }
 
   /**
-   * determine if these datasets are suited to a temporal operation - where we interpolate time values
+   * determine if these datasets are suited to a temporal operation - where we interpolate time
+   * values
    * 
    * @param selection
    * @return
    */
-  public boolean suitableForTimeInterpolation(List<? extends IStoreItem> selection)
+  public boolean suitableForTimeInterpolation(
+      List<? extends IStoreItem> selection)
   {
     // are suitable
     boolean suitable = selection.size() >= 2;
@@ -248,7 +252,7 @@ public class CollectionComplianceTests
       }
 
     }
-    return suitable && (startT != null);
+    return suitable && startT != null;
   }
 
   /**
@@ -508,7 +512,8 @@ public class CollectionComplianceTests
    * @param selection
    * @return true/false
    */
-  public boolean allEqualLengthOrSingleton(List<? extends IStoreItem> selection)
+  public boolean
+      allEqualLengthOrSingleton(List<? extends IStoreItem> selection)
   {
     // are they all temporal?
     boolean allValid = true;
@@ -535,7 +540,7 @@ public class CollectionComplianceTests
         }
         else
         {
-          if ((thisSize != size) && (thisSize != 1))
+          if (thisSize != size && thisSize != 1)
           {
             // oops, no
             allValid = false;
@@ -651,7 +656,8 @@ public class CollectionComplianceTests
    *          one or more group objects
    * @return yes/no
    */
-  public boolean hasNumberOfTracks(List<IStoreItem> selection, final int number)
+  public boolean
+      hasNumberOfTracks(List<IStoreItem> selection, final int number)
   {
     int count = 0;
     Iterator<? extends IStoreItem> iter = selection.iterator();
@@ -683,14 +689,10 @@ public class CollectionComplianceTests
         }
 
         // special case: we can miss out course & speed if there's just a single
-        // stationery location
-        if (!valid)
+        // stationery location, and there's a single location
+        if (!valid && hasSingletonLocation(kids))
         {
-          // is there a singleton location?
-          if (hasSingletonLocation(kids))
-          {
-            valid = true;
-          }
+          valid = true;
         }
       }
       else
@@ -906,8 +908,8 @@ public class CollectionComplianceTests
    *          dimension we need to be present
    * @return yes/no
    */
-  public IQuantityCollection<?> collectionWith(List<IStoreItem> kids, Dimension dimension,
-      final boolean walkTree)
+  public IQuantityCollection<?> collectionWith(List<IStoreItem> kids,
+      Dimension dimension, final boolean walkTree)
   {
     IQuantityCollection<?> res = null;
 
@@ -993,7 +995,8 @@ public class CollectionComplianceTests
     return longest;
   }
 
-  public IBaseTemporalCollection getLongestTemporalCollections(List<IStoreItem> selection)
+  public IBaseTemporalCollection getLongestTemporalCollections(
+      List<IStoreItem> selection)
   {
     // find the longest time series.
     Iterator<IStoreItem> iter = selection.iterator();
@@ -1002,7 +1005,8 @@ public class CollectionComplianceTests
     while (iter.hasNext())
     {
       ICollection thisC = (ICollection) iter.next();
-      if (thisC.isTemporal() && (thisC.isQuantity() || thisC instanceof ILocations))
+      if (thisC.isTemporal()
+          && (thisC.isQuantity() || thisC instanceof ILocations))
       {
         IBaseTemporalCollection tqc = (IBaseTemporalCollection) thisC;
 
@@ -1068,23 +1072,20 @@ public class CollectionComplianceTests
 
       // allow for empty value. sometimes our logic allows null objects for some
       // data types
-      if (iCollection != null)
+      if (iCollection != null && iCollection.isTemporal())
       {
-        if (iCollection.isTemporal())
+        IBaseTemporalCollection timeC = (IBaseTemporalCollection) iCollection;
+        // check it has some data
+        if (timeC.getTimes().size() > 0)
         {
-          IBaseTemporalCollection timeC = (IBaseTemporalCollection) iCollection;
-          // check it has some data
-          if (timeC.getTimes().size() > 0)
+          if (res == null)
           {
-            if (res == null)
-            {
-              res = new TimePeriod(timeC.start(), timeC.finish());
-            }
-            else
-            {
-              res.setStartTime(Math.max(res.getStartTime(), timeC.start()));
-              res.setEndTime(Math.min(res.getEndTime(), timeC.finish()));
-            }
+            res = new TimePeriod(timeC.start(), timeC.finish());
+          }
+          else
+          {
+            res.setStartTime(Math.max(res.getStartTime(), timeC.start()));
+            res.setEndTime(Math.min(res.getEndTime(), timeC.finish()));
           }
         }
       }
@@ -1094,8 +1095,8 @@ public class CollectionComplianceTests
   }
 
   /**
-   * find the best collection to use as a time-base. Which collection has the most values within the specified
-   * time period?
+   * find the best collection to use as a time-base. Which collection has the most values within the
+   * specified time period?
    * 
    * @param period
    *          (optional) period in which we count valid times
@@ -1103,7 +1104,8 @@ public class CollectionComplianceTests
    *          list of datasets we're examining
    * @return most suited collection
    */
-  public IBaseTemporalCollection getOptimalTimes(TimePeriod period, Collection<ICollection> items)
+  public IBaseTemporalCollection getOptimalTimes(TimePeriod period,
+      Collection<ICollection> items)
   {
     IBaseTemporalCollection res = null;
     long resScore = 0;
@@ -1115,27 +1117,24 @@ public class CollectionComplianceTests
 
       // occasionally we may store a null dataset, since it is optional in some
       // circumstances
-      if (iCollection != null)
+      if (iCollection != null && iCollection.isTemporal())
       {
-        if (iCollection.isTemporal())
+        IBaseTemporalCollection timeC = (IBaseTemporalCollection) iCollection;
+        Iterator<Long> times = timeC.getTimes().iterator();
+        int score = 0;
+        while (times.hasNext())
         {
-          IBaseTemporalCollection timeC = (IBaseTemporalCollection) iCollection;
-          Iterator<Long> times = timeC.getTimes().iterator();
-          int score = 0;
-          while (times.hasNext())
+          long long1 = (long) times.next();
+          if (period == null || period.contains(long1))
           {
-            long long1 = (long) times.next();
-            if ((period == null) || period.contains(long1))
-            {
-              score++;
-            }
+            score++;
           }
+        }
 
-          if ((res == null) || (score > resScore))
-          {
-            res = timeC;
-            resScore = score;
-          }
+        if (res == null || score > resScore)
+        {
+          res = timeC;
+          resScore = score;
         }
       }
     }
@@ -1153,7 +1152,8 @@ public class CollectionComplianceTests
    * @return
    */
   @SuppressWarnings("unchecked")
-  public double valueAt(ICollection iCollection, long thisTime, Unit<?> requiredUnits)
+  public double valueAt(ICollection iCollection, long thisTime,
+      Unit<?> requiredUnits)
   {
     Measurable<Quantity> res;
 
@@ -1174,8 +1174,11 @@ public class CollectionComplianceTests
 
       if (iCollection.isTemporal())
       {
-        TemporalQuantityCollection<?> tQ = (TemporalQuantityCollection<?>) iCollection;
-        res = (Measurable<Quantity>) tQ.interpolateValue(thisTime, InterpMethod.Linear);
+        TemporalQuantityCollection<?> tQ =
+            (TemporalQuantityCollection<?>) iCollection;
+        res =
+            (Measurable<Quantity>) tQ.interpolateValue(thisTime,
+                InterpMethod.Linear);
       }
       else
       {
@@ -1221,7 +1224,8 @@ public class CollectionComplianceTests
     }
     else
     {
-      NonTemporal.Location tLoc = (info.limpet.data.impl.samples.StockTypes.NonTemporal.Location) iCollection;
+      NonTemporal.Location tLoc =
+          (Location) iCollection;
       if (tLoc.size() > 0)
       {
         res = tLoc.getValues().iterator().next();
@@ -1248,7 +1252,7 @@ public class CollectionComplianceTests
 
     public boolean contains(long time)
     {
-      return ((getStartTime() <= time) && (getEndTime() >= time));
+      return getStartTime() <= time && getEndTime() >= time;
     }
 
     public long getStartTime()

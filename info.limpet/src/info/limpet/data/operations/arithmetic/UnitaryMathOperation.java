@@ -79,7 +79,7 @@ public abstract class UnitaryMathOperation implements IOperation<ICollection>
     boolean notEmpty = getATests().nonEmpty(selection);
     boolean allQuantity = getATests().allQuantity(selection);
 
-    return (notEmpty && allQuantity);
+    return notEmpty && allQuantity;
   }
 
   public CollectionComplianceTests getATests()
@@ -101,7 +101,7 @@ public abstract class UnitaryMathOperation implements IOperation<ICollection>
     protected String getOutputName()
     {
       return getContext().getInput("Calculate " + super.getName(),
-          NEW_DATASET_MESSAGE, getName() + "(" + super.getSubjectList() + ")");
+          NEW_DATASET_MESSAGE, super.getName() + "(" + super.getSubjectList() + ")");
     }
 
     @Override

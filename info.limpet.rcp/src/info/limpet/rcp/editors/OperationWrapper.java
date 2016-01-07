@@ -49,7 +49,7 @@ public class OperationWrapper extends Action
 	{
 		Collection<ICommand<IStoreItem>> ops = limpetAction.actionsFor(
 				provider.getSelection(), store, context);
-		if ((ops != null) && (ops.size() == 1))
+		if (ops != null && ops.size() == 1)
 		{
 			ICommand<IStoreItem> first = ops.iterator().next();
 			first.execute();

@@ -201,9 +201,11 @@ public class DataManagerEditor extends EditorPart
                           closeEditor();
                         }
                       }
+                      boolean isResourceChanged = delta.getKind() == IResourceDelta.CHANGED;
+                      boolean deltaIsContent = (delta
+                          .getFlags() & IResourceDelta.CONTENT) != 0;
                       if (resource.equals(file)
-                          && (delta.getKind() == IResourceDelta.CHANGED && (delta
-                              .getFlags() & IResourceDelta.CONTENT) != 0))
+                          && (isResourceChanged && deltaIsContent))
                       {
                         reload();
                       }

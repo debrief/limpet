@@ -112,6 +112,7 @@ public abstract class TwoTrackOperation implements IOperation<IStoreItem>
     /**
      * wrap the actual operation. We're doing this since we need to separate it from the core
      * "execute" operation in order to support dynamic updates
+     * 
      * @param unit
      */
     private void performCalc()
@@ -156,14 +157,14 @@ public abstract class TwoTrackOperation implements IOperation<IStoreItem>
         {
           long thisTime = (long) tIter.next();
 
-          if ((thisTime >= period.getStartTime())
-              && (thisTime <= period.getEndTime()))
+          if (thisTime >= period.getStartTime()
+              && thisTime <= period.getEndTime())
           {
 
             Geometry locA = locationFor(track1, thisTime);
             Geometry locB = locationFor(track2, thisTime);
 
-            if ((locA != null) && (locB != null))
+            if (locA != null && locB != null)
             {
               calcAndStore(calc, (Point) locA, (Point) locB, thisTime);
             }
@@ -244,9 +245,10 @@ public abstract class TwoTrackOperation implements IOperation<IStoreItem>
         getATests().suitableForTimeInterpolation(selection);
     boolean onlyTwo = getATests().exactNumber(selection, 2);
     boolean hasContents = getATests().allHaveData(selection);
+    boolean equalOrInterp = equalLength || canInterpolate;
+    boolean allLocation = getATests().allLocation(selection);
 
-    return (nonEmpty && (equalLength || canInterpolate) && onlyTwo
-        && getATests().allLocation(selection) && hasContents);
+    return nonEmpty && equalOrInterp && onlyTwo && allLocation && hasContents;
   }
 
   public CollectionComplianceTests getATests()

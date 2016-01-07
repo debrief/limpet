@@ -19,66 +19,69 @@ import info.limpet.IContext;
 public class MockContext implements IContext
 {
 
-	@Override
-	public String getInput(String title, String description, String defaultText)
-	{
-		return defaultText;
-	}
+  @Override
+  public String getInput(String title, String description, String defaultText)
+  {
+    return defaultText;
+  }
 
-	@Override
-	public void logError(Status status, String message, Exception e)
-	{
-		System.err.println("Logging status:" + status + " message:" + message);
-		e.printStackTrace();
-	}
+  @Override
+  public void logError(Status status, String message, Exception e)
+  {
+    System.err.println("Logging status:" + status + " message:" + message);
+    if (e != null)
+    {
+      e.printStackTrace();
+    }
+  }
 
-	@Override
-	public void openWarning(String title, String message)
-	{
-		// TODO Auto-generated method stub
-		
-	}
+  @Override
+  public void openWarning(String title, String message)
+  {
+    // TODO Auto-generated method stub
 
-	@Override
-	public void openInformation(String title, String message)
-	{
-		// TODO Auto-generated method stub
-		
-	}
+  }
 
-	@Override
-	public String getCsvFilename()
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
+  @Override
+  public void openInformation(String title, String message)
+  {
+    // TODO Auto-generated method stub
 
-	@Override
-	public boolean openQuestion(String title, String message)
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
+  }
 
-	@Override
-	public void openError(String title, String message)
-	{
-		// TODO Auto-generated method stub
-		
-	}
+  @Override
+  public String getCsvFilename()
+  {
+    // TODO Auto-generated method stub
+    return null;
+  }
 
-	@Override
-	public void log(Exception e)
-	{
-		// TODO Auto-generated method stub
-		
-	}
+  @Override
+  public boolean openQuestion(String title, String message)
+  {
+    // TODO Auto-generated method stub
+    return false;
+  }
 
-	@Override
-	public void placeOnClipboard(String text)
-	{
-		// TODO Auto-generated method stub
-		
-	}
+  @Override
+  public void openError(String title, String message)
+  {
+    // TODO Auto-generated method stub
+
+  }
+
+  @Override
+  public void log(Exception e)
+  {
+    // TODO Auto-generated method stub
+
+  }
+
+  @Override
+  public void placeOnClipboard(String text)
+  {
+    // TODO Auto-generated method stub
+
+  }
 
 }

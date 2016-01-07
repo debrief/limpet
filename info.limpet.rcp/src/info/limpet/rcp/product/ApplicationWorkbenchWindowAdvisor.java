@@ -107,15 +107,13 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor
   {
     public void propertyChanged(Object source, int propId)
     {
-      if (propId == IWorkbenchPartConstants.PROP_TITLE)
+      if (propId == IWorkbenchPartConstants.PROP_TITLE
+          && lastActiveEditor != null)
       {
-        if (lastActiveEditor != null)
+        String newTitle = lastActiveEditor.getTitle();
+        if (!lastEditorTitle.equals(newTitle))
         {
-          String newTitle = lastActiveEditor.getTitle();
-          if (!lastEditorTitle.equals(newTitle))
-          {
-            recomputeTitle();
-          }
+          recomputeTitle();
         }
       }
     }
@@ -336,8 +334,8 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor
         updateTitle(false);
       }
     });
-    configurer.getWindow().getPartService()
-        .addPartListener(new IPartListener2()
+    configurer.getWindow().getPartService().addPartListener(
+        new IPartListener2()
         {
           public void partActivated(IWorkbenchPartReference ref)
           {
@@ -453,7 +451,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor
       {
         label = currentPage.getLabel();
       }
-      if (label != null && !label.equals("")) 
+      if (label != null && !label.equals(""))
       { //$NON-NLS-1$
         title =
             NLS.bind(IDEWorkbenchMessages.WorkbenchWindow_shellTitle, label,
@@ -471,8 +469,8 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor
 
     // Bug 284447: Prepend workspace name to the title
     String workspaceName =
-        IDEWorkbenchPlugin.getDefault().getPreferenceStore()
-            .getString(IDEInternalPreferences.WORKSPACE_NAME);
+        IDEWorkbenchPlugin.getDefault().getPreferenceStore().getString(
+            IDEInternalPreferences.WORKSPACE_NAME);
     if (workspaceName != null && workspaceName.length() > 0)
     {
       title =
@@ -671,8 +669,8 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor
    */
   private void openWelcomeEditors(IWorkbenchWindow window)
   {
-    if (IDEWorkbenchPlugin.getDefault().getPreferenceStore()
-        .getBoolean(IDEInternalPreferences.WELCOME_DIALOG))
+    if (IDEWorkbenchPlugin.getDefault().getPreferenceStore().getBoolean(
+        IDEInternalPreferences.WELCOME_DIALOG))
     {
       // show the welcome page for the product the first time the
       // workbench opens
@@ -689,8 +687,8 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor
         return;
       }
 
-      IDEWorkbenchPlugin.getDefault().getPreferenceStore()
-          .setValue(IDEInternalPreferences.WELCOME_DIALOG, false);
+      IDEWorkbenchPlugin.getDefault().getPreferenceStore().setValue(
+          IDEInternalPreferences.WELCOME_DIALOG, false);
       openWelcomeEditor(window, new WelcomeEditorInput(productInfo), null);
     }
     else
@@ -800,8 +798,8 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor
       catch (WorkbenchException e)
       {
         ErrorDialog.openError(win.getShell(),
-            IDEWorkbenchMessages.Problems_Opening_Page, e.getMessage(),
-            e.getStatus());
+            IDEWorkbenchMessages.Problems_Opening_Page, e.getMessage(), e
+                .getStatus());
       }
     }
     if (page == null)
@@ -819,8 +817,8 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor
       {
         ErrorDialog.openError(win.getShell(),
             IDEWorkbenchMessages.Workbench_openEditorErrorDialogTitle,
-            IDEWorkbenchMessages.Workbench_openEditorErrorDialogMessage,
-            e.getStatus());
+            IDEWorkbenchMessages.Workbench_openEditorErrorDialogMessage, e
+                .getStatus());
         return;
       }
     }
@@ -843,10 +841,9 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor
     {
       ErrorDialog.openError(win.getShell(),
           IDEWorkbenchMessages.Workbench_openEditorErrorDialogTitle,
-          IDEWorkbenchMessages.Workbench_openEditorErrorDialogMessage,
-          e.getStatus());
+          IDEWorkbenchMessages.Workbench_openEditorErrorDialogMessage, e
+              .getStatus());
     }
-    return;
   }
 
   /*

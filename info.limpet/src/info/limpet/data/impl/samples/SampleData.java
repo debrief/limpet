@@ -111,7 +111,7 @@ public class SampleData
 
 		for (int i = 1; i <= count; i++)
 		{
-			thisTime = new Date().getTime() + i * 500 * 60;
+			thisTime = new Date().getTime() + i * 500L * 60;
 
 			final long earlyTime = thisTime - (1000 * 60 * 60 * 24 * 365 * 20);
 

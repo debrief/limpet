@@ -111,7 +111,7 @@ public class CopyCsvToClipboardAction implements IOperation<IStoreItem>
 
   private boolean appliesTo(List<IStoreItem> selection)
   {
-    return (selection.size() == 1 && selection.get(0) instanceof ICollection);
+    return selection.size() == 1 && selection.get(0) instanceof ICollection;
   }
 
 }

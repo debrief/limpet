@@ -55,7 +55,7 @@ public class DeleteCollectionOperation implements IOperation<IStoreItem>
 
 	private boolean appliesTo(List<IStoreItem> selection)
 	{
-		return (selection.size() > 0);
+		return selection.size() > 0;
 	}
 
 	public static class DeleteCollection extends AbstractCommand<IStoreItem>

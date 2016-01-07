@@ -516,7 +516,7 @@ public class TestGeotoolsGeometry extends TestCase
 		// populate the datasets
 		for (int i = 10000; i <= 90000; i += 5000)
 		{
-			double j = Math.toRadians(i / 1000);
+			double j = Math.toRadians(i / 1000d);
 
 			loc1.add(
 					i,

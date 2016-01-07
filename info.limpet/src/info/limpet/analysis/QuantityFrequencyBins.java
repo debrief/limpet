@@ -151,7 +151,7 @@ public abstract class QuantityFrequencyBins extends CoreAnalysis
     List<String> values = new ArrayList<String>();
 
     // check compatibility
-    if ((appliesTo(selection)) && (selection.size() == 1))
+    if (appliesTo(selection) && selection.size() == 1)
     {
       // ok, let's go for it.
       for (Iterator<IStoreItem> iter = selection.iterator(); iter.hasNext();)
@@ -160,7 +160,7 @@ public abstract class QuantityFrequencyBins extends CoreAnalysis
         @SuppressWarnings("unchecked")
         IQuantityCollection<Quantity> o = (IQuantityCollection<Quantity>) thisC;
 
-        if ((thisC.size() > 1) && (thisC.size() < MAX_SIZE))
+        if (thisC.size() > 1 && thisC.size() < MAX_SIZE)
         {
           BinnedData res = doBins(o);
 

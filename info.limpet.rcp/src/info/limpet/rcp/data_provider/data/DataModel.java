@@ -271,15 +271,11 @@ public class DataModel implements ITreeContentProvider
           // see if it has predecessors or successors
           final CollectionWrapper cw = (CollectionWrapper) element;
 
-          final IStoreItem item = cw.getCollection();
-          if (item instanceof ICollection)
-          {
-            ICollection coll = (ICollection) item;
-            final boolean hasDependents =
-                ((coll.getDependents() != null) && (coll.getDependents().size() > 0));
-            final boolean hasPrecedents = coll.getPrecedent() != null;
-            res = (hasDependents || hasPrecedents);
-          }
+          final ICollection coll = cw.getCollection();
+          final boolean hasDependents =
+              coll.getDependents() != null && coll.getDependents().size() > 0;
+          final boolean hasPrecedents = coll.getPrecedent() != null;
+          res = hasDependents || hasPrecedents;
         }
         else if (element instanceof CommandWrapper)
         {
@@ -287,8 +283,7 @@ public class DataModel implements ITreeContentProvider
           final CommandWrapper cw = (CommandWrapper) element;
           final ICommand<?> comm = cw.getCommand();
 
-          res =
-              ((comm.getInputs().size() > 0) || (comm.getOutputs().size() > 0));
+          res = comm.getInputs().size() > 0 || comm.getOutputs().size() > 0;
         }
         else if (element instanceof GroupWrapper)
         {

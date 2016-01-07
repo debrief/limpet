@@ -66,7 +66,7 @@ public class SimpleMovingAverageOperation implements IOperation<ICollection>
 	{
 		boolean singleSeries = selection.size() == 1;
 		boolean allQuantity = aTests.allQuantity(selection);
-		return (singleSeries && allQuantity);
+		return singleSeries && allQuantity;
 	}
 
 	public static class SimpleMovingAverageCommand extends AbstractCommand<ICollection>

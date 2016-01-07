@@ -67,7 +67,7 @@ public class AddQuantityOperation<Q extends Quantity> extends
     boolean equalDimensions = getATests().allEqualDimensions(selection);
     boolean equalUnits = getATests().allEqualUnits(selection);
 
-    return (nonEmpty && allQuantity && suitableLength && equalDimensions && equalUnits);
+    return nonEmpty && allQuantity && suitableLength && equalDimensions && equalUnits;
   }
 
   public class AddQuantityValues extends CoreQuantityCommand

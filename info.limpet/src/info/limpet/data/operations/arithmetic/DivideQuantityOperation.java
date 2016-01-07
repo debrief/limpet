@@ -40,12 +40,14 @@ import javax.measure.unit.Unit;
 
 public class DivideQuantityOperation implements IOperation<IStoreItem>
 {
-  private final CollectionComplianceTests aTests = new CollectionComplianceTests();
+  private final CollectionComplianceTests aTests =
+      new CollectionComplianceTests();
 
-  public Collection<ICommand<IStoreItem>> actionsFor(List<IStoreItem> selection, IStore destination,
-      IContext context)
+  public Collection<ICommand<IStoreItem>> actionsFor(
+      List<IStoreItem> selection, IStore destination, IContext context)
   {
-    Collection<ICommand<IStoreItem>> res = new ArrayList<ICommand<IStoreItem>>();
+    Collection<ICommand<IStoreItem>> res =
+        new ArrayList<ICommand<IStoreItem>>();
 
     if (appliesTo(selection))
     {
@@ -63,11 +65,15 @@ public class DivideQuantityOperation implements IOperation<IStoreItem>
         longest = null;
       }
 
-      ICommand<IStoreItem> newC = new DivideQuantityValues("Divide " + item1.getName() + " by "
-          + item2.getName(), selection, item1, item2, destination, longest, context);
+      ICommand<IStoreItem> newC =
+          new DivideQuantityValues("Divide " + item1.getName() + " by "
+              + item2.getName(), selection, item1, item2, destination, longest,
+              context);
       res.add(newC);
-      newC = new DivideQuantityValues("Divide " + item2.getName() + " by " + item1.getName(), selection,
-          item2, item1, destination, longest, context);
+      newC =
+          new DivideQuantityValues("Divide " + item2.getName() + " by "
+              + item1.getName(), selection, item2, item1, destination, longest,
+              context);
       res.add(newC);
     }
 
@@ -78,16 +84,13 @@ public class DivideQuantityOperation implements IOperation<IStoreItem>
   {
     boolean res = false;
     // first check we have quantity data
-    if (aTests.exactNumber(selection, 2))
+    if (aTests.exactNumber(selection, 2) && aTests.allQuantity(selection))
     {
-      if (aTests.allQuantity(selection))
-      {
-        // ok, we have quantity data. See if we have series of the same
-        // length,
-        // or
-        // singletons
-        res = aTests.allTemporal(selection) || aTests.allEqualLengthOrSingleton(selection);
-      }
+      // ok, we have quantity data. See if we have series of the same
+      // length, or singletons
+      res =
+          aTests.allTemporal(selection)
+              || aTests.allEqualLengthOrSingleton(selection);
     }
 
     return res;
@@ -100,10 +103,12 @@ public class DivideQuantityOperation implements IOperation<IStoreItem>
     private IBaseTemporalCollection _timeProvider;
 
     @SuppressWarnings("unchecked")
-    public DivideQuantityValues(String title, List<IStoreItem> selection, ICollection item1,
-        ICollection item2, IStore store, IBaseTemporalCollection timeProvider, IContext context)
+    public DivideQuantityValues(String title, List<IStoreItem> selection,
+        ICollection item1, ICollection item2, IStore store,
+        IBaseTemporalCollection timeProvider, IContext context)
     {
-      super(title, "Divide provided series", store, false, false, selection, context);
+      super(title, "Divide provided series", store, false, false, selection,
+          context);
       _item1 = (IQuantityCollection<Quantity>) item1;
       _item2 = (IQuantityCollection<Quantity>) item2;
       _timeProvider = timeProvider;
@@ -178,20 +183,23 @@ public class DivideQuantityOperation implements IOperation<IStoreItem>
     }
 
     /**
-     * wrap the actual operation. We're doing this since we need to separate it from the core "execute"
-     * operation in order to support dynamic updates
+     * wrap the actual operation. We're doing this since we need to separate it from the core
+     * "execute" operation in order to support dynamic updates
+     * 
      * @param outputs
      */
     @SuppressWarnings("unchecked")
     private void performCalc(List<IStoreItem> outputs)
     {
-      IQuantityCollection<Quantity> target = (IQuantityCollection<Quantity>) outputs.iterator().next();
+      IQuantityCollection<Quantity> target =
+          (IQuantityCollection<Quantity>) outputs.iterator().next();
 
       // clear out the lists, first
       Iterator<IStoreItem> iter = outputs.iterator();
       while (iter.hasNext())
       {
-        IQuantityCollection<Quantity> qC = (IQuantityCollection<Quantity>) iter.next();
+        IQuantityCollection<Quantity> qC =
+            (IQuantityCollection<Quantity>) iter.next();
         qC.clearQuiet();
       }
 
@@ -209,13 +217,15 @@ public class DivideQuantityOperation implements IOperation<IStoreItem>
 
           if (_item1.size() == 1)
           {
-            thisValue = _item1.getValues().get(0).doubleValue((Unit<Quantity>) _item1.getUnits());
+            thisValue =
+                _item1.getValues().get(0).doubleValue(
+                    (Unit<Quantity>) _item1.getUnits());
           }
           else
           {
-            ITemporalQuantityCollection<Quantity> tqc = 
+            ITemporalQuantityCollection<Quantity> tqc =
                 (ITemporalQuantityCollection<Quantity>) _item1;
-            Measurable<Quantity> thisMeasure = 
+            Measurable<Quantity> thisMeasure =
                 tqc.interpolateValue(thisTime, InterpMethod.Linear);
             if (thisMeasure != null)
             {
@@ -229,12 +239,16 @@ public class DivideQuantityOperation implements IOperation<IStoreItem>
 
           if (_item2.size() == 1)
           {
-            otherValue = _item2.getValues().get(0).doubleValue((Unit<Quantity>) _item2.getUnits());
+            otherValue =
+                _item2.getValues().get(0).doubleValue(
+                    (Unit<Quantity>) _item2.getUnits());
           }
           else
           {
-            ITemporalQuantityCollection<Quantity> tqc = (ITemporalQuantityCollection<Quantity>) _item2;
-            Measurable<Quantity> thisMeasure = tqc.interpolateValue(thisTime, InterpMethod.Linear);
+            ITemporalQuantityCollection<Quantity> tqc =
+                (ITemporalQuantityCollection<Quantity>) _item2;
+            Measurable<Quantity> thisMeasure =
+                tqc.interpolateValue(thisTime, InterpMethod.Linear);
             if (thisMeasure != null)
             {
               otherValue = thisMeasure.doubleValue(_item2.getUnits());
@@ -248,7 +262,8 @@ public class DivideQuantityOperation implements IOperation<IStoreItem>
           // first value?
           runningTotal = thisValue / otherValue;
 
-          ITemporalQuantityCollection<?> itq = (ITemporalQuantityCollection<?>) target;
+          ITemporalQuantityCollection<?> itq =
+              (ITemporalQuantityCollection<?>) target;
           itq.add(thisTime, runningTotal);
         }
 
@@ -264,21 +279,29 @@ public class DivideQuantityOperation implements IOperation<IStoreItem>
           final double thisValue;
           if (_item1.size() == 1)
           {
-            thisValue = _item1.getValues().get(0).doubleValue((Unit<Quantity>) _item1.getUnits());
+            thisValue =
+                _item1.getValues().get(0).doubleValue(
+                    (Unit<Quantity>) _item1.getUnits());
           }
           else
           {
-            thisValue = _item1.getValues().get(j).doubleValue((Unit<Quantity>) _item1.getUnits());
+            thisValue =
+                _item1.getValues().get(j).doubleValue(
+                    (Unit<Quantity>) _item1.getUnits());
           }
 
           final double otherValue;
           if (_item2.size() == 1)
           {
-            otherValue = _item2.getValues().get(0).doubleValue((Unit<Quantity>) _item2.getUnits());
+            otherValue =
+                _item2.getValues().get(0).doubleValue(
+                    (Unit<Quantity>) _item2.getUnits());
           }
           else
           {
-            otherValue = _item2.getValues().get(j).doubleValue((Unit<Quantity>) _item2.getUnits());
+            otherValue =
+                _item2.getValues().get(j).doubleValue(
+                    (Unit<Quantity>) _item2.getUnits());
           }
 
           double res = thisValue / otherValue;
@@ -291,7 +314,8 @@ public class DivideQuantityOperation implements IOperation<IStoreItem>
     @Override
     protected String getOutputName()
     {
-      return getContext().getInput("Divide datasets", NEW_DATASET_MESSAGE, _item1 + " div by " + _item2);
+      return getContext().getInput("Divide datasets", NEW_DATASET_MESSAGE,
+          _item1 + " div by " + _item2);
     }
   }
 

@@ -14,19 +14,18 @@
  *****************************************************************************/
 package info.limpet.rcp.decorators;
 
+import info.limpet.ICollection;
+import info.limpet.ICommand;
+import info.limpet.rcp.Activator;
+import info.limpet.rcp.data_provider.data.CollectionWrapper;
+import info.limpet.rcp.data_provider.data.CommandWrapper;
+import info.limpet.rcp.data_provider.data.GroupWrapper;
+
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ILightweightLabelDecorator;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-
-import info.limpet.ICollection;
-import info.limpet.ICommand;
-import info.limpet.IStore.IStoreItem;
-import info.limpet.rcp.Activator;
-import info.limpet.rcp.data_provider.data.CollectionWrapper;
-import info.limpet.rcp.data_provider.data.CommandWrapper;
-import info.limpet.rcp.data_provider.data.GroupWrapper;
 
 public class LimpetDecorator implements ILightweightLabelDecorator
 {
@@ -129,23 +128,19 @@ public class LimpetDecorator implements ILightweightLabelDecorator
   protected void decorateWrapper(CollectionWrapper element,
       IDecoration decoration)
   {
-    final IStoreItem item = element.getCollection();
-    if (item instanceof ICollection)
-    {
-      ICollection coll = (ICollection) item;
-      boolean out = coll.getPrecedent() != null;
-      boolean in =
-          coll.getDependents() != null && coll.getDependents().size() > 0;
-      decorateInOut(decoration, in, out);
+    final ICollection coll = element.getCollection();
+    boolean out = coll.getPrecedent() != null;
+    boolean in =
+        coll.getDependents() != null && coll.getDependents().size() > 0;
+    decorateInOut(decoration, in, out);
 
-      if (coll.isTemporal())
-      {
-        decoration.addOverlay(TIME, IDecoration.BOTTOM_RIGHT);
-      }
-      if (coll.size() == 1)
-      {
-        decoration.addOverlay(SINGLE, IDecoration.BOTTOM_LEFT);
-      }
+    if (coll.isTemporal())
+    {
+      decoration.addOverlay(TIME, IDecoration.BOTTOM_RIGHT);
+    }
+    if (coll.size() == 1)
+    {
+      decoration.addOverlay(SINGLE, IDecoration.BOTTOM_LEFT);
     }
   }
 

@@ -36,100 +36,104 @@ import org.eclipse.ui.PlatformUI;
 
 public class ShowInNamedView implements IOperation<IStoreItem>
 {
-	private final CollectionComplianceTests aTests = new CollectionComplianceTests();
-	private final String theId;
-	private final String _title;
+  private final CollectionComplianceTests aTests =
+      new CollectionComplianceTests();
+  private final String theId;
+  private final String _title;
 
-	public ShowInNamedView(String title, String id)
-	{
-		_title = title;
-		theId = id;
-	}
+  public ShowInNamedView(String title, String id)
+  {
+    _title = title;
+    theId = id;
+  }
 
-	protected CollectionComplianceTests getTests()
-	{
-		return aTests;
-	}
+  protected CollectionComplianceTests getTests()
+  {
+    return aTests;
+  }
 
-	public Collection<ICommand<IStoreItem>> actionsFor(
-			List<IStoreItem> selection, IStore destination, IContext context)
-	{
-		Collection<ICommand<IStoreItem>> res = new ArrayList<ICommand<IStoreItem>>();
-		if (appliesTo(selection))
-		{
-			ICommand<IStoreItem> newC = new ShowInViewOperation(_title, selection,
-					theId, context);
-			res.add(newC);
-		}
+  public Collection<ICommand<IStoreItem>> actionsFor(
+      List<IStoreItem> selection, IStore destination, IContext context)
+  {
+    Collection<ICommand<IStoreItem>> res =
+        new ArrayList<ICommand<IStoreItem>>();
+    if (appliesTo(selection))
+    {
+      ICommand<IStoreItem> newC =
+          new ShowInViewOperation(_title, selection, theId, context);
+      res.add(newC);
+    }
 
-		return res;
-	}
+    return res;
+  }
 
-	protected boolean appliesTo(List<IStoreItem> selection)
-	{
-		return aTests.allCollections(selection) && aTests.nonEmpty(selection);
-	}
+  protected boolean appliesTo(List<IStoreItem> selection)
+  {
+    return aTests.allCollections(selection) && aTests.nonEmpty(selection);
+  }
 
-	public static class ShowInViewOperation extends AbstractCommand<IStoreItem>
-	{
+  public static class ShowInViewOperation extends AbstractCommand<IStoreItem>
+  {
 
-		private final String _id;
+    private final String _id;
 
-		public ShowInViewOperation(String title, List<IStoreItem> selection,
-				String id, IContext context)
-		{
-			super(title, "Show selection in specified view", null, false, false,
-					selection, context);
-			_id = id;
-		}
+    public ShowInViewOperation(String title, List<IStoreItem> selection,
+        String id, IContext context)
+    {
+      super(title, "Show selection in specified view", null, false, false,
+          selection, context);
+      _id = id;
+    }
 
-		@Override
-		protected String getOutputName()
-		{
-			return null;
-		}
+    @Override
+    protected String getOutputName()
+    {
+      return null;
+    }
 
-		@Override
-		public void execute()
-		{
-			String secId = getInputs().toString();
+    @Override
+    public void execute()
+    {
+      String secId = getInputs().toString();
 
-			// create a new instance of the specified view
-			IWorkbenchWindow window = PlatformUI.getWorkbench()
-					.getActiveWorkbenchWindow();
-			IWorkbenchPage page = window.getActivePage();
+      // create a new instance of the specified view
+      IWorkbenchWindow window =
+          PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+      IWorkbenchPage page = window.getActivePage();
 
-			try
-			{
-				page.showView(_id, secId, IWorkbenchPage.VIEW_ACTIVATE);
-			}
-			catch (PartInitException e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+      try
+      {
+        page.showView(_id, secId, IWorkbenchPage.VIEW_ACTIVATE);
+      }
+      catch (PartInitException e)
+      {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
 
-			// try to recover the view
-			IViewReference viewRef = page.findViewReference(_id, secId);
-			IViewPart theView = viewRef.getView(true);
+      // try to recover the view
+      IViewReference viewRef = page.findViewReference(_id, secId);
+      if (viewRef != null)
+      {
+        IViewPart theView = viewRef.getView(true);
 
-			// double check it's what we're after
-			if (theView instanceof CoreAnalysisView)
-			{
-				CoreAnalysisView cv = (CoreAnalysisView) theView;
+        // double check it's what we're after
+        if (theView instanceof CoreAnalysisView)
+        {
+          CoreAnalysisView cv = (CoreAnalysisView) theView;
 
-				// set follow selection to off
-				cv.follow(getInputs());
+          // set follow selection to off
+          cv.follow(getInputs());
+        }
+      }
+    }
 
-			}
-		}
+    @Override
+    protected void recalculate()
+    {
+      // don't worry
+    }
 
-		@Override
-		protected void recalculate()
-		{
-			// don't worry
-		}
-
-	}
+  }
 
 }

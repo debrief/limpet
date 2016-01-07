@@ -32,39 +32,35 @@ public class AddLayerOperation implements IOperation<IStoreItem>
   public Collection<ICommand<IStoreItem>> actionsFor(
       List<IStoreItem> selection, IStore destination, IContext context)
   {
-    Collection<ICommand<IStoreItem>> res = new ArrayList<ICommand<IStoreItem>>();
-    if (appliesTo(selection))
+    Collection<ICommand<IStoreItem>> res =
+        new ArrayList<ICommand<IStoreItem>>();
+
+    // note: we don't do "applies to" - we apply to everything
+    
+    final String thisTitle = "Add new folder";
+    // hmm, see if a group has been selected
+    ICommand<IStoreItem> newC = null;
+    if (selection.size() == 1)
     {
-      final String thisTitle = "Add new folder";
-      // hmm, see if a group has been selected
-      ICommand<IStoreItem> newC = null;
-      if (selection.size() == 1)
+      IStoreItem first = selection.get(0);
+      if (first instanceof StoreGroup)
       {
-        IStoreItem first = selection.get(0);
-        if (first instanceof StoreGroup)
-        {
-          StoreGroup group = (StoreGroup) first;
-          newC = new AddLayerCommand(thisTitle, group, destination, context);
-        }
-      }
-
-      if (newC == null)
-      {
-        newC = new AddLayerCommand(thisTitle, destination, context);
-      }
-
-      if (newC != null)
-      {
-        res.add(newC);
+        StoreGroup group = (StoreGroup) first;
+        newC = new AddLayerCommand(thisTitle, group, destination, context);
       }
     }
 
-    return res;
-  }
+    if (newC == null)
+    {
+      newC = new AddLayerCommand(thisTitle, destination, context);
+    }
 
-  private boolean appliesTo(List<IStoreItem> selection)
-  {
-    return true;
+    if (newC != null)
+    {
+      res.add(newC);
+    }
+
+    return res;
   }
 
   protected static class AddLayerCommand extends AbstractCommand<IStoreItem>

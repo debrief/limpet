@@ -146,7 +146,7 @@ public abstract class TimeFrequencyBins extends CoreAnalysis
     List<String> values = new ArrayList<String>();
 
     // check compatibility
-    if ((appliesTo(selection)) && (selection.size() == 1))
+    if (appliesTo(selection) && selection.size() == 1)
     {
       // ok, let's go for it.
       for (Iterator<IStoreItem> iter = selection.iterator(); iter.hasNext();)
@@ -154,7 +154,7 @@ public abstract class TimeFrequencyBins extends CoreAnalysis
         ICollection thisC = (ICollection) iter.next();
         IBaseTemporalCollection o = (IBaseTemporalCollection) thisC;
 
-        if ((thisC.size() > 1) && (thisC.size() < MAX_SIZE))
+        if (thisC.size() > 1 && thisC.size() < MAX_SIZE)
         {
           BinnedData res = doBins(thisC, o);
 

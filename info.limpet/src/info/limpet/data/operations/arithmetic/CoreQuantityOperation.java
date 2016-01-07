@@ -57,10 +57,10 @@ public abstract class CoreQuantityOperation<Q extends Quantity>
       }
 
       // aah, what about temporal (interpolated) values?
-      if ((getATests().allTemporal(selection) && getATests()
-          .suitableForTimeInterpolation(selection))
-          || (getATests().hasTemporal(selection) && getATests()
-              .allEqualLengthOrSingleton(selection)))
+      if (getATests().allTemporal(selection) && getATests()
+          .suitableForTimeInterpolation(selection)
+          || getATests().hasTemporal(selection) && getATests()
+              .allEqualLengthOrSingleton(selection))
       {
         addInterpolatedCommands(selection, destination, res, context);
       }

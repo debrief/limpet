@@ -25,15 +25,11 @@ import java.util.List;
 
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
-import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.PlatformUI;
 
 /**
  * display analysis overview of selection
@@ -54,27 +50,6 @@ public class AnalysisView extends CoreAnalysisView
 	public AnalysisView()
 	{
 		super(ID, "Analysis");
-	}
-
-
-	class ViewLabelProvider extends LabelProvider implements ITableLabelProvider
-	{
-
-		public String getColumnText(Object obj, int index)
-		{
-			return getText(obj);
-		}
-
-		public Image getColumnImage(Object obj, int index)
-		{
-			return getImage(obj);
-		}
-
-		public Image getImage(Object obj)
-		{
-			return PlatformUI.getWorkbench().getSharedImages()
-					.getImage(ISharedImages.IMG_OBJ_ELEMENT);
-		}
 	}
 
 	@Override
