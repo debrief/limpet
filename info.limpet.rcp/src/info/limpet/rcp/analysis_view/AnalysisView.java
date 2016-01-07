@@ -49,7 +49,7 @@ public class AnalysisView extends CoreAnalysisView
 	 */
 	public static final String ID = "info.limpet.rcp.AnalysisView";
 
-	TableViewer viewer;
+	private TableViewer viewer;
 
 	public AnalysisView()
 	{

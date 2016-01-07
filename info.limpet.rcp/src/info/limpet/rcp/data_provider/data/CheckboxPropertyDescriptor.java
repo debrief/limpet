@@ -48,7 +48,9 @@ public class CheckboxPropertyDescriptor extends PropertyDescriptor
 	{
 		CellEditor editor = new CheckboxCellEditor(parent);
 		if (getValidator() != null)
+		{
 			editor.setValidator(getValidator());
+		}
 		return editor;
 	}
 

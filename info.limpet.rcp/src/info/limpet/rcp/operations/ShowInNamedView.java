@@ -36,9 +36,9 @@ import org.eclipse.ui.PlatformUI;
 
 public class ShowInNamedView implements IOperation<IStoreItem>
 {
-	CollectionComplianceTests aTests = new CollectionComplianceTests();
-	final private String theId;
-	final private String _title;
+	private final CollectionComplianceTests aTests = new CollectionComplianceTests();
+	private final String theId;
+	private final String _title;
 
 	public ShowInNamedView(String title, String id)
 	{
@@ -73,7 +73,7 @@ public class ShowInNamedView implements IOperation<IStoreItem>
 	public static class ShowInViewOperation extends AbstractCommand<IStoreItem>
 	{
 
-		final private String _id;
+		private final String _id;
 
 		public ShowInViewOperation(String title, List<IStoreItem> selection,
 				String id, IContext context)

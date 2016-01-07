@@ -39,7 +39,9 @@ public class LimpetDragListener extends DragSourceAdapter
 	public void dragFinished(DragSourceEvent event)
 	{
 		if (!event.doit)
+		{
 			return;
+		}
 	}
 
 	/**

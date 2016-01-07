@@ -47,19 +47,29 @@ public class GroupWrapper implements IAdaptable, LimpetWrapper, IGroupWrapper
 	public boolean equals(Object obj)
 	{
 		if (this == obj)
+		{
 			return true;
+		}
 		if (obj == null)
+		{
 			return false;
+		}
 		if (getClass() != obj.getClass())
+		{
 			return false;
+		}
 		GroupWrapper other = (GroupWrapper) obj;
 		if (_group == null)
 		{
 			if (other._group != null)
+			{
 				return false;
+			}
 		}
 		else if (!_group.equals(other._group))
+		{
 			return false;
+		}
 		return true;
 	}
 

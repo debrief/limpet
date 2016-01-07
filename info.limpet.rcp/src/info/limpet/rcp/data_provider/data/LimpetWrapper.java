@@ -27,12 +27,12 @@ public interface LimpetWrapper
 	 * 
 	 * @return
 	 */
-	public LimpetWrapper getParent();
+	LimpetWrapper getParent();
 
 	/**
 	 * retrieve the pure limpet object that this instance is wrapping
 	 * 
 	 * @return
 	 */
-	public Object getSubject();
+	Object getSubject();
 }

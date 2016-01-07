@@ -86,19 +86,29 @@ public class DataProviderEditorInput implements IEditorInput
 	public boolean equals(Object obj)
 	{
 		if (this == obj)
+		{
 			return true;
+		}
 		if (obj == null)
+		{
 			return false;
+		}
 		if (getClass() != obj.getClass())
+		{
 			return false;
+		}
 		DataProviderEditorInput other = (DataProviderEditorInput) obj;
 		if (model == null)
 		{
 			if (other.model != null)
+			{
 				return false;
+			}
 		}
 		else if (!model.equals(other.model))
+		{
 			return false;
+		}
 		return true;
 	}
 
