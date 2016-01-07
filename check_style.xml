@@ -48,7 +48,7 @@
       <property name="max" value="110"/>
     </module>
     <module name="MethodLength">
-      <property name="max" value="250"/>
+      <property name="max" value="270"/>
     </module>
     <module name="ParameterNumber">
       <property name="max" value="8"/>
