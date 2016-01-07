@@ -165,22 +165,22 @@ public class TestGeotoolsGeometry extends TestCase
 
 	public void testBuilder() throws TransformException
 	{
-		final Location track_1 = new StockTypes.NonTemporal.Location(
+		final Location track1 = new StockTypes.NonTemporal.Location(
 				"some location data");
 
 		GeometryBuilder builder = new GeometryBuilder(DefaultGeographicCRS.WGS84);
 		GeodeticCalculator geoCalc = new GeodeticCalculator(
 				DefaultGeographicCRS.WGS84);
-		DirectPosition pos_1 = new DirectPosition2D(-4, 55.8);
-		geoCalc.setStartingGeographicPoint(pos_1.getOrdinate(0),
-				pos_1.getOrdinate(1));
+		DirectPosition pos1 = new DirectPosition2D(-4, 55.8);
+		geoCalc.setStartingGeographicPoint(pos1.getOrdinate(0),
+				pos1.getOrdinate(1));
 		geoCalc.setDirection(Math.toRadians(54), 0.003);
-		pos_1 = geoCalc.getDestinationPosition();
+		pos1 = geoCalc.getDestinationPosition();
 
-		Point p1 = builder.createPoint(pos_1.getOrdinate(0), pos_1.getOrdinate(1));
-		track_1.add(p1);
+		Point p1 = builder.createPoint(pos1.getOrdinate(0), pos1.getOrdinate(1));
+		track1.add(p1);
 
-		assertEquals("track has point", 1, track_1.size());
+		assertEquals("track has point", 1, track1.size());
 
 	}
 
@@ -194,7 +194,9 @@ public class TestGeotoolsGeometry extends TestCase
 		PrimitiveFactory primitiveFactory = GeometryFactoryFinder
 				.getPrimitiveFactory(hints);
 		Point point2 = primitiveFactory.createPoint(new double[]
-		{ 48.44, -123.37 });
+		{ 
+		    48.44, -123.37 
+		});
 		Assert.assertNotNull(point2);
 	}
 
@@ -271,7 +273,6 @@ public class TestGeotoolsGeometry extends TestCase
 		selection.add(loc1);
 
 		IStore store = new InMemoryStore();
-		;
 		Collection<ICommand<IStoreItem>> ops = new DistanceBetweenTracksOperation()
 				.actionsFor(selection, store, context);
 		assertEquals("empty collection", 0, ops.size());
@@ -315,7 +316,7 @@ public class TestGeotoolsGeometry extends TestCase
 		selection.add(loc1);
 
 		IStore store = new InMemoryStore();
-		;
+		
 		Collection<ICommand<IStoreItem>> ops = new DistanceBetweenTracksOperation()
 				.actionsFor(selection, store, context);
 		assertEquals("empty collection", 0, ops.size());
@@ -376,7 +377,7 @@ public class TestGeotoolsGeometry extends TestCase
 		selection.add(loc1);
 
 		IStore store = new InMemoryStore();
-		;
+		
 		Collection<ICommand<IStoreItem>> ops = new ProplossBetweenTwoTracksOperation()
 				.actionsFor(selection, store, context);
 		assertEquals("empty collection", 0, ops.size());
@@ -450,7 +451,7 @@ public class TestGeotoolsGeometry extends TestCase
 		selection.add(loc1);
 
 		IStore store = new InMemoryStore();
-		;
+		
 		Collection<ICommand<IStoreItem>> ops = new DistanceBetweenTracksOperation()
 				.actionsFor(selection, store, context);
 		assertEquals("empty collection", 0, ops.size());
@@ -522,26 +523,40 @@ public class TestGeotoolsGeometry extends TestCase
 					GeoSupport.getBuilder().createPoint(2 + Math.cos(5 * j) * 5,
 							4 + Math.sin(6 * j) * 5));
 			if (i % 2000 == 0)
+			{
 				loc2.add(
 						i,
 						GeoSupport.getBuilder().createPoint(4 - Math.cos(3 * j) * 2,
 								9 - Math.sin(4 * j) * 3));
+			}
 
 			if (i % 2000 == 0)
+			{
 				angD1.add(i, 55 + Math.sin(j) * 4);
+			}
 			if (i % 3000 == 0)
+			{
 				angR2.add(i, Math.toRadians(45 + Math.cos(j) * 3));
+			}
 
 			if (i % 4000 == 0)
+			{
 				spdK1.add(i, 5 + Math.sin(j) * 2);
+			}
 			if (i % 6000 == 0)
+			{
 				spdM2.add(i, 6 + Math.sin(j) * 2);
+			}
 
 			if (i % 3000 == 0)
+			{
 				freq1.add(i, 55 + Math.sin(j) * 4);
+			}
 
 			if (i % 4000 == 0)
+			{
 				sspdM1.add(i, 950 + Math.sin(j) * 4);
+			}
 
 		}
 
