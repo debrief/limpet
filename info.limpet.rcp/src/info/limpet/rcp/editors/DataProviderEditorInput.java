@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*****************************************************************************
  *  Limpet - the Lightweight InforMation ProcEssing Toolkit
  *  http://limpet.info
  *
@@ -11,7 +11,7 @@
  *  This library is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *******************************************************************************/
+ *****************************************************************************/
 package info.limpet.rcp.editors;
 
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -86,19 +86,29 @@ public class DataProviderEditorInput implements IEditorInput
 	public boolean equals(Object obj)
 	{
 		if (this == obj)
+		{
 			return true;
+		}
 		if (obj == null)
+		{
 			return false;
+		}
 		if (getClass() != obj.getClass())
+		{
 			return false;
+		}
 		DataProviderEditorInput other = (DataProviderEditorInput) obj;
 		if (model == null)
 		{
 			if (other.model != null)
+			{
 				return false;
+			}
 		}
 		else if (!model.equals(other.model))
+		{
 			return false;
+		}
 		return true;
 	}
 

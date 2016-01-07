@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*****************************************************************************
  *  Limpet - the Lightweight InforMation ProcEssing Toolkit
  *  http://limpet.info
  *
@@ -11,15 +11,15 @@
  *  This library is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *******************************************************************************/
+ *****************************************************************************/
 package info.limpet;
 
 import java.util.List;
 
 public interface IObjectCollection<T extends Object> extends ICollection
 {
-	public List<T> getValues();
-	public void add(T value);	
-	public void clear();
-	public void clearQuiet();
+	List<T> getValues();
+	void add(T value);	
+	void clear();
+	void clearQuiet();
 }

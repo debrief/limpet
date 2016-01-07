@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*****************************************************************************
  *  Limpet - the Lightweight InforMation ProcEssing Toolkit
  *  http://limpet.info
  *
@@ -11,7 +11,7 @@
  *  This library is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *******************************************************************************/
+ *****************************************************************************/
 package info.limpet;
 
 
@@ -23,5 +23,5 @@ import java.util.List;
 
 public interface IOperation<T extends IStoreItem>
 {
-	public Collection<ICommand<T>> actionsFor(List<T> selection, IStore destination, IContext context);
+	Collection<ICommand<T>> actionsFor(List<T> selection, IStore destination, IContext context);
 }

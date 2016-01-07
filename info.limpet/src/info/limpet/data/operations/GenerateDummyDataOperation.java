@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*****************************************************************************
  *  Limpet - the Lightweight InforMation ProcEssing Toolkit
  *  http://limpet.info
  *
@@ -11,7 +11,7 @@
  *  This library is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *******************************************************************************/
+ *****************************************************************************/
 package info.limpet.data.operations;
 
 import info.limpet.ICommand;
@@ -30,11 +30,11 @@ import java.util.List;
 
 public class GenerateDummyDataOperation implements IOperation<IStoreItem>
 {
-	CollectionComplianceTests aTests = new CollectionComplianceTests();
+	private final CollectionComplianceTests aTests = new CollectionComplianceTests();
 
-	final private String _title;
+	private final String _title;
 
-	final private long _count;
+	private final long _count;
 
 	public GenerateDummyDataOperation(String title, long count)
 	{
@@ -66,7 +66,7 @@ public class GenerateDummyDataOperation implements IOperation<IStoreItem>
 	public static class GenerateDummyDataCommand extends
 			AbstractCommand<IStoreItem>
 	{
-		final long _count;
+		private final long _count;
 
 		public GenerateDummyDataCommand(String title, IStore store, long count,
 				IContext context)

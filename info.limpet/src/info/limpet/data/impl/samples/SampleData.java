@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*****************************************************************************
  *  Limpet - the Lightweight InforMation ProcEssing Toolkit
  *  http://limpet.info
  *
@@ -11,7 +11,7 @@
  *  This library is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *******************************************************************************/
+ *****************************************************************************/
 package info.limpet.data.impl.samples;
 
 import info.limpet.ICommand;
@@ -23,7 +23,7 @@ import info.limpet.QuantityRange;
 import info.limpet.data.impl.MockContext;
 import info.limpet.data.impl.ObjectCollection;
 import info.limpet.data.impl.QuantityCollection;
-import info.limpet.data.impl.samples.StockTypes.Temporal.ElapsedTime_Sec;
+import info.limpet.data.impl.samples.StockTypes.Temporal.ElapsedTimeSec;
 import info.limpet.data.operations.arithmetic.AddQuantityOperation;
 import info.limpet.data.operations.arithmetic.MultiplyQuantityOperation;
 import info.limpet.data.store.InMemoryStore;
@@ -71,34 +71,34 @@ public class SampleData
 		InMemoryStore res = new InMemoryStore();
 
 		// // collate our data series
-		StockTypes.Temporal.Angle_Degrees angle1 = new StockTypes.Temporal.Angle_Degrees(
+		StockTypes.Temporal.AngleDegrees angle1 = new StockTypes.Temporal.AngleDegrees(
 				ANGLE_ONE, null);
-		StockTypes.Temporal.Speed_MSec speedSeries1 = new StockTypes.Temporal.Speed_MSec(
+		StockTypes.Temporal.SpeedMSec speedSeries1 = new StockTypes.Temporal.SpeedMSec(
 				SPEED_ONE, null);
-		StockTypes.Temporal.Speed_MSec speedSeries2 = new StockTypes.Temporal.Speed_MSec(
+		StockTypes.Temporal.SpeedMSec speedSeries2 = new StockTypes.Temporal.SpeedMSec(
 				SPEED_TWO, null);
-		StockTypes.Temporal.Speed_MSec speedSeries3 = new StockTypes.Temporal.Speed_MSec(
+		StockTypes.Temporal.SpeedMSec speedSeries3 = new StockTypes.Temporal.SpeedMSec(
 				SPEED_THREE_LONGER, null);
-		StockTypes.Temporal.Speed_MSec speed_early_1 = new StockTypes.Temporal.Speed_MSec(
+		StockTypes.Temporal.SpeedMSec speedEarly1 = new StockTypes.Temporal.SpeedMSec(
 				SPEED_EARLY, null);
-		StockTypes.Temporal.Speed_MSec speed_irregular = new StockTypes.Temporal.Speed_MSec(
+		StockTypes.Temporal.SpeedMSec speedIrregular = new StockTypes.Temporal.SpeedMSec(
 				SPEED_IRREGULAR2, null);
-		StockTypes.NonTemporal.Length_M length1 = new StockTypes.NonTemporal.Length_M(
+		StockTypes.NonTemporal.LengthM length1 = new StockTypes.NonTemporal.LengthM(
 				LENGTH_ONE, null);
-		StockTypes.NonTemporal.Length_M length2 = new StockTypes.NonTemporal.Length_M(
+		StockTypes.NonTemporal.LengthM length2 = new StockTypes.NonTemporal.LengthM(
 				LENGTH_TWO, null);
 		IObjectCollection<String> string1 = new ObjectCollection<String>(STRING_ONE);
 		IObjectCollection<String> string2 = new ObjectCollection<String>(STRING_TWO);
 		IQuantityCollection<Dimensionless> singleton1 = new QuantityCollection<Dimensionless>(
 				FLOATING_POINT_FACTOR, null, Dimensionless.UNIT);
-		StockTypes.NonTemporal.Speed_MSec singletonRange1 = new StockTypes.NonTemporal.Speed_MSec(
+		StockTypes.NonTemporal.SpeedMSec singletonRange1 = new StockTypes.NonTemporal.SpeedMSec(
 				RANGED_SPEED_SINGLETON, null);
-		StockTypes.NonTemporal.Length_M singletonLength = new StockTypes.NonTemporal.Length_M(
+		StockTypes.NonTemporal.LengthM singletonLength = new StockTypes.NonTemporal.LengthM(
 				LENGTH_SINGLETON, null);
-		ElapsedTime_Sec timeIntervals = new StockTypes.Temporal.ElapsedTime_Sec(
+		ElapsedTimeSec timeIntervals = new StockTypes.Temporal.ElapsedTimeSec(
 				TIME_INTERVALS, null);
-		TemporalLocation track_1 = new TemporalLocation(TRACK_ONE);
-		TemporalLocation track_2 = new TemporalLocation(TRACK_TWO);
+		TemporalLocation track1 = new TemporalLocation(TRACK_ONE);
+		TemporalLocation track2 = new TemporalLocation(TRACK_TWO);
 
 		long thisTime = 0;
 
@@ -106,12 +106,12 @@ public class SampleData
 		GeometryBuilder builder = new GeometryBuilder(DefaultGeographicCRS.WGS84);
 		GeodeticCalculator geoCalc = new GeodeticCalculator(
 				DefaultGeographicCRS.WGS84);
-		DirectPosition pos_1 = new DirectPosition2D(-4, 55.8);
-		DirectPosition pos_2 = new DirectPosition2D(-4.2, 54.9);
+		DirectPosition pos1 = new DirectPosition2D(-4, 55.8);
+		DirectPosition pos2 = new DirectPosition2D(-4.2, 54.9);
 
 		for (int i = 1; i <= count; i++)
 		{
-			thisTime = new Date().getTime() + i * 500 * 60;
+			thisTime = new Date().getTime() + i * 500L * 60;
 
 			final long earlyTime = thisTime - (1000 * 60 * 60 * 24 * 365 * 20);
 
@@ -123,18 +123,18 @@ public class SampleData
 			// we want the irregular series to only have occasional
 			if (i % 5 == 0)
 			{
-				speed_irregular.add(thisTime + 500 * 45, 7 + 2 * Math.sin(i + 1));
+				speedIrregular.add(thisTime + 500 * 45, 7 + 2 * Math.sin(i + 1));
 			}
 			else
 			{
 				if (Math.random() > 0.6)
 				{
-					speed_irregular.add(thisTime + 500 * 25 * 2, 7 + 2 * Math.sin(i - 1));
+					speedIrregular.add(thisTime + 500 * 25 * 2, 7 + 2 * Math.sin(i - 1));
 				}
 			}
 
 			speedSeries3.add(thisTime, 3d * Math.cos(i));
-			speed_early_1.add(earlyTime, Math.sin(i));
+			speedEarly1.add(earlyTime, Math.sin(i));
 			length1.add((double) i % 3);
 			length2.add((double) i % 5);
 			string1.add("item " + i);
@@ -145,22 +145,22 @@ public class SampleData
 			// sort out the tracks
 			try
 			{
-				geoCalc.setStartingGeographicPoint(pos_1.getOrdinate(0),
-						pos_1.getOrdinate(1));
+				geoCalc.setStartingGeographicPoint(pos1.getOrdinate(0),
+						pos1.getOrdinate(1));
 				geoCalc.setDirection(Math.toRadians(77 - (i * 4)), 554);
-				pos_1 = geoCalc.getDestinationPosition();
-				Point p1 = builder.createPoint(pos_1.getOrdinate(0),
-						pos_1.getOrdinate(1));
+				pos1 = geoCalc.getDestinationPosition();
+				Point p1 = builder.createPoint(pos1.getOrdinate(0),
+						pos1.getOrdinate(1));
 
-				geoCalc.setStartingGeographicPoint(pos_2.getOrdinate(0),
-						pos_2.getOrdinate(1));
+				geoCalc.setStartingGeographicPoint(pos2.getOrdinate(0),
+						pos2.getOrdinate(1));
 				geoCalc.setDirection(Math.toRadians(54 + (i * 5)), 133);
-				pos_2 = geoCalc.getDestinationPosition();
-				Point p2 = builder.createPoint(pos_2.getOrdinate(0),
-						pos_2.getOrdinate(1));
+				pos2 = geoCalc.getDestinationPosition();
+				Point p2 = builder.createPoint(pos2.getOrdinate(0),
+						pos2.getOrdinate(1));
 
-				track_1.add(thisTime, p1);
-				track_2.add(thisTime, p2);
+				track1.add(thisTime, p1);
+				track2.add(thisTime, p2);
 
 			}
 			catch (TransformException e)
@@ -191,8 +191,8 @@ public class SampleData
 		StoreGroup group1 = new StoreGroup("Speed data");
 		group1.add(speedSeries1);
 		group1.add(speedSeries2);
-		group1.add(speed_irregular);
-		group1.add(speed_early_1);
+		group1.add(speedIrregular);
+		group1.add(speedEarly1);
 		group1.add(speedSeries3);
 
 		list.add(group1);
@@ -206,8 +206,8 @@ public class SampleData
 		list.add(singletonRange1);
 		list.add(singletonLength);
 		list.add(timeIntervals);
-		list.add(track_1);
-		list.add(track_2);
+		list.add(track1);
+		list.add(track2);
 
 		res.addAll(list);
 

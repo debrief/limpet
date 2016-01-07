@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*****************************************************************************
  *  Limpet - the Lightweight InforMation ProcEssing Toolkit
  *  http://limpet.info
  *
@@ -11,33 +11,33 @@
  *  This library is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *******************************************************************************/
+ *****************************************************************************/
 package info.limpet;
 
-public interface ITemporalObjectCollection<T extends Object> extends
-		IObjectCollection<T>, IBaseTemporalCollection
+public interface ITemporalObjectCollection<T extends Object> extends IObjectCollection<T>,
+    IBaseTemporalCollection
 {
 
-	/**
-	 * add this new item
-	 * 
-	 * @param time
-	 * @param object
-	 */
-	public void add(long time, T object);
+  /**
+   * add this new item
+   * 
+   * @param time
+   * @param object
+   */
+  void add(long time, T object);
 
-	/**
-	 * combination of a timestamp with an observation
-	 * 
-	 * @author ian
-	 * 
-	 * @param <T>
-	 */
-	public interface Doublet<T>
-	{
-		long getTime();
+  /**
+   * combination of a timestamp with an observation
+   * 
+   * @author ian
+   * 
+   * @param <T>
+   */
+  interface Doublet<T>
+  {
+    long getTime();
 
-		T getObservation();
-	}
+    T getObservation();
+  }
 
 }

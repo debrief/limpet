@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*****************************************************************************
  *  Limpet - the Lightweight InforMation ProcEssing Toolkit
  *  http://limpet.info
  *
@@ -11,7 +11,7 @@
  *  This library is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *******************************************************************************/
+ *****************************************************************************/
 package info.limpet.rcp.editors;
 
 import java.util.Iterator;
@@ -39,7 +39,9 @@ public class LimpetDragListener extends DragSourceAdapter
 	public void dragFinished(DragSourceEvent event)
 	{
 		if (!event.doit)
+		{
 			return;
+		}
 	}
 
 	/**

@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*****************************************************************************
  *  Limpet - the Lightweight InforMation ProcEssing Toolkit
  *  http://limpet.info
  *
@@ -11,7 +11,7 @@
  *  This library is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *******************************************************************************/
+ *****************************************************************************/
 package info.limpet.data.persistence.xml;
 
 import java.text.ParseException;
@@ -41,12 +41,17 @@ public class TimesCollectionConverter extends CollectionConverter
 	private static final String XML_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
 	private static final String TIME_NODE = "time";
 	private static final String INFO_LIMPET_PLUGIN_ID = "info.limpet";
-	private static SimpleDateFormat _XMLDateFormat;
+	private static final SimpleDateFormat XML_DATE_FORMAT;
 
-	static
+	private static SimpleDateFormat getXmldateformat()
+  {
+    return XML_DATE_FORMAT;
+  }
+
+  static
 	{
-		_XMLDateFormat = new SimpleDateFormat(XML_TIME_FORMAT);
-		_XMLDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+		XML_DATE_FORMAT = new SimpleDateFormat(XML_TIME_FORMAT);
+		XML_DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("GMT"));
 	}
 
 	public TimesCollectionConverter(Mapper mapper)
@@ -69,7 +74,7 @@ public class TimesCollectionConverter extends CollectionConverter
 		TimesList<Long> times = (TimesList<Long>) source;
 		for (Long time : times)
 		{
-			String value = _XMLDateFormat.format(new Date(time));
+			String value = getXmldateformat().format(new Date(time));
 			writer.startNode(TIME_NODE);
 			context.convertAnother(value);
 			writer.endNode();
@@ -88,13 +93,13 @@ public class TimesCollectionConverter extends CollectionConverter
 			Long value;
 			try
 			{
-				value = _XMLDateFormat.parse(item).getTime();
+				value = getXmldateformat().parse(item).getTime();
 			}
 			catch (ParseException e)
 			{
 				try
 				{
-					value = new Long(item);
+					value = Long.valueOf(item);
 				}
 				catch (NumberFormatException e1)
 				{

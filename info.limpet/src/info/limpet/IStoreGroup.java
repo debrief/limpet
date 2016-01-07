@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*****************************************************************************
  *  Limpet - the Lightweight InforMation ProcEssing Toolkit
  *  http://limpet.info
  *
@@ -11,7 +11,7 @@
  *  This library is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *******************************************************************************/
+ *****************************************************************************/
 package info.limpet;
 
 import info.limpet.IStore.IStoreItem;
@@ -19,14 +19,14 @@ import info.limpet.IStore.IStoreItem;
 public interface IStoreGroup extends IChangeListener
 {
 
-	public boolean hasChildren();
+	boolean hasChildren();
 
-	public boolean add(IStoreItem item);
+	boolean add(IStoreItem item);
 	
-	public boolean remove(Object item);
+	boolean remove(Object item);
 	
-	public void addChangeListener(IChangeListener listener);
+	void addChangeListener(IChangeListener listener);
 
-	public void removeChangeListener(IChangeListener listener);
+	void removeChangeListener(IChangeListener listener);
 
 }

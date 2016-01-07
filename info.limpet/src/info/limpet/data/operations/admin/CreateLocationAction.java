@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*****************************************************************************
  *  Limpet - the Lightweight InforMation ProcEssing Toolkit
  *  http://limpet.info
  *
@@ -11,7 +11,7 @@
  *  This library is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *******************************************************************************/
+ *****************************************************************************/
 package info.limpet.data.operations.admin;
 
 import info.limpet.ICommand;
@@ -35,7 +35,7 @@ public class CreateLocationAction extends CreateSingletonGenerator
 		super("location");
 	}
 
-	CollectionComplianceTests aTests = new CollectionComplianceTests();
+	private final CollectionComplianceTests aTests = new CollectionComplianceTests();
 
 	/**
 	 * encapsulate creating a location into a command
@@ -142,5 +142,10 @@ public class CreateLocationAction extends CreateSingletonGenerator
 		throw new RuntimeException(
 				"we shouldn't call this, our command knows it's working with a location");
 	}
+
+  public CollectionComplianceTests getATests()
+  {
+    return aTests;
+  }
 
 }

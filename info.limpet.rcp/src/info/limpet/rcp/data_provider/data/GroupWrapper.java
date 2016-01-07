@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*****************************************************************************
  *  Limpet - the Lightweight InforMation ProcEssing Toolkit
  *  http://limpet.info
  *
@@ -11,7 +11,7 @@
  *  This library is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *******************************************************************************/
+ *****************************************************************************/
 package info.limpet.rcp.data_provider.data;
 
 import info.limpet.IStore.IStoreItem;
@@ -47,19 +47,29 @@ public class GroupWrapper implements IAdaptable, LimpetWrapper, IGroupWrapper
 	public boolean equals(Object obj)
 	{
 		if (this == obj)
+		{
 			return true;
+		}
 		if (obj == null)
+		{
 			return false;
+		}
 		if (getClass() != obj.getClass())
+		{
 			return false;
+		}
 		GroupWrapper other = (GroupWrapper) obj;
 		if (_group == null)
 		{
 			if (other._group != null)
+			{
 				return false;
+			}
 		}
 		else if (!_group.equals(other._group))
+		{
 			return false;
+		}
 		return true;
 	}
 

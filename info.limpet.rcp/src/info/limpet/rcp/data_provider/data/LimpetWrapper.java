@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*****************************************************************************
  *  Limpet - the Lightweight InforMation ProcEssing Toolkit
  *  http://limpet.info
  *
@@ -11,7 +11,7 @@
  *  This library is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *******************************************************************************/
+ *****************************************************************************/
 package info.limpet.rcp.data_provider.data;
 
 /**
@@ -27,12 +27,12 @@ public interface LimpetWrapper
 	 * 
 	 * @return
 	 */
-	public LimpetWrapper getParent();
+	LimpetWrapper getParent();
 
 	/**
 	 * retrieve the pure limpet object that this instance is wrapping
 	 * 
 	 * @return
 	 */
-	public Object getSubject();
+	Object getSubject();
 }

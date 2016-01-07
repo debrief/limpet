@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*****************************************************************************
  *  Limpet - the Lightweight InforMation ProcEssing Toolkit
  *  http://limpet.info
  *
@@ -11,7 +11,7 @@
  *  This library is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *******************************************************************************/
+ *****************************************************************************/
 package info.limpet.data;
 
 import info.limpet.IBaseTemporalCollection;
@@ -30,7 +30,7 @@ import info.limpet.data.impl.samples.StockTypes;
 import info.limpet.data.impl.samples.StockTypes.NonTemporal;
 import info.limpet.data.impl.samples.StockTypes.NonTemporal.Location;
 import info.limpet.data.impl.samples.StockTypes.Temporal;
-import info.limpet.data.impl.samples.StockTypes.Temporal.Speed_Kts;
+import info.limpet.data.impl.samples.StockTypes.Temporal.SpeedKts;
 import info.limpet.data.impl.samples.TemporalLocation;
 import info.limpet.data.operations.CollectionComplianceTests;
 import info.limpet.data.operations.CollectionComplianceTests.TimePeriod;
@@ -165,22 +165,22 @@ public class TestGeotoolsGeometry extends TestCase
 
 	public void testBuilder() throws TransformException
 	{
-		final Location track_1 = new StockTypes.NonTemporal.Location(
+		final Location track1 = new StockTypes.NonTemporal.Location(
 				"some location data");
 
 		GeometryBuilder builder = new GeometryBuilder(DefaultGeographicCRS.WGS84);
 		GeodeticCalculator geoCalc = new GeodeticCalculator(
 				DefaultGeographicCRS.WGS84);
-		DirectPosition pos_1 = new DirectPosition2D(-4, 55.8);
-		geoCalc.setStartingGeographicPoint(pos_1.getOrdinate(0),
-				pos_1.getOrdinate(1));
+		DirectPosition pos1 = new DirectPosition2D(-4, 55.8);
+		geoCalc.setStartingGeographicPoint(pos1.getOrdinate(0),
+				pos1.getOrdinate(1));
 		geoCalc.setDirection(Math.toRadians(54), 0.003);
-		pos_1 = geoCalc.getDestinationPosition();
+		pos1 = geoCalc.getDestinationPosition();
 
-		Point p1 = builder.createPoint(pos_1.getOrdinate(0), pos_1.getOrdinate(1));
-		track_1.add(p1);
+		Point p1 = builder.createPoint(pos1.getOrdinate(0), pos1.getOrdinate(1));
+		track1.add(p1);
 
-		assertEquals("track has point", 1, track_1.size());
+		assertEquals("track has point", 1, track1.size());
 
 	}
 
@@ -194,7 +194,9 @@ public class TestGeotoolsGeometry extends TestCase
 		PrimitiveFactory primitiveFactory = GeometryFactoryFinder
 				.getPrimitiveFactory(hints);
 		Point point2 = primitiveFactory.createPoint(new double[]
-		{ 48.44, -123.37 });
+		{ 
+		    48.44, -123.37 
+		});
 		Assert.assertNotNull(point2);
 	}
 
@@ -265,13 +267,12 @@ public class TestGeotoolsGeometry extends TestCase
 	{
 		Location loc1 = new Location("loc1");
 		Location loc2 = new Location("loc2");
-		Temporal.Length_M len1 = new Temporal.Length_M("dummy2", null);
+		Temporal.LengthM len1 = new Temporal.LengthM("dummy2", null);
 
 		List<IStoreItem> selection = new ArrayList<IStoreItem>();
 		selection.add(loc1);
 
 		IStore store = new InMemoryStore();
-		;
 		Collection<ICommand<IStoreItem>> ops = new DistanceBetweenTracksOperation()
 				.actionsFor(selection, store, context);
 		assertEquals("empty collection", 0, ops.size());
@@ -309,13 +310,13 @@ public class TestGeotoolsGeometry extends TestCase
 	{
 		TemporalLocation loc1 = new TemporalLocation("loc1");
 		TemporalLocation loc2 = new TemporalLocation("loc2");
-		Temporal.Length_M len1 = new Temporal.Length_M("dummy2", null);
+		Temporal.LengthM len1 = new Temporal.LengthM("dummy2", null);
 
 		List<IStoreItem> selection = new ArrayList<IStoreItem>();
 		selection.add(loc1);
 
 		IStore store = new InMemoryStore();
-		;
+		
 		Collection<ICommand<IStoreItem>> ops = new DistanceBetweenTracksOperation()
 				.actionsFor(selection, store, context);
 		assertEquals("empty collection", 0, ops.size());
@@ -370,13 +371,13 @@ public class TestGeotoolsGeometry extends TestCase
 		TemporalLocation loc1 = new TemporalLocation("loc1");
 		TemporalLocation loc2 = new TemporalLocation("loc2");
 		Location loc3 = new Location("loc2");
-		Temporal.Length_M len1 = new Temporal.Length_M("dummy2", null);
+		Temporal.LengthM len1 = new Temporal.LengthM("dummy2", null);
 
 		List<IStoreItem> selection = new ArrayList<IStoreItem>();
 		selection.add(loc1);
 
 		IStore store = new InMemoryStore();
-		;
+		
 		Collection<ICommand<IStoreItem>> ops = new ProplossBetweenTwoTracksOperation()
 				.actionsFor(selection, store, context);
 		assertEquals("empty collection", 0, ops.size());
@@ -444,13 +445,13 @@ public class TestGeotoolsGeometry extends TestCase
 	{
 		TemporalLocation loc1 = new TemporalLocation("loc1");
 		TemporalLocation loc2 = new TemporalLocation("loc2");
-		Temporal.Length_M len1 = new Temporal.Length_M("dummy2", null);
+		Temporal.LengthM len1 = new Temporal.LengthM("dummy2", null);
 
 		List<IStoreItem> selection = new ArrayList<IStoreItem>();
 		selection.add(loc1);
 
 		IStore store = new InMemoryStore();
-		;
+		
 		Collection<ICommand<IStoreItem>> ops = new DistanceBetweenTracksOperation()
 				.actionsFor(selection, store, context);
 		assertEquals("empty collection", 0, ops.size());
@@ -490,58 +491,72 @@ public class TestGeotoolsGeometry extends TestCase
 		NonTemporal.Location loc3 = new NonTemporal.Location("loc 3");
 		NonTemporal.Location loc4 = new NonTemporal.Location("loc 4");
 
-		Temporal.Angle_Degrees angD1 = new Temporal.Angle_Degrees("ang D 1", null);
-		Temporal.Angle_Radians angR2 = new Temporal.Angle_Radians("ang R 2", null);
-		NonTemporal.Angle_Radians angR3 = new NonTemporal.Angle_Radians("ang R 3",
+		Temporal.AngleDegrees angD1 = new Temporal.AngleDegrees("ang D 1", null);
+		Temporal.AngleRadians angR2 = new Temporal.AngleRadians("ang R 2", null);
+		NonTemporal.AngleRadians angR3 = new NonTemporal.AngleRadians("ang R 3",
 				null);
-		NonTemporal.Angle_Degrees angD4 = new NonTemporal.Angle_Degrees("ang D 4",
-				null);
-
-		Temporal.Speed_Kts spdK1 = new Temporal.Speed_Kts("speed kts 1", null);
-		Temporal.Speed_MSec spdM2 = new Temporal.Speed_MSec("speed M 2", null);
-		NonTemporal.Speed_Kts spdK3 = new NonTemporal.Speed_Kts("speed kts 1", null);
-		NonTemporal.Speed_MSec spdM4 = new NonTemporal.Speed_MSec("speed kts 1",
+		NonTemporal.AngleDegrees angD4 = new NonTemporal.AngleDegrees("ang D 4",
 				null);
 
-		Temporal.Frequency_Hz freq1 = new Temporal.Frequency_Hz("freq 1", null);
-		NonTemporal.Frequency_Hz freq2 = new NonTemporal.Frequency_Hz("freq 2",
+		Temporal.SpeedKts spdK1 = new Temporal.SpeedKts("speed kts 1", null);
+		Temporal.SpeedMSec spdM2 = new Temporal.SpeedMSec("speed M 2", null);
+		NonTemporal.SpeedKts spdK3 = new NonTemporal.SpeedKts("speed kts 1", null);
+		NonTemporal.SpeedMSec spdM4 = new NonTemporal.SpeedMSec("speed kts 1",
 				null);
 
-		Temporal.Speed_MSec sspdM1 = new Temporal.Speed_MSec("sound speed M 1",
+		Temporal.FrequencyHz freq1 = new Temporal.FrequencyHz("freq 1", null);
+		NonTemporal.FrequencyHz freq2 = new NonTemporal.FrequencyHz("freq 2",
 				null);
-		NonTemporal.Speed_Kts sspdK2 = new NonTemporal.Speed_Kts(
+
+		Temporal.SpeedMSec sspdM1 = new Temporal.SpeedMSec("sound speed M 1",
+				null);
+		NonTemporal.SpeedKts sspdK2 = new NonTemporal.SpeedKts(
 				"sound speed kts 2", null);
 
 		// populate the datasets
 		for (int i = 10000; i <= 90000; i += 5000)
 		{
-			double j = Math.toRadians(i / 1000);
+			double j = Math.toRadians(i / 1000d);
 
 			loc1.add(
 					i,
 					GeoSupport.getBuilder().createPoint(2 + Math.cos(5 * j) * 5,
 							4 + Math.sin(6 * j) * 5));
 			if (i % 2000 == 0)
+			{
 				loc2.add(
 						i,
 						GeoSupport.getBuilder().createPoint(4 - Math.cos(3 * j) * 2,
 								9 - Math.sin(4 * j) * 3));
+			}
 
 			if (i % 2000 == 0)
+			{
 				angD1.add(i, 55 + Math.sin(j) * 4);
+			}
 			if (i % 3000 == 0)
+			{
 				angR2.add(i, Math.toRadians(45 + Math.cos(j) * 3));
+			}
 
 			if (i % 4000 == 0)
+			{
 				spdK1.add(i, 5 + Math.sin(j) * 2);
+			}
 			if (i % 6000 == 0)
+			{
 				spdM2.add(i, 6 + Math.sin(j) * 2);
+			}
 
 			if (i % 3000 == 0)
+			{
 				freq1.add(i, 55 + Math.sin(j) * 4);
+			}
 
 			if (i % 4000 == 0)
+			{
 				sspdM1.add(i, 950 + Math.sin(j) * 4);
+			}
 
 		}
 
@@ -734,9 +749,9 @@ public class TestGeotoolsGeometry extends TestCase
 		CollectionComplianceTests aTests = new CollectionComplianceTests();
 		Collection<ICollection> items = new ArrayList<ICollection>();
 
-		Speed_Kts speed1 = new Temporal.Speed_Kts("spd1", null);
-		Speed_Kts speed2 = new Temporal.Speed_Kts("spd2", null);
-		Speed_Kts speed3 = new Temporal.Speed_Kts("spd3", null);
+		SpeedKts speed1 = new Temporal.SpeedKts("spd1", null);
+		SpeedKts speed2 = new Temporal.SpeedKts("spd2", null);
+		SpeedKts speed3 = new Temporal.SpeedKts("spd3", null);
 
 		speed1.add(100, 5);
 		speed1.add(120, 5);
@@ -766,8 +781,8 @@ public class TestGeotoolsGeometry extends TestCase
 
 		period = aTests.getBoundingTime(items);
 
-		assertEquals("correct period", 100, period.startTime);
-		assertEquals("correct period", 180, period.endTime);
+		assertEquals("correct period", 100, period.getStartTime());
+		assertEquals("correct period", 180, period.getEndTime());
 
 		common = aTests.getOptimalTimes(period, items);
 		assertNotNull("duh, empty set", common);
@@ -797,9 +812,9 @@ public class TestGeotoolsGeometry extends TestCase
 		CollectionComplianceTests aTests = new CollectionComplianceTests();
 		Collection<ICollection> items = new ArrayList<ICollection>();
 
-		Speed_Kts speed1 = new Temporal.Speed_Kts("spd1", null);
-		Speed_Kts speed2 = new Temporal.Speed_Kts("spd2", null);
-		Speed_Kts speed3 = new Temporal.Speed_Kts("spd3", null);
+		SpeedKts speed1 = new Temporal.SpeedKts("spd1", null);
+		SpeedKts speed2 = new Temporal.SpeedKts("spd2", null);
+		SpeedKts speed3 = new Temporal.SpeedKts("spd3", null);
 
 		speed1.add(100, 5);
 		speed1.add(120, 5);
@@ -822,29 +837,29 @@ public class TestGeotoolsGeometry extends TestCase
 
 		common = aTests.getBoundingTime(items);
 		assertNotNull("duh, empty set", common);
-		assertEquals("correct times", speed1.start(), common.startTime);
-		assertEquals("correct times", speed1.finish(), common.endTime);
+		assertEquals("correct times", speed1.start(), common.getStartTime());
+		assertEquals("correct times", speed1.finish(), common.getEndTime());
 
 		items.add(speed2);
 
 		common = aTests.getBoundingTime(items);
 		assertNotNull("duh, empty set", common);
-		assertEquals("correct times", speed2.start(), common.startTime);
-		assertEquals("correct times", speed1.finish(), common.endTime);
+		assertEquals("correct times", speed2.start(), common.getStartTime());
+		assertEquals("correct times", speed1.finish(), common.getEndTime());
 
 		items.add(speed3);
 
 		common = aTests.getBoundingTime(items);
 		assertNotNull("duh, empty set", common);
-		assertEquals("correct times", speed2.start(), common.startTime);
-		assertEquals("correct times", speed3.finish(), common.endTime);
+		assertEquals("correct times", speed2.start(), common.getStartTime());
+		assertEquals("correct times", speed3.finish(), common.getEndTime());
 	}
 
 	public void testDopplerInterpolation()
 	{
 		final CollectionComplianceTests aTests = new CollectionComplianceTests();
 
-		Temporal.Speed_Kts sKts = new Temporal.Speed_Kts("Speed knots", null);
+		Temporal.SpeedKts sKts = new Temporal.SpeedKts("Speed knots", null);
 		sKts.add(1000, 10);
 		sKts.add(2000, 20);
 		sKts.add(4000, 30);
@@ -856,14 +871,14 @@ public class TestGeotoolsGeometry extends TestCase
 		assertEquals("correct value", 25.0, val);
 
 		// try converting to m_sec
-		val = aTests.valueAt(sKts, 1500L, new Temporal.Speed_MSec().getUnits());
+		val = aTests.valueAt(sKts, 1500L, new Temporal.SpeedMSec().getUnits());
 		assertEquals("correct value", 7.72, val, 0.01);
 
 		// try converting to m_sec
 		try
 		{
 			val = aTests
-					.valueAt(sKts, 1500L, new Temporal.Angle_Degrees().getUnits());
+					.valueAt(sKts, 1500L, new Temporal.AngleDegrees().getUnits());
 		}
 		catch (ConversionException ce)
 		{

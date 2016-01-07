@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*****************************************************************************
  *  Limpet - the Lightweight InforMation ProcEssing Toolkit
  *  http://limpet.info
  *
@@ -11,7 +11,7 @@
  *  This library is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *******************************************************************************/
+ *****************************************************************************/
 package info.limpet;
 
 import javax.measure.Measurable;
@@ -31,14 +31,14 @@ public interface IQuantityCollection<Q extends Quantity> extends
 	 * 
 	 * @param value
 	 */
-	public void add(Number value);
+	void add(Number value);
 
 	/** if this collection just contains a single value, we allow
 	 * that value to be changed in-place
 	 * 
 	 * @param newValue
 	 */
-	public void replaceSingleton(double newValue);
+	void replaceSingleton(double newValue);
 
 	/** allow the range of this collection to be specified
 	 * 

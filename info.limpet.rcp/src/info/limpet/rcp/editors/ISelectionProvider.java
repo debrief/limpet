@@ -17,5 +17,5 @@ public interface ISelectionProvider
 	 * 
 	 * @return
 	 */
-	public List<IStoreItem> getSelection();
+	List<IStoreItem> getSelection();
 }

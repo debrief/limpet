@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*****************************************************************************
  *  Limpet - the Lightweight InforMation ProcEssing Toolkit
  *  http://limpet.info
  *
@@ -11,7 +11,7 @@
  *  This library is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *******************************************************************************/
+ *****************************************************************************/
 package info.limpet.rcp;
 
 import java.util.ArrayList;
@@ -22,25 +22,34 @@ import org.eclipse.swt.widgets.Display;
 
 public class PlottingHelpers
 {
-	private static List<Color> _cols;
+  /** protected constructor, to prevent accidential initialisation
+   * 
+   */
+  protected PlottingHelpers()
+  {
+    
+  }
+  
+	private static final List<Color> COLS;
+	static
+	{
+    Display display = Display.getCurrent();
+    COLS = new ArrayList<Color>();
+    for (int i = 3; i < 12; i++)
+    {
+      COLS.add(display.getSystemColor(i));
+    }
+	  
+	}
 
 	public static Color colorFor(String seriesName)
 	{
 		Color res = null;
-		if (_cols == null)
-		{
-			Display display = Display.getCurrent();
-			_cols = new ArrayList<Color>();
-			for (int i = 3; i < 12; i++)
-			{
-				_cols.add(display.getSystemColor(i));
-			}
-		}
 		
 		
-		int thisIndex = Math.abs(seriesName.hashCode() % _cols.size());
+		int thisIndex = Math.abs(seriesName.hashCode() % COLS.size());
 		
-		res = _cols.get(thisIndex);
+		res = COLS.get(thisIndex);
 		
 		return res;
 	}

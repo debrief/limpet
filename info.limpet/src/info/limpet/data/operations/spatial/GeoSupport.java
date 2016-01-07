@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*****************************************************************************
  *  Limpet - the Lightweight InforMation ProcEssing Toolkit
  *  http://limpet.info
  *
@@ -11,7 +11,7 @@
  *  This library is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *******************************************************************************/
+ *****************************************************************************/
 package info.limpet.data.operations.spatial;
 
 import org.geotools.geometry.DirectPosition2D;
@@ -22,18 +22,27 @@ import org.opengis.geometry.coordinate.Position;
 
 public class GeoSupport
 {
-	public static GeometryBuilder getBuilder()
-	{
-		return new GeometryBuilder(DefaultGeographicCRS.WGS84);
-	}
+  /**
+   * protected constructor - to prevent declaration of GeoSupport
+   * 
+   */
+  protected GeoSupport()
+  {
 
-	public static GeodeticCalculator getCalculator()
-	{
-		return new GeodeticCalculator(DefaultGeographicCRS.WGS84);
-	}
+  }
 
-	public static Position createPosition()
-	{
-		return new DirectPosition2D(-4, 55.8);
-	}
+  public static GeometryBuilder getBuilder()
+  {
+    return new GeometryBuilder(DefaultGeographicCRS.WGS84);
+  }
+
+  public static GeodeticCalculator getCalculator()
+  {
+    return new GeodeticCalculator(DefaultGeographicCRS.WGS84);
+  }
+
+  public static Position createPosition()
+  {
+    return new DirectPosition2D(-4, 55.8);
+  }
 }
