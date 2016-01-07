@@ -48,7 +48,7 @@
       <property name="max" value="110"/>
     </module>
     <module name="MethodLength">
-      <property name="max" value="270"/>
+      <property name="max" value="275"/>
     </module>
     <module name="ParameterNumber">
       <property name="max" value="8"/>
@@ -66,7 +66,9 @@
     <module name="ModifierOrder"/>
     <module name="RedundantModifier"/>
     <module name="AvoidNestedBlocks"/>
-    <module name="EmptyBlock"/>
+    <module name="EmptyBlock">
+      <property name="tokens" value="LITERAL_WHILE,LITERAL_TRY,LITERAL_CATCH,LITERAL_FINALLY,LITERAL_DO,LITERAL_ELSE,LITERAL_FOR,INSTANCE_INIT,STATIC_INIT,LITERAL_SWITCH"/>
+    </module>
     <module name="LeftCurly">
       <property name="option" value="nl"/>
     </module>
