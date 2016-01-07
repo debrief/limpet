@@ -62,8 +62,6 @@ public class TestReflectivePropertySource extends TestCase
 		assertEquals(cellEditorValue, propertyValue);
 	}
 
-	@SuppressWarnings(
-	{ "unchecked"})
 	public void testSetValue()
 	{
 		propertySource.setPropertyValue(TestData.PROP_NAME, "modified value");
@@ -82,7 +80,7 @@ public class TestReflectivePropertySource extends TestCase
 		assertEquals(Temperature.UNIT, testData.getUnits());
 
 		propertySource.setPropertyValue(TestData.PROP_RANGE, "10 : 50");
-		Measure<Double,Velocity> min = (Measure<Double,Velocity>)testData.getRange().getMinimum();
+		Measure<Double,Velocity> min = (Measure<Double,Velocity>) testData.getRange().getMinimum();
 		Measure<Double,Velocity> max = (Measure<Double,Velocity>) testData.getRange().getMaximum();
 		assertEquals(10, min.intValue(min.getUnit()));
 		assertEquals(50, max.intValue(max.getUnit()));
@@ -115,7 +113,7 @@ public class TestReflectivePropertySource extends TestCase
 		public static final String PROP_RANGE = "range";
 
 		private String name;
-		private QuantityRange<?> range;
+		private QuantityRange<Velocity> range;
 		private int quantity;
 		private Unit<Velocity> unit;
 		private boolean flag;
@@ -165,12 +163,12 @@ public class TestReflectivePropertySource extends TestCase
 		}
 
 		@UIProperty(name = PROP_RANGE, category = "category")
-		public QuantityRange<?> getRange()
+		public QuantityRange<Velocity> getRange()
 		{
 			return range;
 		}
 
-		public void setRange(QuantityRange<?> range)
+		public void setRange(QuantityRange<Velocity> range)
 		{
 			this.range = range;
 		}
