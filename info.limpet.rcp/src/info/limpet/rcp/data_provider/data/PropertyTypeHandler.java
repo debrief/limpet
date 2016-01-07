@@ -1,6 +1,6 @@
 package info.limpet.rcp.data_provider.data;
 
-import info.limpet.IQuantityCollection;
+import info.limpet.IBaseQuantityCollection;
 import info.limpet.QuantityRange;
 import info.limpet.UIProperty;
 import info.limpet.data.operations.spatial.GeoSupport;
@@ -25,37 +25,48 @@ import org.opengis.geometry.primitive.Point;
  * {@link #getDefaulValue(UIProperty)} and
  * {@link #doCreatePropertyDescriptor(String, UIProperty)} methods.
  */
-abstract class PropertyTypeHandler
+public abstract class PropertyTypeHandler
 {
 
-	/** can this handler handle a property of the specified type?
+	/**
+	 * can this handler handle a property of the specified type?
 	 * 
-	 * @param propertyType the type of the property
+	 * @param propertyType
+	 *          the type of the property
 	 * @return yes/no
 	 */
 	abstract public boolean canHandle(Class<?> propertyType);
-	
+
 	/**
-	 * Some {@link CellEditor}s represent the model property with different 
-	 * type in the UI, for example String for double values.
-	 * @param cellEditorValue the cell editor value
-	 * @param propertyOwner the object that owns the property
+	 * Some {@link CellEditor}s represent the model property with different type
+	 * in the UI, for example String for double values.
+	 * 
+	 * @param cellEditorValue
+	 *          the cell editor value
+	 * @param propertyOwner
+	 *          the object that owns the property
 	 * @return the model value
 	 */
-	protected Object toModelValue(Object cellEditorValue, Object propertyOwner) {
+	public Object toModelValue(Object cellEditorValue, Object propertyOwner)
+	{
 		return cellEditorValue;
 	}
-	
+
 	/**
-	 * Some {@link CellEditor}s represent the model property with different 
-	 * type in the UI, for example String for double values.
-	 * @param modelValue the model value
-	 * @param propertyOwner the object that owns the property
+	 * Some {@link CellEditor}s represent the model property with different type
+	 * in the UI, for example String for double values.
+	 * 
+	 * @param modelValue
+	 *          the model value
+	 * @param propertyOwner
+	 *          the object that owns the property
 	 * @return the cell editor value
 	 */
-	protected Object toCellEditorValue(Object modelValue, Object properyOwner) {
+	public Object toCellEditorValue(Object modelValue, Object properyOwner)
+	{
 		return modelValue;
 	}
+
 	/**
 	 * @param propertyId
 	 * @param metadata
@@ -70,7 +81,8 @@ abstract class PropertyTypeHandler
 	 */
 	abstract Object getDefaulValue(UIProperty metadata);
 
-	/** create the property descriptor for the specified property
+	/**
+	 * create the property descriptor for the specified property
 	 * 
 	 * @param propertyId
 	 * @param metadata
@@ -88,7 +100,7 @@ abstract class PropertyTypeHandler
 	/**
 	 * A handler for String type properties
 	 */
-	static final PropertyTypeHandler STRING = new PropertyTypeHandler()
+	public static final PropertyTypeHandler STRING = new PropertyTypeHandler()
 	{
 
 		@Override
@@ -113,7 +125,7 @@ abstract class PropertyTypeHandler
 	/**
 	 * A handler for boolean type properties
 	 */
-	static final PropertyTypeHandler BOOLEAN = new PropertyTypeHandler()
+	public static final PropertyTypeHandler BOOLEAN = new PropertyTypeHandler()
 	{
 
 		@Override
@@ -138,7 +150,7 @@ abstract class PropertyTypeHandler
 	/**
 	 * A handler for int type properties
 	 */
-	static final PropertyTypeHandler INTEGER = new PropertyTypeHandler()
+	public static final PropertyTypeHandler INTEGER = new PropertyTypeHandler()
 	{
 
 		@Override
@@ -160,11 +172,11 @@ abstract class PropertyTypeHandler
 			return "int".equals(propertyType.getName());
 		}
 	};
-	
+
 	/**
 	 * A handler for double primitive type and Number type properties.
 	 */
-	static final PropertyTypeHandler DOUBLE = new PropertyTypeHandler()
+	public static final PropertyTypeHandler DOUBLE = new PropertyTypeHandler()
 	{
 
 		@Override
@@ -182,22 +194,25 @@ abstract class PropertyTypeHandler
 		@Override
 		public boolean canHandle(Class<?> propertyType)
 		{
-			return Number.class == propertyType || "double".equals(propertyType.getName());
+			return Number.class == propertyType
+					|| "double".equals(propertyType.getName());
 		}
-		
-		protected Object toModelValue(Object cellEditorValue, Object propertyOwner) {
+
+		public Object toModelValue(Object cellEditorValue, Object propertyOwner)
+		{
 			return Double.parseDouble((String) cellEditorValue);
 		};
-		
-		protected Object toCellEditorValue(Object modelValue, Object propertyOwner) {
+
+		public Object toCellEditorValue(Object modelValue, Object propertyOwner)
+		{
 			return modelValue + "";
 		};
 	};
-	
+
 	/**
 	 * A handler for {@link Unit} typed properties
 	 */
-	static final PropertyTypeHandler UNIT = new PropertyTypeHandler()
+	public static final PropertyTypeHandler UNIT = new PropertyTypeHandler()
 	{
 
 		@Override
@@ -209,7 +224,8 @@ abstract class PropertyTypeHandler
 		protected PropertyDescriptor doCreatePropertyDescriptor(String propertyId,
 				UIProperty metadata)
 		{
-			// TODO: ideally this would be a drop down list, where user can select values.
+			// TODO: ideally this would be a drop down list, where user can select
+			// values.
 			// In that case toModel and toUI would need to deal with indices
 			return new TextPropertyDescriptor(propertyId, metadata.name());
 		}
@@ -219,22 +235,26 @@ abstract class PropertyTypeHandler
 		{
 			return propertyType == Unit.class;
 		}
-		
-		protected Object toModelValue(Object cellEditorValue, Object propertyOwner) {
-			// TODO: here we should have some form of conversion from string to Unit 
-			// (perhaps reuse the logic already in CsvParser class) 
+
+		public Object toModelValue(Object cellEditorValue, Object propertyOwner)
+		{
+			// TODO: here we should have some form of conversion from string to Unit
+			// (perhaps reuse the logic already in CsvParser class)
 			return cellEditorValue;
 		};
-		
-		protected Object toCellEditorValue(Object modelValue, Object propertyOwner) {
+
+		public Object toCellEditorValue(Object modelValue, Object propertyOwner)
+		{
 			return modelValue + "";
 		};
 	};
 
 	/**
-	 * A handler for {@link QuantityRange} typed properties
+	 * A handler for {@link QuantityRange} typed properties. This property type
+	 * handler only makes sense when propertyOwner is an
+	 * {@link IBaseQuantityCollection} instance
 	 */
-	static final PropertyTypeHandler QUANTITY_RANGE = new PropertyTypeHandler()
+	public static final PropertyTypeHandler QUANTITY_RANGE = new PropertyTypeHandler()
 	{
 
 		@Override
@@ -254,13 +274,15 @@ abstract class PropertyTypeHandler
 		{
 			return propertyType == QuantityRange.class;
 		}
-		
-		@SuppressWarnings({ "unchecked", "rawtypes" })
-		protected Object toModelValue(Object cellEditorValue, Object propertyOwner) {
-			
+
+		@SuppressWarnings(
+		{ "unchecked", "rawtypes" })
+		public Object toModelValue(Object cellEditorValue, Object propertyOwner)
+		{
+
 			QuantityRange newR = null;
-			
-			IQuantityCollection<?> tt = (IQuantityCollection<?>) propertyOwner;
+
+			IBaseQuantityCollection<?> tt = (IBaseQuantityCollection<?>) propertyOwner;
 			// try to get a range from the string
 			String str = (String) cellEditorValue;
 			if (str.length() > 0)
@@ -278,32 +300,33 @@ abstract class PropertyTypeHandler
 						if (maxV > minV)
 						{
 							Unit<?> collUnits = tt.getUnits();
-							newR = new QuantityRange(Measure.valueOf(minV,
-									collUnits), Measure.valueOf(maxV, collUnits));
+							newR = new QuantityRange(Measure.valueOf(minV, collUnits),
+									Measure.valueOf(maxV, collUnits));
 						}
 					}
 					catch (NumberFormatException fe)
 					{
-						Activator.logError(Status.ERROR,
-								"Failed to extract number range", fe);						
+						Activator.logError(Status.ERROR, "Failed to extract number range",
+								fe);
 					}
 				}
 				else
 				{
 					Activator.logError(Status.ERROR,
-							"Number format string not properly constructed:"
-									+ str + " (should be 1:10)", null);
+							"Number format string not properly constructed:" + str
+									+ " (should be 1:10)", null);
 				}
 			}
-			
-			return newR; 
+
+			return newR;
 		};
-		
+
 		@SuppressWarnings("unchecked")
-		protected Object toCellEditorValue(Object modelValue, Object propertyOwner) {
+		public Object toCellEditorValue(Object modelValue, Object propertyOwner)
+		{
 			final String str;
 			QuantityRange<Quantity> range = (QuantityRange<Quantity>) modelValue;
-			IQuantityCollection<Quantity> qc = (IQuantityCollection<Quantity>) propertyOwner; 
+			IBaseQuantityCollection<Quantity> qc = (IBaseQuantityCollection<Quantity>) propertyOwner;
 			if (range != null)
 			{
 				str = "" + range.getMinimum().longValue(qc.getUnits()) + " : "
@@ -341,11 +364,12 @@ abstract class PropertyTypeHandler
 		{
 			return propertyType == Geometry.class;
 		}
-		
-		protected Object toModelValue(Object cellEditorValue, Object propertyOwner) {
-			
+
+		public Object toModelValue(Object cellEditorValue, Object propertyOwner)
+		{
+
 			Point newL = null;
-			
+
 			// try to get a location from the string
 			String str = (String) cellEditorValue;
 			if (str.length() > 0)
@@ -360,8 +384,8 @@ abstract class PropertyTypeHandler
 					{
 						double latV = Double.parseDouble(lat);
 						double lngV = Double.parseDouble(lng);
-						
-						newL = GeoSupport.getBuilder().createPoint(lngV,latV);
+
+						newL = GeoSupport.getBuilder().createPoint(lngV, latV);
 					}
 					catch (NumberFormatException fe)
 					{
@@ -372,17 +396,19 @@ abstract class PropertyTypeHandler
 				else
 				{
 					Activator.logError(Status.ERROR,
-							"Number format string not properly constructed:"
-									+ str + " (should be 1:10)", null);
+							"Number format string not properly constructed:" + str
+									+ " (should be 1:10)", null);
 				}
 			}
-			
-			return newL; 
+
+			return newL;
 		};
-		
-		protected Object toCellEditorValue(Object modelValue, Object propertyOwner) {
+
+		public Object toCellEditorValue(Object modelValue, Object propertyOwner)
+		{
 			PointImpl location = (PointImpl) modelValue;
-			return location.getDirectPosition().getY() + " : " + location.getDirectPosition().getX();					
+			return location.getDirectPosition().getY() + " : "
+					+ location.getDirectPosition().getX();
 		};
 	};
 }

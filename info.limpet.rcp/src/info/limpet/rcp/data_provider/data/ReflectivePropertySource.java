@@ -181,15 +181,6 @@ public class ReflectivePropertySource implements IPropertySource
 		return (boolean) expression.evaluate(context);
 	}
 
-	public static void main(String[] args)
-	{
-		JexlEngine jexl = new JexlBuilder().create();
-		JexlExpression expression = jexl.createExpression("test == 1");
-
-		Object rs = expression.evaluate(new MapContext());
-		System.out.println(rs);
-	}
-
 	@Override
 	public Object getPropertyValue(Object id)
 	{
