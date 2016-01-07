@@ -64,7 +64,7 @@ public abstract class AbstractCommand<T extends IStoreItem> implements
     this.outputs = new ArrayList<T>();
 
     // store any inputs, if we have any
-    if (this.getInputs() != null)
+    if (inputs != null)
     {
       this.getInputs().addAll(inputs);
     }
