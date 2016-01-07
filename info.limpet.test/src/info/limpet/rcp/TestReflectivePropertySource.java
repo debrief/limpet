@@ -63,7 +63,7 @@ public class TestReflectivePropertySource extends TestCase
 	}
 
 	@SuppressWarnings(
-	{ "unchecked", "rawtypes" })
+	{ "unchecked"})
 	public void testSetValue()
 	{
 		propertySource.setPropertyValue(TestData.PROP_NAME, "modified value");
@@ -82,8 +82,8 @@ public class TestReflectivePropertySource extends TestCase
 		assertEquals(Temperature.UNIT, testData.getUnits());
 
 		propertySource.setPropertyValue(TestData.PROP_RANGE, "10 : 50");
-		Measure min = (Measure) testData.getRange().getMinimum();
-		Measure max = (Measure) testData.getRange().getMaximum();
+		Measure<Double,Velocity> min = (Measure<Double,Velocity>)testData.getRange().getMinimum();
+		Measure<Double,Velocity> max = (Measure<Double,Velocity>) testData.getRange().getMaximum();
 		assertEquals(10, min.intValue(min.getUnit()));
 		assertEquals(50, max.intValue(max.getUnit()));
 
