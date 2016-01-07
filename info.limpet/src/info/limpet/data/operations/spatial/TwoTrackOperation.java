@@ -75,7 +75,7 @@ public abstract class TwoTrackOperation implements IOperation<IStoreItem>
       super.addOutput(target);
 
       // start adding values.
-      performCalc(outputs);
+      performCalc();
 
       // tell each series that we're a dependent
       Iterator<IStoreItem> iter = getInputs().iterator();
@@ -106,17 +106,15 @@ public abstract class TwoTrackOperation implements IOperation<IStoreItem>
       }
 
       // update the results
-      performCalc(getOutputs());
+      performCalc();
     }
 
     /**
      * wrap the actual operation. We're doing this since we need to separate it from the core
      * "execute" operation in order to support dynamic updates
-     * 
      * @param unit
-     * @param outputs
      */
-    private void performCalc(List<IStoreItem> outputs)
+    private void performCalc()
     {
       ICollection track1 = (ICollection) getInputs().get(0);
       ICollection track2 = (ICollection) getInputs().get(1);

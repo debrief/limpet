@@ -26,9 +26,11 @@ import info.limpet.data.impl.samples.TemporalLocation;
 import info.limpet.data.store.InMemoryStore.StoreGroup;
 
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.charset.Charset;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -46,16 +48,16 @@ import org.opengis.geometry.primitive.Point;
 public class CsvParser
 {
   // 21/09/2015 07:00:31
-  public static final DateFormat DATE_FORMAT = new SimpleDateFormat(
+  private static final DateFormat DATE_FORMAT = new SimpleDateFormat(
       "dd/MM/yyyy hh:mm:ss");
-  public static final DateFormat TIME_FORMAT = new SimpleDateFormat("hh:mm:ss");
+  private static final DateFormat TIME_FORMAT = new SimpleDateFormat("hh:mm:ss");
   private ArrayList<DataImporter> _candidates;
 
   public List<IStoreItem> parse(String filePath) throws IOException
   {
     final List<IStoreItem> res = new ArrayList<IStoreItem>();
     final File inFile = new File(filePath);
-    final Reader in = new FileReader(inFile);
+    final Reader in =   new InputStreamReader(new FileInputStream(inFile), Charset.forName("UTF-8"));
     final String fullFileName = inFile.getName();
     final String fileName = filePrefix(fullFileName);
     final Iterable<CSVRecord> records = CSVFormat.DEFAULT.parse(in);
@@ -297,6 +299,17 @@ public class CsvParser
     }
 
     return res;
+  }
+
+  
+  public static DateFormat getDateFormat()
+  {
+    return DATE_FORMAT;
+  }
+
+  public static DateFormat getTimeFormat()
+  {
+    return TIME_FORMAT;
   }
 
   private String filePrefix(String fullPath)

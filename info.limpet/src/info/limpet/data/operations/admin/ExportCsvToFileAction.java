@@ -27,6 +27,7 @@ import info.limpet.data.operations.admin.CopyCsvToClipboardAction.CopyCsvToClipb
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -83,7 +84,7 @@ public class ExportCsvToFileAction implements IOperation<IStoreItem>
         try
         {
           fop = new FileOutputStream(file);
-          fop.write(csv.getBytes());
+          fop.write(csv.getBytes(Charset.forName("UTF-8")));
         }
         catch (IOException e)
         {

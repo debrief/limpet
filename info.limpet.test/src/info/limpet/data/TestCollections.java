@@ -772,7 +772,7 @@ public class TestCollections extends TestCase
     assertEquals("correct start", 1, it.start());
     assertEquals("correct finish", 12, it.finish());
     assertEquals("correct duration", 11, it.duration());
-    assertEquals("correct start", 1d, it.rate());
+    assertEquals("correct start", 1.1d, it.rate(), 0.1);
 
     // ok, now check the iterator
     long runningValueSum = 0;
@@ -957,7 +957,7 @@ public class TestCollections extends TestCase
     assertEquals("correct start", 1, it.start());
     assertEquals("correct finish", 10, it.finish());
     assertEquals("correct duration", 9, it.duration());
-    assertEquals("correct start", 1d, it.rate());
+    assertEquals("correct start", 1.1d, it.rate(), 0.1);
 
     // ok, now check the iterator
     double runningValueSum = 0;

@@ -28,7 +28,8 @@ import org.apache.commons.math3.stat.Frequency;
 public abstract class ObjectFrequencyBins extends CoreAnalysis
 {
   private static final int MAX_SIZE = 2000;
-  private final CollectionComplianceTests aTests = new CollectionComplianceTests();
+  private final CollectionComplianceTests aTests =
+      new CollectionComplianceTests();
 
   public ObjectFrequencyBins()
   {
@@ -100,38 +101,36 @@ public abstract class ObjectFrequencyBins extends CoreAnalysis
     List<String> values = new ArrayList<String>();
 
     // check compatibility
-    if (appliesTo(selection))
+    if ((appliesTo(selection)) && (selection.size() == 1))
     {
-      if (selection.size() == 1)
+      // ok, let's go for it.
+      for (Iterator<IStoreItem> iter = selection.iterator(); iter.hasNext();)
       {
-        // ok, let's go for it.
-        for (Iterator<IStoreItem> iter = selection.iterator(); iter.hasNext();)
+        ICollection thisC = (ICollection) iter.next();
+
+        if (thisC.size() <= MAX_SIZE)
         {
-          ICollection thisC = (ICollection) iter.next();
+          IObjectCollection<?> o = (IObjectCollection<?>) thisC;
 
-          if (thisC.size() <= MAX_SIZE)
+          BinnedData res = doBins(o);
+
+          titles.add("Unique values");
+          values.add(res.size() + "");
+
+          StringBuffer freqBins = new StringBuffer();
+
+          Iterator<Bin> bIter = res.iterator();
+          while (bIter.hasNext())
           {
-            IObjectCollection<?> o = (IObjectCollection<?>) thisC;
-
-            BinnedData res = doBins(o);
-
-            titles.add("Unique values");
-            values.add(res.size() + "");
-
-            StringBuffer freqBins = new StringBuffer();
-
-            Iterator<Bin> bIter = res.iterator();
-            while (bIter.hasNext())
-            {
-              ObjectFrequencyBins.Bin bin = (ObjectFrequencyBins.Bin) bIter.next();
-              freqBins.append(bin.getIndexVal());
-              freqBins.append(':');
-              freqBins.append(bin.getFreqVal());
-              freqBins.append(", ");
-            }
-            titles.add("Frequency");
-            values.add(freqBins.toString());
+            ObjectFrequencyBins.Bin bin =
+                (ObjectFrequencyBins.Bin) bIter.next();
+            freqBins.append(bin.getIndexVal());
+            freqBins.append(':');
+            freqBins.append(bin.getFreqVal());
+            freqBins.append(", ");
           }
+          titles.add("Frequency");
+          values.add(freqBins.toString());
         }
       }
     }
@@ -149,5 +148,6 @@ public abstract class ObjectFrequencyBins extends CoreAnalysis
         && aTests.allNonLocation(selection);
   }
 
-  protected abstract void presentResults(List<String> titles, List<String> values);
+  protected abstract void presentResults(List<String> titles,
+      List<String> values);
 }

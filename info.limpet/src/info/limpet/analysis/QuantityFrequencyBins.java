@@ -151,43 +151,38 @@ public abstract class QuantityFrequencyBins extends CoreAnalysis
     List<String> values = new ArrayList<String>();
 
     // check compatibility
-    if (appliesTo(selection))
+    if ((appliesTo(selection)) && (selection.size() == 1))
     {
-      if (selection.size() == 1)
+      // ok, let's go for it.
+      for (Iterator<IStoreItem> iter = selection.iterator(); iter.hasNext();)
       {
-        // ok, let's go for it.
-        for (Iterator<IStoreItem> iter = selection.iterator(); iter.hasNext();)
+        ICollection thisC = (ICollection) iter.next();
+        @SuppressWarnings("unchecked")
+        IQuantityCollection<Quantity> o = (IQuantityCollection<Quantity>) thisC;
+
+        if ((thisC.size() > 1) && (thisC.size() < MAX_SIZE))
         {
-          ICollection thisC = (ICollection) iter.next();
-          @SuppressWarnings("unchecked")
-          IQuantityCollection<Quantity> o = (IQuantityCollection<Quantity>) thisC;
+          BinnedData res = doBins(o);
 
-          if (thisC.size() > 1)
+          // now output the bins
+          StringBuffer freqBins = new StringBuffer();
+
+          Iterator<Bin> bIter = res.iterator();
+          while (bIter.hasNext())
           {
-            if (thisC.size() < MAX_SIZE)
-            {
-              BinnedData res = doBins(o);
+            QuantityFrequencyBins.Bin bin =
+                (QuantityFrequencyBins.Bin) bIter.next();
+            freqBins.append((int) bin.getLowerVal());
+            freqBins.append("-");
+            freqBins.append((int) bin.getUpperVal());
+            freqBins.append(": ");
+            freqBins.append(bin.getFreqVal());
+            freqBins.append(", ");
 
-              // now output the bins
-              StringBuffer freqBins = new StringBuffer();
-
-              Iterator<Bin> bIter = res.iterator();
-              while (bIter.hasNext())
-              {
-                QuantityFrequencyBins.Bin bin = (QuantityFrequencyBins.Bin) bIter.next();
-                freqBins.append((int) bin.getLowerVal());
-                freqBins.append("-");
-                freqBins.append((int) bin.getUpperVal());
-                freqBins.append(": ");
-                freqBins.append(bin.getFreqVal());
-                freqBins.append(", ");
-
-              }
-
-              titles.add("Frequency bins");
-              values.add(freqBins.toString());
-            }
           }
+
+          titles.add("Frequency bins");
+          values.add(freqBins.toString());
         }
       }
     }
@@ -205,5 +200,6 @@ public abstract class QuantityFrequencyBins extends CoreAnalysis
         && aTests.allEqualUnits(selection);
   }
 
-  protected abstract void presentResults(List<String> titles, List<String> values);
+  protected abstract void presentResults(List<String> titles,
+      List<String> values);
 }

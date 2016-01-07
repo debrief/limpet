@@ -77,7 +77,7 @@ public class CsvGenerator
       if (timesIterator != null && timesIterator.hasNext())
       {
         Long time = timesIterator.next();
-        header.append(CsvParser.DATE_FORMAT.format(new Date(time)));
+        header.append(CsvParser.getDateFormat().format(new Date(time)));
         header.append(COMMA_SEPARATOR);
       }
       Object value = valuesIterator.next();

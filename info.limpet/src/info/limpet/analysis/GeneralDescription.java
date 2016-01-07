@@ -30,7 +30,8 @@ public abstract class GeneralDescription extends CoreAnalysis
     super("General Description");
   }
 
-  private final CollectionComplianceTests aTests = new CollectionComplianceTests();
+  private final CollectionComplianceTests aTests =
+      new CollectionComplianceTests();
 
   @Override
   public void analyse(List<IStoreItem> selection)
@@ -39,25 +40,22 @@ public abstract class GeneralDescription extends CoreAnalysis
     List<String> values = new ArrayList<String>();
 
     // check compatibility
-    if (appliesTo(selection))
+    if ((appliesTo(selection) && (selection.size() == 1)))
     {
-      if (selection.size() == 1)
+      // ok, let's go for it.
+      for (Iterator<IStoreItem> iter = selection.iterator(); iter.hasNext();)
       {
-        // ok, let's go for it.
-        for (Iterator<IStoreItem> iter = selection.iterator(); iter.hasNext();)
-        {
-          ICollection thisC = (ICollection) iter.next();
+        ICollection thisC = (ICollection) iter.next();
 
-          titles.add("Collection");
-          values.add(thisC.getName());
-          titles.add("Size");
-          values.add("" + thisC.size());
-          titles.add("Temporal");
-          values.add("" + thisC.isTemporal());
-          titles.add("Quantity");
-          values.add("" + thisC.isQuantity());
+        titles.add("Collection");
+        values.add(thisC.getName());
+        titles.add("Size");
+        values.add("" + thisC.size());
+        titles.add("Temporal");
+        values.add("" + thisC.isTemporal());
+        titles.add("Quantity");
+        values.add("" + thisC.isQuantity());
 
-        }
       }
     }
 
@@ -73,5 +71,6 @@ public abstract class GeneralDescription extends CoreAnalysis
     return aTests.allCollections(selection);
   }
 
-  protected abstract void presentResults(List<String> titles, List<String> values);
+  protected abstract void presentResults(List<String> titles,
+      List<String> values);
 }

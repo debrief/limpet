@@ -95,7 +95,7 @@ public abstract class AbstractCommand<T extends IStoreItem> implements
   {
     final int prime = 31;
     int result = 1;
-    result = prime * result + ((getUUID() == null) ? 0 : getUUID().hashCode());
+    result = prime * result + getUUID().hashCode();
     return result;
   }
 
@@ -115,14 +115,7 @@ public abstract class AbstractCommand<T extends IStoreItem> implements
       return false;
     }
     AbstractCommand<?> other = (AbstractCommand<?>) obj;
-    if (getUUID() == null)
-    {
-      if (other.getUUID() != null)
-      {
-        return false;
-      }
-    }
-    else if (!getUUID().equals(other.getUUID()))
+    if (!getUUID().equals(other.getUUID()))
     {
       return false;
     }

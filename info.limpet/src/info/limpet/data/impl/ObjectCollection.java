@@ -81,14 +81,7 @@ public class ObjectCollection<T extends Object> implements IObjectCollection<T>
       return false;
     }
     ObjectCollection<?> other = (ObjectCollection<?>) obj;
-    if (getUUID() == null)
-    {
-      if (other.getUUID() != null)
-      {
-        return false;
-      }
-    }
-    else if (!getUUID().equals(other.getUUID()))
+    if (!getUUID().equals(other.getUUID()))
     {
       return false;
     }

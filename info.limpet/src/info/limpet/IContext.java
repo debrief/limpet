@@ -43,6 +43,8 @@ public interface IContext
 	/** indicate this warning
 	 * 
 	 * @param string
+	 * @param message
+	 * @param e
 	 */
 	void logError(Status status, String message, Exception e);
 

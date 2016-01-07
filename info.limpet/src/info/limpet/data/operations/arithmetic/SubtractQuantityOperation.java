@@ -31,17 +31,9 @@ import javax.measure.quantity.Quantity;
 public class SubtractQuantityOperation<Q extends Quantity> extends
     CoreQuantityOperation<Q> implements IOperation<IQuantityCollection<Q>>
 {
-  public static final String DIFFERENCE_OF_INPUT_SERIES =
-      "Difference of input series";
-
-  public SubtractQuantityOperation(String name)
-  {
-    super();
-  }
-
   public SubtractQuantityOperation()
   {
-    this(DIFFERENCE_OF_INPUT_SERIES);
+    super();
   }
 
   @Override

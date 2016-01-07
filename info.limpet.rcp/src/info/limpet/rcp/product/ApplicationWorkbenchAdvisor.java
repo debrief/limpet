@@ -456,7 +456,7 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor
     job.schedule();
   }
 
-  private class CancelableProgressMonitorWrapper extends ProgressMonitorWrapper
+  private static class CancelableProgressMonitorWrapper extends ProgressMonitorWrapper
   {
     private double total = 0;
     private ProgressMonitorJobsDialog dialog;
@@ -513,7 +513,7 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor
     }
   }
 
-  private class CancelableProgressMonitorJobsDialog extends
+  private static class CancelableProgressMonitorJobsDialog extends
       ProgressMonitorJobsDialog
   {
 

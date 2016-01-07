@@ -73,11 +73,11 @@ public class TimeHelper implements IBaseTemporalCollection
   {
     if (size() > 1)
     {
-      return size() / duration();
+      return (double) size() / duration();
     }
     else
     {
-      return -1;
+      return -1d;
     }
   }
 

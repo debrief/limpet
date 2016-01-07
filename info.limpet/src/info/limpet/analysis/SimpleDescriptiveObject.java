@@ -28,7 +28,8 @@ import org.opengis.geometry.Geometry;
 public abstract class SimpleDescriptiveObject extends CoreAnalysis
 {
 
-  private final CollectionComplianceTests aTests = new CollectionComplianceTests();
+  private final CollectionComplianceTests aTests =
+      new CollectionComplianceTests();
 
   public SimpleDescriptiveObject()
   {
@@ -42,23 +43,20 @@ public abstract class SimpleDescriptiveObject extends CoreAnalysis
     List<String> values = new ArrayList<String>();
 
     // check compatibility
-    if (appliesTo(selection))
+    if ((appliesTo(selection)) && (selection.size() == 1))
     {
-      if (selection.size() == 1)
+      // ok, let's go for it.
+      for (Iterator<IStoreItem> iter = selection.iterator(); iter.hasNext();)
       {
-        // ok, let's go for it.
-        for (Iterator<IStoreItem> iter = selection.iterator(); iter.hasNext();)
-        {
-          ICollection thisC = (ICollection) iter.next();
-          ObjectCollection<?> o = (ObjectCollection<?>) thisC;
+        ICollection thisC = (ICollection) iter.next();
+        ObjectCollection<?> o = (ObjectCollection<?>) thisC;
 
-          // check it has some data
-          if (o.size() > 0)
-          {
-            titles.add("Content Type");
-            Object nextObject = o.getValues().iterator().next();
-            values.add(typeFor(nextObject, nextObject.getClass()));
-          }
+        // check it has some data
+        if (o.size() > 0)
+        {
+          titles.add("Content Type");
+          Object nextObject = o.getValues().iterator().next();
+          values.add(typeFor(nextObject, nextObject.getClass()));
         }
       }
     }
@@ -91,5 +89,6 @@ public abstract class SimpleDescriptiveObject extends CoreAnalysis
     return aTests.allCollections(selection) && aTests.allNonQuantity(selection);
   }
 
-  protected abstract void presentResults(List<String> titles, List<String> values);
+  protected abstract void presentResults(List<String> titles,
+      List<String> values);
 }

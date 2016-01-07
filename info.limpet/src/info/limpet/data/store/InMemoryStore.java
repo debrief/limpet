@@ -108,7 +108,7 @@ public class InMemoryStore implements IStore, IChangeListener
     {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((getUUID() == null) ? 0 : getUUID().hashCode());
+      result = prime * result + getUUID().hashCode();
       return result;
     }
 
@@ -128,14 +128,7 @@ public class InMemoryStore implements IStore, IChangeListener
         return false;
       }
       StoreGroup other = (StoreGroup) obj;
-      if (getUUID() == null)
-      {
-        if (other.getUUID() != null)
-        {
-          return false;
-        }
-      }
-      else if (!getUUID().equals(other.getUUID()))
+      if (!getUUID().equals(other.getUUID()))
       {
         return false;
       }

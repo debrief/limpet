@@ -69,7 +69,7 @@ public class SimpleMovingAverageOperation implements IOperation<ICollection>
 		return (singleSeries && allQuantity);
 	}
 
-	public class SimpleMovingAverageCommand extends AbstractCommand<ICollection>
+	public static class SimpleMovingAverageCommand extends AbstractCommand<ICollection>
 	{
 
 		private int winSize;

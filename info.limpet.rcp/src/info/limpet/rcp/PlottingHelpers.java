@@ -30,25 +30,26 @@ public class PlottingHelpers
     
   }
   
-	private static List<Color> cols;
+	private static final List<Color> COLS;
+	static
+	{
+    Display display = Display.getCurrent();
+    COLS = new ArrayList<Color>();
+    for (int i = 3; i < 12; i++)
+    {
+      COLS.add(display.getSystemColor(i));
+    }
+	  
+	}
 
 	public static Color colorFor(String seriesName)
 	{
 		Color res = null;
-		if (cols == null)
-		{
-			Display display = Display.getCurrent();
-			cols = new ArrayList<Color>();
-			for (int i = 3; i < 12; i++)
-			{
-				cols.add(display.getSystemColor(i));
-			}
-		}
 		
 		
-		int thisIndex = Math.abs(seriesName.hashCode() % cols.size());
+		int thisIndex = Math.abs(seriesName.hashCode() % COLS.size());
 		
-		res = cols.get(thisIndex);
+		res = COLS.get(thisIndex);
 		
 		return res;
 	}

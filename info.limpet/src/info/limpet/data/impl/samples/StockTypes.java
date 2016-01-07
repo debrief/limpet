@@ -156,7 +156,7 @@ public class StockTypes
     {
       public TurnRate(String name, ICommand<?> precedent)
       {
-        super(null, precedent, DEGREE_ANGLE.divide(SECOND).asType(
+        super(name, precedent, DEGREE_ANGLE.divide(SECOND).asType(
             AngularVelocity.class));
       }
 

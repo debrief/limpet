@@ -93,7 +93,7 @@ public class DivideQuantityOperation implements IOperation<IStoreItem>
     return res;
   }
 
-  public class DivideQuantityValues extends AbstractCommand<IStoreItem>
+  public static class DivideQuantityValues extends AbstractCommand<IStoreItem>
   {
     private final IQuantityCollection<Quantity> _item1;
     private final IQuantityCollection<Quantity> _item2;
@@ -137,9 +137,6 @@ public class DivideQuantityOperation implements IOperation<IStoreItem>
     @Override
     public void execute()
     {
-      // get the unit
-      Unit<Quantity> unit = calculateOutputUnit();
-
       List<IStoreItem> outputs = new ArrayList<IStoreItem>();
 
       // ok, generate the new series
@@ -151,7 +148,7 @@ public class DivideQuantityOperation implements IOperation<IStoreItem>
       super.addOutput(target);
 
       // start adding values.
-      performCalc(unit, outputs, _item1, _item2);
+      performCalc(outputs);
 
       // tell each series that we're a dependent
       Iterator<IStoreItem> iter = getInputs().iterator();
@@ -176,22 +173,17 @@ public class DivideQuantityOperation implements IOperation<IStoreItem>
     @Override
     protected void recalculate()
     {
-      Unit<Quantity> unit = calculateOutputUnit();
-
       // update the results
-      performCalc(unit, getOutputs(), _item1, _item2);
+      performCalc(getOutputs());
     }
 
     /**
      * wrap the actual operation. We're doing this since we need to separate it from the core "execute"
      * operation in order to support dynamic updates
-     * 
-     * @param unit
      * @param outputs
      */
     @SuppressWarnings("unchecked")
-    private void performCalc(Unit<Quantity> unit, List<IStoreItem> outputs, ICollection item1,
-        ICollection item2)
+    private void performCalc(List<IStoreItem> outputs)
     {
       IQuantityCollection<Quantity> target = (IQuantityCollection<Quantity>) outputs.iterator().next();
 

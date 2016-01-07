@@ -100,7 +100,7 @@ public abstract class UnitaryMathOperation implements IOperation<ICollection>
     @Override
     protected String getOutputName()
     {
-      return getContext().getInput("Calculate " + getName(),
+      return getContext().getInput("Calculate " + super.getName(),
           NEW_DATASET_MESSAGE, getName() + "(" + super.getSubjectList() + ")");
     }
 
