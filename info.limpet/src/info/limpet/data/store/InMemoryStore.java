@@ -25,15 +25,16 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
-public class InMemoryStore implements IStore, IChangeListener
+public class InMemoryStore implements IStore, IChangeListener, IStoreGroup
 {
 
   private List<IStoreItem> _store = new ArrayList<IStoreItem>();
 
-  private transient List<StoreChangeListener> _listeners = new ArrayList<StoreChangeListener>();
+  private transient List<StoreChangeListener> _listeners =
+      new ArrayList<StoreChangeListener>();
 
-  public static class StoreGroup extends ArrayList<IStoreItem> implements IStoreItem, IStoreGroup,
-      IChangeListener
+  public static class StoreGroup extends ArrayList<IStoreItem> implements
+      IStoreItem, IStoreGroup, IChangeListener
   {
     /**
 		 * 
@@ -51,6 +52,8 @@ public class InMemoryStore implements IStore, IChangeListener
     {
       _name = name;
     }
+
+    // TODO: move this to a standalone class. Make the InMemoryStore extend it
 
     @Override
     public UUID getUUID()
@@ -257,7 +260,8 @@ public class InMemoryStore implements IStore, IChangeListener
     Iterator<StoreChangeListener> iter = _listeners.iterator();
     while (iter.hasNext())
     {
-      InMemoryStore.StoreChangeListener listener = (InMemoryStore.StoreChangeListener) iter.next();
+      InMemoryStore.StoreChangeListener listener =
+          (InMemoryStore.StoreChangeListener) iter.next();
       listener.changed();
     }
   }
@@ -277,9 +281,9 @@ public class InMemoryStore implements IStore, IChangeListener
   }
 
   @Override
-  public void add(IStoreItem results)
+  public boolean add(IStoreItem results)
   {
-    _store.add(results);
+    boolean res = _store.add(results);
 
     // register as a listener with the results object
     if (results instanceof ICollection)
@@ -294,6 +298,8 @@ public class InMemoryStore implements IStore, IChangeListener
     }
 
     fireModified();
+
+    return res;
   }
 
   public int size()
@@ -422,5 +428,23 @@ public class InMemoryStore implements IStore, IChangeListener
   @Override
   public void collectionDeleted(IStoreItem subject)
   {
+  }
+
+  @Override
+  public boolean hasChildren()
+  {
+    return _store.size() > 0;
+  }
+
+  @Override
+  public void addChangeListener(IChangeListener listener)
+  {
+    throw new RuntimeException("not implemented");
+  }
+
+  @Override
+  public void removeChangeListener(IChangeListener listener)
+  {
+    throw new RuntimeException("not implemented");
   }
 }

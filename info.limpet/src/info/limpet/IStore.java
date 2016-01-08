@@ -76,7 +76,7 @@ public interface IStore
 	 * 
 	 * @param results
 	 */
-	void add(IStoreItem items);
+	boolean add(IStoreItem items);
 
 	/**
 	 * retrieve the named collection
