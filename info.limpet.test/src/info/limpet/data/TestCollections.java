@@ -26,7 +26,6 @@ import info.limpet.IContext;
 import info.limpet.IQuantityCollection;
 import info.limpet.IStore;
 import info.limpet.IStore.IStoreItem;
-import info.limpet.IStoreGroup;
 import info.limpet.ITemporalObjectCollection.Doublet;
 import info.limpet.ITemporalQuantityCollection;
 import info.limpet.ITemporalQuantityCollection.InterpMethod;
@@ -39,7 +38,7 @@ import info.limpet.data.impl.TemporalQuantityCollection;
 import info.limpet.data.impl.samples.SampleData;
 import info.limpet.data.impl.samples.StockTypes;
 import info.limpet.data.impl.samples.StockTypes.NonTemporal;
-import info.limpet.data.impl.samples.StockTypes.NonTemporal.Speed_MSec;
+import info.limpet.data.impl.samples.StockTypes.NonTemporal.SpeedMSec;
 import info.limpet.data.impl.samples.StockTypes.Temporal;
 import info.limpet.data.operations.arithmetic.AddQuantityOperation;
 import info.limpet.data.operations.arithmetic.MultiplyQuantityOperation;
@@ -98,48 +97,66 @@ public class TestCollections extends TestCase
   }
 
   @SuppressWarnings(
-  {"rawtypes", "unchecked"})
+  { "rawtypes", "unchecked" })
   public void testTemporalQuantityInterp()
   {
     ITemporalQuantityCollection<?> tq =
-        new StockTypes.Temporal.Speed_MSec("Some data", null);
+        new StockTypes.Temporal.SpeedMSec("Some data", null);
     tq.add(100, 10);
     tq.add(200, 20);
     tq.add(300, 30);
     tq.add(400, 40);
 
-    assertEquals("returned null", null, tq.interpolateValue(90,
-        InterpMethod.Linear));
-    assertEquals("returned null", null, tq.interpolateValue(410,
-        InterpMethod.Linear));
+    assertEquals("returned null", null,
+        tq.interpolateValue(90, InterpMethod.Linear));
+    assertEquals("returned null", null,
+        tq.interpolateValue(410, InterpMethod.Linear));
 
-    assertEquals("returned correct value", 15d, tq.interpolateValue(150,
-        InterpMethod.Linear).doubleValue((Unit) tq.getUnits()));
-    assertEquals("returned correct value", 28d, tq.interpolateValue(280,
-        InterpMethod.Linear).doubleValue((Unit) tq.getUnits()));
-    assertEquals("returned correct value", 10d, tq.interpolateValue(100,
-        InterpMethod.Linear).doubleValue((Unit) tq.getUnits()));
-    assertEquals("returned correct value", 20d, tq.interpolateValue(200,
-        InterpMethod.Linear).doubleValue((Unit) tq.getUnits()));
-    assertEquals("returned correct value", 30d, tq.interpolateValue(300,
-        InterpMethod.Linear).doubleValue((Unit) tq.getUnits()));
-    assertEquals("returned correct value", 40d, tq.interpolateValue(400,
-        InterpMethod.Linear).doubleValue((Unit) tq.getUnits()));
+    assertEquals(
+        "returned correct value",
+        15d,
+        tq.interpolateValue(150, InterpMethod.Linear).doubleValue(
+            (Unit) tq.getUnits()));
+    assertEquals(
+        "returned correct value",
+        28d,
+        tq.interpolateValue(280, InterpMethod.Linear).doubleValue(
+            (Unit) tq.getUnits()));
+    assertEquals(
+        "returned correct value",
+        10d,
+        tq.interpolateValue(100, InterpMethod.Linear).doubleValue(
+            (Unit) tq.getUnits()));
+    assertEquals(
+        "returned correct value",
+        20d,
+        tq.interpolateValue(200, InterpMethod.Linear).doubleValue(
+            (Unit) tq.getUnits()));
+    assertEquals(
+        "returned correct value",
+        30d,
+        tq.interpolateValue(300, InterpMethod.Linear).doubleValue(
+            (Unit) tq.getUnits()));
+    assertEquals(
+        "returned correct value",
+        40d,
+        tq.interpolateValue(400, InterpMethod.Linear).doubleValue(
+            (Unit) tq.getUnits()));
   }
 
   @SuppressWarnings(
-  {"unchecked", "rawtypes"})
+  { "unchecked", "rawtypes" })
   public void testAddQuantityTemporalInterp()
   {
     ITemporalQuantityCollection<?> tq1 =
-        new StockTypes.Temporal.Speed_MSec("Some data1", null);
+        new StockTypes.Temporal.SpeedMSec("Some data1", null);
     tq1.add(100, 10);
     tq1.add(200, 20);
     tq1.add(300, 30);
     tq1.add(400, 40);
 
     ITemporalQuantityCollection<?> tq2 =
-        new StockTypes.Temporal.Speed_MSec("Some data2", null);
+        new StockTypes.Temporal.SpeedMSec("Some data2", null);
     tq2.add(220, 11);
     tq2.add(340, 17);
     tq2.add(440, 22);
@@ -168,17 +185,29 @@ public class TestCollections extends TestCase
 
     ITemporalQuantityCollection<?> tq = (ITemporalQuantityCollection<?>) series;
 
-    assertEquals("returned correct value", 10d, tq.interpolateValue(100,
-        InterpMethod.Linear).doubleValue((Unit) tq.getUnits()));
-    assertEquals("returned correct value", 20d, tq.interpolateValue(200,
-        InterpMethod.Linear).doubleValue((Unit) tq.getUnits()));
-    assertEquals("returned correct value", 45d, tq.interpolateValue(300,
-        InterpMethod.Linear).doubleValue((Unit) tq.getUnits()));
-    assertEquals("returned correct value", 60d, tq.interpolateValue(400,
-        InterpMethod.Linear).doubleValue((Unit) tq.getUnits()));
+    assertEquals(
+        "returned correct value",
+        10d,
+        tq.interpolateValue(100, InterpMethod.Linear).doubleValue(
+            (Unit) tq.getUnits()));
+    assertEquals(
+        "returned correct value",
+        20d,
+        tq.interpolateValue(200, InterpMethod.Linear).doubleValue(
+            (Unit) tq.getUnits()));
+    assertEquals(
+        "returned correct value",
+        45d,
+        tq.interpolateValue(300, InterpMethod.Linear).doubleValue(
+            (Unit) tq.getUnits()));
+    assertEquals(
+        "returned correct value",
+        60d,
+        tq.interpolateValue(400, InterpMethod.Linear).doubleValue(
+            (Unit) tq.getUnits()));
 
     // ok, mangle the second array a bit more
-    tq2 = new StockTypes.Temporal.Speed_MSec("Some data2", null);
+    tq2 = new StockTypes.Temporal.SpeedMSec("Some data2", null);
     tq2.add(20, 11);
     tq2.add(340, 17);
     tq2.add(440, 22);
@@ -205,17 +234,29 @@ public class TestCollections extends TestCase
 
     tq = (ITemporalQuantityCollection<?>) series;
 
-    assertEquals("returned correct value", 22.5d, tq.interpolateValue(100,
-        InterpMethod.Linear).doubleValue((Unit) tq.getUnits()));
-    assertEquals("returned correct value", 34.375d, tq.interpolateValue(200,
-        InterpMethod.Linear).doubleValue((Unit) tq.getUnits()));
-    assertEquals("returned correct value", 46.25d, tq.interpolateValue(300,
-        InterpMethod.Linear).doubleValue((Unit) tq.getUnits()));
-    assertEquals("returned correct value", 60d, tq.interpolateValue(400,
-        InterpMethod.Linear).doubleValue((Unit) tq.getUnits()));
+    assertEquals(
+        "returned correct value",
+        22.5d,
+        tq.interpolateValue(100, InterpMethod.Linear).doubleValue(
+            (Unit) tq.getUnits()));
+    assertEquals(
+        "returned correct value",
+        34.375d,
+        tq.interpolateValue(200, InterpMethod.Linear).doubleValue(
+            (Unit) tq.getUnits()));
+    assertEquals(
+        "returned correct value",
+        46.25d,
+        tq.interpolateValue(300, InterpMethod.Linear).doubleValue(
+            (Unit) tq.getUnits()));
+    assertEquals(
+        "returned correct value",
+        60d,
+        tq.interpolateValue(400, InterpMethod.Linear).doubleValue(
+            (Unit) tq.getUnits()));
 
     // ok, make the second array longer
-    tq2 = new StockTypes.Temporal.Speed_MSec("Some data2", null);
+    tq2 = new StockTypes.Temporal.SpeedMSec("Some data2", null);
     tq2.add(200, 11);
     tq2.add(250, 13);
     tq2.add(330, 17);
@@ -244,38 +285,53 @@ public class TestCollections extends TestCase
 
     tq = (ITemporalQuantityCollection<?>) series;
 
-    assertEquals("returned correct value", null, tq.interpolateValue(100,
-        InterpMethod.Linear));
-    assertEquals("returned correct value", 31d, tq.interpolateValue(200,
-        InterpMethod.Linear).doubleValue((Unit) tq.getUnits()));
-    assertEquals("returned correct value", 45.5d, tq.interpolateValue(300,
-        InterpMethod.Linear).doubleValue((Unit) tq.getUnits()));
-    assertEquals("returned correct value", 38.5d, tq.interpolateValue(400,
-        InterpMethod.Linear).doubleValue((Unit) tq.getUnits()));
-    assertEquals("returned correct value", 30.25d, tq.interpolateValue(420,
-        InterpMethod.Linear).doubleValue((Unit) tq.getUnits()));
-    assertEquals("returned correct value", 22d, tq.interpolateValue(440,
-        InterpMethod.Linear).doubleValue((Unit) tq.getUnits()));
+    assertEquals("returned correct value", null,
+        tq.interpolateValue(100, InterpMethod.Linear));
+    assertEquals(
+        "returned correct value",
+        31d,
+        tq.interpolateValue(200, InterpMethod.Linear).doubleValue(
+            (Unit) tq.getUnits()));
+    assertEquals(
+        "returned correct value",
+        45.5d,
+        tq.interpolateValue(300, InterpMethod.Linear).doubleValue(
+            (Unit) tq.getUnits()));
+    assertEquals(
+        "returned correct value",
+        38.5d,
+        tq.interpolateValue(400, InterpMethod.Linear).doubleValue(
+            (Unit) tq.getUnits()));
+    assertEquals(
+        "returned correct value",
+        30.25d,
+        tq.interpolateValue(420, InterpMethod.Linear).doubleValue(
+            (Unit) tq.getUnits()));
+    assertEquals(
+        "returned correct value",
+        22d,
+        tq.interpolateValue(440, InterpMethod.Linear).doubleValue(
+            (Unit) tq.getUnits()));
   }
 
   @SuppressWarnings("unchecked")
   public void testUUID()
   {
     ITemporalQuantityCollection<?> tq1 =
-        new StockTypes.Temporal.Speed_MSec("Some data1", null);
+        new StockTypes.Temporal.SpeedMSec("Some data1", null);
     tq1.add(100, 10);
     tq1.add(200, 20);
     tq1.add(300, 30);
     tq1.add(400, 40);
 
     ITemporalQuantityCollection<?> tq2 =
-        new StockTypes.Temporal.Speed_MSec("Some data2", null);
+        new StockTypes.Temporal.SpeedMSec("Some data2", null);
     tq2.add(220, 11);
     tq2.add(340, 17);
     tq2.add(440, 22);
 
     ITemporalQuantityCollection<?> tq3 =
-        new StockTypes.Temporal.Speed_MSec("Some data3", null);
+        new StockTypes.Temporal.SpeedMSec("Some data3", null);
     tq3.add(220, 11);
     tq3.add(340, 17);
     tq3.add(440, 22);
@@ -287,7 +343,7 @@ public class TestCollections extends TestCase
 
     InMemoryStore store = new InMemoryStore();
 
-    IStoreGroup group1 = new StoreGroup("Some group");
+    StoreGroup group1 = new StoreGroup("Some group");
 
     store.add(group1);
     group1.add(tq1);
@@ -320,24 +376,24 @@ public class TestCollections extends TestCase
   }
 
   @SuppressWarnings(
-  {"unchecked", "rawtypes"})
+  { "unchecked", "rawtypes" })
   public void testMathOperators()
   {
-    StockTypes.Temporal.Speed_MSec tq1 =
-        new StockTypes.Temporal.Speed_MSec("Some data1", null);
+    StockTypes.Temporal.SpeedMSec tq1 =
+        new StockTypes.Temporal.SpeedMSec("Some data1", null);
     tq1.add(100, 10);
     tq1.add(200, -20);
     tq1.add(300, 30);
     tq1.add(400, -20);
 
     ITemporalQuantityCollection<?> tq2 =
-        new StockTypes.Temporal.Speed_MSec("Some data2", null);
+        new StockTypes.Temporal.SpeedMSec("Some data2", null);
     tq2.add(220, -11);
     tq2.add(340, -17);
     tq2.add(440, -22);
 
-    StockTypes.NonTemporal.Speed_MSec nq1 =
-        new StockTypes.NonTemporal.Speed_MSec("Some data1", null);
+    StockTypes.NonTemporal.SpeedMSec nq1 =
+        new StockTypes.NonTemporal.SpeedMSec("Some data1", null);
     nq1.add(10);
     nq1.add(-20);
     nq1.add(30);
@@ -376,14 +432,14 @@ public class TestCollections extends TestCase
     assertTrue("quantity", series.isQuantity());
 
     // check some values
-    assertEquals("value correct", 10d, series.getValues().get(0).doubleValue(
-        (Unit) series.getUnits()));
-    assertEquals("value correct", 20d, series.getValues().get(1).doubleValue(
-        (Unit) series.getUnits()));
-    assertEquals("value correct", 30d, series.getValues().get(2).doubleValue(
-        (Unit) series.getUnits()));
-    assertEquals("value correct", 20d, series.getValues().get(3).doubleValue(
-        (Unit) series.getUnits()));
+    assertEquals("value correct", 10d,
+        series.getValues().get(0).doubleValue((Unit) series.getUnits()));
+    assertEquals("value correct", 20d,
+        series.getValues().get(1).doubleValue((Unit) series.getUnits()));
+    assertEquals("value correct", 30d,
+        series.getValues().get(2).doubleValue((Unit) series.getUnits()));
+    assertEquals("value correct", 20d,
+        series.getValues().get(3).doubleValue((Unit) series.getUnits()));
 
     series = (ITemporalQuantityCollection<?>) firstC.getOutputs().get(1);
     assertTrue("non empty", series.size() > 0);
@@ -392,12 +448,12 @@ public class TestCollections extends TestCase
     assertTrue("quantity", series.isQuantity());
 
     // check some values
-    assertEquals("value correct", 11d, series.getValues().get(0).doubleValue(
-        (Unit) series.getUnits()));
-    assertEquals("value correct", 17d, series.getValues().get(1).doubleValue(
-        (Unit) series.getUnits()));
-    assertEquals("value correct", 22d, series.getValues().get(2).doubleValue(
-        (Unit) series.getUnits()));
+    assertEquals("value correct", 11d,
+        series.getValues().get(0).doubleValue((Unit) series.getUnits()));
+    assertEquals("value correct", 17d,
+        series.getValues().get(1).doubleValue((Unit) series.getUnits()));
+    assertEquals("value correct", 22d,
+        series.getValues().get(2).doubleValue((Unit) series.getUnits()));
 
     // try to clear the units
     UnitaryMathOperation clearU = new UnitaryMathOperation("Clear units")
@@ -461,18 +517,18 @@ public class TestCollections extends TestCase
   }
 
   @SuppressWarnings(
-  {"unchecked"})
+  { "unchecked" })
   public void testMultiplyQuantitySingleton()
   {
     ITemporalQuantityCollection<Velocity> tq1 =
-        new StockTypes.Temporal.Speed_MSec("Some data1", null);
+        new StockTypes.Temporal.SpeedMSec("Some data1", null);
     tq1.add(100, 10);
     tq1.add(200, 20);
     tq1.add(300, 30);
     tq1.add(400, 40);
 
     IQuantityCollection<Velocity> tq2 =
-        new StockTypes.NonTemporal.Speed_MSec("Some data2", null);
+        new StockTypes.NonTemporal.SpeedMSec("Some data2", null);
     tq2.add(11);
 
     List<IStoreItem> selection = new ArrayList<IStoreItem>();
@@ -496,8 +552,8 @@ public class TestCollections extends TestCase
     assertEquals("corrent length results", 4, series.size());
     assertTrue("temporal", series.isTemporal());
     assertTrue("quantity", series.isQuantity());
-    assertEquals("correct value", 110d, series.getValues().get(0).doubleValue(
-        series.getUnits()));
+    assertEquals("correct value", 110d,
+        series.getValues().get(0).doubleValue(series.getUnits()));
 
     tq2.add(11);
     commands =
@@ -507,18 +563,18 @@ public class TestCollections extends TestCase
   }
 
   @SuppressWarnings(
-  {"unchecked", "rawtypes"})
+  { "unchecked", "rawtypes" })
   public void testMultiplyQuantityTemporalInterp()
   {
     ITemporalQuantityCollection<?> tq1 =
-        new StockTypes.Temporal.Speed_MSec("Some data1", null);
+        new StockTypes.Temporal.SpeedMSec("Some data1", null);
     tq1.add(100, 10);
     tq1.add(200, 20);
     tq1.add(300, 30);
     tq1.add(400, 40);
 
     ITemporalQuantityCollection<?> tq2 =
-        new StockTypes.Temporal.Speed_MSec("Some data2", null);
+        new StockTypes.Temporal.SpeedMSec("Some data2", null);
     tq2.add(220, 11);
     tq2.add(340, 17);
     tq2.add(440, 22);
@@ -546,17 +602,29 @@ public class TestCollections extends TestCase
 
     ITemporalQuantityCollection<?> tq = (ITemporalQuantityCollection<?>) series;
 
-    assertEquals("returned correct value", 10d, tq.interpolateValue(100,
-        InterpMethod.Linear).doubleValue((Unit) tq.getUnits()));
-    assertEquals("returned correct value", 20d, tq.interpolateValue(200,
-        InterpMethod.Linear).doubleValue((Unit) tq.getUnits()));
-    assertEquals("returned correct value", 450d, tq.interpolateValue(300,
-        InterpMethod.Linear).doubleValue((Unit) tq.getUnits()));
-    assertEquals("returned correct value", 800d, tq.interpolateValue(400,
-        InterpMethod.Linear).doubleValue((Unit) tq.getUnits()));
+    assertEquals(
+        "returned correct value",
+        10d,
+        tq.interpolateValue(100, InterpMethod.Linear).doubleValue(
+            (Unit) tq.getUnits()));
+    assertEquals(
+        "returned correct value",
+        20d,
+        tq.interpolateValue(200, InterpMethod.Linear).doubleValue(
+            (Unit) tq.getUnits()));
+    assertEquals(
+        "returned correct value",
+        450d,
+        tq.interpolateValue(300, InterpMethod.Linear).doubleValue(
+            (Unit) tq.getUnits()));
+    assertEquals(
+        "returned correct value",
+        800d,
+        tq.interpolateValue(400, InterpMethod.Linear).doubleValue(
+            (Unit) tq.getUnits()));
 
     // ok, mangle the second array a bit more
-    tq2 = new StockTypes.Temporal.Speed_MSec("Some data2", null);
+    tq2 = new StockTypes.Temporal.SpeedMSec("Some data2", null);
     tq2.add(20, 11);
     tq2.add(340, 17);
     tq2.add(440, 22);
@@ -584,17 +652,29 @@ public class TestCollections extends TestCase
 
     tq = (ITemporalQuantityCollection<?>) series;
 
-    assertEquals("returned correct value", 125d, tq.interpolateValue(100,
-        InterpMethod.Linear).doubleValue((Unit) tq.getUnits()));
-    assertEquals("returned correct value", 287.5d, tq.interpolateValue(200,
-        InterpMethod.Linear).doubleValue((Unit) tq.getUnits()));
-    assertEquals("returned correct value", 487.5d, tq.interpolateValue(300,
-        InterpMethod.Linear).doubleValue((Unit) tq.getUnits()));
-    assertEquals("returned correct value", 800d, tq.interpolateValue(400,
-        InterpMethod.Linear).doubleValue((Unit) tq.getUnits()));
+    assertEquals(
+        "returned correct value",
+        125d,
+        tq.interpolateValue(100, InterpMethod.Linear).doubleValue(
+            (Unit) tq.getUnits()));
+    assertEquals(
+        "returned correct value",
+        287.5d,
+        tq.interpolateValue(200, InterpMethod.Linear).doubleValue(
+            (Unit) tq.getUnits()));
+    assertEquals(
+        "returned correct value",
+        487.5d,
+        tq.interpolateValue(300, InterpMethod.Linear).doubleValue(
+            (Unit) tq.getUnits()));
+    assertEquals(
+        "returned correct value",
+        800d,
+        tq.interpolateValue(400, InterpMethod.Linear).doubleValue(
+            (Unit) tq.getUnits()));
 
     // ok, make the second array longer
-    tq2 = new StockTypes.Temporal.Speed_MSec("Some data2", null);
+    tq2 = new StockTypes.Temporal.SpeedMSec("Some data2", null);
     tq2.add(200, 11);
     tq2.add(250, 13);
     tq2.add(330, 17);
@@ -624,18 +704,33 @@ public class TestCollections extends TestCase
 
     tq = (ITemporalQuantityCollection<?>) series;
 
-    assertEquals("returned correct value", null, tq.interpolateValue(100,
-        InterpMethod.Linear));
-    assertEquals("returned correct value", 220d, tq.interpolateValue(200,
-        InterpMethod.Linear).doubleValue((Unit) tq.getUnits()));
-    assertEquals("returned correct value", 472.5d, tq.interpolateValue(300,
-        InterpMethod.Linear).doubleValue((Unit) tq.getUnits()));
-    assertEquals("returned correct value", 353d, tq.interpolateValue(400,
-        InterpMethod.Linear).doubleValue((Unit) tq.getUnits()));
-    assertEquals("returned correct value", 187.5d, tq.interpolateValue(420,
-        InterpMethod.Linear).doubleValue((Unit) tq.getUnits()));
-    assertEquals("returned correct value", 22d, tq.interpolateValue(440,
-        InterpMethod.Linear).doubleValue((Unit) tq.getUnits()));
+    assertEquals("returned correct value", null,
+        tq.interpolateValue(100, InterpMethod.Linear));
+    assertEquals(
+        "returned correct value",
+        220d,
+        tq.interpolateValue(200, InterpMethod.Linear).doubleValue(
+            (Unit) tq.getUnits()));
+    assertEquals(
+        "returned correct value",
+        472.5d,
+        tq.interpolateValue(300, InterpMethod.Linear).doubleValue(
+            (Unit) tq.getUnits()));
+    assertEquals(
+        "returned correct value",
+        353d,
+        tq.interpolateValue(400, InterpMethod.Linear).doubleValue(
+            (Unit) tq.getUnits()));
+    assertEquals(
+        "returned correct value",
+        187.5d,
+        tq.interpolateValue(420, InterpMethod.Linear).doubleValue(
+            (Unit) tq.getUnits()));
+    assertEquals(
+        "returned correct value",
+        22d,
+        tq.interpolateValue(440, InterpMethod.Linear).doubleValue(
+            (Unit) tq.getUnits()));
 
   }
 
@@ -648,15 +743,14 @@ public class TestCollections extends TestCase
             .get(SampleData.RANGED_SPEED_SINGLETON);
     assertNotNull("found series", ranged);
 
-    @SuppressWarnings("unchecked")
     QuantityRange<Quantity> range = ranged.getRange();
     assertNotNull("found range", range);
 
     // check the range has values
-    assertEquals("correct values", 940d, range.getMinimum().doubleValue(
-        ranged.getUnits()), 0.1);
-    assertEquals("correct values", 1050d, range.getMaximum().doubleValue(
-        ranged.getUnits()), 0.1);
+    assertEquals("correct values", 940d,
+        range.getMinimum().doubleValue(ranged.getUnits()), 0.1);
+    assertEquals("correct values", 1050d,
+        range.getMaximum().doubleValue(ranged.getUnits()), 0.1);
   }
 
   public void testCreateTemporalObject()
@@ -678,7 +772,7 @@ public class TestCollections extends TestCase
     assertEquals("correct start", 1, it.start());
     assertEquals("correct finish", 12, it.finish());
     assertEquals("correct duration", 11, it.duration());
-    assertEquals("correct start", 1d, it.rate());
+    assertEquals("correct start", 1.1d, it.rate(), 0.1);
 
     // ok, now check the iterator
     long runningValueSum = 0;
@@ -713,8 +807,8 @@ public class TestCollections extends TestCase
     Unit<Velocity> kmh = KILO(METRE).divide(HOUR).asType(Velocity.class);
 
     // the target collection
-    Speed_MSec speedCollection =
-        new Speed_MSec("Speed", null);
+    SpeedMSec speedCollection =
+        new StockTypes.NonTemporal.SpeedMSec("Speed", null);
 
     for (int i = 1; i <= 10; i++)
     {
@@ -739,8 +833,8 @@ public class TestCollections extends TestCase
     Unit<Velocity> ms = METRE.divide(SECOND).asType(Velocity.class);
 
     // the target collection
-    Speed_MSec speedCollection =
-        new StockTypes.NonTemporal.Speed_MSec("Speed", null);
+    SpeedMSec speedCollection =
+        new StockTypes.NonTemporal.SpeedMSec("Speed", null);
 
     for (int i = 1; i <= 10; i++)
     {
@@ -756,16 +850,16 @@ public class TestCollections extends TestCase
     assertEquals("correct number of samples", 10, speedCollection.size());
     assertEquals("correct name", "Speed", speedCollection.getName());
 
-    assertEquals("correct min", 2d, speedCollection.min().doubleValue(
-        speedCollection.getUnits()));
-    assertEquals("correct max", 20d, speedCollection.max().doubleValue(
-        speedCollection.getUnits()));
-    assertEquals("correct mean", 11d, speedCollection.mean().doubleValue(
-        speedCollection.getUnits()));
+    assertEquals("correct min", 2d,
+        speedCollection.min().doubleValue(speedCollection.getUnits()));
+    assertEquals("correct max", 20d,
+        speedCollection.max().doubleValue(speedCollection.getUnits()));
+    assertEquals("correct mean", 11d,
+        speedCollection.mean().doubleValue(speedCollection.getUnits()));
     assertEquals("correct variance", 33, speedCollection.variance()
         .doubleValue(speedCollection.getUnits()), 0.1);
-    assertEquals("correct sd", 5.744, speedCollection.sd().doubleValue(
-        speedCollection.getUnits()), 0.001);
+    assertEquals("correct sd", 5.744,
+        speedCollection.sd().doubleValue(speedCollection.getUnits()), 0.001);
   }
 
   public void testTemporalQuantityAddition()
@@ -863,7 +957,7 @@ public class TestCollections extends TestCase
     assertEquals("correct start", 1, it.start());
     assertEquals("correct finish", 10, it.finish());
     assertEquals("correct duration", 9, it.duration());
-    assertEquals("correct start", 1d, it.rate());
+    assertEquals("correct start", 1.1d, it.rate(), 0.1);
 
     // ok, now check the iterator
     double runningValueSum = 0;
@@ -879,12 +973,12 @@ public class TestCollections extends TestCase
     assertEquals("values adds up", 110d, runningValueSum);
     assertEquals("times adds up", 55d, runningTimeSum);
 
-    assertEquals("correct mean", 11d, speedCollection.mean().doubleValue(
-        speedCollection.getUnits()));
+    assertEquals("correct mean", 11d,
+        speedCollection.mean().doubleValue(speedCollection.getUnits()));
     assertEquals("correct variance", 33, speedCollection.variance()
         .doubleValue(speedCollection.getUnits()), 0.1);
-    assertEquals("correct sd", 5.744, speedCollection.sd().doubleValue(
-        speedCollection.getUnits()), 0.001);
+    assertEquals("correct sd", 5.744,
+        speedCollection.sd().doubleValue(speedCollection.getUnits()), 0.001);
 
   }
 
@@ -921,28 +1015,28 @@ public class TestCollections extends TestCase
     }
     assertEquals("values adds up", 110d, runningValueSum);
 
-    assertEquals("correct mean", 11d, speedCollection.mean().doubleValue(
-        speedCollection.getUnits()));
+    assertEquals("correct mean", 11d,
+        speedCollection.mean().doubleValue(speedCollection.getUnits()));
     assertEquals("correct variance", 33, speedCollection.variance()
         .doubleValue(speedCollection.getUnits()), 0.1);
-    assertEquals("correct sd", 5.744, speedCollection.sd().doubleValue(
-        speedCollection.getUnits()), 0.001);
+    assertEquals("correct sd", 5.744,
+        speedCollection.sd().doubleValue(speedCollection.getUnits()), 0.001);
 
   }
 
   @SuppressWarnings(
-  {"unchecked", "rawtypes"})
+  { "unchecked", "rawtypes" })
   public void testSubtractQuantityTemporalInterp()
   {
     ITemporalQuantityCollection<?> tq1 =
-        new StockTypes.Temporal.Speed_MSec("Some data1", null);
+        new StockTypes.Temporal.SpeedMSec("Some data1", null);
     tq1.add(100, 10);
     tq1.add(200, 20);
     tq1.add(300, 30);
     tq1.add(400, 40);
 
     ITemporalQuantityCollection<?> tq2 =
-        new StockTypes.Temporal.Speed_MSec("Some data2", null);
+        new StockTypes.Temporal.SpeedMSec("Some data2", null);
     tq2.add(220, 11);
     tq2.add(340, 17);
     tq2.add(440, 22);
@@ -971,17 +1065,29 @@ public class TestCollections extends TestCase
 
     ITemporalQuantityCollection<?> tq = (ITemporalQuantityCollection<?>) series;
 
-    assertEquals("returned correct value", 10d, tq.interpolateValue(100,
-        InterpMethod.Linear).doubleValue((Unit) tq.getUnits()));
-    assertEquals("returned correct value", 20d, tq.interpolateValue(200,
-        InterpMethod.Linear).doubleValue((Unit) tq.getUnits()));
-    assertEquals("returned correct value", 15d, tq.interpolateValue(300,
-        InterpMethod.Linear).doubleValue((Unit) tq.getUnits()));
-    assertEquals("returned correct value", 20d, tq.interpolateValue(400,
-        InterpMethod.Linear).doubleValue((Unit) tq.getUnits()));
+    assertEquals(
+        "returned correct value",
+        10d,
+        tq.interpolateValue(100, InterpMethod.Linear).doubleValue(
+            (Unit) tq.getUnits()));
+    assertEquals(
+        "returned correct value",
+        20d,
+        tq.interpolateValue(200, InterpMethod.Linear).doubleValue(
+            (Unit) tq.getUnits()));
+    assertEquals(
+        "returned correct value",
+        15d,
+        tq.interpolateValue(300, InterpMethod.Linear).doubleValue(
+            (Unit) tq.getUnits()));
+    assertEquals(
+        "returned correct value",
+        20d,
+        tq.interpolateValue(400, InterpMethod.Linear).doubleValue(
+            (Unit) tq.getUnits()));
 
     // ok, mangle the second array a bit more
-    tq2 = new StockTypes.Temporal.Speed_MSec("Some data2", null);
+    tq2 = new StockTypes.Temporal.SpeedMSec("Some data2", null);
     tq2.add(20, 11);
     tq2.add(340, 17);
     tq2.add(440, 22);
@@ -1009,13 +1115,26 @@ public class TestCollections extends TestCase
 
     tq = (ITemporalQuantityCollection<?>) series;
 
-    assertEquals("returned correct value", -2.5d, tq.interpolateValue(100,
-        InterpMethod.Linear).doubleValue((Unit) tq.getUnits()));
-    assertEquals("returned correct value", 5.625d, tq.interpolateValue(200,
-        InterpMethod.Linear).doubleValue((Unit) tq.getUnits()));
-    assertEquals("returned correct value", 13.75d, tq.interpolateValue(300,
-        InterpMethod.Linear).doubleValue((Unit) tq.getUnits()));
-    assertEquals("returned correct value", 20d, tq.interpolateValue(400,
-        InterpMethod.Linear).doubleValue((Unit) tq.getUnits()));
+    assertEquals(
+        "returned correct value",
+        -2.5d,
+        tq.interpolateValue(100, InterpMethod.Linear).doubleValue(
+            (Unit) tq.getUnits()));
+    assertEquals(
+        "returned correct value",
+        5.625d,
+        tq.interpolateValue(200, InterpMethod.Linear).doubleValue(
+            (Unit) tq.getUnits()));
+    assertEquals(
+        "returned correct value",
+        13.75d,
+        tq.interpolateValue(300, InterpMethod.Linear).doubleValue(
+            (Unit) tq.getUnits()));
+    assertEquals(
+        "returned correct value",
+        20d,
+        tq.interpolateValue(400, InterpMethod.Linear).doubleValue(
+            (Unit) tq.getUnits()));
   }
+
 }
