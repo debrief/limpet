@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*****************************************************************************
  *  Limpet - the Lightweight InforMation ProcEssing Toolkit
  *  http://limpet.info
  *
@@ -11,7 +11,7 @@
  *  This library is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *******************************************************************************/
+ *****************************************************************************/
 package info.limpet;
 
 import javax.measure.Measurable;
@@ -19,14 +19,19 @@ import javax.measure.quantity.Quantity;
 import javax.measure.unit.Dimension;
 import javax.measure.unit.Unit;
 
-
 public interface IBaseQuantityCollection<T extends Quantity>
 {
-	public Measurable<T> min();
-	public Measurable<T> max();
-	public Measurable<T> mean();
-	public Measurable<T> variance();
-	public Measurable<T> sd();
+	Measurable<T> min();
+
+	Measurable<T> max();
+
+	Measurable<T> mean();
+
+	Measurable<T> variance();
+
+	Measurable<T> sd();
+
 	Dimension getDimension();
+
 	Unit<T> getUnits();
 }

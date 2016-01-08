@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*****************************************************************************
  *  Limpet - the Lightweight InforMation ProcEssing Toolkit
  *  http://limpet.info
  *
@@ -11,16 +11,27 @@
  *  This library is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *******************************************************************************/
+ *****************************************************************************/
 package info.limpet;
 
 import java.util.Collection;
 
 import info.limpet.IStore.IStoreItem;
 
-public interface IStoreGroup extends IStoreItem, Collection<IStoreItem>, IChangeListener
+public interface IStoreGroup extends IStoreItem, Collection<IStoreItem>,
+    IChangeListener
 {
 
-	void setName(String value);
-  
+  void setName(String value);
+
+  boolean hasChildren();
+
+  boolean add(IStoreItem item);
+
+  boolean remove(Object item);
+
+  void addChangeListener(IChangeListener listener);
+
+  void removeChangeListener(IChangeListener listener);
+
 }

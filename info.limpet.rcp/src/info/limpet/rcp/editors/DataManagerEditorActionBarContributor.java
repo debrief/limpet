@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*****************************************************************************
  *  Limpet - the Lightweight InforMation ProcEssing Toolkit
  *  http://limpet.info
  *
@@ -11,32 +11,40 @@
  *  This library is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *******************************************************************************/
+ *****************************************************************************/
 package info.limpet.rcp.editors;
 
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.part.EditorActionBarContributor;
 
-public class DataManagerEditorActionBarContributor
-		extends EditorActionBarContributor
+public class DataManagerEditorActionBarContributor extends
+    EditorActionBarContributor
 {
 
-	protected DataManagerEditor _activeEditor;
-	
-	public DataManagerEditorActionBarContributor() {
-		super();
-	}
+  @SuppressWarnings("unused")
+  private DataManagerEditor _activeEditor;
 
-	/**
-	 * Sets the active editor for the contributor.
-	 * @param targetEditor the new target editor
-	 */
-	public void setActiveEditor(IEditorPart targetEditor) {
-		if (targetEditor instanceof DataManagerEditor) {
-			_activeEditor = (DataManagerEditor) targetEditor;
-		} else {
-			_activeEditor = null;
-		}
-	}
+  public DataManagerEditorActionBarContributor()
+  {
+    super();
+  }
+
+  /**
+   * Sets the active editor for the contributor.
+   * 
+   * @param targetEditor
+   *          the new target editor
+   */
+  public void setActiveEditor(IEditorPart targetEditor)
+  {
+    if (targetEditor instanceof DataManagerEditor)
+    {
+      _activeEditor = (DataManagerEditor) targetEditor;
+    }
+    else
+    {
+      _activeEditor = null;
+    }
+  }
 
 }

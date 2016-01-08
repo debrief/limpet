@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*****************************************************************************
  *  Limpet - the Lightweight InforMation ProcEssing Toolkit
  *  http://limpet.info
  *
@@ -11,7 +11,7 @@
  *  This library is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *******************************************************************************/
+ *****************************************************************************/
 package info.limpet.analysis;
 
 import info.limpet.IStore.IStoreItem;
@@ -20,11 +20,12 @@ import java.util.List;
 
 public interface IAnalysis
 {
-	/** perform some analysis on the specified collections
-	 * 
-	 * @param selection
-	 */
-	public void analyse(List<IStoreItem> selection);
+  /**
+   * perform some analysis on the specified collections
+   * 
+   * @param selection
+   */
+  void analyse(List<IStoreItem> selection);
 
-	public String getName();
+  String getName();
 }

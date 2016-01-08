@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*****************************************************************************
  *  Limpet - the Lightweight InforMation ProcEssing Toolkit
  *  http://limpet.info
  *
@@ -11,7 +11,7 @@
  *  This library is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *******************************************************************************/
+ *****************************************************************************/
 package info.limpet.analysis;
 
 import info.limpet.ICollection;
@@ -33,159 +33,173 @@ import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
 public abstract class QuantityFrequencyBins extends CoreAnalysis
 {
-	private static final int MAX_SIZE = 10000;
-	private static final double THRESHOLD_VALUE = 0.001;
-	final CollectionComplianceTests aTests;
+  private static final int MAX_SIZE = 10000;
+  private static final double THRESHOLD_VALUE = 0.001;
+  private final CollectionComplianceTests aTests;
 
-	public QuantityFrequencyBins()
-	{
-		super("Quantity Frequency Bins");
-		aTests = new CollectionComplianceTests();
-	}
+  public QuantityFrequencyBins()
+  {
+    super("Quantity Frequency Bins");
+    aTests = new CollectionComplianceTests();
+  }
 
-	public static class BinnedData extends ArrayList<Bin>
-	{
-		/**
+  public static class BinnedData extends ArrayList<Bin>
+  {
+    /**
 		 * 
 		 */
-		private static final long serialVersionUID = 1L;
-		final ICollection collection;
+    private static final long serialVersionUID = 1L;
 
-		public BinnedData(ICollection collection, int number)
-		{
-			this.collection = collection;
-		}
-	}
+    public BinnedData()
+    {
+    }
+  }
 
-	public static class Bin
-	{
-		public final double lowerVal;
-		public final double upperVal;
-		public final long freqVal;
+  public static class Bin
+  {
+    private final double lowerVal;
+    private final double upperVal;
+    private final long freqVal;
 
-		public Bin(final double lower, final double upper, long freq)
-		{
-			upperVal = upper;
-			lowerVal = lower;
-			freqVal = freq;
-		}
-	}
+    public Bin(final double lower, final double upper, long freq)
+    {
+      upperVal = upper;
+      lowerVal = lower;
+      freqVal = freq;
+    }
 
-	public static BinnedData doBins(IQuantityCollection<Quantity> collection)
-	{
-		// collate the values into an array
-		double[] data = new double[collection.size()];
+    public double getLowerVal()
+    {
+      return lowerVal;
+    }
 
-		// Add the data from the array
-		int ctr = 0;
-		Iterator<Measurable<Quantity>> iterV = collection.getValues().iterator();
-		while (iterV.hasNext())
-		{
-			Measurable<Quantity> object = (Measurable<Quantity>) iterV.next();
-			
-			Unit<Quantity> theseUnits = collection.getUnits();
-			data[ctr++] = object.doubleValue(theseUnits);
-		}
+    public double getUpperVal()
+    {
+      return upperVal;
+    }
 
-		// Get a DescriptiveStatistics instance
-		DescriptiveStatistics stats = new DescriptiveStatistics(data);
+    public long getFreqVal()
+    {
+      return freqVal;
+    }
+  }
 
-		// also do some frequency binning
-		double range = stats.getMax() - stats.getMin();
+  public static BinnedData doBins(IQuantityCollection<Quantity> collection)
+  {
+    // collate the values into an array
+    double[] data = new double[collection.size()];
 
-		// aah, double-check we don't have zero range
-		final int BIN_COUNT;
-		if (range > 10)
-			BIN_COUNT = 10;
-		else
-			BIN_COUNT = (int) Math.max(2, range);
+    // Add the data from the array
+    int ctr = 0;
+    Iterator<Measurable<Quantity>> iterV = collection.getValues().iterator();
+    while (iterV.hasNext())
+    {
+      Measurable<Quantity> object = (Measurable<Quantity>) iterV.next();
 
-		BinnedData res = new BinnedData(collection, BIN_COUNT);
+      Unit<Quantity> theseUnits = collection.getUnits();
+      data[ctr++] = object.doubleValue(theseUnits);
+    }
 
-		if (range > THRESHOLD_VALUE)
-		{
+    // Get a DescriptiveStatistics instance
+    DescriptiveStatistics stats = new DescriptiveStatistics(data);
 
-			long[] histogram = new long[BIN_COUNT];
-			EmpiricalDistribution distribution = new EmpiricalDistribution(BIN_COUNT);
-			distribution.load(data);
+    // also do some frequency binning
+    double range = stats.getMax() - stats.getMin();
 
-			int k = 0;
-			for (SummaryStatistics sStats : distribution.getBinStats())
-			{
-				histogram[k++] = sStats.getN();
-			}
+    // aah, double-check we don't have zero range
+    final int binCount;
+    if (range > 10)
+    {
+      binCount = 10;
+    }
+    else
+    {
+      binCount = (int) Math.max(2, range);
+    }
 
-			double rangeSoFar = stats.getMin();
-			double rangeStep = range / BIN_COUNT;
-			for (int i = 0; i < histogram.length; i++)
-			{
-				long l = histogram[i];
-				res.add(new Bin(rangeSoFar, rangeSoFar + rangeStep, l));
-				rangeSoFar += rangeStep;
-			}
-		}
-		return res;
-	}
+    BinnedData res = new BinnedData();
 
-	@Override
-	public void analyse(List<IStoreItem> selection)
-	{
-		List<String> titles = new ArrayList<String>();
-		List<String> values = new ArrayList<String>();
+    if (range > THRESHOLD_VALUE)
+    {
 
-		// check compatibility
-		if (appliesTo(selection))
-		{
-			if (selection.size() == 1)
-			{
-				// ok, let's go for it.
-				for (Iterator<IStoreItem> iter = selection.iterator(); iter.hasNext();)
-				{
-					ICollection thisC = (ICollection) iter.next();
-					@SuppressWarnings("unchecked")
-					IQuantityCollection<Quantity> o = (IQuantityCollection<Quantity>) thisC;
+      long[] histogram = new long[binCount];
+      EmpiricalDistribution distribution = new EmpiricalDistribution(binCount);
+      distribution.load(data);
 
-					if (thisC.size() > 1)
-					{
-						if (thisC.size() < MAX_SIZE)
-						{
-							BinnedData res = doBins(o);
+      int k = 0;
+      for (SummaryStatistics sStats : distribution.getBinStats())
+      {
+        histogram[k++] = sStats.getN();
+      }
 
-							// now output the bins
-							StringBuffer freqBins = new StringBuffer();
+      double rangeSoFar = stats.getMin();
+      double rangeStep = range / binCount;
+      for (int i = 0; i < histogram.length; i++)
+      {
+        long l = histogram[i];
+        res.add(new Bin(rangeSoFar, rangeSoFar + rangeStep, l));
+        rangeSoFar += rangeStep;
+      }
+    }
+    return res;
+  }
 
-							Iterator<Bin> bIter = res.iterator();
-							while (bIter.hasNext())
-							{
-								QuantityFrequencyBins.Bin bin = (QuantityFrequencyBins.Bin) bIter
-										.next();
-								freqBins.append((int) bin.lowerVal);
-								freqBins.append("-");
-								freqBins.append((int) bin.upperVal);
-								freqBins.append(": ");
-								freqBins.append(bin.freqVal);
-								freqBins.append(", ");
+  @Override
+  public void analyse(List<IStoreItem> selection)
+  {
+    List<String> titles = new ArrayList<String>();
+    List<String> values = new ArrayList<String>();
 
-							}
+    // check compatibility
+    if (appliesTo(selection) && selection.size() == 1)
+    {
+      // ok, let's go for it.
+      for (Iterator<IStoreItem> iter = selection.iterator(); iter.hasNext();)
+      {
+        ICollection thisC = (ICollection) iter.next();
+        @SuppressWarnings("unchecked")
+        IQuantityCollection<Quantity> o = (IQuantityCollection<Quantity>) thisC;
 
-							titles.add("Frequency bins");
-							values.add(freqBins.toString());
-						}
-					}
-				}
-			}
-		}
+        if (thisC.size() > 1 && thisC.size() < MAX_SIZE)
+        {
+          BinnedData res = doBins(o);
 
-		if (titles.size() > 0)
-			presentResults(titles, values);
+          // now output the bins
+          StringBuffer freqBins = new StringBuffer();
 
-	}
+          Iterator<Bin> bIter = res.iterator();
+          while (bIter.hasNext())
+          {
+            QuantityFrequencyBins.Bin bin =
+                (QuantityFrequencyBins.Bin) bIter.next();
+            freqBins.append((int) bin.getLowerVal());
+            freqBins.append("-");
+            freqBins.append((int) bin.getUpperVal());
+            freqBins.append(": ");
+            freqBins.append(bin.getFreqVal());
+            freqBins.append(", ");
 
-	private boolean appliesTo(List<IStoreItem> selection)
-	{
-		return aTests.allCollections(selection) && aTests.allQuantity(selection) && aTests.allEqualUnits(selection);
-	}
+          }
 
-	abstract protected void presentResults(List<String> titles,
-			List<String> values);
+          titles.add("Frequency bins");
+          values.add(freqBins.toString());
+        }
+      }
+    }
+
+    if (titles.size() > 0)
+    {
+      presentResults(titles, values);
+    }
+
+  }
+
+  private boolean appliesTo(List<IStoreItem> selection)
+  {
+    return aTests.allCollections(selection) && aTests.allQuantity(selection)
+        && aTests.allEqualUnits(selection);
+  }
+
+  protected abstract void presentResults(List<String> titles,
+      List<String> values);
 }

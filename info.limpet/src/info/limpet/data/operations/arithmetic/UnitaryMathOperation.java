@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*****************************************************************************
  *  Limpet - the Lightweight InforMation ProcEssing Toolkit
  *  http://limpet.info
  *
@@ -11,7 +11,7 @@
  *  This library is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *******************************************************************************/
+ *****************************************************************************/
 package info.limpet.data.operations.arithmetic;
 
 import info.limpet.IBaseTemporalCollection;
@@ -37,182 +37,190 @@ import javax.measure.Measurable;
 import javax.measure.Measure;
 import javax.measure.unit.Unit;
 
-abstract public class UnitaryMathOperation implements IOperation<ICollection>
+public abstract class UnitaryMathOperation implements IOperation<ICollection>
 {
-	CollectionComplianceTests aTests = new CollectionComplianceTests();
-	private final String _opName;
+  private final CollectionComplianceTests aTests = new CollectionComplianceTests();
+  private final String _opName;
 
-	public UnitaryMathOperation(String opName)
-	{
-		_opName = opName;
-	}
-	
-	public String getName()
-	{
-		return _opName;
-	}
+  public UnitaryMathOperation(String opName)
+  {
+    _opName = opName;
+  }
 
-	abstract public double calcFor(double val);
+  public String getName()
+  {
+    return _opName;
+  }
 
-	public Collection<ICommand<ICollection>> actionsFor(
-			List<ICollection> selection, IStore destination, IContext context)
-	{
-		Collection<ICommand<ICollection>> res = new ArrayList<ICommand<ICollection>>();
-		if (appliesTo(selection))
-		{
-			ICommand<ICollection> newC = new MathCommand("Math - " + _opName,
-					selection, destination, context);
-			res.add(newC);
-		}
+  public abstract double calcFor(double val);
 
-		return res;
-	}
+  public Collection<ICommand<ICollection>> actionsFor(
+      List<ICollection> selection, IStore destination, IContext context)
+  {
+    Collection<ICommand<ICollection>> res =
+        new ArrayList<ICommand<ICollection>>();
+    if (appliesTo(selection))
+    {
+      ICommand<ICollection> newC =
+          new MathCommand("Math - " + _opName, selection, destination, context);
+      res.add(newC);
+    }
 
-	protected Unit<?> getUnits(IQuantityCollection<?> input)
-	{
-		return input.getUnits();
-	}
+    return res;
+  }
 
-	protected boolean appliesTo(List<ICollection> selection)
-	{
-		boolean notEmpty = aTests.nonEmpty(selection);
-		boolean allQuantity = aTests.allQuantity(selection);
+  protected Unit<?> getUnits(IQuantityCollection<?> input)
+  {
+    return input.getUnits();
+  }
 
-		return (notEmpty && allQuantity);
-	}
+  protected boolean appliesTo(List<ICollection> selection)
+  {
+    boolean notEmpty = getATests().nonEmpty(selection);
+    boolean allQuantity = getATests().allQuantity(selection);
 
-	public class MathCommand extends AbstractCommand<ICollection>
-	{
+    return notEmpty && allQuantity;
+  }
 
-		public MathCommand(String operationName, List<ICollection> selection,
-				IStore store, IContext context)
-		{
-			super(operationName, "Convert units of the provided series", store, false,
-					false, selection, context);
-		}
+  public CollectionComplianceTests getATests()
+  {
+    return aTests;
+  }
 
-		@Override
-		protected String getOutputName()
-		{
-			return getContext().getInput("Calculate " + getName(),
-					NEW_DATASET_MESSAGE,
-					getName() + "(" + super.getSubjectList() + ")");
-		}
+  public class MathCommand extends AbstractCommand<ICollection>
+  {
 
-		@Override
-		public void execute()
-		{
-			List<IStoreItem> outputs = new ArrayList<IStoreItem>();
+    public MathCommand(String operationName, List<ICollection> selection,
+        IStore store, IContext context)
+    {
+      super(operationName, "Convert units of the provided series", store,
+          false, false, selection, context);
+    }
 
-			// ok, generate the new series
-			Iterator<ICollection> iIter = getInputs().iterator();
-			while (iIter.hasNext())
-			{
-				final String outName = getOutputName();
-				
-				IQuantityCollection<?> thisInput = (IQuantityCollection<?>) iIter
-						.next();
-				final IQuantityCollection<?> thisOutput;
-				if (thisInput.isTemporal())
-				{
-					thisOutput = new TemporalQuantityCollection<>(outName, this, getUnits(thisInput));
-				}
-				else
-				{
-					thisOutput = new QuantityCollection<>(outName, this, getUnits(thisInput));
-				}
+    @Override
+    protected String getOutputName()
+    {
+      return getContext().getInput("Calculate " + super.getName(),
+          NEW_DATASET_MESSAGE, super.getName() + "(" + super.getSubjectList() + ")");
+    }
 
-				thisInput.addDependent(this);
-				outputs.add(thisOutput);
+    @Override
+    public void execute()
+    {
+      List<IStoreItem> outputs = new ArrayList<IStoreItem>();
 
-				// store the output
-				super.addOutput(thisOutput);
+      // ok, generate the new series
+      Iterator<ICollection> iIter = getInputs().iterator();
+      while (iIter.hasNext())
+      {
+        final String outName = getOutputName();
 
-			}
-			getStore().addAll(outputs);
+        IQuantityCollection<?> thisInput =
+            (IQuantityCollection<?>) iIter.next();
+        final IQuantityCollection<?> thisOutput;
+        if (thisInput.isTemporal())
+        {
+          thisOutput =
+              new TemporalQuantityCollection<>(outName, this,
+                  getUnits(thisInput));
+        }
+        else
+        {
+          thisOutput =
+              new QuantityCollection<>(outName, this, getUnits(thisInput));
+        }
 
-			// ok, now populate the outputs listings
-			performCalc();
+        thisInput.addDependent(this);
+        outputs.add(thisOutput);
 
-		}
+        // store the output
+        super.addOutput(thisOutput);
 
-		@SuppressWarnings(
-		{ "rawtypes", "unchecked" })
-		private void processThis(IQuantityCollection<?> thisInput,
-				IQuantityCollection<?> thisOutput)
-		{
-			Iterator<?> iter = thisInput.getValues().iterator();
-			while (iter.hasNext())
-			{
-				Measurable<?> thisV = (Measurable<?>) iter.next();
-				Unit theUnits = getUnits(thisInput);
-				double thisD = thisV.doubleValue((Unit) thisInput.getUnits());
-				double newD = calcFor(thisD);
-				thisOutput.add(Measure.valueOf(newD, theUnits));
-			}
-		}
+      }
+      getStore().addAll(outputs);
 
-		@SuppressWarnings(
-		{ "rawtypes", "unchecked" })
-		private void processThisTemporal(IQuantityCollection<?> thisInput,
-				ITemporalQuantityCollection<?> thisOutput)
-		{
-			Iterator<?> iter = thisInput.getValues().iterator();
-			IBaseTemporalCollection tqc = (IBaseTemporalCollection) thisInput;
-			Iterator<Long> tIter = tqc.getTimes().iterator();
-			while (iter.hasNext())
-			{
-				Measurable<?> thisV = (Measurable<?>) iter.next();
-				Long thisT = tIter.next();
-				Unit theUnits = getUnits(thisInput);
-				double thisD = thisV.doubleValue((Unit) thisInput.getUnits());
-				double newD = calcFor(thisD);
-				thisOutput.add(thisT, Measure.valueOf(newD, theUnits));
-			}
-		}
+      // ok, now populate the outputs listings
+      performCalc();
 
-		@Override
-		protected void recalculate()
-		{
-			// update the results
-			performCalc();
-		}
+    }
 
-		/**
-		 * wrap the actual operation. We're doing this since we need to separate it
-		 * from the core "execute" operation in order to support dynamic updates
-		 * 
-		 * @param unit
-		 * @param outputs
-		 */
-		private void performCalc()
-		{
-			// ok, generate the new series
-			Iterator<ICollection> iIter = getInputs().iterator();
-			Iterator<ICollection> oIter = getOutputs().iterator();
+    @SuppressWarnings(
+    { "rawtypes", "unchecked" })
+    private void processThis(IQuantityCollection<?> thisInput,
+        IQuantityCollection<?> thisOutput)
+    {
+      Iterator<?> iter = thisInput.getValues().iterator();
+      while (iter.hasNext())
+      {
+        Measurable<?> thisV = (Measurable<?>) iter.next();
+        Unit theUnits = getUnits(thisInput);
+        double thisD = thisV.doubleValue((Unit) thisInput.getUnits());
+        double newD = calcFor(thisD);
+        thisOutput.add(Measure.valueOf(newD, theUnits));
+      }
+    }
 
-			while (iIter.hasNext())
-			{
-				IQuantityCollection<?> thisInput = (IQuantityCollection<?>) iIter
-						.next();
-				IQuantityCollection<?> thisOutput = (IQuantityCollection<?>) oIter
-						.next();
+    @SuppressWarnings(
+    { "rawtypes", "unchecked" })
+    private void processThisTemporal(IQuantityCollection<?> thisInput,
+        ITemporalQuantityCollection<?> thisOutput)
+    {
+      Iterator<?> iter = thisInput.getValues().iterator();
+      IBaseTemporalCollection tqc = (IBaseTemporalCollection) thisInput;
+      Iterator<Long> tIter = tqc.getTimes().iterator();
+      while (iter.hasNext())
+      {
+        Measurable<?> thisV = (Measurable<?>) iter.next();
+        Long thisT = tIter.next();
+        Unit theUnits = getUnits(thisInput);
+        double thisD = thisV.doubleValue((Unit) thisInput.getUnits());
+        double newD = calcFor(thisD);
+        thisOutput.add(thisT, Measure.valueOf(newD, theUnits));
+      }
+    }
 
-				thisOutput.clearQuiet();
+    @Override
+    protected void recalculate()
+    {
+      // update the results
+      performCalc();
+    }
 
-				if (thisInput.isTemporal())
-				{
-					// loop through, performing the operation
-					processThisTemporal(thisInput,
-							(ITemporalQuantityCollection<?>) thisOutput);
-				}
-				else
-				{
-					// loop through, performing the operation
-					processThis(thisInput, thisOutput);
-				}
-			}
-		}
-	}
+    /**
+     * wrap the actual operation. We're doing this since we need to separate it from the core
+     * "execute" operation in order to support dynamic updates
+     * 
+     * @param unit
+     * @param _outputs
+     */
+    private void performCalc()
+    {
+      // ok, generate the new series
+      Iterator<ICollection> iIter = getInputs().iterator();
+      Iterator<ICollection> oIter = getOutputs().iterator();
+
+      while (iIter.hasNext())
+      {
+        IQuantityCollection<?> thisInput =
+            (IQuantityCollection<?>) iIter.next();
+        IQuantityCollection<?> thisOutput =
+            (IQuantityCollection<?>) oIter.next();
+
+        thisOutput.clearQuiet();
+
+        if (thisInput.isTemporal())
+        {
+          // loop through, performing the operation
+          processThisTemporal(thisInput,
+              (ITemporalQuantityCollection<?>) thisOutput);
+        }
+        else
+        {
+          // loop through, performing the operation
+          processThis(thisInput, thisOutput);
+        }
+      }
+    }
+  }
 
 }

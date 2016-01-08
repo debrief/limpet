@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*****************************************************************************
  *  Limpet - the Lightweight InforMation ProcEssing Toolkit
  *  http://limpet.info
  *
@@ -11,7 +11,7 @@
  *  This library is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *******************************************************************************/
+ *****************************************************************************/
 package info.limpet.data.persistence.xml;
 
 import java.util.Collection;
@@ -56,7 +56,8 @@ public class LimpetCollectionConverter extends CollectionConverter
 			return;
 		}
 		Object object = list.get(0);
-		if (! (object instanceof Measure)) {
+		if (!(object instanceof Measure)) 
+		{
 			super.marshal(source, writer, context);
 			return;
 		}

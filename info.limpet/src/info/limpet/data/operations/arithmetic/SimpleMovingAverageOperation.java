@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*****************************************************************************
  *  Limpet - the Lightweight InforMation ProcEssing Toolkit
  *  http://limpet.info
  *
@@ -11,7 +11,7 @@
  *  This library is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *******************************************************************************/
+ *****************************************************************************/
 package info.limpet.data.operations.arithmetic;
 
 import info.limpet.ICollection;
@@ -39,9 +39,9 @@ public class SimpleMovingAverageOperation implements IOperation<ICollection>
 {
 	public static final String SERIES_NAME_TEMPLATE = "Simple Moving Average";
 
-	CollectionComplianceTests aTests = new CollectionComplianceTests();
+	private final CollectionComplianceTests aTests = new CollectionComplianceTests();
 
-	final protected int _windowSize;
+	private final int _windowSize;
 
 	public SimpleMovingAverageOperation(int windowSize)
 	{
@@ -67,10 +67,10 @@ public class SimpleMovingAverageOperation implements IOperation<ICollection>
 	{
 		boolean singleSeries = selection.size() == 1;
 		boolean allQuantity = aTests.allQuantity(selection);
-		return (singleSeries && allQuantity);
+		return singleSeries && allQuantity;
 	}
 
-	public class SimpleMovingAverageCommand extends AbstractCommand<ICollection>
+	public static class SimpleMovingAverageCommand extends AbstractCommand<ICollection>
 	{
 
 		private int winSize;
@@ -107,7 +107,7 @@ public class SimpleMovingAverageOperation implements IOperation<ICollection>
 		@Override
 		public void execute()
 		{
-			IQuantityCollection<?> input = (IQuantityCollection<?>) inputs.get(0);
+			IQuantityCollection<?> input = (IQuantityCollection<?>) getInputs().get(0);
 
 			List<ICollection> outputs = new ArrayList<ICollection>();
 
@@ -124,7 +124,7 @@ public class SimpleMovingAverageOperation implements IOperation<ICollection>
 			performCalc(outputs);
 
 			// tell each series that we're a dependent
-			Iterator<ICollection> iter = inputs.iterator();
+			Iterator<ICollection> iter = getInputs().iterator();
 			while (iter.hasNext())
 			{
 				ICollection iCollection = iter.next();
@@ -141,7 +141,7 @@ public class SimpleMovingAverageOperation implements IOperation<ICollection>
 		public void recalculate()
 		{
 			// update the results
-			performCalc(outputs);
+			performCalc(getOutputs());
 		}
 
 		/**
@@ -166,7 +166,7 @@ public class SimpleMovingAverageOperation implements IOperation<ICollection>
 
 			SimpleMovingAverage sma = new SimpleMovingAverage(winSize);
 			@SuppressWarnings("unchecked")
-			IQuantityCollection<Quantity> input = (IQuantityCollection<Quantity>) inputs
+			IQuantityCollection<Quantity> input = (IQuantityCollection<Quantity>) getInputs()
 					.get(0);
 
 			for (Measurable<Quantity> quantity : input.getValues())

@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*****************************************************************************
  *  Limpet - the Lightweight InforMation ProcEssing Toolkit
  *  http://limpet.info
  *
@@ -11,7 +11,7 @@
  *  This library is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *******************************************************************************/
+ *****************************************************************************/
 package info.limpet.data.operations.admin;
 
 import info.limpet.ICommand;
@@ -29,152 +29,150 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public abstract class CreateSingletonGenerator implements
-		IOperation<IStoreItem>
+public abstract class CreateSingletonGenerator implements IOperation<IStoreItem>
 {
-	CollectionComplianceTests aTests = new CollectionComplianceTests();
-	private final String _name;
-	
-	public CreateSingletonGenerator(String name)
-	{
-		_name = name;
-	}
+  private final CollectionComplianceTests aTests = new CollectionComplianceTests();
+  private final String _name;
 
-	/**
-	 * encapsulate creating a location into a command
-	 * 
-	 * @author ian
-	 * 
-	 */
-	public class CreateSingletonCommand extends AbstractCommand<IStoreItem>
-	{
-		private StoreGroup _targetGroup;
+  public CreateSingletonGenerator(String name)
+  {
+    _name = name;
+  }
 
-		public CreateSingletonCommand(String title, StoreGroup group, IStore store,
-				IContext context)
-		{
-			super(title, "Create single " + _name, store, false, false, null, context);
-			_targetGroup = group;
-		}
+  /**
+   * encapsulate creating a location into a command
+   * 
+   * @author ian
+   * 
+   */
+  public class CreateSingletonCommand extends AbstractCommand<IStoreItem>
+  {
+    private StoreGroup _targetGroup;
 
-		@Override
-		public void execute()
-		{
-			// get the name
-			String name = "new " + _name;
-			double value;
+    public CreateSingletonCommand(String title, StoreGroup group, IStore store, IContext context)
+    {
+      super(title, "Create single " + _name, store, false, false, null, context);
+      _targetGroup = group;
+    }
 
-			name = getContext().getInput("New variable", "Enter name for variable",
-					"");
-			if (name == null || name.isEmpty())
-			{
-				return;
-			}
+    @Override
+    public void execute()
+    {
+      // get the name
+      String name = "new " + _name;
+      double value;
 
-			String str = getContext().getInput("New variable",
-					"Enter initial value for variable", "");
-			if (str == null || str.isEmpty())
-			{
-				return;
-			}
-			try
-			{
-				// get the new collection
-				QuantityCollection<?> newData = generate(name, this);
+      name = getContext().getInput("New variable", "Enter name for variable", "");
+      if (name == null || name.isEmpty())
+      {
+        return;
+      }
 
-				// add the new value
-				value = Double.parseDouble(str);
-				newData.add(value);
-				
-				// and remember it as an output
-				super.addOutput(newData);
+      String str = getContext().getInput("New variable", "Enter initial value for variable", "");
+      if (str == null || str.isEmpty())
+      {
+        return;
+      }
+      try
+      {
+        // get the new collection
+        QuantityCollection<?> newData = generate(name, this);
 
-				// put the new collection in to the selected folder, or into root
-				if (_targetGroup != null)
-				{
-					_targetGroup.add(newData);
-				}
-				else
-				{
-					// just store it at the top level
-					IStore store = getStore();
-					if (store != null)
-					{
-						store.add(newData);
-					}
-				}
+        // add the new value
+        value = Double.parseDouble(str);
+        newData.add(value);
 
-			}
-			catch (NumberFormatException e)
-			{
-				getContext().logError(Status.WARNING, "Failed to parse initial value",
-						e);
-			}
-		}
+        // and remember it as an output
+        super.addOutput(newData);
 
-		@Override
-		protected void recalculate()
-		{
-			// don't worry
-		}
+        // put the new collection in to the selected folder, or into root
+        if (_targetGroup != null)
+        {
+          _targetGroup.add(newData);
+        }
+        else
+        {
+          // just store it at the top level
+          IStore store = getStore();
+          if (store != null)
+          {
+            store.add(newData);
+          }
+        }
 
-		@Override
-		protected String getOutputName()
-		{
-			return getContext().getInput("Create new " + _name, NEW_DATASET_MESSAGE, "");
-		}
+      }
+      catch (NumberFormatException e)
+      {
+        getContext().logError(Status.WARNING, "Failed to parse initial value", e);
+      }
+    }
 
-	}
+    @Override
+    protected void recalculate()
+    {
+      // don't worry
+    }
 
-	public Collection<ICommand<IStoreItem>> actionsFor(
-			List<IStoreItem> selection, IStore destination, IContext context)
-	{
-		Collection<ICommand<IStoreItem>> res = new ArrayList<ICommand<IStoreItem>>();
-		if (appliesTo(selection))
-		{
-			final String thisTitle = "Add single " + _name;
-			// hmm, see if a group has been selected
-			ICommand<IStoreItem> newC = null;
-			if (selection.size() == 1)
-			{
-				IStoreItem first = selection.get(0);
-				if (first instanceof StoreGroup)
-				{
-					StoreGroup group = (StoreGroup) first;
-					newC = getCommand(destination, context, thisTitle, group);
-				}
-			}
+    @Override
+    protected String getOutputName()
+    {
+      return getContext().getInput("Create new " + _name, NEW_DATASET_MESSAGE, "");
+    }
 
-			if (newC == null)
-			{
-				newC = getCommand(destination, context, thisTitle, null);
-			}
+  }
 
-			if (newC != null)
-			{
-				res.add(newC);
-			}
-		}
+  public Collection<ICommand<IStoreItem>> actionsFor(List<IStoreItem> selection, IStore destination,
+      IContext context)
+  {
+    Collection<ICommand<IStoreItem>> res = new ArrayList<ICommand<IStoreItem>>();
+    if (appliesTo(selection))
+    {
+      final String thisTitle = "Add single " + _name;
+      // hmm, see if a group has been selected
+      ICommand<IStoreItem> newC = null;
+      if (selection.size() == 1)
+      {
+        IStoreItem first = selection.get(0);
+        if (first instanceof StoreGroup)
+        {
+          StoreGroup group = (StoreGroup) first;
+          newC = getCommand(destination, context, thisTitle, group);
+        }
+      }
 
-		return res;
-	}
+      if (newC == null)
+      {
+        newC = getCommand(destination, context, thisTitle, null);
+      }
 
+      if (newC != null)
+      {
+        res.add(newC);
+      }
+    }
 
-	protected AbstractCommand<IStoreItem> getCommand(IStore destination,
-			IContext context, final String thisTitle, StoreGroup group)
-	{
-		return new CreateSingletonCommand(thisTitle, group, destination,
-				context);
-	}
-	
+    return res;
+  }
 
-	private boolean appliesTo(List<IStoreItem> selection)
-	{
-		// we can apply this either to a group, or at the top level
-		return (aTests.exactNumber(selection, 0) || ((aTests.exactNumber(selection,
-				1) && aTests.allGroups(selection))));
-	}
+  protected AbstractCommand<IStoreItem> getCommand(IStore destination, IContext context,
+      final String thisTitle, StoreGroup group)
+  {
+    return new CreateSingletonCommand(thisTitle, group, destination, context);
+  }
 
-	protected abstract QuantityCollection<?> generate(String name, ICommand<?> precedent);
+  private boolean appliesTo(List<IStoreItem> selection)
+  {
+    // we can apply this either to a group, or at the top level
+    boolean singleGroupSelected = getATests().exactNumber(selection, 1) && getATests()
+        .allGroups(selection);
+    return getATests().exactNumber(selection, 0) || singleGroupSelected;
+  }
+
+  protected abstract QuantityCollection<?> generate(String name, ICommand<?> precedent);
+
+  public CollectionComplianceTests getATests()
+  {
+    return aTests;
+  }
 
 }

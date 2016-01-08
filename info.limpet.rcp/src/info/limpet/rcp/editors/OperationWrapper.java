@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*****************************************************************************
  *  Limpet - the Lightweight InforMation ProcEssing Toolkit
  *  http://limpet.info
  *
@@ -11,7 +11,7 @@
  *  This library is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *******************************************************************************/
+ *****************************************************************************/
 package info.limpet.rcp.editors;
 
 import info.limpet.ICommand;
@@ -49,7 +49,7 @@ public class OperationWrapper extends Action
 	{
 		Collection<ICommand<IStoreItem>> ops = limpetAction.actionsFor(
 				provider.getSelection(), store, context);
-		if ((ops != null) && (ops.size() == 1))
+		if (ops != null && ops.size() == 1)
 		{
 			ICommand<IStoreItem> first = ops.iterator().next();
 			first.execute();

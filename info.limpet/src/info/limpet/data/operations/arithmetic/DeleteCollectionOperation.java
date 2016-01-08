@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*****************************************************************************
  *  Limpet - the Lightweight InforMation ProcEssing Toolkit
  *  http://limpet.info
  *
@@ -11,7 +11,7 @@
  *  This library is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *******************************************************************************/
+ *****************************************************************************/
 package info.limpet.data.operations.arithmetic;
 
 import info.limpet.ICommand;
@@ -21,7 +21,6 @@ import info.limpet.IStore;
 import info.limpet.IStore.IStoreItem;
 import info.limpet.IStoreGroup;
 import info.limpet.data.commands.AbstractCommand;
-import info.limpet.data.operations.CollectionComplianceTests;
 import info.limpet.data.store.InMemoryStore;
 
 import java.util.ArrayList;
@@ -31,8 +30,6 @@ import java.util.List;
 
 public class DeleteCollectionOperation implements IOperation<IStoreItem>
 {
-	CollectionComplianceTests aTests = new CollectionComplianceTests();
-
 	public Collection<ICommand<IStoreItem>> actionsFor(
 			List<IStoreItem> selection, IStore destination, IContext context)
 	{
@@ -58,7 +55,7 @@ public class DeleteCollectionOperation implements IOperation<IStoreItem>
 
 	private boolean appliesTo(List<IStoreItem> selection)
 	{
-		return (selection.size() > 0);
+		return selection.size() > 0;
 	}
 
 	public static class DeleteCollection extends AbstractCommand<IStoreItem>
@@ -75,14 +72,14 @@ public class DeleteCollectionOperation implements IOperation<IStoreItem>
 		public void execute()
 		{
 			// tell each series that we're a dependent
-			Iterator<IStoreItem> iter = inputs.iterator();
+			Iterator<IStoreItem> iter = getInputs().iterator();
 			while (iter.hasNext())
 			{
 				IStoreItem iCollection = iter.next();
 				
 				// do we know the parent?
 				IStoreGroup parent = iCollection.getParent();
-				if(parent != null)
+				if (parent != null)
 				{
 					parent.remove(iCollection);
 				}

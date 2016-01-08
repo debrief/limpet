@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*****************************************************************************
  *  Limpet - the Lightweight InforMation ProcEssing Toolkit
  *  http://limpet.info
  *
@@ -11,7 +11,7 @@
  *  This library is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *******************************************************************************/
+ *****************************************************************************/
 package info.limpet;
 
 import info.limpet.IStore.IStoreItem;
@@ -22,13 +22,13 @@ public interface IChangeListener
 	 * 
 	 * @param subject
 	 */
-	public void dataChanged(IStoreItem subject);
+	void dataChanged(IStoreItem subject);
 	
 	/** an item has cosmetically changed (name, color, etc)
 	 * 
 	 * @param subject
 	 */
-	public void metadataChanged(IStoreItem subject);
+	void metadataChanged(IStoreItem subject);
 	
-	public void collectionDeleted(IStoreItem subject);
+	void collectionDeleted(IStoreItem subject);
 }
