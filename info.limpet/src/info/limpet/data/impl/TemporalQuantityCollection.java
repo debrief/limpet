@@ -18,6 +18,7 @@ import info.limpet.ICommand;
 import info.limpet.IQuantityCollection;
 import info.limpet.ITemporalQuantityCollection;
 import info.limpet.QuantityRange;
+import info.limpet.UIProperty;
 import info.limpet.data.impl.helpers.QuantityHelper;
 
 import java.util.ArrayList;
@@ -66,9 +67,12 @@ public class TemporalQuantityCollection<T extends Quantity> extends
     {
       Measure<?, ?> oM = (Measure<?, ?>) object;
       Unit<?> hisUnits = oM.getUnit();
-      if (getUnits() != null && !getUnits().equals(hisUnits))
+      if (getUnits() != null)
       {
-        throw new RuntimeException("Measurement is in wrong units");
+        if (!getUnits().equals(hisUnits))
+        {
+          throw new RuntimeException("Measurement is in wrong units");
+        }
       }
     }
     // double-check the units
@@ -151,6 +155,7 @@ public class TemporalQuantityCollection<T extends Quantity> extends
     return _qHelper.getDimension();
   }
 
+  @UIProperty(name = "Units", category = UIProperty.CATEGORY_VALUE)
   @Override
   public Unit<T> getUnits()
   {
@@ -159,7 +164,7 @@ public class TemporalQuantityCollection<T extends Quantity> extends
   }
 
   @Override
-  public void replaceSingleton(double newValue)
+  public void replaceSingleton(Number newValue)
   {
     initQHelper();
     _qHelper.replace(newValue);
@@ -171,8 +176,14 @@ public class TemporalQuantityCollection<T extends Quantity> extends
     initQHelper();
     _range = range;
     _qHelper.setRange(range);
+
+    // tell anyone that wants to know
+    super.fireMetadataChanged();
+
   }
 
+  @UIProperty(name = "Range", category = UIProperty.CATEGORY_METADATA,
+      visibleWhen = "valuesCount == 1")
   @Override
   public QuantityRange<T> getRange()
   {
@@ -180,7 +191,8 @@ public class TemporalQuantityCollection<T extends Quantity> extends
   }
 
   @Override
-  public Measurable<T> interpolateValue(long time, InterpMethod interpMethod)
+  public Measurable<T> interpolateValue(long time,
+      info.limpet.ITemporalQuantityCollection.InterpMethod interpMethod)
   {
     final Measurable<T> res;
     switch (interpMethod)
@@ -260,4 +272,19 @@ public class TemporalQuantityCollection<T extends Quantity> extends
 
     return res;
   }
+
+  @UIProperty(name = "Value", category = UIProperty.CATEGORY_VALUE,
+      visibleWhen = "valuesCount == 1")
+  public Number getSingletonValue()
+  {
+    initQHelper();
+    return _qHelper.getValue();
+  }
+
+  public void setSingletonValue(Number newValue)
+  {
+    replaceSingleton(newValue);
+    fireDataChanged();
+  }
+
 }

@@ -14,17 +14,18 @@
  *****************************************************************************/
 package info.limpet.data.operations;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import info.limpet.ICommand;
 import info.limpet.IContext;
 import info.limpet.IOperation;
 import info.limpet.IStore;
 import info.limpet.IStore.IStoreItem;
+import info.limpet.IStoreGroup;
 import info.limpet.data.commands.AbstractCommand;
 import info.limpet.data.store.InMemoryStore.StoreGroup;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 public class AddLayerOperation implements IOperation<IStoreItem>
 {
@@ -36,14 +37,14 @@ public class AddLayerOperation implements IOperation<IStoreItem>
         new ArrayList<ICommand<IStoreItem>>();
 
     // note: we don't do "applies to" - we apply to everything
-    
+
     final String thisTitle = "Add new folder";
     // hmm, see if a group has been selected
     ICommand<IStoreItem> newC = null;
     if (selection.size() == 1)
     {
       IStoreItem first = selection.get(0);
-      if (first instanceof StoreGroup)
+      if (first instanceof IStoreGroup)
       {
         StoreGroup group = (StoreGroup) first;
         newC = new AddLayerCommand(thisTitle, group, destination, context);
@@ -87,7 +88,7 @@ public class AddLayerOperation implements IOperation<IStoreItem>
 
       if (string != null)
       {
-        StoreGroup newGroup = new StoreGroup(string);
+        IStoreGroup newGroup = new StoreGroup(string);
 
         if (_group != null)
         {

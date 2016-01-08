@@ -15,24 +15,23 @@
 package info.limpet.rcp.data_provider.data;
 
 import info.limpet.IStore.IStoreItem;
+import info.limpet.IStoreGroup;
 import info.limpet.data.store.IGroupWrapper;
-import info.limpet.data.store.InMemoryStore.StoreGroup;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ui.views.properties.IPropertySource;
 
 public class GroupWrapper implements IAdaptable, LimpetWrapper, IGroupWrapper
 {
-	private final StoreGroup _group;
+	private final IStoreGroup _group;
 	private final LimpetWrapper _parent;
 
-	public GroupWrapper(final LimpetWrapper parent, final StoreGroup prec)
+	public GroupWrapper(final LimpetWrapper parent, final IStoreGroup prec)
 	{
 		_parent = parent;
 		_group = prec;
 	}
 
-	
 	@Override
 	public int hashCode()
 	{
@@ -41,7 +40,6 @@ public class GroupWrapper implements IAdaptable, LimpetWrapper, IGroupWrapper
 		result = prime * result + ((_group == null) ? 0 : _group.hashCode());
 		return result;
 	}
-
 
 	@Override
 	public boolean equals(Object obj)
@@ -78,7 +76,7 @@ public class GroupWrapper implements IAdaptable, LimpetWrapper, IGroupWrapper
 	{
 		if (adapter == IPropertySource.class)
 		{
-			return new GroupPropertySource(this);
+			return new ReflectivePropertySource(this.getGroup());
 		}
 		else if (adapter == IStoreItem.class)
 		{
@@ -87,7 +85,7 @@ public class GroupWrapper implements IAdaptable, LimpetWrapper, IGroupWrapper
 		return null;
 	}
 
-	public StoreGroup getGroup()
+	public IStoreGroup getGroup()
 	{
 		return _group;
 	}

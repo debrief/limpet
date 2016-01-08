@@ -234,24 +234,24 @@ public class DopplerShiftBetweenTracksOperation implements
         final CollectionComplianceTests tests = new CollectionComplianceTests();
 
         // ok, transmitter data
-        _data.put(TX + FREQ,
-            tests.collectionWith(_tx, Frequency.UNIT.getDimension(), true));
-        _data.put(TX + COURSE,
-            tests.collectionWith(_tx, SI.RADIAN.getDimension(), true));
+        _data.put(TX + FREQ, tests.collectionWith(_tx, Frequency.UNIT
+            .getDimension(), true));
+        _data.put(TX + COURSE, tests.collectionWith(_tx, SI.RADIAN
+            .getDimension(), true));
         _data.put(TX + SPEED, tests.collectionWith(_tx, METRE.divide(SECOND)
             .getDimension(), true));
         _data.put(TX + LOC, tests.someHaveLocation(_tx));
 
         // and the receiver
-        _data.put(RX + COURSE,
-            tests.collectionWith(_rx, SI.RADIAN.getDimension(), true));
+        _data.put(RX + COURSE, tests.collectionWith(_rx, SI.RADIAN
+            .getDimension(), true));
         _data.put(RX + SPEED, tests.collectionWith(_rx, METRE.divide(SECOND)
             .getDimension(), true));
         _data.put(RX + LOC, tests.someHaveLocation(_rx));
 
         // and the sound speed
-        _data.put(SOUND_SPEED, tests.collectionWith(getInputs(),
-            METRE.divide(SECOND).getDimension(), false));
+        _data.put(SOUND_SPEED, tests.collectionWith(getInputs(), METRE.divide(
+            SECOND).getDimension(), false));
       }
     }
 
@@ -337,9 +337,8 @@ public class DopplerShiftBetweenTracksOperation implements
             // now find the bearing between them
             calc.setStartingGeographicPoint(txLoc.getCentroid().getOrdinate(0),
                 txLoc.getCentroid().getOrdinate(1));
-            calc.setDestinationGeographicPoint(
-                rxLoc.getCentroid().getOrdinate(0), rxLoc.getCentroid()
-                    .getOrdinate(1));
+            calc.setDestinationGeographicPoint(rxLoc.getCentroid().getOrdinate(
+                0), rxLoc.getCentroid().getOrdinate(1));
             double angleDegs = calc.getAzimuth();
             if (angleDegs < 0)
             {

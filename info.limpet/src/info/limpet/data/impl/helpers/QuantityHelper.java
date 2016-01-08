@@ -68,8 +68,8 @@ public class QuantityHelper<T extends Quantity> implements
     {
       double doubleVal = quantity.doubleValue(getUnits());
 
-      _min = _min.doubleValue(getUnits()) < doubleVal ? _min : quantity;
-      _max = _max.doubleValue(getUnits()) > doubleVal ? _max : quantity;
+      _min = (_min.doubleValue(getUnits()) < doubleVal) ? _min : quantity;
+      _max = (_max.doubleValue(getUnits()) > doubleVal) ? _max : quantity;
     }
 
     clearRunningTotal();
@@ -168,7 +168,7 @@ public class QuantityHelper<T extends Quantity> implements
     return _myUnits;
   }
 
-  public void replace(double newValue)
+  public void replace(Number newValue)
   {
     if (_values.size() != 1)
     {
@@ -176,7 +176,7 @@ public class QuantityHelper<T extends Quantity> implements
     }
 
     // create a new value
-    Measurable<T> newVal = Measure.valueOf(newValue, getUnits());
+    Measurable<T> newVal = Measure.valueOf(newValue.doubleValue(), getUnits());
 
     // drop the existing value
     _values.clear();
@@ -193,5 +193,14 @@ public class QuantityHelper<T extends Quantity> implements
   public QuantityRange<T> getRange()
   {
     return _range;
+  }
+
+  public double getValue()
+  {
+    if (_values.size() != 1)
+    {
+      throw new RuntimeException("We only call this on singletons");
+    }
+    return _values.iterator().next().doubleValue(getUnits());
   }
 }

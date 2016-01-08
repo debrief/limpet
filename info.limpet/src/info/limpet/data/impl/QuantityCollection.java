@@ -24,6 +24,7 @@ import javax.measure.unit.Unit;
 import info.limpet.ICommand;
 import info.limpet.IQuantityCollection;
 import info.limpet.QuantityRange;
+import info.limpet.UIProperty;
 import info.limpet.data.impl.helpers.QuantityHelper;
 
 
@@ -72,6 +73,7 @@ public class QuantityCollection<T extends Quantity> extends
 		super.fireMetadataChanged();
 	}
 	
+	@UIProperty(name="Range", category=UIProperty.CATEGORY_METADATA, visibleWhen="valuesCount == 1")
 	@Override
 	public QuantityRange<T> getRange()
 	{
@@ -93,6 +95,7 @@ public class QuantityCollection<T extends Quantity> extends
 		return _qHelper.getDimension();
 	}
 	
+	@UIProperty(name="Units", category=UIProperty.CATEGORY_VALUE)
 	@Override
 	public Unit<T> getUnits()
 	{
@@ -156,9 +159,19 @@ public class QuantityCollection<T extends Quantity> extends
 	}
 
 	@Override
-	public void replaceSingleton(double newValue)
+	public void replaceSingleton(Number newValue)
 	{
 		_qHelper.replace(newValue);
 	}
 
+	@UIProperty(name="Value", category=UIProperty.CATEGORY_VALUE, visibleWhen="valuesCount == 1")
+	public Number getSingletonValue() {
+		initQHelper();
+		return _qHelper.getValue();
+	}
+
+	public void setSingletonValue(Number newValue) {
+		replaceSingleton(newValue);
+		fireDataChanged();
+	}
 }

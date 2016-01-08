@@ -1,4 +1,4 @@
-/*****************************************************************************
+/*******************************************************************************
  *  Limpet - the Lightweight InforMation ProcEssing Toolkit
  *  http://limpet.info
  *
@@ -11,14 +11,8 @@
  *  This library is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *****************************************************************************/
+ *******************************************************************************/
 package info.limpet.rcp.data_provider.data;
-
-import info.limpet.ICollection;
-import info.limpet.ICommand;
-import info.limpet.IStore.IStoreItem;
-import info.limpet.data.store.InMemoryStore;
-import info.limpet.data.store.InMemoryStore.StoreGroup;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -26,6 +20,12 @@ import java.util.List;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
+
+import info.limpet.ICollection;
+import info.limpet.ICommand;
+import info.limpet.IStore.IStoreItem;
+import info.limpet.IStoreGroup;
+import info.limpet.data.store.InMemoryStore;
 
 /**
  * make the Limpet data store suitable for displaying in a tree control
@@ -41,25 +41,54 @@ public class DataModel implements ITreeContentProvider
   private void addCollectionItems(final List<Object> res,
       final CollectionWrapper cw)
   {
-    final ICollection item = cw.getCollection();
+    final IStoreItem item = cw.getCollection();
 
-    final ICommand<?> prec = item.getPrecedent();
-    if (prec != null)
+    if (item instanceof ICollection)
     {
-      final NamedList dList = new NamedList(cw, PRECEDENTS);
-      dList.add(new CommandWrapper(dList, prec));
-      res.add(dList);
+      ICollection coll = (ICollection) item;
+      final ICommand<?> prec = coll.getPrecedent();
+      if (prec != null)
+      {
+        final NamedList dList = new NamedList(cw, PRECEDENTS);
+        dList.add(new CommandWrapper(dList, prec));
+        res.add(dList);
+      }
+
+      final List<ICommand<?>> dep = coll.getDependents();
+      if (dep != null)
+      {
+        final NamedList dList = new NamedList(cw, DEPENDENTS);
+        final Iterator<ICommand<?>> dIter = dep.iterator();
+        while (dIter.hasNext())
+        {
+          final ICommand<?> thisI = dIter.next();
+          dList.add(new CommandWrapper(dList, thisI));
+        }
+
+        // did we find any?
+        if (dList.size() > 0)
+        {
+          res.add(dList);
+        }
+      }
     }
-
-    final List<ICommand<?>> dep = item.getDependents();
-    if (dep != null)
+    else if (item instanceof IStoreGroup)
     {
-      final NamedList dList = new NamedList(cw, DEPENDENTS);
-      final Iterator<ICommand<?>> dIter = dep.iterator();
+      IStoreGroup group = (IStoreGroup) item;
+      final NamedList dList = new NamedList(cw, group.getName());
+      final Iterator<IStoreItem> dIter = group.iterator();
       while (dIter.hasNext())
       {
-        final ICommand<?> thisI = dIter.next();
-        dList.add(new CommandWrapper(dList, thisI));
+        final IStoreItem thisI = dIter.next();
+        if (thisI instanceof CommandWrapper)
+        {
+          dList.add(new CommandWrapper(dList, (ICommand<?>) thisI));
+
+        }
+        else if (thisI instanceof CollectionWrapper)
+        {
+          dList.add(new CollectionWrapper(dList, (ICollection) thisI));
+        }
       }
 
       // did we find any?
@@ -86,9 +115,9 @@ public class DataModel implements ITreeContentProvider
         {
           dList.add(new CollectionWrapper(dList, (ICollection) thisI));
         }
-        else if (thisI instanceof StoreGroup)
+        else if (thisI instanceof IStoreGroup)
         {
-          dList.add(new GroupWrapper(dList, (StoreGroup) thisI));
+          dList.add(new GroupWrapper(dList, (IStoreGroup) thisI));
         }
 
       }
@@ -111,9 +140,9 @@ public class DataModel implements ITreeContentProvider
         {
           dList.add(new CollectionWrapper(dList, (ICollection) thisI));
         }
-        else if (thisI instanceof StoreGroup)
+        else if (thisI instanceof IStoreGroup)
         {
-          dList.add(new GroupWrapper(dList, (StoreGroup) thisI));
+          dList.add(new GroupWrapper(dList, (IStoreGroup) thisI));
         }
       }
       // did we find any?
@@ -126,7 +155,7 @@ public class DataModel implements ITreeContentProvider
 
   private void addGroupItems(final List<Object> res, final GroupWrapper cw)
   {
-    final StoreGroup coll = cw.getGroup();
+    final IStoreGroup coll = cw.getGroup();
 
     // final NamedList dList = new NamedList(cw, coll.getName());
     final Iterator<IStoreItem> dIter = coll.iterator();
@@ -137,11 +166,16 @@ public class DataModel implements ITreeContentProvider
       {
         res.add(new CollectionWrapper(cw, (ICollection) thisI));
       }
-      else if (thisI instanceof StoreGroup)
+      else if (thisI instanceof IStoreGroup)
       {
-        res.add(new GroupWrapper(cw, (StoreGroup) thisI));
+        res.add(new GroupWrapper(cw, (IStoreGroup) thisI));
       }
     }
+    // did we find any?
+    // if (dList.size() > 0)
+    // {
+    // res.add(dList);
+    // }
   }
 
   /**
@@ -234,9 +268,9 @@ public class DataModel implements ITreeContentProvider
         {
           list.add(new CollectionWrapper(null, (ICollection) item));
         }
-        else if (item instanceof StoreGroup)
+        else if (item instanceof IStoreGroup)
         {
-          list.add(new GroupWrapper(null, (StoreGroup) item));
+          list.add(new GroupWrapper(null, (IStoreGroup) item));
         }
       }
     }
@@ -271,11 +305,15 @@ public class DataModel implements ITreeContentProvider
           // see if it has predecessors or successors
           final CollectionWrapper cw = (CollectionWrapper) element;
 
-          final ICollection coll = cw.getCollection();
-          final boolean hasDependents =
-              coll.getDependents() != null && coll.getDependents().size() > 0;
-          final boolean hasPrecedents = coll.getPrecedent() != null;
-          res = hasDependents || hasPrecedents;
+          final IStoreItem item = cw.getCollection();
+          if (item instanceof ICollection)
+          {
+            ICollection coll = (ICollection) item;
+            final boolean hasDependents =
+                ((coll.getDependents() != null) && (coll.getDependents().size() > 0));
+            final boolean hasPrecedents = coll.getPrecedent() != null;
+            res = (hasDependents || hasPrecedents);
+          }
         }
         else if (element instanceof CommandWrapper)
         {
@@ -283,13 +321,14 @@ public class DataModel implements ITreeContentProvider
           final CommandWrapper cw = (CommandWrapper) element;
           final ICommand<?> comm = cw.getCommand();
 
-          res = comm.getInputs().size() > 0 || comm.getOutputs().size() > 0;
+          res =
+              ((comm.getInputs().size() > 0) || (comm.getOutputs().size() > 0));
         }
         else if (element instanceof GroupWrapper)
         {
           // see if it has predecessors or successors
           final GroupWrapper cw = (GroupWrapper) element;
-          final StoreGroup comm = cw.getGroup();
+          final IStoreGroup comm = cw.getGroup();
 
           res = comm.size() > 0;
         }

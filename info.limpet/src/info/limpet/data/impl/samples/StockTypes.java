@@ -45,7 +45,7 @@ import org.opengis.geometry.Geometry;
 
 public class StockTypes
 {
-  
+
   /** protected static class, to prevent accidental declaration
    * 
    */

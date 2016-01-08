@@ -14,19 +14,24 @@
  *****************************************************************************/
 package info.limpet;
 
+import java.util.Collection;
+
 import info.limpet.IStore.IStoreItem;
 
-public interface IStoreGroup extends IChangeListener
+public interface IStoreGroup extends IStoreItem, Collection<IStoreItem>,
+    IChangeListener
 {
 
-	boolean hasChildren();
+  void setName(String value);
 
-	boolean add(IStoreItem item);
-	
-	boolean remove(Object item);
-	
-	void addChangeListener(IChangeListener listener);
+  boolean hasChildren();
 
-	void removeChangeListener(IChangeListener listener);
+  boolean add(IStoreItem item);
+
+  boolean remove(Object item);
+
+  void addChangeListener(IChangeListener listener);
+
+  void removeChangeListener(IChangeListener listener);
 
 }

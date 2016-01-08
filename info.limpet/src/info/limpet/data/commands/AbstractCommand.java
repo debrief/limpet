@@ -14,6 +14,11 @@
  *****************************************************************************/
 package info.limpet.data.commands;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.UUID;
+
 import info.limpet.IChangeListener;
 import info.limpet.ICommand;
 import info.limpet.IContext;
@@ -21,11 +26,7 @@ import info.limpet.IQuantityCollection;
 import info.limpet.IStore;
 import info.limpet.IStore.IStoreItem;
 import info.limpet.IStoreGroup;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.UUID;
+import info.limpet.UIProperty;
 
 public abstract class AbstractCommand<T extends IStoreItem> implements
     ICommand<T>
@@ -172,6 +173,7 @@ public abstract class AbstractCommand<T extends IStoreItem> implements
     return size;
   }
 
+  @UIProperty(name = "Dynamic updates", category = UIProperty.CATEGORY_LABEL)
   @Override
   public boolean getDynamic()
   {
@@ -234,6 +236,7 @@ public abstract class AbstractCommand<T extends IStoreItem> implements
     return store;
   }
 
+  @UIProperty(name = "Description", category = UIProperty.CATEGORY_LABEL)
   @Override
   public final String getDescription()
   {
@@ -295,6 +298,7 @@ public abstract class AbstractCommand<T extends IStoreItem> implements
     getOutputs().add(output);
   }
 
+  @UIProperty(name = "Name", category = UIProperty.CATEGORY_LABEL)
   @Override
   public String getName()
   {
@@ -327,5 +331,4 @@ public abstract class AbstractCommand<T extends IStoreItem> implements
     // TODO Auto-generated method stub
 
   }
-
 }

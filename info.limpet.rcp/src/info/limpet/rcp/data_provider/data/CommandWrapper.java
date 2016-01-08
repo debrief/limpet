@@ -36,7 +36,7 @@ public class CommandWrapper implements IAdaptable, LimpetWrapper
   {
     if (adapter == IPropertySource.class)
     {
-      return new CommandPropertySource(this);
+      return new ReflectivePropertySource(_command);
     }
     else if (adapter == IStoreItem.class)
     {

@@ -47,6 +47,7 @@ import org.opengis.geometry.primitive.Point;
 
 public class CsvParser
 {
+
   // 21/09/2015 07:00:31
   private static final DateFormat DATE_FORMAT = new SimpleDateFormat(
       "dd/MM/yyyy hh:mm:ss");

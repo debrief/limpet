@@ -14,6 +14,7 @@
  *****************************************************************************/
 package info.limpet.data.impl.samples;
 
+
 import info.limpet.ICommand;
 import info.limpet.IContext;
 import info.limpet.IObjectCollection;
@@ -187,7 +188,6 @@ public class SampleData
 		singletonLength.add(12d);
 
 		List<IStoreItem> list = new ArrayList<IStoreItem>();
-
 		StoreGroup group1 = new StoreGroup("Speed data");
 		group1.add(speedSeries1);
 		group1.add(speedSeries2);

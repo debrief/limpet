@@ -17,38 +17,41 @@ package info.limpet;
 import javax.measure.Measurable;
 import javax.measure.quantity.Quantity;
 
-
-//public static interface IQuantityCollection<Q extends Quantity>
-//{
-//	void add(Measurable<Q> item);
-//	void add(double newVal);
-//}
-
-public interface IQuantityCollection<Q extends Quantity> extends 
-			IObjectCollection<Measurable<Q>>, IBaseQuantityCollection<Q>
+public interface IQuantityCollection<Q extends Quantity> extends
+    IObjectCollection<Measurable<Q>>, IBaseQuantityCollection<Q>
 {
-	/** add a quantity, using the default units for this collection
-	 * 
-	 * @param value
-	 */
-	void add(Number value);
+  /**
+   * add a quantity, using the default units for this collection
+   * 
+   * @param value
+   */
+  void add(Number value);
 
-	/** if this collection just contains a single value, we allow
-	 * that value to be changed in-place
-	 * 
-	 * @param newValue
-	 */
-	void replaceSingleton(double newValue);
+  /**
+   * if this collection just contains a single value, we allow that value to be changed in-place
+   * 
+   * @param newValue
+   */
+  void replaceSingleton(Number newValue);
 
-	/** allow the range of this collection to be specified
-	 * 
-	 * @param range
-	 */
-	void setRange(QuantityRange<Q> range);
+  /**
+   * if this collection just contains a single value, we allow that value to be retrieved
+   * 
+   * @return the single value
+   */
+  Number getSingletonValue();
 
-	/** allow the range of this collection to be retrieved
-	 * 
-	 * @return range
-	 */
-	QuantityRange<Q> getRange();
+  /**
+   * allow the range of this collection to be specified
+   * 
+   * @param range
+   */
+  void setRange(QuantityRange<Q> range);
+
+  /**
+   * allow the range of this collection to be retrieved
+   * 
+   * @return range
+   */
+  QuantityRange<Q> getRange();
 }

@@ -1224,8 +1224,7 @@ public class CollectionComplianceTests
     }
     else
     {
-      NonTemporal.Location tLoc =
-          (Location) iCollection;
+      NonTemporal.Location tLoc = (Location) iCollection;
       if (tLoc.size() > 0)
       {
         res = tLoc.getValues().iterator().next();

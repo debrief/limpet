@@ -18,6 +18,7 @@ import info.limpet.IChangeListener;
 import info.limpet.ICollection;
 import info.limpet.IStore;
 import info.limpet.IStoreGroup;
+import info.limpet.UIProperty;
 import info.limpet.data.impl.ListenerHelper;
 
 import java.util.ArrayList;
@@ -25,7 +26,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
-public class InMemoryStore implements IStore, IChangeListener, IStoreGroup
+public class InMemoryStore implements IStore, IChangeListener
 {
 
   private List<IStoreItem> _store = new ArrayList<IStoreItem>();
@@ -53,7 +54,10 @@ public class InMemoryStore implements IStore, IChangeListener, IStoreGroup
       _name = name;
     }
 
-    // TODO: move this to a standalone class. Make the InMemoryStore extend it
+    public List<IStoreItem> children()
+    {
+      return this;
+    }
 
     @Override
     public UUID getUUID()
@@ -100,10 +104,17 @@ public class InMemoryStore implements IStore, IChangeListener, IStoreGroup
       return res;
     }
 
+    @UIProperty(name = "Name", category = UIProperty.CATEGORY_LABEL)
     @Override
     public String getName()
     {
       return _name;
+    }
+
+    @UIProperty(name = "Children", category = UIProperty.CATEGORY_METADATA)
+    public int getSize()
+    {
+      return super.size();
     }
 
     @Override
@@ -111,7 +122,8 @@ public class InMemoryStore implements IStore, IChangeListener, IStoreGroup
     {
       final int prime = 31;
       int result = 1;
-      result = prime * result + getUUID().hashCode();
+      result =
+          prime * result + ((getUUID() == null) ? 0 : getUUID().hashCode());
       return result;
     }
 
@@ -131,7 +143,14 @@ public class InMemoryStore implements IStore, IChangeListener, IStoreGroup
         return false;
       }
       StoreGroup other = (StoreGroup) obj;
-      if (!getUUID().equals(other.getUUID()))
+      if (getUUID() == null)
+      {
+        if (other.getUUID() != null)
+        {
+          return false;
+        }
+      }
+      else if (!getUUID().equals(other.getUUID()))
       {
         return false;
       }
@@ -142,11 +161,6 @@ public class InMemoryStore implements IStore, IChangeListener, IStoreGroup
     public boolean hasChildren()
     {
       return size() > 0;
-    }
-
-    public List<IStoreItem> children()
-    {
-      return this;
     }
 
     public void setName(String value)
@@ -298,7 +312,7 @@ public class InMemoryStore implements IStore, IChangeListener, IStoreGroup
     }
 
     fireModified();
-
+    
     return res;
   }
 
@@ -315,9 +329,9 @@ public class InMemoryStore implements IStore, IChangeListener, IStoreGroup
     while (iter.hasNext())
     {
       IStoreItem item = iter.next();
-      if (item instanceof StoreGroup)
+      if (item instanceof IStoreGroup)
       {
-        StoreGroup group = (StoreGroup) item;
+        IStoreGroup group = (IStoreGroup) item;
         Iterator<IStoreItem> iter2 = group.iterator();
         while (iter2.hasNext())
         {
@@ -346,9 +360,9 @@ public class InMemoryStore implements IStore, IChangeListener, IStoreGroup
     while (iter.hasNext())
     {
       IStoreItem item = iter.next();
-      if (item instanceof StoreGroup)
+      if (item instanceof IStoreGroup)
       {
-        StoreGroup group = (StoreGroup) item;
+        IStoreGroup group = (IStoreGroup) item;
         Iterator<IStoreItem> iter2 = group.iterator();
         while (iter2.hasNext())
         {
@@ -430,21 +444,4 @@ public class InMemoryStore implements IStore, IChangeListener, IStoreGroup
   {
   }
 
-  @Override
-  public boolean hasChildren()
-  {
-    return _store.size() > 0;
-  }
-
-  @Override
-  public void addChangeListener(IChangeListener listener)
-  {
-    throw new RuntimeException("not implemented");
-  }
-
-  @Override
-  public void removeChangeListener(IChangeListener listener)
-  {
-    throw new RuntimeException("not implemented");
-  }
 }

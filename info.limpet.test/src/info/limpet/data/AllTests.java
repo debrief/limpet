@@ -32,6 +32,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 import info.limpet.data.export.csv.TestExport;
+import info.limpet.rcp.TestReflectivePropertySource;
 import junit.framework.TestSuite;
 
 @Suite.SuiteClasses(
@@ -44,6 +45,7 @@ import junit.framework.TestSuite;
 	TestPersistence.class,
 	TestCsvParser.class,
 	TestExport.class,
+	TestReflectivePropertySource.class
 })
 
 @RunWith(Suite.class)

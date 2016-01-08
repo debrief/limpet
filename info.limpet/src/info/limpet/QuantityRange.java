@@ -14,7 +14,6 @@
  *****************************************************************************/
 package info.limpet;
 
-import javax.measure.Measurable;
 import javax.measure.Measure;
 import javax.measure.quantity.Quantity;
 
@@ -31,12 +30,12 @@ public class QuantityRange<T extends Quantity>
 		_max = max;
 	}
 
-	public Measurable<T> getMinimum()
+	public Measure<Double, T> getMinimum()
 	{
 		return _min;
 	}
 
-	public Measurable<T> getMaximum()
+	public Measure<Double, T> getMaximum()
 	{
 		return _max;
 	}

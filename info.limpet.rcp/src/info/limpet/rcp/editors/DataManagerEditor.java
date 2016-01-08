@@ -27,7 +27,6 @@ import info.limpet.data.operations.admin.OperationsLibrary;
 import info.limpet.data.persistence.xml.XStreamHandler;
 import info.limpet.data.store.InMemoryStore;
 import info.limpet.data.store.InMemoryStore.StoreChangeListener;
-import info.limpet.data.store.InMemoryStore.StoreGroup;
 import info.limpet.rcp.RCPContext;
 import info.limpet.rcp.data_provider.data.DataModel;
 import info.limpet.rcp.editors.dnd.DataManagerDropAdapter;
@@ -136,7 +135,8 @@ public class DataManagerEditor extends EditorPart
               {
 
                 @Override
-                public boolean visit(IResourceDelta delta) throws CoreException
+                public boolean visit(final IResourceDelta delta)
+                    throws CoreException
                 {
                   IResource resource = delta.getResource();
                   if (resource instanceof IWorkspaceRoot)
@@ -150,8 +150,10 @@ public class DataManagerEditor extends EditorPart
                     {
                       IProject project =
                           ((IFileEditorInput) input).getFile().getProject();
-                      boolean isPreDelete = eventType == IResourceChangeEvent.PRE_DELETE;
-                      boolean isPreClose = eventType == IResourceChangeEvent.PRE_CLOSE;
+                      final boolean isPreDelete =
+                          eventType == IResourceChangeEvent.PRE_DELETE;
+                      final boolean isPreClose =
+                          eventType == IResourceChangeEvent.PRE_CLOSE;
                       if (resource.equals(project)
                           && (isPreDelete || isPreClose))
                       {
@@ -201,11 +203,9 @@ public class DataManagerEditor extends EditorPart
                           closeEditor();
                         }
                       }
-                      boolean isResourceChanged = delta.getKind() == IResourceDelta.CHANGED;
-                      boolean deltaIsContent = (delta
-                          .getFlags() & IResourceDelta.CONTENT) != 0;
                       if (resource.equals(file)
-                          && (isResourceChanged && deltaIsContent))
+                          && (delta.getKind() == IResourceDelta.CHANGED && (delta
+                              .getFlags() & IResourceDelta.CONTENT) != 0))
                       {
                         reload();
                       }
@@ -321,9 +321,9 @@ public class DataManagerEditor extends EditorPart
   private void connectUp(IStoreItem next, IStoreGroup parent,
       IChangeListener listener)
   {
-    if (next instanceof StoreGroup)
+    if (next instanceof IStoreGroup)
     {
-      StoreGroup group = (StoreGroup) next;
+      IStoreGroup group = (IStoreGroup) next;
       Iterator<IStoreItem> iter = group.iterator();
       while (iter.hasNext())
       {

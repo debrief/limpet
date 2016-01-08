@@ -1,10 +1,8 @@
 package info.limpet.data.store;
 
-import info.limpet.data.store.InMemoryStore.StoreGroup;
+import info.limpet.IStoreGroup;
 
 public interface IGroupWrapper
 {
-
-	StoreGroup getGroup();
-	
+	IStoreGroup getGroup();
 }

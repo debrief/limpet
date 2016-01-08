@@ -77,7 +77,7 @@ public class CollectionWrapper implements IAdaptable, LimpetWrapper
   {
     if (adapter == IPropertySource.class)
     {
-      return new CollectionPropertySource(this);
+      return new ReflectivePropertySource(_collection);
     }
     else if (adapter == IStoreItem.class)
     {
@@ -89,7 +89,6 @@ public class CollectionWrapper implements IAdaptable, LimpetWrapper
     }
     return null;
   }
-
   public ICollection getCollection()
   {
     return _collection;
@@ -115,3 +114,4 @@ public class CollectionWrapper implements IAdaptable, LimpetWrapper
     return msg;
   }
 }
+
