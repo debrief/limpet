@@ -91,7 +91,7 @@ public class TestGeotoolsGeometry extends TestCase
 		StoreGroup group = (StoreGroup) items.get(0);
 		assertEquals("correct num collections", 3, group.size());
 		ICollection firstColl = (ICollection) group.get(2);
-		assertEquals("correct num rows", 1708, firstColl.size());
+		assertEquals("correct num rows", 1708, firstColl.getValuesCount());
 
 		TemporalLocation track = (TemporalLocation) firstColl;
 		GenerateCourseAndSpeedOperation genny = new GenerateCourseAndSpeedOperation();
@@ -109,7 +109,7 @@ public class TestGeotoolsGeometry extends TestCase
 		firstOp.execute();
 		assertEquals("new coll created", 1, store.size());
 		ICollection newColl = (ICollection) firstOp.getOutputs().get(0);
-		assertEquals("correct size", firstColl.size() - 1, newColl.size());
+		assertEquals("correct size", firstColl.getValuesCount() - 1, newColl.getValuesCount());
 		assertNotNull("knows about parent", newColl.getPrecedent());
 
 	}
@@ -126,14 +126,14 @@ public class TestGeotoolsGeometry extends TestCase
 		StoreGroup group = (StoreGroup) items.get(0);
 		assertEquals("correct num collections", 3, group.size());
 		ICollection firstColl = (ICollection) group.get(2);
-		assertEquals("correct num rows", 1708, firstColl.size());
+		assertEquals("correct num rows", 1708, firstColl.getValuesCount());
 
 		List<IStoreItem> items2 = parser.parse(file2.getAbsolutePath());
 		assertEquals("correct group", 1, items2.size());
 		StoreGroup group2 = (StoreGroup) items2.get(0);
 		assertEquals("correct num collections", 3, group2.size());
 		ICollection secondColl = (ICollection) group2.get(2);
-		assertEquals("correct num rows", 1708, secondColl.size());
+		assertEquals("correct num rows", 1708, secondColl.getValuesCount());
 
 		TemporalLocation track1 = (TemporalLocation) firstColl;
 		TemporalLocation track2 = (TemporalLocation) secondColl;
@@ -153,13 +153,13 @@ public class TestGeotoolsGeometry extends TestCase
 		courseOp.execute();
 		assertEquals("new colls created", 2, store.size());
 		ICollection newColl = (ICollection) courseOp.getOutputs().get(0);
-		assertEquals("correct size", firstColl.size() - 1, newColl.size());
+		assertEquals("correct size", firstColl.getValuesCount() - 1, newColl.getValuesCount());
 		ICommand<IStoreItem> speedOp = ops.get(1);
 		assertEquals("store empty", 2, store.size());
 		speedOp.execute();
 		assertEquals("new colls created", 4, store.size());
 		newColl = (ICollection) courseOp.getOutputs().get(0);
-		assertEquals("correct size", firstColl.size() - 1, newColl.size());
+		assertEquals("correct size", firstColl.getValuesCount() - 1, newColl.getValuesCount());
 
 	}
 
@@ -180,7 +180,7 @@ public class TestGeotoolsGeometry extends TestCase
 		Point p1 = builder.createPoint(pos1.getOrdinate(0), pos1.getOrdinate(1));
 		track1.add(p1);
 
-		assertEquals("track has point", 1, track1.size());
+		assertEquals("track has point", 1, track1.getValuesCount());
 
 	}
 
@@ -362,7 +362,7 @@ public class TestGeotoolsGeometry extends TestCase
 				output instanceof ITemporalQuantityCollection<?>);
 
 		IQuantityCollection<?> iq = (IQuantityCollection<?>) output;
-		assertEquals("correct size", 2, iq.size());
+		assertEquals("correct size", 2, iq.getValuesCount());
 
 	}
 
@@ -420,7 +420,7 @@ public class TestGeotoolsGeometry extends TestCase
 		assertNotNull(thisOut);
 		assertTrue("correct type", thisOut instanceof IQuantityCollection);
 		IQuantityCollection<?> iQ = (IQuantityCollection<?>) thisOut;
-		assertEquals("correct length", 3, iQ.size());
+		assertEquals("correct length", 3, iQ.getValuesCount());
 
 		// try with a singleton
 		selection.remove(loc2);
@@ -437,7 +437,7 @@ public class TestGeotoolsGeometry extends TestCase
 		assertNotNull(thisOut);
 		assertTrue("correct type", thisOut instanceof IQuantityCollection);
 		iQ = (IQuantityCollection<?>) thisOut;
-		assertEquals("correct length", 2, iQ.size());
+		assertEquals("correct length", 2, iQ.getValuesCount());
 
 	}
 
@@ -572,13 +572,13 @@ public class TestGeotoolsGeometry extends TestCase
 		spdK3.add(4);
 
 		// check we've got roughly the right amount of data
-		assertEquals("correct items", 17, loc1.size());
-		assertEquals("correct items", 9, loc2.size());
-		assertEquals("correct items", 9, angD1.size());
-		assertEquals("correct items", 6, angR2.size());
-		assertEquals("correct items", 4, spdK1.size());
-		assertEquals("correct items", 3, spdM2.size());
-		assertEquals("correct items", 6, freq1.size());
+		assertEquals("correct items", 17, loc1.getValuesCount());
+		assertEquals("correct items", 9, loc2.getValuesCount());
+		assertEquals("correct items", 9, angD1.getValuesCount());
+		assertEquals("correct items", 6, angR2.getValuesCount());
+		assertEquals("correct items", 4, spdK1.getValuesCount());
+		assertEquals("correct items", 3, spdM2.getValuesCount());
+		assertEquals("correct items", 6, freq1.getValuesCount());
 
 		// create some incomplete input data
 		StoreGroup track1 = new StoreGroup("Track 1");

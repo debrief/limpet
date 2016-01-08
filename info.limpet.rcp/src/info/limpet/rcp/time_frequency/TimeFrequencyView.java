@@ -118,8 +118,8 @@ public class TimeFrequencyView extends CoreAnalysisView
     {
       ICollection iCollection = (ICollection) iter.next();
       TimeFrequencyBins.BinnedData bins = null;
-      if (iCollection.isTemporal() && iCollection.size() > 1
-          && iCollection.size() <= MAX_SIZE)
+      if (iCollection.isTemporal() && iCollection.getValuesCount() > 1
+          && iCollection.getValuesCount() <= MAX_SIZE)
       {
         IBaseTemporalCollection thisQ = (IBaseTemporalCollection) iCollection;
         bins = TimeFrequencyBins.doBins(iCollection, thisQ);

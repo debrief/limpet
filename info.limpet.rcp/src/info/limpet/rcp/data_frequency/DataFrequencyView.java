@@ -131,7 +131,7 @@ public class DataFrequencyView extends CoreAnalysisView
     while (iter.hasNext())
     {
       ICollection iCollection = (ICollection) iter.next();
-      if (iCollection.size() <= MAX_SIZE)
+      if (iCollection.getValuesCount() <= MAX_SIZE)
       {
         BinnedData bins = null;
         IObjectCollection<?> thisQ = (IObjectCollection<?>) iCollection;
@@ -188,8 +188,8 @@ public class DataFrequencyView extends CoreAnalysisView
     {
       ICollection iCollection = (ICollection) iter.next();
       QuantityFrequencyBins.BinnedData bins = null;
-      if (iCollection.isQuantity() && iCollection.size() > 1
-          && iCollection.size() <= MAX_SIZE)
+      if (iCollection.isQuantity() && iCollection.getValuesCount() > 1
+          && iCollection.getValuesCount() <= MAX_SIZE)
       {
         IQuantityCollection<Quantity> thisQ =
             (IQuantityCollection<Quantity>) iCollection;

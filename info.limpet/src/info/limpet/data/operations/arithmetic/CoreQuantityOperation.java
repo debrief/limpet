@@ -91,7 +91,7 @@ public abstract class CoreQuantityOperation<Q extends Quantity>
         else
         {
           // store the longest one
-          longest = thisC.size() > longest.size() ? thisC : longest;
+          longest = thisC.getValuesCount() > longest.getValuesCount() ? thisC : longest;
         }
       }
     }
@@ -235,7 +235,7 @@ public abstract class CoreQuantityOperation<Q extends Quantity>
       {
         IQuantityCollection<Q> iQuantityCollection =
             (IQuantityCollection<Q>) iter.next();
-        int thisSize = iQuantityCollection.size();
+        int thisSize = iQuantityCollection.getValuesCount();
         res = Math.max(res, thisSize);
       }
       return res;

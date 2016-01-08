@@ -94,7 +94,7 @@ public class AddQuantityOperation<Q extends Quantity> extends
       for (int seriesCount = 0; seriesCount < getInputs().size(); seriesCount++)
       {
         IQuantityCollection<Q> thisC = getInputs().get(seriesCount);
-        Measurable<Q> thisV = thisC.size() == 1 ? thisC.getValues().get(0)
+        Measurable<Q> thisV = thisC.getValuesCount() == 1 ? thisC.getValues().get(0)
             : (Measurable<Q>) thisC.getValues().get(elementCount);
 
         // is this the first field?
@@ -131,7 +131,7 @@ public class AddQuantityOperation<Q extends Quantity> extends
         }
         else
         {
-          if (thisC.size() == 1)
+          if (thisC.getValuesCount() == 1)
           {
             // ok, it's a singleton that we're applying to all values
             thisV = thisC.getValues().get(0);

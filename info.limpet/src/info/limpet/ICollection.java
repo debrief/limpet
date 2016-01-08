@@ -22,7 +22,7 @@ public interface ICollection extends IStoreItem
 {
 	String getName();
 	void setName(String name);
-	int size();
+	int getValuesCount();
 	boolean isQuantity();
 	boolean isTemporal();
 	void setDescription(String description);

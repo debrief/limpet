@@ -83,7 +83,7 @@ public abstract class TimeFrequencyBins extends CoreAnalysis
   public static BinnedData doBins(ICollection c, IBaseTemporalCollection o)
   {
     // collate the values into an array
-    double[] data = new double[c.size()];
+    double[] data = new double[c.getValuesCount()];
 
     // Add the data from the array
     int ctr = 0;
@@ -154,7 +154,7 @@ public abstract class TimeFrequencyBins extends CoreAnalysis
         ICollection thisC = (ICollection) iter.next();
         IBaseTemporalCollection o = (IBaseTemporalCollection) thisC;
 
-        if (thisC.size() > 1 && thisC.size() < MAX_SIZE)
+        if (thisC.getValuesCount() > 1 && thisC.getValuesCount() < MAX_SIZE)
         {
           BinnedData res = doBins(thisC, o);
 

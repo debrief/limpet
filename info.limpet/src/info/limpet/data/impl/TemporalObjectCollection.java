@@ -127,7 +127,7 @@ public class TemporalObjectCollection<T extends Object> extends ObjectCollection
     @Override
     public boolean hasNext()
     {
-      return ctr < size();
+      return ctr < getValuesCount();
     }
 
     @Override

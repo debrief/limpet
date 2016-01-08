@@ -110,7 +110,7 @@ public class CollectionWrapper implements IAdaptable, LimpetWrapper
   public String toString()
   {
     final String msg;
-    msg = _collection.getName() + " (" + (_collection).size() + " items)";
+    msg = _collection.getName() + " (" + (_collection).getValuesCount() + " items)";
     return msg;
   }
 }

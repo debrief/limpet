@@ -97,7 +97,7 @@ public class CollectionPropertySource implements IPropertySource
 
       // see if we want to add a value editor
       final ICollection coll = (ICollection) _collection.getCollection();
-      if (coll.size() == 1)
+      if (coll.getValuesCount() == 1)
       {
         // ok, just use a text editor
         if (coll.isQuantity())
@@ -127,7 +127,7 @@ public class CollectionPropertySource implements IPropertySource
           rangeDescriptor.setCategory("Metadata");
           dList.add(rangeDescriptor);
         }
-        else if (coll instanceof NonTemporal.Location && coll.size() == 1)
+        else if (coll instanceof NonTemporal.Location && coll.getValuesCount() == 1)
         {
           final PropertyDescriptor latDescriptor =
               new TextPropertyDescriptor(PROPERTY_LOC_LAT, "Latitude");
@@ -165,7 +165,7 @@ public class CollectionPropertySource implements IPropertySource
     }
     else if (prop.equals(PROPERTY_SIZE))
     {
-      return coll.size();
+      return coll.getValuesCount();
     }
     else if (prop.equals(PROPERTY_DESCRIPTION))
     {
@@ -231,7 +231,7 @@ public class CollectionPropertySource implements IPropertySource
     }
     else if (prop.equals(PROPERTY_LOC_LAT))
     {
-      if (coll.size() > 0 && coll instanceof NonTemporal.Location)
+      if (coll.getValuesCount() > 0 && coll instanceof NonTemporal.Location)
       {
         NonTemporal.Location locColl = (Location) coll;
         Geometry loc = locColl.getValues().iterator().next();
@@ -241,7 +241,7 @@ public class CollectionPropertySource implements IPropertySource
     }
     else if (prop.equals(PROPERTY_LOC_LONG)) 
     {
-      if (coll.size() > 0 && coll instanceof NonTemporal.Location)
+      if (coll.getValuesCount() > 0 && coll instanceof NonTemporal.Location)
       {
         NonTemporal.Location locColl = (Location) coll;
         Geometry loc = locColl.getValues().iterator().next();
@@ -332,7 +332,7 @@ public class CollectionPropertySource implements IPropertySource
         NonTemporal.Location locColl = (Location) coll;
 
         // get the current location
-        if (locColl.size() > 0)
+        if (locColl.getValuesCount() > 0)
         {
           PointImpl loc = (PointImpl) locColl.getValues().iterator().next();
 
@@ -358,7 +358,7 @@ public class CollectionPropertySource implements IPropertySource
       {
         NonTemporal.Location locColl = (Location) coll;
 
-        if (locColl.size() > 0)
+        if (locColl.getValuesCount() > 0)
         {
           // get the current location
           PointImpl loc = (PointImpl) locColl.getValues().iterator().next();

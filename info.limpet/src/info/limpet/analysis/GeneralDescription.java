@@ -50,7 +50,7 @@ public abstract class GeneralDescription extends CoreAnalysis
         titles.add("Collection");
         values.add(thisC.getName());
         titles.add("Size");
-        values.add("" + thisC.size());
+        values.add("" + thisC.getValuesCount());
         titles.add("Temporal");
         values.add("" + thisC.isTemporal());
         titles.add("Quantity");

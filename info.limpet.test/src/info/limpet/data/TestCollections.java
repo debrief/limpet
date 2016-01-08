@@ -78,7 +78,7 @@ public class TestCollections extends TestCase
     }
 
     // check it didn't get stored
-    assertEquals("correct number of samples", 10, stringCollection.size());
+    assertEquals("correct number of samples", 10, stringCollection.getValuesCount());
   }
 
   public void testStringCollections()
@@ -86,13 +86,13 @@ public class TestCollections extends TestCase
     Temporal.Strings tStr = new Temporal.Strings("t strings");
     tStr.add(1000, "aaa");
     tStr.add(1002, "bbb");
-    assertEquals("correct size", 2, tStr.size());
+    assertEquals("correct size", 2, tStr.getValuesCount());
 
     NonTemporal.Strings str = new NonTemporal.Strings("non t strings");
     str.add("aaa");
     str.add("bbb");
     str.add("ccc");
-    assertEquals("correct size", 3, str.size());
+    assertEquals("correct size", 3, str.getValuesCount());
 
   }
 
@@ -179,7 +179,7 @@ public class TestCollections extends TestCase
 
     ICollection series =
         (ICollection) store.get("Sum of Some data1, Some data2");
-    assertTrue("non empty", series.size() > 0);
+    assertTrue("non empty", series.getValuesCount() > 0);
     assertTrue("temporal", series.isTemporal());
     assertTrue("quantity", series.isQuantity());
 
@@ -228,7 +228,7 @@ public class TestCollections extends TestCase
     assertEquals("new collection created", 1, store.size());
 
     series = (ICollection) store.get("Sum of Some data1, Some data2");
-    assertTrue("non empty", series.size() > 0);
+    assertTrue("non empty", series.getValuesCount() > 0);
     assertTrue("temporal", series.isTemporal());
     assertTrue("quantity", series.isQuantity());
 
@@ -278,8 +278,8 @@ public class TestCollections extends TestCase
     assertEquals("new collection created", 1, store.size());
 
     series = (ICollection) firstC.getOutputs().iterator().next();
-    assertTrue("non empty", series.size() > 0);
-    assertEquals("corrent length results", 5, series.size());
+    assertTrue("non empty", series.getValuesCount() > 0);
+    assertEquals("corrent length results", 5, series.getValuesCount());
     assertTrue("temporal", series.isTemporal());
     assertTrue("quantity", series.isQuantity());
 
@@ -368,7 +368,7 @@ public class TestCollections extends TestCase
 
     ICollection series =
         (ICollection) store.get("Sum of Some data1, Some data2");
-    assertTrue("non empty", series.size() > 0);
+    assertTrue("non empty", series.getValuesCount() > 0);
     assertTrue("temporal", series.isTemporal());
     assertTrue("quantity", series.isQuantity());
 
@@ -426,8 +426,8 @@ public class TestCollections extends TestCase
     // get the first one.
     ITemporalQuantityCollection<?> series =
         (ITemporalQuantityCollection<?>) firstC.getOutputs().iterator().next();
-    assertTrue("non empty", series.size() > 0);
-    assertEquals("corrent length results", 4, series.size());
+    assertTrue("non empty", series.getValuesCount() > 0);
+    assertEquals("corrent length results", 4, series.getValuesCount());
     assertTrue("temporal", series.isTemporal());
     assertTrue("quantity", series.isQuantity());
 
@@ -442,8 +442,8 @@ public class TestCollections extends TestCase
         series.getValues().get(3).doubleValue((Unit) series.getUnits()));
 
     series = (ITemporalQuantityCollection<?>) firstC.getOutputs().get(1);
-    assertTrue("non empty", series.size() > 0);
-    assertEquals("corrent length results", 3, series.size());
+    assertTrue("non empty", series.getValuesCount() > 0);
+    assertEquals("corrent length results", 3, series.getValuesCount());
     assertTrue("temporal", series.isTemporal());
     assertTrue("quantity", series.isQuantity());
 
@@ -486,7 +486,7 @@ public class TestCollections extends TestCase
             .next();
 
     assertEquals("new type:", "", output.getUnits().getDimension().toString());
-    assertEquals("same size", output.size(), tq1.size());
+    assertEquals("same size", output.getValuesCount(), tq1.getValuesCount());
     assertEquals("first item same value", output.getValues().iterator().next()
         .doubleValue(output.getUnits()), tq1.getValues().iterator().next()
         .doubleValue(tq1.getUnits()));
@@ -509,7 +509,7 @@ public class TestCollections extends TestCase
         (IQuantityCollection<Quantity>) command.getOutputs().iterator().next();
 
     assertEquals("new type:", "", output2.getUnits().getDimension().toString());
-    assertEquals("same size", output2.size(), nq1.size());
+    assertEquals("same size", output2.getValuesCount(), nq1.getValuesCount());
     assertEquals("first item same value", output2.getValues().iterator().next()
         .doubleValue(output2.getUnits()), nq1.getValues().iterator().next()
         .doubleValue(nq1.getUnits()));
@@ -548,8 +548,8 @@ public class TestCollections extends TestCase
 
     IQuantityCollection<Velocity> series =
         (IQuantityCollection<Velocity>) firstC.getOutputs().iterator().next();
-    assertTrue("non empty", series.size() > 0);
-    assertEquals("corrent length results", 4, series.size());
+    assertTrue("non empty", series.getValuesCount() > 0);
+    assertEquals("corrent length results", 4, series.getValuesCount());
     assertTrue("temporal", series.isTemporal());
     assertTrue("quantity", series.isQuantity());
     assertEquals("correct value", 110d,
@@ -595,8 +595,8 @@ public class TestCollections extends TestCase
     assertEquals("new collection created", 1, store.size());
 
     ICollection series = (ICollection) firstC.getOutputs().iterator().next();
-    assertTrue("non empty", series.size() > 0);
-    assertEquals("corrent length results", 4, series.size());
+    assertTrue("non empty", series.getValuesCount() > 0);
+    assertEquals("corrent length results", 4, series.getValuesCount());
     assertTrue("temporal", series.isTemporal());
     assertTrue("quantity", series.isQuantity());
 
@@ -645,8 +645,8 @@ public class TestCollections extends TestCase
     assertEquals("new collection created", 1, store.size());
 
     series = (ICollection) firstC.getOutputs().iterator().next();
-    assertTrue("non empty", series.size() > 0);
-    assertEquals("corrent length results", 4, series.size());
+    assertTrue("non empty", series.getValuesCount() > 0);
+    assertEquals("corrent length results", 4, series.getValuesCount());
     assertTrue("temporal", series.isTemporal());
     assertTrue("quantity", series.isQuantity());
 
@@ -697,8 +697,8 @@ public class TestCollections extends TestCase
     assertEquals("new collection created", 1, store.size());
 
     series = (ICollection) firstC.getOutputs().iterator().next();
-    assertTrue("non empty", series.size() > 0);
-    assertEquals("corrent length results", 5, series.size());
+    assertTrue("non empty", series.getValuesCount() > 0);
+    assertEquals("corrent length results", 5, series.getValuesCount());
     assertTrue("temporal", series.isTemporal());
     assertTrue("quantity", series.isQuantity());
 
@@ -766,7 +766,7 @@ public class TestCollections extends TestCase
     }
 
     // check it didn't get stored
-    assertEquals("correct number of samples", 12, stringCollection.size());
+    assertEquals("correct number of samples", 12, stringCollection.getValuesCount());
 
     IBaseTemporalCollection it = stringCollection;
     assertEquals("correct start", 1, it.start());
@@ -820,11 +820,11 @@ public class TestCollections extends TestCase
       speedCollection.add(speedVal);
     }
 
-    assertEquals("correct num of items", 10, speedCollection.size());
+    assertEquals("correct num of items", 10, speedCollection.getValuesCount());
 
     speedCollection.add(12);
 
-    assertEquals("correct num of items", 11, speedCollection.size());
+    assertEquals("correct num of items", 11, speedCollection.getValuesCount());
   }
 
   public void testCreateQuantity()
@@ -847,7 +847,7 @@ public class TestCollections extends TestCase
     }
 
     // check it didn't get stored
-    assertEquals("correct number of samples", 10, speedCollection.size());
+    assertEquals("correct number of samples", 10, speedCollection.getValuesCount());
     assertEquals("correct name", "Speed", speedCollection.getName());
 
     assertEquals("correct min", 2d,
@@ -879,7 +879,7 @@ public class TestCollections extends TestCase
     sc.add(12, speedVal);
 
     // check it got stored
-    assertEquals("correct number of samples", 1, sc.size());
+    assertEquals("correct number of samples", 1, sc.getValuesCount());
 
     long time = sc.getTimes().iterator().next();
     Measurable<Velocity> theS = sc.getValues().iterator().next();
@@ -906,7 +906,7 @@ public class TestCollections extends TestCase
     assertNotNull("runtime got thrown", errorThrown);
 
     // check it didn't get stored
-    assertEquals("correct number of samples", 1, sc.size());
+    assertEquals("correct number of samples", 1, sc.getValuesCount());
 
     // ok, now add another
     speedVal = Measure.valueOf(12, kmh);
@@ -915,7 +915,7 @@ public class TestCollections extends TestCase
     sc.add(14, speedVal);
 
     // check it got get stored
-    assertEquals("correct number of samples", 2, sc.size());
+    assertEquals("correct number of samples", 2, sc.getValuesCount());
 
     boolean eThrown = false;
     try
@@ -951,7 +951,7 @@ public class TestCollections extends TestCase
     }
 
     // check it didn't get stored
-    assertEquals("correct number of samples", 10, speedCollection.size());
+    assertEquals("correct number of samples", 10, speedCollection.getValuesCount());
 
     IBaseTemporalCollection it = speedCollection;
     assertEquals("correct start", 1, it.start());
@@ -1002,7 +1002,7 @@ public class TestCollections extends TestCase
     }
 
     // check it didn't get stored
-    assertEquals("correct number of samples", 10, speedCollection.size());
+    assertEquals("correct number of samples", 10, speedCollection.getValuesCount());
 
     // ok, now check the iterator
     double runningValueSum = 0;
@@ -1058,8 +1058,8 @@ public class TestCollections extends TestCase
     assertEquals("new collection created", 1, store.size());
 
     ICollection series = firstC.getOutputs().iterator().next();
-    assertTrue("non empty", series.size() > 0);
-    assertEquals("corrent length results", 4, series.size());
+    assertTrue("non empty", series.getValuesCount() > 0);
+    assertEquals("corrent length results", 4, series.getValuesCount());
     assertTrue("temporal", series.isTemporal());
     assertTrue("quantity", series.isQuantity());
 
@@ -1108,8 +1108,8 @@ public class TestCollections extends TestCase
     assertEquals("new collection created", 1, store.size());
 
     series = firstC.getOutputs().iterator().next();
-    assertTrue("non empty", series.size() > 0);
-    assertEquals("corrent length results", 4, series.size());
+    assertTrue("non empty", series.getValuesCount() > 0);
+    assertEquals("corrent length results", 4, series.getValuesCount());
     assertTrue("temporal", series.isTemporal());
     assertTrue("quantity", series.isQuantity());
 

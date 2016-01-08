@@ -272,7 +272,7 @@ public class RangeSliderView extends CoreAnalysisView implements
       {
         ICollection coll = (ICollection) item;
 
-        if (coll.isQuantity() && coll.size() == 1)
+        if (coll.isQuantity() && coll.getValuesCount() == 1)
         {
           IQuantityCollection<?> qc = (IQuantityCollection<?>) coll;
           QuantityRange<?> range = qc.getRange();

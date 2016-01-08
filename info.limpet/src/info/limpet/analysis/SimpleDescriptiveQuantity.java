@@ -70,7 +70,7 @@ public abstract class SimpleDescriptiveQuantity extends CoreAnalysis
         }
 
         // if it's a singleton, show the value
-        if (o.size() == 1)
+        if (o.getValuesCount() == 1)
         {
           titles.add("Value");
           values.add(""
@@ -88,10 +88,10 @@ public abstract class SimpleDescriptiveQuantity extends CoreAnalysis
         }
 
         // we only bother with the stats if there are more than 1 item
-        if (o.size() > 1)
+        if (o.getValuesCount() > 1)
         {
           // collate the values into an array
-          double[] data = new double[o.size()];
+          double[] data = new double[o.getValuesCount()];
 
           // Add the data from the array
           int ctr = 0;

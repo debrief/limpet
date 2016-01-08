@@ -138,7 +138,7 @@ public class LimpetDecorator implements ILightweightLabelDecorator
     {
       decoration.addOverlay(TIME, IDecoration.BOTTOM_RIGHT);
     }
-    if (coll.size() == 1)
+    if (coll.getValuesCount() == 1)
     {
       decoration.addOverlay(SINGLE, IDecoration.BOTTOM_LEFT);
     }

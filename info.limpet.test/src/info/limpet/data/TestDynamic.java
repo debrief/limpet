@@ -163,9 +163,9 @@ public class TestDynamic extends TestCase
 
 		// check the data lengths
 		IQuantityCollection<?> newResQ = (IQuantityCollection<?>) newResSeries;
-		assertEquals("correct elements", 10, newResQ.size());
-		assertEquals("correct elements", 10, speedTwo.size());
-		assertEquals("correct elements", 10, resSeries.size());
+		assertEquals("correct elements", 10, newResQ.getValuesCount());
+		assertEquals("correct elements", 10, speedTwo.getValuesCount());
+		assertEquals("correct elements", 10, resSeries.getValuesCount());
 
 		// check the units haven't changed
 		assertEquals("units still valid", resUnits, iq.getUnits().toString());

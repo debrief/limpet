@@ -488,7 +488,7 @@ public class CollectionComplianceTests
         else
         {
           // check if it's not a singleton
-          if (thisC.size() != 1)
+          if (thisC.getValuesCount() != 1)
           {
             // oops, no
             allValid = false;
@@ -526,7 +526,7 @@ public class CollectionComplianceTests
       {
         ICollection thisC = (ICollection) thisI;
 
-        int thisSize = thisC.size();
+        int thisSize = thisC.getValuesCount();
 
         // valid, check the size
         if (size == -1)
@@ -580,11 +580,11 @@ public class CollectionComplianceTests
         // valid, check the size
         if (size == -1)
         {
-          size = thisC.size();
+          size = thisC.getValuesCount();
         }
         else
         {
-          if (size != thisC.size())
+          if (size != thisC.getValuesCount())
           {
             // oops, no
             allValid = false;
@@ -990,7 +990,7 @@ public class CollectionComplianceTests
     while (iter.hasNext())
     {
       ICollection thisC = (ICollection) iter.next();
-      longest = Math.max(longest, thisC.size());
+      longest = Math.max(longest, thisC.getValuesCount());
     }
     return longest;
   }
@@ -1021,7 +1021,7 @@ public class CollectionComplianceTests
           {
             // store the longest one
             ICollection asColl = (ICollection) longest;
-            longest = thisC.size() > asColl.size() ? tqc : longest;
+            longest = thisC.getValuesCount() > asColl.getValuesCount() ? tqc : longest;
           }
         }
       }
@@ -1040,7 +1040,7 @@ public class CollectionComplianceTests
       if (thisI instanceof ICollection)
       {
         ICollection thisC = (ICollection) thisI;
-        if (thisC.size() == 0)
+        if (thisC.getValuesCount() == 0)
         {
           allValid = false;
           break;
@@ -1167,7 +1167,7 @@ public class CollectionComplianceTests
       IQuantityCollection<?> iQ = (IQuantityCollection<?>) iCollection;
 
       // just check it's not empty (which can happen during edits)
-      if (iQ.size() == 0)
+      if (iQ.getValuesCount() == 0)
       {
         return 0;
       }
@@ -1225,7 +1225,7 @@ public class CollectionComplianceTests
     else
     {
       NonTemporal.Location tLoc = (Location) iCollection;
-      if (tLoc.size() > 0)
+      if (tLoc.getValuesCount() > 0)
       {
         res = tLoc.getValues().iterator().next();
       }

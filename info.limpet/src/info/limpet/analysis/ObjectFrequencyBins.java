@@ -108,7 +108,7 @@ public abstract class ObjectFrequencyBins extends CoreAnalysis
       {
         ICollection thisC = (ICollection) iter.next();
 
-        if (thisC.size() <= MAX_SIZE)
+        if (thisC.getValuesCount() <= MAX_SIZE)
         {
           IObjectCollection<?> o = (IObjectCollection<?>) thisC;
 

@@ -215,7 +215,7 @@ public class DivideQuantityOperation implements IOperation<IStoreItem>
 
           final double thisValue, otherValue;
 
-          if (_item1.size() == 1)
+          if (_item1.getValuesCount() == 1)
           {
             thisValue =
                 _item1.getValues().get(0).doubleValue(
@@ -237,7 +237,7 @@ public class DivideQuantityOperation implements IOperation<IStoreItem>
             }
           }
 
-          if (_item2.size() == 1)
+          if (_item2.getValuesCount() == 1)
           {
             otherValue =
                 _item2.getValues().get(0).doubleValue(
@@ -277,7 +277,7 @@ public class DivideQuantityOperation implements IOperation<IStoreItem>
         for (int j = 0; j < length; j++)
         {
           final double thisValue;
-          if (_item1.size() == 1)
+          if (_item1.getValuesCount() == 1)
           {
             thisValue =
                 _item1.getValues().get(0).doubleValue(
@@ -291,7 +291,7 @@ public class DivideQuantityOperation implements IOperation<IStoreItem>
           }
 
           final double otherValue;
-          if (_item2.size() == 1)
+          if (_item2.getValuesCount() == 1)
           {
             otherValue =
                 _item2.getValues().get(0).doubleValue(

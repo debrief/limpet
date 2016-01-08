@@ -87,7 +87,7 @@ public abstract class QuantityFrequencyBins extends CoreAnalysis
   public static BinnedData doBins(IQuantityCollection<Quantity> collection)
   {
     // collate the values into an array
-    double[] data = new double[collection.size()];
+    double[] data = new double[collection.getValuesCount()];
 
     // Add the data from the array
     int ctr = 0;
@@ -160,7 +160,7 @@ public abstract class QuantityFrequencyBins extends CoreAnalysis
         @SuppressWarnings("unchecked")
         IQuantityCollection<Quantity> o = (IQuantityCollection<Quantity>) thisC;
 
-        if (thisC.size() > 1 && thisC.size() < MAX_SIZE)
+        if (thisC.getValuesCount() > 1 && thisC.getValuesCount() < MAX_SIZE)
         {
           BinnedData res = doBins(o);
 

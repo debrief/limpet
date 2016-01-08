@@ -126,7 +126,7 @@ public class ObjectCollection<T extends Object> implements IObjectCollection<T>
   }
 
   @Override
-  public int size()
+  public int getValuesCount()
   {
     return values.size();
   }
@@ -259,7 +259,7 @@ public class ObjectCollection<T extends Object> implements IObjectCollection<T>
   @Override
   public boolean hasChildren()
   {
-    return size() > 0;
+    return getValuesCount() > 0;
   }
 
   @Override

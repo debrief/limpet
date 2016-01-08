@@ -195,7 +195,7 @@ public class TestOperations extends TestCase
     ICollection output = theOp.getOutputs().iterator().next();
 
     // check the size
-    assertEquals("correct size", 2, output.size());
+    assertEquals("correct size", 2, output.getValuesCount());
 
     // check data type
     assertTrue("isn't temporal", !output.isTemporal());
@@ -215,7 +215,7 @@ public class TestOperations extends TestCase
     output = theOp.getOutputs().iterator().next();
 
     // check the size
-    assertEquals("correct size", 3, output.size());
+    assertEquals("correct size", 3, output.getValuesCount());
 
     // check data type
     assertTrue("isn't temporal", output.isTemporal());
@@ -479,7 +479,7 @@ public class TestOperations extends TestCase
             .get("Product of Speed One Time, Floating point factor");
 
     // test results is same length as thisSpeed
-    assertEquals("correct size", 10, newS.size());
+    assertEquals("correct size", 10, newS.getValuesCount());
 
     selection.clear();
     selection.add(speedGood1);
@@ -504,7 +504,7 @@ public class TestOperations extends TestCase
     assertTrue(output.isTemporal());
     assertTrue(output.isQuantity());
     assertEquals("Correct len",
-        Math.max(speedGood1.size(), speedIrregular.size()), output.size());
+        Math.max(speedGood1.getValuesCount(), speedIrregular.getValuesCount()), output.getValuesCount());
   }
 
   @SuppressWarnings("unchecked")
@@ -540,7 +540,7 @@ public class TestOperations extends TestCase
     assertNotNull(newS);
 
     // test results is same length as thisSpeed
-    assertEquals("correct size", 10, newS.size());
+    assertEquals("correct size", 10, newS.getValuesCount());
     assertTrue("is temporal", newS.isTemporal());
 
     // check that operation isn't offered if the dataset is already in
@@ -601,7 +601,7 @@ public class TestOperations extends TestCase
     assertNotNull(newS);
 
     // test results is same length as thisSpeed
-    assertEquals("correct size", 10, newS.size());
+    assertEquals("correct size", 10, newS.getValuesCount());
 
     // calculate sum of input values [0..windowSize-1]
     double sum = 0;
@@ -637,7 +637,7 @@ public class TestOperations extends TestCase
             .get("Sum of Speed One Time, Speed Two Time");
 
     assertNotNull(newS);
-    assertEquals("correct size", 10, newS.size());
+    assertEquals("correct size", 10, newS.getValuesCount());
 
     // assert same unit
     assertEquals(newS.getUnits(), speedGood1.getUnits());
@@ -688,7 +688,7 @@ public class TestOperations extends TestCase
     first.execute();
     ICollection output = first.getOutputs().iterator().next();
     assertNotNull("produced output", output);
-    assertEquals("correct size", speedGood1.size(), output.size());
+    assertEquals("correct size", speedGood1.getValuesCount(), output.getValuesCount());
 
     assertEquals("correct value", 2.3767, speedGood1.getValues().get(0)
         .doubleValue(Velocity.UNIT) * 2, 0.001);
@@ -724,7 +724,7 @@ public class TestOperations extends TestCase
         (IQuantityCollection) first.getOutputs().iterator().next();
     assertNotNull("produced output", output);
     assertTrue("output is temporal", output.isTemporal());
-    assertEquals("correct size", speedGood1.size(), output.size());
+    assertEquals("correct size", speedGood1.getValuesCount(), output.getValuesCount());
 
     assertEquals("correct value",
         output.getValues().get(0).doubleValue(Velocity.UNIT), speedGood1
@@ -784,7 +784,7 @@ public class TestOperations extends TestCase
             + " from " + speedGood1.getName());
 
     assertNotNull(newS);
-    assertEquals("correct size", 10, newS.size());
+    assertEquals("correct size", 10, newS.getValuesCount());
 
     // assert same unit
     assertEquals(newS.getUnits(), speedGood1.getUnits());
@@ -875,7 +875,7 @@ public class TestOperations extends TestCase
     assertEquals(1, store.size());
     IQuantityCollection<Duration> duration =
         (IQuantityCollection<Duration>) store.iterator().next();
-    assertEquals(speedGood1.size(), duration.size());
+    assertEquals(speedGood1.getValuesCount(), duration.getValuesCount());
 
     double firstDuration =
         duration.getValues().get(0).doubleValue(duration.getUnits());
@@ -903,7 +903,7 @@ public class TestOperations extends TestCase
     assertEquals(1, store.size());
     IQuantityCollection<Length> resultLength =
         (IQuantityCollection<Length>) store.iterator().next();
-    assertEquals(length1.size(), resultLength.size());
+    assertEquals(length1.getValuesCount(), resultLength.getValuesCount());
 
     double firstResultLength =
         resultLength.getValues().get(0).doubleValue(resultLength.getUnits());
@@ -920,7 +920,7 @@ public class TestOperations extends TestCase
     // assert expected unit (1/m)
     assertEquals("1/" + length1.getUnits().toString(), resultQuantity
         .getUnits().toString());
-    assertEquals(length1.size(), resultQuantity.size());
+    assertEquals(length1.getValuesCount(), resultQuantity.getValuesCount());
 
     double firstResultQuantity =
         resultQuantity.getValues().get(0)

@@ -52,7 +52,7 @@ public abstract class SimpleDescriptiveObject extends CoreAnalysis
         ObjectCollection<?> o = (ObjectCollection<?>) thisC;
 
         // check it has some data
-        if (o.size() > 0)
+        if (o.getValuesCount() > 0)
         {
           titles.add("Content Type");
           Object nextObject = o.getValues().iterator().next();

@@ -163,9 +163,9 @@ public abstract class AbstractCommand<T extends IStoreItem> implements
     while (iter.hasNext())
     {
       IQuantityCollection<?> thisC = (IQuantityCollection<?>) iter.next();
-      if (thisC.size() >= 1)
+      if (thisC.getValuesCount() >= 1)
       {
-        size = thisC.size();
+        size = thisC.getValuesCount();
         break;
       }
     }

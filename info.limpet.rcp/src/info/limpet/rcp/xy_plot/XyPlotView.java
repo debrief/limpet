@@ -153,7 +153,7 @@ public class XyPlotView extends CoreAnalysisView
     while (iter.hasNext())
     {
       ICollection coll = (ICollection) iter.next();
-      if (coll.isQuantity() && coll.size() >= 1 && coll.size() < MAX_SIZE)
+      if (coll.isQuantity() && coll.getValuesCount() >= 1 && coll.getValuesCount() < MAX_SIZE)
       {
 
         IQuantityCollection<Quantity> thisQ =
@@ -168,7 +168,7 @@ public class XyPlotView extends CoreAnalysisView
         final PlotSymbolType theSym;
         // if it's a singleton, show the symbol
         // markers
-        if (thisQ.size() > 1000 || thisQ.size() == 1)
+        if (thisQ.getValuesCount() > 1000 || thisQ.getValuesCount() == 1)
         {
           theSym = PlotSymbolType.NONE;
         }
@@ -183,7 +183,7 @@ public class XyPlotView extends CoreAnalysisView
 
         final double[] yData;
 
-        if (coll.size() == 1)
+        if (coll.getValuesCount() == 1)
         {
           // singleton = insert it's value at every point
           yData = new double[longestColl];
@@ -196,7 +196,7 @@ public class XyPlotView extends CoreAnalysisView
         }
         else
         {
-          yData = new double[thisQ.size()];
+          yData = new double[thisQ.getValuesCount()];
           Iterator<?> values = thisQ.getValues().iterator();
           int ctr = 0;
           while (values.hasNext())
@@ -257,7 +257,7 @@ public class XyPlotView extends CoreAnalysisView
     while (iter.hasNext())
     {
       ICollection coll = (ICollection) iter.next();
-      if (coll.isQuantity() && coll.size() >= 1 && coll.size() < MAX_SIZE)
+      if (coll.isQuantity() && coll.getValuesCount() >= 1 && coll.getValuesCount() < MAX_SIZE)
       {
         IQuantityCollection<Quantity> thisQ =
             (IQuantityCollection<Quantity>) coll;
@@ -279,8 +279,8 @@ public class XyPlotView extends CoreAnalysisView
           ITemporalQuantityCollection<Quantity> thisTQ =
               (ITemporalQuantityCollection<Quantity>) coll;
 
-          xTimeData = new Date[thisQ.size()];
-          yData = new double[thisQ.size()];
+          xTimeData = new Date[thisQ.getValuesCount()];
+          yData = new double[thisQ.getValuesCount()];
 
           Iterator<?> values = thisTQ.getValues().iterator();
           Iterator<Long> times = thisTQ.getTimes().iterator();
@@ -335,7 +335,7 @@ public class XyPlotView extends CoreAnalysisView
 
         // if it's a monster line, or just a singleton value, we won't plot
         // markers
-        if (thisQ.size() > 1000 || thisQ.size() == 1)
+        if (thisQ.getValuesCount() > 1000 || thisQ.getValuesCount() == 1)
         {
           newSeries.setSymbolType(PlotSymbolType.NONE);
         }
@@ -390,7 +390,7 @@ public class XyPlotView extends CoreAnalysisView
     while (iter.hasNext())
     {
       ICollection coll = (ICollection) iter.next();
-      if (!coll.isQuantity() && coll.size() >= 1 && coll.size() < MAX_SIZE)
+      if (!coll.isQuantity() && coll.getValuesCount() >= 1 && coll.getValuesCount() < MAX_SIZE)
       {
         final List<Geometry> values;
 

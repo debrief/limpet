@@ -136,10 +136,10 @@ public class SubtractQuantityOperation<Q extends Quantity> extends
     protected Double calcThisElement(int elementCount)
     {
       final Measurable<Q> thisValue =
-          _item1.size() == 1 ? _item1.getValues().get(0) : _item1.getValues()
+          _item1.getValuesCount() == 1 ? _item1.getValues().get(0) : _item1.getValues()
               .get(elementCount);
       final Measurable<Q> otherValue =
-          _item2.size() == 1 ? _item2.getValues().get(0) : _item2.getValues()
+          _item2.getValuesCount() == 1 ? _item2.getValues().get(0) : _item2.getValues()
               .get(elementCount);
       double runningTotal =
           thisValue.doubleValue(_item1.getUnits())
@@ -162,7 +162,7 @@ public class SubtractQuantityOperation<Q extends Quantity> extends
       }
       else
       {
-        if (!_item1.isTemporal() && _item1.size() == 1)
+        if (!_item1.isTemporal() && _item1.getValuesCount() == 1)
         {
           thisValue = _item1.getValues().get(0);
         }
@@ -182,7 +182,7 @@ public class SubtractQuantityOperation<Q extends Quantity> extends
       }
       else
       {
-        if (!_item2.isTemporal() && _item2.size() == 1)
+        if (!_item2.isTemporal() && _item2.getValuesCount() == 1)
         {
           otherValue = _item2.getValues().get(0);
         }

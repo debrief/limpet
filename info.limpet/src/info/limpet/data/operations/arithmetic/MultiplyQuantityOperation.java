@@ -238,7 +238,7 @@ public class MultiplyQuantityOperation implements IOperation<IStoreItem>
             final double thisValue;
 
             // just check that this isn't a singleton
-            if (thisC.size() == 1)
+            if (thisC.getValuesCount() == 1)
             {
               thisValue =
                   thisC.getValues().get(0).doubleValue(thisC.getUnits());
@@ -294,7 +294,7 @@ public class MultiplyQuantityOperation implements IOperation<IStoreItem>
             final double thisValue;
 
             // just check that this isn't a singleton
-            if (thisC.size() == 1)
+            if (thisC.getValuesCount() == 1)
             {
               thisValue =
                   thisC.getValues().get(0).doubleValue(thisC.getUnits());

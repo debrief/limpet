@@ -33,7 +33,7 @@ public class TestCsvParser extends TestCase
 		List<IStoreItem> items = new CsvParser().parse(file.getAbsolutePath());
 		assertTrue(items.size() == 1);
 		ICollection firstColl = (ICollection) items.get(0);
-		assertEquals("correct num rows", 69, firstColl.size());
+		assertEquals("correct num rows", 69, firstColl.getValuesCount());
 	}
 
 	public void testFrequencs() throws Exception
@@ -43,7 +43,7 @@ public class TestCsvParser extends TestCase
 		List<IStoreItem> items = new CsvParser().parse(file.getAbsolutePath());
 		assertTrue(items.size() == 1);
 		ICollection firstColl = (ICollection) items.get(0);
-		assertEquals("correct num rows", 11, firstColl.size());
+		assertEquals("correct num rows", 11, firstColl.getValuesCount());
 	}
 
 	public void testMultiColumn() throws Exception
@@ -56,7 +56,7 @@ public class TestCsvParser extends TestCase
 		StoreGroup group = (StoreGroup) items.get(0);
 		assertEquals("correct num collections", 6, group.size());
 		ICollection firstColl = (ICollection) group.get(0);
-		assertEquals("correct num rows", 69, firstColl.size());
+		assertEquals("correct num rows", 69, firstColl.getValuesCount());
 	}
 
 	public void testMultiColumnUSA() throws Exception
@@ -69,7 +69,7 @@ public class TestCsvParser extends TestCase
 		StoreGroup group = (StoreGroup) items.get(0);
 		assertEquals("correct num collections", 3, group.size());
 		ICollection firstColl = (ICollection) group.get(0);
-		assertEquals("correct num rows", 1708, firstColl.size());
+		assertEquals("correct num rows", 1708, firstColl.getValuesCount());
 	}
 	
 	public static File getDataFile(String name)

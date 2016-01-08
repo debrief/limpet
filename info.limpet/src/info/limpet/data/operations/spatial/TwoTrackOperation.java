@@ -182,7 +182,7 @@ public abstract class TwoTrackOperation implements IOperation<IStoreItem>
         // find one wiht more than one item
         final TemporalLocation primary;
         final TemporalLocation secondary;
-        if (track1.size() > 1)
+        if (track1.getValuesCount() > 1)
         {
           primary = (TemporalLocation) track1;
           secondary = (TemporalLocation) track2;
@@ -193,13 +193,13 @@ public abstract class TwoTrackOperation implements IOperation<IStoreItem>
           secondary = (TemporalLocation) track1;
         }
 
-        for (int j = 0; j < primary.size(); j++)
+        for (int j = 0; j < primary.getValuesCount(); j++)
         {
           final Point locA, locB;
 
           locA = (Point) primary.getValues().get(j);
 
-          if (secondary.size() > 1)
+          if (secondary.getValuesCount() > 1)
           {
             locB = (Point) secondary.getValues().get(j);
           }
