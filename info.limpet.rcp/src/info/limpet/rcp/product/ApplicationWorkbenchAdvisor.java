@@ -456,7 +456,8 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor
     job.schedule();
   }
 
-  private static class CancelableProgressMonitorWrapper extends ProgressMonitorWrapper
+  private static class CancelableProgressMonitorWrapper extends
+      ProgressMonitorWrapper
   {
     private double total = 0;
     private ProgressMonitorJobsDialog dialog;
@@ -958,25 +959,22 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor
    */
   public AboutInfo[] getWelcomePerspectiveInfos()
   {
-    if (welcomePerspectiveInfos == null)
+    // support old welcome perspectives if intro plugin is not present
+    if (welcomePerspectiveInfos == null && !hasIntro())
     {
-      // support old welcome perspectives if intro plugin is not present
-      if (!hasIntro())
+      Map<String, AboutInfo> m = getNewlyAddedBundleGroups();
+      List<AboutInfo> list = new ArrayList<AboutInfo>(m.size());
+      for (Iterator<AboutInfo> i = m.values().iterator(); i.hasNext();)
       {
-        Map<String, AboutInfo> m = getNewlyAddedBundleGroups();
-        List<AboutInfo> list = new ArrayList<AboutInfo>(m.size());
-        for (Iterator<AboutInfo> i = m.values().iterator(); i.hasNext();)
+        AboutInfo info = (AboutInfo) i.next();
+        if (info != null && info.getWelcomePerspectiveId() != null
+            && info.getWelcomePageURL() != null)
         {
-          AboutInfo info = (AboutInfo) i.next();
-          if (info != null && info.getWelcomePerspectiveId() != null
-              && info.getWelcomePageURL() != null)
-          {
-            list.add(info);
-          }
+          list.add(info);
         }
-        welcomePerspectiveInfos = new AboutInfo[list.size()];
-        list.toArray(welcomePerspectiveInfos);
       }
+      welcomePerspectiveInfos = new AboutInfo[list.size()];
+      list.toArray(welcomePerspectiveInfos);
     }
     return welcomePerspectiveInfos;
   }

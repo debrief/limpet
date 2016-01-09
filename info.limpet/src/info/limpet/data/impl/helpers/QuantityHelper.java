@@ -68,8 +68,8 @@ public class QuantityHelper<T extends Quantity> implements
     {
       double doubleVal = quantity.doubleValue(getUnits());
 
-      _min = (_min.doubleValue(getUnits()) < doubleVal) ? _min : quantity;
-      _max = (_max.doubleValue(getUnits()) > doubleVal) ? _max : quantity;
+      _min = _min.doubleValue(getUnits()) < doubleVal ? _min : quantity;
+      _max = _max.doubleValue(getUnits()) > doubleVal ? _max : quantity;
     }
 
     clearRunningTotal();
