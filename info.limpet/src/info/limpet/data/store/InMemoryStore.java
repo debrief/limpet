@@ -26,13 +26,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
-public class InMemoryStore implements IStore, IChangeListener
+public class InMemoryStore implements IStore, IChangeListener,
+    IStore.IStoreItem
 {
 
   private List<IStoreItem> _store = new ArrayList<IStoreItem>();
 
-  private transient List<StoreChangeListener> _listeners =
-      new ArrayList<StoreChangeListener>();
+  private transient List<StoreChangeListener> _listeners = new ArrayList<StoreChangeListener>();
+
+  private UUID uuid;
 
   public static class StoreGroup extends ArrayList<IStoreItem> implements
       IStoreItem, IStoreGroup, IChangeListener
@@ -122,8 +124,7 @@ public class InMemoryStore implements IStore, IChangeListener
     {
       final int prime = 31;
       int result = 1;
-      result =
-          prime * result + getUUID().hashCode();
+      result = prime * result + getUUID().hashCode();
       return result;
     }
 
@@ -267,8 +268,8 @@ public class InMemoryStore implements IStore, IChangeListener
     Iterator<StoreChangeListener> iter = _listeners.iterator();
     while (iter.hasNext())
     {
-      InMemoryStore.StoreChangeListener listener =
-          (InMemoryStore.StoreChangeListener) iter.next();
+      InMemoryStore.StoreChangeListener listener = (InMemoryStore.StoreChangeListener) iter
+          .next();
       listener.changed();
     }
   }
@@ -305,7 +306,7 @@ public class InMemoryStore implements IStore, IChangeListener
     }
 
     fireModified();
-    
+
     return res;
   }
 
@@ -435,6 +436,64 @@ public class InMemoryStore implements IStore, IChangeListener
   @Override
   public void collectionDeleted(IStoreItem subject)
   {
+  }
+
+  @Override
+  public boolean hasChildren()
+  {
+    // TODO Auto-generated method stub
+    return false;
+  }
+
+  @Override
+  public IStoreGroup getParent()
+  {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public void setParent(IStoreGroup parent)
+  {
+    // TODO Auto-generated method stub
+
+  }
+
+  @Override
+  public String getName()
+  {
+    return "Limpet Store";
+  }
+
+  @Override
+  public void addChangeListener(IChangeListener listener)
+  {
+    // TODO Auto-generated method stub
+
+  }
+
+  @Override
+  public void removeChangeListener(IChangeListener listener)
+  {
+    // TODO Auto-generated method stub
+
+  }
+
+  @Override
+  public void fireDataChanged()
+  {
+    // TODO Auto-generated method stub
+
+  }
+
+  @Override
+  public UUID getUUID()
+  {
+    if (uuid == null)
+    {
+      uuid = UUID.randomUUID();
+    }
+    return uuid;
   }
 
 }
