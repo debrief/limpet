@@ -23,8 +23,10 @@ import info.limpet.data.impl.samples.StockTypes.NonTemporal;
 import info.limpet.data.impl.samples.StockTypes.Temporal;
 import info.limpet.data.impl.samples.StockTypes.Temporal.Strings;
 import info.limpet.data.impl.samples.TemporalLocation;
+import info.limpet.data.operations.spatial.GeoSupport;
 import info.limpet.data.store.InMemoryStore.StoreGroup;
 
+import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -41,9 +43,6 @@ import java.util.List;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
-import org.geotools.geometry.GeometryBuilder;
-import org.geotools.referencing.crs.DefaultGeographicCRS;
-import org.opengis.geometry.primitive.Point;
 
 public class CsvParser
 {
@@ -560,8 +559,7 @@ public class CsvParser
       String longVal = row.get(colStart + 1);
       Double valLong = Double.parseDouble(longVal);
 
-      GeometryBuilder builder = new GeometryBuilder(DefaultGeographicCRS.WGS84);
-      Point point = builder.createPoint(valLong, valLat);
+      Point2D point = new GeoSupport().createPoint(valLong, valLat);
 
       locS.add(thisTime, point);
     }

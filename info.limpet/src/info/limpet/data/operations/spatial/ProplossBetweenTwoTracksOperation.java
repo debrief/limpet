@@ -25,6 +25,7 @@ import info.limpet.data.impl.samples.StockTypes.NonTemporal;
 import info.limpet.data.impl.samples.StockTypes.Temporal;
 import info.limpet.data.impl.samples.StockTypes.Temporal.AcousticStrength;
 
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -33,9 +34,6 @@ import javax.measure.Measure;
 import javax.measure.quantity.Dimensionless;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.Unit;
-
-import org.geotools.referencing.GeodeticCalculator;
-import org.opengis.geometry.primitive.Point;
 
 public class ProplossBetweenTwoTracksOperation extends TwoTrackOperation
 {
@@ -71,17 +69,17 @@ public class ProplossBetweenTwoTracksOperation extends TwoTrackOperation
           NEW_DATASET_MESSAGE, "Proploss between " + super.getSubjectList());
     }
 
-    protected void calcAndStore(final GeodeticCalculator calc,
-        final Point locA, final Point locB, Long time)
+    protected void calcAndStore(final GeoCalculator calc,
+        final Point2D locA, final Point2D locB, Long time)
     {
       final Unit<Dimensionless> outUnits = NonSI.DECIBEL;
 
       // now find the range between them
-      calc.setStartingGeographicPoint(locA.getCentroid().getOrdinate(0), locA
-          .getCentroid().getOrdinate(1));
-      calc.setDestinationGeographicPoint(locB.getCentroid().getOrdinate(0),
-          locB.getCentroid().getOrdinate(1));
-      double thisDistMetres = calc.getOrthodromicDistance();
+//      calc.setStartingGeographicPoint(locA.getCentroid().getOrdinate(0), locA
+//          .getCentroid().getOrdinate(1));
+//      calc.setDestinationGeographicPoint(locB.getCentroid().getOrdinate(0),
+//          locB.getCentroid().getOrdinate(1));
+      double thisDistMetres = calc.getDistanceBetween(locA, locB);
 
       // ok, we've got to do 20 log R
       double thisLoss = 20d * Math.log(thisDistMetres);

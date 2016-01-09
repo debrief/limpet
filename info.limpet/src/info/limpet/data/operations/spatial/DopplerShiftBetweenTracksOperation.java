@@ -34,6 +34,7 @@ import info.limpet.data.operations.CollectionComplianceTests.TimePeriod;
 import info.limpet.data.store.InMemoryStore;
 import info.limpet.data.store.InMemoryStore.StoreGroup;
 
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -45,7 +46,6 @@ import javax.measure.quantity.Frequency;
 import javax.measure.unit.SI;
 
 import org.geotools.referencing.GeodeticCalculator;
-import org.opengis.geometry.Geometry;
 import org.opengis.geometry.primitive.Point;
 
 public class DopplerShiftBetweenTracksOperation implements
@@ -293,7 +293,7 @@ public class DopplerShiftBetweenTracksOperation implements
       final Temporal.FrequencyHz output =
           (FrequencyHz) outputs.iterator().next();
 
-      final GeodeticCalculator calc = GeoSupport.getCalculator();
+      final GeoCalculator calc = new GeoSupport();
 
       // and now we can start looping through
       final Iterator<Long> tIter = times.getTimes().iterator();
@@ -305,9 +305,9 @@ public class DopplerShiftBetweenTracksOperation implements
             && thisTime <= period.getEndTime())
         {
           // ok, now collate our data
-          final Geometry txLoc =
+          final Point2D txLoc =
               aTests.locationFor(_data.get(TX + LOC), thisTime);
-          final Geometry rxLoc =
+          final Point2D rxLoc =
               aTests.locationFor(_data.get(RX + LOC), thisTime);
 
           final double txCourseRads =
@@ -335,11 +335,9 @@ public class DopplerShiftBetweenTracksOperation implements
           if (txLoc != null && rxLoc != null)
           {
             // now find the bearing between them
-            calc.setStartingGeographicPoint(txLoc.getCentroid().getOrdinate(0),
-                txLoc.getCentroid().getOrdinate(1));
-            calc.setDestinationGeographicPoint(rxLoc.getCentroid().getOrdinate(
-                0), rxLoc.getCentroid().getOrdinate(1));
-            double angleDegs = calc.getAzimuth();
+            
+            double angleDegs = calc.getAngleBetween(txLoc, rxLoc);
+            
             if (angleDegs < 0)
             {
               angleDegs += 360;

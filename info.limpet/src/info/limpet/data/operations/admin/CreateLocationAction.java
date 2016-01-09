@@ -26,7 +26,7 @@ import info.limpet.data.operations.CollectionComplianceTests;
 import info.limpet.data.operations.spatial.GeoSupport;
 import info.limpet.data.store.InMemoryStore.StoreGroup;
 
-import org.opengis.geometry.Geometry;
+import java.awt.geom.Point2D;
 
 public class CreateLocationAction extends CreateSingletonGenerator
 {
@@ -86,7 +86,7 @@ public class CreateLocationAction extends CreateSingletonGenerator
 				double dblLat = Double.parseDouble(strLat);
 				double dblLong = Double.parseDouble(strLong);
 
-				Geometry newLoc = GeoSupport.getBuilder().createPoint(dblLong, dblLat);
+				Point2D newLoc = new GeoSupport().createPoint(dblLong, dblLat);
 				newData.add(newLoc);
 
 				// put the new collection in to the selected folder, or into root

@@ -24,6 +24,7 @@ import info.limpet.data.impl.samples.StockTypes;
 import info.limpet.data.impl.samples.StockTypes.NonTemporal.AngleDegrees;
 import info.limpet.data.impl.samples.StockTypes.Temporal;
 
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -32,131 +33,125 @@ import javax.measure.Measure;
 import javax.measure.quantity.Angle;
 import javax.measure.unit.Unit;
 
-import org.geotools.referencing.GeodeticCalculator;
-import org.opengis.geometry.primitive.Point;
-
 public class BearingBetweenTracksOperation extends TwoTrackOperation
 {
 
   public Collection<ICommand<IStoreItem>> actionsFor(
       List<IStoreItem> selection, IStore destination, IContext context)
   {
-    Collection<ICommand<IStoreItem>> res = new ArrayList<ICommand<IStoreItem>>();
+    Collection<ICommand<IStoreItem>> res =
+        new ArrayList<ICommand<IStoreItem>>();
     if (appliesTo(selection))
     {
       // ok, are we doing a tempoarl opeartion?
       if (getATests().suitableForTimeInterpolation(selection))
       {
         // hmm, find the time provider
-        final IBaseTemporalCollection timeProvider = getATests()
-            .getLongestTemporalCollections(selection);
+        final IBaseTemporalCollection timeProvider =
+            getATests().getLongestTemporalCollections(selection);
 
-        ICommand<IStoreItem> newC = new DistanceOperation(selection,
-            destination, "Bearing between tracks (interpolated)",
-            "Calculate bearing between two tracks (interpolated)",
-            timeProvider, context)
-        {
-
-          protected IQuantityCollection<?> getOutputCollection(String title,
-              boolean isTemporal)
-          {
-            final IQuantityCollection<?> output;
-            if (isTemporal)
+        ICommand<IStoreItem> newC =
+            new DistanceOperation(selection, destination,
+                "Bearing between tracks (interpolated)",
+                "Calculate bearing between two tracks (interpolated)",
+                timeProvider, context)
             {
-              output = new StockTypes.Temporal.AngleDegrees(title, this);
 
-            }
-            else
-            {
-              output = new StockTypes.NonTemporal.AngleDegrees(title, this);
-            }
+              protected IQuantityCollection<?> getOutputCollection(
+                  String title, boolean isTemporal)
+              {
+                final IQuantityCollection<?> output;
+                if (isTemporal)
+                {
+                  output = new StockTypes.Temporal.AngleDegrees(title, this);
 
-            return output;
-          }
+                }
+                else
+                {
+                  output = new StockTypes.NonTemporal.AngleDegrees(title, this);
+                }
 
-          @Override
-          protected String getOutputName()
-          {
-            return getContext().getInput("Generate bearing",
-                NEW_DATASET_MESSAGE,
-                "Bearing between " + super.getSubjectList());
-          }
+                return output;
+              }
 
-          protected void calcAndStore(final GeodeticCalculator calc,
-              final Point locA, final Point locB, Long time)
-          {
-            // get the output dataset
-            Temporal.AngleDegrees target2 = (Temporal.AngleDegrees) getOutputs()
-                .get(0);
-            Unit<Angle> outUnits = target2.getUnits();
+              @Override
+              protected String getOutputName()
+              {
+                return getContext().getInput("Generate bearing",
+                    NEW_DATASET_MESSAGE,
+                    "Bearing between " + super.getSubjectList());
+              }
 
-            // now find the range between them
-            calc.setStartingGeographicPoint(locA.getCentroid().getOrdinate(0),
-                locA.getCentroid().getOrdinate(1));
-            calc.setDestinationGeographicPoint(locB.getCentroid()
-                .getOrdinate(0), locB.getCentroid().getOrdinate(1));
-            double thisDist = calc.getAzimuth();
-            Measure<Double, Angle> outVar = Measure.valueOf(thisDist, outUnits);
+              protected void calcAndStore(final GeoCalculator calc,
+                  final Point2D locA, final Point2D locB, Long time)
+              {
+                // get the output dataset
+                Temporal.AngleDegrees target2 =
+                    (Temporal.AngleDegrees) getOutputs().get(0);
+                Unit<Angle> outUnits = target2.getUnits();
 
-            target2.add(time, outVar);
-          }
-        };
+                // now find the range between them
+                double thisDist = calc.getAngleBetween(locA, locB);
+                Measure<Double, Angle> outVar =
+                    Measure.valueOf(thisDist, outUnits);
+
+                target2.add(time, outVar);
+              }
+            };
 
         res.add(newC);
       }
 
       if (getATests().allEqualLengthOrSingleton(selection))
       {
-        ICommand<IStoreItem> newC = new DistanceOperation(selection,
-            destination, "Bearing between tracks (indexed)",
-            "Calculate bearing between two tracks (indexed)", null, context)
-        {
-
-          protected IQuantityCollection<?> getOutputCollection(String title,
-              boolean isTemporal)
-          {
-            final IQuantityCollection<?> output;
-            if (isTemporal)
+        ICommand<IStoreItem> newC =
+            new DistanceOperation(selection, destination,
+                "Bearing between tracks (indexed)",
+                "Calculate bearing between two tracks (indexed)", null, context)
             {
-              output = new StockTypes.Temporal.AngleDegrees(title, this);
 
-            }
-            else
-            {
-              output = new StockTypes.NonTemporal.AngleDegrees(title, null);
-            }
+              protected IQuantityCollection<?> getOutputCollection(
+                  String title, boolean isTemporal)
+              {
+                final IQuantityCollection<?> output;
+                if (isTemporal)
+                {
+                  output = new StockTypes.Temporal.AngleDegrees(title, this);
 
-            return output;
-          }
+                }
+                else
+                {
+                  output = new StockTypes.NonTemporal.AngleDegrees(title, null);
+                }
 
-          @Override
-          protected String getOutputName()
-          {
-            return getContext().getInput("Generate bearing",
-                NEW_DATASET_MESSAGE,
-                "Bearing between " + super.getSubjectList());
-          }
+                return output;
+              }
 
-          protected void calcAndStore(final GeodeticCalculator calc,
-              final Point locA, final Point locB, Long time)
-          {
-            // get the output dataset
-            AngleDegrees target2 = (AngleDegrees) getOutputs().get(0);
-            Unit<Angle> outUnits = target2.getUnits();
+              @Override
+              protected String getOutputName()
+              {
+                return getContext().getInput("Generate bearing",
+                    NEW_DATASET_MESSAGE,
+                    "Bearing between " + super.getSubjectList());
+              }
 
-            // now find the range between them
-            calc.setStartingGeographicPoint(locA.getCentroid().getOrdinate(0),
-                locA.getCentroid().getOrdinate(1));
-            calc.setDestinationGeographicPoint(locB.getCentroid()
-                .getOrdinate(0), locB.getCentroid().getOrdinate(1));
-            double thisDist = calc.getAzimuth();
-            Measure<Double, Angle> outVar = Measure.valueOf(thisDist, outUnits);
+              protected void calcAndStore(final GeoCalculator calc,
+                  final Point2D locA, final Point2D locB, Long time)
+              {
+                // get the output dataset
+                AngleDegrees target2 = (AngleDegrees) getOutputs().get(0);
+                Unit<Angle> outUnits = target2.getUnits();
 
-            // get the output dataset
-            target2.add(outVar);
+                // now find the range between them
+                double thisDist = calc.getAngleBetween(locA,  locB);
+                Measure<Double, Angle> outVar =
+                    Measure.valueOf(thisDist, outUnits);
 
-          }
-        };
+                // get the output dataset
+                target2.add(outVar);
+
+              }
+            };
 
         res.add(newC);
       }

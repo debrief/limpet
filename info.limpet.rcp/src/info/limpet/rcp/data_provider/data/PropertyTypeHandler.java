@@ -1,5 +1,7 @@
 package info.limpet.rcp.data_provider.data;
 
+import java.awt.geom.Point2D;
+
 import info.limpet.IBaseQuantityCollection;
 import info.limpet.QuantityRange;
 import info.limpet.UIProperty;
@@ -14,9 +16,6 @@ import javax.measure.unit.Unit;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
 import org.eclipse.ui.views.properties.TextPropertyDescriptor;
-import org.geotools.geometry.iso.primitive.PointImpl;
-import org.opengis.geometry.Geometry;
-import org.opengis.geometry.primitive.Point;
 
 /**
  * A helper class that encapsulates some logic about certain property types. Each subclass handles
@@ -366,13 +365,13 @@ public abstract class PropertyTypeHandler
     @Override
     public boolean canHandle(Class<?> propertyType)
     {
-      return propertyType == Geometry.class;
+      return propertyType == Point2D.class;
     }
 
     public Object toModelValue(Object cellEditorValue, Object propertyOwner)
     {
 
-      Point newL = null;
+      Point2D newL = null;
 
       // try to get a location from the string
       String str = (String) cellEditorValue;
@@ -389,7 +388,7 @@ public abstract class PropertyTypeHandler
             double latV = Double.parseDouble(lat);
             double lngV = Double.parseDouble(lng);
 
-            newL = GeoSupport.getBuilder().createPoint(lngV, latV);
+            newL = new GeoSupport().createPoint(lngV, latV);
           }
           catch (NumberFormatException fe)
           {
@@ -410,9 +409,9 @@ public abstract class PropertyTypeHandler
 
     public Object toCellEditorValue(Object modelValue, Object propertyOwner)
     {
-      PointImpl location = (PointImpl) modelValue;
-      return location.getDirectPosition().getY() + " : "
-          + location.getDirectPosition().getX();
+      Point2D location = (Point2D) modelValue;
+      return location.getY() + " : "
+          + location.getX();
     };
   };
 }
