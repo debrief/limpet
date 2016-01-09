@@ -2,8 +2,8 @@ package info.limpet.data.operations.spatial;
 
 public class GeoSupport
 {
-  private static final IGeoCalculator CALC = new GeotoolsCalculator(); 
-  
+  private static IGeoCalculator calc;
+
   /**
    * protected constructor, to prevent inadvertent instantiation
    * 
@@ -14,11 +14,17 @@ public class GeoSupport
 
   public static void setCalculator(IGeoCalculator calculator)
   {
-
+    calc = calculator;
   }
 
   public static IGeoCalculator getCalculator()
   {
-    return CALC;
+    if (calc == null)
+    {
+      calc = new GeotoolsCalculator();
+      System.err.println("ERROR: geospatial calculator not assigned");
+    }
+
+    return calc;
   }
 }
