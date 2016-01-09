@@ -38,8 +38,8 @@ import info.limpet.data.operations.spatial.DistanceBetweenTracksOperation;
 import info.limpet.data.operations.spatial.DopplerShiftBetweenTracksOperation;
 import info.limpet.data.operations.spatial.DopplerShiftBetweenTracksOperation.DopplerShiftOperation;
 import info.limpet.data.operations.spatial.GenerateCourseAndSpeedOperation;
-import info.limpet.data.operations.spatial.GeoCalculator;
 import info.limpet.data.operations.spatial.GeoSupport;
+import info.limpet.data.operations.spatial.IGeoCalculator;
 import info.limpet.data.operations.spatial.ProplossBetweenTwoTracksOperation;
 import info.limpet.data.store.InMemoryStore;
 import info.limpet.data.store.InMemoryStore.StoreGroup;
@@ -164,7 +164,7 @@ public class TestGeotoolsGeometry extends TestCase
     final Location track1 =
         new StockTypes.NonTemporal.Location("some location data");
 
-    GeoCalculator calc = new GeoSupport();
+    IGeoCalculator calc = GeoSupport.getCalculator();
     Point2D pos1 = calc.createPoint(-4, 55.8);
     Point2D pos2 = calc.calculatePoint(pos1, Math.toRadians(54), 0.003);
 
@@ -176,7 +176,7 @@ public class TestGeotoolsGeometry extends TestCase
 
   public void testCreatePoint()
   {
-    GeoCalculator builder = new GeoSupport();
+    IGeoCalculator builder = GeoSupport.getCalculator();
     Point2D point = builder.createPoint(48.44, -123.37);
     Assert.assertNotNull(point);
 
@@ -187,7 +187,7 @@ public class TestGeotoolsGeometry extends TestCase
   public void testRangeCalc()
   {
 
-    GeoCalculator builder = new GeoSupport();
+    IGeoCalculator builder = GeoSupport.getCalculator();
 
     Point2D p1 = builder.createPoint(0, 80);
     Point2D p2 = builder.createPoint(0, 81);
@@ -204,7 +204,7 @@ public class TestGeotoolsGeometry extends TestCase
   public void testBearingCalc()
   {
 
-    GeoCalculator builder = new GeoSupport();
+    IGeoCalculator builder = GeoSupport.getCalculator();
 
     Point2D p1 = builder.createPoint(1, 0);
     Point2D p2 = builder.createPoint(2, 1);
@@ -216,7 +216,7 @@ public class TestGeotoolsGeometry extends TestCase
   public void testLocationInterp()
   {
     TemporalLocation loc1 = new TemporalLocation("loc1");
-    GeoSupport builder = new GeoSupport();
+    IGeoCalculator builder = GeoSupport.getCalculator();
     loc1.add(1000, builder.createPoint(2, 3));
     loc1.add(2000, builder.createPoint(3, 4));
 
@@ -259,7 +259,7 @@ public class TestGeotoolsGeometry extends TestCase
     assertEquals("empty collection", 0, ops.size());
 
     // ok, try adding some data
-    GeoSupport builder = new GeoSupport();
+    IGeoCalculator builder = GeoSupport.getCalculator();
     loc1.add(builder.createPoint(4, 3));
     loc1.add(builder.createPoint(1, 3));
     loc2.add(builder.createPoint(3, 4));
@@ -308,7 +308,7 @@ public class TestGeotoolsGeometry extends TestCase
     assertEquals("empty collection", 0, ops.size());
 
     // ok, try adding some data
-    GeoSupport builder = new GeoSupport();
+    IGeoCalculator builder = GeoSupport.getCalculator();
 
     loc1.add(1000, builder.createPoint(4, 3));
     loc1.add(2000, builder.createPoint(1, 3));
@@ -375,7 +375,7 @@ public class TestGeotoolsGeometry extends TestCase
     assertEquals("empty collection", 0, ops.size());
 
     // ok, try adding some data
-    GeoSupport builder = new GeoSupport();
+    IGeoCalculator builder = GeoSupport.getCalculator();
 
     loc1.add(1000, builder.createPoint(4, 3));
     loc1.add(2000, builder.createPoint(3, 4));
@@ -456,7 +456,7 @@ public class TestGeotoolsGeometry extends TestCase
     assertEquals("empty collection", 0, ops.size());
 
     // ok, try adding some data
-    GeoSupport builder = new GeoSupport();
+    IGeoCalculator builder = GeoSupport.getCalculator();
 
     loc1.add(1000, builder.createPoint(4, 3));
     loc2.add(2000, builder.createPoint(3, 4));
@@ -502,7 +502,7 @@ public class TestGeotoolsGeometry extends TestCase
     NonTemporal.SpeedKts sspdK2 =
         new NonTemporal.SpeedKts("sound speed kts 2", null);
 
-    GeoSupport builder = new GeoSupport();
+    IGeoCalculator builder = GeoSupport.getCalculator();
 
     // populate the datasets
     for (int i = 10000; i <= 90000; i += 5000)

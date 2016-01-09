@@ -82,7 +82,7 @@ public class BearingBetweenTracksOperation extends TwoTrackOperation
                     "Bearing between " + super.getSubjectList());
               }
 
-              protected void calcAndStore(final GeoCalculator calc,
+              protected void calcAndStore(final IGeoCalculator calc,
                   final Point2D locA, final Point2D locB, Long time)
               {
                 // get the output dataset
@@ -135,7 +135,7 @@ public class BearingBetweenTracksOperation extends TwoTrackOperation
                     "Bearing between " + super.getSubjectList());
               }
 
-              protected void calcAndStore(final GeoCalculator calc,
+              protected void calcAndStore(final IGeoCalculator calc,
                   final Point2D locA, final Point2D locB, Long time)
               {
                 // get the output dataset

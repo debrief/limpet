@@ -69,7 +69,7 @@ public class ProplossBetweenTwoTracksOperation extends TwoTrackOperation
           NEW_DATASET_MESSAGE, "Proploss between " + super.getSubjectList());
     }
 
-    protected void calcAndStore(final GeoCalculator calc,
+    protected void calcAndStore(final IGeoCalculator calc,
         final Point2D locA, final Point2D locB, Long time)
     {
       final Unit<Dimensionless> outUnits = NonSI.DECIBEL;

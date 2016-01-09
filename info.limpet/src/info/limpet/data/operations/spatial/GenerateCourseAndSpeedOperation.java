@@ -116,7 +116,7 @@ public class GenerateCourseAndSpeedOperation implements IOperation<IStoreItem>
     private void performCalc(List<IStoreItem> outputs)
     {
       // get a calculator to use
-      final GeoCalculator calc = new GeoSupport();
+      final IGeoCalculator calc = GeoSupport.getCalculator();
 
       // do some clearing first
 
@@ -155,7 +155,7 @@ public class GenerateCourseAndSpeedOperation implements IOperation<IStoreItem>
     }
 
     protected abstract void calcAndStore(IStoreItem thisOut,
-        final GeoCalculator calc, final long timeA, final Point2D locA,
+        final IGeoCalculator calc, final long timeA, final Point2D locA,
         final long timeB, final Point2D locB);
   }
 
@@ -208,7 +208,7 @@ public class GenerateCourseAndSpeedOperation implements IOperation<IStoreItem>
             }
 
             protected void calcAndStore(IStoreItem output,
-                final GeoCalculator calc, long lastTime, final Point2D locA,
+                final IGeoCalculator calc, long lastTime, final Point2D locA,
                 long thisTime, final Point2D locB)
             {
               // get the output dataset
@@ -243,7 +243,7 @@ public class GenerateCourseAndSpeedOperation implements IOperation<IStoreItem>
             }
 
             protected void calcAndStore(IStoreItem output,
-                final GeoCalculator calc, long lastTime, final Point2D locA,
+                final IGeoCalculator calc, long lastTime, final Point2D locA,
                 long thisTime, final Point2D locB)
             {
               // get the output dataset

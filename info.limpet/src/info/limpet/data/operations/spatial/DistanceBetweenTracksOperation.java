@@ -70,7 +70,7 @@ public class DistanceBetweenTracksOperation extends TwoTrackOperation
 
     }
 
-    protected void calcAndStore(final GeoCalculator calc, final Point2D locA,
+    protected void calcAndStore(final IGeoCalculator calc, final Point2D locA,
         final Point2D locB, Long time)
     {
       final Unit<Length> outUnits;

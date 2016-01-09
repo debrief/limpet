@@ -118,7 +118,7 @@ public abstract class TwoTrackOperation implements IOperation<IStoreItem>
       ICollection track2 = (ICollection) getInputs().get(1);
 
       // get a calculator to use
-      final GeoSupport calc = new GeoSupport();
+      final IGeoCalculator calc = GeoSupport.getCalculator();
 
       if (_timeProvider != null)
       {
@@ -227,7 +227,7 @@ public abstract class TwoTrackOperation implements IOperation<IStoreItem>
       return locOne;
     }
 
-    protected abstract void calcAndStore(final GeoCalculator calc,
+    protected abstract void calcAndStore(final IGeoCalculator calc,
         final Point2D locA, final Point2D locB, Long time);
   }
 

@@ -100,8 +100,8 @@ public class SampleData
     long thisTime = 0;
 
     // get ready for the track generation
-    Point2D pos1 = new GeoSupport().createPoint(-4, 55.8);
-    Point2D pos2 = new GeoSupport().createPoint(-4.2, 54.9);
+    Point2D pos1 = GeoSupport.getCalculator().createPoint(-4, 55.8);
+    Point2D pos2 = GeoSupport.getCalculator().createPoint(-4.2, 54.9);
 
     for (int i = 1; i <= count; i++)
     {
@@ -138,11 +138,11 @@ public class SampleData
 
       // sort out the tracks
       Point2D p1 =
-          new GeoSupport().calculatePoint(pos1, Math.toRadians(77 - (i * 4)),
+          GeoSupport.getCalculator().calculatePoint(pos1, Math.toRadians(77 - (i * 4)),
               554);
 
       Point2D p2 =
-          new GeoSupport().calculatePoint(pos2, Math.toRadians(54 + (i * 5)),
+          GeoSupport.getCalculator().calculatePoint(pos2, Math.toRadians(54 + (i * 5)),
               133);
 
       track1.add(thisTime, p1);

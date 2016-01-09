@@ -82,20 +82,6 @@ public class XStreamHandler
 
     XSTREAM.alias("Folder", StoreGroup.class);
 
-    XSTREAM.alias("Point", org.geotools.geometry.iso.primitive.PointImpl.class);
-    XSTREAM.alias("GeographicBoundingBox",
-        org.geotools.metadata.iso.extent.GeographicBoundingBoxImpl.class);
-    XSTREAM.alias("LocalName", org.geotools.util.LocalName.class);
-    XSTREAM.alias("DefaultCoordinateSystemAxis",
-        org.geotools.referencing.cs.DefaultCoordinateSystemAxis.class);
-    XSTREAM.alias("SimpleInternationalString",
-        org.geotools.util.SimpleInternationalString.class);
-    XSTREAM.alias("ResponsibleParty",
-        org.geotools.metadata.iso.citation.ResponsiblePartyImpl.class);
-    XSTREAM.alias("NamedIdentifier",
-        org.geotools.referencing.NamedIdentifier.class);
-    XSTREAM.alias("Identifier", org.geotools.metadata.iso.IdentifierImpl.class);
-
     // tidier names for operations
     XSTREAM.alias("AddQuantityValues", AddQuantityValues.class);
     XSTREAM.alias("MultiplyQuantityValues", MultiplyQuantityValues.class);

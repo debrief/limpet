@@ -45,9 +45,6 @@ import javax.measure.Measure;
 import javax.measure.quantity.Frequency;
 import javax.measure.unit.SI;
 
-import org.geotools.referencing.GeodeticCalculator;
-import org.opengis.geometry.primitive.Point;
-
 public class DopplerShiftBetweenTracksOperation implements
     IOperation<IStoreItem>
 {
@@ -122,18 +119,14 @@ public class DopplerShiftBetweenTracksOperation implements
       _rx = rx;
     }
 
-    protected void calcAndStore(final GeodeticCalculator calc,
-        final Point locA, final Point locB)
+    protected void calcAndStore(final IGeoCalculator calc,
+        final Point2D locA, final Point2D locB)
     {
       // get the output dataset
       final LengthM target = (LengthM) getOutputs().get(0);
 
       // now find the range between them
-      calc.setStartingGeographicPoint(locA.getCentroid().getOrdinate(0), locA
-          .getCentroid().getOrdinate(1));
-      calc.setDestinationGeographicPoint(locB.getCentroid().getOrdinate(0),
-          locB.getCentroid().getOrdinate(1));
-      final double thisDist = calc.getOrthodromicDistance();
+      final double thisDist = calc.getDistanceBetween(locA,  locB);
       target.add(Measure.valueOf(thisDist, target.getUnits()));
     }
 
@@ -293,7 +286,7 @@ public class DopplerShiftBetweenTracksOperation implements
       final Temporal.FrequencyHz output =
           (FrequencyHz) outputs.iterator().next();
 
-      final GeoCalculator calc = new GeoSupport();
+      final IGeoCalculator calc = GeoSupport.getCalculator();
 
       // and now we can start looping through
       final Iterator<Long> tIter = times.getTimes().iterator();

@@ -103,7 +103,7 @@ public class TemporalLocation extends TemporalObjectCollection<Point2D>
         double newResLong = longY0 + (longY1 - longY0) * (x - x0) / (x1 - x0);
 
         // ok, we can do the calc
-        res = new GeoSupport().createPoint(newResLong, newResLat);
+        res = GeoSupport.getCalculator().createPoint(newResLong, newResLat);
       }
     }
     else

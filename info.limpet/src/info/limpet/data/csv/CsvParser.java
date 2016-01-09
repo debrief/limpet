@@ -559,7 +559,7 @@ public class CsvParser
       String longVal = row.get(colStart + 1);
       Double valLong = Double.parseDouble(longVal);
 
-      Point2D point = new GeoSupport().createPoint(valLong, valLat);
+      Point2D point = GeoSupport.getCalculator().createPoint(valLong, valLat);
 
       locS.add(thisTime, point);
     }

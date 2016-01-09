@@ -336,7 +336,8 @@ public class CollectionPropertySource implements IPropertySource
           // ok, create replacement
           double newLat = Double.parseDouble((String) value);
 
-          Point2D newLoc = new GeoSupport().createPoint(loc.getX(), newLat);
+          Point2D newLoc =
+              GeoSupport.getCalculator().createPoint(loc.getX(), newLat);
 
           locColl.clear();
 
@@ -361,7 +362,8 @@ public class CollectionPropertySource implements IPropertySource
           // ok, create replacement
           double newLong = Double.parseDouble((String) value);
 
-          Point2D newLoc = new GeoSupport().createPoint(newLong, loc.getY());
+          Point2D newLoc =
+              GeoSupport.getCalculator().createPoint(newLong, loc.getY());
 
           locColl.clear();
 
