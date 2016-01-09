@@ -9,10 +9,10 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface UIProperty
 {
-	static String CATEGORY_LABEL = "Label";
-	static String CATEGORY_METADATA = "Metadata";
-	static String CATEGORY_CALCULATION = "Calculation";
-	static String CATEGORY_VALUE = "Value";
+	String CATEGORY_LABEL = "Label";
+	String CATEGORY_METADATA = "Metadata";
+	String CATEGORY_CALCULATION = "Calculation";
+	String CATEGORY_VALUE = "Value";
 
 	/**
 	 * @return user-friendly name of this property that will be displayed in the

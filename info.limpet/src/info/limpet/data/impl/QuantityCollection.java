@@ -27,151 +27,153 @@ import info.limpet.QuantityRange;
 import info.limpet.UIProperty;
 import info.limpet.data.impl.helpers.QuantityHelper;
 
-
-
 public class QuantityCollection<T extends Quantity> extends
-		ObjectCollection<Measurable<T>> implements IQuantityCollection<T>
+    ObjectCollection<Measurable<T>> implements IQuantityCollection<T>
 {
 
-	private Unit<T> units;
-	
-	private transient QuantityHelper<T> _qHelper;
+  private Unit<T> units;
 
-	// TODO: we store range at this level, and in the Q Helper
-	// this is required for persistence reasons, since the
-	// Q Helper is transient
-	private QuantityRange<T> _range;
-	
-//	public QuantityCollection(String name, Unit<T> units)
-//	{
-//		this(name, null, units);
-//	}
+  private transient QuantityHelper<T> _qHelper;
 
-	public QuantityCollection(String name, ICommand<?> precedent, Unit<T> units)
-	{
-		super(name, precedent);
-		this.units = units;
-		initQHelper();
-	}
-	
-	protected void initQHelper()
-	{
-		if (_qHelper == null)
-		{
-			_qHelper = new QuantityHelper<T>((ArrayList<Measurable<T>>) getValues(), units);
-		}
-	}
-	
-	@Override
-	public void setRange(QuantityRange<T> range)
-	{
-		initQHelper();
-		_range = range;
-		_qHelper.setRange(range);
-		
-		// tell anyone that wants to know
-		super.fireMetadataChanged();
-	}
-	
-	@UIProperty(name="Range", category=UIProperty.CATEGORY_METADATA, visibleWhen="valuesCount == 1")
-	@Override
-	public QuantityRange<T> getRange()
-	{
-		initQHelper();
-		return _range;
-	}
+  // TODO: we store range at this level, and in the Q Helper
+  // this is required for persistence reasons, since the
+  // Q Helper is transient
+  private QuantityRange<T> _range;
 
-	@Override
-	public void add(Number value)
-	{
-		initQHelper();
-		_qHelper.add(value);
-	}
+  // public QuantityCollection(String name, Unit<T> units)
+  // {
+  // this(name, null, units);
+  // }
 
-	@Override
-	public Dimension getDimension()
-	{
-		initQHelper();
-		return _qHelper.getDimension();
-	}
-	
-	@UIProperty(name="Units", category=UIProperty.CATEGORY_VALUE)
-	@Override
-	public Unit<T> getUnits()
-	{
-		initQHelper();
-		return _qHelper.getUnits();
-	}
-	
-	@Override
-	public void add(Measurable<T> value)
-	{
-		initQHelper();
-		_qHelper.add(value);
-	}
+  public QuantityCollection(String name, ICommand<?> precedent, Unit<T> units)
+  {
+    super(name, precedent);
+    this.units = units;
+    initQHelper();
+  }
 
-	@Override
-	public Measurable<T> min()
-	{
-		initQHelper();
-		return _qHelper.min();
-	}
+  protected void initQHelper()
+  {
+    if (_qHelper == null)
+    {
+      _qHelper =
+          new QuantityHelper<T>((ArrayList<Measurable<T>>) getValues(), units);
+    }
+  }
 
-	@Override
-	public Measurable<T> max()
-	{
-		initQHelper();
-		return _qHelper.max();
-	}
+  @Override
+  public void setRange(QuantityRange<T> range)
+  {
+    initQHelper();
+    _range = range;
+    _qHelper.setRange(range);
 
-	@Override
-	public Measurable<T> mean()
-	{
-		initQHelper();
-		return _qHelper.mean();
-	}
+    // tell anyone that wants to know
+    super.fireMetadataChanged();
+  }
 
-	@Override
-	public Measurable<T> variance()
-	{
-		initQHelper();
-		return _qHelper.variance();
-	}
+  @UIProperty(name = "Range", category = UIProperty.CATEGORY_METADATA,
+      visibleWhen = "valuesCount == 1")
+  @Override
+  public QuantityRange<T> getRange()
+  {
+    initQHelper();
+    return _range;
+  }
 
-	@Override
-	public Measurable<T> sd()
-	{
-		initQHelper();
-		return _qHelper.sd();
-	}
-	
+  @Override
+  public void add(Number value)
+  {
+    initQHelper();
+    _qHelper.add(value);
+  }
 
-	@Override
-	public boolean isQuantity()
-	{
-		return true;
-	}
+  @Override
+  public Dimension getDimension()
+  {
+    initQHelper();
+    return _qHelper.getDimension();
+  }
 
-	@Override
-	public boolean isTemporal()
-	{
-		return false;
-	}
+  @UIProperty(name = "Units", category = UIProperty.CATEGORY_VALUE)
+  @Override
+  public Unit<T> getUnits()
+  {
+    initQHelper();
+    return _qHelper.getUnits();
+  }
 
-	@Override
-	public void replaceSingleton(Number newValue)
-	{
-		_qHelper.replace(newValue);
-	}
+  @Override
+  public void add(Measurable<T> value)
+  {
+    initQHelper();
+    _qHelper.add(value);
+  }
 
-	@UIProperty(name="Value", category=UIProperty.CATEGORY_VALUE, visibleWhen="valuesCount == 1")
-	public Number getSingletonValue() {
-		initQHelper();
-		return _qHelper.getValue();
-	}
+  @Override
+  public Measurable<T> min()
+  {
+    initQHelper();
+    return _qHelper.min();
+  }
 
-	public void setSingletonValue(Number newValue) {
-		replaceSingleton(newValue);
-		fireDataChanged();
-	}
+  @Override
+  public Measurable<T> max()
+  {
+    initQHelper();
+    return _qHelper.max();
+  }
+
+  @Override
+  public Measurable<T> mean()
+  {
+    initQHelper();
+    return _qHelper.mean();
+  }
+
+  @Override
+  public Measurable<T> variance()
+  {
+    initQHelper();
+    return _qHelper.variance();
+  }
+
+  @Override
+  public Measurable<T> sd()
+  {
+    initQHelper();
+    return _qHelper.sd();
+  }
+
+  @Override
+  public boolean isQuantity()
+  {
+    return true;
+  }
+
+  @Override
+  public boolean isTemporal()
+  {
+    return false;
+  }
+
+  @Override
+  public void replaceSingleton(Number newValue)
+  {
+    _qHelper.replace(newValue);
+  }
+
+  @UIProperty(name = "Value", category = UIProperty.CATEGORY_VALUE,
+      visibleWhen = "valuesCount == 1")
+  public Number getSingletonValue()
+  {
+    initQHelper();
+    return _qHelper.getValue();
+  }
+
+  public void setSingletonValue(Number newValue)
+  {
+    replaceSingleton(newValue);
+    fireDataChanged();
+  }
 }

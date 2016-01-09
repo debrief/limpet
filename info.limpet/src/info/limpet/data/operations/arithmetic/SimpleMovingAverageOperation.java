@@ -37,144 +37,150 @@ import javax.measure.quantity.Quantity;
 
 public class SimpleMovingAverageOperation implements IOperation<ICollection>
 {
-	public static final String SERIES_NAME_TEMPLATE = "Simple Moving Average";
+  public static final String SERIES_NAME_TEMPLATE = "Simple Moving Average";
 
-	private final CollectionComplianceTests aTests = new CollectionComplianceTests();
+  private final CollectionComplianceTests aTests =
+      new CollectionComplianceTests();
 
-	private final int _windowSize;
+  private final int _windowSize;
 
-	public SimpleMovingAverageOperation(int windowSize)
-	{
-		this._windowSize = windowSize;
-	}
+  public SimpleMovingAverageOperation(int windowSize)
+  {
+    this._windowSize = windowSize;
+  }
 
-	public Collection<ICommand<ICollection>> actionsFor(
-			List<ICollection> selection, IStore destination, IContext context)
-	{
-		Collection<ICommand<ICollection>> res = new ArrayList<ICommand<ICollection>>();
-		if (appliesTo(selection))
-		{
-			ICommand<ICollection> newC = new SimpleMovingAverageCommand(
-					SERIES_NAME_TEMPLATE, selection, destination, _windowSize,
-					context);
-			res.add(newC);
-		}
+  public Collection<ICommand<ICollection>> actionsFor(
+      List<ICollection> selection, IStore destination, IContext context)
+  {
+    Collection<ICommand<ICollection>> res =
+        new ArrayList<ICommand<ICollection>>();
+    if (appliesTo(selection))
+    {
+      ICommand<ICollection> newC =
+          new SimpleMovingAverageCommand(SERIES_NAME_TEMPLATE, selection,
+              destination, _windowSize, context);
+      res.add(newC);
+    }
 
-		return res;
-	}
+    return res;
+  }
 
-	private boolean appliesTo(List<ICollection> selection)
-	{
-		boolean singleSeries = selection.size() == 1;
-		boolean allQuantity = aTests.allQuantity(selection);
-		return singleSeries && allQuantity;
-	}
+  private boolean appliesTo(List<ICollection> selection)
+  {
+    boolean singleSeries = selection.size() == 1;
+    boolean allQuantity = aTests.allQuantity(selection);
+    return singleSeries && allQuantity;
+  }
 
-	public static class SimpleMovingAverageCommand extends AbstractCommand<ICollection>
-	{
+  public static class SimpleMovingAverageCommand extends
+      AbstractCommand<ICollection>
+  {
 
-		private int winSize;
+    private int winSize;
 
-		public SimpleMovingAverageCommand(String operationName, List<ICollection> selection,
-				IStore store, int windowSize, IContext context)
-		{
-			super(operationName, "Calculates a Simple Moving Average", store,
-					false, false, selection, context);
-			winSize = windowSize;
-		}
+    public SimpleMovingAverageCommand(String operationName,
+        List<ICollection> selection, IStore store, int windowSize,
+        IContext context)
+    {
+      super(operationName, "Calculates a Simple Moving Average", store, false,
+          false, selection, context);
+      winSize = windowSize;
+    }
 
-		@UIProperty(name="Window", category=UIProperty.CATEGORY_CALCULATION, min=1, max=20)
-		public int getWindowSize()
-		{
-			return winSize;
-		}
+    @UIProperty(name = "Window", category = UIProperty.CATEGORY_CALCULATION,
+        min = 1, max = 20)
+    public int getWindowSize()
+    {
+      return winSize;
+    }
 
-		@Override
-		protected String getOutputName()
-		{
-			return getContext().getInput("Generate simple moving average",
-					NEW_DATASET_MESSAGE, "Moving average of " + super.getSubjectList());
-		}
+    @Override
+    protected String getOutputName()
+    {
+      return getContext().getInput("Generate simple moving average",
+          NEW_DATASET_MESSAGE, "Moving average of " + super.getSubjectList());
+    }
 
-		public void setWindowSize(int winSize)
-		{
-			this.winSize = winSize;
-			
-			// ok, we now need to update!
-			super.dataChanged(this.getOutputs().iterator().next());
-		}
+    public void setWindowSize(int winSize)
+    {
+      this.winSize = winSize;
 
-		@Override
-		public void execute()
-		{
-			IQuantityCollection<?> input = (IQuantityCollection<?>) getInputs().get(0);
+      // ok, we now need to update!
+      super.dataChanged(this.getOutputs().iterator().next());
+    }
 
-			List<ICollection> outputs = new ArrayList<ICollection>();
+    @Override
+    public void execute()
+    {
+      IQuantityCollection<?> input =
+          (IQuantityCollection<?>) getInputs().get(0);
 
-			// ok, generate the new series
-			IQuantityCollection<?> target = new QuantityCollection<>(getOutputName(),
-					this, input.getUnits());
+      List<ICollection> outputs = new ArrayList<ICollection>();
 
-			outputs.add(target);
+      // ok, generate the new series
+      IQuantityCollection<?> target =
+          new QuantityCollection<>(getOutputName(), this, input.getUnits());
 
-			// store the output
-			super.addOutput(target);
+      outputs.add(target);
 
-			// start adding values.
-			performCalc(outputs);
+      // store the output
+      super.addOutput(target);
 
-			// tell each series that we're a dependent
-			Iterator<ICollection> iter = getInputs().iterator();
-			while (iter.hasNext())
-			{
-				ICollection iCollection = iter.next();
-				iCollection.addDependent(this);
-			}
+      // start adding values.
+      performCalc(outputs);
 
-			// ok, done
-			List<IStoreItem> res = new ArrayList<IStoreItem>();
-			res.add(target);
-			getStore().addAll(res);
-		}
+      // tell each series that we're a dependent
+      Iterator<ICollection> iter = getInputs().iterator();
+      while (iter.hasNext())
+      {
+        ICollection iCollection = iter.next();
+        iCollection.addDependent(this);
+      }
 
-		@Override
-		public void recalculate()
-		{
-			// update the results
-			performCalc(getOutputs());
-		}
+      // ok, done
+      List<IStoreItem> res = new ArrayList<IStoreItem>();
+      res.add(target);
+      getStore().addAll(res);
+    }
 
-		/**
-		 * wrap the actual operation. We're doing this since we need to separate it
-		 * from the core "execute" operation in order to support dynamic updates
-		 * 
-		 * @param unit
-		 * @param outputs
-		 */
-		private void performCalc(List<ICollection> outputs)
-		{
-			IQuantityCollection<?> target = (IQuantityCollection<?>) outputs
-					.iterator().next();
+    @Override
+    public void recalculate()
+    {
+      // update the results
+      performCalc(getOutputs());
+    }
 
-			// clear out the lists, first
-			Iterator<ICollection> iter = outputs.iterator();
-			while (iter.hasNext())
-			{
-				IQuantityCollection<?> qC = (IQuantityCollection<?>) iter.next();
-				qC.clearQuiet();
-			}
+    /**
+     * wrap the actual operation. We're doing this since we need to separate it from the core
+     * "execute" operation in order to support dynamic updates
+     * 
+     * @param unit
+     * @param outputs
+     */
+    private void performCalc(List<ICollection> outputs)
+    {
+      IQuantityCollection<?> target =
+          (IQuantityCollection<?>) outputs.iterator().next();
 
-			SimpleMovingAverage sma = new SimpleMovingAverage(winSize);
-			@SuppressWarnings("unchecked")
-			IQuantityCollection<Quantity> input = (IQuantityCollection<Quantity>) getInputs()
-					.get(0);
+      // clear out the lists, first
+      Iterator<ICollection> iter = outputs.iterator();
+      while (iter.hasNext())
+      {
+        IQuantityCollection<?> qC = (IQuantityCollection<?>) iter.next();
+        qC.clearQuiet();
+      }
 
-			for (Measurable<Quantity> quantity : input.getValues())
-			{
-				sma.newNum(quantity.doubleValue(input.getUnits()));
-				target.add(sma.getAvg());
-			}
-		}
-	}
+      SimpleMovingAverage sma = new SimpleMovingAverage(winSize);
+      @SuppressWarnings("unchecked")
+      IQuantityCollection<Quantity> input =
+          (IQuantityCollection<Quantity>) getInputs().get(0);
+
+      for (Measurable<Quantity> quantity : input.getValues())
+      {
+        sma.newNum(quantity.doubleValue(input.getUnits()));
+        target.add(sma.getAvg());
+      }
+    }
+  }
 
 }
