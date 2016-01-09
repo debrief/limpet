@@ -24,6 +24,7 @@ import info.limpet.data.operations.CollectionComplianceTests.TimePeriod;
 import info.limpet.rcp.PlottingHelpers;
 import info.limpet.rcp.core_view.CoreAnalysisView;
 
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -36,7 +37,6 @@ import javax.measure.unit.Unit;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
-import org.opengis.geometry.Geometry;
 import org.swtchart.Chart;
 import org.swtchart.IAxis;
 import org.swtchart.IAxis.Position;
@@ -392,7 +392,7 @@ public class XyPlotView extends CoreAnalysisView
       ICollection coll = (ICollection) iter.next();
       if (!coll.isQuantity() && coll.getValuesCount() >= 1 && coll.getValuesCount() < MAX_SIZE)
       {
-        final List<Geometry> values;
+        final List<Point2D> values;
 
         if (coll.isTemporal())
         {
@@ -416,14 +416,14 @@ public class XyPlotView extends CoreAnalysisView
         double[] xData = new double[values.size()];
         double[] yData = new double[values.size()];
 
-        Iterator<Geometry> vIter = values.iterator();
+        Iterator<Point2D> vIter = values.iterator();
 
         int ctr = 0;
         while (vIter.hasNext())
         {
-          Geometry geom = vIter.next();
-          xData[ctr] = geom.getRepresentativePoint().getOrdinate(0);
-          yData[ctr++] = geom.getRepresentativePoint().getOrdinate(1);
+          Point2D geom = vIter.next();
+          xData[ctr] = geom.getX();
+          yData[ctr++] = geom.getY();
         }
 
         // clear the axis labels

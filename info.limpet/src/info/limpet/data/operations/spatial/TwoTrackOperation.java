@@ -29,14 +29,11 @@ import info.limpet.data.impl.samples.TemporalLocation;
 import info.limpet.data.operations.CollectionComplianceTests;
 import info.limpet.data.operations.CollectionComplianceTests.TimePeriod;
 
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-
-import org.geotools.referencing.GeodeticCalculator;
-import org.opengis.geometry.Geometry;
-import org.opengis.geometry.primitive.Point;
 
 public abstract class TwoTrackOperation implements IOperation<IStoreItem>
 {
@@ -121,7 +118,7 @@ public abstract class TwoTrackOperation implements IOperation<IStoreItem>
       ICollection track2 = (ICollection) getInputs().get(1);
 
       // get a calculator to use
-      final GeodeticCalculator calc = GeoSupport.getCalculator();
+      final IGeoCalculator calc = GeoSupport.getCalculator();
 
       if (_timeProvider != null)
       {
@@ -161,12 +158,12 @@ public abstract class TwoTrackOperation implements IOperation<IStoreItem>
               && thisTime <= period.getEndTime())
           {
 
-            Geometry locA = locationFor(track1, thisTime);
-            Geometry locB = locationFor(track2, thisTime);
+            Point2D locA = locationFor(track1, thisTime);
+            Point2D locB = locationFor(track2, thisTime);
 
             if (locA != null && locB != null)
             {
-              calcAndStore(calc, (Point) locA, (Point) locB, thisTime);
+              calcAndStore(calc, locA, locB, thisTime);
             }
             else
             {
@@ -195,17 +192,17 @@ public abstract class TwoTrackOperation implements IOperation<IStoreItem>
 
         for (int j = 0; j < primary.getValuesCount(); j++)
         {
-          final Point locA, locB;
+          final Point2D locA, locB;
 
-          locA = (Point) primary.getValues().get(j);
+          locA = primary.getValues().get(j);
 
           if (secondary.getValuesCount() > 1)
           {
-            locB = (Point) secondary.getValues().get(j);
+            locB = secondary.getValues().get(j);
           }
           else
           {
-            locB = (Point) secondary.getValues().get(0);
+            locB = secondary.getValues().get(0);
           }
 
           calcAndStore(calc, locA, locB, null);
@@ -214,9 +211,9 @@ public abstract class TwoTrackOperation implements IOperation<IStoreItem>
 
     }
 
-    private Geometry locationFor(ICollection track, final Long thisTime)
+    private Point2D locationFor(ICollection track, final Long thisTime)
     {
-      final Geometry locOne;
+      final Point2D locOne;
       if (track instanceof IBaseTemporalCollection)
       {
         TemporalLocation tl = (TemporalLocation) track;
@@ -230,8 +227,8 @@ public abstract class TwoTrackOperation implements IOperation<IStoreItem>
       return locOne;
     }
 
-    protected abstract void calcAndStore(final GeodeticCalculator calc,
-        final Point locA, final Point locB, Long time);
+    protected abstract void calcAndStore(final IGeoCalculator calc,
+        final Point2D locA, final Point2D locB, Long time);
   }
 
   private final CollectionComplianceTests aTests =

@@ -24,6 +24,7 @@ import info.limpet.data.impl.samples.StockTypes;
 import info.limpet.data.impl.samples.StockTypes.NonTemporal.LengthM;
 import info.limpet.data.impl.samples.StockTypes.Temporal;
 
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -31,9 +32,6 @@ import java.util.List;
 import javax.measure.Measure;
 import javax.measure.quantity.Length;
 import javax.measure.unit.Unit;
-
-import org.geotools.referencing.GeodeticCalculator;
-import org.opengis.geometry.primitive.Point;
 
 public class DistanceBetweenTracksOperation extends TwoTrackOperation
 {
@@ -72,8 +70,8 @@ public class DistanceBetweenTracksOperation extends TwoTrackOperation
 
     }
 
-    protected void calcAndStore(final GeodeticCalculator calc,
-        final Point locA, final Point locB, Long time)
+    protected void calcAndStore(final IGeoCalculator calc, final Point2D locA,
+        final Point2D locB, Long time)
     {
       final Unit<Length> outUnits;
       if (time != null)
@@ -90,11 +88,7 @@ public class DistanceBetweenTracksOperation extends TwoTrackOperation
       }
 
       // now find the range between them
-      calc.setStartingGeographicPoint(locA.getCentroid().getOrdinate(0), locA
-          .getCentroid().getOrdinate(1));
-      calc.setDestinationGeographicPoint(locB.getCentroid().getOrdinate(0),
-          locB.getCentroid().getOrdinate(1));
-      double thisDist = calc.getOrthodromicDistance();
+      double thisDist = calc.getDistanceBetween(locA, locB);
       final Measure<Double, Length> thisRes =
           Measure.valueOf(thisDist, outUnits);
 

@@ -27,6 +27,7 @@ import info.limpet.data.impl.QuantityCollection;
 import info.limpet.data.impl.TemporalObjectCollection;
 import info.limpet.data.impl.TemporalQuantityCollection;
 
+import java.awt.geom.Point2D;
 import java.util.List;
 
 import javax.measure.quantity.Acceleration;
@@ -40,8 +41,6 @@ import javax.measure.quantity.Temperature;
 import javax.measure.quantity.Velocity;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.Unit;
-
-import org.opengis.geometry.Geometry;
 
 public class StockTypes
 {
@@ -58,7 +57,7 @@ public class StockTypes
 
   public interface ILocations
   {
-    List<Geometry> getLocations();
+    List<Point2D> getLocations();
   }
 
   /**
@@ -403,7 +402,7 @@ public class StockTypes
 
     }
 
-    public static class Location extends ObjectCollection<Geometry> implements
+    public static class Location extends ObjectCollection<Point2D> implements
         ILocations
     {
       public Location(String name)
@@ -417,7 +416,7 @@ public class StockTypes
       }
 
       @Override
-      public List<Geometry> getLocations()
+      public List<Point2D> getLocations()
       {
         return super.getValues();
       }

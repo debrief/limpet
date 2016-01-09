@@ -29,6 +29,7 @@ import info.limpet.data.impl.samples.StockTypes.NonTemporal.Location;
 import info.limpet.data.impl.samples.TemporalLocation;
 import info.limpet.data.store.InMemoryStore.StoreGroup;
 
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -40,8 +41,6 @@ import javax.measure.quantity.Quantity;
 import javax.measure.unit.Dimension;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
-
-import org.opengis.geometry.Geometry;
 
 public class CollectionComplianceTests
 {
@@ -77,7 +76,7 @@ public class CollectionComplianceTests
       {
         ICollection thisC = (ICollection) thisI;
         Class<?> theClass = thisC.storedClass();
-        if (Geometry.class.equals(theClass))
+        if (Point2D.class.equals(theClass))
         {
           allValid = false;
           break;
@@ -110,7 +109,7 @@ public class CollectionComplianceTests
       {
         ICollection thisC = (ICollection) thisI;
         Class<?> theClass = thisC.storedClass();
-        if (!Geometry.class.equals(theClass))
+        if (!Point2D.class.equals(theClass))
         {
           allValid = false;
           break;
@@ -1214,9 +1213,9 @@ public class CollectionComplianceTests
    *          time we're need a location for
    * @return
    */
-  public Geometry locationFor(ICollection iCollection, Long thisTime)
+  public Point2D locationFor(ICollection iCollection, Long thisTime)
   {
-    Geometry res = null;
+    Point2D res = null;
     if (iCollection.isTemporal())
     {
       TemporalLocation tLoc = (TemporalLocation) iCollection;

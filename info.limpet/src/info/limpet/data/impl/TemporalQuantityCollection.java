@@ -38,18 +38,9 @@ public class TemporalQuantityCollection<T extends Quantity> extends
 {
   private transient QuantityHelper<T> _qHelper;
 
-  // TODO: we're duplicating range in this class and the helper, because the
-  // helper
-  // is transient
-
   private QuantityRange<T> _range;
 
   private Unit<T> units;
-
-  // public TemporalQuantityCollection(String name, Unit<T> units)
-  // {
-  // this(name, null, units);
-  // }
 
   public TemporalQuantityCollection(String name, ICommand<?> precedent,
       Unit<T> units)
@@ -67,12 +58,9 @@ public class TemporalQuantityCollection<T extends Quantity> extends
     {
       Measure<?, ?> oM = (Measure<?, ?>) object;
       Unit<?> hisUnits = oM.getUnit();
-      if (getUnits() != null)
+      if (getUnits() != null && !getUnits().equals(hisUnits))
       {
-        if (!getUnits().equals(hisUnits))
-        {
-          throw new RuntimeException("Measurement is in wrong units");
-        }
+        throw new RuntimeException("Measurement is in wrong units");
       }
     }
     // double-check the units
@@ -191,8 +179,7 @@ public class TemporalQuantityCollection<T extends Quantity> extends
   }
 
   @Override
-  public Measurable<T> interpolateValue(long time,
-      info.limpet.ITemporalQuantityCollection.InterpMethod interpMethod)
+  public Measurable<T> interpolateValue(long time, InterpMethod interpMethod)
   {
     final Measurable<T> res;
     switch (interpMethod)

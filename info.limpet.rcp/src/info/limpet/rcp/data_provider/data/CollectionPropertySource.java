@@ -21,6 +21,7 @@ import info.limpet.data.impl.samples.StockTypes.NonTemporal;
 import info.limpet.data.impl.samples.StockTypes.NonTemporal.Location;
 import info.limpet.data.operations.spatial.GeoSupport;
 
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,9 +34,6 @@ import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
 import org.eclipse.ui.views.properties.TextPropertyDescriptor;
-import org.geotools.geometry.iso.primitive.PointImpl;
-import org.opengis.geometry.Geometry;
-import org.opengis.geometry.primitive.Point;
 
 /**
  * This class provides property sheet properties for ButtonElement.
@@ -127,7 +125,8 @@ public class CollectionPropertySource implements IPropertySource
           rangeDescriptor.setCategory("Metadata");
           dList.add(rangeDescriptor);
         }
-        else if (coll instanceof NonTemporal.Location && coll.getValuesCount() == 1)
+        else if (coll instanceof NonTemporal.Location
+            && coll.getValuesCount() == 1)
         {
           final PropertyDescriptor latDescriptor =
               new TextPropertyDescriptor(PROPERTY_LOC_LAT, "Latitude");
@@ -234,19 +233,17 @@ public class CollectionPropertySource implements IPropertySource
       if (coll.getValuesCount() > 0 && coll instanceof NonTemporal.Location)
       {
         NonTemporal.Location locColl = (Location) coll;
-        Geometry loc = locColl.getValues().iterator().next();
-        PointImpl point = (PointImpl) loc;
-        return "" + point.getDirectPosition().getY();
+        Point2D point = locColl.getValues().iterator().next();
+        return "" + point.getY();
       }
     }
-    else if (prop.equals(PROPERTY_LOC_LONG)) 
+    else if (prop.equals(PROPERTY_LOC_LONG))
     {
       if (coll.getValuesCount() > 0 && coll instanceof NonTemporal.Location)
       {
         NonTemporal.Location locColl = (Location) coll;
-        Geometry loc = locColl.getValues().iterator().next();
-        PointImpl point = (PointImpl) loc;
-        return "" + point.getDirectPosition().getX();
+        Point2D point = locColl.getValues().iterator().next();
+        return "" + point.getX();
       }
     }
 
@@ -334,14 +331,13 @@ public class CollectionPropertySource implements IPropertySource
         // get the current location
         if (locColl.getValuesCount() > 0)
         {
-          PointImpl loc = (PointImpl) locColl.getValues().iterator().next();
+          Point2D loc = (Point2D) locColl.getValues().iterator().next();
 
           // ok, create replacement
           double newLat = Double.parseDouble((String) value);
 
-          Point newLoc =
-              GeoSupport.getBuilder().createPoint(
-                  loc.getDirectPosition().getX(), newLat);
+          Point2D newLoc =
+              GeoSupport.getCalculator().createPoint(loc.getX(), newLat);
 
           locColl.clear();
 
@@ -361,14 +357,13 @@ public class CollectionPropertySource implements IPropertySource
         if (locColl.getValuesCount() > 0)
         {
           // get the current location
-          PointImpl loc = (PointImpl) locColl.getValues().iterator().next();
+          Point2D loc = locColl.getValues().iterator().next();
 
           // ok, create replacement
           double newLong = Double.parseDouble((String) value);
 
-          Point newLoc =
-              GeoSupport.getBuilder().createPoint(newLong,
-                  loc.getDirectPosition().getY());
+          Point2D newLoc =
+              GeoSupport.getCalculator().createPoint(newLong, loc.getY());
 
           locColl.clear();
 

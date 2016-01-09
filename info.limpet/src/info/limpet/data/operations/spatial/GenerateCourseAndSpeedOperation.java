@@ -28,16 +28,13 @@ import info.limpet.data.impl.samples.StockTypes.Temporal.AngleDegrees;
 import info.limpet.data.impl.samples.TemporalLocation;
 import info.limpet.data.operations.CollectionComplianceTests;
 
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
 import javax.measure.Measure;
-
-import org.geotools.referencing.GeodeticCalculator;
-import org.opengis.geometry.Geometry;
-import org.opengis.geometry.primitive.Point;
 
 public class GenerateCourseAndSpeedOperation implements IOperation<IStoreItem>
 {
@@ -119,7 +116,7 @@ public class GenerateCourseAndSpeedOperation implements IOperation<IStoreItem>
     private void performCalc(List<IStoreItem> outputs)
     {
       // get a calculator to use
-      final GeodeticCalculator calc = GeoSupport.getCalculator();
+      final IGeoCalculator calc = GeoSupport.getCalculator();
 
       // do some clearing first
 
@@ -131,16 +128,16 @@ public class GenerateCourseAndSpeedOperation implements IOperation<IStoreItem>
         IStoreItem thisOut = oIter.next();
 
         // ok, walk through it
-        Iterator<Geometry> pITer = thisTrack.getLocations().iterator();
+        Iterator<Point2D> pITer = thisTrack.getLocations().iterator();
         Iterator<Long> tIter = thisTrack.getTimes().iterator();
 
         // remember the last value
         long lastTime = 0;
-        Point lastLocation = null;
+        Point2D lastLocation = null;
 
         while (pITer.hasNext())
         {
-          Point geometry = (Point) pITer.next();
+          Point2D geometry =  pITer.next();
           long thisTime = tIter.next();
 
           if (lastLocation != null)
@@ -158,8 +155,8 @@ public class GenerateCourseAndSpeedOperation implements IOperation<IStoreItem>
     }
 
     protected abstract void calcAndStore(IStoreItem thisOut,
-        final GeodeticCalculator calc, final long timeA, final Point locA,
-        final long timeB, final Point locB);
+        final IGeoCalculator calc, final long timeA, final Point2D locA,
+        final long timeB, final Point2D locB);
   }
 
   private final CollectionComplianceTests aTests =
@@ -211,19 +208,14 @@ public class GenerateCourseAndSpeedOperation implements IOperation<IStoreItem>
             }
 
             protected void calcAndStore(IStoreItem output,
-                final GeodeticCalculator calc, long lastTime, final Point locA,
-                long thisTime, final Point locB)
+                final IGeoCalculator calc, long lastTime, final Point2D locA,
+                long thisTime, final Point2D locB)
             {
               // get the output dataset
               Temporal.AngleDegrees target = (AngleDegrees) output;
 
               // now find the bearing between them
-              calc.setStartingGeographicPoint(
-                  locA.getCentroid().getOrdinate(0), locA.getCentroid()
-                      .getOrdinate(1));
-              calc.setDestinationGeographicPoint(locB.getCentroid()
-                  .getOrdinate(0), locB.getCentroid().getOrdinate(1));
-              double angleDegs = calc.getAzimuth();
+              double angleDegs = calc.getAngleBetween(locA,  locB);
               if (angleDegs < 0)
               {
                 angleDegs += 360;
@@ -251,19 +243,14 @@ public class GenerateCourseAndSpeedOperation implements IOperation<IStoreItem>
             }
 
             protected void calcAndStore(IStoreItem output,
-                final GeodeticCalculator calc, long lastTime, final Point locA,
-                long thisTime, final Point locB)
+                final IGeoCalculator calc, long lastTime, final Point2D locA,
+                long thisTime, final Point2D locB)
             {
               // get the output dataset
               Temporal.SpeedMSec target = (Temporal.SpeedMSec) output;
 
               // now find the range between them
-              calc.setStartingGeographicPoint(
-                  locA.getCentroid().getOrdinate(0), locA.getCentroid()
-                      .getOrdinate(1));
-              calc.setDestinationGeographicPoint(locB.getCentroid()
-                  .getOrdinate(0), locB.getCentroid().getOrdinate(1));
-              double thisDist = calc.getOrthodromicDistance();
+              double thisDist = calc.getDistanceBetween(locA,  locB);
               double calcTime = thisTime - lastTime;
               double thisSpeed = thisDist / (calcTime / 1000d);
               target.add(thisTime,
