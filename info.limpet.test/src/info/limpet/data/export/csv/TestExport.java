@@ -5,8 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import info.limpet.ICollection;
-import info.limpet.IStore;
-import info.limpet.IStore.IStoreItem;
+import info.limpet.IStoreItem;
 import info.limpet.data.csv.CsvGenerator;
 import info.limpet.data.impl.samples.SampleData;
 import info.limpet.data.store.InMemoryStore;
@@ -47,7 +46,7 @@ public class TestExport extends TestCase
 				Iterator<IStoreItem> iter2 = group.iterator();
 				while (iter2.hasNext())
 				{
-					IStore.IStoreItem iStoreItem = (IStore.IStoreItem) iter2.next();
+					IStoreItem iStoreItem = (IStoreItem) iter2.next();
 					if (iStoreItem instanceof ICollection)
 					{
 						collections.add((ICollection) iStoreItem);

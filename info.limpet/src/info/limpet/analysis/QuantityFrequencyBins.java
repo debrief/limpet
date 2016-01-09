@@ -16,7 +16,7 @@ package info.limpet.analysis;
 
 import info.limpet.ICollection;
 import info.limpet.IQuantityCollection;
-import info.limpet.IStore.IStoreItem;
+import info.limpet.IStoreItem;
 import info.limpet.data.operations.CollectionComplianceTests;
 
 import java.util.ArrayList;

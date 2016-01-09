@@ -14,8 +14,8 @@
  *****************************************************************************/
 package info.limpet.rcp.data_provider.data;
 
-import info.limpet.IStore.IStoreItem;
 import info.limpet.IStoreGroup;
+import info.limpet.IStoreItem;
 import info.limpet.data.store.IGroupWrapper;
 
 import org.eclipse.core.runtime.IAdaptable;

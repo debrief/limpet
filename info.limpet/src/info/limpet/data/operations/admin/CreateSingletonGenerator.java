@@ -19,7 +19,7 @@ import info.limpet.IContext;
 import info.limpet.IContext.Status;
 import info.limpet.IOperation;
 import info.limpet.IStore;
-import info.limpet.IStore.IStoreItem;
+import info.limpet.IStoreItem;
 import info.limpet.data.commands.AbstractCommand;
 import info.limpet.data.impl.QuantityCollection;
 import info.limpet.data.operations.CollectionComplianceTests;

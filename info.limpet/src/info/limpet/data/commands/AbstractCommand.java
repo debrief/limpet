@@ -24,8 +24,8 @@ import info.limpet.ICommand;
 import info.limpet.IContext;
 import info.limpet.IQuantityCollection;
 import info.limpet.IStore;
-import info.limpet.IStore.IStoreItem;
 import info.limpet.IStoreGroup;
+import info.limpet.IStoreItem;
 import info.limpet.UIProperty;
 
 public abstract class AbstractCommand<T extends IStoreItem> implements
@@ -144,7 +144,7 @@ public abstract class AbstractCommand<T extends IStoreItem> implements
     int ctr = 0;
     while (iter.hasNext())
     {
-      IStore.IStoreItem storeItem = (IStore.IStoreItem) iter.next();
+      IStoreItem storeItem = (IStoreItem) iter.next();
       if (ctr++ > 0)
       {
         res.append(", ");

@@ -16,7 +16,7 @@ package info.limpet.rcp.time_frequency;
 
 import info.limpet.IBaseTemporalCollection;
 import info.limpet.ICollection;
-import info.limpet.IStore.IStoreItem;
+import info.limpet.IStoreItem;
 import info.limpet.analysis.TimeFrequencyBins;
 import info.limpet.analysis.TimeFrequencyBins.Bin;
 import info.limpet.data.operations.CollectionComplianceTests;

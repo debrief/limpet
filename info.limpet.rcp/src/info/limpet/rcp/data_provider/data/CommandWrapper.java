@@ -15,7 +15,7 @@
 package info.limpet.rcp.data_provider.data;
 
 import info.limpet.ICommand;
-import info.limpet.IStore.IStoreItem;
+import info.limpet.IStoreItem;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ui.views.properties.IPropertySource;

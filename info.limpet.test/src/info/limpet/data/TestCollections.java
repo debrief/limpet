@@ -25,7 +25,7 @@ import info.limpet.ICommand;
 import info.limpet.IContext;
 import info.limpet.IQuantityCollection;
 import info.limpet.IStore;
-import info.limpet.IStore.IStoreItem;
+import info.limpet.IStoreItem;
 import info.limpet.ITemporalObjectCollection.Doublet;
 import info.limpet.ITemporalQuantityCollection;
 import info.limpet.ITemporalQuantityCollection.InterpMethod;

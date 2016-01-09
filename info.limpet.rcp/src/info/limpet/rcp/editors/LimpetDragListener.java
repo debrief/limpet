@@ -16,7 +16,7 @@ package info.limpet.rcp.editors;
 
 import java.util.Iterator;
 
-import info.limpet.IStore.IStoreItem;
+import info.limpet.IStoreItem;
 import info.limpet.rcp.data_provider.data.LimpetWrapper;
 
 import org.eclipse.jface.viewers.IStructuredSelection;

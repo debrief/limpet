@@ -19,8 +19,8 @@ import info.limpet.ICommand;
 import info.limpet.IContext;
 import info.limpet.IOperation;
 import info.limpet.IStore;
-import info.limpet.IStore.IStoreItem;
 import info.limpet.IStoreGroup;
+import info.limpet.IStoreItem;
 import info.limpet.data.operations.AddLayerOperation;
 import info.limpet.data.operations.GenerateDummyDataOperation;
 import info.limpet.data.operations.admin.OperationsLibrary;
@@ -288,9 +288,6 @@ public class DataManagerEditor extends EditorPart
 
           // we need to loop down through the data, setting all of the listeners
           InMemoryStore ms = (InMemoryStore) _store;
-
-          // check we didn't load an empty store
-          ms.init();
 
           // and get hooked up
           Iterator<IStoreItem> iter = ms.iterator();

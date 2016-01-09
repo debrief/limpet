@@ -26,7 +26,7 @@ import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 import info.limpet.ICollection;
 import info.limpet.IQuantityCollection;
-import info.limpet.IStore.IStoreItem;
+import info.limpet.IStoreItem;
 import info.limpet.QuantityRange;
 import info.limpet.data.operations.CollectionComplianceTests;
 

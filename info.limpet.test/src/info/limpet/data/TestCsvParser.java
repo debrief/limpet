@@ -18,7 +18,7 @@ import java.io.File;
 import java.util.List;
 
 import info.limpet.ICollection;
-import info.limpet.IStore.IStoreItem;
+import info.limpet.IStoreItem;
 import info.limpet.data.csv.CsvParser;
 import info.limpet.data.store.InMemoryStore.StoreGroup;
 import junit.framework.TestCase;

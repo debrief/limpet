@@ -17,7 +17,7 @@ package info.limpet.rcp.data_frequency;
 import info.limpet.ICollection;
 import info.limpet.IObjectCollection;
 import info.limpet.IQuantityCollection;
-import info.limpet.IStore.IStoreItem;
+import info.limpet.IStoreItem;
 import info.limpet.analysis.ObjectFrequencyBins;
 import info.limpet.analysis.ObjectFrequencyBins.BinnedData;
 import info.limpet.analysis.QuantityFrequencyBins;

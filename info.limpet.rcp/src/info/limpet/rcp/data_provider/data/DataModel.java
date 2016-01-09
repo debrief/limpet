@@ -23,8 +23,8 @@ import org.eclipse.jface.viewers.Viewer;
 
 import info.limpet.ICollection;
 import info.limpet.ICommand;
-import info.limpet.IStore.IStoreItem;
 import info.limpet.IStoreGroup;
+import info.limpet.IStoreItem;
 import info.limpet.data.store.InMemoryStore;
 
 /**

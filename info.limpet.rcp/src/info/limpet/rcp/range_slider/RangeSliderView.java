@@ -18,7 +18,7 @@ import info.limpet.IChangeListener;
 import info.limpet.ICollection;
 import info.limpet.ICommand;
 import info.limpet.IQuantityCollection;
-import info.limpet.IStore.IStoreItem;
+import info.limpet.IStoreItem;
 import info.limpet.QuantityRange;
 import info.limpet.data.operations.CollectionComplianceTests;
 import info.limpet.data.operations.arithmetic.SimpleMovingAverageOperation.SimpleMovingAverageCommand;

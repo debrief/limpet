@@ -28,74 +28,38 @@ import info.limpet.data.store.InMemoryStore.StoreChangeListener;
 public interface IStore
 {
 
-	interface IStoreItem
-	{
+  /**
+   * add the new collections at the root level
+   * 
+   * @param results
+   */
+  void addAll(List<IStoreItem> items);
 
-		/** if this object has children
-		 * 
-		 * @return
-		 */
-		boolean hasChildren();
-		
-		/** find the layer that contains this collection (or null if applicable)
-		 * 
-		 * @return parent collection, or null
-		 */
-		IStoreGroup getParent();
-		
-		/** set the parent object for this collection
-		 * 
-		 * @param parent
-		 */
-		void setParent(IStoreGroup parent);
-		
-		String getName();
+  /**
+   * add the new collections at the root level
+   * 
+   * @param results
+   */
+  boolean add(IStoreItem items);
 
-		void addChangeListener(IChangeListener listener);
+  /**
+   * retrieve the named collection
+   * 
+   * @param name
+   * @return
+   */
+  IStoreItem get(String name);
 
-		void removeChangeListener(IChangeListener listener);
+  /**
+   * retrieve the data item with the specified UUID
+   * 
+   * @param uuid
+   *          the item we're looking for
+   * @return the matching item (or null)
+   */
+  IStoreItem get(UUID uuid);
 
-		/**
-		 * indicate that the collection has changed Note: both registeered listeners
-		 * and dependents are informed of the change
-		 */
-		void fireDataChanged();
+  void addChangeListener(StoreChangeListener listener);
 
-		UUID getUUID();
-	}
-
-	/**
-	 * add the new collections at the root level
-	 * 
-	 * @param results
-	 */
-	void addAll(List<IStoreItem> items);
-
-	/**
-	 * add the new collections at the root level
-	 * 
-	 * @param results
-	 */
-	boolean add(IStoreItem items);
-
-	/**
-	 * retrieve the named collection
-	 * 
-	 * @param name
-	 * @return
-	 */
-	IStoreItem get(String name);
-
-	/**
-	 * retrieve the data item with the specified UUID
-	 * 
-	 * @param uuid
-	 *          the item we're looking for
-	 * @return the matching item (or null)
-	 */
-	IStoreItem get(UUID uuid);
-
-	void addChangeListener(StoreChangeListener listener);
-
-	void removeChangeListener(StoreChangeListener listener);
+  void removeChangeListener(StoreChangeListener listener);
 }

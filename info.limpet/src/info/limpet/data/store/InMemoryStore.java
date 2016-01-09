@@ -18,6 +18,7 @@ import info.limpet.IChangeListener;
 import info.limpet.ICollection;
 import info.limpet.IStore;
 import info.limpet.IStoreGroup;
+import info.limpet.IStoreItem;
 import info.limpet.UIProperty;
 import info.limpet.data.impl.ListenerHelper;
 
@@ -26,15 +27,20 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
-public class InMemoryStore implements IStore, IChangeListener,
-    IStore.IStoreItem
+public class InMemoryStore extends ArrayList<IStoreItem> implements
+    IStore, IChangeListener,  IStoreGroup
 {
 
-  private List<IStoreItem> _store = new ArrayList<IStoreItem>();
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 1L;
 
   private transient List<StoreChangeListener> _listeners = new ArrayList<StoreChangeListener>();
 
   private UUID uuid;
+
+  private String _name = "Limpet Store";
 
   public static class StoreGroup extends ArrayList<IStoreItem> implements
       IStoreItem, IStoreGroup, IChangeListener
@@ -230,18 +236,6 @@ public class InMemoryStore implements IStore, IChangeListener,
     }
   }
 
-  /**
-   * just check we're correctly configured
-   * 
-   */
-  public void init()
-  {
-    if (_store == null)
-    {
-      _store = new ArrayList<IStoreItem>();
-    }
-  }
-
   private Object readResolve()
   {
     _listeners = new ArrayList<StoreChangeListener>();
@@ -291,7 +285,7 @@ public class InMemoryStore implements IStore, IChangeListener,
   @Override
   public boolean add(IStoreItem results)
   {
-    boolean res = _store.add(results);
+    boolean res = super.add(results);
 
     // register as a listener with the results object
     if (results instanceof ICollection)
@@ -310,16 +304,11 @@ public class InMemoryStore implements IStore, IChangeListener,
     return res;
   }
 
-  public int size()
-  {
-    return _store.size();
-  }
-
   @Override
   public IStoreItem get(String name)
   {
     IStoreItem res = null;
-    Iterator<IStoreItem> iter = _store.iterator();
+    Iterator<IStoreItem> iter = iterator();
     while (iter.hasNext())
     {
       IStoreItem item = iter.next();
@@ -329,7 +318,7 @@ public class InMemoryStore implements IStore, IChangeListener,
         Iterator<IStoreItem> iter2 = group.iterator();
         while (iter2.hasNext())
         {
-          IStore.IStoreItem thisI = (IStore.IStoreItem) iter2.next();
+          IStoreItem thisI = (IStoreItem) iter2.next();
           if (name.equals(thisI.getName()))
           {
             res = thisI;
@@ -350,7 +339,7 @@ public class InMemoryStore implements IStore, IChangeListener,
   public IStoreItem get(UUID uuid)
   {
     IStoreItem res = null;
-    Iterator<IStoreItem> iter = _store.iterator();
+    Iterator<IStoreItem> iter = iterator();
     while (iter.hasNext())
     {
       IStoreItem item = iter.next();
@@ -360,7 +349,7 @@ public class InMemoryStore implements IStore, IChangeListener,
         Iterator<IStoreItem> iter2 = group.iterator();
         while (iter2.hasNext())
         {
-          IStore.IStoreItem thisI = (IStore.IStoreItem) iter2.next();
+          IStoreItem thisI = (IStoreItem) iter2.next();
           if (uuid.equals(thisI.getUUID()))
           {
             res = thisI;
@@ -377,17 +366,12 @@ public class InMemoryStore implements IStore, IChangeListener,
     return res;
   }
 
-  public Iterator<IStoreItem> iterator()
-  {
-    return _store.iterator();
-  }
-
   public void clear()
   {
     // stop listening to the collections individually
     // - defer the clear until the end,
     // so we don't get concurrent modification
-    Iterator<IStoreItem> iter = _store.iterator();
+    Iterator<IStoreItem> iter = super.iterator();
     while (iter.hasNext())
     {
       IStoreItem iC = iter.next();
@@ -398,13 +382,13 @@ public class InMemoryStore implements IStore, IChangeListener,
       }
     }
 
-    _store.clear();
+    super.clear();
     fireModified();
   }
 
   public boolean remove(Object item)
   {
-    boolean res = _store.remove(item);
+    boolean res = super.remove(item);
 
     // stop listening to this one
     if (item instanceof ICollection)
@@ -462,7 +446,7 @@ public class InMemoryStore implements IStore, IChangeListener,
   @Override
   public String getName()
   {
-    return "Limpet Store";
+    return _name;
   }
 
   @Override
@@ -494,6 +478,12 @@ public class InMemoryStore implements IStore, IChangeListener,
       uuid = UUID.randomUUID();
     }
     return uuid;
+  }
+
+  @Override
+  public void setName(String value)
+  {
+    _name = value;
   }
 
 }

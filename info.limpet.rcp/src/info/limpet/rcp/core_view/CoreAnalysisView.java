@@ -15,7 +15,7 @@
 package info.limpet.rcp.core_view;
 
 import info.limpet.IChangeListener;
-import info.limpet.IStore.IStoreItem;
+import info.limpet.IStoreItem;
 import info.limpet.data.operations.CollectionComplianceTests;
 import info.limpet.rcp.Activator;
 

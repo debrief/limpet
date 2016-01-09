@@ -1,6 +1,6 @@
 package info.limpet.rcp.editors;
 
-import info.limpet.IStore.IStoreItem;
+import info.limpet.IStoreItem;
 
 import java.util.List;
 

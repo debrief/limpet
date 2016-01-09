@@ -15,7 +15,6 @@
 package info.limpet;
 
 
-import info.limpet.IStore.IStoreItem;
 
 import java.util.Collection;
 import java.util.List;

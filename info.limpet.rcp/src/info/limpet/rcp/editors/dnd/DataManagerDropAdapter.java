@@ -15,8 +15,8 @@
 package info.limpet.rcp.editors.dnd;
 
 import info.limpet.IStore;
-import info.limpet.IStore.IStoreItem;
 import info.limpet.IStoreGroup;
+import info.limpet.IStoreItem;
 import info.limpet.data.csv.CsvParser;
 import info.limpet.data.persistence.xml.XStreamHandler;
 import info.limpet.data.store.InMemoryStore;

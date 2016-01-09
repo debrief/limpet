@@ -16,7 +16,7 @@ package info.limpet.rcp.xy_plot;
 
 import info.limpet.ICollection;
 import info.limpet.IQuantityCollection;
-import info.limpet.IStore.IStoreItem;
+import info.limpet.IStoreItem;
 import info.limpet.ITemporalQuantityCollection;
 import info.limpet.data.impl.samples.TemporalLocation;
 import info.limpet.data.operations.CollectionComplianceTests;

@@ -61,12 +61,6 @@ public class TestPersistence extends TestCase
       assertEquals("correct num of objects", storeSize, ims.size());
     }
 
-    // do a bit of tidying up
-    // if (testF.exists())
-    // {
-    // testF.delete();
-    // }
-
   }
 
 }

@@ -18,7 +18,7 @@ import info.limpet.ICollection;
 import info.limpet.ICommand;
 import info.limpet.IContext;
 import info.limpet.IQuantityCollection;
-import info.limpet.IStore.IStoreItem;
+import info.limpet.IStoreItem;
 import info.limpet.data.impl.CoreChangeListener;
 import info.limpet.data.impl.MockContext;
 import info.limpet.data.impl.samples.SampleData;

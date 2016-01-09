@@ -14,7 +14,7 @@
  *****************************************************************************/
 package info.limpet.data;
 
-import info.limpet.IStore.IStoreItem;
+import info.limpet.IStoreItem;
 import info.limpet.analysis.AnalysisLibrary;
 import info.limpet.analysis.IAnalysis;
 import info.limpet.analysis.TimeFrequencyBins;

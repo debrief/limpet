@@ -20,7 +20,7 @@ import info.limpet.IBaseTemporalCollection;
 import info.limpet.ICollection;
 import info.limpet.IObjectCollection;
 import info.limpet.IQuantityCollection;
-import info.limpet.IStore.IStoreItem;
+import info.limpet.IStoreItem;
 import info.limpet.ITemporalQuantityCollection.InterpMethod;
 import info.limpet.data.impl.TemporalQuantityCollection;
 import info.limpet.data.impl.samples.StockTypes.ILocations;

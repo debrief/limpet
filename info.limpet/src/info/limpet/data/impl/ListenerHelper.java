@@ -15,7 +15,7 @@
 package info.limpet.data.impl;
 
 import info.limpet.IChangeListener;
-import info.limpet.IStore.IStoreItem;
+import info.limpet.IStoreItem;
 
 import java.util.ArrayList;
 import java.util.Iterator;

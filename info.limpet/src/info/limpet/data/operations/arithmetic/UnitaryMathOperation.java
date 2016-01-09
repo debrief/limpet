@@ -21,7 +21,7 @@ import info.limpet.IContext;
 import info.limpet.IOperation;
 import info.limpet.IQuantityCollection;
 import info.limpet.IStore;
-import info.limpet.IStore.IStoreItem;
+import info.limpet.IStoreItem;
 import info.limpet.ITemporalQuantityCollection;
 import info.limpet.data.commands.AbstractCommand;
 import info.limpet.data.impl.QuantityCollection;

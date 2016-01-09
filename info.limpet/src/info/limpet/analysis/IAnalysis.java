@@ -14,7 +14,7 @@
  *****************************************************************************/
 package info.limpet.analysis;
 
-import info.limpet.IStore.IStoreItem;
+import info.limpet.IStoreItem;
 
 import java.util.List;
 

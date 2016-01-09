@@ -1,7 +1,7 @@
 package info.limpet.rcp.editors;
 
 import info.limpet.IOperation;
-import info.limpet.IStore.IStoreItem;
+import info.limpet.IStoreItem;
 import info.limpet.rcp.analysis_view.AnalysisView;
 import info.limpet.rcp.data_frequency.DataFrequencyView;
 import info.limpet.rcp.operations.ShowInNamedView;

@@ -95,8 +95,6 @@ public class XStreamHandler
     XSTREAM.useAttributeFor(AbstractCommand.class, "canRedo");
     XSTREAM.useAttributeFor(AbstractCommand.class, "dynamic");
 
-    XSTREAM.addImplicitCollection(InMemoryStore.class, "_store");
-
     // setup converter
     XSTREAM.registerConverter(
         new LimpetCollectionConverter(XSTREAM.getMapper()),

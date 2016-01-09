@@ -14,7 +14,7 @@
  *****************************************************************************/
 package info.limpet.rcp.analysis_view;
 
-import info.limpet.IStore.IStoreItem;
+import info.limpet.IStoreItem;
 import info.limpet.analysis.AnalysisLibrary;
 import info.limpet.data.operations.CollectionComplianceTests;
 import info.limpet.rcp.core_view.CoreAnalysisView;

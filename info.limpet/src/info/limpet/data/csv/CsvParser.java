@@ -16,7 +16,7 @@ package info.limpet.data.csv;
 
 import info.limpet.ICollection;
 import info.limpet.IQuantityCollection;
-import info.limpet.IStore.IStoreItem;
+import info.limpet.IStoreItem;
 import info.limpet.ITemporalQuantityCollection;
 import info.limpet.data.impl.ObjectCollection;
 import info.limpet.data.impl.samples.StockTypes.NonTemporal;

@@ -17,9 +17,8 @@ package info.limpet.rcp.editors;
 import info.limpet.ICollection;
 import info.limpet.ICommand;
 import info.limpet.IQuantityCollection;
-import info.limpet.IStore;
-import info.limpet.IStore.IStoreItem;
 import info.limpet.IStoreGroup;
+import info.limpet.IStoreItem;
 import info.limpet.data.impl.ObjectCollection;
 import info.limpet.data.impl.samples.StockTypes.NonTemporal;
 import info.limpet.data.impl.samples.StockTypes.Temporal.AcousticStrength;
@@ -46,7 +45,7 @@ public class LimpetLabelProvider extends LabelProvider
 
     ImageDescriptor res = null;
 
-    IStore.IStoreItem item = null;
+    IStoreItem item = null;
 
     if (obj2 instanceof LimpetWrapper)
     {

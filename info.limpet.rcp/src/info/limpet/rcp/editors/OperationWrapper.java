@@ -18,7 +18,7 @@ import info.limpet.ICommand;
 import info.limpet.IContext;
 import info.limpet.IOperation;
 import info.limpet.IStore;
-import info.limpet.IStore.IStoreItem;
+import info.limpet.IStoreItem;
 
 import java.util.Collection;
 

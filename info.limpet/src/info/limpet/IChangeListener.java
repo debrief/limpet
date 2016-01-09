@@ -14,7 +14,6 @@
  *****************************************************************************/
 package info.limpet;
 
-import info.limpet.IStore.IStoreItem;
 
 public interface IChangeListener
 {
