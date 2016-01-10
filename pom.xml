@@ -19,7 +19,8 @@
   <modules>
     <module>info.limpet</module>
     <module>info.limpet.libs</module>
-    <module>info.limpet.geotools</module>
+    <module>org.geotools</module>
+    <module>org.geotools.feature</module>
     <module>info.limpet.rcp</module>
     <module>info.limpet.test</module>
     <module>info.limpet.feature</module>

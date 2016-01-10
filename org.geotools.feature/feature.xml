@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="info.limpet.feature"
+      id="org.geotools.feature"
       label="%featureName"
-      version="1.0.4"
+      version="1.0.1"
       provider-name="%providerName"
-      plugin="info.limpet">
+      plugin="org.geotools">
 
    <description>
       %description
@@ -183,16 +183,10 @@ Library.
    </url>
 
    <plugin
-         id="info.limpet"
+         id="org.geotools"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-
-   <plugin
-         id="info.limpet.libs"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
 
 </feature>

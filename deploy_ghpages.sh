@@ -17,8 +17,10 @@ then
 	cp ../../info.limpet.product/target/repository/binary/* binary
 	mkdir features
 	cp ../../info.limpet.product/target/repository/features/info.limpet* features
+	cp ../../info.limpet.product/target/repository/features/org.geotools* features
 	mkdir plugins
 	cp ../../info.limpet.product/target/repository/plugins/info.limpet* plugins
+	cp ../../info.limpet.product/target/repository/plugins/org.geotools* plugins
 	cp ../../info.limpet.product/www/* .
 	cd ..
 	rm -rf coverage
