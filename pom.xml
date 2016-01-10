@@ -22,9 +22,11 @@
     <module>org.geotools</module>
     <module>org.geotools.feature</module>
     <module>info.limpet.rcp</module>
+    <module>info.limpet.ui</module>
     <module>info.limpet.test</module>
     <module>info.limpet.feature</module>
     <module>info.limpet.rcp.feature</module>
+    <module>info.limpet.ui.feature</module>
     <module>info.limpet.site</module>
     <module>info.limpet.product</module>
     <module>info.limpet.sample_data</module>
@@ -192,6 +194,8 @@
                                       <fileset
                                          dir="${source-location}/info.limpet.rcp/target/classes" />
                                       <fileset
+                                         dir="${source-location}/info.limpet.ui/target/classes" />
+                                      <fileset
                                          dir="${source-location}/info.limpet.test/target/classes" />
                                    </classfiles>
                                    <sourcefiles
@@ -200,6 +204,8 @@
                                          dir="${source-location}/info.limpet/src/" />
                                       <fileset
                                          dir="${source-location}/info.limpet.rcp/src/" />
+                                      <fileset
+                                         dir="${source-location}/info.limpet.ui/src/" />
                                       <fileset
                                          dir="${source-location}/info.limpet.test/src/" />
                                    </sourcefiles>

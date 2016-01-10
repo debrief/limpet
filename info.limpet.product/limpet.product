@@ -234,6 +234,7 @@ Library.
       <feature id="org.geotools.feature"/>
       <feature id="info.limpet.feature"/>
       <feature id="info.limpet.rcp.feature"/>
+      <feature id="info.limpet.ui.feature"/>
    </features>
 
    <configurations>

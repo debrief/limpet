@@ -14,8 +14,6 @@
  *****************************************************************************/
 package info.limpet.rcp.product;
 
-import info.limpet.rcp.Activator;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -29,6 +27,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.Policy;
+
+import info.limpet.rcp.Activator;
 
 /**
  * The idle helper detects when the system is idle in order to perform garbage collection in a way

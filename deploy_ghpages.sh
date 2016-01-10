@@ -33,6 +33,7 @@ then
 	cp ../info.limpet.site/*.css static/report
 	cp -r ../info.limpet/target/site static/report/info.limpet
 	cp -r ../info.limpet.rcp/target/site static/report/info.limpet.rcp
+	cp -r ../info.limpet.ui/target/site static/report/info.limpet.ui
 	cp -r ../info.limpet.test/target/site static/report/info.limpet.rcp.test
 	git add .
 	git commit -m "Deploy Limpet Artifacts"
