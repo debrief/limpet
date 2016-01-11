@@ -30,6 +30,7 @@ import info.limpet.data.impl.QuantityCollection;
 import info.limpet.data.impl.TemporalQuantityCollection;
 import info.limpet.data.impl.samples.SampleData;
 import info.limpet.data.impl.samples.StockTypes;
+import info.limpet.data.operations.AddLayerOperation;
 import info.limpet.data.operations.AddQuantityOperation;
 import info.limpet.data.operations.CollectionComplianceTests;
 import info.limpet.data.operations.DivideQuantityOperation;
@@ -38,6 +39,7 @@ import info.limpet.data.operations.SimpleMovingAverageOperation;
 import info.limpet.data.operations.SubtractQuantityOperation;
 import info.limpet.data.operations.UnitConversionOperation;
 import info.limpet.data.store.InMemoryStore;
+import info.limpet.data.store.InMemoryStore.StoreGroup;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -591,7 +593,8 @@ public class TestOperations extends TestCase
 
 		// have a look
 		Iterator<ICommand<ICollection>> iter = commands.iterator();
-		iter.next();
+		ICommand<ICollection> second = iter.next();
+		second.execute();
 		ICommand<ICollection> first = iter.next();
 		first.execute();
 		IQuantityCollection<Velocity> output = (IQuantityCollection) first.getOutputs().iterator().next();
@@ -601,6 +604,7 @@ public class TestOperations extends TestCase
 
 		assertEquals("correct value", output.getValues().get(0).doubleValue(Velocity.UNIT), speed_good_1.getValues().get(0)
 				.doubleValue(Velocity.UNIT) + 2, 0.001);
+		
 	}
 
 
@@ -671,6 +675,35 @@ public class TestOperations extends TestCase
 		assertEquals(firstDifference, speed1firstValue - speed2firstValue);
 	}
 
+	@SuppressWarnings("unchecked")
+	public void testAddLayerOperation(){
+		// place to store results data
+		InMemoryStore store = new SampleData().getData(10);
+
+		List<IStoreItem> selection = new ArrayList<IStoreItem>();
+
+		StoreGroup track1 = new StoreGroup("Track 1");
+		selection.add(track1);
+
+		Collection<ICommand<IStoreItem>> commands = new AddLayerOperation().actionsFor(selection, store, context);
+		assertEquals("invalid number of inputs", 1, commands.size());
+		for (ICommand<IStoreItem> iCommand : commands) {
+			iCommand.execute();
+		}
+
+		IQuantityCollection<Velocity> speed_good_1 = (IQuantityCollection<Velocity>) store.get(SampleData.SPEED_ONE);
+		selection =new ArrayList<>();
+		selection.add(speed_good_1);
+
+		commands = new AddLayerOperation().actionsFor(selection, store, context);
+		assertEquals("invalid number of inputs", 1, commands.size());
+		for (ICommand<IStoreItem> iCommand : commands) {
+			iCommand.execute();
+			iCommand.dataChanged(speed_good_1);
+		}
+	}
+	
+	
 	@SuppressWarnings("unchecked")
 	public void testDivision()
 	{
