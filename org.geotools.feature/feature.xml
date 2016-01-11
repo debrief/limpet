@@ -2,7 +2,7 @@
 <feature
       id="org.geotools.feature"
       label="%featureName"
-      version="1.0.1"
+      version="1.0.6.qualifier"
       provider-name="%providerName"
       plugin="org.geotools">
 
