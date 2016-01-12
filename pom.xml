@@ -30,6 +30,7 @@
     <module>info.limpet.site</module>
     <module>info.limpet.product</module>
     <module>info.limpet.sample_data</module>
+    <module>info.limpet.report</module>
   </modules>
 
   <build>
