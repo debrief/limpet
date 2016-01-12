@@ -1,16 +1,19 @@
-/*******************************************************************************
- * Copyright (c) 2015 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+/*****************************************************************************
+ *  Limpet - the Lightweight InforMation ProcEssing Toolkit
+ *  http://limpet.info
  *
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ *  (C) 2015-2016, Deep Blue C Technologies Ltd
+ *
+ *  This library is free software; you can redistribute it and/or
+ *  modify it under the terms of the Eclipse Public License v1.0
+ *  (http://www.eclipse.org/legal/epl-v10.html)
+ *
+ *  This library is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *****************************************************************************/
 package info.limpet;
 
-import info.limpet.IStore.IStoreItem;
 
 import java.util.List;
 
@@ -22,17 +25,17 @@ import java.util.List;
  */
 public interface ICommand<T extends IStoreItem> extends IChangeListener, IStoreItem
 {
-	public String getDescription();
-	public void execute();
-	public void undo();
-	public void redo();
-	public boolean canUndo();
-	public boolean canRedo();
-	public List<T> getOutputs();
-	public List<T> getInputs();
+	String getDescription();
+	void execute();
+	void undo();
+	void redo();
+	boolean canUndo();
+	boolean canRedo();
+	List<T> getOutputs();
+	List<T> getInputs();
 	boolean getDynamic();
 	void setDynamic(boolean dynamic);
 	
-	final static String NEW_DATASET_MESSAGE = "Provide name for new dataset"; 
+	String NEW_DATASET_MESSAGE = "Provide name for new dataset"; 
 	
 }

@@ -1,13 +1,17 @@
-/*******************************************************************************
- * Copyright (c) 2015 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+/*****************************************************************************
+ *  Limpet - the Lightweight InforMation ProcEssing Toolkit
+ *  http://limpet.info
  *
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ *  (C) 2015-2016, Deep Blue C Technologies Ltd
+ *
+ *  This library is free software; you can redistribute it and/or
+ *  modify it under the terms of the Eclipse Public License v1.0
+ *  (http://www.eclipse.org/legal/epl-v10.html)
+ *
+ *  This library is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *****************************************************************************/
 package info.limpet.data.impl;
 
 import java.util.Iterator;
@@ -17,157 +21,156 @@ import info.limpet.ICommand;
 import info.limpet.ITemporalObjectCollection;
 import info.limpet.data.impl.helpers.TimeHelper;
 
-public class TemporalObjectCollection<T extends Object> extends
-		ObjectCollection<T> implements ITemporalObjectCollection<T>
+public class TemporalObjectCollection<T extends Object> extends ObjectCollection<T> implements
+    ITemporalObjectCollection<T>
 {
 
-	TimesList<Long> times = new TimesList<Long>();
-	transient TimeHelper tSupport;
+  private final TimesList<Long> times = new TimesList<Long>();
+  private transient TimeHelper tSupport;
 
-	public TemporalObjectCollection(String name)
-	{
-		this(name, null);
-	}
+  public TemporalObjectCollection(String name)
+  {
+    this(name, null);
+  }
 
-	public TemporalObjectCollection(String name, ICommand<?> precedent)
-	{
-		super(name, precedent);
+  public TemporalObjectCollection(String name, ICommand<?> precedent)
+  {
+    super(name, precedent);
 
-		initTime();
-	}
+    initTime();
+  }
 
-	@Override
-	public void clearQuiet()
-	{
-		times.clear();
+  @Override
+  public void clearQuiet()
+  {
+    times.clear();
 
-		// let the parent clear the objects/values
-		super.clearQuiet();
-	}
+    // let the parent clear the objects/values
+    super.clearQuiet();
+  }
 
-	@Override
-	public void clear()
-	{
-		times.clear();
+  @Override
+  public void clear()
+  {
+    times.clear();
 
-		// let the parent clear the objects/values
-		super.clear();
-	}
+    // let the parent clear the objects/values
+    super.clear();
+  }
 
-	protected void initTime()
-	{
-		if (tSupport == null)
-		{
-			tSupport = new TimeHelper(times);
-		}
-	}
+  protected void initTime()
+  {
+    if (tSupport == null)
+    {
+      tSupport = new TimeHelper(times);
+    }
+  }
 
-	@Override
-	public List<Long> getTimes()
-	{
-		initTime();
-		return tSupport.getTimes();
-	}
+  @Override
+  public List<Long> getTimes()
+  {
+    initTime();
+    return tSupport.getTimes();
+  }
 
-	@Override
-	public void add(T value)
-	{
-		throw new UnsupportedOperationException(
-				"Use add(time,object) for a time series");
-	}
+  @Override
+  public void add(T value)
+  {
+    throw new UnsupportedOperationException("Use add(time,object) for a time series");
+  }
 
-	@Override
-	public void add(long time, T object)
-	{
-		times.add(time);
-		super.add(object);
-	}
+  @Override
+  public void add(long time, T object)
+  {
+    times.add(time);
+    super.add(object);
+  }
 
-	@Override
-	public long start()
-	{
-		initTime();
-		return tSupport.start();
-	}
+  @Override
+  public long start()
+  {
+    initTime();
+    return tSupport.start();
+  }
 
-	@Override
-	public long finish()
-	{
-		initTime();
-		return tSupport.finish();
-	}
+  @Override
+  public long finish()
+  {
+    initTime();
+    return tSupport.finish();
+  }
 
-	@Override
-	public long duration()
-	{
-		initTime();
-		return tSupport.duration();
-	}
+  @Override
+  public long duration()
+  {
+    initTime();
+    return tSupport.duration();
+  }
 
-	@Override
-	public double rate()
-	{
-		initTime();
-		return tSupport.rate();
-	}
+  @Override
+  public double rate()
+  {
+    initTime();
+    return tSupport.rate();
+  }
 
-	public Iterator<Doublet<T>> iterator()
-	{
-		return new MyIterator();
-	}
+  public Iterator<Doublet<T>> iterator()
+  {
+    return new MyIterator();
+  }
 
-	private class MyIterator implements Iterator<Doublet<T>>
-	{
+  private class MyIterator implements Iterator<Doublet<T>>
+  {
 
-		int ctr = 0;
+    private int ctr = 0;
 
-		@Override
-		public boolean hasNext()
-		{
-			return ctr < size();
-		}
+    @Override
+    public boolean hasNext()
+    {
+      return ctr < getValuesCount();
+    }
 
-		@Override
-		public Doublet<T> next()
-		{
+    @Override
+    public Doublet<T> next()
+    {
 
-			final int thisCtr = ctr;
-			ctr++;
-			return new Doublet<T>()
-			{
+      final int thisCtr = ctr;
+      ctr++;
+      return new Doublet<T>()
+      {
 
-				@Override
-				public long getTime()
-				{
-					return times.get(thisCtr);
-				}
+        @Override
+        public long getTime()
+        {
+          return times.get(thisCtr);
+        }
 
-				@Override
-				public T getObservation()
-				{
-					return values.get(thisCtr);
-				}
-			};
-		}
+        @Override
+        public T getObservation()
+        {
+          return getValues().get(thisCtr);
+        }
+      };
+    }
 
-		@Override
-		public void remove()
-		{
-			throw new UnsupportedOperationException("Method not implemented");
-		}
+    @Override
+    public void remove()
+    {
+      throw new UnsupportedOperationException("Method not implemented");
+    }
 
-	}
+  }
 
-	@Override
-	public boolean isQuantity()
-	{
-		return false;
-	}
+  @Override
+  public boolean isQuantity()
+  {
+    return false;
+  }
 
-	@Override
-	public boolean isTemporal()
-	{
-		return true;
-	}
+  @Override
+  public boolean isTemporal()
+  {
+    return true;
+  }
 
 }

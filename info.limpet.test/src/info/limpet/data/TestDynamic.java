@@ -1,24 +1,28 @@
-/*******************************************************************************
- * Copyright (c) 2015 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+/*****************************************************************************
+ *  Limpet - the Lightweight InforMation ProcEssing Toolkit
+ *  http://limpet.info
  *
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ *  (C) 2015-2016, Deep Blue C Technologies Ltd
+ *
+ *  This library is free software; you can redistribute it and/or
+ *  modify it under the terms of the Eclipse Public License v1.0
+ *  (http://www.eclipse.org/legal/epl-v10.html)
+ *
+ *  This library is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *****************************************************************************/
 package info.limpet.data;
 
 import info.limpet.ICollection;
 import info.limpet.ICommand;
 import info.limpet.IContext;
 import info.limpet.IQuantityCollection;
-import info.limpet.IStore.IStoreItem;
+import info.limpet.IStoreItem;
 import info.limpet.data.impl.CoreChangeListener;
 import info.limpet.data.impl.MockContext;
 import info.limpet.data.impl.samples.SampleData;
-import info.limpet.data.operations.AddQuantityOperation;
+import info.limpet.data.operations.arithmetic.AddQuantityOperation;
 import info.limpet.data.store.InMemoryStore;
 
 import java.util.ArrayList;
@@ -159,9 +163,9 @@ public class TestDynamic extends TestCase
 
 		// check the data lengths
 		IQuantityCollection<?> newResQ = (IQuantityCollection<?>) newResSeries;
-		assertEquals("correct elements", 10, newResQ.size());
-		assertEquals("correct elements", 10, speedTwo.size());
-		assertEquals("correct elements", 10, resSeries.size());
+		assertEquals("correct elements", 10, newResQ.getValuesCount());
+		assertEquals("correct elements", 10, speedTwo.getValuesCount());
+		assertEquals("correct elements", 10, resSeries.getValuesCount());
 
 		// check the units haven't changed
 		assertEquals("units still valid", resUnits, iq.getUnits().toString());

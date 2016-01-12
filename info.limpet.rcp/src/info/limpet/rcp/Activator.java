@@ -1,14 +1,21 @@
-/*******************************************************************************
- * Copyright (c) 2015 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+/*****************************************************************************
+ *  Limpet - the Lightweight InforMation ProcEssing Toolkit
+ *  http://limpet.info
  *
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ *  (C) 2015-2016, Deep Blue C Technologies Ltd
+ *
+ *  This library is free software; you can redistribute it and/or
+ *  modify it under the terms of the Eclipse Public License v1.0
+ *  (http://www.eclipse.org/legal/epl-v10.html)
+ *
+ *  This library is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *****************************************************************************/
 package info.limpet.rcp;
+
+import info.limpet.data.operations.spatial.GeoSupport;
+import info.limpet.data.operations.spatial.GeotoolsCalculator;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -78,6 +85,9 @@ public class Activator extends AbstractUIPlugin
 	{
 		super.start(context);
 		plugin = this;
+		
+		// ok, setup the geo tools service
+		GeoSupport.setCalculator(new GeotoolsCalculator());
 	}
 
 	/*

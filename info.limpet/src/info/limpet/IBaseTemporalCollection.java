@@ -1,13 +1,17 @@
-/*******************************************************************************
- * Copyright (c) 2015 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+/*****************************************************************************
+ *  Limpet - the Lightweight InforMation ProcEssing Toolkit
+ *  http://limpet.info
  *
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ *  (C) 2015-2016, Deep Blue C Technologies Ltd
+ *
+ *  This library is free software; you can redistribute it and/or
+ *  modify it under the terms of the Eclipse Public License v1.0
+ *  (http://www.eclipse.org/legal/epl-v10.html)
+ *
+ *  This library is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *****************************************************************************/
 package info.limpet;
 
 import java.util.List;
@@ -20,14 +24,14 @@ public interface IBaseTemporalCollection
 	 * 
 	 * @return
 	 */
-	public long start();
+	long start();
 
 	/**
 	 * time of the last observation
 	 * 
 	 * @return
 	 */
-	public long finish();
+	long finish();
 
 	/**
 	 * time period between first & last measurement. 0 if just one observation, -1
@@ -35,19 +39,19 @@ public interface IBaseTemporalCollection
 	 * 
 	 * @return
 	 */
-	public long duration();
+	long duration();
 
 	/**
 	 * number of observations per milli, across the whole collection
 	 * 
 	 * @return
 	 */
-	public double rate();
+	double rate();
 	
 	/** retrieve the times
 	 * 
 	 * @return
 	 */
-	public List<Long> getTimes();
+	List<Long> getTimes();
 	
 }

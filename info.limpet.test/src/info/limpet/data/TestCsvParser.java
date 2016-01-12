@@ -1,20 +1,24 @@
-/*******************************************************************************
- * Copyright (c) 2015 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+/*****************************************************************************
+ *  Limpet - the Lightweight InforMation ProcEssing Toolkit
+ *  http://limpet.info
  *
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ *  (C) 2015-2016, Deep Blue C Technologies Ltd
+ *
+ *  This library is free software; you can redistribute it and/or
+ *  modify it under the terms of the Eclipse Public License v1.0
+ *  (http://www.eclipse.org/legal/epl-v10.html)
+ *
+ *  This library is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *****************************************************************************/
 package info.limpet.data;
 
 import java.io.File;
 import java.util.List;
 
 import info.limpet.ICollection;
-import info.limpet.IStore.IStoreItem;
+import info.limpet.IStoreItem;
 import info.limpet.data.csv.CsvParser;
 import info.limpet.data.store.InMemoryStore.StoreGroup;
 import junit.framework.TestCase;
@@ -29,7 +33,7 @@ public class TestCsvParser extends TestCase
 		List<IStoreItem> items = new CsvParser().parse(file.getAbsolutePath());
 		assertTrue(items.size() == 1);
 		ICollection firstColl = (ICollection) items.get(0);
-		assertEquals("correct num rows", 69, firstColl.size());
+		assertEquals("correct num rows", 69, firstColl.getValuesCount());
 	}
 
 	public void testFrequencs() throws Exception
@@ -39,7 +43,7 @@ public class TestCsvParser extends TestCase
 		List<IStoreItem> items = new CsvParser().parse(file.getAbsolutePath());
 		assertTrue(items.size() == 1);
 		ICollection firstColl = (ICollection) items.get(0);
-		assertEquals("correct num rows", 11, firstColl.size());
+		assertEquals("correct num rows", 11, firstColl.getValuesCount());
 	}
 
 	public void testMultiColumn() throws Exception
@@ -52,7 +56,7 @@ public class TestCsvParser extends TestCase
 		StoreGroup group = (StoreGroup) items.get(0);
 		assertEquals("correct num collections", 6, group.size());
 		ICollection firstColl = (ICollection) group.get(0);
-		assertEquals("correct num rows", 69, firstColl.size());
+		assertEquals("correct num rows", 69, firstColl.getValuesCount());
 	}
 
 	public void testMultiColumnUSA() throws Exception
@@ -65,7 +69,7 @@ public class TestCsvParser extends TestCase
 		StoreGroup group = (StoreGroup) items.get(0);
 		assertEquals("correct num collections", 3, group.size());
 		ICollection firstColl = (ICollection) group.get(0);
-		assertEquals("correct num rows", 1708, firstColl.size());
+		assertEquals("correct num rows", 1708, firstColl.getValuesCount());
 	}
 	
 	public static File getDataFile(String name)

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="Limpet" uid="Limpet" id="info.limpet.rcp.product" application="info.limpet.rcp.application" version="1.0.5" useFeatures="true" includeLaunchers="true">
+<product name="Limpet" uid="Limpet" id="info.limpet.rcp.product" application="info.limpet.rcp.application" version="1.0.6" useFeatures="true" includeLaunchers="true">
 
    <aboutInfo>
       <image path="icons/DebriefNGlogoSmall.png"/>
@@ -231,8 +231,10 @@ Library.
       <feature id="org.eclipse.equinox.p2.rcp.feature"/>
       <feature id="org.eclipse.equinox.p2.user.ui"/>
       <feature id="org.eclipse.equinox.p2.extras.feature"/>
+      <feature id="org.geotools.feature"/>
       <feature id="info.limpet.feature"/>
       <feature id="info.limpet.rcp.feature"/>
+      <feature id="info.limpet.ui.feature"/>
    </features>
 
    <configurations>

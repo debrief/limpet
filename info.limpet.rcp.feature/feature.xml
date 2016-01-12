@@ -2,7 +2,7 @@
 <feature
       id="info.limpet.rcp.feature"
       label="%featureName"
-      version="1.0.3"
+      version="1.0.6.qualifier"
       provider-name="%providerName"
       plugin="info.limpet.rcp">
 
@@ -188,11 +188,5 @@ Library.
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-
-   <plugin
-         id="info.limpet.sample_data"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
 
 </feature>

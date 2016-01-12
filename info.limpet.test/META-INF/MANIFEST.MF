@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Limpet Test plugin
 Bundle-SymbolicName: info.limpet.test
-Bundle-Version: 1.0.2
+Bundle-Version: 1.0.6.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-Vendor: MWC
 Require-Bundle: info.limpet;bundle-version="1.0.0",
@@ -12,4 +12,7 @@ Require-Bundle: info.limpet;bundle-version="1.0.0",
  org.apache.felix.gogo.runtime,
  org.apache.felix.gogo.shell,
  org.eclipse.core.resources,
- org.eclipse.core.runtime
+ org.eclipse.core.runtime,
+ info.limpet.rcp,
+ info.limpet.ui,
+ org.eclipse.ui.views

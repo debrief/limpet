@@ -1,18 +1,22 @@
-/*******************************************************************************
- * Copyright (c) 2015 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+/*****************************************************************************
+ *  Limpet - the Lightweight InforMation ProcEssing Toolkit
+ *  http://limpet.info
  *
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ *  (C) 2015-2016, Deep Blue C Technologies Ltd
+ *
+ *  This library is free software; you can redistribute it and/or
+ *  modify it under the terms of the Eclipse Public License v1.0
+ *  (http://www.eclipse.org/legal/epl-v10.html)
+ *
+ *  This library is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *****************************************************************************/
 package info.limpet.analysis;
 
 import info.limpet.ICollection;
 import info.limpet.IObjectCollection;
-import info.limpet.IStore.IStoreItem;
+import info.limpet.IStoreItem;
 import info.limpet.data.operations.CollectionComplianceTests;
 
 import java.util.ArrayList;
@@ -23,122 +27,127 @@ import org.apache.commons.math3.stat.Frequency;
 
 public abstract class ObjectFrequencyBins extends CoreAnalysis
 {
-	private static final int MAX_SIZE = 2000;
-	final CollectionComplianceTests aTests;
+  private static final int MAX_SIZE = 2000;
+  private final CollectionComplianceTests aTests =
+      new CollectionComplianceTests();
 
-	public ObjectFrequencyBins()
-	{
-		super("Quantity Frequency Bins");
-		aTests = new CollectionComplianceTests();
-	}
+  public ObjectFrequencyBins()
+  {
+    super("Quantity Frequency Bins");
+  }
 
-	public static class BinnedData extends ArrayList<Bin>
-	{
-		/**
+  public static class BinnedData extends ArrayList<Bin>
+  {
+    /**
 		 * 
 		 */
-		private static final long serialVersionUID = 1L;
-		final ICollection collection;
+    private static final long serialVersionUID = 1L;
 
-		public BinnedData(ICollection collection, int number)
-		{
-			this.collection = collection;
-		}
-	}
+    public BinnedData()
+    {
+    }
+  }
 
-	public static class Bin
-	{
-		final public Object indexVal;
-		final public long freqVal;
+  public static class Bin
+  {
+    private final Object indexVal;
+    private final long freqVal;
 
-		public Bin(Object index, long freq)
-		{
-			indexVal = index;
-			freqVal = freq;
-		}
-	}
+    public Bin(Object index, long freq)
+    {
+      indexVal = index;
+      freqVal = freq;
+    }
 
-	public static BinnedData doBins(IObjectCollection<?> collection)
-	{
+    public long getFreqVal()
+    {
+      return freqVal;
+    }
 
-		// build up the histogram
-		Frequency freq = new Frequency();
-		Iterator<?> iter2 = collection.getValues().iterator();
-		while (iter2.hasNext())
-		{
-			Object object = (Object) iter2.next();
-			freq.addValue(object.toString());
-		}
+    public Object getIndexVal()
+    {
+      return indexVal;
+    }
+  }
 
-		// ok, now output this one
-		int numItems = freq.getUniqueCount();
+  public static BinnedData doBins(IObjectCollection<?> collection)
+  {
 
-		BinnedData res = new BinnedData(collection, numItems);
+    // build up the histogram
+    Frequency freq = new Frequency();
+    Iterator<?> iter2 = collection.getValues().iterator();
+    while (iter2.hasNext())
+    {
+      Object object = (Object) iter2.next();
+      freq.addValue(object.toString());
+    }
 
-		Iterator<Comparable<?>> vIter = freq.valuesIterator();
-		while (vIter.hasNext())
-		{
-			Comparable<?> value = vIter.next();
-			res.add(new Bin(value, freq.getCount(value)));
-		}
+    BinnedData res = new BinnedData();
 
-		return res;
-	}
+    Iterator<Comparable<?>> vIter = freq.valuesIterator();
+    while (vIter.hasNext())
+    {
+      Comparable<?> value = vIter.next();
+      res.add(new Bin(value, freq.getCount(value)));
+    }
 
-	@Override
-	public void analyse(List<IStoreItem> selection)
-	{
-		List<String> titles = new ArrayList<String>();
-		List<String> values = new ArrayList<String>();
+    return res;
+  }
 
-		// check compatibility
-		if (appliesTo(selection))
-		{
-			if (selection.size() == 1)
-			{
-				// ok, let's go for it.
-				for (Iterator<IStoreItem> iter = selection.iterator(); iter.hasNext();)
-				{
-					ICollection thisC = (ICollection) iter.next();
+  @Override
+  public void analyse(List<IStoreItem> selection)
+  {
+    List<String> titles = new ArrayList<String>();
+    List<String> values = new ArrayList<String>();
 
-					if (thisC.size() <= MAX_SIZE)
-					{
-						IObjectCollection<?> o = (IObjectCollection<?>) thisC;
+    // check compatibility
+    if (appliesTo(selection) && selection.size() == 1)
+    {
+      // ok, let's go for it.
+      for (Iterator<IStoreItem> iter = selection.iterator(); iter.hasNext();)
+      {
+        ICollection thisC = (ICollection) iter.next();
 
-						BinnedData res = doBins(o);
+        if (thisC.getValuesCount() <= MAX_SIZE)
+        {
+          IObjectCollection<?> o = (IObjectCollection<?>) thisC;
 
-						titles.add("Unique values");
-						values.add(res.size() + "");
+          BinnedData res = doBins(o);
 
-						StringBuffer freqBins = new StringBuffer();
+          titles.add("Unique values");
+          values.add(res.size() + "");
 
-						Iterator<Bin> bIter = res.iterator();
-						while (bIter.hasNext())
-						{
-							ObjectFrequencyBins.Bin bin = (ObjectFrequencyBins.Bin) bIter
-									.next();
-							freqBins.append(bin.indexVal);
-							freqBins.append(':');
-							freqBins.append(bin.freqVal);
-							freqBins.append(", ");
-						}
-						titles.add("Frequency");
-						values.add(freqBins.toString());
-					}
-				}
-			}
-		}
+          StringBuffer freqBins = new StringBuffer();
 
-		if (titles.size() > 0)
-			presentResults(titles, values);
+          Iterator<Bin> bIter = res.iterator();
+          while (bIter.hasNext())
+          {
+            ObjectFrequencyBins.Bin bin =
+                (ObjectFrequencyBins.Bin) bIter.next();
+            freqBins.append(bin.getIndexVal());
+            freqBins.append(':');
+            freqBins.append(bin.getFreqVal());
+            freqBins.append(", ");
+          }
+          titles.add("Frequency");
+          values.add(freqBins.toString());
+        }
+      }
+    }
 
-	}
+    if (titles.size() > 0)
+    {
+      presentResults(titles, values);
+    }
 
-	private boolean appliesTo(List<IStoreItem> selection)
-	{
-		return aTests.allCollections(selection) && aTests.allNonQuantity(selection)  && aTests.allNonLocation(selection);
-	}
+  }
 
-	abstract protected void presentResults(List<String> titles,
-			List<String> values);
+  private boolean appliesTo(List<IStoreItem> selection)
+  {
+    return aTests.allCollections(selection) && aTests.allNonQuantity(selection)
+        && aTests.allNonLocation(selection);
+  }
+
+  protected abstract void presentResults(List<String> titles,
+      List<String> values);
 }
