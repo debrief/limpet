@@ -50,7 +50,16 @@ public class LimpetLabelProvider extends LabelProvider
     if (obj2 instanceof LimpetWrapper)
     {
       LimpetWrapper wrapper = (LimpetWrapper) obj2;
-      item = (IStoreItem) wrapper.getSubject();
+      Object obj = wrapper.getSubject();
+      if (obj instanceof IStoreItem)
+      {
+        item = (IStoreItem) obj;
+      }
+      else if (obj instanceof NamedList)
+      {
+        // is it just one, or multiple?
+        res = Activator.getImageDescriptor("icons/folder.png");
+      }
     }
     else if (obj2 instanceof IStoreItem)
     {
