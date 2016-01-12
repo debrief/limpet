@@ -14,8 +14,6 @@
  *****************************************************************************/
 package info.limpet.rcp.product;
 
-import info.limpet.rcp.Activator;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -51,6 +49,8 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.StatusUtil;
 import org.eclipse.ui.internal.ide.application.DelayedEventsProcessor;
 import org.eclipse.ui.internal.ide.application.IDEWorkbenchAdvisor;
+
+import info.limpet.rcp.Activator;
 
 @SuppressWarnings("restriction")
 public class Application implements IApplication, IExecutableExtension

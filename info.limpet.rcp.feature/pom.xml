@@ -5,11 +5,10 @@
   <parent>
     <groupId>info.limpet</groupId>
     <artifactId>parent</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.6-SNAPSHOT</version>
   </parent>
   <groupId>info.limpet</groupId>
   <artifactId>info.limpet.rcp.feature</artifactId>
-  <version>1.0.3</version>
   <packaging>eclipse-feature</packaging>
   
 </project>

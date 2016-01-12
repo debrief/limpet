@@ -17,8 +17,10 @@ then
 	cp ../../info.limpet.product/target/repository/binary/* binary
 	mkdir features
 	cp ../../info.limpet.product/target/repository/features/info.limpet* features
+	cp ../../info.limpet.product/target/repository/features/org.geotools* features
 	mkdir plugins
 	cp ../../info.limpet.product/target/repository/plugins/info.limpet* plugins
+	cp ../../info.limpet.product/target/repository/plugins/org.geotools* plugins
 	cp ../../info.limpet.product/www/* .
 	cd ..
 	rm -rf coverage
@@ -31,6 +33,7 @@ then
 	cp ../info.limpet.site/*.css static/report
 	cp -r ../info.limpet/target/site static/report/info.limpet
 	cp -r ../info.limpet.rcp/target/site static/report/info.limpet.rcp
+	cp -r ../info.limpet.ui/target/site static/report/info.limpet.ui
 	cp -r ../info.limpet.test/target/site static/report/info.limpet.rcp.test
 	git add .
 	git commit -m "Deploy Limpet Artifacts"

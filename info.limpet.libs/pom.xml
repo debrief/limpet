@@ -5,10 +5,9 @@
   <parent>
     <groupId>info.limpet</groupId>
     <artifactId>parent</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.6-SNAPSHOT</version>
   </parent>
   <groupId>info.limpet</groupId>
   <artifactId>info.limpet.libs</artifactId>
-  <version>1.0.0</version>
   <packaging>eclipse-plugin</packaging>
 </project>
