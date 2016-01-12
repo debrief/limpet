@@ -15,6 +15,10 @@ import javax.measure.unit.Unit;
 
 import junit.framework.TestCase;
 
+/**
+ * Test setting/getting properties of a {@link TestData} object via {@link ReflectivePropertySource}
+ * .
+ */
 public class TestReflectivePropertySource extends TestCase
 {
 
@@ -57,9 +61,8 @@ public class TestReflectivePropertySource extends TestCase
 
     propertyValue = propertySource.getPropertyValue(TestData.PROP_RANGE);
 
-    Object cellEditorValue =
-        PropertyTypeHandler.QUANTITY_RANGE.toCellEditorValue(testData
-            .getRange(), testData);
+    Object cellEditorValue = PropertyTypeHandler.QUANTITY_RANGE
+        .toCellEditorValue(testData.getRange(), testData);
     assertEquals(cellEditorValue, propertyValue);
   }
 
@@ -77,14 +80,11 @@ public class TestReflectivePropertySource extends TestCase
     propertySource.setPropertyValue(TestData.PROP_UNIT, Temperature.UNIT);
     assertEquals(Temperature.UNIT, testData.getUnits());
 
-    propertySource.setPropertyValue(TestData.PROP_UNIT, Temperature.UNIT);
-    assertEquals(Temperature.UNIT, testData.getUnits());
-
     propertySource.setPropertyValue(TestData.PROP_RANGE, "10 : 50");
-    Measure<Double, Velocity> min =
-        (Measure<Double, Velocity>) testData.getRange().getMinimum();
-    Measure<Double, Velocity> max =
-        (Measure<Double, Velocity>) testData.getRange().getMaximum();
+    Measure<Double, Velocity> min = (Measure<Double, Velocity>) testData
+        .getRange().getMinimum();
+    Measure<Double, Velocity> max = (Measure<Double, Velocity>) testData
+        .getRange().getMaximum();
     assertEquals(10, min.intValue(min.getUnit()));
     assertEquals(50, max.intValue(max.getUnit()));
 
