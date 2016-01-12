@@ -18,11 +18,11 @@ import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
 
-import info.limpet.rcp.analysis_view.AnalysisView;
-import info.limpet.rcp.data_frequency.DataFrequencyView;
-import info.limpet.rcp.range_slider.RangeSliderView;
-import info.limpet.rcp.time_frequency.TimeFrequencyView;
-import info.limpet.rcp.xy_plot.XyPlotView;
+import info.limpet.ui.analysis_view.AnalysisView;
+import info.limpet.ui.data_frequency.DataFrequencyView;
+import info.limpet.ui.range_slider.RangeSliderView;
+import info.limpet.ui.time_frequency.TimeFrequencyView;
+import info.limpet.ui.xy_plot.XyPlotView;
 
 public class Perspective implements IPerspectiveFactory
 {
