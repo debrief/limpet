@@ -32,7 +32,7 @@ public class Activator extends AbstractUIPlugin
 {
 
 	// The plug-in ID
-	public static final String PLUGIN_ID = "info.limpet.rcp"; //$NON-NLS-1$
+	public static final String PLUGIN_ID = "info.limpet.ui"; //$NON-NLS-1$
 
 	// The shared instance
 	private static Activator plugin;
