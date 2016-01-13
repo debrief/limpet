@@ -463,7 +463,7 @@ public class DataManagerEditor extends EditorPart
     List<IStoreItem> selection = getSuitableObjects();
 
     // include some top level items
-    showThisList(selection, menu, OperationsLibrary.getTopLevel());
+    showThisList(selection, menu, OperationsLibrary.getTopLevel(), _store, _context);
 
     // now the tree of operations
     menu.add(new Separator());
@@ -492,7 +492,7 @@ public class DataManagerEditor extends EditorPart
       // now loop through this set of operations
       List<IOperation<?>> values = ops.get(name);
 
-      showThisList(selection, newM, values);
+      showThisList(selection, newM, values, _store, _context);
     }
 
     menu.add(new Separator());
@@ -500,17 +500,16 @@ public class DataManagerEditor extends EditorPart
 
   }
 
-  private void showThisList(List<IStoreItem> selection, IMenuManager newM,
-      List<IOperation<?>> values)
+  public static void showThisList(List<IStoreItem> selection, IMenuManager newM,
+      List<IOperation<?>> values, final IStore theStore, final IContext context)
   {
     Iterator<IOperation<?>> oIter = values.iterator();
     while (oIter.hasNext())
     {
       @SuppressWarnings("unchecked")
       final IOperation<IStoreItem> op = (IOperation<IStoreItem>) oIter.next();
-      final IStore theStore = _store;
       Collection<ICommand<IStoreItem>> matches =
-          op.actionsFor(selection, theStore, _context);
+          op.actionsFor(selection, theStore, context);
 
       Iterator<ICommand<IStoreItem>> mIter = matches.iterator();
       while (mIter.hasNext())
