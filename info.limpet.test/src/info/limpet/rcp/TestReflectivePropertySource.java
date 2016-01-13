@@ -3,8 +3,8 @@ package info.limpet.rcp;
 import info.limpet.IBaseQuantityCollection;
 import info.limpet.QuantityRange;
 import info.limpet.UIProperty;
-import info.limpet.rcp.data_provider.data.PropertyTypeHandler;
-import info.limpet.rcp.data_provider.data.ReflectivePropertySource;
+import info.limpet.ui.data_provider.data.PropertyTypeHandler;
+import info.limpet.ui.data_provider.data.ReflectivePropertySource;
 
 import javax.measure.Measurable;
 import javax.measure.Measure;

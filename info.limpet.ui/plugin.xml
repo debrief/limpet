@@ -6,46 +6,46 @@
          point="org.eclipse.ui.views">
       <category
             name="Limpet Data Analysis"
-            id="info.limpet.rcp">
+            id="info.limpet.ui">
       </category>
       <view
             allowMultiple="true"
             name="Analysis View"
             icon="icons/overview.png"
-            category="info.limpet.rcp"
-            class="info.limpet.rcp.analysis_view.AnalysisView"
-            id="info.limpet.rcp.AnalysisView">
+            category="info.limpet.ui"
+            class="info.limpet.ui.analysis_view.AnalysisView"
+            id="info.limpet.ui.AnalysisView">
       </view>
       <view
             allowMultiple="true"
             name="Data Frequency"
             icon="icons/bar-chart.png"
-            category="info.limpet.rcp"
-            class="info.limpet.rcp.data_frequency.DataFrequencyView"
-            id="info.limpet.rcp.DataFrequencyView">
+            category="info.limpet.ui"
+            class="info.limpet.ui.data_frequency.DataFrequencyView"
+            id="info.limpet.ui.DataFrequencyView">
       </view>
       <view
             allowMultiple="true"
             name="Time Frequency"
             icon="icons/time-bar-chart.png"
-            category="info.limpet.rcp"
-            class="info.limpet.rcp.time_frequency.TimeFrequencyView"
-            id="info.limpet.rcp.TimeFrequencyView">
+            category="info.limpet.ui"
+            class="info.limpet.ui.time_frequency.TimeFrequencyView"
+            id="info.limpet.ui.TimeFrequencyView">
       </view>
       <view
             allowMultiple="true"
-            category="info.limpet.rcp"
-            class="info.limpet.rcp.xy_plot.XyPlotView"
+            category="info.limpet.ui"
+            class="info.limpet.ui.xy_plot.XyPlotView"
             icon="icons/line-chart.png"
-            id="info.limpet.rcp.XyPlotView"
+            id="info.limpet.ui.XyPlotView"
             name="XY Plot">
       </view>
       <view
             allowMultiple="true"
-            category="info.limpet.rcp"
-            class="info.limpet.rcp.range_slider.RangeSliderView"
+            category="info.limpet.ui"
+            class="info.limpet.ui.range_slider.RangeSliderView"
             icon="icons/properties.png"
-            id="info.limpet.rcp.RangeSliderView"
+            id="info.limpet.ui.RangeSliderView"
             name="Range Slider">
       </view>
    </extension>
@@ -56,9 +56,9 @@
       	name="Data Manager Editor"
       	extensions="lap"
       	icon="icons/limpet.png"
-      	class="info.limpet.rcp.editors.DataManagerEditor"
-      	contributorClass="info.limpet.rcp.editors.DataManagerEditorActionBarContributor"
-      	id="info.limpet.rcp.editors.dataManagerEditor">
+      	class="info.limpet.ui.editors.DataManagerEditor"
+      	contributorClass="info.limpet.ui.editors.DataManagerEditorActionBarContributor"
+      	id="info.limpet.ui.editors.dataManagerEditor">
    	</editor>
    </extension>
 
@@ -68,35 +68,35 @@
             lightweight="true"
             adaptable="true"
             label="Limpet Decorator"
-            class="info.limpet.rcp.decorators.LimpetDecorator"
+            class="info.limpet.ui.decorators.LimpetDecorator"
             state="true"
-            id="info.limpet.rcp.decorators.LimpetDecorator">
+            id="info.limpet.ui.decorators.LimpetDecorator">
          <description>
             Limpet Decorator
          </description>
          <enablement>
             <objectClass
-                  name="info.limpet.rcp.data_provider.data.LimpetWrapper">
+                  name="info.limpet.ui.data_provider.data.LimpetWrapper">
             </objectClass>
          </enablement>
       </decorator>
     </extension>
     
     <extension point="org.eclipse.ui.commands">
-        <command defaultHandler="info.limpet.rcp.actions.CreateSampleProject"
-            id="info.limpet.rcp.sampleProject" 
+        <command defaultHandler="info.limpet.ui.actions.CreateSampleProject"
+            id="info.limpet.ui.sampleProject" 
             name="Create Sample Project">
         </command>
     </extension>
     
     <extension point="org.eclipse.ui.menus">
         <menuContribution locationURI="toolbar:org.eclipse.ui.main.toolbar?after=group.file">
-          <toolbar id="info.limpet.rcp.toolbar">
-            <command commandId="info.limpet.rcp.sampleProject"
+          <toolbar id="info.limpet.ui.toolbar">
+            <command commandId="info.limpet.ui.sampleProject"
                 icon="icons/create_project.png"
                 label="Create Sample Project"
                 tooltip="Create Sample project" style="push"
-                id="info.limpet.rcp.sampleProject">
+                id="info.limpet.ui.sampleProject">
             </command>
           </toolbar>
         </menuContribution>
