@@ -18,6 +18,7 @@ import info.limpet.IChangeListener;
 import info.limpet.ICommand;
 import info.limpet.IObjectCollection;
 import info.limpet.IStoreGroup;
+import info.limpet.UIProperty;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -99,6 +100,7 @@ public class ObjectCollection<T extends Object> implements IObjectCollection<T>
   }
 
   @Override
+  @UIProperty(name = "Description", category = UIProperty.CATEGORY_LABEL)
   public String getDescription()
   {
     return description;
@@ -126,12 +128,14 @@ public class ObjectCollection<T extends Object> implements IObjectCollection<T>
   }
 
   @Override
+  @UIProperty(name = "Size", category = UIProperty.CATEGORY_LABEL)
   public int getValuesCount()
   {
     return values.size();
   }
 
   @Override
+  @UIProperty(name = "Name", category = UIProperty.CATEGORY_LABEL)
   public String getName()
   {
     return name;
