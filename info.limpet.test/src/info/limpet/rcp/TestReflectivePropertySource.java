@@ -3,8 +3,10 @@ package info.limpet.rcp;
 import info.limpet.IBaseQuantityCollection;
 import info.limpet.QuantityRange;
 import info.limpet.UIProperty;
-import info.limpet.rcp.data_provider.data.PropertyTypeHandler;
 import info.limpet.rcp.data_provider.data.ReflectivePropertySource;
+
+import java.awt.Point;
+import java.awt.geom.Point2D;
 
 import javax.measure.Measurable;
 import javax.measure.Measure;
@@ -40,6 +42,8 @@ public class TestReflectivePropertySource extends TestCase
     Measure<Double, Velocity> max = Measure.valueOf(100d, unit);
     testData.setRange(new QuantityRange<Velocity>(min, max));
 
+    testData.setLocation(new Point(7, 3));
+
     propertySource = new ReflectivePropertySource(testData);
     propertySource.getPropertyDescriptors();
 
@@ -60,10 +64,10 @@ public class TestReflectivePropertySource extends TestCase
     assertEquals(Velocity.UNIT.toString(), propertyValue);
 
     propertyValue = propertySource.getPropertyValue(TestData.PROP_RANGE);
+    assertEquals("0 : 100", propertyValue);
 
-    Object cellEditorValue = PropertyTypeHandler.QUANTITY_RANGE
-        .toCellEditorValue(testData.getRange(), testData);
-    assertEquals(cellEditorValue, propertyValue);
+    propertyValue = propertySource.getPropertyValue(TestData.PROP_LOCATION);
+    assertEquals("7.0 : 3.0", propertyValue);
   }
 
   public void testSetValue()
@@ -81,13 +85,16 @@ public class TestReflectivePropertySource extends TestCase
     assertEquals(Temperature.UNIT, testData.getUnits());
 
     propertySource.setPropertyValue(TestData.PROP_RANGE, "10 : 50");
-    Measure<Double, Velocity> min = (Measure<Double, Velocity>) testData
-        .getRange().getMinimum();
-    Measure<Double, Velocity> max = (Measure<Double, Velocity>) testData
-        .getRange().getMaximum();
+    Measure<Double, Velocity> min =
+        (Measure<Double, Velocity>) testData.getRange().getMinimum();
+    Measure<Double, Velocity> max =
+        (Measure<Double, Velocity>) testData.getRange().getMaximum();
     assertEquals(10, min.intValue(min.getUnit()));
     assertEquals(50, max.intValue(max.getUnit()));
 
+    propertySource.setPropertyValue(TestData.PROP_LOCATION, "5.0 : 15.0");
+    assertEquals(5.0, testData.getLocation().getX());
+    assertEquals(15.0, testData.getLocation().getY());
   }
 
   public void testResetValue()
@@ -114,12 +121,14 @@ public class TestReflectivePropertySource extends TestCase
     public static final String PROP_FLAG = "flag";
     public static final String PROP_UNIT = "units";
     public static final String PROP_RANGE = "range";
+    public static final String PROP_LOCATION = "location";
 
     private String name;
     private QuantityRange<Velocity> range;
     private int quantity;
     private Unit<Velocity> unit;
     private boolean flag;
+    private Point2D location;
 
     @UIProperty(name = PROP_NAME, category = "category",
         defaultString = "default name")
@@ -212,6 +221,17 @@ public class TestReflectivePropertySource extends TestCase
     public Dimension getDimension()
     {
       return null;
+    }
+
+    @UIProperty(name = "Location (lat:long)", category = "category")
+    public Point2D getLocation()
+    {
+      return location;
+    }
+
+    public void setLocation(Point2D point2d)
+    {
+      this.location = point2d;
     }
 
   }

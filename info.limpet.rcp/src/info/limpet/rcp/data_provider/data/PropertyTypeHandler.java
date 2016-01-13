@@ -1,19 +1,19 @@
 package info.limpet.rcp.data_provider.data;
 
-import java.awt.geom.Point2D;
-
 import info.limpet.IBaseQuantityCollection;
 import info.limpet.QuantityRange;
 import info.limpet.UIProperty;
-import info.limpet.data.operations.spatial.GeoSupport;
 import info.limpet.rcp.Activator;
 import info.limpet.rcp.propertyeditors.SliderPropertyDescriptor;
+
+import java.awt.geom.Point2D;
 
 import javax.measure.Measure;
 import javax.measure.quantity.Quantity;
 import javax.measure.unit.Unit;
 
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
 import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 
@@ -345,9 +345,9 @@ public abstract class PropertyTypeHandler
       };
 
   /**
-   * A handler for {@link Geometry} typed properties
+   * A handler for {@link Point2D} typed properties
    */
-  static final PropertyTypeHandler GEOMETRY = new PropertyTypeHandler()
+  public static final PropertyTypeHandler GEOMETRY = new PropertyTypeHandler()
   {
 
     @Override
@@ -381,14 +381,14 @@ public abstract class PropertyTypeHandler
         String[] bits = str.split(":");
         if (bits.length == 2)
         {
-          String lat = bits[0].trim();
-          String lng = bits[1].trim();
+          String xStr = bits[0].trim();
+          String yStr = bits[1].trim();
           try
           {
-            double latV = Double.parseDouble(lat);
-            double lngV = Double.parseDouble(lng);
+            double x = Double.parseDouble(xStr);
+            double y = Double.parseDouble(yStr);
 
-            newL = GeoSupport.getCalculator().createPoint(lngV, latV);
+            newL = new Point2D.Double(x, y);
           }
           catch (NumberFormatException fe)
           {
@@ -410,8 +410,7 @@ public abstract class PropertyTypeHandler
     public Object toCellEditorValue(Object modelValue, Object propertyOwner)
     {
       Point2D location = (Point2D) modelValue;
-      return location.getY() + " : "
-          + location.getX();
+      return location.getX() + " : " + location.getY();
     };
   };
 }
