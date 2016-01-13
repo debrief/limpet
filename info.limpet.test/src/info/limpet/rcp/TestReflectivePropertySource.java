@@ -42,7 +42,7 @@ public class TestReflectivePropertySource extends TestCase
     Measure<Double, Velocity> max = Measure.valueOf(100d, unit);
     testData.setRange(new QuantityRange<Velocity>(min, max));
 
-    testData.setLocation(new Point(7, 3));
+    testData.setLocation(new Point(3, 7));
 
     propertySource = new ReflectivePropertySource(testData);
     propertySource.getPropertyDescriptors();
@@ -93,8 +93,8 @@ public class TestReflectivePropertySource extends TestCase
     assertEquals(50, max.intValue(max.getUnit()));
 
     propertySource.setPropertyValue(TestData.PROP_LOCATION, "5.0 : 15.0");
-    assertEquals(5.0, testData.getLocation().getX());
-    assertEquals(15.0, testData.getLocation().getY());
+    assertEquals(15.0, testData.getLocation().getX());
+    assertEquals(5.0, testData.getLocation().getY());
   }
 
   public void testResetValue()

@@ -347,7 +347,7 @@ public abstract class PropertyTypeHandler
   /**
    * A handler for {@link Point2D} typed properties
    */
-  public static final PropertyTypeHandler GEOMETRY = new PropertyTypeHandler()
+  public static final PropertyTypeHandler POINT2D = new PropertyTypeHandler()
   {
 
     @Override
@@ -388,7 +388,7 @@ public abstract class PropertyTypeHandler
             double x = Double.parseDouble(xStr);
             double y = Double.parseDouble(yStr);
 
-            newL = new Point2D.Double(x, y);
+            newL = new Point2D.Double(y, x);
           }
           catch (NumberFormatException fe)
           {
@@ -410,7 +410,7 @@ public abstract class PropertyTypeHandler
     public Object toCellEditorValue(Object modelValue, Object propertyOwner)
     {
       Point2D location = (Point2D) modelValue;
-      return location.getX() + " : " + location.getY();
+      return location.getY() + " : " + location.getX();
     };
   };
 }

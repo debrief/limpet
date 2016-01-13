@@ -22,6 +22,7 @@ import static javax.measure.unit.SI.METRE;
 import static javax.measure.unit.SI.RADIAN;
 import static javax.measure.unit.SI.SECOND;
 import info.limpet.ICommand;
+import info.limpet.UIProperty;
 import info.limpet.data.impl.ObjectCollection;
 import info.limpet.data.impl.QuantityCollection;
 import info.limpet.data.impl.TemporalObjectCollection;
@@ -45,12 +46,13 @@ import javax.measure.unit.Unit;
 public class StockTypes
 {
 
-  /** protected static class, to prevent accidental declaration
+  /**
+   * protected static class, to prevent accidental declaration
    * 
    */
   protected StockTypes()
   {
-    
+
   }
 
   public static final Unit<?> DEGREE_ANGLE = RADIAN.times(Math.PI / 180d);
@@ -183,8 +185,8 @@ public class StockTypes
     {
       public AccelerationMSecSec(String name, ICommand<?> precedent)
       {
-        super(name, precedent, METRE.divide(SECOND).divide(SECOND)
-            .asType(Acceleration.class));
+        super(name, precedent, METRE.divide(SECOND).divide(SECOND).asType(
+            Acceleration.class));
       }
 
       public AccelerationMSecSec()
@@ -391,8 +393,8 @@ public class StockTypes
     {
       public AccelerationMSecSec(String name, ICommand<?> precedent)
       {
-        super(name, precedent, METRE.divide(SECOND).divide(SECOND)
-            .asType(Acceleration.class));
+        super(name, precedent, METRE.divide(SECOND).divide(SECOND).asType(
+            Acceleration.class));
       }
 
       public AccelerationMSecSec()
@@ -419,6 +421,34 @@ public class StockTypes
       public List<Point2D> getLocations()
       {
         return super.getValues();
+      }
+
+      @UIProperty(name = "Location (lat:long)",
+          category = UIProperty.CATEGORY_VALUE, visibleWhen = "valuesCount==1")
+      public Point2D getSingletonLocation()
+      {
+        List<Point2D> locations = getLocations();
+        if (locations.size() != 1)
+        {
+          throw new RuntimeException("We only call this on singletons");
+        }
+        return locations.iterator().next();
+      }
+
+      public void setSingletonLocation(Point2D location)
+      {
+        List<Point2D> locations = getLocations();
+        if (locations.size() != 1)
+        {
+          throw new RuntimeException("We only call this on singletons");
+        }
+        clear();
+
+        add(location);
+
+        // ok, fire changed!
+        fireDataChanged();
+
       }
     }
 
