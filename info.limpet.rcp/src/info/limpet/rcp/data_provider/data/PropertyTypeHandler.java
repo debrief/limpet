@@ -90,7 +90,9 @@ public abstract class PropertyTypeHandler
   {
     final PropertyDescriptor propertyDescriptor =
         doCreatePropertyDescriptor(propertyId, metadata);
-    propertyDescriptor.setCategory(metadata.category());
+    if (!metadata.category().isEmpty()) {
+      propertyDescriptor.setCategory(metadata.category());
+    }
     return propertyDescriptor;
   }
 

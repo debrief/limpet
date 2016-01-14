@@ -20,7 +20,7 @@ public @interface UIProperty
 	 */
 	String name();
 
-	String category();
+	String category() default "";
 
 	/**
 	 * Some properties are visible when certain condition is met.

@@ -124,7 +124,9 @@ public class ReflectivePropertySource implements IPropertySource
             descriptor =
                 new org.eclipse.ui.views.properties.PropertyDescriptor(propId,
                     annotation.name());
-            descriptor.setCategory(annotation.category());
+            if (!annotation.category().isEmpty()) {
+              descriptor.setCategory(annotation.category());
+            }
           }
 
           result.add(descriptor);

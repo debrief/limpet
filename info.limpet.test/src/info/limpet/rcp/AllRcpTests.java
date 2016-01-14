@@ -7,7 +7,8 @@ import junit.framework.TestSuite;
 
 @Suite.SuiteClasses(
 {TestReflectivePropertySource.class,
-    TestReflectivePropertySourceSpeedMSec.class})
+    TestReflectivePropertySourceSpeedMSec.class,
+    TestReflectivePropertySourceVisibility.class})
 
 @RunWith(Suite.class)
 public class AllRcpTests extends TestSuite
