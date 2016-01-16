@@ -234,6 +234,37 @@ public class InMemoryStore extends ArrayList<IStoreItem> implements
     {
       fireDataChanged();
     }
+
+    @Override
+    public IStoreItem get(String name)
+    {
+      IStoreItem res = null;
+      Iterator<IStoreItem> iter = iterator();
+      while (iter.hasNext())
+      {
+        IStoreItem item = iter.next();
+        if (item instanceof IStoreGroup)
+        {
+          IStoreGroup group = (IStoreGroup) item;
+          Iterator<IStoreItem> iter2 = group.iterator();
+          while (iter2.hasNext())
+          {
+            IStoreItem thisI = (IStoreItem) iter2.next();
+            if (name.equals(thisI.getName()))
+            {
+              res = thisI;
+              break;
+            }
+          }
+        }
+        if (name.equals(item.getName()))
+        {
+          res = item;
+          break;
+        }
+      }
+      return res;
+    }
   }
 
   private Object readResolve()
