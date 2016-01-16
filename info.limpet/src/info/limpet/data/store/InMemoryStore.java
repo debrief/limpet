@@ -27,8 +27,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
-public class InMemoryStore extends ArrayList<IStoreItem> implements
-    IStore, IChangeListener,  IStoreGroup
+public class InMemoryStore extends ArrayList<IStoreItem> implements IStore,
+    IChangeListener, IStoreGroup
 {
 
   /**
@@ -234,6 +234,37 @@ public class InMemoryStore extends ArrayList<IStoreItem> implements
     {
       fireDataChanged();
     }
+
+    @Override
+    public IStoreItem get(String name)
+    {
+      IStoreItem res = null;
+      Iterator<IStoreItem> iter = iterator();
+      while (iter.hasNext())
+      {
+        IStoreItem item = iter.next();
+        if (item instanceof IStoreGroup)
+        {
+          IStoreGroup group = (IStoreGroup) item;
+          Iterator<IStoreItem> iter2 = group.iterator();
+          while (iter2.hasNext())
+          {
+            IStoreItem thisI = (IStoreItem) iter2.next();
+            if (name.equals(thisI.getName()))
+            {
+              res = thisI;
+              break;
+            }
+          }
+        }
+        if (name.equals(item.getName()))
+        {
+          res = item;
+          break;
+        }
+      }
+      return res;
+    }
   }
 
   private Object readResolve()
@@ -420,6 +451,38 @@ public class InMemoryStore extends ArrayList<IStoreItem> implements
   @Override
   public void collectionDeleted(IStoreItem subject)
   {
+  }
+
+  @Override
+  public int hashCode()
+  {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + getUUID().hashCode();
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj)
+  {
+    if (this == obj)
+    {
+      return true;
+    }
+    if (obj == null)
+    {
+      return false;
+    }
+    if (getClass() != obj.getClass())
+    {
+      return false;
+    }
+    InMemoryStore other = (InMemoryStore) obj;
+    if (!getUUID().equals(other.getUUID()))
+    {
+      return false;
+    }
+    return true;
   }
 
   @Override

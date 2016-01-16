@@ -25,7 +25,7 @@ import info.limpet.data.store.InMemoryStore.StoreChangeListener;
  * @author ian
  * 
  */
-public interface IStore
+public interface IStore extends IStoreGroup
 {
 
   /**
@@ -42,13 +42,6 @@ public interface IStore
    */
   boolean add(IStoreItem items);
 
-  /**
-   * retrieve the named collection
-   * 
-   * @param name
-   * @return
-   */
-  IStoreItem get(String name);
 
   /**
    * retrieve the data item with the specified UUID

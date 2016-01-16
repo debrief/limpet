@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -140,6 +141,26 @@ public abstract class CoreAnalysisView extends ViewPart
           if (coll != null)
           {
             res.add(coll);
+          }
+        }
+        else
+        {
+          // can we adapt it?
+          ArrayList<IAdapterFactory> adapters = Activator.getDefault().getAdapters();
+          if (adapters != null)
+          {
+            Iterator<IAdapterFactory> aIter = adapters.iterator();
+            while (aIter.hasNext())
+            {
+              IAdapterFactory iAdapterFactory = (IAdapterFactory) aIter.next();
+              Object match = iAdapterFactory.getAdapter(object, IStoreItem.class);
+              if (match != null)
+              {
+                res.add((IStoreItem) match);
+                break;
+              }
+              
+            }
           }
         }
       }

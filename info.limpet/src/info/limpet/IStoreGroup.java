@@ -21,6 +21,14 @@ public interface IStoreGroup extends IStoreItem, Collection<IStoreItem>,
     IChangeListener
 {
 
+  /**
+   * retrieve the named collection
+   * 
+   * @param name
+   * @return
+   */
+  IStoreItem get(String name);
+  
   void setName(String value);
 
   boolean hasChildren();

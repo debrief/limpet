@@ -463,7 +463,7 @@ public class DataManagerEditor extends EditorPart
     List<IStoreItem> selection = getSuitableObjects();
 
     // include some top level items
-    showThisList(selection, menu, OperationsLibrary.getTopLevel(), _store, _context);
+    showThisList(selection, menu, OperationsLibrary.getTopLevel(), _store, _context, null);
 
     // now the tree of operations
     menu.add(new Separator());
@@ -492,7 +492,7 @@ public class DataManagerEditor extends EditorPart
       // now loop through this set of operations
       List<IOperation<?>> values = ops.get(name);
 
-      showThisList(selection, newM, values, _store, _context);
+      showThisList(selection, newM, values, _store, _context, null);
     }
 
     menu.add(new Separator());
@@ -501,7 +501,7 @@ public class DataManagerEditor extends EditorPart
   }
 
   public static void showThisList(List<IStoreItem> selection, IMenuManager newM,
-      List<IOperation<?>> values, final IStore theStore, final IContext context)
+      List<IOperation<?>> values, final IStore theStore, final IContext context, final Runnable listener)
   {
     Iterator<IOperation<?>> oIter = values.iterator();
     while (oIter.hasNext())
@@ -521,6 +521,12 @@ public class DataManagerEditor extends EditorPart
           public void run()
           {
             thisC.execute();
+            
+            // do we have a listener?
+            if (listener != null)
+            {
+              listener.run();
+            }
           }
         });
       }

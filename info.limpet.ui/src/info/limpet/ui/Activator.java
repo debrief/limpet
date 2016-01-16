@@ -14,9 +14,12 @@
  *****************************************************************************/
 package info.limpet.ui;
 
+import java.util.ArrayList;
+
 import info.limpet.data.operations.spatial.GeoSupport;
 import info.limpet.data.operations.spatial.GeotoolsCalculator;
 
+import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -31,110 +34,138 @@ import org.osgi.framework.BundleContext;
 public class Activator extends AbstractUIPlugin
 {
 
-	// The plug-in ID
-	public static final String PLUGIN_ID = "info.limpet.ui"; //$NON-NLS-1$
+  // The plug-in ID
+  public static final String PLUGIN_ID = "info.limpet.ui"; //$NON-NLS-1$
 
-	// The shared instance
-	private static Activator plugin;
+  // The shared instance
+  private static Activator plugin;
 
-	private ImageRegistry _imageRegistry;
+  private ImageRegistry _imageRegistry;
 
-	/**
-	 * The constructor
-	 */
-	public Activator()
-	{
-	}
+  /**
+   * the adapters we know about
+   * 
+   */
+  private ArrayList<IAdapterFactory> _adapters;
 
-	private static ImageRegistry getRegistry()
-	{
-		return plugin._imageRegistry;
-	}
+  /**
+   * The constructor
+   */
+  public Activator()
+  {
+  }
 
-	public static Image getImageFromRegistry(final ImageDescriptor name)
-	{
-		Image res = null;
+  private static ImageRegistry getRegistry()
+  {
+    return plugin._imageRegistry;
+  }
 
-		// do we already have an image
-		if (getRegistry() == null)
-		{
-			plugin._imageRegistry = new ImageRegistry();
-		}
+  public static Image getImageFromRegistry(final ImageDescriptor name)
+  {
+    Image res = null;
 
-		// ok - do we have it already?
-		res = getRegistry().get(name.toString());
+    // do we already have an image
+    if (getRegistry() == null)
+    {
+      plugin._imageRegistry = new ImageRegistry();
+    }
 
-		if (res == null)
-		{
-			getRegistry().put(name.toString(), name);
-			res = getRegistry().get(name.toString());
-		}
+    // ok - do we have it already?
+    res = getRegistry().get(name.toString());
 
-		// and return it..
-		return res;
-	}
+    if (res == null)
+    {
+      getRegistry().put(name.toString(), name);
+      res = getRegistry().get(name.toString());
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext
-	 * )
-	 */
-	public void start(BundleContext context) throws Exception
-	{
-		super.start(context);
-		plugin = this;
-		
-		// ok, setup the geo tools service
-		GeoSupport.setCalculator(new GeotoolsCalculator());
-	}
+    // and return it..
+    return res;
+  }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext
-	 * )
-	 */
-	public void stop(BundleContext context) throws Exception
-	{
-		plugin = null;
-		super.stop(context);
-	}
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext
+   * )
+   */
+  public void start(BundleContext context) throws Exception
+  {
+    super.start(context);
+    plugin = this;
 
-	/**
-	 * Returns the shared instance
-	 * 
-	 * @return the shared instance
-	 */
-	public static Activator getDefault()
-	{
-		return plugin;
-	}
+    // ok, setup the geo tools service
+    GeoSupport.setCalculator(new GeotoolsCalculator());
+  }
 
-	/**
-	 * Returns an image descriptor for the image file at the given plug-in
-	 * relative path
-	 * 
-	 * @param path
-	 *          the path
-	 * @return the image descriptor
-	 */
-	public static ImageDescriptor getImageDescriptor(String path)
-	{
-		return imageDescriptorFromPlugin(PLUGIN_ID, path);
-	}
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext
+   * )
+   */
+  public void stop(BundleContext context) throws Exception
+  {
+    plugin = null;
+    super.stop(context);
+  }
 
-	public static void logError(int statCode, String message, Exception e)
-	{
-		IStatus status = new Status(statCode, PLUGIN_ID, message, e);
-		getDefault().getLog().log(status);
-	}
+  /**
+   * Returns the shared instance
+   * 
+   * @return the shared instance
+   */
+  public static Activator getDefault()
+  {
+    return plugin;
+  }
 
-	public static void log(Exception e)
-	{
-		IStatus status = new Status(IStatus.WARNING, PLUGIN_ID, e.getMessage(), e);
-		getDefault().getLog().log(status);
-	}
+  /**
+   * Returns an image descriptor for the image file at the given plug-in
+   * relative path
+   * 
+   * @param path
+   *          the path
+   * @return the image descriptor
+   */
+  public static ImageDescriptor getImageDescriptor(String path)
+  {
+    return imageDescriptorFromPlugin(PLUGIN_ID, path);
+  }
+
+  public static void logError(int statCode, String message, Exception e)
+  {
+    IStatus status = new Status(statCode, PLUGIN_ID, message, e);
+    getDefault().getLog().log(status);
+  }
+
+  public static void log(Exception e)
+  {
+    IStatus status = new Status(IStatus.WARNING, PLUGIN_ID, e.getMessage(), e);
+    getDefault().getLog().log(status);
+  }
+
+  /**
+   * @param limpetAdapters
+   */
+  public void addAdapterFactory(IAdapterFactory newFactory)
+  {
+    if (_adapters == null)
+    {
+      _adapters = new ArrayList<IAdapterFactory>();
+    }
+    _adapters.add(newFactory);
+
+  }
+
+  /**
+   * @return
+   */
+  public ArrayList<IAdapterFactory> getAdapters()
+  {
+    return _adapters;
+  }
+
 }
