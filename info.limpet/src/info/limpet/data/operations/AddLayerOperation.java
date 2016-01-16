@@ -46,7 +46,7 @@ public class AddLayerOperation implements IOperation<IStoreItem>
       IStoreItem first = selection.get(0);
       if (first instanceof IStoreGroup)
       {
-        StoreGroup group = (StoreGroup) first;
+        IStoreGroup group = (IStoreGroup) first;
         newC = new AddLayerCommand(thisTitle, group, destination, context);
       }
     }
@@ -66,14 +66,14 @@ public class AddLayerOperation implements IOperation<IStoreItem>
 
   protected static class AddLayerCommand extends AbstractCommand<IStoreItem>
   {
-    private StoreGroup _group;
+    private IStoreGroup _group;
 
     public AddLayerCommand(String title, IStore store, IContext context)
     {
       super(title, "Add a new layer", store, false, false, null, context);
     }
 
-    public AddLayerCommand(String title, StoreGroup group, IStore store,
+    public AddLayerCommand(String title, IStoreGroup group, IStore store,
         IContext context)
     {
       this(title, store, context);
