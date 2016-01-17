@@ -378,7 +378,6 @@ public class DopplerShiftBetweenTracksOperation implements
         new ArrayList<ICommand<IStoreItem>>();
     if (appliesTo(selection))
     {
-
       // get the list of tracks
       ArrayList<StoreGroup> trackList = aTests.getChildTrackGroups(selection);
 
@@ -417,7 +416,7 @@ public class DopplerShiftBetweenTracksOperation implements
         aTests.collectionWith(selection, Frequency.UNIT.getDimension(), true) != null;
     final boolean topLevelSpeed =
         aTests.collectionWith(selection, METRE.divide(SECOND).getDimension(),
-            true) != null;
+            false) != null;
 
     return aTests.exactNumber(selection, 3) && allGroups && allTracks
         && someHaveFreq && topLevelSpeed;
