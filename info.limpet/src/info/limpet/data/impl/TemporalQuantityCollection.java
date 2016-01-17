@@ -171,7 +171,7 @@ public class TemporalQuantityCollection<T extends Quantity> extends
   }
 
   @UIProperty(name = "Range", category = UIProperty.CATEGORY_METADATA,
-      visibleWhen = "valuesCount == 1")
+      visibleWhen = "values.size() == 1")
   @Override
   public QuantityRange<T> getRange()
   {
@@ -261,7 +261,7 @@ public class TemporalQuantityCollection<T extends Quantity> extends
   }
 
   @UIProperty(name = "Value", category = UIProperty.CATEGORY_VALUE,
-      visibleWhen = "valuesCount == 1")
+      visibleWhen = "values.size() == 1")
   public Number getSingletonValue()
   {
     initQHelper();

@@ -7,28 +7,40 @@ import info.limpet.rcp.data_provider.data.ReflectivePropertySource;
 import junit.framework.TestCase;
 
 /**
- * Test visibility evaluation of properties .
+ * Test visibility evaluation of properties. Full syntax of JEXL available here:
+ * http://commons.apache.org/proper/commons-jexl/reference/syntax.html
  */
 public class TestReflectivePropertySourceVisibility extends TestCase
 {
 
   public void testStateVisibility()
   {
-    assertFalse(new TestSubject(null).containsProperty("state"));
-    assertFalse(new TestSubject("Belgium").containsProperty("state"));
-    assertTrue(new TestSubject("USA").containsProperty("state"));
+    assertFalse(new TestSubject1(null).containsProperty("state"));
+    assertFalse(new TestSubject1("Belgium").containsProperty("state"));
+    assertTrue(new TestSubject1("USA").containsProperty("state"));
   }
 
   public void testMonthlyPensionVisibility()
   {
-    assertFalse(new TestSubject(Gender.FEMALE, 55).containsProperty(
+    assertFalse(new TestSubject2(Gender.FEMALE, 55).containsProperty(
         "monthlyPension"));
-    assertTrue(new TestSubject(Gender.FEMALE, 60).containsProperty(
+    assertTrue(new TestSubject2(Gender.FEMALE, 60).containsProperty(
         "monthlyPension"));
-    assertFalse(new TestSubject(Gender.MALE, 60).containsProperty(
+    assertFalse(new TestSubject2(Gender.MALE, 60).containsProperty(
         "monthlyPension"));
-    assertTrue(new TestSubject(Gender.MALE, 65).containsProperty(
+    assertTrue(new TestSubject2(Gender.MALE, 65).containsProperty(
         "monthlyPension"));
+  }
+
+  public void testSecondLineVisibility()
+  {
+    String[] line1 = new String[]
+    {"First", " ", "line."};
+    assertFalse(new TestSubject3(line1).containsProperty("secondLine"));
+
+    line1 = new String[]
+    {"First", " ", "line,"};
+    assertTrue(new TestSubject3(line1).containsProperty("secondLine"));
   }
 
   enum Gender
@@ -36,28 +48,33 @@ public class TestReflectivePropertySourceVisibility extends TestCase
     MALE, FEMALE
   };
 
-  public static class TestSubject
+  static class BaseTestSubject
+  {
+        boolean containsProperty(String id)
+    {
+      IPropertyDescriptor[] descriptors = new ReflectivePropertySource(this)
+          .getPropertyDescriptors();
+      for (IPropertyDescriptor descriptor : descriptors)
+      {
+        if (descriptor.getId().equals(id))
+        {
+          return true;
+        }
+      }
+      return false;
+    }
+  }
+
+  public static class TestSubject1 extends BaseTestSubject
   {
 
     private String country;
 
     private String state;
 
-    private Gender gender;
-
-    private int age;
-
-    private double monthlyPension;
-
-    public TestSubject(String country)
+    public TestSubject1(String country)
     {
       this.country = country;
-    }
-
-    public TestSubject(Gender gender, int age)
-    {
-      this.gender = gender;
-      this.age = age;
     }
 
     public String getCountry()
@@ -92,6 +109,22 @@ public class TestReflectivePropertySourceVisibility extends TestCase
     public void setState(String state)
     {
       this.state = state;
+    }
+
+  }
+
+  public static class TestSubject2 extends BaseTestSubject
+  {
+    private Gender gender;
+
+    private int age;
+
+    private double monthlyPension;
+
+    public TestSubject2(Gender gender, int age)
+    {
+      this.gender = gender;
+      this.age = age;
     }
 
     public int getAge()
@@ -132,18 +165,37 @@ public class TestReflectivePropertySourceVisibility extends TestCase
       this.monthlyPension = monthlyPension;
     }
 
-    boolean containsProperty(String id)
+  }
+
+  /**
+   * A test subject to demonstrate array access, empty and size functions.
+   */
+  public static class TestSubject3 extends BaseTestSubject
+  {
+    private String[] firstLine;
+
+    /**
+     * Second line shall only be visible if the last word in the first line does not end with period
+     */
+    private String[] secondLine;
+
+    private TestSubject3(String[] firstLine)
     {
-      IPropertyDescriptor[] descriptors = new ReflectivePropertySource(this)
-          .getPropertyDescriptors();
-      for (IPropertyDescriptor descriptor : descriptors)
-      {
-        if (descriptor.getId().equals(id))
-        {
-          return true;
-        }
-      }
-      return false;
+      this.firstLine = firstLine;
     }
+
+    @UIProperty(name = "First line")
+    public String[] getFirstLine()
+    {
+      return firstLine;
+    }
+
+    @UIProperty(name = "Second line",
+        visibleWhen = "!empty(firstLine) && !(firstLine[size(firstLine)-1] =$ '.')")
+    public String[] getSecondLine()
+    {
+      return secondLine;
+    }
+
   }
 }

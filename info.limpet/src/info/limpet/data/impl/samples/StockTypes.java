@@ -424,7 +424,7 @@ public class StockTypes
       }
 
       @UIProperty(name = "Location (lat:long)",
-          category = UIProperty.CATEGORY_VALUE, visibleWhen = "valuesCount==1")
+          category = UIProperty.CATEGORY_VALUE, visibleWhen = "values.size()==1")
       public Point2D getSingletonLocation()
       {
         List<Point2D> locations = getLocations();
