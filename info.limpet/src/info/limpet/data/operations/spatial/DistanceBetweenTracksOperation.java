@@ -91,7 +91,7 @@ public class DistanceBetweenTracksOperation extends TwoTrackOperation
       double thisDist = calc.getDistanceBetween(locA, locB);
       final Measure<Double, Length> thisRes =
           Measure.valueOf(thisDist, outUnits);
-
+      
       if (time != null)
       {
         // get the output dataset
@@ -113,35 +113,41 @@ public class DistanceBetweenTracksOperation extends TwoTrackOperation
           NEW_DATASET_MESSAGE, "Distance between " + super.getSubjectList());
     }
   }
+  
+  
 
   public Collection<ICommand<IStoreItem>> actionsFor(
       List<IStoreItem> selection, IStore destination, IContext context)
   {
+    
+    List<IStoreItem> collatedTracks = getLocationDatasets(selection);
+    
+    
     Collection<ICommand<IStoreItem>> res =
         new ArrayList<ICommand<IStoreItem>>();
-    if (appliesTo(selection))
+    if (appliesTo(collatedTracks))
     {
       // ok, are we doing a tempoarl opeartion?
-      if (getATests().suitableForTimeInterpolation(selection))
+      if (getATests().suitableForTimeInterpolation(collatedTracks))
       {
         // hmm, find the time provider
         final IBaseTemporalCollection timeProvider =
-            getATests().getLongestTemporalCollections(selection);
+            getATests().getLongestTemporalCollections(collatedTracks);
 
         // ok, provide an interpolated action
         ICommand<IStoreItem> newC =
-            new DistanceBetweenOperation(selection, destination,
+            new DistanceBetweenOperation(collatedTracks, destination,
                 "Distance between tracks (interpolated)",
                 "Calculate distance between two tracks (interpolated)",
                 timeProvider, context);
         res.add(newC);
       }
 
-      if (getATests().allEqualLengthOrSingleton(selection))
+      if (getATests().allEqualLengthOrSingleton(collatedTracks))
       {
         // ok, provide an indexed action
         ICommand<IStoreItem> newC =
-            new DistanceBetweenOperation(selection, destination,
+            new DistanceBetweenOperation(collatedTracks, destination,
                 "Distance between tracks (indexed)",
                 "Calculate distance between two tracks (indexed)", context);
         res.add(newC);

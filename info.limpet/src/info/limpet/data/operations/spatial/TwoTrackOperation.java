@@ -17,12 +17,15 @@ package info.limpet.data.operations.spatial;
 import info.limpet.IBaseTemporalCollection;
 import info.limpet.ICollection;
 import info.limpet.IContext;
+import info.limpet.IObjectCollection;
 import info.limpet.IOperation;
 import info.limpet.IQuantityCollection;
 import info.limpet.IStore;
+import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
 import info.limpet.ITemporalQuantityCollection.InterpMethod;
 import info.limpet.data.commands.AbstractCommand;
+import info.limpet.data.impl.samples.StockTypes.ILocations;
 import info.limpet.data.impl.samples.StockTypes.NonTemporal;
 import info.limpet.data.impl.samples.StockTypes.NonTemporal.Location;
 import info.limpet.data.impl.samples.TemporalLocation;
@@ -112,6 +115,7 @@ public abstract class TwoTrackOperation implements IOperation<IStoreItem>
      * 
      * @param unit
      */
+    @SuppressWarnings("unchecked")
     private void performCalc()
     {
       ICollection track1 = (ICollection) getInputs().get(0);
@@ -177,17 +181,17 @@ public abstract class TwoTrackOperation implements IOperation<IStoreItem>
       {
         // ok, we're doing an indexed version
         // find one wiht more than one item
-        final TemporalLocation primary;
-        final TemporalLocation secondary;
+        final IObjectCollection<Point2D> primary;
+        final IObjectCollection<Point2D> secondary;
         if (track1.getValuesCount() > 1)
         {
-          primary = (TemporalLocation) track1;
-          secondary = (TemporalLocation) track2;
+          primary = (IObjectCollection<Point2D>) track1;
+          secondary = (IObjectCollection<Point2D>) track2;
         }
         else
         {
-          primary = (TemporalLocation) track2;
-          secondary = (TemporalLocation) track1;
+          primary = (IObjectCollection<Point2D>) track2;
+          secondary = (IObjectCollection<Point2D>) track1;
         }
 
         for (int j = 0; j < primary.getValuesCount(); j++)
@@ -251,6 +255,44 @@ public abstract class TwoTrackOperation implements IOperation<IStoreItem>
   public CollectionComplianceTests getATests()
   {
     return aTests;
+  }
+
+  /**
+   * utility operation to extract the location datasets from the selection 
+   * (walking down into groups as necessary)
+   * 
+   * @param selection
+   * @return
+   */
+  protected List<IStoreItem> getLocationDatasets(List<IStoreItem> selection)
+  {
+    List<IStoreItem> collatedTracks = new ArrayList<IStoreItem>();
+
+    // hmm, they may be composite tracks - extract the location data
+    Iterator<IStoreItem> sIter = selection.iterator();
+    while (sIter.hasNext())
+    {
+      IStoreItem iStoreItem = (IStoreItem) sIter.next();
+      if (iStoreItem instanceof IStoreGroup)
+      {
+        IStoreGroup group = (IStoreGroup) iStoreItem;
+        Iterator<IStoreItem> kids = group.iterator();
+        while (kids.hasNext())
+        {
+          IStoreItem thisItem = (IStoreItem) kids.next();
+          if (thisItem instanceof ILocations)
+          {
+            IStoreItem thisI = (IStoreItem) thisItem;
+            collatedTracks.add(thisI);
+          }
+        }
+      }
+      else if (iStoreItem instanceof ILocations)
+      {
+        collatedTracks.add(iStoreItem);
+      }
+    }
+    return collatedTracks;
   }
 
 }

@@ -37,21 +37,25 @@ public class BearingBetweenTracksOperation extends TwoTrackOperation
 {
 
   public Collection<ICommand<IStoreItem>> actionsFor(
-      List<IStoreItem> selection, IStore destination, IContext context)
+      List<IStoreItem> rawSelection, IStore destination, IContext context)
   {
     Collection<ICommand<IStoreItem>> res =
         new ArrayList<ICommand<IStoreItem>>();
-    if (appliesTo(selection))
+    
+    // get some tracks
+    List<IStoreItem> collatedTracks = getLocationDatasets(rawSelection);
+    
+    if (appliesTo(collatedTracks))
     {
       // ok, are we doing a tempoarl opeartion?
-      if (getATests().suitableForTimeInterpolation(selection))
+      if (getATests().suitableForTimeInterpolation(collatedTracks))
       {
         // hmm, find the time provider
         final IBaseTemporalCollection timeProvider =
-            getATests().getLongestTemporalCollections(selection);
+            getATests().getLongestTemporalCollections(collatedTracks);
 
         ICommand<IStoreItem> newC =
-            new DistanceOperation(selection, destination,
+            new DistanceOperation(collatedTracks, destination,
                 "Bearing between tracks (interpolated)",
                 "Calculate bearing between two tracks (interpolated)",
                 timeProvider, context)
@@ -102,10 +106,10 @@ public class BearingBetweenTracksOperation extends TwoTrackOperation
         res.add(newC);
       }
 
-      if (getATests().allEqualLengthOrSingleton(selection))
+      if (getATests().allEqualLengthOrSingleton(collatedTracks))
       {
         ICommand<IStoreItem> newC =
-            new DistanceOperation(selection, destination,
+            new DistanceOperation(collatedTracks, destination,
                 "Bearing between tracks (indexed)",
                 "Calculate bearing between two tracks (indexed)", null, context)
             {
