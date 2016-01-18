@@ -15,17 +15,20 @@
 package info.limpet.data;
 
 import info.limpet.IBaseTemporalCollection;
+import info.limpet.IChangeListener;
 import info.limpet.ICollection;
 import info.limpet.ICommand;
 import info.limpet.IContext;
 import info.limpet.IQuantityCollection;
 import info.limpet.IStore;
+import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
 import info.limpet.ITemporalQuantityCollection;
 import info.limpet.ITemporalQuantityCollection.InterpMethod;
 import info.limpet.data.csv.CsvParser;
 import info.limpet.data.impl.MockContext;
 import info.limpet.data.impl.TemporalObjectCollection;
+import info.limpet.data.impl.samples.SampleData;
 import info.limpet.data.impl.samples.StockTypes;
 import info.limpet.data.impl.samples.StockTypes.NonTemporal;
 import info.limpet.data.impl.samples.StockTypes.NonTemporal.Location;
@@ -36,7 +39,8 @@ import info.limpet.data.operations.CollectionComplianceTests;
 import info.limpet.data.operations.CollectionComplianceTests.TimePeriod;
 import info.limpet.data.operations.spatial.DistanceBetweenTracksOperation;
 import info.limpet.data.operations.spatial.DopplerShiftBetweenTracksOperation;
-import info.limpet.data.operations.spatial.DopplerShiftBetweenTracksOperation.DopplerShiftOperation;
+import info.limpet.data.operations.spatial.DopplerShiftBetweenTracksOperation.DSOperation;
+import info.limpet.data.operations.spatial.DopplerShiftBetweenTracksOperation.DSOperation.TrackProvider;
 import info.limpet.data.operations.spatial.GenerateCourseAndSpeedOperation;
 import info.limpet.data.operations.spatial.GeoSupport;
 import info.limpet.data.operations.spatial.IGeoCalculator;
@@ -467,9 +471,161 @@ public class TestGeotoolsGeometry extends TestCase
     assertEquals("not empty collection", 1, ops.size());
   }
 
+  public void testFindingDopplerTracks()
+  {
+    final List<IStoreItem> items = new ArrayList<IStoreItem>();
+    final DopplerShiftBetweenTracksOperation doppler =
+        new DopplerShiftBetweenTracksOperation();
+    final InMemoryStore store = new InMemoryStore();
+    final CollectionComplianceTests tests = new CollectionComplianceTests();
+
+    IContext mockContext = new MockContext();
+    List<TrackProvider> matches =
+        DopplerShiftBetweenTracksOperation.DSOperation.getTracks(
+            null, items, tests);
+    assertEquals("empty", 0, matches.size());
+
+    // create a good track
+    IStore tmpStore = new SampleData().getData(20);
+    IStoreGroup cTrack = (IStoreGroup) tmpStore.get(SampleData.COMPOSITE_ONE);
+    assertNotNull("not found track", cTrack);
+    items.add(cTrack);
+    matches =
+        DopplerShiftBetweenTracksOperation.DSOperation.getTracks(
+            null, items, tests);
+    assertEquals("not empty", 1, matches.size());
+
+    // ignore that track
+    matches =
+        DopplerShiftBetweenTracksOperation.DSOperation.getTracks(
+            (IStoreGroup) cTrack, items, tests);
+    assertEquals("empty", 0, matches.size());
+
+    // ok, add a singleton location
+    StockTypes.NonTemporal.Location loc1 = (Location) tmpStore.get(SampleData.SINGLETON_LOC_1);
+    assertNotNull("not found track", loc1);
+    items.add(loc1);
+    matches =
+        DopplerShiftBetweenTracksOperation.DSOperation.getTracks(
+            (IStoreGroup) cTrack, items, tests);
+    assertEquals("not empty", 1, matches.size());
+
+    IStoreItem loc2 = tmpStore.get(SampleData.SINGLETON_LOC_2);
+    items.add(loc2);
+    matches =
+        DopplerShiftBetweenTracksOperation.DSOperation.getTracks(
+            (IStoreGroup) cTrack, items, tests);
+    assertEquals("not empty", 2, matches.size());
+    
+    // ok - they work at the top level, see if they work
+    // in a child group
+    items.remove(loc1);
+    items.remove(loc2);
+
+    // check it's empty
+    matches =
+        DopplerShiftBetweenTracksOperation.DSOperation.getTracks(
+            (IStoreGroup) cTrack, items, tests);
+    assertEquals("empty", 0, matches.size());
+
+    
+    IStoreGroup sensors = new StoreGroup("Sensor");
+    sensors.add(loc1);
+    sensors.add(loc2);
+    items.add(sensors);
+
+    matches =
+        DopplerShiftBetweenTracksOperation.DSOperation.getTracks(
+            (IStoreGroup) cTrack, items, tests);
+    assertEquals("not empty", 2, matches.size());
+
+    // ok, move up a level
+    Collection<ICommand<IStoreItem>> ops = doppler.actionsFor(items, store, mockContext);
+    assertEquals("single action", 0, ops.size());
+    
+    // ok, give it a top-level sounds speed
+    final IStoreItem soundSpeed = tmpStore.get(SampleData.SPEED_ONE);
+    items.add(soundSpeed);
+    
+    ops = doppler.actionsFor(items, store, mockContext);
+    assertEquals("single action", 1, ops.size());
+    
+    // ok, we have two static sensors, ets them
+    ICommand<IStoreItem> firstOp = ops.iterator().next();
+    firstOp.execute();
+    List<IStoreItem> outputs = firstOp.getOutputs();
+    assertEquals("two output datasets", 2, outputs.size());
+    
+    // hmm, ensure we only get updates on tracks that have changed
+    final List<String> messages = new ArrayList<String>();
+    final IChangeListener listener = new IChangeListener()
+    {
+      
+      @Override
+      public void metadataChanged(IStoreItem subject)
+      {
+        // TODO Auto-generated method stub
+        
+      }
+      
+      @Override
+      public void dataChanged(IStoreItem subject)
+      {
+        messages.add("" + subject.getName());
+      }
+      
+      @Override
+      public void collectionDeleted(IStoreItem subject)
+      {
+        // TODO Auto-generated method stub
+        
+      }
+    };
+    
+    Iterator<IStoreItem> iter = outputs.iterator();
+    while (iter.hasNext())
+    {
+      IStoreItem iStoreItem = (IStoreItem) iter.next();
+      iStoreItem.addChangeListener(listener);
+    }
+    
+    // ok, make a change to loc1
+    loc1.clearQuiet();
+    loc1.add(new Point2D.Double(22, 33));
+    loc1.fireDataChanged();
+    
+    assertEquals("only one update", 1, messages.size());
+    
+    // restart
+    messages.clear();
+    
+    // get the freq
+    tmpStore.get(SampleData.FREQ_ONE).fireDataChanged();
+    assertEquals("both outputs updated", 2, messages.size());
+    
+    // restart
+    messages.clear();
+    
+    // get the freq
+    soundSpeed.fireDataChanged();
+    assertEquals("both outputs updated", 2, messages.size());
+
+    // and what if we make the sensors group look like a track?
+    sensors.remove(loc2);
+    sensors.add(tmpStore.get(SampleData.FREQ_ONE));
+    sensors.add(soundSpeed);
+        
+    ops = doppler.actionsFor(items, store, mockContext);
+    assertEquals("single action", 2, ops.size());
+    
+    
+  }
+
   @SuppressWarnings("unused")
   public void testDoppler()
   {
+    // TODO: reinstate me!
+
     final ArrayList<IStoreItem> items = new ArrayList<IStoreItem>();
     final DopplerShiftBetweenTracksOperation doppler =
         new DopplerShiftBetweenTracksOperation();
@@ -583,23 +739,23 @@ public class TestGeotoolsGeometry extends TestCase
 
     assertEquals("empty", 0, doppler.actionsFor(items, store, context).size());
 
-    assertFalse("valid track", tests.hasNumberOfTracks(items, 1));
+    assertFalse("valid track", tests.getNumberOfTracks(items) == 1);
 
     track1.add(spdK1);
 
     assertEquals("empty", 0, doppler.actionsFor(items, store, context).size());
 
-    assertTrue("valid track", tests.hasNumberOfTracks(items, 1));
+    assertTrue("valid track", tests.getNumberOfTracks(items) == 1);
 
     // now for track two
     track2.add(loc2);
     track2.add(angR2);
 
-    assertFalse("valid track", tests.hasNumberOfTracks(items, 2));
+    assertFalse("valid track", tests.getNumberOfTracks(items) == 2);
 
     track2.add(spdK3);
 
-    assertTrue("valid track", tests.hasNumberOfTracks(items, 2));
+    assertTrue("valid track", tests.getNumberOfTracks(items) == 2);
 
     assertEquals("still empty", 0, doppler.actionsFor(items, store, context)
         .size());
@@ -697,15 +853,15 @@ public class TestGeotoolsGeometry extends TestCase
     assertEquals("empty", 1, doppler.actionsFor(items, store, context).size());
 
     // ok, now check how the doppler handler organises its data
-    DopplerShiftOperation op1 =
-        (DopplerShiftOperation) doppler.actionsFor(items, store, context)
+    DSOperation op1 =
+        (DSOperation) doppler.actionsFor(items, store, context)
             .iterator().next();
 
     assertNotNull("found operation", op1);
 
     op1.organiseData();
     HashMap<String, ICollection> map = op1.getDataMap();
-    assertEquals("all items", 8, map.size());
+    assertEquals("all items", 5, map.size());
 
     // ok, let's try undo redo
     assertEquals("correct size store", store.size(), 1);

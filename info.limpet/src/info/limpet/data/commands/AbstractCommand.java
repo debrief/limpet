@@ -212,19 +212,21 @@ public abstract class AbstractCommand<T extends IStoreItem> implements
     if (dynamic)
     {
       // do the recalc
-      recalculate();
+      recalculate(subject);
 
-      // now tell the outputs they have changed
-      Iterator<T> iter = getOutputs().iterator();
-      while (iter.hasNext())
-      {
-        T t = (T) iter.next();
-        t.fireDataChanged();
-      }
+//      // now tell the outputs they have changed
+      // TODO: fire updates from the performCalc event, not here
+      // - then we can minimise the number of updates we send
+//      Iterator<T> iter = getOutputs().iterator();
+//      while (iter.hasNext())
+//      {
+//        T t = (T) iter.next();
+//        t.fireDataChanged();
+//      }
     }
   }
 
-  protected abstract void recalculate();
+  protected abstract void recalculate(IStoreItem subject);
 
   @Override
   public void collectionDeleted(IStoreItem subject)

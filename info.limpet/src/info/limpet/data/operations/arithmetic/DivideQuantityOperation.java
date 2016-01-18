@@ -176,7 +176,7 @@ public class DivideQuantityOperation implements IOperation<IStoreItem>
     }
 
     @Override
-    protected void recalculate()
+    protected void recalculate(IStoreItem subject)
     {
       // update the results
       performCalc(getOutputs());

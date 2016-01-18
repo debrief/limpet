@@ -142,7 +142,7 @@ public class RangeSliderView extends CoreAnalysisView implements
     else if (_command != null)
     {
       _command.setWindowSize((int) val);
-      _command.recalculate();
+      _command.recalculate(null);
     }
   }
 

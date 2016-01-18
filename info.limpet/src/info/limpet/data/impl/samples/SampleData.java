@@ -18,15 +18,18 @@ import info.limpet.ICommand;
 import info.limpet.IContext;
 import info.limpet.IObjectCollection;
 import info.limpet.IQuantityCollection;
+import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
 import info.limpet.QuantityRange;
 import info.limpet.data.impl.MockContext;
 import info.limpet.data.impl.ObjectCollection;
 import info.limpet.data.impl.QuantityCollection;
+import info.limpet.data.impl.samples.StockTypes.NonTemporal.Location;
 import info.limpet.data.impl.samples.StockTypes.Temporal.ElapsedTimeSec;
 import info.limpet.data.operations.arithmetic.AddQuantityOperation;
 import info.limpet.data.operations.arithmetic.MultiplyQuantityOperation;
 import info.limpet.data.operations.spatial.GeoSupport;
+import info.limpet.data.operations.spatial.IGeoCalculator;
 import info.limpet.data.store.InMemoryStore;
 import info.limpet.data.store.InMemoryStore.StoreGroup;
 
@@ -52,19 +55,26 @@ public class SampleData
   public static final String LENGTH_TWO = "Length Two non-Time";
   public static final String LENGTH_ONE = "Length One non-Time";
   public static final String ANGLE_ONE = "Angle One Time";
+  public static final String FREQ_ONE = "Freq One";
   public static final String SPEED_ONE = "Speed One Time";
   public static final String SPEED_TWO = "Speed Two Time";
+  public static final String SPEED_FOUR = "Speed Four Time";
   public static final String TRACK_ONE = "Track One Time";
+  public static final String COMPOSITE_ONE = "Composite Track One";
   public static final String TRACK_TWO = "Track Two Time";
   public static final String SPEED_EARLY = "Speed Two Time (earlier)";
   public static final String RANGED_SPEED_SINGLETON = "Ranged Speed Singleton";
   public static final String FLOATING_POINT_FACTOR = "Floating point factor";
+  public static final String SINGLETON_LOC_1 = "Single Track One";
+  public static final String SINGLETON_LOC_2 = "Single Track Two";
 
   public InMemoryStore getData(long count)
   {
     InMemoryStore res = new InMemoryStore();
 
     // // collate our data series
+    StockTypes.NonTemporal.FrequencyHz freq1 =
+        new StockTypes.NonTemporal.FrequencyHz(FREQ_ONE, null);
     StockTypes.Temporal.AngleDegrees angle1 =
         new StockTypes.Temporal.AngleDegrees(ANGLE_ONE, null);
     StockTypes.Temporal.SpeedMSec speedSeries1 =
@@ -77,6 +87,8 @@ public class SampleData
         new StockTypes.Temporal.SpeedMSec(SPEED_EARLY, null);
     StockTypes.Temporal.SpeedMSec speedIrregular =
         new StockTypes.Temporal.SpeedMSec(SPEED_IRREGULAR2, null);
+    StockTypes.Temporal.SpeedMSec speedSeries4 =
+        new StockTypes.Temporal.SpeedMSec(SPEED_FOUR, null);
     StockTypes.NonTemporal.LengthM length1 =
         new StockTypes.NonTemporal.LengthM(LENGTH_ONE, null);
     StockTypes.NonTemporal.LengthM length2 =
@@ -96,12 +108,15 @@ public class SampleData
         new StockTypes.Temporal.ElapsedTimeSec(TIME_INTERVALS, null);
     TemporalLocation track1 = new TemporalLocation(TRACK_ONE);
     TemporalLocation track2 = new TemporalLocation(TRACK_TWO);
+    Location singleLoc1 = new Location(SINGLETON_LOC_1);
+    Location singleLoc2 = new Location(SINGLETON_LOC_2);
 
     long thisTime = 0;
 
     // get ready for the track generation
-    Point2D pos1 = GeoSupport.getCalculator().createPoint(-4, 55.8);
-    Point2D pos2 = GeoSupport.getCalculator().createPoint(-4.2, 54.9);
+    final IGeoCalculator calc = GeoSupport.getCalculator();
+    Point2D pos1 = calc.createPoint(-4, 55.8);
+    Point2D pos2 = calc.createPoint(-4.2, 54.9);
 
     for (int i = 1; i <= count; i++)
     {
@@ -128,6 +143,7 @@ public class SampleData
       }
 
       speedSeries3.add(thisTime, 3d * Math.cos(i));
+      speedSeries4.add(thisTime, 3 + 2d * Math.cos(i / 10));
       speedEarly1.add(earlyTime, Math.sin(i));
       length1.add((double) i % 3);
       length2.add((double) i % 5);
@@ -137,13 +153,9 @@ public class SampleData
           * Math.random())));
 
       // sort out the tracks
-      Point2D p1 =
-          GeoSupport.getCalculator().calculatePoint(pos1, Math.toRadians(77 - (i * 4)),
-              554);
+      Point2D p1 = calc.calculatePoint(pos1, Math.toRadians(77 - (i * 4)), 554);
 
-      Point2D p2 =
-          GeoSupport.getCalculator().calculatePoint(pos2, Math.toRadians(54 + (i * 5)),
-              133);
+      Point2D p2 = calc.calculatePoint(pos2, Math.toRadians(54 + (i * 5)), 133);
 
       track1.add(thisTime, p1);
       track2.add(thisTime, p2);
@@ -153,7 +165,7 @@ public class SampleData
     // add an extra item to speedSeries3
     speedSeries3.add(thisTime + 12 * 500 * 60, 12);
 
-    // give the singleton a value
+    // give the singletons a value
     singleton1.add(4d);
     singletonRange1.add(998);
     Measure<Double, Velocity> minR =
@@ -163,20 +175,29 @@ public class SampleData
     QuantityRange<Velocity> speedRange =
         new QuantityRange<Velocity>(minR, maxR);
     singletonRange1.setRange(speedRange);
+    freq1.add(77);
+    singleLoc1.add(calc.createPoint(12, 13));
+    singleLoc2.add(calc.createPoint(7, 7));
 
     singletonLength.add(12d);
 
     List<IStoreItem> list = new ArrayList<IStoreItem>();
     StoreGroup group1 = new StoreGroup("Speed data");
     group1.add(speedSeries1);
-    group1.add(speedSeries2);
     group1.add(speedIrregular);
     group1.add(speedEarly1);
-    group1.add(speedSeries3);
+    group1.add(speedSeries2);
 
     list.add(group1);
 
-    list.add(angle1);
+    IStoreGroup compositeTrack = new InMemoryStore.StoreGroup(COMPOSITE_ONE);
+    compositeTrack.add(angle1);
+    compositeTrack.add(track2);
+    compositeTrack.add(freq1);
+    compositeTrack.add(speedSeries4);
+
+    list.add(compositeTrack);
+
     list.add(length1);
     list.add(length2);
     list.add(string1);
@@ -187,6 +208,9 @@ public class SampleData
     list.add(timeIntervals);
     list.add(track1);
     list.add(track2);
+    list.add(singleLoc1);
+    list.add(singleLoc2);
+    list.add(speedSeries3);
 
     res.addAll(list);
 

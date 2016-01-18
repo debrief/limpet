@@ -144,7 +144,7 @@ public class SimpleMovingAverageOperation implements IOperation<ICollection>
     }
 
     @Override
-    public void recalculate()
+    public void recalculate(IStoreItem subject)
     {
       // update the results
       performCalc(getOutputs());

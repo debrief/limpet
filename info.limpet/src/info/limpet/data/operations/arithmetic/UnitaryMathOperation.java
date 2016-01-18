@@ -180,7 +180,7 @@ public abstract class UnitaryMathOperation implements IOperation<ICollection>
     }
 
     @Override
-    protected void recalculate()
+    protected void recalculate(IStoreItem subject)
     {
       // update the results
       performCalc();

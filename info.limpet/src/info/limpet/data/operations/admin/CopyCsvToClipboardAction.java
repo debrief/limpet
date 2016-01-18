@@ -74,7 +74,7 @@ public class CopyCsvToClipboardAction implements IOperation<IStoreItem>
     }
 
     @Override
-    protected void recalculate()
+    protected void recalculate(IStoreItem subject)
     {
       // don't worry
     }
