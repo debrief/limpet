@@ -31,6 +31,7 @@ import info.limpet.data.impl.samples.StockTypes;
 import info.limpet.data.impl.samples.StockTypes.ILocations;
 import info.limpet.data.impl.samples.StockTypes.NonTemporal.Location;
 import info.limpet.data.impl.samples.StockTypes.Temporal.FrequencyHz;
+import info.limpet.data.impl.samples.TemporalLocation;
 import info.limpet.data.operations.CollectionComplianceTests;
 import info.limpet.data.operations.CollectionComplianceTests.TimePeriod;
 import info.limpet.data.store.InMemoryStore;
@@ -97,24 +98,30 @@ public class DopplerShiftBetweenTracksOperation implements
       double getSpeedAt(long time);
 
       String getName();
+
+      /**
+       * @param dsOperation
+       */
+      void addDependent(ICommand<IStoreItem> dsOperation);
+
     }
 
     protected static class SingletonWrapper implements TrackProvider
     {
 
-      private final Point2D _point;
       private final String _name;
+      private Location _dataset;
 
-      public SingletonWrapper(Point2D point, String name)
+      public SingletonWrapper(String name, Location loc)
       {
-        _point = point;
         _name = name;
+        _dataset = loc;
       }
 
       @Override
       public Point2D getLocationAt(long time)
       {
-        return _point;
+        return _dataset.getValues().iterator().next();
       }
 
       @Override
@@ -135,6 +142,18 @@ public class DopplerShiftBetweenTracksOperation implements
         return _name;
       }
 
+      /*
+       * (non-Javadoc)
+       * 
+       * @see info.limpet.data.operations.spatial.DopplerShiftBetweenTracksOperation
+       * .DSOperation.TrackProvider#addDependent(info.limpet.IOperation)
+       */
+      @Override
+      public void addDependent(ICommand<IStoreItem> operation)
+      {
+        _dataset.addDependent(operation);
+      }
+
     }
 
     protected static class CompositeTrackWrapper implements TrackProvider
@@ -146,7 +165,7 @@ public class DopplerShiftBetweenTracksOperation implements
           new CollectionComplianceTests();
       private IQuantityCollection<?> _course;
       private IQuantityCollection<?> _speed;
-      private ILocations _location;
+      private TemporalLocation _location;
 
       public CompositeTrackWrapper(IStoreGroup track, String name)
       {
@@ -162,12 +181,25 @@ public class DopplerShiftBetweenTracksOperation implements
         while (iter.hasNext())
         {
           IStoreItem iStoreItem = (IStoreItem) iter.next();
-          if (iStoreItem instanceof ILocations)
+          if (iStoreItem instanceof TemporalLocation)
           {
-            _location = (ILocations) iStoreItem;
+            _location = (TemporalLocation) iStoreItem;
           }
         }
+      }
 
+      /*
+       * (non-Javadoc)
+       * 
+       * @see info.limpet.data.operations.spatial.DopplerShiftBetweenTracksOperation
+       * .DSOperation.TrackProvider#addDependent(info.limpet.IOperation)
+       */
+      @Override
+      public void addDependent(ICommand<IStoreItem> operation)
+      {
+        _course.addDependent(operation);
+        _speed.addDependent(operation);
+        _location.addDependent(operation);
       }
 
       @Override
@@ -219,12 +251,12 @@ public class DopplerShiftBetweenTracksOperation implements
           if (item instanceof ILocations)
           {
             Location loc = (Location) item;
-            Point2D point = loc.getValues().get(0);
-            res.add(new SingletonWrapper(point, loc.getName()));
+            res.add(new SingletonWrapper(loc.getName(), loc));
           }
           else if (item instanceof IStoreGroup)
           {
-            // CHECK IF IT'S SUITABLE AS A TRACK. IF NOT, SEE IF IT JUST CONTAINS LOCATIONS
+            // CHECK IF IT'S SUITABLE AS A TRACK. IF NOT, SEE IF IT JUST
+            // CONTAINS LOCATIONS
             // - THEN ADD THEM ALL
             //
             IStoreGroup grp = (IStoreGroup) item;
@@ -247,11 +279,10 @@ public class DopplerShiftBetweenTracksOperation implements
                   ICollection coll = (ICollection) iStoreItem;
                   if (coll.getValuesCount() == 1)
                   {
-                    if (coll instanceof ILocations)
+                    if (coll instanceof Location)
                     {
-                      final ILocations loc = (ILocations) coll;
-                      final Point2D point = loc.getLocations().get(0);
-                      res.add(new SingletonWrapper(point, coll.getName()));
+                      final Location loc = (Location) coll;
+                      res.add(new SingletonWrapper(coll.getName(), loc));
                     }
                   }
                 }
@@ -318,6 +349,13 @@ public class DopplerShiftBetweenTracksOperation implements
         {
           iCollection.addDependent(this);
         }
+      }
+      // and for the receiver tracks.
+      oIter = _allTracks.iterator();
+      while (oIter.hasNext())
+      {
+        TrackProvider track = (TrackProvider) oIter.next();
+        track.addDependent(this);
       }
 
       // ok, done
@@ -556,16 +594,14 @@ public class DopplerShiftBetweenTracksOperation implements
   protected boolean appliesTo(final List<IStoreItem> selection)
   {
     // ok, check we have two collections
-    final boolean allGroups = aTests.numberOfGroups(selection, 2);
-    final boolean allTracks = aTests.hasNumberOfTracks(selection, 2);
+    final boolean allTracks = aTests.getNumberOfTracks(selection) >= 2;
     final boolean someHaveFreq =
         aTests.collectionWith(selection, Frequency.UNIT.getDimension(), true) != null;
     final boolean topLevelSpeed =
         aTests.collectionWith(selection, METRE.divide(SECOND).getDimension(),
             false) != null;
 
-    return aTests.exactNumber(selection, 3) && allGroups && allTracks
-        && someHaveFreq && topLevelSpeed;
+    return allTracks && someHaveFreq && topLevelSpeed;
   }
 
   /**
