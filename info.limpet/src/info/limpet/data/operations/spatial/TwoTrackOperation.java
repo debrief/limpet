@@ -45,8 +45,7 @@ public abstract class TwoTrackOperation implements IOperation<IStoreItem>
       AbstractCommand<IStoreItem>
   {
     private final IBaseTemporalCollection _timeProvider;
-    private final CollectionComplianceTests aTests =
-        new CollectionComplianceTests();
+    private final CollectionComplianceTests aTests = new CollectionComplianceTests();
 
     public DistanceOperation(List<IStoreItem> selection, IStore store,
         String title, String description, IBaseTemporalCollection timeProvider,
@@ -66,8 +65,8 @@ public abstract class TwoTrackOperation implements IOperation<IStoreItem>
       String title = getOutputName();
 
       // ok, generate the new series
-      IQuantityCollection<?> target =
-          getOutputCollection(title, _timeProvider != null);
+      IQuantityCollection<?> target = getOutputCollection(title,
+          _timeProvider != null);
 
       outputs.add(target);
 
@@ -110,8 +109,8 @@ public abstract class TwoTrackOperation implements IOperation<IStoreItem>
     }
 
     /**
-     * wrap the actual operation. We're doing this since we need to separate it from the core
-     * "execute" operation in order to support dynamic updates
+     * wrap the actual operation. We're doing this since we need to separate it
+     * from the core "execute" operation in order to support dynamic updates
      * 
      * @param unit
      */
@@ -142,8 +141,8 @@ public abstract class TwoTrackOperation implements IOperation<IStoreItem>
         }
 
         // ok, let's start by finding our time sync
-        IBaseTemporalCollection times =
-            aTests.getOptimalTimes(period, selection);
+        IBaseTemporalCollection times = aTests.getOptimalTimes(period,
+            selection);
 
         // check we were able to find some times
         if (times == null)
@@ -213,6 +212,13 @@ public abstract class TwoTrackOperation implements IOperation<IStoreItem>
         }
       }
 
+      // ok, share the updates
+      Iterator<IStoreItem> oIter = getOutputs().iterator();
+      while (oIter.hasNext())
+      {
+        IStoreItem iStoreItem = (IStoreItem) oIter.next();
+        iStoreItem.fireDataChanged();
+      }
     }
 
     private Point2D locationFor(ICollection track, final Long thisTime)
@@ -235,15 +241,14 @@ public abstract class TwoTrackOperation implements IOperation<IStoreItem>
         final Point2D locA, final Point2D locB, Long time);
   }
 
-  private final CollectionComplianceTests aTests =
-      new CollectionComplianceTests();
+  private final CollectionComplianceTests aTests = new CollectionComplianceTests();
 
   protected boolean appliesTo(List<IStoreItem> selection)
   {
     boolean nonEmpty = getATests().nonEmpty(selection);
     boolean equalLength = getATests().allEqualLengthOrSingleton(selection);
-    boolean canInterpolate =
-        getATests().suitableForTimeInterpolation(selection);
+    boolean canInterpolate = getATests()
+        .suitableForTimeInterpolation(selection);
     boolean onlyTwo = getATests().exactNumber(selection, 2);
     boolean hasContents = getATests().allHaveData(selection);
     boolean equalOrInterp = equalLength || canInterpolate;
@@ -258,7 +263,7 @@ public abstract class TwoTrackOperation implements IOperation<IStoreItem>
   }
 
   /**
-   * utility operation to extract the location datasets from the selection 
+   * utility operation to extract the location datasets from the selection
    * (walking down into groups as necessary)
    * 
    * @param selection
