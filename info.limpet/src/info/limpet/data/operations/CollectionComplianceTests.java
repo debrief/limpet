@@ -20,6 +20,7 @@ import info.limpet.IBaseTemporalCollection;
 import info.limpet.ICollection;
 import info.limpet.IObjectCollection;
 import info.limpet.IQuantityCollection;
+import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
 import info.limpet.ITemporalQuantityCollection.InterpMethod;
 import info.limpet.data.impl.TemporalQuantityCollection;
@@ -729,6 +730,35 @@ public class CollectionComplianceTests
     return res;
   }
 
+  /** test for if a group contains enough data for us to treat it as a track
+   * 
+   * @param group the group of tracks
+   * @return yes/no
+   */
+  public boolean isATrack(IStoreGroup group)
+  {
+    boolean res = true;
+
+    // ok, keep looping through, to check we have the right types
+    if (!isPresent(group, METRE.divide(SECOND).getDimension()))
+    {
+      return false;
+    }
+
+    // ok, keep looping through, to check we have the right types
+    if (!isPresent(group, SI.RADIAN.getDimension()))
+    {
+      return false;
+    }
+
+    if (!hasLocation(group))
+    {
+      return false;
+    }
+
+    return res;
+  }
+
   /**
    * convenience test to verify if children of the supplied item can all be treated as tracks
    * 
@@ -743,31 +773,12 @@ public class CollectionComplianceTests
     while (iter.hasNext())
     {
       IStoreItem storeItem = iter.next();
-      if (storeItem instanceof StoreGroup)
+      if (storeItem instanceof IStoreGroup)
       {
         // ok, check the contents
         StoreGroup group = (StoreGroup) storeItem;
-        List<IStoreItem> kids = group.children();
 
-        // ok, keep looping through, to check we have the right types
-        if (!isPresent(kids, METRE.divide(SECOND).getDimension()))
-        {
-          res = false;
-          break;
-        }
-
-        // ok, keep looping through, to check we have the right types
-        if (!isPresent(kids, SI.RADIAN.getDimension()))
-        {
-          res = false;
-          break;
-        }
-
-        if (!hasLocation(kids))
-        {
-          res = false;
-          break;
-        }
+        res = isATrack(group);
 
       }
     }
@@ -849,7 +860,7 @@ public class CollectionComplianceTests
    *          we're looking for
    * @return yes/no
    */
-  private boolean isPresent(List<IStoreItem> kids, Dimension dim)
+  private boolean isPresent(Collection<IStoreItem> kids, Dimension dim)
   {
     boolean res = false;
 
@@ -880,7 +891,7 @@ public class CollectionComplianceTests
    *          we're looking for
    * @return yes/no
    */
-  private boolean hasLocation(List<IStoreItem> kids)
+  private boolean hasLocation(Collection<IStoreItem> kids)
   {
     boolean res = false;
 
@@ -907,7 +918,7 @@ public class CollectionComplianceTests
    *          dimension we need to be present
    * @return yes/no
    */
-  public IQuantityCollection<?> collectionWith(List<IStoreItem> kids,
+  public IQuantityCollection<?> collectionWith(Collection<IStoreItem> kids,
       Dimension dimension, final boolean walkTree)
   {
     IQuantityCollection<?> res = null;
@@ -1020,7 +1031,9 @@ public class CollectionComplianceTests
           {
             // store the longest one
             ICollection asColl = (ICollection) longest;
-            longest = thisC.getValuesCount() > asColl.getValuesCount() ? tqc : longest;
+            longest =
+                thisC.getValuesCount() > asColl.getValuesCount() ? tqc
+                    : longest;
           }
         }
       }
