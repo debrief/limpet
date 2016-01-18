@@ -222,6 +222,9 @@ public abstract class CoreQuantityOperation<Q extends Quantity>
           storeValue(target, elementCount, thisResult);
         }
       }
+      
+      // and fire out the update
+      target.fireDataChanged();
 
     }
 
@@ -297,7 +300,7 @@ public abstract class CoreQuantityOperation<Q extends Quantity>
     protected abstract Double calcThisInterpolatedElement(long time);
 
     @Override
-    protected void recalculate()
+    protected void recalculate(IStoreItem subject)
     {
       // get the unit
       IQuantityCollection<Q> first = getInputs().get(0);

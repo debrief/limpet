@@ -195,7 +195,7 @@ public class MultiplyQuantityOperation implements IOperation<IStoreItem>
     }
 
     @Override
-    protected void recalculate()
+    protected void recalculate(IStoreItem subject)
     {
       Unit<?> unit = calculateOutputUnit();
 

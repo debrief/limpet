@@ -187,7 +187,6 @@ public class SampleData
     group1.add(speedIrregular);
     group1.add(speedEarly1);
     group1.add(speedSeries2);
-    group1.add(speedSeries3);
 
     list.add(group1);
 
@@ -211,6 +210,7 @@ public class SampleData
     list.add(track2);
     list.add(singleLoc1);
     list.add(singleLoc2);
+    list.add(speedSeries3);
 
     res.addAll(list);
 

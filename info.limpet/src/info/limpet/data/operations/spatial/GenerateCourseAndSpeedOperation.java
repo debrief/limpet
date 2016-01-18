@@ -92,7 +92,7 @@ public class GenerateCourseAndSpeedOperation implements IOperation<IStoreItem>
         String trackList);
 
     @Override
-    protected void recalculate()
+    protected void recalculate(IStoreItem subject)
     {
       // clear out the lists, first
       Iterator<IStoreItem> iter = getOutputs().iterator();

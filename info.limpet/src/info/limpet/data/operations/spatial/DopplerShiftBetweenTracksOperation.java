@@ -322,7 +322,8 @@ public class DopplerShiftBetweenTracksOperation implements
         if (storeGroup != _tx)
         {
           // put the names into a string
-          final String title = _tx.getName() + " and " + storeGroup.getName();
+          final String title =
+              getOutputNameFor(_tx.getName(), storeGroup.getName());
 
           // ok, generate the new series
           final IQuantityCollection<?> target = getOutputCollection(title);
@@ -403,8 +404,12 @@ public class DopplerShiftBetweenTracksOperation implements
 
     protected IQuantityCollection<?> getOutputCollection(final String title)
     {
-      return new StockTypes.Temporal.FrequencyHz("Doppler shift between "
-          + title, this);
+      return new StockTypes.Temporal.FrequencyHz(title, this);
+    }
+
+    protected String getOutputNameFor(final String tx, String rx)
+    {
+      return "Doppler shift between " + tx + " and " + rx;
     }
 
     public void organiseData()
@@ -465,44 +470,66 @@ public class DopplerShiftBetweenTracksOperation implements
         return;
       }
 
+      // keep a list of updated tracks
+      List<ICollection> updated = new ArrayList<ICollection>();
+
       final IGeoCalculator calc = GeoSupport.getCalculator();
 
-      // and now we can start looping through
-      final Iterator<Long> tIter = times.getTimes().iterator();
-      while (tIter.hasNext())
+      // ok, now loop through the receivers
+      Iterator<TrackProvider> rIter = _allTracks.iterator();
+      while (rIter.hasNext())
       {
-        final long thisTime = tIter.next();
+        TrackProvider trackProvider = (TrackProvider) rIter.next();
 
-        if (thisTime >= period.getStartTime()
-            && thisTime <= period.getEndTime())
+        // find the relevant outputs dataset
+        String thisOutName =
+            getOutputNameFor(_tx.getName(), trackProvider.getName());
+
+        Iterator<IStoreItem> oIter = getOutputs().iterator();
+        FrequencyHz thisOutput = null;
+        while (oIter.hasNext() && thisOutput == null)
         {
-          final Iterator<IStoreItem> oIter = outputs.iterator();
-
-          // ok, now collate our data
-          final Point2D txLoc =
-              aTests.locationFor(_data.get(TX + LOC), thisTime);
-
-          final double txCourseRads =
-              aTests.valueAt(_data.get(TX + COURSE), thisTime, SI.RADIAN);
-
-          final double txSpeedMSec =
-              aTests.valueAt(_data.get(TX + SPEED), thisTime,
-                  SI.METERS_PER_SECOND);
-
-          final double freq =
-              aTests.valueAt(_data.get(TX + FREQ), thisTime, SI.HERTZ);
-
-          final double soundSpeed =
-              aTests.valueAt(_data.get(SOUND_SPEED), thisTime,
-                  SI.METERS_PER_SECOND);
-
-          // ok, now loop through the receivers
-          Iterator<TrackProvider> rIter = _allTracks.iterator();
-          while (rIter.hasNext())
+          FrequencyHz tmpOutput = (FrequencyHz) oIter.next();
+          if (tmpOutput.getName().equals(thisOutName)
+              && (tmpOutput.getValuesCount() == 0))
           {
-            TrackProvider trackProvider = (TrackProvider) rIter.next();
-            final Point2D rxLoc = trackProvider.getLocationAt(thisTime);
+            thisOutput = tmpOutput;
+          }
+        }
 
+        if (thisOutput == null)
+        {
+          continue;
+        }
+            
+        // and now we can start looping through
+        final Iterator<Long> tIter = times.getTimes().iterator();
+        while (tIter.hasNext())
+        {
+          final long thisTime = tIter.next();
+
+          if (thisTime >= period.getStartTime()
+              && thisTime <= period.getEndTime())
+          {
+            // ok, now collate our data
+            final Point2D txLoc =
+                aTests.locationFor(_data.get(TX + LOC), thisTime);
+
+            final double txCourseRads =
+                aTests.valueAt(_data.get(TX + COURSE), thisTime, SI.RADIAN);
+
+            final double txSpeedMSec =
+                aTests.valueAt(_data.get(TX + SPEED), thisTime,
+                    SI.METERS_PER_SECOND);
+
+            final double freq =
+                aTests.valueAt(_data.get(TX + FREQ), thisTime, SI.HERTZ);
+
+            final double soundSpeed =
+                aTests.valueAt(_data.get(SOUND_SPEED), thisTime,
+                    SI.METERS_PER_SECOND);
+
+            final Point2D rxLoc = trackProvider.getLocationAt(thisTime);
             final double rxCourseRads = trackProvider.getCourseAt(thisTime);
             final double rxSpeedMSec = trackProvider.getSpeedAt(thisTime);
 
@@ -512,7 +539,6 @@ public class DopplerShiftBetweenTracksOperation implements
             if (txLoc != null && rxLoc != null)
             {
               // now find the bearing between them
-
               double angleDegs = calc.getAngleBetween(txLoc, rxLoc);
 
               if (angleDegs < 0)
@@ -527,26 +553,57 @@ public class DopplerShiftBetweenTracksOperation implements
                   calcPredictedFreqSI(soundSpeed, txCourseRads, rxCourseRads,
                       txSpeedMSec, rxSpeedMSec, angleRads, freq);
 
-              StockTypes.Temporal.FrequencyHz thisOut =
-                  (FrequencyHz) oIter.next();
-              thisOut.add(thisTime, shifted);
+              // see if we have an output collection for this input one.
+              thisOutput.add(thisTime, shifted);
+
+              if (!updated.contains(thisOutput))
+              {
+                updated.add(thisOutput);
+              }
             }
-
           }
-
         }
+      }
+      Iterator<ICollection> updates = updated.iterator();
+      while (updates.hasNext())
+      {
+        ICollection iCollection = (ICollection) updates.next();
+        iCollection.fireDataChanged();
       }
     }
 
     @Override
-    protected void recalculate()
+    protected void recalculate(IStoreItem subject)
     {
-      // clear out the lists, first
+      // do we know which subject this relates to?
+      // just one of our input datasets has changed
+      boolean handled = false;
       final Iterator<IStoreItem> iter = getOutputs().iterator();
+      final String nameToRemove =
+          getOutputNameFor(_tx.getName(), subject.getName());
       while (iter.hasNext())
       {
-        final IQuantityCollection<?> qC = (IQuantityCollection<?>) iter.next();
-        qC.clear();
+        final IQuantityCollection<?> qC =
+            (IQuantityCollection<?>) iter.next();
+        if (qC.getName().equals(nameToRemove))
+        {
+          qC.clearQuiet();
+          handled = true;
+          break;
+        }
+      }
+      
+      // did we manage a precision surgical removal?
+      if (!handled)
+      {
+        // clear out all the lists, first
+        Iterator<IStoreItem> iter2 = getOutputs().iterator();
+        while (iter2.hasNext())
+        {
+          final IQuantityCollection<?> qC =
+              (IQuantityCollection<?>) iter2.next();
+          qC.clearQuiet();
+        }
       }
 
       // update the results

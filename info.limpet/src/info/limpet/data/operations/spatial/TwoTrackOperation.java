@@ -95,7 +95,7 @@ public abstract class TwoTrackOperation implements IOperation<IStoreItem>
         String trackList, boolean isTemporal);
 
     @Override
-    protected void recalculate()
+    protected void recalculate(IStoreItem subject)
     {
       // clear out the lists, first
       Iterator<IStoreItem> iter = getOutputs().iterator();

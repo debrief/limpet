@@ -15,6 +15,7 @@
 package info.limpet.data;
 
 import info.limpet.IBaseTemporalCollection;
+import info.limpet.IChangeListener;
 import info.limpet.ICollection;
 import info.limpet.ICommand;
 import info.limpet.IContext;
@@ -486,7 +487,7 @@ public class TestGeotoolsGeometry extends TestCase
 
     // create a good track
     IStore tmpStore = new SampleData().getData(20);
-    IStoreItem cTrack = tmpStore.get(SampleData.COMPOSITE_ONE);
+    IStoreGroup cTrack = (IStoreGroup) tmpStore.get(SampleData.COMPOSITE_ONE);
     assertNotNull("not found track", cTrack);
     items.add(cTrack);
     matches =
@@ -501,7 +502,7 @@ public class TestGeotoolsGeometry extends TestCase
     assertEquals("empty", 0, matches.size());
 
     // ok, add a singleton location
-    IStoreItem loc1 = tmpStore.get(SampleData.SINGLETON_LOC_1);
+    StockTypes.NonTemporal.Location loc1 = (Location) tmpStore.get(SampleData.SINGLETON_LOC_1);
     assertNotNull("not found track", loc1);
     items.add(loc1);
     matches =
@@ -509,7 +510,7 @@ public class TestGeotoolsGeometry extends TestCase
             (IStoreGroup) cTrack, items, tests);
     assertEquals("not empty", 1, matches.size());
 
-    IStoreItem loc2 = tmpStore.get(SampleData.SINGLETON_LOC_1);
+    IStoreItem loc2 = tmpStore.get(SampleData.SINGLETON_LOC_2);
     items.add(loc2);
     matches =
         DopplerShiftBetweenTracksOperation.DSOperation.getTracks(
@@ -543,7 +544,8 @@ public class TestGeotoolsGeometry extends TestCase
     assertEquals("single action", 0, ops.size());
     
     // ok, give it a top-level sounds speed
-    items.add(tmpStore.get(SampleData.SPEED_FOUR));
+    final IStoreItem soundSpeed = tmpStore.get(SampleData.SPEED_ONE);
+    items.add(soundSpeed);
     
     ops = doppler.actionsFor(items, store, mockContext);
     assertEquals("single action", 1, ops.size());
@@ -554,24 +556,73 @@ public class TestGeotoolsGeometry extends TestCase
     List<IStoreItem> outputs = firstOp.getOutputs();
     assertEquals("two output datasets", 2, outputs.size());
     
+    // hmm, ensure we only get updates on tracks that have changed
+    final List<String> messages = new ArrayList<String>();
+    final IChangeListener listener = new IChangeListener()
+    {
+      
+      @Override
+      public void metadataChanged(IStoreItem subject)
+      {
+        // TODO Auto-generated method stub
+        
+      }
+      
+      @Override
+      public void dataChanged(IStoreItem subject)
+      {
+        messages.add("" + subject.getName());
+      }
+      
+      @Override
+      public void collectionDeleted(IStoreItem subject)
+      {
+        // TODO Auto-generated method stub
+        
+      }
+    };
+    
+    Iterator<IStoreItem> iter = outputs.iterator();
+    while (iter.hasNext())
+    {
+      IStoreItem iStoreItem = (IStoreItem) iter.next();
+      iStoreItem.addChangeListener(listener);
+    }
+    
+    // ok, make a change to loc1
+    loc1.clearQuiet();
+    loc1.add(new Point2D.Double(22, 33));
+    loc1.fireDataChanged();
+    
+    assertEquals("only one update", 1, messages.size());
+    
+    // restart
+    messages.clear();
+    
+    // get the freq
+    tmpStore.get(SampleData.FREQ_ONE).fireDataChanged();
+    assertEquals("both outputs updated", 2, messages.size());
+    
+    // restart
+    messages.clear();
+    
+    // get the freq
+    soundSpeed.fireDataChanged();
+    assertEquals("both outputs updated", 2, messages.size());
 
     // and what if we make the sensors group look like a track?
     sensors.remove(loc2);
     sensors.add(tmpStore.get(SampleData.FREQ_ONE));
-    sensors.add(tmpStore.get(SampleData.SPEED_ONE));
+    sensors.add(soundSpeed);
         
     ops = doppler.actionsFor(items, store, mockContext);
     assertEquals("single action", 2, ops.size());
-    
-    firstOp = ops.iterator().next();
-    
-    // try to run it.
     
     
   }
 
   @SuppressWarnings("unused")
-  public void untestDoppler()
+  public void testDoppler()
   {
     // TODO: reinstate me!
 
@@ -688,23 +739,23 @@ public class TestGeotoolsGeometry extends TestCase
 
     assertEquals("empty", 0, doppler.actionsFor(items, store, context).size());
 
-    assertFalse("valid track", tests.hasNumberOfTracks(items, 1));
+    assertFalse("valid track", tests.getNumberOfTracks(items) == 1);
 
     track1.add(spdK1);
 
     assertEquals("empty", 0, doppler.actionsFor(items, store, context).size());
 
-    assertTrue("valid track", tests.hasNumberOfTracks(items, 1));
+    assertTrue("valid track", tests.getNumberOfTracks(items) == 1);
 
     // now for track two
     track2.add(loc2);
     track2.add(angR2);
 
-    assertFalse("valid track", tests.hasNumberOfTracks(items, 2));
+    assertFalse("valid track", tests.getNumberOfTracks(items) == 2);
 
     track2.add(spdK3);
 
-    assertTrue("valid track", tests.hasNumberOfTracks(items, 2));
+    assertTrue("valid track", tests.getNumberOfTracks(items) == 2);
 
     assertEquals("still empty", 0, doppler.actionsFor(items, store, context)
         .size());
@@ -810,7 +861,7 @@ public class TestGeotoolsGeometry extends TestCase
 
     op1.organiseData();
     HashMap<String, ICollection> map = op1.getDataMap();
-    assertEquals("all items", 8, map.size());
+    assertEquals("all items", 5, map.size());
 
     // ok, let's try undo redo
     assertEquals("correct size store", store.size(), 1);

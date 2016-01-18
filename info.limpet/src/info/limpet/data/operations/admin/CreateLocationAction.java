@@ -114,7 +114,7 @@ public class CreateLocationAction extends CreateSingletonGenerator
 		}
 
 		@Override
-		protected void recalculate()
+		protected void recalculate(IStoreItem subject)
 		{
 			// don't worry
 		}
