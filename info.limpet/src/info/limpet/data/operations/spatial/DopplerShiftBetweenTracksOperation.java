@@ -29,7 +29,6 @@ import info.limpet.IStoreItem;
 import info.limpet.data.commands.AbstractCommand;
 import info.limpet.data.impl.samples.StockTypes;
 import info.limpet.data.impl.samples.StockTypes.ILocations;
-import info.limpet.data.impl.samples.StockTypes.NonTemporal.LengthM;
 import info.limpet.data.impl.samples.StockTypes.NonTemporal.Location;
 import info.limpet.data.impl.samples.StockTypes.Temporal.FrequencyHz;
 import info.limpet.data.operations.CollectionComplianceTests;
@@ -44,7 +43,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.measure.Measure;
 import javax.measure.quantity.Angle;
 import javax.measure.quantity.Frequency;
 import javax.measure.quantity.Velocity;
@@ -53,7 +51,7 @@ import javax.measure.unit.SI;
 public class DopplerShiftBetweenTracksOperation implements
     IOperation<IStoreItem>
 {
-  public static class DopplerShiftOperation extends AbstractCommand<IStoreItem>
+  public static class DSOperation extends AbstractCommand<IStoreItem>
   {
 
     private static final String SOUND_SPEED = "SOUND_SPEED";
@@ -64,44 +62,13 @@ public class DopplerShiftBetweenTracksOperation implements
     private static final String TX = "TX_";
 
     /**
-     * 
-     * @param speedOfSound
-     * @param osHeadingRads
-     * @param tgtHeadingRads
-     * @param osSpeed
-     * @param tgtSpeed
-     * @param bearing
-     * @param fNought
-     * @return
-     */
-    private double calcPredictedFreqSI(final double speedOfSound,
-        final double osHeadingRads, final double tgtHeadingRads,
-        final double osSpeed, final double tgtSpeed, final double bearing,
-        final double fNought)
-    {
-      final double relB = bearing - osHeadingRads;
-
-      // note - contrary to some publications TSL uses the
-      // angle along the bearing, not the angle back down the bearing (ATB).
-      final double angleOffTheOtherB = tgtHeadingRads - bearing;
-
-      final double valOSL = Math.cos(relB) * osSpeed;
-      final double valTSL = Math.cos(angleOffTheOtherB) * tgtSpeed;
-
-      final double freq =
-          fNought * (speedOfSound + valOSL) / (speedOfSound + valTSL);
-
-      return freq;
-    }
-
-    /**
      * let the class organise a tidy set of data, to collate the assorted datasets
      * 
      */
     private transient HashMap<String, ICollection> _data;
 
     /**
-     * nominated transmitted
+     * nominated transmitter
      * 
      */
     private final StoreGroup _tx;
@@ -230,6 +197,14 @@ public class DopplerShiftBetweenTracksOperation implements
 
     }
 
+    /**
+     * find any selection items that we can use as tracks
+     * 
+     * @param ignoreMe
+     * @param selection
+     * @param aTests
+     * @return
+     */
     public static List<TrackProvider> getTracks(IStoreGroup ignoreMe,
         List<IStoreItem> selection, CollectionComplianceTests aTests)
     {
@@ -254,16 +229,13 @@ public class DopplerShiftBetweenTracksOperation implements
             //
             IStoreGroup grp = (IStoreGroup) item;
 
-            TrackProvider match = null;
-
             // see if this is a composite track
             // or, is this a conventional track
             if (aTests.isATrack(grp))
             {
-              match = new CompositeTrackWrapper(grp, grp.getName());
+              res.add(new CompositeTrackWrapper(grp, grp.getName()));
             }
-
-            if (match == null)
+            else
             {
               // see if this is a group of non-temporal locations
               Iterator<IStoreItem> iter2 = grp.iterator();
@@ -285,18 +257,13 @@ public class DopplerShiftBetweenTracksOperation implements
                 }
               }
             }
-
-            if (match != null)
-            {
-              res.add(match);
-            }
           }
         }
       }
       return res;
     }
 
-    public DopplerShiftOperation(final StoreGroup tx, final IStore store,
+    public DSOperation(final StoreGroup tx, final IStore store,
         final String title, final String description,
         final List<IStoreItem> selection, IContext context)
     {
@@ -305,17 +272,6 @@ public class DopplerShiftBetweenTracksOperation implements
 
       // create the list of non-tx tracks
       _allTracks = getTracks(tx, selection, aTests);
-    }
-
-    protected void calcAndStore(final IGeoCalculator calc, final Point2D locA,
-        final Point2D locB)
-    {
-      // get the output dataset
-      final LengthM target = (LengthM) getOutputs().get(0);
-
-      // now find the range between them
-      final double thisDist = calc.getDistanceBetween(locA, locB);
-      target.add(Measure.valueOf(thisDist, target.getUnits()));
     }
 
     @Override
@@ -344,7 +300,6 @@ public class DopplerShiftBetweenTracksOperation implements
 
           // store the output
           super.addOutput(target);
-
         }
       }
 
@@ -587,7 +542,7 @@ public class DopplerShiftBetweenTracksOperation implements
         if (hasFrequency)
         {
           final ICommand<IStoreItem> newC =
-              new DopplerShiftOperation(thisG, destination,
+              new DSOperation(thisG, destination,
                   "Doppler between tracks (from " + thisG.getName() + ")",
                   "Calculate doppler between two tracks", selection, context);
           res.add(newC);
@@ -611,5 +566,36 @@ public class DopplerShiftBetweenTracksOperation implements
 
     return aTests.exactNumber(selection, 3) && allGroups && allTracks
         && someHaveFreq && topLevelSpeed;
+  }
+
+  /**
+   * 
+   * @param speedOfSound
+   * @param osHeadingRads
+   * @param tgtHeadingRads
+   * @param osSpeed
+   * @param tgtSpeed
+   * @param bearing
+   * @param fNought
+   * @return
+   */
+  private static double calcPredictedFreqSI(final double speedOfSound,
+      final double osHeadingRads, final double tgtHeadingRads,
+      final double osSpeed, final double tgtSpeed, final double bearing,
+      final double fNought)
+  {
+    final double relB = bearing - osHeadingRads;
+
+    // note - contrary to some publications TSL uses the
+    // angle along the bearing, not the angle back down the bearing (ATB).
+    final double angleOffTheOtherB = tgtHeadingRads - bearing;
+
+    final double valOSL = Math.cos(relB) * osSpeed;
+    final double valTSL = Math.cos(angleOffTheOtherB) * tgtSpeed;
+
+    final double freq =
+        fNought * (speedOfSound + valOSL) / (speedOfSound + valTSL);
+
+    return freq;
   }
 }

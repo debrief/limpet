@@ -38,8 +38,8 @@ import info.limpet.data.operations.CollectionComplianceTests;
 import info.limpet.data.operations.CollectionComplianceTests.TimePeriod;
 import info.limpet.data.operations.spatial.DistanceBetweenTracksOperation;
 import info.limpet.data.operations.spatial.DopplerShiftBetweenTracksOperation;
-import info.limpet.data.operations.spatial.DopplerShiftBetweenTracksOperation.DopplerShiftOperation;
-import info.limpet.data.operations.spatial.DopplerShiftBetweenTracksOperation.DopplerShiftOperation.TrackProvider;
+import info.limpet.data.operations.spatial.DopplerShiftBetweenTracksOperation.DSOperation;
+import info.limpet.data.operations.spatial.DopplerShiftBetweenTracksOperation.DSOperation.TrackProvider;
 import info.limpet.data.operations.spatial.GenerateCourseAndSpeedOperation;
 import info.limpet.data.operations.spatial.GeoSupport;
 import info.limpet.data.operations.spatial.IGeoCalculator;
@@ -480,7 +480,7 @@ public class TestGeotoolsGeometry extends TestCase
 
     IContext mockContext = new MockContext();
     List<TrackProvider> matches =
-        DopplerShiftBetweenTracksOperation.DopplerShiftOperation.getTracks(
+        DopplerShiftBetweenTracksOperation.DSOperation.getTracks(
             null, items, tests);
     assertEquals("empty", 0, matches.size());
 
@@ -490,13 +490,13 @@ public class TestGeotoolsGeometry extends TestCase
     assertNotNull("not found track", cTrack);
     items.add(cTrack);
     matches =
-        DopplerShiftBetweenTracksOperation.DopplerShiftOperation.getTracks(
+        DopplerShiftBetweenTracksOperation.DSOperation.getTracks(
             null, items, tests);
     assertEquals("not empty", 1, matches.size());
 
     // ignore that track
     matches =
-        DopplerShiftBetweenTracksOperation.DopplerShiftOperation.getTracks(
+        DopplerShiftBetweenTracksOperation.DSOperation.getTracks(
             (IStoreGroup) cTrack, items, tests);
     assertEquals("empty", 0, matches.size());
 
@@ -505,14 +505,14 @@ public class TestGeotoolsGeometry extends TestCase
     assertNotNull("not found track", loc1);
     items.add(loc1);
     matches =
-        DopplerShiftBetweenTracksOperation.DopplerShiftOperation.getTracks(
+        DopplerShiftBetweenTracksOperation.DSOperation.getTracks(
             (IStoreGroup) cTrack, items, tests);
     assertEquals("not empty", 1, matches.size());
 
     IStoreItem loc2 = tmpStore.get(SampleData.SINGLETON_LOC_1);
     items.add(loc2);
     matches =
-        DopplerShiftBetweenTracksOperation.DopplerShiftOperation.getTracks(
+        DopplerShiftBetweenTracksOperation.DSOperation.getTracks(
             (IStoreGroup) cTrack, items, tests);
     assertEquals("not empty", 2, matches.size());
     
@@ -523,7 +523,7 @@ public class TestGeotoolsGeometry extends TestCase
 
     // check it's empty
     matches =
-        DopplerShiftBetweenTracksOperation.DopplerShiftOperation.getTracks(
+        DopplerShiftBetweenTracksOperation.DSOperation.getTracks(
             (IStoreGroup) cTrack, items, tests);
     assertEquals("empty", 0, matches.size());
 
@@ -534,7 +534,7 @@ public class TestGeotoolsGeometry extends TestCase
     items.add(sensors);
 
     matches =
-        DopplerShiftBetweenTracksOperation.DopplerShiftOperation.getTracks(
+        DopplerShiftBetweenTracksOperation.DSOperation.getTracks(
             (IStoreGroup) cTrack, items, tests);
     assertEquals("not empty", 2, matches.size());
 
@@ -802,8 +802,8 @@ public class TestGeotoolsGeometry extends TestCase
     assertEquals("empty", 1, doppler.actionsFor(items, store, context).size());
 
     // ok, now check how the doppler handler organises its data
-    DopplerShiftOperation op1 =
-        (DopplerShiftOperation) doppler.actionsFor(items, store, context)
+    DSOperation op1 =
+        (DSOperation) doppler.actionsFor(items, store, context)
             .iterator().next();
 
     assertNotNull("found operation", op1);
