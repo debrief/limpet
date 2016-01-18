@@ -107,15 +107,8 @@ public class CollectionComplianceTests
     for (int i = 0; i < selection.size(); i++)
     {
       IStoreItem thisI = selection.get(i);
-      if (thisI instanceof ICollection)
+      if (thisI instanceof ILocations)
       {
-        ICollection thisC = (ICollection) thisI;
-        Class<?> theClass = thisC.storedClass();
-        if (!Point2D.class.equals(theClass))
-        {
-          allValid = false;
-          break;
-        }
       }
       else
       {
