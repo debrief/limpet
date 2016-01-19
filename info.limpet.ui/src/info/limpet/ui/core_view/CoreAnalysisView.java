@@ -50,320 +50,334 @@ import org.eclipse.ui.part.ViewPart;
 public abstract class CoreAnalysisView extends ViewPart
 {
 
-  private Action newView;
-  private Action copyToClipboard;
-  private Action followSelection;
-  private ISelectionListener selListener;
-  private final CollectionComplianceTests aTests;
-  private final List<IStoreItem> curList = new ArrayList<IStoreItem>();
-  private IChangeListener changeListener;
-  private final String _myId;
-  private final String _myTitle;
+	private Action newView;
+	private Action copyToClipboard;
+	private Action followSelection;
+	private ISelectionListener selListener;
+	private final CollectionComplianceTests aTests;
+	private final List<IStoreItem> curList = new ArrayList<IStoreItem>();
+	private IChangeListener changeListener;
+	private final String _myId;
+	private final String _myTitle;
 
-  public CoreAnalysisView(String myId, String myTitle)
-  {
-    super();
+	public CoreAnalysisView(String myId, String myTitle)
+	{
+		super();
 
-    _myId = myId;
-    _myTitle = myTitle;
+		_myId = myId;
+		_myTitle = myTitle;
 
-    aTests = new CollectionComplianceTests();
-    changeListener = new IChangeListener()
-    {
+		aTests = new CollectionComplianceTests();
+		changeListener = new IChangeListener()
+		{
 
-      @Override
-      public void dataChanged(IStoreItem subject)
-      {
-        display(curList);
-      }
+			@Override
+			public void dataChanged(IStoreItem subject)
+			{
+				datasetDataChanged(subject);
+				display(curList);
+			}
 
-      @Override
-      public void collectionDeleted(IStoreItem subject)
-      {
-        // hmm, we should probably stop listening to that collection
-        curList.remove(subject);
+			@Override
+			public void collectionDeleted(IStoreItem subject)
+			{
+				// hmm, we should probably stop listening to that collection
+				curList.remove(subject);
 
-        // and update the UI
-        display(curList);
-      }
+				// and update the UI
+				display(curList);
+			}
 
-      @Override
-      public void metadataChanged(IStoreItem subject)
-      {
-        display(curList);
-      }
-    };
-  }
+			@Override
+			public void metadataChanged(IStoreItem subject)
+			{
+				display(curList);
+			}
+		};
+	}
 
-  /**
-   * external accessor, since we switch off following when a view has been created specifically to
-   * view a particular selection
-   * 
-   * @param val
-   */
-  public void follow(List<IStoreItem> data)
-  {
-    followSelection.setChecked(false);
-    followSelection.setEnabled(false);
-    followSelection
-        .setDescription("Disabled - view focussed on particular dataset");
+	/**
+	 * the specified item has changed, and should be re-analysed
+	 * 
+	 * @param subject
+	 *          the item that has changed
+	 */
+	protected void datasetDataChanged(IStoreItem subject)
+	{
 
-    display(data);
+	}
 
-    // also set the title
-    if (data.size() == 1)
-    {
-      this.setPartName(_myTitle + " - " + data.get(0).getName());
-    }
-    else
-    {
-      this.setPartName(_myTitle + " - multiple datasets");
-    }
+	/**
+	 * external accessor, since we switch off following when a view has been
+	 * created specifically to view a particular selection
+	 * 
+	 * @param val
+	 */
+	public void follow(List<IStoreItem> data)
+	{
+		followSelection.setChecked(false);
+		followSelection.setEnabled(false);
+		followSelection
+				.setDescription("Disabled - view focussed on particular dataset");
 
-  }
+		display(data);
 
-  protected void newSelection(ISelection selection)
-  {
-    List<IStoreItem> res = new ArrayList<IStoreItem>();
-    if (selection instanceof StructuredSelection)
-    {
-      StructuredSelection str = (StructuredSelection) selection;
+		// also set the title
+		if (data.size() == 1)
+		{
+			this.setPartName(_myTitle + " - " + data.get(0).getName());
+		}
+		else
+		{
+			this.setPartName(_myTitle + " - multiple datasets");
+		}
 
-      // check if it/they are suitable
-      Iterator<?> iter = str.iterator();
-      while (iter.hasNext())
-      {
-        Object object = (Object) iter.next();
-        if (object instanceof IAdaptable)
-        {
-          IAdaptable ad = (IAdaptable) object;
-          IStoreItem coll = (IStoreItem) ad.getAdapter(IStoreItem.class);
-          if (coll != null)
-          {
-            res.add(coll);
-          }
-        }
-        else
-        {
-          // can we adapt it?
-          ArrayList<IAdapterFactory> adapters = Activator.getDefault().getAdapters();
-          if (adapters != null)
-          {
-            Iterator<IAdapterFactory> aIter = adapters.iterator();
-            while (aIter.hasNext())
-            {
-              IAdapterFactory iAdapterFactory = (IAdapterFactory) aIter.next();
-              Object match = iAdapterFactory.getAdapter(object, IStoreItem.class);
-              if (match != null)
-              {
-                res.add((IStoreItem) match);
-                break;
-              }
-              
-            }
-          }
-        }
-      }
-    }
+	}
 
-    // ok, stop listening to the old list
-    clearChangeListeners();
+	protected void newSelection(ISelection selection)
+	{
+		List<IStoreItem> res = new ArrayList<IStoreItem>();
+		if (selection instanceof StructuredSelection)
+		{
+			StructuredSelection str = (StructuredSelection) selection;
 
-    // have we found any, and are they suitable for us?
-    if ((res.size()) > 0 && appliesToMe(res, getATests()))
-    {
-      // store the new list
-      curList.addAll(res);
+			// check if it/they are suitable
+			Iterator<?> iter = str.iterator();
+			while (iter.hasNext())
+			{
+				Object object = (Object) iter.next();
+				if (object instanceof IAdaptable)
+				{
+					IAdaptable ad = (IAdaptable) object;
+					IStoreItem coll = (IStoreItem) ad.getAdapter(IStoreItem.class);
+					if (coll != null)
+					{
+						res.add(coll);
+					}
+				}
+				else
+				{
+					// can we adapt it?
+					ArrayList<IAdapterFactory> adapters = Activator.getDefault()
+							.getAdapters();
+					if (adapters != null)
+					{
+						Iterator<IAdapterFactory> aIter = adapters.iterator();
+						while (aIter.hasNext())
+						{
+							IAdapterFactory iAdapterFactory = (IAdapterFactory) aIter.next();
+							Object match = iAdapterFactory.getAdapter(object,
+									IStoreItem.class);
+							if (match != null)
+							{
+								res.add((IStoreItem) match);
+								break;
+							}
 
-      // now listen to the new list
-      Iterator<IStoreItem> iter = curList.iterator();
-      while (iter.hasNext())
-      {
-        IStoreItem iC = iter.next();
-        iC.addChangeListener(changeListener);
-      }
+						}
+					}
+				}
+			}
+		}
 
-      // ok, display them
-      display(res);
-    }
-    else
-    {
-      // ok, nothing to display - clear the graph
-      display(new ArrayList<IStoreItem>());
-    }
-  }
+		// ok, stop listening to the old list
+		clearChangeListeners();
 
-  private void clearChangeListeners()
-  {
-    if (curList.size() > 0)
-    {
-      Iterator<IStoreItem> iter = curList.iterator();
-      while (iter.hasNext())
-      {
-        IStoreItem iC = iter.next();
-        iC.removeChangeListener(changeListener);
-      }
+		// have we found any, and are they suitable for us?
+		if ((res.size()) > 0 && appliesToMe(res, getATests()))
+		{
+			// store the new list
+			curList.addAll(res);
 
-      // and forget about them all
-      curList.clear();
-    }
-  }
+			// now listen to the new list
+			Iterator<IStoreItem> iter = curList.iterator();
+			while (iter.hasNext())
+			{
+				IStoreItem iC = iter.next();
+				iC.addChangeListener(changeListener);
+			}
 
-  public List<IStoreItem> getData()
-  {
-    return curList;
-  }
+			// ok, display them
+			display(res);
+		}
+		else
+		{
+			// ok, nothing to display - clear the graph
+			display(new ArrayList<IStoreItem>());
+		}
+	}
 
-  /**
-   * determine if this set of collections are suitable for displaying
-   * 
-   * @param res
-   * @param aTests2
-   * @return
-   */
-  protected abstract boolean appliesToMe(List<IStoreItem> res,
-      CollectionComplianceTests aTests2);
+	private void clearChangeListeners()
+	{
+		if (curList.size() > 0)
+		{
+			Iterator<IStoreItem> iter = curList.iterator();
+			while (iter.hasNext())
+			{
+				IStoreItem iC = iter.next();
+				iC.removeChangeListener(changeListener);
+			}
 
-  /**
-   * show this set of collections
-   * 
-   * @param res
-   */
-  public abstract void display(List<IStoreItem> res);
+			// and forget about them all
+			curList.clear();
+		}
+	}
 
-  protected void fillLocalPullDown(IMenuManager manager)
-  {
-    manager.add(newView);
-    manager.add(copyToClipboard);
-    manager.add(followSelection);
-    manager.add(new Separator());
-  }
+	public List<IStoreItem> getData()
+	{
+		return curList;
+	}
 
-  protected void fillLocalToolBar(IToolBarManager manager)
-  {
-    manager.add(copyToClipboard);
-    manager.add(followSelection);
-  }
+	/**
+	 * determine if this set of collections are suitable for displaying
+	 * 
+	 * @param res
+	 * @param aTests2
+	 * @return
+	 */
+	protected abstract boolean appliesToMe(List<IStoreItem> res,
+			CollectionComplianceTests aTests2);
 
-  protected void copyToClipboard()
-  {
-    Display display = Display.getCurrent();
-    Clipboard clipboard = new Clipboard(display);
-    String output = getTextForClipboard();
+	/**
+	 * show this set of collections
+	 * 
+	 * @param res
+	 */
+	public abstract void display(List<IStoreItem> res);
 
-    clipboard.setContents(new Object[]
-    {output}, new Transfer[]
-    {TextTransfer.getInstance()});
-    clipboard.dispose();
-  }
+	protected void fillLocalPullDown(IMenuManager manager)
+	{
+		manager.add(newView);
+		manager.add(copyToClipboard);
+		manager.add(followSelection);
+		manager.add(new Separator());
+	}
 
-  protected void contributeToActionBars()
-  {
-    IActionBars bars = getViewSite().getActionBars();
-    fillLocalPullDown(bars.getMenuManager());
-    fillLocalToolBar(bars.getToolBarManager());
-  }
+	protected void fillLocalToolBar(IToolBarManager manager)
+	{
+		manager.add(copyToClipboard);
+		manager.add(followSelection);
+	}
 
-  protected void setupListener()
-  {
-    // register as selection listener
-    selListener = new ISelectionListener()
-    {
-      public void selectionChanged(IWorkbenchPart part, ISelection selection)
-      {
-        // are we following the selection?
-        if (followSelection.isChecked())
-        {
-          newSelection(selection);
-        }
-      }
-    };
-    getSite().getWorkbenchWindow().getSelectionService()
-        .addSelectionListener(selListener);
-  }
+	protected void copyToClipboard()
+	{
+		Display display = Display.getCurrent();
+		Clipboard clipboard = new Clipboard(display);
+		String output = getTextForClipboard();
 
-  public void dispose()
-  {
-    // stop listening for data changes
-    clearChangeListeners();
+		clipboard.setContents(new Object[]
+		{ output }, new Transfer[]
+		{ TextTransfer.getInstance() });
+		clipboard.dispose();
+	}
 
-    // and stop listening for selection changes
-    getSite().getWorkbenchWindow().getSelectionService()
-        .removeSelectionListener(selListener);
+	protected void contributeToActionBars()
+	{
+		IActionBars bars = getViewSite().getActionBars();
+		fillLocalPullDown(bars.getMenuManager());
+		fillLocalToolBar(bars.getToolBarManager());
+	}
 
-    super.dispose();
-  }
+	protected void setupListener()
+	{
+		// register as selection listener
+		selListener = new ISelectionListener()
+		{
+			public void selectionChanged(IWorkbenchPart part, ISelection selection)
+			{
+				// are we following the selection?
+				if (followSelection.isChecked())
+				{
+					newSelection(selection);
+				}
+			}
+		};
+		getSite().getWorkbenchWindow().getSelectionService()
+				.addSelectionListener(selListener);
+	}
 
-  protected abstract String getTextForClipboard();
+	public void dispose()
+	{
+		// stop listening for data changes
+		clearChangeListeners();
 
-  protected void makeActions()
-  {
-    newView = new Action()
-    {
-      public void run()
-      {
-        createNewView();
-      }
-    };
-    newView.setText("New instance of " + _myTitle);
-    newView.setToolTipText("Create a fresh instance of this view");
-    newView.setImageDescriptor(Activator
-        .getImageDescriptor("icons/newView.png"));
+		// and stop listening for selection changes
+		getSite().getWorkbenchWindow().getSelectionService()
+				.removeSelectionListener(selListener);
 
-    copyToClipboard = new Action()
-    {
-      public void run()
-      {
-        copyToClipboard();
-      }
-    };
-    copyToClipboard.setText("Copy to clipboard");
-    copyToClipboard.setToolTipText("Copy analysis to clipboard");
-    copyToClipboard.setImageDescriptor(PlatformUI.getWorkbench()
-        .getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
+		super.dispose();
+	}
 
-    followSelection = new Action("Follow selection", SWT.TOGGLE)
-    {
-      public void run()
-      {
-        // don't worry, we can ignore the events
-      }
-    };
-    followSelection.setChecked(true);
-    followSelection.setToolTipText("Link with selection");
-    followSelection.setImageDescriptor(PlatformUI.getWorkbench()
-        .getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_SYNCED));
+	protected abstract String getTextForClipboard();
 
-  }
+	protected void makeActions()
+	{
+		newView = new Action()
+		{
+			public void run()
+			{
+				createNewView();
+			}
+		};
+		newView.setText("New instance of " + _myTitle);
+		newView.setToolTipText("Create a fresh instance of this view");
+		newView.setImageDescriptor(Activator
+				.getImageDescriptor("icons/newView.png"));
 
-  protected void createNewView()
-  {
-    // create a new instance of the specified view
-    IWorkbenchWindow window =
-        PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-    IWorkbenchPage page = window.getActivePage();
+		copyToClipboard = new Action()
+		{
+			public void run()
+			{
+				copyToClipboard();
+			}
+		};
+		copyToClipboard.setText("Copy to clipboard");
+		copyToClipboard.setToolTipText("Copy analysis to clipboard");
+		copyToClipboard.setImageDescriptor(PlatformUI.getWorkbench()
+				.getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
 
-    try
-    {
-      String millis = "" + System.currentTimeMillis();
-      page.showView(_myId, millis, IWorkbenchPage.VIEW_ACTIVATE);
-    }
-    catch (PartInitException e)
-    {
-      e.printStackTrace();
-    }
-  }
+		followSelection = new Action("Follow selection", SWT.TOGGLE)
+		{
+			public void run()
+			{
+				// don't worry, we can ignore the events
+			}
+		};
+		followSelection.setChecked(true);
+		followSelection.setToolTipText("Link with selection");
+		followSelection.setImageDescriptor(PlatformUI.getWorkbench()
+				.getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_SYNCED));
 
-  protected void fillContextMenu(IMenuManager manager)
-  {
-    manager.add(copyToClipboard);
-    // Other plug-ins can contribute there actions here
-    manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-  }
+	}
 
-  public CollectionComplianceTests getATests()
-  {
-    return aTests;
-  }
+	protected void createNewView()
+	{
+		// create a new instance of the specified view
+		IWorkbenchWindow window = PlatformUI.getWorkbench()
+				.getActiveWorkbenchWindow();
+		IWorkbenchPage page = window.getActivePage();
+
+		try
+		{
+			String millis = "" + System.currentTimeMillis();
+			page.showView(_myId, millis, IWorkbenchPage.VIEW_ACTIVATE);
+		}
+		catch (PartInitException e)
+		{
+			e.printStackTrace();
+		}
+	}
+
+	protected void fillContextMenu(IMenuManager manager)
+	{
+		manager.add(copyToClipboard);
+		// Other plug-ins can contribute there actions here
+		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+	}
+
+	public CollectionComplianceTests getATests()
+	{
+		return aTests;
+	}
 
 }
