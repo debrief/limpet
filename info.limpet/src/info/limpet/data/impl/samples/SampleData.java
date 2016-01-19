@@ -42,7 +42,9 @@ import java.util.List;
 
 import javax.measure.Measure;
 import javax.measure.quantity.Dimensionless;
+import javax.measure.quantity.Length;
 import javax.measure.quantity.Velocity;
+import javax.measure.unit.Unit;
 
 public class SampleData
 {
@@ -187,15 +189,48 @@ public class SampleData
     group1.add(speedIrregular);
     group1.add(speedEarly1);
     group1.add(speedSeries2);
-
     list.add(group1);
 
+    IStoreGroup factors = new StoreGroup("Factors");
+    StockTypes.NonTemporal.SpeedMSec singletonRange2 =
+        new StockTypes.NonTemporal.SpeedMSec(RANGED_SPEED_SINGLETON, null);
+    Measure<Double, Velocity> minR1 =
+        Measure.valueOf(940d, singletonRange1.getUnits());
+    Measure<Double, Velocity> maxR1 =
+        Measure.valueOf(1050d, singletonRange1.getUnits());
+    QuantityRange<Velocity> speedRange1 =
+        new QuantityRange<Velocity>(minR1, maxR1);
+    singletonRange2.setRange(speedRange1);
+    singletonRange2.add(998);
+    Unit<Velocity> unit = Velocity.UNIT;
+
+    IQuantityCollection<Velocity> singletonSpeed =
+        new QuantityCollection<Velocity>("Ranged Speed", null, Velocity.UNIT);
+    Measure<Double, Velocity> min = Measure.valueOf(0d, unit);
+    Measure<Double, Velocity> max = Measure.valueOf(100d, unit);
+    singletonSpeed.add(54);
+    singletonSpeed.setRange(new QuantityRange<Velocity>(min, max));
+
+    IQuantityCollection<Length> singletonLength1 =
+        new QuantityCollection<Length>("Ranged Speed", null, Length.UNIT);
+    Unit<Length> lUnit = Length.UNIT;
+    Measure<Double, Length> minL = Measure.valueOf(40d, lUnit);
+    Measure<Double, Length> maxL = Measure.valueOf(150d, lUnit);
+    singletonLength1.add(134);
+    singletonLength1.setRange(new QuantityRange<Length>(minL, maxL));
+    
+    factors.add(singletonRange2);
+    factors.add(singletonSpeed);
+    factors.add(singletonLength1);
+
+    list.add(factors);
+    
     IStoreGroup compositeTrack = new InMemoryStore.StoreGroup(COMPOSITE_ONE);
     compositeTrack.add(angle1);
     compositeTrack.add(track2);
     compositeTrack.add(freq1);
     compositeTrack.add(speedSeries4);
-
+    
     list.add(compositeTrack);
 
     list.add(length1);

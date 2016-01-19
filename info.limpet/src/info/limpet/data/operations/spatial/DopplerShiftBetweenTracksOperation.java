@@ -28,7 +28,6 @@ import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
 import info.limpet.data.commands.AbstractCommand;
 import info.limpet.data.impl.samples.StockTypes;
-import info.limpet.data.impl.samples.StockTypes.ILocations;
 import info.limpet.data.impl.samples.StockTypes.NonTemporal.Location;
 import info.limpet.data.impl.samples.StockTypes.Temporal.FrequencyHz;
 import info.limpet.data.impl.samples.TemporalLocation;
@@ -248,7 +247,7 @@ public class DopplerShiftBetweenTracksOperation implements
         IStoreItem item = iter.next();
         if (item != ignoreMe)
         {
-          if (item instanceof ILocations)
+          if (item instanceof Location)
           {
             Location loc = (Location) item;
             res.add(new SingletonWrapper(loc.getName(), loc));
