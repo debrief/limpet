@@ -335,7 +335,7 @@ public class XyPlotView extends CoreAnalysisView
 
         // if it's a monster line, or just a singleton value, we won't plot
         // markers
-        if (thisQ.getValuesCount() > 100 || thisQ.getValuesCount() == 1)
+        if (thisQ.getValuesCount() > 90 || thisQ.getValuesCount() == 1)
         {
           newSeries.setSymbolType(PlotSymbolType.NONE);
         }
