@@ -160,7 +160,15 @@ public class XyPlotView extends CoreAnalysisView
 				IQuantityCollection<Quantity> thisQ = (IQuantityCollection<Quantity>) coll;
 
 				final Unit<Quantity> theseUnits = thisQ.getUnits();
-				String seriesName = thisQ.getName() + " (" + theseUnits + ")";
+				String seriesName = seriesNameFor(thisQ, theseUnits);
+				
+				// do we need to create this series
+				ISeries match = chart.getSeriesSet().getSeries(seriesName);
+				if (match != null)
+				{
+					continue;
+				}
+				
 				ILineSeries newSeries = (ILineSeries) chart.getSeriesSet()
 						.createSeries(SeriesType.LINE, seriesName);
 
@@ -239,6 +247,12 @@ public class XyPlotView extends CoreAnalysisView
 		}
 	}
 
+	private String seriesNameFor(IQuantityCollection<Quantity> thisQ,
+			final Unit<Quantity> theseUnits) {
+		String seriesName = thisQ.getName() + " (" + theseUnits + ")";
+		return seriesName;
+	}
+
 	@SuppressWarnings("unchecked")
 	private void showTemporalQuantity(List<IStoreItem> res)
 	{
@@ -264,7 +278,7 @@ public class XyPlotView extends CoreAnalysisView
 
 				final Unit<Quantity> theseUnits = thisQ.getUnits();
 
-				String seriesName = thisQ.getName() + " (" + theseUnits + ")";
+				String seriesName = seriesNameFor(thisQ, theseUnits);
 
 				// do we need to create this series
 				ISeries match = chart.getSeriesSet().getSeries(seriesName);
@@ -469,15 +483,27 @@ public class XyPlotView extends CoreAnalysisView
 		return "Pending";
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void datasetDataChanged(IStoreItem subject)
 	{
-		// delete this dataset from the graph
-		final String name = subject.getName();
-
+		final String name;
+		ICollection coll = (ICollection) subject;
+		if(coll.isQuantity())
+		{
+			IQuantityCollection<Quantity> cq = (IQuantityCollection<Quantity>) coll;
+			Unit<Quantity> units = cq.getUnits();
+			name = seriesNameFor(cq, units);
+		}
+		else
+		{
+			name = coll.getName();
+		}
+		
 		ISeries match = chart.getSeriesSet().getSeries(name);
 		if (match != null)
 		{
+			
 			System.out.println("just deleting:" + name);
 			chart.getSeriesSet().deleteSeries(name);
 		}
