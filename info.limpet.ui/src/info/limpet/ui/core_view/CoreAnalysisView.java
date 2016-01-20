@@ -74,6 +74,7 @@ public abstract class CoreAnalysisView extends ViewPart
       @Override
       public void dataChanged(IStoreItem subject)
       {
+        datasetDataChanged(subject);
         display(curList);
       }
 
@@ -93,6 +94,17 @@ public abstract class CoreAnalysisView extends ViewPart
         display(curList);
       }
     };
+  }
+
+  /**
+   * the specified item has changed, and should be re-analysed
+   * 
+   * @param subject
+   *          the item that has changed
+   */
+  protected void datasetDataChanged(IStoreItem subject)
+  {
+
   }
 
   /**
@@ -146,20 +158,22 @@ public abstract class CoreAnalysisView extends ViewPart
         else
         {
           // can we adapt it?
-          ArrayList<IAdapterFactory> adapters = Activator.getDefault().getAdapters();
+          ArrayList<IAdapterFactory> adapters =
+              Activator.getDefault().getAdapters();
           if (adapters != null)
           {
             Iterator<IAdapterFactory> aIter = adapters.iterator();
             while (aIter.hasNext())
             {
               IAdapterFactory iAdapterFactory = (IAdapterFactory) aIter.next();
-              Object match = iAdapterFactory.getAdapter(object, IStoreItem.class);
+              Object match =
+                  iAdapterFactory.getAdapter(object, IStoreItem.class);
               if (match != null)
               {
                 res.add((IStoreItem) match);
                 break;
               }
-              
+
             }
           }
         }
@@ -278,8 +292,8 @@ public abstract class CoreAnalysisView extends ViewPart
         }
       }
     };
-    getSite().getWorkbenchWindow().getSelectionService()
-        .addSelectionListener(selListener);
+    getSite().getWorkbenchWindow().getSelectionService().addSelectionListener(
+        selListener);
   }
 
   public void dispose()
