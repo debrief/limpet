@@ -201,10 +201,11 @@ public class UnitConversionOperation implements IOperation<ICollection>
         else
         {
           target.add(converted);
-
         }
-
       }
+      
+      // and fire the update
+      target.fireDataChanged();
     }
   }
 

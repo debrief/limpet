@@ -54,12 +54,23 @@ public class MultiplyQuantityOperation implements IOperation<IStoreItem>
     if (appliesTo(selection))
     {
       // ok, temporal?
-      if (aTests.allTemporal(selection) || !aTests.allNonTemporal(selection)
-          && aTests.allEqualLengthOrSingleton(selection))
+      final boolean suitableForInterpolated = aTests.allTemporalOrSingleton(selection);
+      final boolean suitableForIndexed =
+          !aTests.allNonTemporal(selection)
+              && aTests.allEqualLengthOrSingleton(selection);
+      if (suitableForInterpolated || suitableForIndexed)
       {
-        IBaseTemporalCollection longest =
-            (IBaseTemporalCollection) aTests
-                .getLongestTemporalCollections(selection);
+        final IBaseTemporalCollection longest;
+        if (suitableForInterpolated)
+        {
+          longest =
+              (IBaseTemporalCollection) aTests
+                  .getLongestTemporalCollections(selection);
+        }
+        else
+        {
+          longest = null;
+        }
 
         ICommand<IStoreItem> newC =
             new MultiplyQuantityValues(selection, destination, longest, context);
@@ -320,6 +331,7 @@ public class MultiplyQuantityOperation implements IOperation<IStoreItem>
         }
       }
 
+      target.fireDataChanged();
     }
   }
 }

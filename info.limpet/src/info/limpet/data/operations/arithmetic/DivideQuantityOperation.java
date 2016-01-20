@@ -309,6 +309,10 @@ public class DivideQuantityOperation implements IOperation<IStoreItem>
           target.add(res);
         }
       }
+      
+      // and fire the update
+      target.fireDataChanged();
+
     }
 
     @Override

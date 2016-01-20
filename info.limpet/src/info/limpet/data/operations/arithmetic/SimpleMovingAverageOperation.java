@@ -180,6 +180,10 @@ public class SimpleMovingAverageOperation implements IOperation<ICollection>
         sma.newNum(quantity.doubleValue(input.getUnits()));
         target.add(sma.getAvg());
       }
+      
+      // and fire the update
+      target.fireDataChanged();
+
     }
   }
 

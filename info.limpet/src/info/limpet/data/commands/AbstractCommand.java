@@ -314,23 +314,22 @@ public abstract class AbstractCommand<T extends IStoreItem> implements
   }
 
   @Override
-  public void addChangeListener(IChangeListener listener)
+  public final void addChangeListener(IChangeListener listener)
   {
-    // TODO Auto-generated method stub
-
+    // TODO we should add change listener support
   }
 
   @Override
-  public void removeChangeListener(IChangeListener listener)
+  public final void removeChangeListener(IChangeListener listener)
   {
-    // TODO Auto-generated method stub
-
+    // TODO we should add change listener support
   }
 
   @Override
   public void fireDataChanged()
   {
+    // hmm, we don't really implement this, because apps listen to the 
+    // results collections, not the command.
     // TODO Auto-generated method stub
-
   }
 }
