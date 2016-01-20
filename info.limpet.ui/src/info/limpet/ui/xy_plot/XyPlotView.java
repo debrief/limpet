@@ -489,7 +489,7 @@ public class XyPlotView extends CoreAnalysisView
 	{
 		final String name;
 		ICollection coll = (ICollection) subject;
-		if(coll.isQuantity())
+		if (coll.isQuantity())
 		{
 			IQuantityCollection<Quantity> cq = (IQuantityCollection<Quantity>) coll;
 			Unit<Quantity> units = cq.getUnits();
@@ -503,14 +503,10 @@ public class XyPlotView extends CoreAnalysisView
 		ISeries match = chart.getSeriesSet().getSeries(name);
 		if (match != null)
 		{
-			
-			System.out.println("just deleting:" + name);
 			chart.getSeriesSet().deleteSeries(name);
 		}
 		else
 		{
-			System.out.println("deleting all!");
-			
 			// clear all of the series
 			ISeries[] allSeries = chart.getSeriesSet().getSeries();
 			for (int i = 0; i < allSeries.length; i++)
