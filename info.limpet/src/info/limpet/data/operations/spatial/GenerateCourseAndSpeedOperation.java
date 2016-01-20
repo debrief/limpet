@@ -118,8 +118,10 @@ public class GenerateCourseAndSpeedOperation implements IOperation<IStoreItem>
       // get a calculator to use
       final IGeoCalculator calc = GeoSupport.getCalculator();
 
+      // remember what series have been updated
+      List<ICollection> updated = new ArrayList<ICollection>();
+      
       // do some clearing first
-
       Iterator<IStoreItem> iter = getInputs().iterator();
       Iterator<IStoreItem> oIter = outputs.iterator();
       while (iter.hasNext())
@@ -149,8 +151,17 @@ public class GenerateCourseAndSpeedOperation implements IOperation<IStoreItem>
           // and remember the values
           lastLocation = geometry;
           lastTime = thisTime;
-
         }
+        
+        updated.add((ICollection) thisOut);
+      }
+      
+      Iterator<ICollection> iter2 = updated.iterator();
+      while (iter2.hasNext())
+      {
+        ICollection iC = (ICollection) iter2.next();
+        iC.fireDataChanged();
+        
       }
     }
 

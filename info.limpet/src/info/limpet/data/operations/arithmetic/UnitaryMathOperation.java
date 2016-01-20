@@ -220,6 +220,14 @@ public abstract class UnitaryMathOperation implements IOperation<ICollection>
           processThis(thisInput, thisOutput);
         }
       }
+      
+      oIter = getOutputs().iterator();
+      while (oIter.hasNext())
+      {
+        ICollection iCollection = (ICollection) oIter.next();
+        iCollection.fireDataChanged();
+      }
+      
     }
   }
 
