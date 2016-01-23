@@ -39,6 +39,7 @@ import info.limpet.data.impl.samples.StockTypes.NonTemporal.AngleDegrees;
 import info.limpet.data.impl.samples.StockTypes.Temporal.SpeedKts;
 import info.limpet.data.operations.AddLayerOperation;
 import info.limpet.data.operations.CollectionComplianceTests;
+import info.limpet.data.operations.GenerateDummyDataOperation;
 import info.limpet.data.operations.UnitConversionOperation;
 import info.limpet.data.operations.admin.OperationsLibrary;
 import info.limpet.data.operations.arithmetic.AddQuantityOperation;
@@ -539,6 +540,7 @@ public class TestOperations extends TestCase
     ICollection newS =
         (ICollection) store.get("Speed One Time converted to km/h");
     assertNotNull(newS);
+    command.dataChanged(newS);
 
     // test results is same length as thisSpeed
     assertEquals("correct size", 10, newS.getValuesCount());
@@ -802,6 +804,26 @@ public class TestOperations extends TestCase
     assertEquals(firstDifference, speed1firstValue - speed2firstValue);
   }
 
+  public void testGenerateDummyDataOperation()
+  {
+	  InMemoryStore store = new SampleData().getData(10);
+
+	  List<IStoreItem> selection = new ArrayList<IStoreItem>();
+
+	  Collection<ICommand<IStoreItem>> commands =
+			  new GenerateDummyDataOperation("Generate Dummy Data Test",1).actionsFor(selection, store, context);
+	  assertEquals("Valid number of commands", 1, commands.size());
+	  
+	  IQuantityCollection<Velocity> speedGood1 =
+		        (IQuantityCollection<Velocity>) store.get(SampleData.SPEED_ONE);
+		    selection = new ArrayList<>();
+		    
+	  for (ICommand<IStoreItem> iCommand : commands)
+	  {
+		  iCommand.execute();
+		  iCommand.dataChanged(speedGood1);
+	  }
+  }
   @SuppressWarnings("unchecked")
   public void testAddLayerOperation()
   {
@@ -815,7 +837,7 @@ public class TestOperations extends TestCase
 
     Collection<ICommand<IStoreItem>> commands =
         new AddLayerOperation().actionsFor(selection, store, context);
-    assertEquals("invalid number of inputs", 1, commands.size());
+    assertEquals("Valid number of commands", 1, commands.size());
     for (ICommand<IStoreItem> iCommand : commands)
     {
       iCommand.execute();
