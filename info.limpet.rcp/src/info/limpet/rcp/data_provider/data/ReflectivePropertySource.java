@@ -94,18 +94,20 @@ public class ReflectivePropertySource implements IPropertySource
 
     try
     {
-      PropertyDescriptor[] beanPropertyDescriptors = Introspector.getBeanInfo(
-          object.getClass()).getPropertyDescriptors();
+      PropertyDescriptor[] beanPropertyDescriptors =
+          Introspector.getBeanInfo(object.getClass()).getPropertyDescriptors();
       for (PropertyDescriptor beanPropertyDescriptor : beanPropertyDescriptors)
       {
-        UIProperty annotation = beanPropertyDescriptor.getReadMethod()
-            .getAnnotation(UIProperty.class);
+        UIProperty annotation =
+            beanPropertyDescriptor.getReadMethod().getAnnotation(
+                UIProperty.class);
         if (annotation != null)
         {
 
           // skip descriptor if not visible
-          if (!annotation.visibleWhen().isEmpty() && !evaluateVisibility(object,
-              beanPropertyDescriptors, annotation.visibleWhen()))
+          if (!annotation.visibleWhen().isEmpty()
+              && !evaluateVisibility(object, beanPropertyDescriptors,
+                  annotation.visibleWhen()))
           {
             continue;
           }
@@ -115,16 +117,18 @@ public class ReflectivePropertySource implements IPropertySource
           String propId = beanPropertyDescriptor.getName();
           if (beanPropertyDescriptor.getWriteMethod() != null)
           {
-            PropertyTypeHandler propertyTypeHandler = getPropertyTypeHandler(
-                beanPropertyDescriptor.getPropertyType());
-            descriptor = propertyTypeHandler.createPropertyDescriptor(propId,
-                annotation);
+            PropertyTypeHandler propertyTypeHandler =
+                getPropertyTypeHandler(beanPropertyDescriptor.getPropertyType());
+            descriptor =
+                propertyTypeHandler
+                    .createPropertyDescriptor(propId, annotation);
           }
           else
           {
             // read only descriptor
-            descriptor = new org.eclipse.ui.views.properties.PropertyDescriptor(
-                propId, annotation.name());
+            descriptor =
+                new org.eclipse.ui.views.properties.PropertyDescriptor(propId,
+                    annotation.name());
             if (!annotation.category().isEmpty())
             {
               descriptor.setCategory(annotation.category());
@@ -140,13 +144,13 @@ public class ReflectivePropertySource implements IPropertySource
     catch (IntrospectionException e)
     {
       Activator.logError(Status.ERROR,
-          "Could not load property descriptors for class " + object.getClass()
-              .getName(), e);
+          "Could not load property descriptors for class "
+              + object.getClass().getName(), e);
 
     }
 
-    propertyDescriptors = result.toArray(new IPropertyDescriptor[result
-        .size()]);
+    propertyDescriptors =
+        result.toArray(new IPropertyDescriptor[result.size()]);
   }
 
   private boolean evaluateVisibility(Object object,
@@ -199,8 +203,8 @@ public class ReflectivePropertySource implements IPropertySource
       // editable properties use custom cell editor, thus value needs conversion
       if (descriptor.getWriteMethod() != null)
       {
-        PropertyTypeHandler propertyTypeHandler = getPropertyTypeHandler(
-            descriptor.getPropertyType());
+        PropertyTypeHandler propertyTypeHandler =
+            getPropertyTypeHandler(descriptor.getPropertyType());
         value = propertyTypeHandler.toCellEditorValue(value, object);
       }
 
@@ -220,12 +224,12 @@ public class ReflectivePropertySource implements IPropertySource
     PropertyDescriptor descriptor = descriptorPerProperty.get(id);
     if (descriptor.getWriteMethod() != null)
     {
-      PropertyTypeHandler propertyTypeHandler = getPropertyTypeHandler(
-          descriptor.getPropertyType());
-      UIProperty annotation = descriptor.getReadMethod().getAnnotation(
-          UIProperty.class);
-      return getPropertyValue(id) != propertyTypeHandler.getDefaulValue(
-          annotation);
+      PropertyTypeHandler propertyTypeHandler =
+          getPropertyTypeHandler(descriptor.getPropertyType());
+      UIProperty annotation =
+          descriptor.getReadMethod().getAnnotation(UIProperty.class);
+      return getPropertyValue(id) != propertyTypeHandler
+          .getDefaulValue(annotation);
     }
     return false;
   }
@@ -237,11 +241,11 @@ public class ReflectivePropertySource implements IPropertySource
     // editable property
     if (descriptor.getWriteMethod() != null)
     {
-      PropertyTypeHandler propertyTypeHandler = getPropertyTypeHandler(
-          descriptor.getPropertyType());
+      PropertyTypeHandler propertyTypeHandler =
+          getPropertyTypeHandler(descriptor.getPropertyType());
       // delegate to set property
-      UIProperty annotation = descriptor.getReadMethod().getAnnotation(
-          UIProperty.class);
+      UIProperty annotation =
+          descriptor.getReadMethod().getAnnotation(UIProperty.class);
       setPropertyValue(id, propertyTypeHandler.getDefaulValue(annotation));
     }
 
@@ -251,17 +255,18 @@ public class ReflectivePropertySource implements IPropertySource
   public void setPropertyValue(Object id, Object value)
   {
     PropertyDescriptor descriptor = descriptorPerProperty.get(id);
-    PropertyTypeHandler propertyTypeHandler = getPropertyTypeHandler(descriptor
-        .getPropertyType());
-    value = propertyTypeHandler.toModelValue(value, object);
+    PropertyTypeHandler propertyTypeHandler =
+        getPropertyTypeHandler(descriptor.getPropertyType());
     try
     {
+      // if value fails to be parsed to model value, no property change will occur
+      value = propertyTypeHandler.toModelValue(value, object);
       descriptor.getWriteMethod().invoke(object, value);
     }
     catch (Exception e)
     {
-      Activator.logError(Status.ERROR, "Could not set value for property " + id,
-          e);
+      Activator.logError(Status.ERROR,
+          "Could not set value for property " + id, e);
     }
   }
 

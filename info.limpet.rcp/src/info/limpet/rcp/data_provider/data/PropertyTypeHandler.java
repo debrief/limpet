@@ -43,8 +43,9 @@ public abstract class PropertyTypeHandler
    * @param propertyOwner
    *          the object that owns the property
    * @return the model value
+   * @throws Exception 
    */
-  public Object toModelValue(Object cellEditorValue, Object propertyOwner)
+  public Object toModelValue(Object cellEditorValue, Object propertyOwner) throws Exception
   {
     return cellEditorValue;
   }
@@ -277,7 +278,7 @@ public abstract class PropertyTypeHandler
         @SuppressWarnings(
         {"unchecked", "rawtypes"})
         public Object
-            toModelValue(Object cellEditorValue, Object propertyOwner)
+            toModelValue(Object cellEditorValue, Object propertyOwner) throws Exception
         {
 
           QuantityRange newR = null;
@@ -310,13 +311,16 @@ public abstract class PropertyTypeHandler
               {
                 Activator.logError(Status.ERROR,
                     "Failed to extract number range", fe);
+                throw fe;
               }
             }
             else
             {
+              String message = "Number format string not properly constructed:" + str
+                  + " (should be 1:10)";
               Activator.logError(Status.ERROR,
-                  "Number format string not properly constructed:" + str
-                      + " (should be 1:10)", null);
+                  message, null);
+              throw new Exception(message);
             }
           }
 
@@ -370,7 +374,7 @@ public abstract class PropertyTypeHandler
       return propertyType == Point2D.class;
     }
 
-    public Object toModelValue(Object cellEditorValue, Object propertyOwner)
+    public Object toModelValue(Object cellEditorValue, Object propertyOwner) throws Exception
     {
 
       Point2D newL = null;
@@ -396,13 +400,16 @@ public abstract class PropertyTypeHandler
           {
             Activator.logError(Status.ERROR,
                 "Failed to extract number location", fe);
+            throw fe;
           }
         }
         else
         {
+          String message = "Number format string not properly constructed:" + str
+              + " (should be 1:10)";
           Activator.logError(Status.ERROR,
-              "Number format string not properly constructed:" + str
-                  + " (should be 1:10)", null);
+              message, null);
+          throw new Exception(message);
         }
       }
 
