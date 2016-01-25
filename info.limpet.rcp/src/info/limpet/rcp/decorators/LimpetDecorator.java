@@ -16,10 +16,9 @@ package info.limpet.rcp.decorators;
 
 import info.limpet.ICollection;
 import info.limpet.ICommand;
+import info.limpet.IStoreGroup;
 import info.limpet.rcp.Activator;
-import info.limpet.rcp.data_provider.data.CollectionWrapper;
-import info.limpet.rcp.data_provider.data.CommandWrapper;
-import info.limpet.rcp.data_provider.data.GroupWrapper;
+import info.limpet.rcp.data_provider.data.StoreItemWrapper;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IDecoration;
@@ -90,45 +89,46 @@ public class LimpetDecorator implements ILightweightLabelDecorator
   @Override
   public void decorate(Object element, IDecoration decoration)
   {
-    if (element instanceof CollectionWrapper)
-    {
-      decorateWrapper((CollectionWrapper) element, decoration);
-    }
-    if (element instanceof CommandWrapper)
-    {
-      decorateWrapper((CommandWrapper) element, decoration);
-    }
-    if (element instanceof GroupWrapper)
-    {
-      decorateWrapper((GroupWrapper) element, decoration);
+    if (element instanceof StoreItemWrapper) {
+      Object subject = ((StoreItemWrapper)element).getSubject();
+      if (subject instanceof ICollection)
+      {
+        decorateCollection((ICollection) subject, decoration);
+      }
+      if (subject instanceof ICommand<?>)
+      {
+        decorateCommand((ICommand<?>) subject, decoration);
+      }
+      if (subject instanceof IStoreGroup)
+      {
+        decorateGroup((IStoreGroup) subject, decoration);
+      }
     }
   }
 
-  protected void decorateWrapper(GroupWrapper element, IDecoration decoration)
+  protected void decorateGroup(IStoreGroup group, IDecoration decoration)
   {
     // we don't currently apply and decorations to groups
   }
 
   protected void
-      decorateWrapper(CommandWrapper element, IDecoration decoration)
+      decorateCommand(ICommand<?> cmd, IDecoration decoration)
   {
-    final ICommand<?> coll = element.getCommand();
-
-    boolean in = coll.getInputs() != null && coll.getInputs().size() > 0;
-    boolean out = coll.getOutputs() != null && coll.getOutputs().size() > 0;
+  
+    boolean in = cmd.getInputs() != null && cmd.getInputs().size() > 0;
+    boolean out = cmd.getOutputs() != null && cmd.getOutputs().size() > 0;
     decorateInOut(decoration, in, out);
 
     // also apply a decoration to indicate that the symbol is dynamically updating
-    if (coll.getDynamic())
+    if (cmd.getDynamic())
     {
       decoration.addOverlay(DYNAMIC, IDecoration.BOTTOM_RIGHT);
     }
   }
 
-  protected void decorateWrapper(CollectionWrapper element,
+  protected void decorateCollection(ICollection coll,
       IDecoration decoration)
   {
-    final ICollection coll = element.getCollection();
     boolean out = coll.getPrecedent() != null;
     boolean in =
         coll.getDependents() != null && coll.getDependents().size() > 0;

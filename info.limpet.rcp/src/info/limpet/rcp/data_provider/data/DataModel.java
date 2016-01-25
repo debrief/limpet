@@ -38,16 +38,14 @@ public class DataModel implements ITreeContentProvider
   public static final String DEPENDENTS = "Dependents";
   public static final String PRECEDENTS = "Precedents";
 
-  private void addCollectionItems(final List<Object> res,
-      final CollectionWrapper cw)
+  private void addCollectionItems(final List<Object> res, ICollection coll, 
+      final StoreItemWrapper cw)
   {
-    final ICollection coll = cw.getCollection();
-
     final ICommand<?> prec = coll.getPrecedent();
     if (prec != null)
     {
       final NamedList dList = new NamedList(cw, PRECEDENTS);
-      dList.add(new CommandWrapper(dList, prec));
+      dList.add(new StoreItemWrapper(prec, dList));
       res.add(dList);
     }
 
@@ -59,7 +57,7 @@ public class DataModel implements ITreeContentProvider
       while (dIter.hasNext())
       {
         final ICommand<?> thisI = dIter.next();
-        dList.add(new CommandWrapper(dList, thisI));
+        dList.add(new StoreItemWrapper(thisI, dList));
       }
 
       // did we find any?
@@ -70,11 +68,10 @@ public class DataModel implements ITreeContentProvider
     }
   }
 
-  private void addCommandItems(final List<Object> res, final CommandWrapper cw)
+  private void
+      addCommandItems(final List<Object> res, ICommand<?> cmd, final StoreItemWrapper cw)
   {
-    final ICommand<?> coll = cw.getCommand();
-
-    final List<? extends IStoreItem> inp = coll.getInputs();
+    final List<? extends IStoreItem> inp = cmd.getInputs();
     if (inp != null)
     {
       final NamedList dList = new NamedList(cw, "Inputs");
@@ -84,11 +81,11 @@ public class DataModel implements ITreeContentProvider
         final IStoreItem thisI = dIter.next();
         if (thisI instanceof ICollection)
         {
-          dList.add(new CollectionWrapper(dList, (ICollection) thisI));
+          dList.add(new StoreItemWrapper((ICollection) thisI, dList));
         }
         else if (thisI instanceof IStoreGroup)
         {
-          dList.add(new GroupWrapper(dList, (IStoreGroup) thisI));
+          dList.add(new StoreItemWrapper((IStoreGroup) thisI, dList));
         }
 
       }
@@ -99,7 +96,7 @@ public class DataModel implements ITreeContentProvider
       }
     }
 
-    final List<? extends IStoreItem> outp = coll.getOutputs();
+    final List<? extends IStoreItem> outp = cmd.getOutputs();
     if (outp != null)
     {
       final NamedList dList = new NamedList(cw, "Outputs");
@@ -109,11 +106,11 @@ public class DataModel implements ITreeContentProvider
         final IStoreItem thisI = dIter.next();
         if (thisI instanceof ICollection)
         {
-          dList.add(new CollectionWrapper(dList, (ICollection) thisI));
+          dList.add(new StoreItemWrapper((ICollection) thisI, dList));
         }
         else if (thisI instanceof IStoreGroup)
         {
-          dList.add(new GroupWrapper(dList, (IStoreGroup) thisI));
+          dList.add(new StoreItemWrapper((IStoreGroup) thisI, dList));
         }
       }
       // did we find any?
@@ -124,22 +121,21 @@ public class DataModel implements ITreeContentProvider
     }
   }
 
-  private void addGroupItems(final List<Object> res, final GroupWrapper cw)
+  private void addGroupItems(final List<Object> res, IStoreGroup group, final StoreItemWrapper cw)
   {
-    final IStoreGroup coll = cw.getGroup();
 
     // final NamedList dList = new NamedList(cw, coll.getName());
-    final Iterator<IStoreItem> dIter = coll.iterator();
+    final Iterator<IStoreItem> dIter = group.iterator();
     while (dIter.hasNext())
     {
       final IStoreItem thisI = dIter.next();
       if (thisI instanceof ICollection)
       {
-        res.add(new CollectionWrapper(cw, (ICollection) thisI));
+        res.add(new StoreItemWrapper((ICollection) thisI, cw));
       }
       else if (thisI instanceof IStoreGroup)
       {
-        res.add(new GroupWrapper(cw, (IStoreGroup) thisI));
+        res.add(new StoreItemWrapper((IStoreGroup) thisI, cw));
       }
     }
     // did we find any?
@@ -193,20 +189,24 @@ public class DataModel implements ITreeContentProvider
   {
     final List<Object> res = new ArrayList<Object>();
 
-    if (parentElement instanceof CollectionWrapper)
+    if (parentElement instanceof StoreItemWrapper)
     {
       // see if it has predecessors or successors
-      addCollectionItems(res, (CollectionWrapper) parentElement);
-    }
-    else if (parentElement instanceof CommandWrapper)
-    {
-      // see if it has predecessors or successors
-      addCommandItems(res, (CommandWrapper) parentElement);
-    }
-    else if (parentElement instanceof GroupWrapper)
-    {
-      // see if it has predecessors or successors
-      addGroupItems(res, (GroupWrapper) parentElement);
+      StoreItemWrapper storeItemWrapper = (StoreItemWrapper) parentElement;
+      Object subject = storeItemWrapper.getSubject();
+      
+      if (subject instanceof ICollection)
+      {
+        addCollectionItems(res, (ICollection) subject, storeItemWrapper);
+      }
+      else if (subject instanceof ICommand<?>)
+      {
+        addCommandItems(res, (ICommand<?>) subject, storeItemWrapper);
+      }
+      else if (subject instanceof IStoreGroup)
+      {
+        addGroupItems(res, (IStoreGroup) subject, storeItemWrapper);
+      }
     }
     else if (parentElement instanceof List)
     {
@@ -235,14 +235,7 @@ public class DataModel implements ITreeContentProvider
       while (iter.hasNext())
       {
         final IStoreItem item = iter.next();
-        if (item instanceof ICollection)
-        {
-          list.add(new CollectionWrapper(null, (ICollection) item));
-        }
-        else if (item instanceof IStoreGroup)
-        {
-          list.add(new GroupWrapper(null, (IStoreGroup) item));
-        }
+        list.add(new StoreItemWrapper(item, null));
       }
     }
     else
@@ -271,32 +264,33 @@ public class DataModel implements ITreeContentProvider
       // has it already been shown?
       if (!alreadyShown(core))
       {
-        if (element instanceof CollectionWrapper)
-        {
-          // see if it has predecessors or successors
-          final CollectionWrapper cw = (CollectionWrapper) element;
-
-          final ICollection coll = cw.getCollection();
-          final boolean hasDependents =
-              coll.getDependents() != null && coll.getDependents().size() > 0;
-          final boolean hasPrecedents = coll.getPrecedent() != null;
-          res = (hasDependents || hasPrecedents);
-        }
-        else if (element instanceof CommandWrapper)
-        {
-          // see if it has predecessors or successors
-          final CommandWrapper cw = (CommandWrapper) element;
-          final ICommand<?> comm = cw.getCommand();
-
-          res = comm.getInputs().size() > 0 || comm.getOutputs().size() > 0;
-        }
-        else if (element instanceof GroupWrapper)
-        {
-          // see if it has predecessors or successors
-          final GroupWrapper cw = (GroupWrapper) element;
-          final IStoreGroup comm = cw.getGroup();
-
-          res = comm.size() > 0;
+        
+        if (element instanceof StoreItemWrapper) {
+          StoreItemWrapper storeItemWrapper = (StoreItemWrapper) element;
+          Object subject = storeItemWrapper.getSubject();
+          if (subject instanceof ICollection)
+          {
+            // see if it has predecessors or successors
+            final ICollection coll = (ICollection) subject;
+            final boolean hasDependents =
+                coll.getDependents() != null && coll.getDependents().size() > 0;
+            final boolean hasPrecedents = coll.getPrecedent() != null;
+            res = (hasDependents || hasPrecedents);
+          }
+          else if (subject instanceof ICommand)
+          {
+            // see if it has predecessors or successors
+            final ICommand<?> comm = (ICommand<?>) subject;
+  
+            res = comm.getInputs().size() > 0 || comm.getOutputs().size() > 0;
+          }
+          else if (subject instanceof IStoreGroup)
+          {
+            // see if it has predecessors or successors
+            final IStoreGroup comm = (IStoreGroup) subject;
+  
+            res = comm.size() > 0;
+          }
         }
         else if (element instanceof ArrayList)
         {

@@ -20,8 +20,9 @@ import info.limpet.IStoreItem;
 import info.limpet.data.csv.CsvParser;
 import info.limpet.data.persistence.xml.XStreamHandler;
 import info.limpet.data.store.InMemoryStore;
+import info.limpet.data.store.InMemoryStore.StoreGroup;
 import info.limpet.rcp.Activator;
-import info.limpet.rcp.data_provider.data.GroupWrapper;
+import info.limpet.rcp.data_provider.data.StoreItemWrapper;
 import info.limpet.rcp.editors.LimpetDragListener;
 
 import java.io.IOException;
@@ -76,7 +77,7 @@ public class DataManagerDropAdapter extends ViewerDropAdapter
       {
         validTarget = true;
       }
-      else if (target instanceof GroupWrapper)
+      else if (isGroupWrapper(target))
       {
         validTarget = true;
       }
@@ -123,11 +124,12 @@ public class DataManagerDropAdapter extends ViewerDropAdapter
           }
 
           // sort out the object
-          if (target instanceof GroupWrapper)
+          if (isGroupWrapper(target))
           {
-            GroupWrapper group = (GroupWrapper) target;
+            IStoreGroup storeGroup =
+                (IStoreGroup) ((StoreItemWrapper) target).getSubject();
             // and add to the new one
-            group.getGroup().add(item);
+            storeGroup.add(item);
           }
           else
           {
@@ -182,11 +184,18 @@ public class DataManagerDropAdapter extends ViewerDropAdapter
   public boolean validateDrop(Object target, int operation,
       TransferData transferType)
   {
-    boolean validTarget = target == null || target instanceof GroupWrapper;
+    boolean validTarget =
+        target == null || isGroupWrapper(target);
 
     return FileTransfer.getInstance().isSupportedType(transferType)
         || TextTransfer.getInstance().isSupportedType(transferType)
         || validTarget;
+  }
+
+  private boolean isGroupWrapper(Object target)
+  {
+    return target instanceof StoreItemWrapper
+        && ((StoreItemWrapper) target).getSubject() instanceof IStoreGroup;
   }
 
   private boolean filesDropped(String[] fileNames)
@@ -236,9 +245,10 @@ public class DataManagerDropAdapter extends ViewerDropAdapter
   {
     List<IStoreItem> collections = new CsvParser().parse(fileName);
     Object target = getCurrentTarget();
-    if (target instanceof GroupWrapper)
+    if (isGroupWrapper(target))
     {
-      ((GroupWrapper) target).getGroup().addAll(collections);
+      IStoreGroup storeGroup = (IStoreGroup) ((StoreItemWrapper)target).getSubject();
+      storeGroup.addAll(collections);
     }
     else
     {
@@ -258,16 +268,16 @@ public class DataManagerDropAdapter extends ViewerDropAdapter
     Object target = getCurrentTarget();
     IStore store = new XStreamHandler().load(fileName);
     final List<IStoreItem> list = new ArrayList<IStoreItem>();
-    if (store instanceof InMemoryStore && target instanceof GroupWrapper)
+    if (store instanceof InMemoryStore && isGroupWrapper(target))
     {
       final Iterator<IStoreItem> iter = ((InMemoryStore) store).iterator();
-      GroupWrapper groupWrapper = (GroupWrapper) target;
+      IStoreGroup storeGroup = (IStoreGroup) ((StoreItemWrapper)target).getSubject();
       while (iter.hasNext())
       {
         final IStoreItem item = iter.next();
         list.add(item);
       }
-      groupWrapper.getGroup().addAll(list);
+      storeGroup.addAll(list);
     }
     changed();
   }
