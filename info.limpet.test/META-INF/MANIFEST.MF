@@ -16,3 +16,6 @@ Require-Bundle: info.limpet;bundle-version="1.0.0",
  info.limpet.rcp,
  info.limpet.ui,
  org.eclipse.ui.views
+Bundle-ClassPath: libs/easymock-3.4.jar,
+ .,
+ libs/objenesis-2.2.jar

@@ -21,6 +21,10 @@ import static javax.measure.unit.NonSI.MINUTE;
 import static javax.measure.unit.SI.KILO;
 import static javax.measure.unit.SI.METRE;
 import static javax.measure.unit.SI.METRES_PER_SECOND;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import info.limpet.ICollection;
 import info.limpet.ICommand;
 import info.limpet.IContext;
@@ -41,6 +45,7 @@ import info.limpet.data.operations.AddLayerOperation;
 import info.limpet.data.operations.CollectionComplianceTests;
 import info.limpet.data.operations.GenerateDummyDataOperation;
 import info.limpet.data.operations.UnitConversionOperation;
+import info.limpet.data.operations.admin.CreateSingletonGenerator;
 import info.limpet.data.operations.admin.OperationsLibrary;
 import info.limpet.data.operations.arithmetic.AddQuantityOperation;
 import info.limpet.data.operations.arithmetic.DivideQuantityOperation;
@@ -68,14 +73,22 @@ import javax.measure.quantity.Quantity;
 import javax.measure.quantity.Velocity;
 import javax.measure.unit.Unit;
 
-import junit.framework.TestCase;
+import junit.framework.Assert;
 
-public class TestOperations extends TestCase
+import org.easymock.EasyMock;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
+
+public class TestOperations
 {
   private IContext context = new MockContext();
-
+  @Rule
+  public final ExpectedException thrown = ExpectedException.none();
+  
   @SuppressWarnings(
   {"rawtypes", "unchecked"})
+  @Test
   public void testInterpolateTests()
   {
     // place to store results data
@@ -103,7 +116,6 @@ public class TestOperations extends TestCase
     selection.clear();
     selection.add(speedGood1);
     selection.add(speedGood2);
-
     actions = new AddQuantityOperation().actionsFor(selection, store, context);
 
     assertEquals("correct number of actions returned", 2, actions.size());
@@ -114,6 +126,7 @@ public class TestOperations extends TestCase
 
   }
 
+  @Test
   public void testTrig()
   {
     // prepare some data
@@ -221,9 +234,9 @@ public class TestOperations extends TestCase
 
     // check data type
     assertTrue("isn't temporal", output.isTemporal());
-
+    
   }
-
+  @Test
   public void testAppliesTo()
   {
     // the units for this measurement
@@ -287,6 +300,16 @@ public class TestOperations extends TestCase
     assertTrue("all same length", testOp.allEqualLength(selection));
     assertTrue("all quantities", testOp.allQuantity(selection));
     assertFalse("all temporal", testOp.allTemporal(selection));
+    assertFalse("all groups",testOp.allGroups(selection));
+    
+    assertFalse("all Temporal or singleton",testOp.allTemporalOrSingleton(selection));
+    
+    assertTrue("Longest collection lenght", testOp.getLongestCollectionLength(selection) > 0);
+    
+    StoreGroup track1 = new StoreGroup("Track 1");
+    selection.add(track1);
+    
+    assertFalse("all childrens are tracks",testOp.allChildrenAreTracks(selection));
 
     selection.clear();
     selection.add(speedGood1);
@@ -406,7 +429,7 @@ public class TestOperations extends TestCase
       assertEquals("Correct dependent", precedent, dep);
     }
   }
-
+  @Test
   public void testDimensionlessMultiply()
   {
     // place to store results data
@@ -508,7 +531,7 @@ public class TestOperations extends TestCase
     assertEquals("Correct len", Math.max(speedGood1.getValuesCount(),
         speedIrregular.getValuesCount()), output.getValuesCount());
   }
-
+  @Test
   @SuppressWarnings("unchecked")
   public void testUnitConversion()
   {
@@ -569,10 +592,11 @@ public class TestOperations extends TestCase
         inputSpeed.getUnits().getConverterTo(KILOMETERS_PER_HOUR);
 
     assertEquals(oc.convert(firstInputSpeed
-        .doubleValue((Unit<Velocity>) inputSpeed.getUnits())), firstOutputSpeed);
+        .doubleValue((Unit<Velocity>) inputSpeed.getUnits())), firstOutputSpeed,0);
 
   }
 
+  @Test
   public void testSimpleMovingAverage()
   {
     // place to store results data
@@ -585,7 +609,7 @@ public class TestOperations extends TestCase
         (IQuantityCollection<Velocity>) store.get(SampleData.SPEED_ONE);
     selection.add(speedGood1);
 
-    int windowSize = 3;
+   int windowSize=3;
 
     Collection<ICommand<ICollection>> commands =
         new SimpleMovingAverageOperation(windowSize).actionsFor(selection,
@@ -623,6 +647,7 @@ public class TestOperations extends TestCase
 
   }
 
+  @Test
   @SuppressWarnings(
   {"unchecked"})
   public void testAddition()
@@ -652,7 +677,7 @@ public class TestOperations extends TestCase
     double speed2firstValue =
         speedGood2.getValues().get(0).doubleValue(speedGood2.getUnits());
 
-    assertEquals(firstDifference, speed1firstValue + speed2firstValue);
+    assertEquals(firstDifference, speed1firstValue + speed2firstValue,0);
 
     // test that original series have dependents
     assertEquals("first series has dependents", 2, speedGood1.getDependents()
@@ -665,6 +690,7 @@ public class TestOperations extends TestCase
 
   }
 
+  @Test
   @SuppressWarnings(
   {"rawtypes", "unchecked"})
   public void testSubtractionSingleton()
@@ -698,6 +724,7 @@ public class TestOperations extends TestCase
         .doubleValue(Velocity.UNIT) * 2, 0.001);
   }
 
+  @Test
   @SuppressWarnings(
   {"rawtypes", "unchecked"})
   public void testAddSingleton()
@@ -736,6 +763,7 @@ public class TestOperations extends TestCase
         .doubleValue(Velocity.UNIT) + 2, 0.001);
   }
 
+  @Test
   @SuppressWarnings(
   {"rawtypes", "unchecked"})
   public void testSubtraction()
@@ -801,42 +829,122 @@ public class TestOperations extends TestCase
     double speed2firstValue =
         speedGood2.getValues().get(0).doubleValue(speedGood2.getUnits());
 
-    assertEquals(firstDifference, speed1firstValue - speed2firstValue);
+    assertEquals(firstDifference, speed1firstValue - speed2firstValue,0);
   }
 
   @SuppressWarnings("unchecked")
-  public void testAddLayerOperation()
+  @Test
+  public void testAddLayerOperation() throws RuntimeException
   {
-    // place to store results data
-    InMemoryStore store = new SampleData().getData(10);
+	  IContext context=EasyMock.createMock(MockContext.class);
+	  // place to store results data
+	  InMemoryStore store = new SampleData().getData(10);
 
-    List<IStoreItem> selection = new ArrayList<IStoreItem>();
+	  List<IStoreItem> selection = new ArrayList<IStoreItem>();
 
-    StoreGroup track1 = new StoreGroup("Track 1");
-    selection.add(track1);
+	  StoreGroup track1 = new StoreGroup("Track 1");
+	  selection.add(track1);
 
-    Collection<ICommand<IStoreItem>> commands =
-        new AddLayerOperation().actionsFor(selection, store, context);
-    assertEquals("Valid number of commands", 1, commands.size());
-    for (ICommand<IStoreItem> iCommand : commands)
-    {
-      iCommand.execute();
-    }
+	  Collection<ICommand<IStoreItem>> commands =
+			  new AddLayerOperation().actionsFor(selection, store, context);
+	  assertEquals("Valid number of commands", 1, commands.size());
+	  commands.contains(track1);
+	  Iterator<ICommand<IStoreItem>> iterator = commands.iterator();
+	  ICommand<IStoreItem> firstItem = iterator.next();
+	  
+	  EasyMock.expect(context.getInput("Add layer", "Provide name for new folder",
+	          "")).andReturn("").times(2);
+	  EasyMock.expect(context.getInput("Add layer", "Provide name for new folder",
+	          "")).andReturn(null).times(1);
+	  EasyMock.expect(context.getInput("Add layer", "Provide name for new folder",
+	          "")).andReturn("").times(1);
+	  
+	  EasyMock.replay(context);
+	  
+	  firstItem.execute();
 
-    IQuantityCollection<Velocity> speedGood1 =
-        (IQuantityCollection<Velocity>) store.get(SampleData.SPEED_ONE);
-    selection = new ArrayList<>();
-    selection.add(speedGood1);
+	  //Coverage purpose for Equals method.
+	  boolean equals = firstItem.equals(track1);
+	  assertEquals("Two objects are not equal", false,equals);
+	  
+	  //Coverage purpose for Hash code method
+	  long hashCode= firstItem.hashCode();
+	  final int prime = 31;
+	  int result = 1;
+	  result = prime * result + firstItem.getUUID().hashCode();
+	  assertEquals(result, hashCode);
+	  
+	  assertEquals("Parent not defined",null, firstItem.getParent());
+	  
+	  firstItem.setParent(track1);
+	  assertEquals("Parent defined as a Track1",track1, firstItem.getParent());
+	  
+	  assertNotNull("UUID is generated randomly",firstItem.getUUID());
 
-    commands = new AddLayerOperation().actionsFor(selection, store, context);
-    assertEquals("invalid number of inputs", 1, commands.size());
-    for (ICommand<IStoreItem> iCommand : commands)
-    {
-      iCommand.execute();
-      iCommand.dataChanged(speedGood1);
-    }
+	  StoreGroup dummyStoreTrack = new StoreGroup("Dummy Store Track");
+	  firstItem.metadataChanged(dummyStoreTrack);
+	  
+	  assertTrue("First Item is dynamic", firstItem.getDynamic());
+	  
+	  assertEquals("Store Item Description","Add a new layer",firstItem.getDescription());
+	  firstItem.execute();
+	  firstItem.collectionDeleted(dummyStoreTrack);
+	  
+	   
+	  try{
+		  firstItem.undo();
+	  }catch(Throwable throwable){
+		  Assert.assertEquals(true, throwable instanceof UnsupportedOperationException);
+	  }
+	  try{
+		  firstItem.redo();
+	  }catch(Throwable throwable){
+		  Assert.assertEquals(true, throwable instanceof UnsupportedOperationException);
+	  }
+	  assertEquals("CanUndo operation",false, firstItem.canRedo());
+	  assertEquals("CanRedo operation",false, firstItem.canUndo());
+	  
+	  boolean hasChildren = firstItem.hasChildren();
+	  assertEquals("Parent have children",true,hasChildren);
+
+	  firstItem.execute();
+
+	  IQuantityCollection<Velocity> speedGood1 =
+			  (IQuantityCollection<Velocity>) store.get(SampleData.SPEED_ONE);
+	  selection = new ArrayList<>();
+	  selection.add(speedGood1);
+
+	  commands = new AddLayerOperation().actionsFor(selection, store, context);
+	  assertEquals("invalid number of inputs", 1, commands.size());
+	  for (ICommand<IStoreItem> iCommand : commands)
+	  {
+		  iCommand.execute();
+		  iCommand.dataChanged(speedGood1);
+	  }
+	  
+	  HashMap<String, List<IOperation<?>>> ops = OperationsLibrary.getOperations();
+	  // Check Create operations.
+	    
+	    List<IOperation<?>> create = ops.get(OperationsLibrary.CREATE);
+	    Iterator<IOperation<?>> createIter = create.iterator();
+	    assertEquals("Creation size",7, create.size());
+	    CreateSingletonGenerator generator=null;
+	    
+	    while (createIter.hasNext()){
+	    	IOperation<?> operation = createIter.next();
+	    	if(operation instanceof CreateSingletonGenerator){
+	    		generator=(CreateSingletonGenerator) operation;
+	    	}
+	    }
+	    assertNotNull("Create Singleton generator is not NULL", generator);
+	    
+	    List<IStoreItem> selectionForCreation = new ArrayList<IStoreItem>();
+	    StoreGroup creationTrack = new StoreGroup("Track 1");
+		selectionForCreation.add(creationTrack);
+	    Collection<ICommand<IStoreItem>> actionsFor = generator.actionsFor(selection, store, context);
   }
 
+  @Test
   @SuppressWarnings("unchecked")
   public void testDivision()
   {
@@ -909,7 +1017,6 @@ public class TestOperations extends TestCase
 
     store.clear();
     command.execute();
-
     assertEquals(1, store.size());
     IQuantityCollection<Duration> duration =
         (IQuantityCollection<Duration>) store.iterator().next();
@@ -922,7 +1029,7 @@ public class TestOperations extends TestCase
     double firstSpeed =
         speedGood1.getValues().get(0).doubleValue(speedGood1.getUnits());
 
-    assertEquals(firstLength / firstSpeed, firstDuration);
+    assertEquals(firstLength / firstSpeed, firstDuration,0);
 
     // test length over factor
     selection.clear();
@@ -947,7 +1054,7 @@ public class TestOperations extends TestCase
         resultLength.getValues().get(0).doubleValue(resultLength.getUnits());
     double factorValue =
         factor.getValues().get(0).doubleValue(factor.getUnits());
-    assertEquals(firstLength / factorValue, firstResultLength);
+    assertEquals(firstLength / factorValue, firstResultLength,0);
 
     // test command #2: factor over length
     command = iterator.next();
@@ -963,8 +1070,10 @@ public class TestOperations extends TestCase
     double firstResultQuantity =
         resultQuantity.getValues().get(0)
             .doubleValue(resultQuantity.getUnits());
-    assertEquals(factorValue / firstLength, firstResultQuantity);
+    assertEquals(factorValue / firstLength, firstResultQuantity,0);
   }
+
+  @Test
   @SuppressWarnings("unchecked")
   public void testGenerateDummyDataOperation()
     {
@@ -986,5 +1095,6 @@ public class TestOperations extends TestCase
   		  iCommand.dataChanged(speedGood1);
   	  }
     }
-   
+
+  
 }
