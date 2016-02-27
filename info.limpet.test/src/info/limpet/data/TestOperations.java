@@ -47,7 +47,6 @@ import info.limpet.data.operations.GenerateDummyDataOperation;
 import info.limpet.data.operations.UnitConversionOperation;
 import info.limpet.data.operations.admin.CopyCsvToClipboardAction;
 import info.limpet.data.operations.admin.CreateLocationAction;
-import info.limpet.data.operations.admin.CreateLocationAction.CreateLocationCommand;
 import info.limpet.data.operations.admin.CreateSingletonGenerator;
 import info.limpet.data.operations.admin.ExportCsvToFileAction;
 import info.limpet.data.operations.admin.OperationsLibrary;
@@ -60,16 +59,12 @@ import info.limpet.data.operations.arithmetic.UnitaryMathOperation;
 import info.limpet.data.store.InMemoryStore;
 import info.limpet.data.store.InMemoryStore.StoreGroup;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.imageio.IIOException;
 import javax.measure.Measurable;
 import javax.measure.Measure;
 import javax.measure.converter.UnitConverter;
@@ -1033,6 +1028,22 @@ public class TestOperations
   }
   
   @Test
+  public void testUnitaryMathOperation(){
+	  UnitaryMathOperation clearUnit=new UnitaryMathOperation("Clear units"){
+		  public double calcFor(double val){
+			  return val;
+		  }
+
+		  protected Unit<?> getUnits(IQuantityCollection<?> input){
+			  return Dimensionless.UNIT;
+		  }
+	  };
+	  assertNotNull(clearUnit);
+	  double calcFor = clearUnit.calcFor(123.45);
+	  assertTrue("Calc for",123.45==calcFor);
+  }
+  
+  @Test
   public void testOperations(){
 	  // place to store results data
 	  HashMap<String, List<IOperation<?>>> ops = OperationsLibrary.getOperations();
@@ -1042,24 +1053,10 @@ public class TestOperations
   	  //Administrator Operations.
 
 	  List<IOperation<?>> adminOperations = ops.get(OperationsLibrary.ADMINISTRATION);
-	  Iterator<IOperation<?>> adminIter = adminOperations.iterator();
 	  assertEquals("Creation size",6, adminOperations.size());
-
-	  GenerateDummyDataOperation dataOperationSmall=(GenerateDummyDataOperation) adminIter.next();
-	  assertNotNull(dataOperationSmall);
-
-	  GenerateDummyDataOperation dataOperationLarge=(GenerateDummyDataOperation) adminIter.next();
-	  assertNotNull(dataOperationLarge);
-
-	  GenerateDummyDataOperation dataOperationMonster=(GenerateDummyDataOperation) adminIter.next();
-	  assertNotNull(dataOperationMonster);
-
-	  UnitaryMathOperation clearUnit=(UnitaryMathOperation) adminIter.next();
-	  assertNotNull(clearUnit);
-	  double calcFor = clearUnit.calcFor(123.45);
-	  assertTrue("Calc for",123.45==calcFor);
   }
 
+  
   @Test
   @SuppressWarnings("unchecked")
   public void testDivision()
