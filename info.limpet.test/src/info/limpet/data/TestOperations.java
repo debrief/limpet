@@ -976,7 +976,7 @@ public class TestOperations
 	  Collection<ICommand<IStoreItem>> actionsFor = createLocationAction.actionsFor(selection, store, mockContext);
 	  assertEquals("Create location collection size", 1,actionsFor.size());
 	  Iterator<ICommand<IStoreItem>> creationLocIterator = actionsFor.iterator();
-	  CreateLocationCommand command=(CreateLocationCommand) creationLocIterator.next();
+	  ICommand<IStoreItem> command= creationLocIterator.next();
 
 	  EasyMock.expect(mockContext.getInput("New fixed location", "Enter name for location", "")).andReturn("seriesName").times(1);
 	  EasyMock.expect(mockContext.getInput("New location","Enter initial value for latitude", "")).andReturn("123.23").times(1);
