@@ -60,12 +60,16 @@ import info.limpet.data.operations.arithmetic.UnitaryMathOperation;
 import info.limpet.data.store.InMemoryStore;
 import info.limpet.data.store.InMemoryStore.StoreGroup;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.imageio.IIOException;
 import javax.measure.Measurable;
 import javax.measure.Measure;
 import javax.measure.converter.UnitConverter;
@@ -929,57 +933,113 @@ public class TestOperations
   }
 
   @Test
-  public void testOperations(){
-	  // place to store results data
+  public void testCreateSingletonGenerator(){
 	  InMemoryStore store = new SampleData().getData(10);
-	  HashMap<String, List<IOperation<?>>> ops = OperationsLibrary.getOperations();
-
-	  // Check Create operations.
-
-	  List<IOperation<?>> create = ops.get(OperationsLibrary.CREATE);
-	  Iterator<IOperation<?>> createIter = create.iterator();
-	  assertEquals("Creation size",7, create.size());
-
-	  createIter.next();
-	  
-	  CreateSingletonGenerator generator= (CreateSingletonGenerator) createIter.next();
+	  CreateSingletonGenerator generator= new CreateSingletonGenerator("dimensionless") {
+		@Override
+		protected QuantityCollection<?> generate(String name, ICommand<?> precedent) {
+			return new StockTypes.NonTemporal.DimensionlessDouble(name, precedent);
+		}
+	};
 	  assertNotNull("Create Single Generator is not NULL", generator);
-	  List<IStoreItem> selectionForCreation = new ArrayList<IStoreItem>();
-	  StoreGroup creationTrack = new StoreGroup("Track 1");
-	  selectionForCreation.add(creationTrack);
-	  IContext operationalsContext=EasyMock.createMock(MockContext.class);
-	  Collection<ICommand<IStoreItem>> singleGeneratorActionFor = generator.actionsFor(selectionForCreation, store, operationalsContext);
+	  
+	  List<IStoreItem> selection = new ArrayList<IStoreItem>();
+	  StoreGroup storeGroup = new StoreGroup("Track 1");
+	  selection.add(storeGroup);
+	  
+	  IContext mockContext=EasyMock.createMock(MockContext.class);
+	  
+	  Collection<ICommand<IStoreItem>> singleGeneratorActionFor = generator.actionsFor(selection, store, mockContext);
 	  assertEquals("Create location collection size", 1,singleGeneratorActionFor.size());
 	  ICommand<IStoreItem> singleGenCommand = singleGeneratorActionFor.iterator().next();
-	  EasyMock.expect(operationalsContext.getInput("New variable", "Enter name for variable", "")).andReturn("new dimensionless").times(1);
-	  EasyMock.expect(operationalsContext.getInput("New variable", "Enter initial value for variable", "")).andReturn("1234.56").times(1);
-
-	  EasyMock.replay(operationalsContext);
+	  
+	  EasyMock.expect(mockContext.getInput("New variable", "Enter name for variable", "")).andReturn("new dimensionless").times(1);
+	  EasyMock.expect(mockContext.getInput("New variable", "Enter initial value for variable", "")).andReturn("1234.56").times(1);
+	  EasyMock.replay(mockContext);
+	  
 	  singleGenCommand.execute();
-	  
-	  createIter.next();createIter.next();createIter.next(); createIter.next();
-	  
-	  CreateLocationAction  createLocationAction= (CreateLocationAction) createIter.next();
+
+  }
+  
+  @Test
+  public void testCreateLocationAction(){
+	  InMemoryStore store = new SampleData().getData(10);
+	  CreateLocationAction  createLocationAction= new CreateLocationAction();
 	  assertNotNull("Create Location action is not NULL", createLocationAction);
 
-	  operationalsContext=EasyMock.createMock(MockContext.class);
-	  Collection<ICommand<IStoreItem>> actionsFor = createLocationAction.actionsFor(selectionForCreation, store, operationalsContext);
+	  List<IStoreItem> selection = new ArrayList<IStoreItem>();
+	  StoreGroup storeGroup = new StoreGroup("Track 1");
+	  selection.add(storeGroup);
+	  
+	  IContext mockContext=EasyMock.createMock(MockContext.class);
+	  
+	  Collection<ICommand<IStoreItem>> actionsFor = createLocationAction.actionsFor(selection, store, mockContext);
 	  assertEquals("Create location collection size", 1,actionsFor.size());
 	  Iterator<ICommand<IStoreItem>> creationLocIterator = actionsFor.iterator();
 	  CreateLocationCommand command=(CreateLocationCommand) creationLocIterator.next();
 
-	  EasyMock.expect(operationalsContext.getInput("New fixed location",
-			  "Enter name for location", "")).andReturn("seriesName").times(1);
-	  EasyMock.expect(operationalsContext.getInput("New location",
-			  "Enter initial value for latitude", "")).andReturn("123.23").times(1);
-	  EasyMock.expect(operationalsContext.getInput("New location",
-			  "Enter initial value for longitude", "")).andReturn("3456.78").times(1);
-
-	  EasyMock.replay(operationalsContext);
+	  EasyMock.expect(mockContext.getInput("New fixed location", "Enter name for location", "")).andReturn("seriesName").times(1);
+	  EasyMock.expect(mockContext.getInput("New location","Enter initial value for latitude", "")).andReturn("123.23").times(1);
+	  EasyMock.expect(mockContext.getInput("New location","Enter initial value for longitude", "")).andReturn("3456.78").times(1);
+	  EasyMock.replay(mockContext);
 
 	  command.execute();
+  }
+  
+  @Test
+  public void testExportCsvToFileAction(){
+	  InMemoryStore store = new SampleData().getData(10);
+	  ExportCsvToFileAction exportCSVFileAction=new ExportCsvToFileAction();
+	  assertNotNull(exportCSVFileAction);
+	  
+	  List<IStoreItem> selection = new ArrayList<IStoreItem>();
+	  IQuantityCollection<Velocity> speedGood1 = (IQuantityCollection<Velocity>) store.get(SampleData.SPEED_ONE);
+	  selection.add(speedGood1);
+	  
+	  IContext mockContext=EasyMock.createMock(MockContext.class);
+	  
+	  Collection<ICommand<IStoreItem>> exportActionfor = exportCSVFileAction.actionsFor(selection, store, mockContext);
+	  assertEquals("Export CSV file collection size", 1,exportActionfor.size());
+	  Iterator<ICommand<IStoreItem>> iterator=exportActionfor.iterator();
+	  ICommand<IStoreItem> command = iterator.next();
+	  
+	  EasyMock.expect(mockContext.getCsvFilename()).andReturn("ExportCSV.csv").times(1);
+	  EasyMock.expect(mockContext.openQuestion("Overwrite '" + "ExportCSV.csv" + "'?",
+              "Are you sure you want to overwrite '" + "ExportCSV.csv" + "'?")).andReturn(true).times(1);
+	  EasyMock.replay(mockContext);
+	  
+	  command.execute();
 
-	  //Administrator Operations.
+  }
+  
+  @Test
+  public void testCopyCsvToClipboardAction(){
+
+	  InMemoryStore store = new SampleData().getData(10);
+	  CopyCsvToClipboardAction copyCSVToClipAction=new CopyCsvToClipboardAction();
+	  assertNotNull(copyCSVToClipAction);
+	  
+	  List<IStoreItem> selection = new ArrayList<IStoreItem>();
+	  IQuantityCollection<Velocity> speedGood1 = (IQuantityCollection<Velocity>) store.get(SampleData.SPEED_ONE);
+	  selection.add(speedGood1);
+	  
+	  IContext mockContext=EasyMock.createMock(MockContext.class);
+	  Collection<ICommand<IStoreItem>> copyCSVActionfor = copyCSVToClipAction.actionsFor(selection, store, mockContext);
+	  assertEquals("Copy CSV file collection size", 1,copyCSVActionfor.size());
+	  
+	  Iterator<ICommand<IStoreItem>> copyrIterator=copyCSVActionfor.iterator();
+	  ICommand<IStoreItem> copyCommand = copyrIterator.next();
+	  copyCommand.execute();
+  }
+  
+  @Test
+  public void testOperations(){
+	  // place to store results data
+	  HashMap<String, List<IOperation<?>>> ops = OperationsLibrary.getOperations();
+
+	  List<IOperation<?>> create = ops.get(OperationsLibrary.CREATE);
+	  assertEquals("Creation size",7, create.size());
+  	  //Administrator Operations.
 
 	  List<IOperation<?>> adminOperations = ops.get(OperationsLibrary.ADMINISTRATION);
 	  Iterator<IOperation<?>> adminIter = adminOperations.iterator();
@@ -998,41 +1058,8 @@ public class TestOperations
 	  assertNotNull(clearUnit);
 	  double calcFor = clearUnit.calcFor(123.45);
 	  assertTrue("Calc for",123.45==calcFor);
-
-	  ExportCsvToFileAction exportCSVFileAction=(ExportCsvToFileAction) adminIter.next();
-	  assertNotNull(exportCSVFileAction);
-	  List<IStoreItem> selection = new ArrayList<IStoreItem>();
-
-	  IQuantityCollection<Velocity> speedGood1 =
-			  (IQuantityCollection<Velocity>) store.get(SampleData.SPEED_ONE);
-	  //	    ICollection speedGood2 = (ICollection) store.get(SampleData.SPEED_TWO);
-	  selection.add(speedGood1);
-	  IContext exportCSVContext=EasyMock.createMock(MockContext.class);
-	  Collection<ICommand<IStoreItem>> exportActionfor = exportCSVFileAction.actionsFor(selection, store, exportCSVContext);
-	  assertEquals("Export CSV file collection size", 1,exportActionfor.size());
-	  Iterator<ICommand<IStoreItem>> iterator=exportActionfor.iterator();
-	  ICommand<IStoreItem> next = iterator.next();
-	  EasyMock.expect(exportCSVContext.getCsvFilename()).andReturn("ExportCSV.csv").times(1);
-	  EasyMock.expect(exportCSVContext.openQuestion("Overwrite '" + "ExportCSV.csv" + "'?",
-              "Are you sure you want to overwrite '" + "ExportCSV.csv" + "'?")).andReturn(true).times(1);
-	  EasyMock.replay(exportCSVContext);
-	  next.execute();
-
-	  CopyCsvToClipboardAction copyCSVToClipAction=(CopyCsvToClipboardAction) adminIter.next();
-	  assertNotNull(copyCSVToClipAction);
-	  IContext copyCSVContext=EasyMock.createMock(MockContext.class);
-	  Collection<ICommand<IStoreItem>> copyCSVActionfor = copyCSVToClipAction.actionsFor(selection, store, copyCSVContext);
-	  assertEquals("Copy CSV file collection size", 1,copyCSVActionfor.size());
-	  Iterator<ICommand<IStoreItem>> copyrIterator=copyCSVActionfor.iterator();
-	  ICommand<IStoreItem> copyCommand = copyrIterator.next();
-//	  EasyMock.expect(copyCSVContext.getCsvFilename()).andReturn("CopyCSV.csv").times(1);
-//	  EasyMock.expect(copyCSVContext.openQuestion("Overwrite '" + "CopyCSV.csv" + "'?",
-//              "Are you sure you want to overwrite '" + "CopyCSV.csv" + "'?")).andReturn(true).times(1);
-//	  EasyMock.replay(copyCSVContext);
-	  copyCommand.execute();
-	  
-
   }
+
   @Test
   @SuppressWarnings("unchecked")
   public void testDivision()
