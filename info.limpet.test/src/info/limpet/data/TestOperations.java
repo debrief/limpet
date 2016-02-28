@@ -33,12 +33,15 @@ import info.limpet.IQuantityCollection;
 import info.limpet.IStore;
 import info.limpet.IStoreItem;
 import info.limpet.ITemporalQuantityCollection;
+import info.limpet.QuantityRange;
+import info.limpet.data.csv.CsvParser;
 import info.limpet.data.impl.MockContext;
 import info.limpet.data.impl.ObjectCollection;
 import info.limpet.data.impl.QuantityCollection;
 import info.limpet.data.impl.TemporalQuantityCollection;
 import info.limpet.data.impl.samples.SampleData;
 import info.limpet.data.impl.samples.StockTypes;
+import info.limpet.data.impl.samples.TemporalLocation;
 import info.limpet.data.impl.samples.StockTypes.NonTemporal.AngleDegrees;
 import info.limpet.data.impl.samples.StockTypes.Temporal.SpeedKts;
 import info.limpet.data.operations.AddLayerOperation;
@@ -51,14 +54,21 @@ import info.limpet.data.operations.admin.CreateSingletonGenerator;
 import info.limpet.data.operations.admin.ExportCsvToFileAction;
 import info.limpet.data.operations.admin.OperationsLibrary;
 import info.limpet.data.operations.arithmetic.AddQuantityOperation;
+import info.limpet.data.operations.arithmetic.DeleteCollectionOperation;
 import info.limpet.data.operations.arithmetic.DivideQuantityOperation;
 import info.limpet.data.operations.arithmetic.MultiplyQuantityOperation;
 import info.limpet.data.operations.arithmetic.SimpleMovingAverageOperation;
 import info.limpet.data.operations.arithmetic.SubtractQuantityOperation;
 import info.limpet.data.operations.arithmetic.UnitaryMathOperation;
+import info.limpet.data.operations.spatial.BearingBetweenTracksOperation;
+import info.limpet.data.operations.spatial.GeoSupport;
+import info.limpet.data.operations.spatial.IGeoCalculator;
 import info.limpet.data.store.InMemoryStore;
 import info.limpet.data.store.InMemoryStore.StoreGroup;
 
+import java.awt.geom.Point2D;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -288,6 +298,16 @@ public class TestOperations
       string2.add(i + "a ");
     }
 
+    Measurable<Velocity> max = temporalSpeed1.max();
+    System.out.println(max);    
+    
+    Measurable<Velocity> min = temporalSpeed1.min();
+    System.out.println(min);
+    
+    QuantityRange<Velocity> range = temporalSpeed1.getRange();
+    System.out.println(range);
+    
+    
     Measurable<Velocity> speedVal3a = Measure.valueOf(2, kmh);
     speedLonger.add(speedVal3a);
 
@@ -431,6 +451,7 @@ public class TestOperations
       assertNotNull("has a depedent", dep);
       assertEquals("Correct dependent", precedent, dep);
     }
+    
   }
   @Test
   public void testDimensionlessMultiply()
@@ -833,6 +854,7 @@ public class TestOperations
         speedGood2.getValues().get(0).doubleValue(speedGood2.getUnits());
 
     assertEquals(firstDifference, speed1firstValue - speed2firstValue,0);
+    context.logError(IContext.Status.ERROR, "Error", null);
   }
 
   @SuppressWarnings("unchecked")
@@ -1004,7 +1026,6 @@ public class TestOperations
 	  EasyMock.replay(mockContext);
 	  
 	  command.execute();
-
   }
   
   @Test
@@ -1054,6 +1075,9 @@ public class TestOperations
 
 	  List<IOperation<?>> adminOperations = ops.get(OperationsLibrary.ADMINISTRATION);
 	  assertEquals("Creation size",6, adminOperations.size());
+	  
+	  List<IOperation<?>> topLevel = OperationsLibrary.getTopLevel();
+	  assertNotNull(topLevel);
   }
 
   
@@ -1208,6 +1232,67 @@ public class TestOperations
   		  iCommand.dataChanged(speedGood1);
   	  }
     }
-
   
+  @Test
+  public void testDeleteCollectionOperation(){
+	  InMemoryStore store = new SampleData().getData(10);
+	  List<IStoreItem> selection = new ArrayList<IStoreItem>();
+
+	  ICollection speedGood1 = (ICollection) store.get(SampleData.SPEED_ONE);
+	  ICollection string1 = (ICollection) store.get(SampleData.STRING_ONE);
+	  selection.add(speedGood1);
+	  selection.add(string1);
+
+	  DeleteCollectionOperation deleteCollectionOperation=new DeleteCollectionOperation();
+	  Collection<ICommand<IStoreItem>> commands =
+			  deleteCollectionOperation.actionsFor(selection, store, context);
+	  assertEquals("Delete collection operation", 1, commands.size());
+	  ICommand<IStoreItem> command = commands.iterator().next();
+	  command.execute();
+  }
+
+  @Test
+  public void testBearingBetweenTracksOperation() throws IOException{
+	  InMemoryStore store = new SampleData().getData(10);
+	  List<IStoreItem> selection = new ArrayList<IStoreItem>();
+
+	  File file = TestCsvParser.getDataFile("americas_cup/usa.csv");
+	  assertTrue(file.isFile());
+	  File file2 = TestCsvParser.getDataFile("americas_cup/nzl.csv");
+	  assertTrue(file2.isFile());
+	  CsvParser parser = new CsvParser();
+	  List<IStoreItem> items = parser.parse(file.getAbsolutePath());
+	  assertEquals("correct group", 1, items.size());
+	  StoreGroup group = (StoreGroup) items.get(0);
+	  assertEquals("correct num collections", 3, group.size());
+	  ICollection firstColl = (ICollection) group.get(2);
+	  assertEquals("correct num rows", 1708, firstColl.getValuesCount());
+
+	  List<IStoreItem> items2 = parser.parse(file2.getAbsolutePath());
+	  assertEquals("correct group", 1, items2.size());
+	  StoreGroup group2 = (StoreGroup) items2.get(0);
+	  assertEquals("correct num collections", 3, group2.size());
+	  ICollection secondColl = (ICollection) group2.get(2);
+	  assertEquals("correct num rows", 1708, secondColl.getValuesCount());
+
+	  TemporalLocation track1 = (TemporalLocation) firstColl;
+	  TemporalLocation track2 = (TemporalLocation) secondColl;
+	  selection.add(track1);
+	  selection.add(track2);
+
+	  Collection<ICommand<IStoreItem>> commands =
+			  new BearingBetweenTracksOperation().actionsFor(selection, store, context);
+	  assertEquals("Bearing Between Tracks operation", 2, commands.size());
+	  Iterator<ICommand<IStoreItem>> iterator = commands.iterator();
+	  ICommand<IStoreItem> command = iterator.next();
+	  command.execute();
+
+	  command = iterator.next();
+	  command.execute();
+	  
+	  boolean numeric = CsvParser.isNumeric("123");
+	  assertTrue(numeric);
+	  numeric = CsvParser.isNumeric("NAN");
+	  assertTrue(!numeric);
+  }
 }
