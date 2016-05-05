@@ -1,5 +1,13 @@
 package info.limpet.stackedcharts.model.tests;
 
+import info.limpet.stackedcharts.model.Axis;
+import info.limpet.stackedcharts.model.Chart;
+import info.limpet.stackedcharts.model.ChartSet;
+import info.limpet.stackedcharts.model.DataItem;
+import info.limpet.stackedcharts.model.Dataset;
+import info.limpet.stackedcharts.model.StackedchartsFactory;
+import info.limpet.stackedcharts.model.StackedchartsPackage;
+
 import java.io.IOException;
 import java.util.HashMap;
 
@@ -11,14 +19,6 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.junit.Assert;
 import org.junit.Test;
-
-import info.limpet.stackedcharts.model.Axis;
-import info.limpet.stackedcharts.model.Chart;
-import info.limpet.stackedcharts.model.ChartsSet;
-import info.limpet.stackedcharts.model.DataItem;
-import info.limpet.stackedcharts.model.Dataset;
-import info.limpet.stackedcharts.model.StackedchartsFactory;
-import info.limpet.stackedcharts.model.StackedchartsPackage;
 
 /**
  * A JUnit Plug-in Test to demonstrate basic EMF operations, such as model manipulaton, persistnce
@@ -41,7 +41,7 @@ public class ModelTests
       e.printStackTrace();
       Assert.fail("Could not read model: " + e.getMessage());
     }
-    ChartsSet chartsSet = (ChartsSet) resource.getContents().get(0);
+    ChartSet chartsSet = (ChartSet) resource.getContents().get(0);
 
     Assert.assertNotNull(chartsSet);
     Assert.assertEquals(1, chartsSet.getCharts().size());
@@ -54,7 +54,7 @@ public class ModelTests
   @Test
   public void testWriteModel()
   {
-    ChartsSet chartsSet = createModel();
+    ChartSet chartsSet = createModel();
     URI resourceURI = URI.createFileURI("testWrite.stackedcharts");
     Resource resource = new ResourceSetImpl().createResource(resourceURI);
     resource.getContents().add(chartsSet);
@@ -83,11 +83,11 @@ public class ModelTests
     Assert.assertTrue(listener.isNotified());
   }
 
-  private ChartsSet createModel()
+  private ChartSet createModel()
   {
     StackedchartsFactory factory = StackedchartsFactory.eINSTANCE;
 
-    ChartsSet chartsSet = factory.createChartsSet();
+    ChartSet chartsSet = factory.createChartSet();
     Chart chart = factory.createChart();
     chart.setName("Geothermal Gradient");
     chartsSet.getCharts().add(chart);
@@ -157,7 +157,7 @@ public class ModelTests
     @Override
     public boolean isAdapterForType(Object type)
     {
-      return ChartsSet.class.equals(type);
+      return ChartSet.class.equals(type);
     }
 
     public boolean isNotified()
