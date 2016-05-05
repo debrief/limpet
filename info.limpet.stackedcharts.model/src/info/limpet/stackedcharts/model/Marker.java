@@ -10,10 +10,10 @@ package info.limpet.stackedcharts.model;
  *
  * <p>
  * The following features are supported:
- * </p>
  * <ul>
  *   <li>{@link info.limpet.stackedcharts.model.Marker#getValue <em>Value</em>}</li>
  * </ul>
+ * </p>
  *
  * @see info.limpet.stackedcharts.model.StackedchartsPackage#getMarker()
  * @model

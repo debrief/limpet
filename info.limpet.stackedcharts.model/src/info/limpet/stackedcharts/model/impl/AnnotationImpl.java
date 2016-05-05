@@ -23,12 +23,12 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
- * </p>
  * <ul>
  *   <li>{@link info.limpet.stackedcharts.model.impl.AnnotationImpl#getName <em>Name</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.impl.AnnotationImpl#getColor <em>Color</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.impl.AnnotationImpl#getChart <em>Chart</em>}</li>
  * </ul>
+ * </p>
  *
  * @generated
  */

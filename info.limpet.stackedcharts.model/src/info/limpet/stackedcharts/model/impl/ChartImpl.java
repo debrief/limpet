@@ -5,7 +5,7 @@ package info.limpet.stackedcharts.model.impl;
 import info.limpet.stackedcharts.model.Annotation;
 import info.limpet.stackedcharts.model.Axis;
 import info.limpet.stackedcharts.model.Chart;
-import info.limpet.stackedcharts.model.ChartsSet;
+import info.limpet.stackedcharts.model.ChartSet;
 import info.limpet.stackedcharts.model.Dataset;
 import info.limpet.stackedcharts.model.StackedchartsPackage;
 
@@ -31,7 +31,6 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
- * </p>
  * <ul>
  *   <li>{@link info.limpet.stackedcharts.model.impl.ChartImpl#getParent <em>Parent</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.impl.ChartImpl#getAxes <em>Axes</em>}</li>
@@ -39,6 +38,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link info.limpet.stackedcharts.model.impl.ChartImpl#getName <em>Name</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.impl.ChartImpl#getAnnotations <em>Annotations</em>}</li>
  * </ul>
+ * </p>
  *
  * @generated
  */
@@ -116,10 +116,10 @@ public class ChartImpl extends MinimalEObjectImpl.Container implements Chart
    * <!-- end-user-doc -->
    * @generated
    */
-  public ChartsSet getParent()
+  public ChartSet getParent()
   {
     if (eContainerFeatureID() != StackedchartsPackage.CHART__PARENT) return null;
-    return (ChartsSet)eInternalContainer();
+    return (ChartSet)eInternalContainer();
   }
 
   /**
@@ -127,7 +127,7 @@ public class ChartImpl extends MinimalEObjectImpl.Container implements Chart
    * <!-- end-user-doc -->
    * @generated
    */
-  public NotificationChain basicSetParent(ChartsSet newParent, NotificationChain msgs)
+  public NotificationChain basicSetParent(ChartSet newParent, NotificationChain msgs)
   {
     msgs = eBasicSetContainer((InternalEObject)newParent, StackedchartsPackage.CHART__PARENT, msgs);
     return msgs;
@@ -138,7 +138,7 @@ public class ChartImpl extends MinimalEObjectImpl.Container implements Chart
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setParent(ChartsSet newParent)
+  public void setParent(ChartSet newParent)
   {
     if (newParent != eInternalContainer() || (eContainerFeatureID() != StackedchartsPackage.CHART__PARENT && newParent != null))
     {
@@ -148,7 +148,7 @@ public class ChartImpl extends MinimalEObjectImpl.Container implements Chart
       if (eInternalContainer() != null)
         msgs = eBasicRemoveFromContainer(msgs);
       if (newParent != null)
-        msgs = ((InternalEObject)newParent).eInverseAdd(this, StackedchartsPackage.CHARTS_SET__CHARTS, ChartsSet.class, msgs);
+        msgs = ((InternalEObject)newParent).eInverseAdd(this, StackedchartsPackage.CHART_SET__CHARTS, ChartSet.class, msgs);
       msgs = basicSetParent(newParent, msgs);
       if (msgs != null) msgs.dispatch();
     }
@@ -235,7 +235,7 @@ public class ChartImpl extends MinimalEObjectImpl.Container implements Chart
       case StackedchartsPackage.CHART__PARENT:
         if (eInternalContainer() != null)
           msgs = eBasicRemoveFromContainer(msgs);
-        return basicSetParent((ChartsSet)otherEnd, msgs);
+        return basicSetParent((ChartSet)otherEnd, msgs);
       case StackedchartsPackage.CHART__AXES:
         return ((InternalEList<InternalEObject>)(InternalEList<?>)getAxes()).basicAdd(otherEnd, msgs);
       case StackedchartsPackage.CHART__ANNOTATIONS:
@@ -277,7 +277,7 @@ public class ChartImpl extends MinimalEObjectImpl.Container implements Chart
     switch (eContainerFeatureID())
     {
       case StackedchartsPackage.CHART__PARENT:
-        return eInternalContainer().eInverseRemove(this, StackedchartsPackage.CHARTS_SET__CHARTS, ChartsSet.class, msgs);
+        return eInternalContainer().eInverseRemove(this, StackedchartsPackage.CHART_SET__CHARTS, ChartSet.class, msgs);
     }
     return super.eBasicRemoveFromContainerFeature(msgs);
   }
@@ -318,7 +318,7 @@ public class ChartImpl extends MinimalEObjectImpl.Container implements Chart
     switch (featureID)
     {
       case StackedchartsPackage.CHART__PARENT:
-        setParent((ChartsSet)newValue);
+        setParent((ChartSet)newValue);
         return;
       case StackedchartsPackage.CHART__AXES:
         getAxes().clear();
@@ -350,7 +350,7 @@ public class ChartImpl extends MinimalEObjectImpl.Container implements Chart
     switch (featureID)
     {
       case StackedchartsPackage.CHART__PARENT:
-        setParent((ChartsSet)null);
+        setParent((ChartSet)null);
         return;
       case StackedchartsPackage.CHART__AXES:
         getAxes().clear();

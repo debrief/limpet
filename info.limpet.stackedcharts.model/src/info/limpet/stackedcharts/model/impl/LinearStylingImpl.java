@@ -17,13 +17,13 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
- * </p>
  * <ul>
  *   <li>{@link info.limpet.stackedcharts.model.impl.LinearStylingImpl#getStartColor <em>Start Color</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.impl.LinearStylingImpl#getEndColor <em>End Color</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.impl.LinearStylingImpl#getStartVal <em>Start Val</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.impl.LinearStylingImpl#getEndVal <em>End Val</em>}</li>
  * </ul>
+ * </p>
  *
  * @generated
  */

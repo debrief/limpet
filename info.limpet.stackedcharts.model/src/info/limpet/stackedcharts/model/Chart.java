@@ -12,7 +12,6 @@ import org.eclipse.emf.ecore.EObject;
  *
  * <p>
  * The following features are supported:
- * </p>
  * <ul>
  *   <li>{@link info.limpet.stackedcharts.model.Chart#getParent <em>Parent</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.Chart#getAxes <em>Axes</em>}</li>
@@ -20,6 +19,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link info.limpet.stackedcharts.model.Chart#getName <em>Name</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.Chart#getAnnotations <em>Annotations</em>}</li>
  * </ul>
+ * </p>
  *
  * @see info.limpet.stackedcharts.model.StackedchartsPackage#getChart()
  * @model
@@ -29,7 +29,7 @@ public interface Chart extends EObject
 {
   /**
    * Returns the value of the '<em><b>Parent</b></em>' container reference.
-   * It is bidirectional and its opposite is '{@link info.limpet.stackedcharts.model.ChartsSet#getCharts <em>Charts</em>}'.
+   * It is bidirectional and its opposite is '{@link info.limpet.stackedcharts.model.ChartSet#getCharts <em>Charts</em>}'.
    * <!-- begin-user-doc -->
    * <p>
    * If the meaning of the '<em>Parent</em>' container reference isn't clear,
@@ -37,13 +37,13 @@ public interface Chart extends EObject
    * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Parent</em>' container reference.
-   * @see #setParent(ChartsSet)
+   * @see #setParent(ChartSet)
    * @see info.limpet.stackedcharts.model.StackedchartsPackage#getChart_Parent()
-   * @see info.limpet.stackedcharts.model.ChartsSet#getCharts
+   * @see info.limpet.stackedcharts.model.ChartSet#getCharts
    * @model opposite="charts" transient="false"
    * @generated
    */
-  ChartsSet getParent();
+  ChartSet getParent();
 
   /**
    * Sets the value of the '{@link info.limpet.stackedcharts.model.Chart#getParent <em>Parent</em>}' container reference.
@@ -53,7 +53,7 @@ public interface Chart extends EObject
    * @see #getParent()
    * @generated
    */
-  void setParent(ChartsSet value);
+  void setParent(ChartSet value);
 
   /**
    * Returns the value of the '<em><b>Axes</b></em>' containment reference list.

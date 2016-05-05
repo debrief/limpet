@@ -59,14 +59,14 @@ public interface StackedchartsPackage extends EPackage
   StackedchartsPackage eINSTANCE = info.limpet.stackedcharts.model.impl.StackedchartsPackageImpl.init();
 
   /**
-   * The meta object id for the '{@link info.limpet.stackedcharts.model.impl.ChartsSetImpl <em>Charts Set</em>}' class.
+   * The meta object id for the '{@link info.limpet.stackedcharts.model.impl.ChartSetImpl <em>Chart Set</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see info.limpet.stackedcharts.model.impl.ChartsSetImpl
-   * @see info.limpet.stackedcharts.model.impl.StackedchartsPackageImpl#getChartsSet()
+   * @see info.limpet.stackedcharts.model.impl.ChartSetImpl
+   * @see info.limpet.stackedcharts.model.impl.StackedchartsPackageImpl#getChartSet()
    * @generated
    */
-  int CHARTS_SET = 0;
+  int CHART_SET = 0;
 
   /**
    * The feature id for the '<em><b>Charts</b></em>' containment reference list.
@@ -75,25 +75,25 @@ public interface StackedchartsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CHARTS_SET__CHARTS = 0;
+  int CHART_SET__CHARTS = 0;
 
   /**
-   * The number of structural features of the '<em>Charts Set</em>' class.
+   * The number of structural features of the '<em>Chart Set</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int CHARTS_SET_FEATURE_COUNT = 1;
+  int CHART_SET_FEATURE_COUNT = 1;
 
   /**
-   * The number of operations of the '<em>Charts Set</em>' class.
+   * The number of operations of the '<em>Chart Set</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int CHARTS_SET_OPERATION_COUNT = 0;
+  int CHART_SET_OPERATION_COUNT = 0;
 
   /**
    * The meta object id for the '{@link info.limpet.stackedcharts.model.impl.ChartImpl <em>Chart</em>}' class.
@@ -686,25 +686,25 @@ public interface StackedchartsPackage extends EPackage
 
 
   /**
-   * Returns the meta object for class '{@link info.limpet.stackedcharts.model.ChartsSet <em>Charts Set</em>}'.
+   * Returns the meta object for class '{@link info.limpet.stackedcharts.model.ChartSet <em>Chart Set</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Charts Set</em>'.
-   * @see info.limpet.stackedcharts.model.ChartsSet
+   * @return the meta object for class '<em>Chart Set</em>'.
+   * @see info.limpet.stackedcharts.model.ChartSet
    * @generated
    */
-  EClass getChartsSet();
+  EClass getChartSet();
 
   /**
-   * Returns the meta object for the containment reference list '{@link info.limpet.stackedcharts.model.ChartsSet#getCharts <em>Charts</em>}'.
+   * Returns the meta object for the containment reference list '{@link info.limpet.stackedcharts.model.ChartSet#getCharts <em>Charts</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the meta object for the containment reference list '<em>Charts</em>'.
-   * @see info.limpet.stackedcharts.model.ChartsSet#getCharts()
-   * @see #getChartsSet()
+   * @see info.limpet.stackedcharts.model.ChartSet#getCharts()
+   * @see #getChartSet()
    * @generated
    */
-  EReference getChartsSet_Charts();
+  EReference getChartSet_Charts();
 
   /**
    * Returns the meta object for class '{@link info.limpet.stackedcharts.model.Chart <em>Chart</em>}'.
@@ -1137,14 +1137,14 @@ public interface StackedchartsPackage extends EPackage
   interface Literals
   {
     /**
-     * The meta object literal for the '{@link info.limpet.stackedcharts.model.impl.ChartsSetImpl <em>Charts Set</em>}' class.
+     * The meta object literal for the '{@link info.limpet.stackedcharts.model.impl.ChartSetImpl <em>Chart Set</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see info.limpet.stackedcharts.model.impl.ChartsSetImpl
-     * @see info.limpet.stackedcharts.model.impl.StackedchartsPackageImpl#getChartsSet()
+     * @see info.limpet.stackedcharts.model.impl.ChartSetImpl
+     * @see info.limpet.stackedcharts.model.impl.StackedchartsPackageImpl#getChartSet()
      * @generated
      */
-    EClass CHARTS_SET = eINSTANCE.getChartsSet();
+    EClass CHART_SET = eINSTANCE.getChartSet();
 
     /**
      * The meta object literal for the '<em><b>Charts</b></em>' containment reference list feature.
@@ -1152,7 +1152,7 @@ public interface StackedchartsPackage extends EPackage
      * <!-- end-user-doc -->
      * @generated
      */
-    EReference CHARTS_SET__CHARTS = eINSTANCE.getChartsSet_Charts();
+    EReference CHART_SET__CHARTS = eINSTANCE.getChartSet_Charts();
 
     /**
      * The meta object literal for the '{@link info.limpet.stackedcharts.model.impl.ChartImpl <em>Chart</em>}' class.

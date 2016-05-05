@@ -65,7 +65,7 @@ public class StackedchartsFactoryImpl extends EFactoryImpl implements Stackedcha
   {
     switch (eClass.getClassifierID())
     {
-      case StackedchartsPackage.CHARTS_SET: return createChartsSet();
+      case StackedchartsPackage.CHART_SET: return createChartSet();
       case StackedchartsPackage.CHART: return createChart();
       case StackedchartsPackage.AXIS: return createAxis();
       case StackedchartsPackage.DATASET: return createDataset();
@@ -124,10 +124,10 @@ public class StackedchartsFactoryImpl extends EFactoryImpl implements Stackedcha
    * <!-- end-user-doc -->
    * @generated
    */
-  public ChartsSet createChartsSet()
+  public ChartSet createChartSet()
   {
-    ChartsSetImpl chartsSet = new ChartsSetImpl();
-    return chartsSet;
+    ChartSetImpl chartSet = new ChartSetImpl();
+    return chartSet;
   }
 
   /**

@@ -23,13 +23,13 @@ public interface StackedchartsFactory extends EFactory
   StackedchartsFactory eINSTANCE = info.limpet.stackedcharts.model.impl.StackedchartsFactoryImpl.init();
 
   /**
-   * Returns a new object of class '<em>Charts Set</em>'.
+   * Returns a new object of class '<em>Chart Set</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>Charts Set</em>'.
+   * @return a new object of class '<em>Chart Set</em>'.
    * @generated
    */
-  ChartsSet createChartsSet();
+  ChartSet createChartSet();
 
   /**
    * Returns a new object of class '<em>Chart</em>'.

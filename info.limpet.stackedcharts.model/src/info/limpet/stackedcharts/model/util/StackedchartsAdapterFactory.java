@@ -75,9 +75,9 @@ public class StackedchartsAdapterFactory extends AdapterFactoryImpl
     new StackedchartsSwitch<Adapter>()
     {
       @Override
-      public Adapter caseChartsSet(ChartsSet object)
+      public Adapter caseChartSet(ChartSet object)
       {
-        return createChartsSetAdapter();
+        return createChartSetAdapter();
       }
       @Override
       public Adapter caseChart(Chart object)
@@ -152,16 +152,16 @@ public class StackedchartsAdapterFactory extends AdapterFactoryImpl
 
 
   /**
-   * Creates a new adapter for an object of class '{@link info.limpet.stackedcharts.model.ChartsSet <em>Charts Set</em>}'.
+   * Creates a new adapter for an object of class '{@link info.limpet.stackedcharts.model.ChartSet <em>Chart Set</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see info.limpet.stackedcharts.model.ChartsSet
+   * @see info.limpet.stackedcharts.model.ChartSet
    * @generated
    */
-  public Adapter createChartsSetAdapter()
+  public Adapter createChartSetAdapter()
   {
     return null;
   }

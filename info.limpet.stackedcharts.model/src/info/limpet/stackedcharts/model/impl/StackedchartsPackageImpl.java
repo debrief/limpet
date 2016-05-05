@@ -7,7 +7,7 @@ import info.limpet.stackedcharts.model.Axis;
 import info.limpet.stackedcharts.model.AxisOrigin;
 import info.limpet.stackedcharts.model.AxisScale;
 import info.limpet.stackedcharts.model.Chart;
-import info.limpet.stackedcharts.model.ChartsSet;
+import info.limpet.stackedcharts.model.ChartSet;
 import info.limpet.stackedcharts.model.DataItem;
 import info.limpet.stackedcharts.model.Dataset;
 import info.limpet.stackedcharts.model.LinearStyling;
@@ -39,7 +39,7 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
    * <!-- end-user-doc -->
    * @generated
    */
-  private EClass chartsSetEClass = null;
+  private EClass chartSetEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -193,9 +193,9 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
    * <!-- end-user-doc -->
    * @generated
    */
-  public EClass getChartsSet()
+  public EClass getChartSet()
   {
-    return chartsSetEClass;
+    return chartSetEClass;
   }
 
   /**
@@ -203,9 +203,9 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getChartsSet_Charts()
+  public EReference getChartSet_Charts()
   {
-    return (EReference)chartsSetEClass.getEStructuralFeatures().get(0);
+    return (EReference)chartSetEClass.getEStructuralFeatures().get(0);
   }
 
   /**
@@ -618,8 +618,8 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
     isCreated = true;
 
     // Create classes and their features
-    chartsSetEClass = createEClass(CHARTS_SET);
-    createEReference(chartsSetEClass, CHARTS_SET__CHARTS);
+    chartSetEClass = createEClass(CHART_SET);
+    createEReference(chartSetEClass, CHART_SET__CHARTS);
 
     chartEClass = createEClass(CHART);
     createEReference(chartEClass, CHART__PARENT);
@@ -707,11 +707,11 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
     linearStylingEClass.getESuperTypes().add(this.getStyling());
 
     // Initialize classes, features, and operations; add parameters
-    initEClass(chartsSetEClass, ChartsSet.class, "ChartsSet", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEReference(getChartsSet_Charts(), this.getChart(), this.getChart_Parent(), "charts", null, 0, -1, ChartsSet.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEClass(chartSetEClass, ChartSet.class, "ChartSet", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getChartSet_Charts(), this.getChart(), this.getChart_Parent(), "charts", null, 0, -1, ChartSet.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(chartEClass, Chart.class, "Chart", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEReference(getChart_Parent(), this.getChartsSet(), this.getChartsSet_Charts(), "parent", null, 0, 1, Chart.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getChart_Parent(), this.getChartSet(), this.getChartSet_Charts(), "parent", null, 0, 1, Chart.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getChart_Axes(), this.getAxis(), this.getAxis_Parent(), "axes", null, 0, -1, Chart.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getChart_Datasets(), this.getDataset(), null, "datasets", null, 0, -1, Chart.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getChart_Name(), ecorePackage.getEString(), "name", null, 0, 1, Chart.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

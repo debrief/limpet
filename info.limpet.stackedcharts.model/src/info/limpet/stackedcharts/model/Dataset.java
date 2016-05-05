@@ -13,13 +13,13 @@ import org.eclipse.emf.ecore.EObject;
  *
  * <p>
  * The following features are supported:
- * </p>
  * <ul>
  *   <li>{@link info.limpet.stackedcharts.model.Dataset#getName <em>Name</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.Dataset#getAxis <em>Axis</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.Dataset#getItems <em>Items</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.Dataset#getStyling <em>Styling</em>}</li>
  * </ul>
+ * </p>
  *
  * @see info.limpet.stackedcharts.model.StackedchartsPackage#getDataset()
  * @model

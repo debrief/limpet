@@ -18,11 +18,11 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
- * </p>
  * <ul>
  *   <li>{@link info.limpet.stackedcharts.model.impl.DataItemImpl#getIndependentVal <em>Independent Val</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.impl.DataItemImpl#getDependentVal <em>Dependent Val</em>}</li>
  * </ul>
+ * </p>
  *
  * @generated
  */

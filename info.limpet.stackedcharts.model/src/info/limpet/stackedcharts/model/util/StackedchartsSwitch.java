@@ -50,7 +50,7 @@ public class StackedchartsSwitch<T> extends Switch<T>
    * Checks whether this is a switch for the given package.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @param ePackage the package in question.
+   * @parameter ePackage the package in question.
    * @return whether this is a switch for the given package.
    * @generated
    */
@@ -72,10 +72,10 @@ public class StackedchartsSwitch<T> extends Switch<T>
   {
     switch (classifierID)
     {
-      case StackedchartsPackage.CHARTS_SET:
+      case StackedchartsPackage.CHART_SET:
       {
-        ChartsSet chartsSet = (ChartsSet)theEObject;
-        T result = caseChartsSet(chartsSet);
+        ChartSet chartSet = (ChartSet)theEObject;
+        T result = caseChartSet(chartSet);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -158,17 +158,17 @@ public class StackedchartsSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Charts Set</em>'.
+   * Returns the result of interpreting the object as an instance of '<em>Chart Set</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
    * <!-- end-user-doc -->
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Charts Set</em>'.
+   * @return the result of interpreting the object as an instance of '<em>Chart Set</em>'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
-  public T caseChartsSet(ChartsSet object)
+  public T caseChartSet(ChartSet object)
   {
     return null;
   }
