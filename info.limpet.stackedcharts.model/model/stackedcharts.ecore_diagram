@@ -14,7 +14,7 @@
       <styles xmi:type="notation:SortingStyle" xmi:id="_y4jSGBIaEeawNZULF3rB4Q"/>
       <styles xmi:type="notation:FilteringStyle" xmi:id="_y4jSGRIaEeawNZULF3rB4Q"/>
     </children>
-    <element xmi:type="ecore:EClass" href="stackedcharts.ecore#//ChartsSet"/>
+    <element xmi:type="ecore:EClass" href="stackedcharts.ecore#//ChartSet"/>
     <layoutConstraint xmi:type="notation:Bounds" xmi:id="_y4b9URIaEeawNZULF3rB4Q" x="65" y="65" width="149" height="104"/>
   </children>
   <children xmi:type="notation:Shape" xmi:id="_0Kk6oBIaEeawNZULF3rB4Q" type="2001" fontName="Segoe UI">
@@ -307,7 +307,7 @@
       <layoutConstraint xmi:type="notation:Location" xmi:id="_2u2OMxIaEeawNZULF3rB4Q" x="-6" y="25"/>
     </children>
     <styles xmi:type="notation:FontStyle" xmi:id="_2u1nIRIaEeawNZULF3rB4Q" fontName="Segoe UI"/>
-    <element xmi:type="ecore:EReference" href="stackedcharts.ecore#//ChartsSet/charts"/>
+    <element xmi:type="ecore:EReference" href="stackedcharts.ecore#//ChartSet/charts"/>
     <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_2u1nIhIaEeawNZULF3rB4Q" points="[75, -8, -149, -5]$[170, -8, -54, -5]"/>
   </edges>
   <edges xmi:type="notation:Connector" xmi:id="_EE0CYBIeEeaJN4BQt6nrqQ" type="4003" source="_0Kk6oBIaEeawNZULF3rB4Q" target="_CBgG0BIeEeaJN4BQt6nrqQ">

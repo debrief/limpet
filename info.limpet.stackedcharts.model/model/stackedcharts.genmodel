@@ -15,8 +15,8 @@
       <genEnumLiterals ecoreEnumLiteral="stackedcharts.ecore#//AxisScale/Linear"/>
       <genEnumLiterals ecoreEnumLiteral="stackedcharts.ecore#//AxisScale/Log"/>
     </genEnums>
-    <genClasses ecoreClass="stackedcharts.ecore#//ChartsSet">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference stackedcharts.ecore#//ChartsSet/charts"/>
+    <genClasses ecoreClass="stackedcharts.ecore#//ChartSet">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference stackedcharts.ecore#//ChartSet/charts"/>
     </genClasses>
     <genClasses ecoreClass="stackedcharts.ecore#//Chart">
       <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference stackedcharts.ecore#//Chart/parent"/>
