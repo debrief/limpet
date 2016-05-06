@@ -20,11 +20,11 @@ import org.eclipse.emf.ecore.EReference;
  *   <li>and each data type</li>
  * </ul>
  * <!-- end-user-doc -->
- * @see info.limpet.stackedcharts.model.StackedchartsFactory
+ * @see info.limpet.stackedcharts.model.ModelFactory
  * @model kind="package"
  * @generated
  */
-public interface StackedchartsPackage extends EPackage
+public interface ModelPackage extends EPackage
 {
   /**
    * The package name.
@@ -56,14 +56,14 @@ public interface StackedchartsPackage extends EPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  StackedchartsPackage eINSTANCE = info.limpet.stackedcharts.model.impl.StackedchartsPackageImpl.init();
+  ModelPackage eINSTANCE = info.limpet.stackedcharts.model.impl.ModelPackageImpl.init();
 
   /**
    * The meta object id for the '{@link info.limpet.stackedcharts.model.impl.ChartSetImpl <em>Chart Set</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @see info.limpet.stackedcharts.model.impl.ChartSetImpl
-   * @see info.limpet.stackedcharts.model.impl.StackedchartsPackageImpl#getChartSet()
+   * @see info.limpet.stackedcharts.model.impl.ModelPackageImpl#getChartSet()
    * @generated
    */
   int CHART_SET = 0;
@@ -100,7 +100,7 @@ public interface StackedchartsPackage extends EPackage
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @see info.limpet.stackedcharts.model.impl.ChartImpl
-   * @see info.limpet.stackedcharts.model.impl.StackedchartsPackageImpl#getChart()
+   * @see info.limpet.stackedcharts.model.impl.ModelPackageImpl#getChart()
    * @generated
    */
   int CHART = 1;
@@ -173,7 +173,7 @@ public interface StackedchartsPackage extends EPackage
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @see info.limpet.stackedcharts.model.impl.AxisImpl
-   * @see info.limpet.stackedcharts.model.impl.StackedchartsPackageImpl#getAxis()
+   * @see info.limpet.stackedcharts.model.impl.ModelPackageImpl#getAxis()
    * @generated
    */
   int AXIS = 2;
@@ -237,7 +237,7 @@ public interface StackedchartsPackage extends EPackage
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @see info.limpet.stackedcharts.model.impl.DatasetImpl
-   * @see info.limpet.stackedcharts.model.impl.StackedchartsPackageImpl#getDataset()
+   * @see info.limpet.stackedcharts.model.impl.ModelPackageImpl#getDataset()
    * @generated
    */
   int DATASET = 3;
@@ -301,7 +301,7 @@ public interface StackedchartsPackage extends EPackage
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @see info.limpet.stackedcharts.model.impl.DataItemImpl
-   * @see info.limpet.stackedcharts.model.impl.StackedchartsPackageImpl#getDataItem()
+   * @see info.limpet.stackedcharts.model.impl.ModelPackageImpl#getDataItem()
    * @generated
    */
   int DATA_ITEM = 4;
@@ -347,7 +347,7 @@ public interface StackedchartsPackage extends EPackage
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @see info.limpet.stackedcharts.model.impl.AnnotationImpl
-   * @see info.limpet.stackedcharts.model.impl.StackedchartsPackageImpl#getAnnotation()
+   * @see info.limpet.stackedcharts.model.impl.ModelPackageImpl#getAnnotation()
    * @generated
    */
   int ANNOTATION = 5;
@@ -402,7 +402,7 @@ public interface StackedchartsPackage extends EPackage
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @see info.limpet.stackedcharts.model.impl.ZoneImpl
-   * @see info.limpet.stackedcharts.model.impl.StackedchartsPackageImpl#getZone()
+   * @see info.limpet.stackedcharts.model.impl.ModelPackageImpl#getZone()
    * @generated
    */
   int ZONE = 6;
@@ -475,7 +475,7 @@ public interface StackedchartsPackage extends EPackage
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @see info.limpet.stackedcharts.model.impl.MarkerImpl
-   * @see info.limpet.stackedcharts.model.impl.StackedchartsPackageImpl#getMarker()
+   * @see info.limpet.stackedcharts.model.impl.ModelPackageImpl#getMarker()
    * @generated
    */
   int MARKER = 7;
@@ -539,7 +539,7 @@ public interface StackedchartsPackage extends EPackage
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @see info.limpet.stackedcharts.model.impl.StylingImpl
-   * @see info.limpet.stackedcharts.model.impl.StackedchartsPackageImpl#getStyling()
+   * @see info.limpet.stackedcharts.model.impl.ModelPackageImpl#getStyling()
    * @generated
    */
   int STYLING = 8;
@@ -567,7 +567,7 @@ public interface StackedchartsPackage extends EPackage
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @see info.limpet.stackedcharts.model.impl.PlainStylingImpl
-   * @see info.limpet.stackedcharts.model.impl.StackedchartsPackageImpl#getPlainStyling()
+   * @see info.limpet.stackedcharts.model.impl.ModelPackageImpl#getPlainStyling()
    * @generated
    */
   int PLAIN_STYLING = 9;
@@ -604,7 +604,7 @@ public interface StackedchartsPackage extends EPackage
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @see info.limpet.stackedcharts.model.impl.LinearStylingImpl
-   * @see info.limpet.stackedcharts.model.impl.StackedchartsPackageImpl#getLinearStyling()
+   * @see info.limpet.stackedcharts.model.impl.ModelPackageImpl#getLinearStyling()
    * @generated
    */
   int LINEAR_STYLING = 10;
@@ -668,7 +668,7 @@ public interface StackedchartsPackage extends EPackage
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @see info.limpet.stackedcharts.model.AxisOrigin
-   * @see info.limpet.stackedcharts.model.impl.StackedchartsPackageImpl#getAxisOrigin()
+   * @see info.limpet.stackedcharts.model.impl.ModelPackageImpl#getAxisOrigin()
    * @generated
    */
   int AXIS_ORIGIN = 11;
@@ -678,7 +678,7 @@ public interface StackedchartsPackage extends EPackage
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @see info.limpet.stackedcharts.model.AxisScale
-   * @see info.limpet.stackedcharts.model.impl.StackedchartsPackageImpl#getAxisScale()
+   * @see info.limpet.stackedcharts.model.impl.ModelPackageImpl#getAxisScale()
    * @generated
    */
   int AXIS_SCALE = 12;
@@ -1118,7 +1118,7 @@ public interface StackedchartsPackage extends EPackage
    * @return the factory that creates the instances of the model.
    * @generated
    */
-  StackedchartsFactory getStackedchartsFactory();
+  ModelFactory getModelFactory();
 
   /**
    * <!-- begin-user-doc -->
@@ -1140,7 +1140,7 @@ public interface StackedchartsPackage extends EPackage
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @see info.limpet.stackedcharts.model.impl.ChartSetImpl
-     * @see info.limpet.stackedcharts.model.impl.StackedchartsPackageImpl#getChartSet()
+     * @see info.limpet.stackedcharts.model.impl.ModelPackageImpl#getChartSet()
      * @generated
      */
     EClass CHART_SET = eINSTANCE.getChartSet();
@@ -1158,7 +1158,7 @@ public interface StackedchartsPackage extends EPackage
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @see info.limpet.stackedcharts.model.impl.ChartImpl
-     * @see info.limpet.stackedcharts.model.impl.StackedchartsPackageImpl#getChart()
+     * @see info.limpet.stackedcharts.model.impl.ModelPackageImpl#getChart()
      * @generated
      */
     EClass CHART = eINSTANCE.getChart();
@@ -1208,7 +1208,7 @@ public interface StackedchartsPackage extends EPackage
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @see info.limpet.stackedcharts.model.impl.AxisImpl
-     * @see info.limpet.stackedcharts.model.impl.StackedchartsPackageImpl#getAxis()
+     * @see info.limpet.stackedcharts.model.impl.ModelPackageImpl#getAxis()
      * @generated
      */
     EClass AXIS = eINSTANCE.getAxis();
@@ -1250,7 +1250,7 @@ public interface StackedchartsPackage extends EPackage
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @see info.limpet.stackedcharts.model.impl.DatasetImpl
-     * @see info.limpet.stackedcharts.model.impl.StackedchartsPackageImpl#getDataset()
+     * @see info.limpet.stackedcharts.model.impl.ModelPackageImpl#getDataset()
      * @generated
      */
     EClass DATASET = eINSTANCE.getDataset();
@@ -1292,7 +1292,7 @@ public interface StackedchartsPackage extends EPackage
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @see info.limpet.stackedcharts.model.impl.DataItemImpl
-     * @see info.limpet.stackedcharts.model.impl.StackedchartsPackageImpl#getDataItem()
+     * @see info.limpet.stackedcharts.model.impl.ModelPackageImpl#getDataItem()
      * @generated
      */
     EClass DATA_ITEM = eINSTANCE.getDataItem();
@@ -1318,7 +1318,7 @@ public interface StackedchartsPackage extends EPackage
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @see info.limpet.stackedcharts.model.impl.AnnotationImpl
-     * @see info.limpet.stackedcharts.model.impl.StackedchartsPackageImpl#getAnnotation()
+     * @see info.limpet.stackedcharts.model.impl.ModelPackageImpl#getAnnotation()
      * @generated
      */
     EClass ANNOTATION = eINSTANCE.getAnnotation();
@@ -1352,7 +1352,7 @@ public interface StackedchartsPackage extends EPackage
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @see info.limpet.stackedcharts.model.impl.ZoneImpl
-     * @see info.limpet.stackedcharts.model.impl.StackedchartsPackageImpl#getZone()
+     * @see info.limpet.stackedcharts.model.impl.ModelPackageImpl#getZone()
      * @generated
      */
     EClass ZONE = eINSTANCE.getZone();
@@ -1378,7 +1378,7 @@ public interface StackedchartsPackage extends EPackage
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @see info.limpet.stackedcharts.model.impl.MarkerImpl
-     * @see info.limpet.stackedcharts.model.impl.StackedchartsPackageImpl#getMarker()
+     * @see info.limpet.stackedcharts.model.impl.ModelPackageImpl#getMarker()
      * @generated
      */
     EClass MARKER = eINSTANCE.getMarker();
@@ -1396,7 +1396,7 @@ public interface StackedchartsPackage extends EPackage
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @see info.limpet.stackedcharts.model.impl.StylingImpl
-     * @see info.limpet.stackedcharts.model.impl.StackedchartsPackageImpl#getStyling()
+     * @see info.limpet.stackedcharts.model.impl.ModelPackageImpl#getStyling()
      * @generated
      */
     EClass STYLING = eINSTANCE.getStyling();
@@ -1406,7 +1406,7 @@ public interface StackedchartsPackage extends EPackage
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @see info.limpet.stackedcharts.model.impl.PlainStylingImpl
-     * @see info.limpet.stackedcharts.model.impl.StackedchartsPackageImpl#getPlainStyling()
+     * @see info.limpet.stackedcharts.model.impl.ModelPackageImpl#getPlainStyling()
      * @generated
      */
     EClass PLAIN_STYLING = eINSTANCE.getPlainStyling();
@@ -1424,7 +1424,7 @@ public interface StackedchartsPackage extends EPackage
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @see info.limpet.stackedcharts.model.impl.LinearStylingImpl
-     * @see info.limpet.stackedcharts.model.impl.StackedchartsPackageImpl#getLinearStyling()
+     * @see info.limpet.stackedcharts.model.impl.ModelPackageImpl#getLinearStyling()
      * @generated
      */
     EClass LINEAR_STYLING = eINSTANCE.getLinearStyling();
@@ -1466,7 +1466,7 @@ public interface StackedchartsPackage extends EPackage
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @see info.limpet.stackedcharts.model.AxisOrigin
-     * @see info.limpet.stackedcharts.model.impl.StackedchartsPackageImpl#getAxisOrigin()
+     * @see info.limpet.stackedcharts.model.impl.ModelPackageImpl#getAxisOrigin()
      * @generated
      */
     EEnum AXIS_ORIGIN = eINSTANCE.getAxisOrigin();
@@ -1476,11 +1476,11 @@ public interface StackedchartsPackage extends EPackage
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @see info.limpet.stackedcharts.model.AxisScale
-     * @see info.limpet.stackedcharts.model.impl.StackedchartsPackageImpl#getAxisScale()
+     * @see info.limpet.stackedcharts.model.impl.ModelPackageImpl#getAxisScale()
      * @generated
      */
     EEnum AXIS_SCALE = eINSTANCE.getAxisScale();
 
   }
 
-} //StackedchartsPackage
+} //ModelPackage

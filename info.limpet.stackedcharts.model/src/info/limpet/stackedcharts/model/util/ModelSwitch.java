@@ -19,10 +19,10 @@ import org.eclipse.emf.ecore.util.Switch;
  * until a non-null result is returned,
  * which is the result of the switch.
  * <!-- end-user-doc -->
- * @see info.limpet.stackedcharts.model.StackedchartsPackage
+ * @see info.limpet.stackedcharts.model.ModelPackage
  * @generated
  */
-public class StackedchartsSwitch<T> extends Switch<T>
+public class ModelSwitch<T> extends Switch<T>
 {
   /**
    * The cached model package
@@ -30,7 +30,7 @@ public class StackedchartsSwitch<T> extends Switch<T>
    * <!-- end-user-doc -->
    * @generated
    */
-  protected static StackedchartsPackage modelPackage;
+  protected static ModelPackage modelPackage;
 
   /**
    * Creates an instance of the switch.
@@ -38,11 +38,11 @@ public class StackedchartsSwitch<T> extends Switch<T>
    * <!-- end-user-doc -->
    * @generated
    */
-  public StackedchartsSwitch()
+  public ModelSwitch()
   {
     if (modelPackage == null)
     {
-      modelPackage = StackedchartsPackage.eINSTANCE;
+      modelPackage = ModelPackage.eINSTANCE;
     }
   }
 
@@ -72,49 +72,49 @@ public class StackedchartsSwitch<T> extends Switch<T>
   {
     switch (classifierID)
     {
-      case StackedchartsPackage.CHART_SET:
+      case ModelPackage.CHART_SET:
       {
         ChartSet chartSet = (ChartSet)theEObject;
         T result = caseChartSet(chartSet);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case StackedchartsPackage.CHART:
+      case ModelPackage.CHART:
       {
         Chart chart = (Chart)theEObject;
         T result = caseChart(chart);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case StackedchartsPackage.AXIS:
+      case ModelPackage.AXIS:
       {
         Axis axis = (Axis)theEObject;
         T result = caseAxis(axis);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case StackedchartsPackage.DATASET:
+      case ModelPackage.DATASET:
       {
         Dataset dataset = (Dataset)theEObject;
         T result = caseDataset(dataset);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case StackedchartsPackage.DATA_ITEM:
+      case ModelPackage.DATA_ITEM:
       {
         DataItem dataItem = (DataItem)theEObject;
         T result = caseDataItem(dataItem);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case StackedchartsPackage.ANNOTATION:
+      case ModelPackage.ANNOTATION:
       {
         Annotation annotation = (Annotation)theEObject;
         T result = caseAnnotation(annotation);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case StackedchartsPackage.ZONE:
+      case ModelPackage.ZONE:
       {
         Zone zone = (Zone)theEObject;
         T result = caseZone(zone);
@@ -122,7 +122,7 @@ public class StackedchartsSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case StackedchartsPackage.MARKER:
+      case ModelPackage.MARKER:
       {
         Marker marker = (Marker)theEObject;
         T result = caseMarker(marker);
@@ -130,14 +130,14 @@ public class StackedchartsSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case StackedchartsPackage.STYLING:
+      case ModelPackage.STYLING:
       {
         Styling styling = (Styling)theEObject;
         T result = caseStyling(styling);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case StackedchartsPackage.PLAIN_STYLING:
+      case ModelPackage.PLAIN_STYLING:
       {
         PlainStyling plainStyling = (PlainStyling)theEObject;
         T result = casePlainStyling(plainStyling);
@@ -145,7 +145,7 @@ public class StackedchartsSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case StackedchartsPackage.LINEAR_STYLING:
+      case ModelPackage.LINEAR_STYLING:
       {
         LinearStyling linearStyling = (LinearStyling)theEObject;
         T result = caseLinearStyling(linearStyling);
@@ -350,4 +350,4 @@ public class StackedchartsSwitch<T> extends Switch<T>
     return null;
   }
 
-} //StackedchartsSwitch
+} //ModelSwitch

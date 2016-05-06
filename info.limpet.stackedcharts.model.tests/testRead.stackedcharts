@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ASCII"?>
-<stackedcharts:ChartsSet xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:stackedcharts="stackedcharts">
+<stackedcharts:ChartSet xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:stackedcharts="stackedcharts">
   <charts name="Geothermal Gradient">
     <axes name="Depth"/>
     <axes name="Temperature"/>
@@ -9,4 +9,4 @@
       <items independentVal="3000.0" dependentVal="70.0"/>
     </datasets>
   </charts>
-</stackedcharts:ChartsSet>
+</stackedcharts:ChartSet>

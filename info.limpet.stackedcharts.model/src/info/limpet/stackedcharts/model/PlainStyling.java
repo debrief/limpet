@@ -10,10 +10,10 @@ package info.limpet.stackedcharts.model;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link info.limpet.stackedcharts.model.PlainStyling#getColor <em>Color</em>}</li>
  * </ul>
- * </p>
  *
  * @see info.limpet.stackedcharts.model.StackedchartsPackage#getPlainStyling()
  * @model

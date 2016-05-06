@@ -17,11 +17,11 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link info.limpet.stackedcharts.model.impl.ZoneImpl#getStart <em>Start</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.impl.ZoneImpl#getEnd <em>End</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

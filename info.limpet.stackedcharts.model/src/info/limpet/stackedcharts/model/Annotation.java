@@ -11,12 +11,12 @@ import org.eclipse.emf.ecore.EObject;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link info.limpet.stackedcharts.model.Annotation#getName <em>Name</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.Annotation#getColor <em>Color</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.Annotation#getChart <em>Chart</em>}</li>
  * </ul>
- * </p>
  *
  * @see info.limpet.stackedcharts.model.StackedchartsPackage#getAnnotation()
  * @model

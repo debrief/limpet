@@ -8,12 +8,13 @@ import info.limpet.stackedcharts.model.Chart;
 import info.limpet.stackedcharts.model.ChartSet;
 import info.limpet.stackedcharts.model.Dataset;
 import info.limpet.stackedcharts.model.StackedchartsPackage;
-
 import java.util.Collection;
+
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
 
 import org.eclipse.emf.common.util.EList;
+
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
 
@@ -31,6 +32,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link info.limpet.stackedcharts.model.impl.ChartImpl#getParent <em>Parent</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.impl.ChartImpl#getAxes <em>Axes</em>}</li>
@@ -38,7 +40,6 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link info.limpet.stackedcharts.model.impl.ChartImpl#getName <em>Name</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.impl.ChartImpl#getAnnotations <em>Annotations</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */
@@ -53,6 +54,7 @@ public class ChartImpl extends MinimalEObjectImpl.Container implements Chart
    * @ordered
    */
   protected EList<Axis> axes;
+
   /**
    * The cached value of the '{@link #getDatasets() <em>Datasets</em>}' containment reference list.
    * <!-- begin-user-doc -->
@@ -62,6 +64,7 @@ public class ChartImpl extends MinimalEObjectImpl.Container implements Chart
    * @ordered
    */
   protected EList<Dataset> datasets;
+
   /**
    * The default value of the '{@link #getName() <em>Name</em>}' attribute.
    * <!-- begin-user-doc -->
@@ -71,6 +74,7 @@ public class ChartImpl extends MinimalEObjectImpl.Container implements Chart
    * @ordered
    */
   protected static final String NAME_EDEFAULT = null;
+
   /**
    * The cached value of the '{@link #getName() <em>Name</em>}' attribute.
    * <!-- begin-user-doc -->
@@ -80,6 +84,7 @@ public class ChartImpl extends MinimalEObjectImpl.Container implements Chart
    * @ordered
    */
   protected String name = NAME_EDEFAULT;
+
   /**
    * The cached value of the '{@link #getAnnotations() <em>Annotations</em>}' containment reference list.
    * <!-- begin-user-doc -->

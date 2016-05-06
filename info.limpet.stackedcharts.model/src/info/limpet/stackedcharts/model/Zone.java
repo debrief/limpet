@@ -10,11 +10,11 @@ package info.limpet.stackedcharts.model;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link info.limpet.stackedcharts.model.Zone#getStart <em>Start</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.Zone#getEnd <em>End</em>}</li>
  * </ul>
- * </p>
  *
  * @see info.limpet.stackedcharts.model.StackedchartsPackage#getZone()
  * @model

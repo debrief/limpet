@@ -5,7 +5,6 @@ package info.limpet.stackedcharts.model.impl;
 import info.limpet.stackedcharts.model.Annotation;
 import info.limpet.stackedcharts.model.Chart;
 import info.limpet.stackedcharts.model.StackedchartsPackage;
-
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
 
@@ -23,12 +22,12 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link info.limpet.stackedcharts.model.impl.AnnotationImpl#getName <em>Name</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.impl.AnnotationImpl#getColor <em>Color</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.impl.AnnotationImpl#getChart <em>Chart</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

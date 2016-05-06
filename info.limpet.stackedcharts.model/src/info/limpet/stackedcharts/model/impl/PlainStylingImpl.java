@@ -3,8 +3,8 @@
 package info.limpet.stackedcharts.model.impl;
 
 import info.limpet.stackedcharts.model.PlainStyling;
-import info.limpet.stackedcharts.model.StackedchartsPackage;
 
+import info.limpet.stackedcharts.model.StackedchartsPackage;
 import org.eclipse.emf.common.notify.Notification;
 
 import org.eclipse.emf.ecore.EClass;
@@ -17,10 +17,10 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link info.limpet.stackedcharts.model.impl.PlainStylingImpl#getColor <em>Color</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

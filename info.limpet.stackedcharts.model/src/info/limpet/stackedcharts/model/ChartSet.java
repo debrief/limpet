@@ -13,10 +13,10 @@ import org.eclipse.emf.ecore.EObject;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link info.limpet.stackedcharts.model.ChartSet#getCharts <em>Charts</em>}</li>
  * </ul>
- * </p>
  *
  * @see info.limpet.stackedcharts.model.StackedchartsPackage#getChartSet()
  * @model

@@ -3,6 +3,7 @@
 package info.limpet.stackedcharts.model;
 
 import org.eclipse.emf.common.util.EList;
+
 import org.eclipse.emf.ecore.EObject;
 
 /**
@@ -12,6 +13,7 @@ import org.eclipse.emf.ecore.EObject;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link info.limpet.stackedcharts.model.Chart#getParent <em>Parent</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.Chart#getAxes <em>Axes</em>}</li>
@@ -19,7 +21,6 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link info.limpet.stackedcharts.model.Chart#getName <em>Name</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.Chart#getAnnotations <em>Annotations</em>}</li>
  * </ul>
- * </p>
  *
  * @see info.limpet.stackedcharts.model.StackedchartsPackage#getChart()
  * @model

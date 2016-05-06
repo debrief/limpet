@@ -7,7 +7,6 @@ import info.limpet.stackedcharts.model.AxisOrigin;
 import info.limpet.stackedcharts.model.AxisScale;
 import info.limpet.stackedcharts.model.Chart;
 import info.limpet.stackedcharts.model.StackedchartsPackage;
-
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
 
@@ -25,13 +24,13 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link info.limpet.stackedcharts.model.impl.AxisImpl#getParent <em>Parent</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.impl.AxisImpl#getName <em>Name</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.impl.AxisImpl#getOrigin <em>Origin</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.impl.AxisImpl#getScale <em>Scale</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

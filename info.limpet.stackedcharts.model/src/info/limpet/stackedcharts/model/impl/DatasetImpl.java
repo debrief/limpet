@@ -30,13 +30,13 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link info.limpet.stackedcharts.model.impl.DatasetImpl#getName <em>Name</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.impl.DatasetImpl#getAxis <em>Axis</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.impl.DatasetImpl#getItems <em>Items</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.impl.DatasetImpl#getStyling <em>Styling</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

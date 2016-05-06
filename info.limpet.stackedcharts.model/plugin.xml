@@ -7,11 +7,11 @@
 <plugin>
 
    <extension point="org.eclipse.emf.ecore.generated_package">
-      <!-- @generated stackedcharts -->
+      <!-- @generated model -->
       <package
             uri="stackedcharts"
             class="info.limpet.stackedcharts.model.StackedchartsPackage"
-            genModel="model/stackedcharts.genmodel"/>
+            genModel="model/model.genmodel"/>
    </extension>
 
 </plugin>

@@ -5,7 +5,6 @@ package info.limpet.stackedcharts.model.impl;
 import info.limpet.stackedcharts.model.Chart;
 import info.limpet.stackedcharts.model.ChartSet;
 import info.limpet.stackedcharts.model.StackedchartsPackage;
-
 import java.util.Collection;
 
 import org.eclipse.emf.common.notify.NotificationChain;
@@ -26,10 +25,10 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link info.limpet.stackedcharts.model.impl.ChartSetImpl#getCharts <em>Charts</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

@@ -12,9 +12,9 @@ import info.limpet.stackedcharts.model.DataItem;
 import info.limpet.stackedcharts.model.Dataset;
 import info.limpet.stackedcharts.model.LinearStyling;
 import info.limpet.stackedcharts.model.Marker;
+import info.limpet.stackedcharts.model.ModelFactory;
+import info.limpet.stackedcharts.model.ModelPackage;
 import info.limpet.stackedcharts.model.PlainStyling;
-import info.limpet.stackedcharts.model.StackedchartsFactory;
-import info.limpet.stackedcharts.model.StackedchartsPackage;
 import info.limpet.stackedcharts.model.Styling;
 import info.limpet.stackedcharts.model.Zone;
 
@@ -32,7 +32,7 @@ import org.eclipse.emf.ecore.impl.EPackageImpl;
  * <!-- end-user-doc -->
  * @generated
  */
-public class StackedchartsPackageImpl extends EPackageImpl implements StackedchartsPackage
+public class ModelPackageImpl extends EPackageImpl implements ModelPackage
 {
   /**
    * <!-- begin-user-doc -->
@@ -136,13 +136,13 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @see org.eclipse.emf.ecore.EPackage.Registry
-   * @see info.limpet.stackedcharts.model.StackedchartsPackage#eNS_URI
+   * @see info.limpet.stackedcharts.model.ModelPackage#eNS_URI
    * @see #init()
    * @generated
    */
-  private StackedchartsPackageImpl()
+  private ModelPackageImpl()
   {
-    super(eNS_URI, StackedchartsFactory.eINSTANCE);
+    super(eNS_URI, ModelFactory.eINSTANCE);
   }
 
   /**
@@ -155,7 +155,7 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
   /**
    * Creates, registers, and initializes the <b>Package</b> for this model, and for any others upon which it depends.
    * 
-   * <p>This method is used to initialize {@link StackedchartsPackage#eINSTANCE} when that field is accessed.
+   * <p>This method is used to initialize {@link ModelPackage#eINSTANCE} when that field is accessed.
    * Clients should not invoke it directly. Instead, they should simply access that field to obtain the package.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -164,28 +164,28 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
    * @see #initializePackageContents()
    * @generated
    */
-  public static StackedchartsPackage init()
+  public static ModelPackage init()
   {
-    if (isInited) return (StackedchartsPackage)EPackage.Registry.INSTANCE.getEPackage(StackedchartsPackage.eNS_URI);
+    if (isInited) return (ModelPackage)EPackage.Registry.INSTANCE.getEPackage(ModelPackage.eNS_URI);
 
     // Obtain or create and register package
-    StackedchartsPackageImpl theStackedchartsPackage = (StackedchartsPackageImpl)(EPackage.Registry.INSTANCE.get(eNS_URI) instanceof StackedchartsPackageImpl ? EPackage.Registry.INSTANCE.get(eNS_URI) : new StackedchartsPackageImpl());
+    ModelPackageImpl theModelPackage = (ModelPackageImpl)(EPackage.Registry.INSTANCE.get(eNS_URI) instanceof ModelPackageImpl ? EPackage.Registry.INSTANCE.get(eNS_URI) : new ModelPackageImpl());
 
     isInited = true;
 
     // Create package meta-data objects
-    theStackedchartsPackage.createPackageContents();
+    theModelPackage.createPackageContents();
 
     // Initialize created meta-data
-    theStackedchartsPackage.initializePackageContents();
+    theModelPackage.initializePackageContents();
 
     // Mark meta-data to indicate it can't be changed
-    theStackedchartsPackage.freeze();
+    theModelPackage.freeze();
 
   
     // Update the registry and return the package
-    EPackage.Registry.INSTANCE.put(StackedchartsPackage.eNS_URI, theStackedchartsPackage);
-    return theStackedchartsPackage;
+    EPackage.Registry.INSTANCE.put(ModelPackage.eNS_URI, theModelPackage);
+    return theModelPackage;
   }
 
   /**
@@ -593,9 +593,9 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
    * <!-- end-user-doc -->
    * @generated
    */
-  public StackedchartsFactory getStackedchartsFactory()
+  public ModelFactory getModelFactory()
   {
-    return (StackedchartsFactory)getEFactoryInstance();
+    return (ModelFactory)getEFactoryInstance();
   }
 
   /**
@@ -769,4 +769,4 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
     createResource(eNS_URI);
   }
 
-} //StackedchartsPackageImpl
+} //ModelPackageImpl

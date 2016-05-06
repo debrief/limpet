@@ -4,7 +4,6 @@ package info.limpet.stackedcharts.model.impl;
 
 import info.limpet.stackedcharts.model.DataItem;
 import info.limpet.stackedcharts.model.StackedchartsPackage;
-
 import org.eclipse.emf.common.notify.Notification;
 
 import org.eclipse.emf.ecore.EClass;
@@ -18,11 +17,11 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link info.limpet.stackedcharts.model.impl.DataItemImpl#getIndependentVal <em>Independent Val</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.impl.DataItemImpl#getDependentVal <em>Dependent Val</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

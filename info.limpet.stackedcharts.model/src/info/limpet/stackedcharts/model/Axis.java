@@ -11,13 +11,13 @@ import org.eclipse.emf.ecore.EObject;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link info.limpet.stackedcharts.model.Axis#getParent <em>Parent</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.Axis#getName <em>Name</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.Axis#getOrigin <em>Origin</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.Axis#getScale <em>Scale</em>}</li>
  * </ul>
- * </p>
  *
  * @see info.limpet.stackedcharts.model.StackedchartsPackage#getAxis()
  * @model

@@ -10,13 +10,13 @@ package info.limpet.stackedcharts.model;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link info.limpet.stackedcharts.model.LinearStyling#getStartColor <em>Start Color</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.LinearStyling#getEndColor <em>End Color</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.LinearStyling#getStartVal <em>Start Val</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.LinearStyling#getEndVal <em>End Val</em>}</li>
  * </ul>
- * </p>
  *
  * @see info.limpet.stackedcharts.model.StackedchartsPackage#getLinearStyling()
  * @model
