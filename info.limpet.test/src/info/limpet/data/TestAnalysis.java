@@ -59,11 +59,17 @@ public class TestAnalysis extends TestCase
 		// run the analysis
 		ia.analyse(selection);
 		
+		
 		// check the results
 //		assertEquals("enough titles", 0, tList.size());
 //		assertEquals("enough values", 0, tList.size());
-		
 		outList(tList, vList);
+		
+		len1 = new StockTypes.NonTemporal.LengthM("lengths 1", null); 
+		selection.clear();
+		selection.add(len1);
+		len1.add(12d);
+		ia.analyse(selection);
 
 	}
 	
