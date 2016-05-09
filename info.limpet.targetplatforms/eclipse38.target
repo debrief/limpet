@@ -3,6 +3,7 @@
 <locations>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.emf.sdk.feature.group" version="2.11.2.v20160208-0841"/>
+<unit id="org.eclipse.gef.sdk.feature.group" version="3.10.1.201508170204"/>
 <repository location="http://www.eclipse.org/modeling/amalgam/downloads/package/modeling/mars/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
