@@ -99,6 +99,8 @@ public class AddLayerOperation implements IOperation<IStoreItem>
           getStore().add(newGroup);
 
         }
+      }else{
+    	  super.execute();
       }
     }
 

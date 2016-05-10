@@ -126,7 +126,7 @@ public abstract class CreateSingletonGenerator implements IOperation<IStoreItem>
   {
     Collection<ICommand<IStoreItem>> res = new ArrayList<ICommand<IStoreItem>>();
     if (appliesTo(selection))
-    {
+    { 
       final String thisTitle = "Add single " + _name;
       // hmm, see if a group has been selected
       ICommand<IStoreItem> newC = null;
