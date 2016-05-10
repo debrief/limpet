@@ -88,8 +88,43 @@ public class ModelTests
     StackedchartsFactory factory = StackedchartsFactory.eINSTANCE;
 
     ChartSet chartsSet = factory.createChartSet();
+    
+    // first chart
+    Chart chart1 = factory.createChart();
+    chart1.setName("Geothermal Gradient");
+    chartsSet.getCharts().add(chart1);
+
+    Axis xAxis1 = factory.createAxis();
+    xAxis1.setName("Depth");
+    chart1.getAxes().add(xAxis1);
+
+    Axis yAxis1 = factory.createAxis();
+    yAxis1.setName("Temperature");
+    chart1.getAxes().add(yAxis1);
+
+    Dataset temperatureVsDepth1 = factory.createDataset();
+    temperatureVsDepth1.setAxis(yAxis1);
+    chart1.getDatasets().add(temperatureVsDepth1);
+
+    DataItem item1 = factory.createDataItem();
+    item1.setIndependentVal(1000);
+    item1.setDependentVal(30);
+    temperatureVsDepth1.getItems().add(item1);
+
+    item1 = factory.createDataItem();
+    item1.setIndependentVal(2000);
+    item1.setDependentVal(50);
+    temperatureVsDepth1.getItems().add(item1);
+
+    item1 = factory.createDataItem();
+    item1.setIndependentVal(3000);
+    item1.setDependentVal(60);
+    temperatureVsDepth1.getItems().add(item1);
+    
+    // create a second chart
+    // first chart
     Chart chart = factory.createChart();
-    chart.setName("Geothermal Gradient");
+    chart.setName("Alternate Gradient");
     chartsSet.getCharts().add(chart);
 
     Axis xAxis = factory.createAxis();
@@ -97,7 +132,7 @@ public class ModelTests
     chart.getAxes().add(xAxis);
 
     Axis yAxis = factory.createAxis();
-    yAxis.setName("Temperature");
+    yAxis.setName("Pressure");
     chart.getAxes().add(yAxis);
 
     Dataset temperatureVsDepth = factory.createDataset();
@@ -106,19 +141,19 @@ public class ModelTests
 
     DataItem item = factory.createDataItem();
     item.setIndependentVal(1000);
-    item.setDependentVal(30);
-    temperatureVsDepth.getItems().add(item);
-
-    item = factory.createDataItem();
-    item.setIndependentVal(2000);
-    item.setDependentVal(50);
+    item.setDependentVal(3);
     temperatureVsDepth.getItems().add(item);
 
     item = factory.createDataItem();
     item.setIndependentVal(3000);
-    item.setDependentVal(70);
+    item.setDependentVal(5);
     temperatureVsDepth.getItems().add(item);
 
+    item = factory.createDataItem();
+    item.setIndependentVal(3000);
+    item.setDependentVal(6);
+    temperatureVsDepth.getItems().add(item);
+    
     return chartsSet;
   }
 
