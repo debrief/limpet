@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/info.limpet.stackedcharts.model/src" modelPluginID="info.limpet.stackedcharts.model"
+    modelName="Model" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
+    importerID="org.eclipse.emf.importer.ecore" complianceLevel="7.0" copyrightFields="false"
+    operationReflection="true" importOrganizing="true">
+  <foreignModel>model.ecore</foreignModel>
+  <genPackages prefix="Stackedcharts" basePackage="info.limpet.stackedcharts" disposableProviderFactory="true"
+      ecorePackage="model.ecore#/">
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="model.ecore#//AxisOrigin">
+      <genEnumLiterals ecoreEnumLiteral="model.ecore#//AxisOrigin/Min"/>
+      <genEnumLiterals ecoreEnumLiteral="model.ecore#//AxisOrigin/Max"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="model.ecore#//AxisScale">
+      <genEnumLiterals ecoreEnumLiteral="model.ecore#//AxisScale/Linear"/>
+      <genEnumLiterals ecoreEnumLiteral="model.ecore#//AxisScale/Log"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="model.ecore#//Orientation">
+      <genEnumLiterals ecoreEnumLiteral="model.ecore#//Orientation/Horizontal"/>
+      <genEnumLiterals ecoreEnumLiteral="model.ecore#//Orientation/Vertical"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="model.ecore#//AxisDirection">
+      <genEnumLiterals ecoreEnumLiteral="model.ecore#//AxisDirection/Ascending"/>
+      <genEnumLiterals ecoreEnumLiteral="model.ecore#//AxisDirection/Descending"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="model.ecore#//MarkerStyle">
+      <genEnumLiterals ecoreEnumLiteral="model.ecore#//MarkerStyle/Circle"/>
+      <genEnumLiterals ecoreEnumLiteral="model.ecore#//MarkerStyle/Square"/>
+      <genEnumLiterals ecoreEnumLiteral="model.ecore#//MarkerStyle/None"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="model.ecore#//LineType">
+      <genEnumLiterals ecoreEnumLiteral="model.ecore#//LineType/None"/>
+      <genEnumLiterals ecoreEnumLiteral="model.ecore#//LineType/Solid"/>
+      <genEnumLiterals ecoreEnumLiteral="model.ecore#//LineType/Dotted"/>
+      <genEnumLiterals ecoreEnumLiteral="model.ecore#//LineType/Dashed"/>
+    </genEnums>
+    <genClasses ecoreClass="model.ecore#//ChartSet">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference model.ecore#//ChartSet/charts"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//ChartSet/orientation"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference model.ecore#//ChartSet/sharedAxis"/>
+    </genClasses>
+    <genClasses ecoreClass="model.ecore#//Chart">
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference model.ecore#//Chart/parent"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference model.ecore#//Chart/axes"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//Chart/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//Chart/title"/>
+    </genClasses>
+    <genClasses ecoreClass="model.ecore#//DependentAxis">
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference model.ecore#//DependentAxis/parent"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference model.ecore#//DependentAxis/datasets"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//DependentAxis/axisOrigin"/>
+    </genClasses>
+    <genClasses ecoreClass="model.ecore#//Dataset">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//Dataset/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference model.ecore#//Dataset/measurements"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference model.ecore#//Dataset/styling"/>
+    </genClasses>
+    <genClasses ecoreClass="model.ecore#//DataItem">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//DataItem/independentVal"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//DataItem/dependentVal"/>
+    </genClasses>
+    <genClasses ecoreClass="model.ecore#//AbstractAnnotation">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//AbstractAnnotation/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//AbstractAnnotation/color"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference model.ecore#//AbstractAnnotation/chart"/>
+    </genClasses>
+    <genClasses ecoreClass="model.ecore#//Zone">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//Zone/start"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//Zone/end"/>
+    </genClasses>
+    <genClasses ecoreClass="model.ecore#//Marker">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//Marker/value"/>
+    </genClasses>
+    <genClasses ecoreClass="model.ecore#//Styling">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//Styling/markerStyle"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//Styling/markerSize"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//Styling/lineThickness"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//Styling/lineStyle"/>
+    </genClasses>
+    <genClasses ecoreClass="model.ecore#//PlainStyling">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//PlainStyling/color"/>
+    </genClasses>
+    <genClasses ecoreClass="model.ecore#//LinearStyling">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//LinearStyling/startColor"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//LinearStyling/endColor"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//LinearStyling/startVal"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//LinearStyling/endVal"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="model.ecore#//AbstractAxis">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//AbstractAxis/scale"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//AbstractAxis/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//AbstractAxis/autoScale"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//AbstractAxis/direction"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference model.ecore#//AbstractAxis/annotations"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//AbstractAxis/font"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//AbstractAxis/color"/>
+    </genClasses>
+    <genClasses ecoreClass="model.ecore#//IndependentAxis"/>
+    <genClasses ecoreClass="model.ecore#//ScatterSet">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference model.ecore#//ScatterSet/datums"/>
+    </genClasses>
+    <genClasses ecoreClass="model.ecore#//Datum">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//Datum/independentVal"/>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>
