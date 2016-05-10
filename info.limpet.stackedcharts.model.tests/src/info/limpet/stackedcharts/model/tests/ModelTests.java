@@ -32,6 +32,7 @@ public class ModelTests
   {
     URI resourceURI = URI.createFileURI("testRead.stackedcharts");
     Resource resource = new ResourceSetImpl().createResource(resourceURI);
+    Assert.assertNotNull("Created resource", resource);
     try
     {
       resource.load(new HashMap<>());
@@ -57,6 +58,7 @@ public class ModelTests
     ChartSet chartsSet = createModel();
     URI resourceURI = URI.createFileURI("testWrite.stackedcharts");
     Resource resource = new ResourceSetImpl().createResource(resourceURI);
+    Assert.assertNotNull("Created resource", resource);
     resource.getContents().add(chartsSet);
     try
     {
