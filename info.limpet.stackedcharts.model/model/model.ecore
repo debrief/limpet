@@ -22,15 +22,13 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="parent" eType="#//ChartSet"
         eOpposite="#//ChartSet/charts"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="maxAxes" upperBound="-1"
-        eType="#//DependentAxis" containment="true" eOpposite="#//DependentAxis/parent"/>
+        eType="#//DependentAxis" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="title" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="minAxes" upperBound="-1"
         eType="#//DependentAxis" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="DependentAxis" eSuperTypes="#//AbstractAxis">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="parent" eType="#//Chart"
-        eOpposite="#//Chart/maxAxes"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="datasets" upperBound="-1"
         eType="#//Dataset"/>
   </eClassifiers>
