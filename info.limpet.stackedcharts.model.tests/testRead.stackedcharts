@@ -1,12 +1,29 @@
 <?xml version="1.0" encoding="ASCII"?>
 <stackedcharts:ChartSet xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:stackedcharts="stackedcharts">
-  <charts name="Geothermal Gradient">
-    <axes name="Depth"/>
-    <axes name="Temperature"/>
-    <datasets axis="//@charts.0/@axes.1">
-      <items independentVal="1000.0" dependentVal="30.0"/>
-      <items independentVal="2000.0" dependentVal="50.0"/>
-      <items independentVal="3000.0" dependentVal="70.0"/>
-    </datasets>
+  <charts name="Temperature &amp; Salinity">
+    <axes name="Temperature">
+      <datasets>
+        <measurements independentVal="1000.0" dependentVal="30.0"/>
+        <measurements independentVal="2000.0" dependentVal="50.0"/>
+        <measurements independentVal="3000.0" dependentVal="60.0"/>
+      </datasets>
+    </axes>
+    <axes name="Salinity" axisOrigin="Max">
+      <datasets>
+        <measurements independentVal="1000.0" dependentVal="3000.0"/>
+        <measurements independentVal="2000.0" dependentVal="5000.0"/>
+        <measurements independentVal="3000.0" dependentVal="9000.0"/>
+      </datasets>
+    </axes>
   </charts>
+  <charts name="Pressure Gradient">
+    <axes name="Pressure">
+      <datasets>
+        <measurements independentVal="1000.0" dependentVal="400.0"/>
+        <measurements independentVal="2000.0" dependentVal="500.0"/>
+        <measurements independentVal="3000.0" dependentVal="100.0"/>
+      </datasets>
+    </axes>
+  </charts>
+  <sharedAxis name="Depth"/>
 </stackedcharts:ChartSet>

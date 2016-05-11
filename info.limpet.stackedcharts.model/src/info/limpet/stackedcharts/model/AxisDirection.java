@@ -10,98 +10,98 @@ import org.eclipse.emf.common.util.Enumerator;
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the literals of the enumeration '<em><b>Axis Scale</b></em>',
+ * A representation of the literals of the enumeration '<em><b>Axis Direction</b></em>',
  * and utility methods for working with them.
  * <!-- end-user-doc -->
  * <!-- begin-model-doc -->
- * List of styles of axis
+ * Whether the axis is shown in ascending or descending numerical order
  * <!-- end-model-doc -->
- * @see info.limpet.stackedcharts.model.StackedchartsPackage#getAxisScale()
+ * @see info.limpet.stackedcharts.model.StackedchartsPackage#getAxisDirection()
  * @model
  * @generated
  */
-public enum AxisScale implements Enumerator {
+public enum AxisDirection implements Enumerator {
 	/**
-	 * The '<em><b>Linear</b></em>' literal object.
+	 * The '<em><b>Ascending</b></em>' literal object.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #LINEAR_VALUE
+	 * @see #ASCENDING_VALUE
 	 * @generated
 	 * @ordered
 	 */
-	LINEAR(0, "Linear", "Linear"),
+	ASCENDING(0, "Ascending", "Ascending"),
 
 	/**
-	 * The '<em><b>Log</b></em>' literal object.
+	 * The '<em><b>Descending</b></em>' literal object.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #LOG_VALUE
+	 * @see #DESCENDING_VALUE
 	 * @generated
 	 * @ordered
 	 */
-	LOG(0, "Log", "Log");
+	DESCENDING(0, "Descending", "Descending");
 
 	/**
-	 * The '<em><b>Linear</b></em>' literal value.
+	 * The '<em><b>Ascending</b></em>' literal value.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of '<em><b>Linear</b></em>' literal object isn't clear,
+	 * If the meaning of '<em><b>Ascending</b></em>' literal object isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @see #LINEAR
-	 * @model name="Linear"
+	 * @see #ASCENDING
+	 * @model name="Ascending"
 	 * @generated
 	 * @ordered
 	 */
-	public static final int LINEAR_VALUE = 0;
+	public static final int ASCENDING_VALUE = 0;
 
 	/**
-	 * The '<em><b>Log</b></em>' literal value.
+	 * The '<em><b>Descending</b></em>' literal value.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of '<em><b>Log</b></em>' literal object isn't clear,
+	 * If the meaning of '<em><b>Descending</b></em>' literal object isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @see #LOG
-	 * @model name="Log"
+	 * @see #DESCENDING
+	 * @model name="Descending"
 	 * @generated
 	 * @ordered
 	 */
-	public static final int LOG_VALUE = 0;
+	public static final int DESCENDING_VALUE = 0;
 
 	/**
-	 * An array of all the '<em><b>Axis Scale</b></em>' enumerators.
+	 * An array of all the '<em><b>Axis Direction</b></em>' enumerators.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private static final AxisScale[] VALUES_ARRAY =
-		new AxisScale[] {
-			LINEAR,
-			LOG,
+	private static final AxisDirection[] VALUES_ARRAY =
+		new AxisDirection[] {
+			ASCENDING,
+			DESCENDING,
 		};
 
 	/**
-	 * A public read-only list of all the '<em><b>Axis Scale</b></em>' enumerators.
+	 * A public read-only list of all the '<em><b>Axis Direction</b></em>' enumerators.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public static final List<AxisScale> VALUES = Collections.unmodifiableList(Arrays.asList(VALUES_ARRAY));
+	public static final List<AxisDirection> VALUES = Collections.unmodifiableList(Arrays.asList(VALUES_ARRAY));
 
 	/**
-	 * Returns the '<em><b>Axis Scale</b></em>' literal with the specified literal value.
+	 * Returns the '<em><b>Axis Direction</b></em>' literal with the specified literal value.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @param literal the literal.
 	 * @return the matching enumerator or <code>null</code>.
 	 * @generated
 	 */
-	public static AxisScale get(String literal) {
+	public static AxisDirection get(String literal) {
 		for (int i = 0; i < VALUES_ARRAY.length; ++i) {
-			AxisScale result = VALUES_ARRAY[i];
+			AxisDirection result = VALUES_ARRAY[i];
 			if (result.toString().equals(literal)) {
 				return result;
 			}
@@ -110,16 +110,16 @@ public enum AxisScale implements Enumerator {
 	}
 
 	/**
-	 * Returns the '<em><b>Axis Scale</b></em>' literal with the specified name.
+	 * Returns the '<em><b>Axis Direction</b></em>' literal with the specified name.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @param name the name.
 	 * @return the matching enumerator or <code>null</code>.
 	 * @generated
 	 */
-	public static AxisScale getByName(String name) {
+	public static AxisDirection getByName(String name) {
 		for (int i = 0; i < VALUES_ARRAY.length; ++i) {
-			AxisScale result = VALUES_ARRAY[i];
+			AxisDirection result = VALUES_ARRAY[i];
 			if (result.getName().equals(name)) {
 				return result;
 			}
@@ -128,16 +128,16 @@ public enum AxisScale implements Enumerator {
 	}
 
 	/**
-	 * Returns the '<em><b>Axis Scale</b></em>' literal with the specified integer value.
+	 * Returns the '<em><b>Axis Direction</b></em>' literal with the specified integer value.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @param value the integer value.
 	 * @return the matching enumerator or <code>null</code>.
 	 * @generated
 	 */
-	public static AxisScale get(int value) {
+	public static AxisDirection get(int value) {
 		switch (value) {
-			case LINEAR_VALUE: return LINEAR;
+			case ASCENDING_VALUE: return ASCENDING;
 		}
 		return null;
 	}
@@ -169,7 +169,7 @@ public enum AxisScale implements Enumerator {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private AxisScale(int value, String name, String literal) {
+	private AxisDirection(int value, String name, String literal) {
 		this.value = value;
 		this.name = name;
 		this.literal = literal;
@@ -213,4 +213,4 @@ public enum AxisScale implements Enumerator {
 		return literal;
 	}
 	
-} //AxisScale
+} //AxisDirection
