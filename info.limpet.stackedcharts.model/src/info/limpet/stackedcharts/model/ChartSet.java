@@ -22,6 +22,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link info.limpet.stackedcharts.model.ChartSet#getCharts <em>Charts</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.ChartSet#getOrientation <em>Orientation</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.ChartSet#getSharedAxis <em>Shared Axis</em>}</li>
+ *   <li>{@link info.limpet.stackedcharts.model.ChartSet#getDatasets <em>Datasets</em>}</li>
  * </ul>
  *
  * @see info.limpet.stackedcharts.model.StackedchartsPackage#getChartSet()
@@ -103,5 +104,21 @@ public interface ChartSet extends EObject {
 	 * @generated
 	 */
 	void setSharedAxis(IndependentAxis value);
+
+	/**
+	 * Returns the value of the '<em><b>Datasets</b></em>' containment reference list.
+	 * The list contents are of type {@link info.limpet.stackedcharts.model.Dataset}.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Datasets</em>' containment reference list isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Datasets</em>' containment reference list.
+	 * @see info.limpet.stackedcharts.model.StackedchartsPackage#getChartSet_Datasets()
+	 * @model containment="true"
+	 * @generated
+	 */
+	EList<Dataset> getDatasets();
 
 } // ChartSet

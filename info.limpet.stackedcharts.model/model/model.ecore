@@ -15,6 +15,8 @@
         defaultValueLiteral="Horizontal"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="sharedAxis" eType="#//IndependentAxis"
         containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="datasets" upperBound="-1"
+        eType="#//Dataset" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Chart">
     <eStructuralFeatures xsi:type="ecore:EReference" name="parent" eType="#//ChartSet"
@@ -28,7 +30,7 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="parent" eType="#//Chart"
         eOpposite="#//Chart/axes"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="datasets" upperBound="-1"
-        eType="#//Dataset" containment="true"/>
+        eType="#//Dataset"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="axisOrigin" eType="#//AxisOrigin"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Dataset">

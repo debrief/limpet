@@ -38,6 +38,7 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference model.ecore#//ChartSet/charts"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//ChartSet/orientation"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference model.ecore#//ChartSet/sharedAxis"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference model.ecore#//ChartSet/datasets"/>
     </genClasses>
     <genClasses ecoreClass="model.ecore#//Chart">
       <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference model.ecore#//Chart/parent"/>
@@ -47,7 +48,7 @@
     </genClasses>
     <genClasses ecoreClass="model.ecore#//DependentAxis">
       <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference model.ecore#//DependentAxis/parent"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference model.ecore#//DependentAxis/datasets"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference model.ecore#//DependentAxis/datasets"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//DependentAxis/axisOrigin"/>
     </genClasses>
     <genClasses ecoreClass="model.ecore#//Dataset">

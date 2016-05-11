@@ -95,13 +95,22 @@ public interface StackedchartsPackage extends EPackage {
 	int CHART_SET__SHARED_AXIS = 2;
 
 	/**
+	 * The feature id for the '<em><b>Datasets</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CHART_SET__DATASETS = 3;
+
+	/**
 	 * The number of structural features of the '<em>Chart Set</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int CHART_SET_FEATURE_COUNT = 3;
+	int CHART_SET_FEATURE_COUNT = 4;
 
 	/**
 	 * The number of operations of the '<em>Chart Set</em>' class.
@@ -350,7 +359,7 @@ public interface StackedchartsPackage extends EPackage {
 	int DEPENDENT_AXIS__PARENT = ABSTRACT_AXIS_FEATURE_COUNT + 0;
 
 	/**
-	 * The feature id for the '<em><b>Datasets</b></em>' containment reference list.
+	 * The feature id for the '<em><b>Datasets</b></em>' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -1212,6 +1221,17 @@ public interface StackedchartsPackage extends EPackage {
 	EReference getChartSet_SharedAxis();
 
 	/**
+	 * Returns the meta object for the containment reference list '{@link info.limpet.stackedcharts.model.ChartSet#getDatasets <em>Datasets</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference list '<em>Datasets</em>'.
+	 * @see info.limpet.stackedcharts.model.ChartSet#getDatasets()
+	 * @see #getChartSet()
+	 * @generated
+	 */
+	EReference getChartSet_Datasets();
+
+	/**
 	 * Returns the meta object for class '{@link info.limpet.stackedcharts.model.Chart <em>Chart</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1287,10 +1307,10 @@ public interface StackedchartsPackage extends EPackage {
 	EReference getDependentAxis_Parent();
 
 	/**
-	 * Returns the meta object for the containment reference list '{@link info.limpet.stackedcharts.model.DependentAxis#getDatasets <em>Datasets</em>}'.
+	 * Returns the meta object for the reference list '{@link info.limpet.stackedcharts.model.DependentAxis#getDatasets <em>Datasets</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference list '<em>Datasets</em>'.
+	 * @return the meta object for the reference list '<em>Datasets</em>'.
 	 * @see info.limpet.stackedcharts.model.DependentAxis#getDatasets()
 	 * @see #getDependentAxis()
 	 * @generated
@@ -1865,6 +1885,14 @@ public interface StackedchartsPackage extends EPackage {
 		EReference CHART_SET__SHARED_AXIS = eINSTANCE.getChartSet_SharedAxis();
 
 		/**
+		 * The meta object literal for the '<em><b>Datasets</b></em>' containment reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference CHART_SET__DATASETS = eINSTANCE.getChartSet_Datasets();
+
+		/**
 		 * The meta object literal for the '{@link info.limpet.stackedcharts.model.impl.ChartImpl <em>Chart</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -1925,7 +1953,7 @@ public interface StackedchartsPackage extends EPackage {
 		EReference DEPENDENT_AXIS__PARENT = eINSTANCE.getDependentAxis_Parent();
 
 		/**
-		 * The meta object literal for the '<em><b>Datasets</b></em>' containment reference list feature.
+		 * The meta object literal for the '<em><b>Datasets</b></em>' reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated

@@ -6,12 +6,14 @@ import java.util.HashMap;
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.Notifier;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.junit.Assert;
 import org.junit.Test;
 
+import info.limpet.stackedcharts.model.AxisDirection;
 import info.limpet.stackedcharts.model.AxisOrigin;
 import info.limpet.stackedcharts.model.Chart;
 import info.limpet.stackedcharts.model.ChartSet;
@@ -50,6 +52,17 @@ public class ModelTests
 
     Chart chart = chartsSet.getCharts().get(0);
     Assert.assertEquals("Temperature & Salinity", chart.getName());
+    
+    // have a look at the innads
+    EList<DependentAxis> axes = chart.getAxes();
+    Assert.assertEquals("Correct number",  2, axes.size());
+    DependentAxis axis1 = axes.get(0);
+    Assert.assertEquals("correct name", "Temperature", axis1.getName());
+    Assert.assertEquals("correct origin", AxisOrigin.MIN, axis1.getAxisOrigin());
+    Assert.assertEquals("correct direction", AxisDirection.ASCENDING, axis1.getDirection());
+    DependentAxis axis2 = axes.get(1);
+    Assert.assertEquals("correct name", "Salinity", axis2.getName());
+    Assert.assertEquals("correct origin", AxisOrigin.MAX, axis2.getAxisOrigin());
 
   }
 
@@ -106,7 +119,9 @@ public class ModelTests
     chart1.getAxes().add(yAxis1);
 
     Dataset temperatureVsDepth1 = factory.createDataset();
+    temperatureVsDepth1.setName("Temp vs Depth");
     yAxis1.getDatasets().add(temperatureVsDepth1);
+    chartsSet.getDatasets().add(temperatureVsDepth1);
 
     DataItem item1 = factory.createDataItem();
     item1.setIndependentVal(1000);
@@ -130,7 +145,10 @@ public class ModelTests
     chart1.getAxes().add(yAxis2);
 
     Dataset salinityVsDepth1 = factory.createDataset();
+    salinityVsDepth1.setName("Salinity Vs Depth");
     yAxis2.getDatasets().add(salinityVsDepth1);
+    chartsSet.getDatasets().add(salinityVsDepth1);
+
 
     item1 = factory.createDataItem();
     item1.setIndependentVal(1000);
@@ -158,7 +176,9 @@ public class ModelTests
     chart.getAxes().add(yAxis);
 
     Dataset pressureVsDepth = factory.createDataset();
+    pressureVsDepth.setName("Pressure vs Depth");
     yAxis.getDatasets().add(pressureVsDepth);
+    chartsSet.getDatasets().add(pressureVsDepth);
 
     DataItem item = factory.createDataItem();
     item.setIndependentVal(1000);

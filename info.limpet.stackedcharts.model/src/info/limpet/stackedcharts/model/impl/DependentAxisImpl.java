@@ -19,10 +19,8 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
-
-import org.eclipse.emf.ecore.util.EObjectContainmentEList;
+import org.eclipse.emf.ecore.util.EObjectResolvingEList;
 import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.eclipse.emf.ecore.util.InternalEList;
 
 /**
  * <!-- begin-user-doc -->
@@ -41,7 +39,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  */
 public class DependentAxisImpl extends AbstractAxisImpl implements DependentAxis {
 	/**
-	 * The cached value of the '{@link #getDatasets() <em>Datasets</em>}' containment reference list.
+	 * The cached value of the '{@link #getDatasets() <em>Datasets</em>}' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getDatasets()
@@ -137,7 +135,7 @@ public class DependentAxisImpl extends AbstractAxisImpl implements DependentAxis
 	 */
 	public EList<Dataset> getDatasets() {
 		if (datasets == null) {
-			datasets = new EObjectContainmentEList<Dataset>(Dataset.class, this, StackedchartsPackage.DEPENDENT_AXIS__DATASETS);
+			datasets = new EObjectResolvingEList<Dataset>(Dataset.class, this, StackedchartsPackage.DEPENDENT_AXIS__DATASETS);
 		}
 		return datasets;
 	}
@@ -189,8 +187,6 @@ public class DependentAxisImpl extends AbstractAxisImpl implements DependentAxis
 		switch (featureID) {
 			case StackedchartsPackage.DEPENDENT_AXIS__PARENT:
 				return basicSetParent(null, msgs);
-			case StackedchartsPackage.DEPENDENT_AXIS__DATASETS:
-				return ((InternalEList<?>)getDatasets()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}

@@ -295,6 +295,15 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EReference getChartSet_Datasets() {
+		return (EReference)chartSetEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getChart() {
 		return chartEClass;
 	}
@@ -826,6 +835,7 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
 		createEReference(chartSetEClass, CHART_SET__CHARTS);
 		createEAttribute(chartSetEClass, CHART_SET__ORIENTATION);
 		createEReference(chartSetEClass, CHART_SET__SHARED_AXIS);
+		createEReference(chartSetEClass, CHART_SET__DATASETS);
 
 		chartEClass = createEClass(CHART);
 		createEReference(chartEClass, CHART__PARENT);
@@ -944,6 +954,7 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
 		initEReference(getChartSet_Charts(), this.getChart(), this.getChart_Parent(), "charts", null, 0, -1, ChartSet.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getChartSet_Orientation(), this.getOrientation(), "orientation", "Horizontal", 0, 1, ChartSet.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getChartSet_SharedAxis(), this.getIndependentAxis(), null, "sharedAxis", null, 0, 1, ChartSet.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getChartSet_Datasets(), this.getDataset(), null, "datasets", null, 0, -1, ChartSet.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(chartEClass, Chart.class, "Chart", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getChart_Parent(), this.getChartSet(), this.getChartSet_Charts(), "parent", null, 0, 1, Chart.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -953,7 +964,7 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
 
 		initEClass(dependentAxisEClass, DependentAxis.class, "DependentAxis", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getDependentAxis_Parent(), this.getChart(), this.getChart_Axes(), "parent", null, 0, 1, DependentAxis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getDependentAxis_Datasets(), this.getDataset(), null, "datasets", null, 0, -1, DependentAxis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getDependentAxis_Datasets(), this.getDataset(), null, "datasets", null, 0, -1, DependentAxis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getDependentAxis_AxisOrigin(), this.getAxisOrigin(), "axisOrigin", null, 0, 1, DependentAxis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(datasetEClass, Dataset.class, "Dataset", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);

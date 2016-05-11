@@ -52,7 +52,7 @@ public interface DependentAxis extends AbstractAxis {
 	void setParent(Chart value);
 
 	/**
-	 * Returns the value of the '<em><b>Datasets</b></em>' containment reference list.
+	 * Returns the value of the '<em><b>Datasets</b></em>' reference list.
 	 * The list contents are of type {@link info.limpet.stackedcharts.model.Dataset}.
 	 * <!-- begin-user-doc -->
 	 * <p>
@@ -60,9 +60,9 @@ public interface DependentAxis extends AbstractAxis {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Datasets</em>' containment reference list.
+	 * @return the value of the '<em>Datasets</em>' reference list.
 	 * @see info.limpet.stackedcharts.model.StackedchartsPackage#getDependentAxis_Datasets()
-	 * @model containment="true"
+	 * @model
 	 * @generated
 	 */
 	EList<Dataset> getDatasets();
