@@ -6,11 +6,17 @@
       <details key="documentation" value="A stack of charts, sharing a single independent axis."/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="charts" upperBound="-1"
-        eType="#//Chart" containment="true" eOpposite="#//Chart/parent"/>
+        eType="#//Chart" containment="true" eOpposite="#//Chart/parent">
+      <eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+        <details key="name" value="chart"/>
+      </eAnnotations>
+    </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="orientation" eType="#//Orientation"
         defaultValueLiteral="Horizontal"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="sharedAxis" upperBound="-1"
-        eType="#//IndependentAxis" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="sharedAxis" eType="#//IndependentAxis"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="datasets" upperBound="-1"
+        eType="#//Dataset" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Chart">
     <eStructuralFeatures xsi:type="ecore:EReference" name="parent" eType="#//ChartSet"
@@ -24,7 +30,7 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="parent" eType="#//Chart"
         eOpposite="#//Chart/axes"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="datasets" upperBound="-1"
-        eType="#//Dataset" containment="true"/>
+        eType="#//Dataset"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="axisOrigin" eType="#//AxisOrigin"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Dataset">
