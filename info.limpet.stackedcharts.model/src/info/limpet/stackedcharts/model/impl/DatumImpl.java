@@ -20,31 +20,31 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link info.limpet.stackedcharts.model.impl.DatumImpl#getIndependentVal <em>Independent Val</em>}</li>
+ *   <li>{@link info.limpet.stackedcharts.model.impl.DatumImpl#getVal <em>Val</em>}</li>
  * </ul>
  *
  * @generated
  */
 public class DatumImpl extends MinimalEObjectImpl.Container implements Datum {
 	/**
-	 * The default value of the '{@link #getIndependentVal() <em>Independent Val</em>}' attribute.
+	 * The default value of the '{@link #getVal() <em>Val</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getIndependentVal()
+	 * @see #getVal()
 	 * @generated
 	 * @ordered
 	 */
-	protected static final double INDEPENDENT_VAL_EDEFAULT = 0.0;
+	protected static final double VAL_EDEFAULT = 0.0;
 
 	/**
-	 * The cached value of the '{@link #getIndependentVal() <em>Independent Val</em>}' attribute.
+	 * The cached value of the '{@link #getVal() <em>Val</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getIndependentVal()
+	 * @see #getVal()
 	 * @generated
 	 * @ordered
 	 */
-	protected double independentVal = INDEPENDENT_VAL_EDEFAULT;
+	protected double val = VAL_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -70,8 +70,8 @@ public class DatumImpl extends MinimalEObjectImpl.Container implements Datum {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public double getIndependentVal() {
-		return independentVal;
+	public double getVal() {
+		return val;
 	}
 
 	/**
@@ -79,11 +79,11 @@ public class DatumImpl extends MinimalEObjectImpl.Container implements Datum {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setIndependentVal(double newIndependentVal) {
-		double oldIndependentVal = independentVal;
-		independentVal = newIndependentVal;
+	public void setVal(double newVal) {
+		double oldVal = val;
+		val = newVal;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, StackedchartsPackage.DATUM__INDEPENDENT_VAL, oldIndependentVal, independentVal));
+			eNotify(new ENotificationImpl(this, Notification.SET, StackedchartsPackage.DATUM__VAL, oldVal, val));
 	}
 
 	/**
@@ -94,8 +94,8 @@ public class DatumImpl extends MinimalEObjectImpl.Container implements Datum {
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case StackedchartsPackage.DATUM__INDEPENDENT_VAL:
-				return getIndependentVal();
+			case StackedchartsPackage.DATUM__VAL:
+				return getVal();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -108,8 +108,8 @@ public class DatumImpl extends MinimalEObjectImpl.Container implements Datum {
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case StackedchartsPackage.DATUM__INDEPENDENT_VAL:
-				setIndependentVal((Double)newValue);
+			case StackedchartsPackage.DATUM__VAL:
+				setVal((Double)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -123,8 +123,8 @@ public class DatumImpl extends MinimalEObjectImpl.Container implements Datum {
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case StackedchartsPackage.DATUM__INDEPENDENT_VAL:
-				setIndependentVal(INDEPENDENT_VAL_EDEFAULT);
+			case StackedchartsPackage.DATUM__VAL:
+				setVal(VAL_EDEFAULT);
 				return;
 		}
 		super.eUnset(featureID);
@@ -138,8 +138,8 @@ public class DatumImpl extends MinimalEObjectImpl.Container implements Datum {
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case StackedchartsPackage.DATUM__INDEPENDENT_VAL:
-				return independentVal != INDEPENDENT_VAL_EDEFAULT;
+			case StackedchartsPackage.DATUM__VAL:
+				return val != VAL_EDEFAULT;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -154,8 +154,8 @@ public class DatumImpl extends MinimalEObjectImpl.Container implements Datum {
 		if (eIsProxy()) return super.toString();
 
 		StringBuffer result = new StringBuffer(super.toString());
-		result.append(" (independentVal: ");
-		result.append(independentVal);
+		result.append(" (val: ");
+		result.append(val);
 		result.append(')');
 		return result.toString();
 	}

@@ -13,7 +13,7 @@ import org.eclipse.emf.ecore.EObject;
  * The following features are supported:
  * </p>
  * <ul>
- *   <li>{@link info.limpet.stackedcharts.model.Datum#getIndependentVal <em>Independent Val</em>}</li>
+ *   <li>{@link info.limpet.stackedcharts.model.Datum#getVal <em>Val</em>}</li>
  * </ul>
  *
  * @see info.limpet.stackedcharts.model.StackedchartsPackage#getDatum()
@@ -22,29 +22,29 @@ import org.eclipse.emf.ecore.EObject;
  */
 public interface Datum extends EObject {
 	/**
-	 * Returns the value of the '<em><b>Independent Val</b></em>' attribute.
+	 * Returns the value of the '<em><b>Val</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Independent Val</em>' attribute isn't clear,
+	 * If the meaning of the '<em>Val</em>' attribute isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Independent Val</em>' attribute.
-	 * @see #setIndependentVal(double)
-	 * @see info.limpet.stackedcharts.model.StackedchartsPackage#getDatum_IndependentVal()
+	 * @return the value of the '<em>Val</em>' attribute.
+	 * @see #setVal(double)
+	 * @see info.limpet.stackedcharts.model.StackedchartsPackage#getDatum_Val()
 	 * @model
 	 * @generated
 	 */
-	double getIndependentVal();
+	double getVal();
 
 	/**
-	 * Sets the value of the '{@link info.limpet.stackedcharts.model.Datum#getIndependentVal <em>Independent Val</em>}' attribute.
+	 * Sets the value of the '{@link info.limpet.stackedcharts.model.Datum#getVal <em>Val</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Independent Val</em>' attribute.
-	 * @see #getIndependentVal()
+	 * @param value the new value of the '<em>Val</em>' attribute.
+	 * @see #getVal()
 	 * @generated
 	 */
-	void setIndependentVal(double value);
+	void setVal(double value);
 
 } // Datum

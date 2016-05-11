@@ -728,7 +728,7 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getDatum_IndependentVal() {
+	public EAttribute getDatum_Val() {
 		return (EAttribute)datumEClass.getEStructuralFeatures().get(0);
 	}
 
@@ -872,7 +872,7 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
 		createEReference(scatterSetEClass, SCATTER_SET__DATUMS);
 
 		datumEClass = createEClass(DATUM);
-		createEAttribute(datumEClass, DATUM__INDEPENDENT_VAL);
+		createEAttribute(datumEClass, DATUM__VAL);
 
 		// Create enums
 		axisScaleEEnum = createEEnum(AXIS_SCALE);
@@ -989,7 +989,7 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
 		initEReference(getScatterSet_Datums(), this.getDatum(), null, "datums", null, 0, -1, ScatterSet.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(datumEClass, Datum.class, "Datum", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getDatum_IndependentVal(), ecorePackage.getEDouble(), "independentVal", null, 0, 1, Datum.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getDatum_Val(), ecorePackage.getEDouble(), "val", null, 0, 1, Datum.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		// Initialize enums and add enum literals
 		initEEnum(axisScaleEEnum, AxisScale.class, "AxisScale");

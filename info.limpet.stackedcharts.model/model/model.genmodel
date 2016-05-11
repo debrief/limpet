@@ -96,7 +96,7 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference model.ecore#//ScatterSet/datums"/>
     </genClasses>
     <genClasses ecoreClass="model.ecore#//Datum">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//Datum/independentVal"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//Datum/val"/>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>

@@ -121,7 +121,7 @@
         eType="#//Datum" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Datum">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="independentVal" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="val" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="MarkerStyle">
     <eLiterals name="Circle"/>

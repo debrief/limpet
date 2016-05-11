@@ -1054,13 +1054,13 @@ public interface StackedchartsPackage extends EPackage {
 	int DATUM = 14;
 
 	/**
-	 * The feature id for the '<em><b>Independent Val</b></em>' attribute.
+	 * The feature id for the '<em><b>Val</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int DATUM__INDEPENDENT_VAL = 0;
+	int DATUM__VAL = 0;
 
 	/**
 	 * The number of structural features of the '<em>Datum</em>' class.
@@ -1700,15 +1700,15 @@ public interface StackedchartsPackage extends EPackage {
 	EClass getDatum();
 
 	/**
-	 * Returns the meta object for the attribute '{@link info.limpet.stackedcharts.model.Datum#getIndependentVal <em>Independent Val</em>}'.
+	 * Returns the meta object for the attribute '{@link info.limpet.stackedcharts.model.Datum#getVal <em>Val</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Independent Val</em>'.
-	 * @see info.limpet.stackedcharts.model.Datum#getIndependentVal()
+	 * @return the meta object for the attribute '<em>Val</em>'.
+	 * @see info.limpet.stackedcharts.model.Datum#getVal()
 	 * @see #getDatum()
 	 * @generated
 	 */
-	EAttribute getDatum_IndependentVal();
+	EAttribute getDatum_Val();
 
 	/**
 	 * Returns the meta object for enum '{@link info.limpet.stackedcharts.model.AxisScale <em>Axis Scale</em>}'.
@@ -2238,12 +2238,12 @@ public interface StackedchartsPackage extends EPackage {
 		EClass DATUM = eINSTANCE.getDatum();
 
 		/**
-		 * The meta object literal for the '<em><b>Independent Val</b></em>' attribute feature.
+		 * The meta object literal for the '<em><b>Val</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute DATUM__INDEPENDENT_VAL = eINSTANCE.getDatum_IndependentVal();
+		EAttribute DATUM__VAL = eINSTANCE.getDatum_Val();
 
 		/**
 		 * The meta object literal for the '{@link info.limpet.stackedcharts.model.AxisScale <em>Axis Scale</em>}' enum.
