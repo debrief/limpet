@@ -2,7 +2,6 @@
  */
 package info.limpet.stackedcharts.model.impl;
 
-import info.limpet.stackedcharts.model.AxisOrigin;
 import info.limpet.stackedcharts.model.Chart;
 import info.limpet.stackedcharts.model.Dataset;
 import info.limpet.stackedcharts.model.DependentAxis;
@@ -32,7 +31,6 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
  * <ul>
  *   <li>{@link info.limpet.stackedcharts.model.impl.DependentAxisImpl#getParent <em>Parent</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.impl.DependentAxisImpl#getDatasets <em>Datasets</em>}</li>
- *   <li>{@link info.limpet.stackedcharts.model.impl.DependentAxisImpl#getAxisOrigin <em>Axis Origin</em>}</li>
  * </ul>
  *
  * @generated
@@ -47,26 +45,6 @@ public class DependentAxisImpl extends AbstractAxisImpl implements DependentAxis
 	 * @ordered
 	 */
 	protected EList<Dataset> datasets;
-
-	/**
-	 * The default value of the '{@link #getAxisOrigin() <em>Axis Origin</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getAxisOrigin()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final AxisOrigin AXIS_ORIGIN_EDEFAULT = AxisOrigin.MIN;
-
-	/**
-	 * The cached value of the '{@link #getAxisOrigin() <em>Axis Origin</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getAxisOrigin()
-	 * @generated
-	 * @ordered
-	 */
-	protected AxisOrigin axisOrigin = AXIS_ORIGIN_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -120,7 +98,7 @@ public class DependentAxisImpl extends AbstractAxisImpl implements DependentAxis
 			if (eInternalContainer() != null)
 				msgs = eBasicRemoveFromContainer(msgs);
 			if (newParent != null)
-				msgs = ((InternalEObject)newParent).eInverseAdd(this, StackedchartsPackage.CHART__AXES, Chart.class, msgs);
+				msgs = ((InternalEObject)newParent).eInverseAdd(this, StackedchartsPackage.CHART__MAX_AXES, Chart.class, msgs);
 			msgs = basicSetParent(newParent, msgs);
 			if (msgs != null) msgs.dispatch();
 		}
@@ -138,27 +116,6 @@ public class DependentAxisImpl extends AbstractAxisImpl implements DependentAxis
 			datasets = new EObjectResolvingEList<Dataset>(Dataset.class, this, StackedchartsPackage.DEPENDENT_AXIS__DATASETS);
 		}
 		return datasets;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public AxisOrigin getAxisOrigin() {
-		return axisOrigin;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setAxisOrigin(AxisOrigin newAxisOrigin) {
-		AxisOrigin oldAxisOrigin = axisOrigin;
-		axisOrigin = newAxisOrigin == null ? AXIS_ORIGIN_EDEFAULT : newAxisOrigin;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, StackedchartsPackage.DEPENDENT_AXIS__AXIS_ORIGIN, oldAxisOrigin, axisOrigin));
 	}
 
 	/**
@@ -200,7 +157,7 @@ public class DependentAxisImpl extends AbstractAxisImpl implements DependentAxis
 	public NotificationChain eBasicRemoveFromContainerFeature(NotificationChain msgs) {
 		switch (eContainerFeatureID()) {
 			case StackedchartsPackage.DEPENDENT_AXIS__PARENT:
-				return eInternalContainer().eInverseRemove(this, StackedchartsPackage.CHART__AXES, Chart.class, msgs);
+				return eInternalContainer().eInverseRemove(this, StackedchartsPackage.CHART__MAX_AXES, Chart.class, msgs);
 		}
 		return super.eBasicRemoveFromContainerFeature(msgs);
 	}
@@ -217,8 +174,6 @@ public class DependentAxisImpl extends AbstractAxisImpl implements DependentAxis
 				return getParent();
 			case StackedchartsPackage.DEPENDENT_AXIS__DATASETS:
 				return getDatasets();
-			case StackedchartsPackage.DEPENDENT_AXIS__AXIS_ORIGIN:
-				return getAxisOrigin();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -239,9 +194,6 @@ public class DependentAxisImpl extends AbstractAxisImpl implements DependentAxis
 				getDatasets().clear();
 				getDatasets().addAll((Collection<? extends Dataset>)newValue);
 				return;
-			case StackedchartsPackage.DEPENDENT_AXIS__AXIS_ORIGIN:
-				setAxisOrigin((AxisOrigin)newValue);
-				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -260,9 +212,6 @@ public class DependentAxisImpl extends AbstractAxisImpl implements DependentAxis
 			case StackedchartsPackage.DEPENDENT_AXIS__DATASETS:
 				getDatasets().clear();
 				return;
-			case StackedchartsPackage.DEPENDENT_AXIS__AXIS_ORIGIN:
-				setAxisOrigin(AXIS_ORIGIN_EDEFAULT);
-				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -279,26 +228,8 @@ public class DependentAxisImpl extends AbstractAxisImpl implements DependentAxis
 				return getParent() != null;
 			case StackedchartsPackage.DEPENDENT_AXIS__DATASETS:
 				return datasets != null && !datasets.isEmpty();
-			case StackedchartsPackage.DEPENDENT_AXIS__AXIS_ORIGIN:
-				return axisOrigin != AXIS_ORIGIN_EDEFAULT;
 		}
 		return super.eIsSet(featureID);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public String toString() {
-		if (eIsProxy()) return super.toString();
-
-		StringBuffer result = new StringBuffer(super.toString());
-		result.append(" (axisOrigin: ");
-		result.append(axisOrigin);
-		result.append(')');
-		return result.toString();
 	}
 
 } //DependentAxisImpl

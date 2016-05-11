@@ -21,17 +21,18 @@
   <eClassifiers xsi:type="ecore:EClass" name="Chart">
     <eStructuralFeatures xsi:type="ecore:EReference" name="parent" eType="#//ChartSet"
         eOpposite="#//ChartSet/charts"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="axes" upperBound="-1" eType="#//DependentAxis"
-        containment="true" eOpposite="#//DependentAxis/parent"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="maxAxes" upperBound="-1"
+        eType="#//DependentAxis" containment="true" eOpposite="#//DependentAxis/parent"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="title" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="minAxes" upperBound="-1"
+        eType="#//DependentAxis" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="DependentAxis" eSuperTypes="#//AbstractAxis">
     <eStructuralFeatures xsi:type="ecore:EReference" name="parent" eType="#//Chart"
-        eOpposite="#//Chart/axes"/>
+        eOpposite="#//Chart/maxAxes"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="datasets" upperBound="-1"
         eType="#//Dataset"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="axisOrigin" eType="#//AxisOrigin"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Dataset">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -65,13 +66,6 @@
       <details key="documentation" value="Single &quot;discrete&quot; marker on independent axis"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EEnum" name="AxisOrigin">
-    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-      <details key="documentation" value="Whether the dependent axis crosses the independent axis at the minimum, or maximum value (left or right)"/>
-    </eAnnotations>
-    <eLiterals name="Min"/>
-    <eLiterals name="Max"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="AxisScale">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">

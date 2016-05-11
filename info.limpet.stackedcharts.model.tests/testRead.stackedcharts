@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="ASCII"?>
 <stackedcharts:ChartSet xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:stackedcharts="stackedcharts">
   <charts name="Temperature &amp; Salinity">
-    <axes name="Temperature" datasets="//@datasets.0"/>
-    <axes name="Salinity" datasets="//@datasets.1" axisOrigin="Max"/>
+    <maxAxes name="Salinity" datasets="//@datasets.1"/>
+    <minAxes name="Temperature" datasets="//@datasets.0"/>
   </charts>
   <charts name="Pressure Gradient">
-    <axes name="Pressure" datasets="//@datasets.2"/>
+    <minAxes name="Pressure" datasets="//@datasets.2"/>
   </charts>
   <sharedAxis name="Depth"/>
   <datasets name="Temp vs Depth">

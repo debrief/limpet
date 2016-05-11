@@ -7,10 +7,6 @@
   <foreignModel>model.ecore</foreignModel>
   <genPackages prefix="Stackedcharts" basePackage="info.limpet.stackedcharts" disposableProviderFactory="true"
       ecorePackage="model.ecore#/">
-    <genEnums typeSafeEnumCompatible="false" ecoreEnum="model.ecore#//AxisOrigin">
-      <genEnumLiterals ecoreEnumLiteral="model.ecore#//AxisOrigin/Min"/>
-      <genEnumLiterals ecoreEnumLiteral="model.ecore#//AxisOrigin/Max"/>
-    </genEnums>
     <genEnums typeSafeEnumCompatible="false" ecoreEnum="model.ecore#//AxisScale">
       <genEnumLiterals ecoreEnumLiteral="model.ecore#//AxisScale/Linear"/>
       <genEnumLiterals ecoreEnumLiteral="model.ecore#//AxisScale/Log"/>
@@ -42,14 +38,14 @@
     </genClasses>
     <genClasses ecoreClass="model.ecore#//Chart">
       <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference model.ecore#//Chart/parent"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference model.ecore#//Chart/axes"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference model.ecore#//Chart/maxAxes"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//Chart/name"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//Chart/title"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference model.ecore#//Chart/minAxes"/>
     </genClasses>
     <genClasses ecoreClass="model.ecore#//DependentAxis">
       <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference model.ecore#//DependentAxis/parent"/>
       <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference model.ecore#//DependentAxis/datasets"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//DependentAxis/axisOrigin"/>
     </genClasses>
     <genClasses ecoreClass="model.ecore#//Dataset">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//Dataset/name"/>

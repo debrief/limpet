@@ -141,13 +141,13 @@ public interface StackedchartsPackage extends EPackage {
 	int CHART__PARENT = 0;
 
 	/**
-	 * The feature id for the '<em><b>Axes</b></em>' containment reference list.
+	 * The feature id for the '<em><b>Max Axes</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int CHART__AXES = 1;
+	int CHART__MAX_AXES = 1;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -168,13 +168,22 @@ public interface StackedchartsPackage extends EPackage {
 	int CHART__TITLE = 3;
 
 	/**
+	 * The feature id for the '<em><b>Min Axes</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CHART__MIN_AXES = 4;
+
+	/**
 	 * The number of structural features of the '<em>Chart</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int CHART_FEATURE_COUNT = 4;
+	int CHART_FEATURE_COUNT = 5;
 
 	/**
 	 * The number of operations of the '<em>Chart</em>' class.
@@ -368,22 +377,13 @@ public interface StackedchartsPackage extends EPackage {
 	int DEPENDENT_AXIS__DATASETS = ABSTRACT_AXIS_FEATURE_COUNT + 1;
 
 	/**
-	 * The feature id for the '<em><b>Axis Origin</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int DEPENDENT_AXIS__AXIS_ORIGIN = ABSTRACT_AXIS_FEATURE_COUNT + 2;
-
-	/**
 	 * The number of structural features of the '<em>Dependent Axis</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int DEPENDENT_AXIS_FEATURE_COUNT = ABSTRACT_AXIS_FEATURE_COUNT + 3;
+	int DEPENDENT_AXIS_FEATURE_COUNT = ABSTRACT_AXIS_FEATURE_COUNT + 2;
 
 	/**
 	 * The number of operations of the '<em>Dependent Axis</em>' class.
@@ -1117,16 +1117,6 @@ public interface StackedchartsPackage extends EPackage {
 	int DATUM_OPERATION_COUNT = 0;
 
 	/**
-	 * The meta object id for the '{@link info.limpet.stackedcharts.model.AxisOrigin <em>Axis Origin</em>}' enum.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see info.limpet.stackedcharts.model.AxisOrigin
-	 * @see info.limpet.stackedcharts.model.impl.StackedchartsPackageImpl#getAxisOrigin()
-	 * @generated
-	 */
-	int AXIS_ORIGIN = 15;
-
-	/**
 	 * The meta object id for the '{@link info.limpet.stackedcharts.model.AxisScale <em>Axis Scale</em>}' enum.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1134,7 +1124,7 @@ public interface StackedchartsPackage extends EPackage {
 	 * @see info.limpet.stackedcharts.model.impl.StackedchartsPackageImpl#getAxisScale()
 	 * @generated
 	 */
-	int AXIS_SCALE = 16;
+	int AXIS_SCALE = 15;
 
 	/**
 	 * The meta object id for the '{@link info.limpet.stackedcharts.model.Orientation <em>Orientation</em>}' enum.
@@ -1144,7 +1134,7 @@ public interface StackedchartsPackage extends EPackage {
 	 * @see info.limpet.stackedcharts.model.impl.StackedchartsPackageImpl#getOrientation()
 	 * @generated
 	 */
-	int ORIENTATION = 17;
+	int ORIENTATION = 16;
 
 	/**
 	 * The meta object id for the '{@link info.limpet.stackedcharts.model.AxisDirection <em>Axis Direction</em>}' enum.
@@ -1154,7 +1144,7 @@ public interface StackedchartsPackage extends EPackage {
 	 * @see info.limpet.stackedcharts.model.impl.StackedchartsPackageImpl#getAxisDirection()
 	 * @generated
 	 */
-	int AXIS_DIRECTION = 18;
+	int AXIS_DIRECTION = 17;
 
 	/**
 	 * The meta object id for the '{@link info.limpet.stackedcharts.model.MarkerStyle <em>Marker Style</em>}' enum.
@@ -1164,7 +1154,7 @@ public interface StackedchartsPackage extends EPackage {
 	 * @see info.limpet.stackedcharts.model.impl.StackedchartsPackageImpl#getMarkerStyle()
 	 * @generated
 	 */
-	int MARKER_STYLE = 19;
+	int MARKER_STYLE = 18;
 
 	/**
 	 * The meta object id for the '{@link info.limpet.stackedcharts.model.LineType <em>Line Type</em>}' enum.
@@ -1174,7 +1164,7 @@ public interface StackedchartsPackage extends EPackage {
 	 * @see info.limpet.stackedcharts.model.impl.StackedchartsPackageImpl#getLineType()
 	 * @generated
 	 */
-	int LINE_TYPE = 20;
+	int LINE_TYPE = 19;
 
 
 	/**
@@ -1253,15 +1243,15 @@ public interface StackedchartsPackage extends EPackage {
 	EReference getChart_Parent();
 
 	/**
-	 * Returns the meta object for the containment reference list '{@link info.limpet.stackedcharts.model.Chart#getAxes <em>Axes</em>}'.
+	 * Returns the meta object for the containment reference list '{@link info.limpet.stackedcharts.model.Chart#getMaxAxes <em>Max Axes</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference list '<em>Axes</em>'.
-	 * @see info.limpet.stackedcharts.model.Chart#getAxes()
+	 * @return the meta object for the containment reference list '<em>Max Axes</em>'.
+	 * @see info.limpet.stackedcharts.model.Chart#getMaxAxes()
 	 * @see #getChart()
 	 * @generated
 	 */
-	EReference getChart_Axes();
+	EReference getChart_MaxAxes();
 
 	/**
 	 * Returns the meta object for the attribute '{@link info.limpet.stackedcharts.model.Chart#getName <em>Name</em>}'.
@@ -1284,6 +1274,17 @@ public interface StackedchartsPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getChart_Title();
+
+	/**
+	 * Returns the meta object for the containment reference list '{@link info.limpet.stackedcharts.model.Chart#getMinAxes <em>Min Axes</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference list '<em>Min Axes</em>'.
+	 * @see info.limpet.stackedcharts.model.Chart#getMinAxes()
+	 * @see #getChart()
+	 * @generated
+	 */
+	EReference getChart_MinAxes();
 
 	/**
 	 * Returns the meta object for class '{@link info.limpet.stackedcharts.model.DependentAxis <em>Dependent Axis</em>}'.
@@ -1316,17 +1317,6 @@ public interface StackedchartsPackage extends EPackage {
 	 * @generated
 	 */
 	EReference getDependentAxis_Datasets();
-
-	/**
-	 * Returns the meta object for the attribute '{@link info.limpet.stackedcharts.model.DependentAxis#getAxisOrigin <em>Axis Origin</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Axis Origin</em>'.
-	 * @see info.limpet.stackedcharts.model.DependentAxis#getAxisOrigin()
-	 * @see #getDependentAxis()
-	 * @generated
-	 */
-	EAttribute getDependentAxis_AxisOrigin();
 
 	/**
 	 * Returns the meta object for class '{@link info.limpet.stackedcharts.model.Dataset <em>Dataset</em>}'.
@@ -1768,16 +1758,6 @@ public interface StackedchartsPackage extends EPackage {
 	EAttribute getDatum_IndependentVal();
 
 	/**
-	 * Returns the meta object for enum '{@link info.limpet.stackedcharts.model.AxisOrigin <em>Axis Origin</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for enum '<em>Axis Origin</em>'.
-	 * @see info.limpet.stackedcharts.model.AxisOrigin
-	 * @generated
-	 */
-	EEnum getAxisOrigin();
-
-	/**
 	 * Returns the meta object for enum '{@link info.limpet.stackedcharts.model.AxisScale <em>Axis Scale</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1911,12 +1891,12 @@ public interface StackedchartsPackage extends EPackage {
 		EReference CHART__PARENT = eINSTANCE.getChart_Parent();
 
 		/**
-		 * The meta object literal for the '<em><b>Axes</b></em>' containment reference list feature.
+		 * The meta object literal for the '<em><b>Max Axes</b></em>' containment reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference CHART__AXES = eINSTANCE.getChart_Axes();
+		EReference CHART__MAX_AXES = eINSTANCE.getChart_MaxAxes();
 
 		/**
 		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
@@ -1933,6 +1913,14 @@ public interface StackedchartsPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute CHART__TITLE = eINSTANCE.getChart_Title();
+
+		/**
+		 * The meta object literal for the '<em><b>Min Axes</b></em>' containment reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference CHART__MIN_AXES = eINSTANCE.getChart_MinAxes();
 
 		/**
 		 * The meta object literal for the '{@link info.limpet.stackedcharts.model.impl.DependentAxisImpl <em>Dependent Axis</em>}' class.
@@ -1959,14 +1947,6 @@ public interface StackedchartsPackage extends EPackage {
 		 * @generated
 		 */
 		EReference DEPENDENT_AXIS__DATASETS = eINSTANCE.getDependentAxis_Datasets();
-
-		/**
-		 * The meta object literal for the '<em><b>Axis Origin</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute DEPENDENT_AXIS__AXIS_ORIGIN = eINSTANCE.getDependentAxis_AxisOrigin();
 
 		/**
 		 * The meta object literal for the '{@link info.limpet.stackedcharts.model.impl.DatasetImpl <em>Dataset</em>}' class.
@@ -2319,16 +2299,6 @@ public interface StackedchartsPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute DATUM__INDEPENDENT_VAL = eINSTANCE.getDatum_IndependentVal();
-
-		/**
-		 * The meta object literal for the '{@link info.limpet.stackedcharts.model.AxisOrigin <em>Axis Origin</em>}' enum.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see info.limpet.stackedcharts.model.AxisOrigin
-		 * @see info.limpet.stackedcharts.model.impl.StackedchartsPackageImpl#getAxisOrigin()
-		 * @generated
-		 */
-		EEnum AXIS_ORIGIN = eINSTANCE.getAxisOrigin();
 
 		/**
 		 * The meta object literal for the '{@link info.limpet.stackedcharts.model.AxisScale <em>Axis Scale</em>}' enum.

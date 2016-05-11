@@ -16,9 +16,10 @@ import org.eclipse.emf.ecore.EObject;
  * </p>
  * <ul>
  *   <li>{@link info.limpet.stackedcharts.model.Chart#getParent <em>Parent</em>}</li>
- *   <li>{@link info.limpet.stackedcharts.model.Chart#getAxes <em>Axes</em>}</li>
+ *   <li>{@link info.limpet.stackedcharts.model.Chart#getMaxAxes <em>Max Axes</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.Chart#getName <em>Name</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.Chart#getTitle <em>Title</em>}</li>
+ *   <li>{@link info.limpet.stackedcharts.model.Chart#getMinAxes <em>Min Axes</em>}</li>
  * </ul>
  *
  * @see info.limpet.stackedcharts.model.StackedchartsPackage#getChart()
@@ -55,22 +56,22 @@ public interface Chart extends EObject {
 	void setParent(ChartSet value);
 
 	/**
-	 * Returns the value of the '<em><b>Axes</b></em>' containment reference list.
+	 * Returns the value of the '<em><b>Max Axes</b></em>' containment reference list.
 	 * The list contents are of type {@link info.limpet.stackedcharts.model.DependentAxis}.
 	 * It is bidirectional and its opposite is '{@link info.limpet.stackedcharts.model.DependentAxis#getParent <em>Parent</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Axes</em>' containment reference list isn't clear,
+	 * If the meaning of the '<em>Max Axes</em>' containment reference list isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Axes</em>' containment reference list.
-	 * @see info.limpet.stackedcharts.model.StackedchartsPackage#getChart_Axes()
+	 * @return the value of the '<em>Max Axes</em>' containment reference list.
+	 * @see info.limpet.stackedcharts.model.StackedchartsPackage#getChart_MaxAxes()
 	 * @see info.limpet.stackedcharts.model.DependentAxis#getParent
 	 * @model opposite="parent" containment="true"
 	 * @generated
 	 */
-	EList<DependentAxis> getAxes();
+	EList<DependentAxis> getMaxAxes();
 
 	/**
 	 * Returns the value of the '<em><b>Name</b></em>' attribute.
@@ -123,5 +124,21 @@ public interface Chart extends EObject {
 	 * @generated
 	 */
 	void setTitle(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Min Axes</b></em>' containment reference list.
+	 * The list contents are of type {@link info.limpet.stackedcharts.model.DependentAxis}.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Min Axes</em>' containment reference list isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Min Axes</em>' containment reference list.
+	 * @see info.limpet.stackedcharts.model.StackedchartsPackage#getChart_MinAxes()
+	 * @model containment="true"
+	 * @generated
+	 */
+	EList<DependentAxis> getMinAxes();
 
 } // Chart

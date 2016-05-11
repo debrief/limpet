@@ -14,7 +14,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import info.limpet.stackedcharts.model.AxisDirection;
-import info.limpet.stackedcharts.model.AxisOrigin;
 import info.limpet.stackedcharts.model.Chart;
 import info.limpet.stackedcharts.model.ChartSet;
 import info.limpet.stackedcharts.model.DataItem;
@@ -54,15 +53,14 @@ public class ModelTests
     Assert.assertEquals("Temperature & Salinity", chart.getName());
     
     // have a look at the innads
-    EList<DependentAxis> axes = chart.getAxes();
-    Assert.assertEquals("Correct number",  2, axes.size());
+    EList<DependentAxis> axes = chart.getMinAxes();
+    Assert.assertEquals("Correct number",  1, axes.size());
     DependentAxis axis1 = axes.get(0);
     Assert.assertEquals("correct name", "Temperature", axis1.getName());
-    Assert.assertEquals("correct origin", AxisOrigin.MIN, axis1.getAxisOrigin());
     Assert.assertEquals("correct direction", AxisDirection.ASCENDING, axis1.getDirection());
-    DependentAxis axis2 = axes.get(1);
+    axes = chart.getMaxAxes();
+    DependentAxis axis2 = axes.get(0);
     Assert.assertEquals("correct name", "Salinity", axis2.getName());
-    Assert.assertEquals("correct origin", AxisOrigin.MAX, axis2.getAxisOrigin());
 
   }
 
@@ -116,7 +114,7 @@ public class ModelTests
 
     DependentAxis yAxis1 = factory.createDependentAxis();
     yAxis1.setName("Temperature");
-    chart1.getAxes().add(yAxis1);
+    chart1.getMinAxes().add(yAxis1);
 
     Dataset temperatureVsDepth1 = factory.createDataset();
     temperatureVsDepth1.setName("Temp vs Depth");
@@ -141,8 +139,7 @@ public class ModelTests
     // second axis/dataset on this first graph
     DependentAxis yAxis2 = factory.createDependentAxis();
     yAxis2.setName("Salinity");
-    yAxis2.setAxisOrigin(AxisOrigin.MAX);
-    chart1.getAxes().add(yAxis2);
+    chart1.getMaxAxes().add(yAxis2);
 
     Dataset salinityVsDepth1 = factory.createDataset();
     salinityVsDepth1.setName("Salinity Vs Depth");
@@ -173,7 +170,7 @@ public class ModelTests
 
     DependentAxis yAxis = factory.createDependentAxis();
     yAxis.setName("Pressure");
-    chart.getAxes().add(yAxis);
+    chart.getMinAxes().add(yAxis);
 
     Dataset pressureVsDepth = factory.createDataset();
     pressureVsDepth.setName("Pressure vs Depth");

@@ -5,7 +5,6 @@ package info.limpet.stackedcharts.model.impl;
 import info.limpet.stackedcharts.model.AbstractAnnotation;
 import info.limpet.stackedcharts.model.AbstractAxis;
 import info.limpet.stackedcharts.model.AxisDirection;
-import info.limpet.stackedcharts.model.AxisOrigin;
 import info.limpet.stackedcharts.model.AxisScale;
 import info.limpet.stackedcharts.model.Chart;
 import info.limpet.stackedcharts.model.ChartSet;
@@ -147,13 +146,6 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
 	 * @generated
 	 */
 	private EClass datumEClass = null;
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	private EEnum axisOriginEEnum = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -322,7 +314,7 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getChart_Axes() {
+	public EReference getChart_MaxAxes() {
 		return (EReference)chartEClass.getEStructuralFeatures().get(1);
 	}
 
@@ -342,6 +334,15 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
 	 */
 	public EAttribute getChart_Title() {
 		return (EAttribute)chartEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getChart_MinAxes() {
+		return (EReference)chartEClass.getEStructuralFeatures().get(4);
 	}
 
 	/**
@@ -369,15 +370,6 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
 	 */
 	public EReference getDependentAxis_Datasets() {
 		return (EReference)dependentAxisEClass.getEStructuralFeatures().get(1);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getDependentAxis_AxisOrigin() {
-		return (EAttribute)dependentAxisEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -754,15 +746,6 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EEnum getAxisOrigin() {
-		return axisOriginEEnum;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public EEnum getAxisScale() {
 		return axisScaleEEnum;
 	}
@@ -839,14 +822,14 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
 
 		chartEClass = createEClass(CHART);
 		createEReference(chartEClass, CHART__PARENT);
-		createEReference(chartEClass, CHART__AXES);
+		createEReference(chartEClass, CHART__MAX_AXES);
 		createEAttribute(chartEClass, CHART__NAME);
 		createEAttribute(chartEClass, CHART__TITLE);
+		createEReference(chartEClass, CHART__MIN_AXES);
 
 		dependentAxisEClass = createEClass(DEPENDENT_AXIS);
 		createEReference(dependentAxisEClass, DEPENDENT_AXIS__PARENT);
 		createEReference(dependentAxisEClass, DEPENDENT_AXIS__DATASETS);
-		createEAttribute(dependentAxisEClass, DEPENDENT_AXIS__AXIS_ORIGIN);
 
 		datasetEClass = createEClass(DATASET);
 		createEAttribute(datasetEClass, DATASET__NAME);
@@ -902,7 +885,6 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
 		createEAttribute(datumEClass, DATUM__INDEPENDENT_VAL);
 
 		// Create enums
-		axisOriginEEnum = createEEnum(AXIS_ORIGIN);
 		axisScaleEEnum = createEEnum(AXIS_SCALE);
 		orientationEEnum = createEEnum(ORIENTATION);
 		axisDirectionEEnum = createEEnum(AXIS_DIRECTION);
@@ -958,14 +940,14 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
 
 		initEClass(chartEClass, Chart.class, "Chart", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getChart_Parent(), this.getChartSet(), this.getChartSet_Charts(), "parent", null, 0, 1, Chart.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getChart_Axes(), this.getDependentAxis(), this.getDependentAxis_Parent(), "axes", null, 0, -1, Chart.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getChart_MaxAxes(), this.getDependentAxis(), this.getDependentAxis_Parent(), "maxAxes", null, 0, -1, Chart.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getChart_Name(), ecorePackage.getEString(), "name", null, 0, 1, Chart.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getChart_Title(), ecorePackage.getEString(), "title", null, 0, 1, Chart.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getChart_MinAxes(), this.getDependentAxis(), null, "minAxes", null, 0, -1, Chart.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(dependentAxisEClass, DependentAxis.class, "DependentAxis", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEReference(getDependentAxis_Parent(), this.getChart(), this.getChart_Axes(), "parent", null, 0, 1, DependentAxis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getDependentAxis_Parent(), this.getChart(), this.getChart_MaxAxes(), "parent", null, 0, 1, DependentAxis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getDependentAxis_Datasets(), this.getDataset(), null, "datasets", null, 0, -1, DependentAxis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getDependentAxis_AxisOrigin(), this.getAxisOrigin(), "axisOrigin", null, 0, 1, DependentAxis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(datasetEClass, Dataset.class, "Dataset", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getDataset_Name(), ecorePackage.getEString(), "name", null, 0, 1, Dataset.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1021,10 +1003,6 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
 		initEAttribute(getDatum_IndependentVal(), ecorePackage.getEDouble(), "independentVal", null, 0, 1, Datum.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		// Initialize enums and add enum literals
-		initEEnum(axisOriginEEnum, AxisOrigin.class, "AxisOrigin");
-		addEEnumLiteral(axisOriginEEnum, AxisOrigin.MIN);
-		addEEnumLiteral(axisOriginEEnum, AxisOrigin.MAX);
-
 		initEEnum(axisScaleEEnum, AxisScale.class, "AxisScale");
 		addEEnumLiteral(axisScaleEEnum, AxisScale.LINEAR);
 		addEEnumLiteral(axisScaleEEnum, AxisScale.LOG);

@@ -83,8 +83,6 @@ public class StackedchartsFactoryImpl extends EFactoryImpl implements Stackedcha
 	@Override
 	public Object createFromString(EDataType eDataType, String initialValue) {
 		switch (eDataType.getClassifierID()) {
-			case StackedchartsPackage.AXIS_ORIGIN:
-				return createAxisOriginFromString(eDataType, initialValue);
 			case StackedchartsPackage.AXIS_SCALE:
 				return createAxisScaleFromString(eDataType, initialValue);
 			case StackedchartsPackage.ORIENTATION:
@@ -108,8 +106,6 @@ public class StackedchartsFactoryImpl extends EFactoryImpl implements Stackedcha
 	@Override
 	public String convertToString(EDataType eDataType, Object instanceValue) {
 		switch (eDataType.getClassifierID()) {
-			case StackedchartsPackage.AXIS_ORIGIN:
-				return convertAxisOriginToString(eDataType, instanceValue);
 			case StackedchartsPackage.AXIS_SCALE:
 				return convertAxisScaleToString(eDataType, instanceValue);
 			case StackedchartsPackage.ORIENTATION:
@@ -253,26 +249,6 @@ public class StackedchartsFactoryImpl extends EFactoryImpl implements Stackedcha
 	public Datum createDatum() {
 		DatumImpl datum = new DatumImpl();
 		return datum;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public AxisOrigin createAxisOriginFromString(EDataType eDataType, String initialValue) {
-		AxisOrigin result = AxisOrigin.get(initialValue);
-		if (result == null) throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
-		return result;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public String convertAxisOriginToString(EDataType eDataType, Object instanceValue) {
-		return instanceValue == null ? null : instanceValue.toString();
 	}
 
 	/**

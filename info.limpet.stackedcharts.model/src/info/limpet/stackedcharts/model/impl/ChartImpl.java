@@ -20,6 +20,7 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
+import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.EObjectContainmentWithInverseEList;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.util.InternalEList;
@@ -33,23 +34,24 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * </p>
  * <ul>
  *   <li>{@link info.limpet.stackedcharts.model.impl.ChartImpl#getParent <em>Parent</em>}</li>
- *   <li>{@link info.limpet.stackedcharts.model.impl.ChartImpl#getAxes <em>Axes</em>}</li>
+ *   <li>{@link info.limpet.stackedcharts.model.impl.ChartImpl#getMaxAxes <em>Max Axes</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.impl.ChartImpl#getName <em>Name</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.impl.ChartImpl#getTitle <em>Title</em>}</li>
+ *   <li>{@link info.limpet.stackedcharts.model.impl.ChartImpl#getMinAxes <em>Min Axes</em>}</li>
  * </ul>
  *
  * @generated
  */
 public class ChartImpl extends MinimalEObjectImpl.Container implements Chart {
 	/**
-	 * The cached value of the '{@link #getAxes() <em>Axes</em>}' containment reference list.
+	 * The cached value of the '{@link #getMaxAxes() <em>Max Axes</em>}' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getAxes()
+	 * @see #getMaxAxes()
 	 * @generated
 	 * @ordered
 	 */
-	protected EList<DependentAxis> axes;
+	protected EList<DependentAxis> maxAxes;
 
 	/**
 	 * The default value of the '{@link #getName() <em>Name</em>}' attribute.
@@ -90,6 +92,16 @@ public class ChartImpl extends MinimalEObjectImpl.Container implements Chart {
 	 * @ordered
 	 */
 	protected String title = TITLE_EDEFAULT;
+
+	/**
+	 * The cached value of the '{@link #getMinAxes() <em>Min Axes</em>}' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getMinAxes()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<DependentAxis> minAxes;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -156,11 +168,11 @@ public class ChartImpl extends MinimalEObjectImpl.Container implements Chart {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EList<DependentAxis> getAxes() {
-		if (axes == null) {
-			axes = new EObjectContainmentWithInverseEList<DependentAxis>(DependentAxis.class, this, StackedchartsPackage.CHART__AXES, StackedchartsPackage.DEPENDENT_AXIS__PARENT);
+	public EList<DependentAxis> getMaxAxes() {
+		if (maxAxes == null) {
+			maxAxes = new EObjectContainmentWithInverseEList<DependentAxis>(DependentAxis.class, this, StackedchartsPackage.CHART__MAX_AXES, StackedchartsPackage.DEPENDENT_AXIS__PARENT);
 		}
-		return axes;
+		return maxAxes;
 	}
 
 	/**
@@ -210,6 +222,18 @@ public class ChartImpl extends MinimalEObjectImpl.Container implements Chart {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EList<DependentAxis> getMinAxes() {
+		if (minAxes == null) {
+			minAxes = new EObjectContainmentEList<DependentAxis>(DependentAxis.class, this, StackedchartsPackage.CHART__MIN_AXES);
+		}
+		return minAxes;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
@@ -218,8 +242,8 @@ public class ChartImpl extends MinimalEObjectImpl.Container implements Chart {
 				if (eInternalContainer() != null)
 					msgs = eBasicRemoveFromContainer(msgs);
 				return basicSetParent((ChartSet)otherEnd, msgs);
-			case StackedchartsPackage.CHART__AXES:
-				return ((InternalEList<InternalEObject>)(InternalEList<?>)getAxes()).basicAdd(otherEnd, msgs);
+			case StackedchartsPackage.CHART__MAX_AXES:
+				return ((InternalEList<InternalEObject>)(InternalEList<?>)getMaxAxes()).basicAdd(otherEnd, msgs);
 		}
 		return super.eInverseAdd(otherEnd, featureID, msgs);
 	}
@@ -234,8 +258,10 @@ public class ChartImpl extends MinimalEObjectImpl.Container implements Chart {
 		switch (featureID) {
 			case StackedchartsPackage.CHART__PARENT:
 				return basicSetParent(null, msgs);
-			case StackedchartsPackage.CHART__AXES:
-				return ((InternalEList<?>)getAxes()).basicRemove(otherEnd, msgs);
+			case StackedchartsPackage.CHART__MAX_AXES:
+				return ((InternalEList<?>)getMaxAxes()).basicRemove(otherEnd, msgs);
+			case StackedchartsPackage.CHART__MIN_AXES:
+				return ((InternalEList<?>)getMinAxes()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -264,12 +290,14 @@ public class ChartImpl extends MinimalEObjectImpl.Container implements Chart {
 		switch (featureID) {
 			case StackedchartsPackage.CHART__PARENT:
 				return getParent();
-			case StackedchartsPackage.CHART__AXES:
-				return getAxes();
+			case StackedchartsPackage.CHART__MAX_AXES:
+				return getMaxAxes();
 			case StackedchartsPackage.CHART__NAME:
 				return getName();
 			case StackedchartsPackage.CHART__TITLE:
 				return getTitle();
+			case StackedchartsPackage.CHART__MIN_AXES:
+				return getMinAxes();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -286,15 +314,19 @@ public class ChartImpl extends MinimalEObjectImpl.Container implements Chart {
 			case StackedchartsPackage.CHART__PARENT:
 				setParent((ChartSet)newValue);
 				return;
-			case StackedchartsPackage.CHART__AXES:
-				getAxes().clear();
-				getAxes().addAll((Collection<? extends DependentAxis>)newValue);
+			case StackedchartsPackage.CHART__MAX_AXES:
+				getMaxAxes().clear();
+				getMaxAxes().addAll((Collection<? extends DependentAxis>)newValue);
 				return;
 			case StackedchartsPackage.CHART__NAME:
 				setName((String)newValue);
 				return;
 			case StackedchartsPackage.CHART__TITLE:
 				setTitle((String)newValue);
+				return;
+			case StackedchartsPackage.CHART__MIN_AXES:
+				getMinAxes().clear();
+				getMinAxes().addAll((Collection<? extends DependentAxis>)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -311,14 +343,17 @@ public class ChartImpl extends MinimalEObjectImpl.Container implements Chart {
 			case StackedchartsPackage.CHART__PARENT:
 				setParent((ChartSet)null);
 				return;
-			case StackedchartsPackage.CHART__AXES:
-				getAxes().clear();
+			case StackedchartsPackage.CHART__MAX_AXES:
+				getMaxAxes().clear();
 				return;
 			case StackedchartsPackage.CHART__NAME:
 				setName(NAME_EDEFAULT);
 				return;
 			case StackedchartsPackage.CHART__TITLE:
 				setTitle(TITLE_EDEFAULT);
+				return;
+			case StackedchartsPackage.CHART__MIN_AXES:
+				getMinAxes().clear();
 				return;
 		}
 		super.eUnset(featureID);
@@ -334,12 +369,14 @@ public class ChartImpl extends MinimalEObjectImpl.Container implements Chart {
 		switch (featureID) {
 			case StackedchartsPackage.CHART__PARENT:
 				return getParent() != null;
-			case StackedchartsPackage.CHART__AXES:
-				return axes != null && !axes.isEmpty();
+			case StackedchartsPackage.CHART__MAX_AXES:
+				return maxAxes != null && !maxAxes.isEmpty();
 			case StackedchartsPackage.CHART__NAME:
 				return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
 			case StackedchartsPackage.CHART__TITLE:
 				return TITLE_EDEFAULT == null ? title != null : !TITLE_EDEFAULT.equals(title);
+			case StackedchartsPackage.CHART__MIN_AXES:
+				return minAxes != null && !minAxes.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}
