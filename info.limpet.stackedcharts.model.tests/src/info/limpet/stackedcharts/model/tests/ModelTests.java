@@ -1,13 +1,5 @@
 package info.limpet.stackedcharts.model.tests;
 
-import info.limpet.stackedcharts.model.Axis;
-import info.limpet.stackedcharts.model.Chart;
-import info.limpet.stackedcharts.model.ChartSet;
-import info.limpet.stackedcharts.model.DataItem;
-import info.limpet.stackedcharts.model.Dataset;
-import info.limpet.stackedcharts.model.StackedchartsFactory;
-import info.limpet.stackedcharts.model.StackedchartsPackage;
-
 import java.io.IOException;
 import java.util.HashMap;
 
@@ -19,6 +11,16 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.junit.Assert;
 import org.junit.Test;
+
+import info.limpet.stackedcharts.model.AxisOrigin;
+import info.limpet.stackedcharts.model.Chart;
+import info.limpet.stackedcharts.model.ChartSet;
+import info.limpet.stackedcharts.model.DataItem;
+import info.limpet.stackedcharts.model.Dataset;
+import info.limpet.stackedcharts.model.DependentAxis;
+import info.limpet.stackedcharts.model.IndependentAxis;
+import info.limpet.stackedcharts.model.StackedchartsFactory;
+import info.limpet.stackedcharts.model.StackedchartsPackage;
 
 /**
  * A JUnit Plug-in Test to demonstrate basic EMF operations, such as model manipulaton, persistnce
@@ -32,7 +34,6 @@ public class ModelTests
   {
     URI resourceURI = URI.createFileURI("testRead.stackedcharts");
     Resource resource = new ResourceSetImpl().createResource(resourceURI);
-    Assert.assertNotNull("Created resource", resource);
     try
     {
       resource.load(new HashMap<>());
@@ -45,10 +46,10 @@ public class ModelTests
     ChartSet chartsSet = (ChartSet) resource.getContents().get(0);
 
     Assert.assertNotNull(chartsSet);
-    Assert.assertEquals(1, chartsSet.getCharts().size());
+    Assert.assertEquals(2, chartsSet.getCharts().size());
 
     Chart chart = chartsSet.getCharts().get(0);
-    Assert.assertEquals("Geothermal Gradient", chart.getName());
+    Assert.assertEquals("Temperature & Salinity", chart.getName());
 
   }
 
@@ -58,7 +59,6 @@ public class ModelTests
     ChartSet chartsSet = createModel();
     URI resourceURI = URI.createFileURI("testWrite.stackedcharts");
     Resource resource = new ResourceSetImpl().createResource(resourceURI);
-    Assert.assertNotNull("Created resource", resource);
     resource.getContents().add(chartsSet);
     try
     {
@@ -90,71 +90,90 @@ public class ModelTests
     StackedchartsFactory factory = StackedchartsFactory.eINSTANCE;
 
     ChartSet chartsSet = factory.createChartSet();
-    
+
+    // set the common x axis
+    IndependentAxis depthAxis = factory.createIndependentAxis();
+    depthAxis.setName("Depth");
+    chartsSet.setSharedAxis(depthAxis);
+
     // first chart
     Chart chart1 = factory.createChart();
-    chart1.setName("Geothermal Gradient");
+    chart1.setName("Temperature & Salinity");
     chartsSet.getCharts().add(chart1);
 
-    Axis xAxis1 = factory.createAxis();
-    xAxis1.setName("Depth");
-    chart1.getAxes().add(xAxis1);
-
-    Axis yAxis1 = factory.createAxis();
+    DependentAxis yAxis1 = factory.createDependentAxis();
     yAxis1.setName("Temperature");
     chart1.getAxes().add(yAxis1);
 
     Dataset temperatureVsDepth1 = factory.createDataset();
-    temperatureVsDepth1.setAxis(yAxis1);
-    chart1.getDatasets().add(temperatureVsDepth1);
+    yAxis1.getDatasets().add(temperatureVsDepth1);
 
     DataItem item1 = factory.createDataItem();
     item1.setIndependentVal(1000);
     item1.setDependentVal(30);
-    temperatureVsDepth1.getItems().add(item1);
+    temperatureVsDepth1.getMeasurements().add(item1);
 
     item1 = factory.createDataItem();
     item1.setIndependentVal(2000);
     item1.setDependentVal(50);
-    temperatureVsDepth1.getItems().add(item1);
+    temperatureVsDepth1.getMeasurements().add(item1);
 
     item1 = factory.createDataItem();
     item1.setIndependentVal(3000);
     item1.setDependentVal(60);
-    temperatureVsDepth1.getItems().add(item1);
+    temperatureVsDepth1.getMeasurements().add(item1);
+    
+    // second axis/dataset on this first graph
+    DependentAxis yAxis2 = factory.createDependentAxis();
+    yAxis2.setName("Salinity");
+    yAxis2.setAxisOrigin(AxisOrigin.MAX);
+    chart1.getAxes().add(yAxis2);
+
+    Dataset salinityVsDepth1 = factory.createDataset();
+    yAxis2.getDatasets().add(salinityVsDepth1);
+
+    item1 = factory.createDataItem();
+    item1.setIndependentVal(1000);
+    item1.setDependentVal(3000);
+    salinityVsDepth1.getMeasurements().add(item1);
+
+    item1 = factory.createDataItem();
+    item1.setIndependentVal(2000);
+    item1.setDependentVal(5000);
+    salinityVsDepth1.getMeasurements().add(item1);
+
+    item1 = factory.createDataItem();
+    item1.setIndependentVal(3000);
+    item1.setDependentVal(9000);
+    salinityVsDepth1.getMeasurements().add(item1);
     
     // create a second chart
     // first chart
     Chart chart = factory.createChart();
-    chart.setName("Alternate Gradient");
+    chart.setName("Pressure Gradient");
     chartsSet.getCharts().add(chart);
 
-    Axis xAxis = factory.createAxis();
-    xAxis.setName("Depth");
-    chart.getAxes().add(xAxis);
-
-    Axis yAxis = factory.createAxis();
+    DependentAxis yAxis = factory.createDependentAxis();
     yAxis.setName("Pressure");
     chart.getAxes().add(yAxis);
 
-    Dataset temperatureVsDepth = factory.createDataset();
-    temperatureVsDepth.setAxis(yAxis);
-    chart.getDatasets().add(temperatureVsDepth);
+    Dataset pressureVsDepth = factory.createDataset();
+    yAxis.getDatasets().add(pressureVsDepth);
 
     DataItem item = factory.createDataItem();
     item.setIndependentVal(1000);
-    item.setDependentVal(3);
-    temperatureVsDepth.getItems().add(item);
+    item.setDependentVal(400);
+    pressureVsDepth.getMeasurements().add(item);
+
+    item = factory.createDataItem();
+    item.setIndependentVal(2000);
+    item.setDependentVal(500);
+    pressureVsDepth.getMeasurements().add(item);
 
     item = factory.createDataItem();
     item.setIndependentVal(3000);
-    item.setDependentVal(5);
-    temperatureVsDepth.getItems().add(item);
-
-    item = factory.createDataItem();
-    item.setIndependentVal(3000);
-    item.setDependentVal(6);
-    temperatureVsDepth.getItems().add(item);
+    item.setDependentVal(100);
+    pressureVsDepth.getMeasurements().add(item);
     
     return chartsSet;
   }

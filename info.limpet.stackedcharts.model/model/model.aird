@@ -1204,7 +1204,7 @@
         </ownedStyle>
         <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@edgeMappings[name='EC%20ESupertypes']"/>
       </ownedDiagramElements>
-      <ownedDiagramElements xmi:type="diagram:DEdge" xmi:id="_qg0TIBNvEeal4orqSlvugA" name="[0..*] sharedAxis" sourceNode="_fi4OoBNeEea13aVd91dE-g" targetNode="_bJBCsBNvEeal4orqSlvugA">
+      <ownedDiagramElements xmi:type="diagram:DEdge" xmi:id="_qg0TIBNvEeal4orqSlvugA" name="[0..1] sharedAxis" sourceNode="_fi4OoBNeEea13aVd91dE-g" targetNode="_bJBCsBNvEeal4orqSlvugA">
         <target xmi:type="ecore:EReference" href="model.ecore#//ChartSet/sharedAxis"/>
         <semanticElements xmi:type="ecore:EReference" href="model.ecore#//ChartSet/sharedAxis"/>
         <ownedStyle xmi:type="diagram:EdgeStyle" xmi:id="_qg0TIRNvEeal4orqSlvugA" description="_fj3GEBNeEea13aVd91dE-g" sourceArrow="FillDiamond" routingStyle="manhattan" strokeColor="0,0,0">
