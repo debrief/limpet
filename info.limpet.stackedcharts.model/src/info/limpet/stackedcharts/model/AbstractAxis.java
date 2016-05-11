@@ -2,6 +2,7 @@
  */
 package info.limpet.stackedcharts.model;
 
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 
 /**
@@ -17,9 +18,9 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link info.limpet.stackedcharts.model.AbstractAxis#getName <em>Name</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.AbstractAxis#isAutoScale <em>Auto Scale</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.AbstractAxis#getDirection <em>Direction</em>}</li>
- *   <li>{@link info.limpet.stackedcharts.model.AbstractAxis#getAnnotations <em>Annotations</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.AbstractAxis#getFont <em>Font</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.AbstractAxis#getColor <em>Color</em>}</li>
+ *   <li>{@link info.limpet.stackedcharts.model.AbstractAxis#getAnnotations <em>Annotations</em>}</li>
  * </ul>
  *
  * @see info.limpet.stackedcharts.model.StackedchartsPackage#getAbstractAxis()
@@ -138,32 +139,20 @@ public interface AbstractAxis extends EObject {
 	void setDirection(AxisDirection value);
 
 	/**
-	 * Returns the value of the '<em><b>Annotations</b></em>' reference.
-	 * It is bidirectional and its opposite is '{@link info.limpet.stackedcharts.model.AbstractAnnotation#getChart <em>Chart</em>}'.
+	 * Returns the value of the '<em><b>Annotations</b></em>' containment reference list.
+	 * The list contents are of type {@link info.limpet.stackedcharts.model.AbstractAnnotation}.
 	 * <!-- begin-user-doc -->
 	 * <p>
 	 * If the meaning of the '<em>Annotations</em>' reference isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Annotations</em>' reference.
-	 * @see #setAnnotations(AbstractAnnotation)
+	 * @return the value of the '<em>Annotations</em>' containment reference list.
 	 * @see info.limpet.stackedcharts.model.StackedchartsPackage#getAbstractAxis_Annotations()
-	 * @see info.limpet.stackedcharts.model.AbstractAnnotation#getChart
-	 * @model opposite="chart"
+	 * @model containment="true"
 	 * @generated
 	 */
-	AbstractAnnotation getAnnotations();
-
-	/**
-	 * Sets the value of the '{@link info.limpet.stackedcharts.model.AbstractAxis#getAnnotations <em>Annotations</em>}' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Annotations</em>' reference.
-	 * @see #getAnnotations()
-	 * @generated
-	 */
-	void setAnnotations(AbstractAnnotation value);
+	EList<AbstractAnnotation> getAnnotations();
 
 	/**
 	 * Returns the value of the '<em><b>Font</b></em>' attribute.

@@ -20,8 +20,10 @@ import info.limpet.stackedcharts.model.DataItem;
 import info.limpet.stackedcharts.model.Dataset;
 import info.limpet.stackedcharts.model.DependentAxis;
 import info.limpet.stackedcharts.model.IndependentAxis;
+import info.limpet.stackedcharts.model.Marker;
 import info.limpet.stackedcharts.model.StackedchartsFactory;
 import info.limpet.stackedcharts.model.StackedchartsPackage;
+import info.limpet.stackedcharts.model.Zone;
 
 /**
  * A JUnit Plug-in Test to demonstrate basic EMF operations, such as model manipulaton, persistnce
@@ -167,6 +169,18 @@ public class ModelTests
     Chart chart = factory.createChart();
     chart.setName("Pressure Gradient");
     chartsSet.getCharts().add(chart);
+    
+    // have a go at an annotation on the x axis
+    IndependentAxis shared = chartsSet.getSharedAxis();
+    Marker marker = factory.createMarker();
+    marker.setValue(1200);
+    marker.setName("A marker");
+    shared.getAnnotations().add(marker);
+    Zone zone = factory.createZone();
+    zone.setStart(2100);
+    zone.setEnd(2500);
+    zone.setName("A Zone");    
+    shared.getAnnotations().add(zone);
 
     DependentAxis yAxis = factory.createDependentAxis();
     yAxis.setName("Pressure");

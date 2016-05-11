@@ -241,22 +241,13 @@ public interface StackedchartsPackage extends EPackage {
 	int ABSTRACT_AXIS__DIRECTION = 3;
 
 	/**
-	 * The feature id for the '<em><b>Annotations</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ABSTRACT_AXIS__ANNOTATIONS = 4;
-
-	/**
 	 * The feature id for the '<em><b>Font</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ABSTRACT_AXIS__FONT = 5;
+	int ABSTRACT_AXIS__FONT = 4;
 
 	/**
 	 * The feature id for the '<em><b>Color</b></em>' attribute.
@@ -265,7 +256,16 @@ public interface StackedchartsPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ABSTRACT_AXIS__COLOR = 6;
+	int ABSTRACT_AXIS__COLOR = 5;
+
+	/**
+	 * The feature id for the '<em><b>Annotations</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ABSTRACT_AXIS__ANNOTATIONS = 6;
 
 	/**
 	 * The number of structural features of the '<em>Abstract Axis</em>' class.
@@ -332,15 +332,6 @@ public interface StackedchartsPackage extends EPackage {
 	int DEPENDENT_AXIS__DIRECTION = ABSTRACT_AXIS__DIRECTION;
 
 	/**
-	 * The feature id for the '<em><b>Annotations</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int DEPENDENT_AXIS__ANNOTATIONS = ABSTRACT_AXIS__ANNOTATIONS;
-
-	/**
 	 * The feature id for the '<em><b>Font</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -357,6 +348,15 @@ public interface StackedchartsPackage extends EPackage {
 	 * @ordered
 	 */
 	int DEPENDENT_AXIS__COLOR = ABSTRACT_AXIS__COLOR;
+
+	/**
+	 * The feature id for the '<em><b>Annotations</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int DEPENDENT_AXIS__ANNOTATIONS = ABSTRACT_AXIS__ANNOTATIONS;
 
 	/**
 	 * The feature id for the '<em><b>Parent</b></em>' container reference.
@@ -524,22 +524,13 @@ public interface StackedchartsPackage extends EPackage {
 	int ABSTRACT_ANNOTATION__COLOR = 1;
 
 	/**
-	 * The feature id for the '<em><b>Chart</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ABSTRACT_ANNOTATION__CHART = 2;
-
-	/**
 	 * The number of structural features of the '<em>Abstract Annotation</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ABSTRACT_ANNOTATION_FEATURE_COUNT = 3;
+	int ABSTRACT_ANNOTATION_FEATURE_COUNT = 2;
 
 	/**
 	 * The number of operations of the '<em>Abstract Annotation</em>' class.
@@ -577,15 +568,6 @@ public interface StackedchartsPackage extends EPackage {
 	 * @ordered
 	 */
 	int ZONE__COLOR = ABSTRACT_ANNOTATION__COLOR;
-
-	/**
-	 * The feature id for the '<em><b>Chart</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ZONE__CHART = ABSTRACT_ANNOTATION__CHART;
 
 	/**
 	 * The feature id for the '<em><b>Start</b></em>' attribute.
@@ -650,15 +632,6 @@ public interface StackedchartsPackage extends EPackage {
 	 * @ordered
 	 */
 	int MARKER__COLOR = ABSTRACT_ANNOTATION__COLOR;
-
-	/**
-	 * The feature id for the '<em><b>Chart</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MARKER__CHART = ABSTRACT_ANNOTATION__CHART;
 
 	/**
 	 * The feature id for the '<em><b>Value</b></em>' attribute.
@@ -971,15 +944,6 @@ public interface StackedchartsPackage extends EPackage {
 	int INDEPENDENT_AXIS__DIRECTION = ABSTRACT_AXIS__DIRECTION;
 
 	/**
-	 * The feature id for the '<em><b>Annotations</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int INDEPENDENT_AXIS__ANNOTATIONS = ABSTRACT_AXIS__ANNOTATIONS;
-
-	/**
 	 * The feature id for the '<em><b>Font</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -996,6 +960,15 @@ public interface StackedchartsPackage extends EPackage {
 	 * @ordered
 	 */
 	int INDEPENDENT_AXIS__COLOR = ABSTRACT_AXIS__COLOR;
+
+	/**
+	 * The feature id for the '<em><b>Annotations</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int INDEPENDENT_AXIS__ANNOTATIONS = ABSTRACT_AXIS__ANNOTATIONS;
 
 	/**
 	 * The number of structural features of the '<em>Independent Axis</em>' class.
@@ -1042,15 +1015,6 @@ public interface StackedchartsPackage extends EPackage {
 	 * @ordered
 	 */
 	int SCATTER_SET__COLOR = ABSTRACT_ANNOTATION__COLOR;
-
-	/**
-	 * The feature id for the '<em><b>Chart</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int SCATTER_SET__CHART = ABSTRACT_ANNOTATION__CHART;
 
 	/**
 	 * The feature id for the '<em><b>Datums</b></em>' containment reference list.
@@ -1426,17 +1390,6 @@ public interface StackedchartsPackage extends EPackage {
 	EAttribute getAbstractAnnotation_Color();
 
 	/**
-	 * Returns the meta object for the reference '{@link info.limpet.stackedcharts.model.AbstractAnnotation#getChart <em>Chart</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference '<em>Chart</em>'.
-	 * @see info.limpet.stackedcharts.model.AbstractAnnotation#getChart()
-	 * @see #getAbstractAnnotation()
-	 * @generated
-	 */
-	EReference getAbstractAnnotation_Chart();
-
-	/**
 	 * Returns the meta object for class '{@link info.limpet.stackedcharts.model.Zone <em>Zone</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1673,10 +1626,10 @@ public interface StackedchartsPackage extends EPackage {
 	EAttribute getAbstractAxis_Direction();
 
 	/**
-	 * Returns the meta object for the reference '{@link info.limpet.stackedcharts.model.AbstractAxis#getAnnotations <em>Annotations</em>}'.
+	 * Returns the meta object for the containment reference list '{@link info.limpet.stackedcharts.model.AbstractAxis#getAnnotations <em>Annotations</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference '<em>Annotations</em>'.
+	 * @return the meta object for the containment reference list '<em>Annotations</em>'.
 	 * @see info.limpet.stackedcharts.model.AbstractAxis#getAnnotations()
 	 * @see #getAbstractAxis()
 	 * @generated
@@ -2035,14 +1988,6 @@ public interface StackedchartsPackage extends EPackage {
 		EAttribute ABSTRACT_ANNOTATION__COLOR = eINSTANCE.getAbstractAnnotation_Color();
 
 		/**
-		 * The meta object literal for the '<em><b>Chart</b></em>' reference feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference ABSTRACT_ANNOTATION__CHART = eINSTANCE.getAbstractAnnotation_Chart();
-
-		/**
 		 * The meta object literal for the '{@link info.limpet.stackedcharts.model.impl.ZoneImpl <em>Zone</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -2231,7 +2176,7 @@ public interface StackedchartsPackage extends EPackage {
 		EAttribute ABSTRACT_AXIS__DIRECTION = eINSTANCE.getAbstractAxis_Direction();
 
 		/**
-		 * The meta object literal for the '<em><b>Annotations</b></em>' reference feature.
+		 * The meta object literal for the '<em><b>Annotations</b></em>' containment reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated

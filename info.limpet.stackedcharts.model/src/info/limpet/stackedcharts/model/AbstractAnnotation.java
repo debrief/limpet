@@ -19,7 +19,6 @@ import org.eclipse.emf.ecore.EObject;
  * <ul>
  *   <li>{@link info.limpet.stackedcharts.model.AbstractAnnotation#getName <em>Name</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.AbstractAnnotation#getColor <em>Color</em>}</li>
- *   <li>{@link info.limpet.stackedcharts.model.AbstractAnnotation#getChart <em>Chart</em>}</li>
  * </ul>
  *
  * @see info.limpet.stackedcharts.model.StackedchartsPackage#getAbstractAnnotation()
@@ -78,33 +77,5 @@ public interface AbstractAnnotation extends EObject {
 	 * @generated
 	 */
 	void setColor(String value);
-
-	/**
-	 * Returns the value of the '<em><b>Chart</b></em>' reference.
-	 * It is bidirectional and its opposite is '{@link info.limpet.stackedcharts.model.AbstractAxis#getAnnotations <em>Annotations</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Chart</em>' reference isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Chart</em>' reference.
-	 * @see #setChart(AbstractAxis)
-	 * @see info.limpet.stackedcharts.model.StackedchartsPackage#getAbstractAnnotation_Chart()
-	 * @see info.limpet.stackedcharts.model.AbstractAxis#getAnnotations
-	 * @model opposite="annotations"
-	 * @generated
-	 */
-	AbstractAxis getChart();
-
-	/**
-	 * Sets the value of the '{@link info.limpet.stackedcharts.model.AbstractAnnotation#getChart <em>Chart</em>}' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Chart</em>' reference.
-	 * @see #getChart()
-	 * @generated
-	 */
-	void setChart(AbstractAxis value);
 
 } // AbstractAnnotation

@@ -467,15 +467,6 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getAbstractAnnotation_Chart() {
-		return (EReference)abstractAnnotationEClass.getEStructuralFeatures().get(2);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public EClass getZone() {
 		return zoneEClass;
 	}
@@ -675,7 +666,7 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
 	 * @generated
 	 */
 	public EReference getAbstractAxis_Annotations() {
-		return (EReference)abstractAxisEClass.getEStructuralFeatures().get(4);
+		return (EReference)abstractAxisEClass.getEStructuralFeatures().get(6);
 	}
 
 	/**
@@ -684,7 +675,7 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
 	 * @generated
 	 */
 	public EAttribute getAbstractAxis_Font() {
-		return (EAttribute)abstractAxisEClass.getEStructuralFeatures().get(5);
+		return (EAttribute)abstractAxisEClass.getEStructuralFeatures().get(4);
 	}
 
 	/**
@@ -693,7 +684,7 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
 	 * @generated
 	 */
 	public EAttribute getAbstractAxis_Color() {
-		return (EAttribute)abstractAxisEClass.getEStructuralFeatures().get(6);
+		return (EAttribute)abstractAxisEClass.getEStructuralFeatures().get(5);
 	}
 
 	/**
@@ -843,7 +834,6 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
 		abstractAnnotationEClass = createEClass(ABSTRACT_ANNOTATION);
 		createEAttribute(abstractAnnotationEClass, ABSTRACT_ANNOTATION__NAME);
 		createEAttribute(abstractAnnotationEClass, ABSTRACT_ANNOTATION__COLOR);
-		createEReference(abstractAnnotationEClass, ABSTRACT_ANNOTATION__CHART);
 
 		zoneEClass = createEClass(ZONE);
 		createEAttribute(zoneEClass, ZONE__START);
@@ -872,9 +862,9 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
 		createEAttribute(abstractAxisEClass, ABSTRACT_AXIS__NAME);
 		createEAttribute(abstractAxisEClass, ABSTRACT_AXIS__AUTO_SCALE);
 		createEAttribute(abstractAxisEClass, ABSTRACT_AXIS__DIRECTION);
-		createEReference(abstractAxisEClass, ABSTRACT_AXIS__ANNOTATIONS);
 		createEAttribute(abstractAxisEClass, ABSTRACT_AXIS__FONT);
 		createEAttribute(abstractAxisEClass, ABSTRACT_AXIS__COLOR);
+		createEReference(abstractAxisEClass, ABSTRACT_AXIS__ANNOTATIONS);
 
 		independentAxisEClass = createEClass(INDEPENDENT_AXIS);
 
@@ -961,7 +951,6 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
 		initEClass(abstractAnnotationEClass, AbstractAnnotation.class, "AbstractAnnotation", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getAbstractAnnotation_Name(), ecorePackage.getEString(), "name", null, 0, 1, AbstractAnnotation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getAbstractAnnotation_Color(), ecorePackage.getEString(), "color", null, 0, 1, AbstractAnnotation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getAbstractAnnotation_Chart(), this.getAbstractAxis(), this.getAbstractAxis_Annotations(), "chart", null, 0, 1, AbstractAnnotation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(zoneEClass, Zone.class, "Zone", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getZone_Start(), ecorePackage.getEDouble(), "start", null, 0, 1, Zone.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -990,9 +979,9 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
 		initEAttribute(getAbstractAxis_Name(), ecorePackage.getEString(), "name", null, 0, 1, AbstractAxis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getAbstractAxis_AutoScale(), theXMLTypePackage.getBoolean(), "autoScale", null, 0, 1, AbstractAxis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getAbstractAxis_Direction(), this.getAxisDirection(), "direction", null, 0, 1, AbstractAxis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getAbstractAxis_Annotations(), this.getAbstractAnnotation(), this.getAbstractAnnotation_Chart(), "annotations", null, 0, 1, AbstractAxis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getAbstractAxis_Font(), ecorePackage.getEString(), "font", null, 0, 1, AbstractAxis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getAbstractAxis_Color(), ecorePackage.getEString(), "color", null, 0, 1, AbstractAxis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getAbstractAxis_Annotations(), this.getAbstractAnnotation(), null, "annotations", null, 0, -1, AbstractAxis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(independentAxisEClass, IndependentAxis.class, "IndependentAxis", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 

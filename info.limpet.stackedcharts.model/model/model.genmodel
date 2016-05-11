@@ -59,7 +59,6 @@
     <genClasses ecoreClass="model.ecore#//AbstractAnnotation">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//AbstractAnnotation/name"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//AbstractAnnotation/color"/>
-      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference model.ecore#//AbstractAnnotation/chart"/>
     </genClasses>
     <genClasses ecoreClass="model.ecore#//Zone">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//Zone/start"/>
@@ -88,9 +87,9 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//AbstractAxis/name"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//AbstractAxis/autoScale"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//AbstractAxis/direction"/>
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference model.ecore#//AbstractAxis/annotations"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//AbstractAxis/font"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//AbstractAxis/color"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference model.ecore#//AbstractAxis/annotations"/>
     </genClasses>
     <genClasses ecoreClass="model.ecore#//IndependentAxis"/>
     <genClasses ecoreClass="model.ecore#//ScatterSet">

@@ -8,14 +8,18 @@ import info.limpet.stackedcharts.model.AxisDirection;
 import info.limpet.stackedcharts.model.AxisScale;
 import info.limpet.stackedcharts.model.StackedchartsPackage;
 
+import java.util.Collection;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
 
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
+import org.eclipse.emf.ecore.util.EObjectContainmentEList;
+import org.eclipse.emf.ecore.util.InternalEList;
 
 /**
  * <!-- begin-user-doc -->
@@ -29,9 +33,9 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
  *   <li>{@link info.limpet.stackedcharts.model.impl.AbstractAxisImpl#getName <em>Name</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.impl.AbstractAxisImpl#isAutoScale <em>Auto Scale</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.impl.AbstractAxisImpl#getDirection <em>Direction</em>}</li>
- *   <li>{@link info.limpet.stackedcharts.model.impl.AbstractAxisImpl#getAnnotations <em>Annotations</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.impl.AbstractAxisImpl#getFont <em>Font</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.impl.AbstractAxisImpl#getColor <em>Color</em>}</li>
+ *   <li>{@link info.limpet.stackedcharts.model.impl.AbstractAxisImpl#getAnnotations <em>Annotations</em>}</li>
  * </ul>
  *
  * @generated
@@ -118,16 +122,6 @@ public abstract class AbstractAxisImpl extends MinimalEObjectImpl.Container impl
 	protected AxisDirection direction = DIRECTION_EDEFAULT;
 
 	/**
-	 * The cached value of the '{@link #getAnnotations() <em>Annotations</em>}' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getAnnotations()
-	 * @generated
-	 * @ordered
-	 */
-	protected AbstractAnnotation annotations;
-
-	/**
 	 * The default value of the '{@link #getFont() <em>Font</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -166,6 +160,16 @@ public abstract class AbstractAxisImpl extends MinimalEObjectImpl.Container impl
 	 * @ordered
 	 */
 	protected String color = COLOR_EDEFAULT;
+
+	/**
+	 * The cached value of the '{@link #getAnnotations() <em>Annotations</em>}' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getAnnotations()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<AbstractAnnotation> annotations;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -275,59 +279,11 @@ public abstract class AbstractAxisImpl extends MinimalEObjectImpl.Container impl
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public AbstractAnnotation getAnnotations() {
-		if (annotations != null && annotations.eIsProxy()) {
-			InternalEObject oldAnnotations = (InternalEObject)annotations;
-			annotations = (AbstractAnnotation)eResolveProxy(oldAnnotations);
-			if (annotations != oldAnnotations) {
-				if (eNotificationRequired())
-					eNotify(new ENotificationImpl(this, Notification.RESOLVE, StackedchartsPackage.ABSTRACT_AXIS__ANNOTATIONS, oldAnnotations, annotations));
-			}
+	public EList<AbstractAnnotation> getAnnotations() {
+		if (annotations == null) {
+			annotations = new EObjectContainmentEList<AbstractAnnotation>(AbstractAnnotation.class, this, StackedchartsPackage.ABSTRACT_AXIS__ANNOTATIONS);
 		}
 		return annotations;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public AbstractAnnotation basicGetAnnotations() {
-		return annotations;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public NotificationChain basicSetAnnotations(AbstractAnnotation newAnnotations, NotificationChain msgs) {
-		AbstractAnnotation oldAnnotations = annotations;
-		annotations = newAnnotations;
-		if (eNotificationRequired()) {
-			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, StackedchartsPackage.ABSTRACT_AXIS__ANNOTATIONS, oldAnnotations, newAnnotations);
-			if (msgs == null) msgs = notification; else msgs.add(notification);
-		}
-		return msgs;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setAnnotations(AbstractAnnotation newAnnotations) {
-		if (newAnnotations != annotations) {
-			NotificationChain msgs = null;
-			if (annotations != null)
-				msgs = ((InternalEObject)annotations).eInverseRemove(this, StackedchartsPackage.ABSTRACT_ANNOTATION__CHART, AbstractAnnotation.class, msgs);
-			if (newAnnotations != null)
-				msgs = ((InternalEObject)newAnnotations).eInverseAdd(this, StackedchartsPackage.ABSTRACT_ANNOTATION__CHART, AbstractAnnotation.class, msgs);
-			msgs = basicSetAnnotations(newAnnotations, msgs);
-			if (msgs != null) msgs.dispatch();
-		}
-		else if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, StackedchartsPackage.ABSTRACT_AXIS__ANNOTATIONS, newAnnotations, newAnnotations));
 	}
 
 	/**
@@ -378,26 +334,10 @@ public abstract class AbstractAxisImpl extends MinimalEObjectImpl.Container impl
 	 * @generated
 	 */
 	@Override
-	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
-		switch (featureID) {
-			case StackedchartsPackage.ABSTRACT_AXIS__ANNOTATIONS:
-				if (annotations != null)
-					msgs = ((InternalEObject)annotations).eInverseRemove(this, StackedchartsPackage.ABSTRACT_ANNOTATION__CHART, AbstractAnnotation.class, msgs);
-				return basicSetAnnotations((AbstractAnnotation)otherEnd, msgs);
-		}
-		return super.eInverseAdd(otherEnd, featureID, msgs);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
 			case StackedchartsPackage.ABSTRACT_AXIS__ANNOTATIONS:
-				return basicSetAnnotations(null, msgs);
+				return ((InternalEList<?>)getAnnotations()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -418,13 +358,12 @@ public abstract class AbstractAxisImpl extends MinimalEObjectImpl.Container impl
 				return isAutoScale();
 			case StackedchartsPackage.ABSTRACT_AXIS__DIRECTION:
 				return getDirection();
-			case StackedchartsPackage.ABSTRACT_AXIS__ANNOTATIONS:
-				if (resolve) return getAnnotations();
-				return basicGetAnnotations();
 			case StackedchartsPackage.ABSTRACT_AXIS__FONT:
 				return getFont();
 			case StackedchartsPackage.ABSTRACT_AXIS__COLOR:
 				return getColor();
+			case StackedchartsPackage.ABSTRACT_AXIS__ANNOTATIONS:
+				return getAnnotations();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -434,6 +373,7 @@ public abstract class AbstractAxisImpl extends MinimalEObjectImpl.Container impl
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
@@ -449,14 +389,15 @@ public abstract class AbstractAxisImpl extends MinimalEObjectImpl.Container impl
 			case StackedchartsPackage.ABSTRACT_AXIS__DIRECTION:
 				setDirection((AxisDirection)newValue);
 				return;
-			case StackedchartsPackage.ABSTRACT_AXIS__ANNOTATIONS:
-				setAnnotations((AbstractAnnotation)newValue);
-				return;
 			case StackedchartsPackage.ABSTRACT_AXIS__FONT:
 				setFont((String)newValue);
 				return;
 			case StackedchartsPackage.ABSTRACT_AXIS__COLOR:
 				setColor((String)newValue);
+				return;
+			case StackedchartsPackage.ABSTRACT_AXIS__ANNOTATIONS:
+				getAnnotations().clear();
+				getAnnotations().addAll((Collection<? extends AbstractAnnotation>)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -482,14 +423,14 @@ public abstract class AbstractAxisImpl extends MinimalEObjectImpl.Container impl
 			case StackedchartsPackage.ABSTRACT_AXIS__DIRECTION:
 				setDirection(DIRECTION_EDEFAULT);
 				return;
-			case StackedchartsPackage.ABSTRACT_AXIS__ANNOTATIONS:
-				setAnnotations((AbstractAnnotation)null);
-				return;
 			case StackedchartsPackage.ABSTRACT_AXIS__FONT:
 				setFont(FONT_EDEFAULT);
 				return;
 			case StackedchartsPackage.ABSTRACT_AXIS__COLOR:
 				setColor(COLOR_EDEFAULT);
+				return;
+			case StackedchartsPackage.ABSTRACT_AXIS__ANNOTATIONS:
+				getAnnotations().clear();
 				return;
 		}
 		super.eUnset(featureID);
@@ -511,12 +452,12 @@ public abstract class AbstractAxisImpl extends MinimalEObjectImpl.Container impl
 				return autoScale != AUTO_SCALE_EDEFAULT;
 			case StackedchartsPackage.ABSTRACT_AXIS__DIRECTION:
 				return direction != DIRECTION_EDEFAULT;
-			case StackedchartsPackage.ABSTRACT_AXIS__ANNOTATIONS:
-				return annotations != null;
 			case StackedchartsPackage.ABSTRACT_AXIS__FONT:
 				return FONT_EDEFAULT == null ? font != null : !FONT_EDEFAULT.equals(font);
 			case StackedchartsPackage.ABSTRACT_AXIS__COLOR:
 				return COLOR_EDEFAULT == null ? color != null : !COLOR_EDEFAULT.equals(color);
+			case StackedchartsPackage.ABSTRACT_AXIS__ANNOTATIONS:
+				return annotations != null && !annotations.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}
