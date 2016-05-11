@@ -16,7 +16,11 @@ public class ChartSetEditPart extends AbstractGraphicalEditPart
   protected IFigure createFigure()
   {
     RectangleFigure rectangle = new RectangleFigure();
-    rectangle.setLayoutManager(new FlowLayout());
+    rectangle.setOutline(false);
+    FlowLayout flowLayout = new FlowLayout();
+    flowLayout.setMinorSpacing(20);
+    flowLayout.setHorizontal(false);
+    rectangle.setLayoutManager(flowLayout);
     return rectangle;
   }
 
