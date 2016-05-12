@@ -10305,7 +10305,7 @@
               <size>1</size>
             </default>
             <int>1</int>
-            <Temporal.Angle__Degs id="149" name="ShortBearing">
+            <Temporal.Angle__Degs id="149" name="Bearing">
               <values id="150">
                 <TransformedUnit id="151">
                   <__parentUnit class="AlternateUnit" id="152">
@@ -10322,9 +10322,6 @@
                 <double>59.3</double>
                 <double>59.3</double>
                 <double>59.5</double>
-                <double>60.0</double>
-                <double>60.8</double>
-                <double>61.3</double>
                 <double>61.3</double>
                 <double>61.8</double>
                 <double>62.0</double>
@@ -10355,12 +10352,6 @@
                 <double>67.8</double>
                 <double>67.0</double>
                 <double>66.5</double>
-                <double>66.0</double>
-                <double>65.8</double>
-                <double>65.3</double>
-                <double>65.3</double>
-                <double>65.3</double>
-                <double>64.3</double>
                 <double>64.3</double>
                 <double>64.3</double>
                 <double>63.5</double>
@@ -10379,9 +10370,6 @@
                 <time>2009-07-22T04:15:22</time>
                 <time>2009-07-22T04:16:45</time>
                 <time>2009-07-22T04:18:25</time>
-                <time>2009-07-22T04:20:36</time>
-                <time>2009-07-22T04:23:12</time>
-                <time>2009-07-22T04:25:35</time>
                 <time>2009-07-22T04:27:11</time>
                 <time>2009-07-22T04:29:18</time>
                 <time>2009-07-22T04:31:34</time>
@@ -10412,12 +10400,6 @@
                 <time>2009-07-22T05:04:34</time>
                 <time>2009-07-22T05:06:02</time>
                 <time>2009-07-22T05:07:57</time>
-                <time>2009-07-22T05:09:13</time>
-                <time>2009-07-22T05:10:44</time>
-                <time>2009-07-22T05:12:00</time>
-                <time>2009-07-22T05:13:20</time>
-                <time>2009-07-22T05:14:04</time>
-                <time>2009-07-22T05:15:35</time>
                 <time>2009-07-22T05:16:39</time>
                 <time>2009-07-22T05:18:11</time>
                 <time>2009-07-22T05:19:11</time>
