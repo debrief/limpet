@@ -11,17 +11,21 @@ import info.limpet.stackedcharts.model.Orientation;
 import info.limpet.stackedcharts.model.StackedchartsFactory;
 import info.limpet.stackedcharts.model.Zone;
 
+import java.util.Date;
+
 import org.eclipse.emf.common.util.EList;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.AxisLocation;
+import org.jfree.chart.axis.DateAxis;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.CombinedDomainXYPlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.StandardXYItemRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
-import org.jfree.data.xy.XYSeries;
-import org.jfree.data.xy.XYSeriesCollection;
+import org.jfree.data.time.Millisecond;
+import org.jfree.data.time.TimeSeries;
+import org.jfree.data.time.TimeSeriesCollection;
 
 public class ChartBuilder
 {
@@ -42,27 +46,30 @@ public class ChartBuilder
 
     if (sharedAxis == null)
     {
-      plot = new CombinedDomainXYPlot();
+      DateAxis parentAxis = new DateAxis("Time");
+      plot = new CombinedDomainXYPlot(parentAxis);
     }
     else
     {
-      NumberAxis parentAxis = new NumberAxis(sharedAxis.getName());
       // TODO: set sharedAxis config to parentAxis
-
+      DateAxis parentAxis = new DateAxis(sharedAxis.getName());
       plot = new CombinedDomainXYPlot(parentAxis);
     }
     EList<Chart> charts = chartsSet.getCharts();
     for (Chart chart : charts)
     {
       // sub plots
+      
+      // TODO - we have to build up multiple axes, according to the minAxes
+      // & maxAxes
 
       final XYItemRenderer renderer = new StandardXYItemRenderer();
       final NumberAxis chartAxis = new NumberAxis(chart.getName());
-      final XYSeriesCollection collection = new XYSeriesCollection();
+      final TimeSeriesCollection collection = new TimeSeriesCollection();
       EList<DependentAxis> minAxes = chart.getMinAxes();
       for (DependentAxis dependentAxis : minAxes)
       {
-        final XYSeries series = new XYSeries(dependentAxis.getName());
+        final TimeSeries series = new TimeSeries(dependentAxis.getName());
         collection.addSeries(series);
         buildAxsis(dependentAxis, series);
       }
@@ -70,7 +77,7 @@ public class ChartBuilder
       EList<DependentAxis> maxAxes = chart.getMaxAxes();
       for (DependentAxis dependentAxis : maxAxes)
       {
-        final XYSeries series = new XYSeries(dependentAxis.getName());
+        final TimeSeries series = new TimeSeries(dependentAxis.getName());
         collection.addSeries(series);
         buildAxsis(dependentAxis, series);
       }
@@ -87,7 +94,7 @@ public class ChartBuilder
     return new JFreeChart(plot);
   }
 
-  private void buildAxsis(DependentAxis dependentAxis, final XYSeries series)
+  private void buildAxsis(DependentAxis dependentAxis, final TimeSeries series)
   {
     EList<Dataset> datasets = dependentAxis.getDatasets();
     for (Dataset dataset : datasets)
@@ -95,8 +102,11 @@ public class ChartBuilder
       EList<DataItem> measurements = dataset.getMeasurements();
       for (DataItem dataItem : measurements)
       {
+        // sort out the time
+        Millisecond time = new Millisecond(new Date((long)dataItem.getIndependentVal()));
+        
         series
-            .add(dataItem.getIndependentVal(), dataItem.getDependentVal());
+            .add(time, dataItem.getDependentVal());
       }
     }
   }
