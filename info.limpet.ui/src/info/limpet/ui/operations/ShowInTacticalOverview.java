@@ -237,6 +237,8 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
     res.setOrientation(Orientation.VERTICAL);
     
     IndependentAxis timeAxis = factory.createIndependentAxis();
+    
+    // ok, make it a time axis
     timeAxis.setAxisType(AxisType.TIME);
     res.setSharedAxis(timeAxis);
 
