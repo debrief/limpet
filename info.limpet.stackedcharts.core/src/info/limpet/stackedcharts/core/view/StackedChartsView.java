@@ -1,5 +1,7 @@
 package info.limpet.stackedcharts.core.view;
 
+import info.limpet.stackedcharts.model.ChartSet;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -33,6 +35,7 @@ public class StackedChartsView extends ViewPart
 
   // effects
   protected TransitionManager transitionManager = null;
+  private Composite chartHolder;
 
   @Override
   public void createPartControl(Composite parent)
@@ -95,15 +98,22 @@ public class StackedChartsView extends ViewPart
     }
 
   }
-
-  protected Control createChartView()
+  
+  public void setModel(ChartSet charts)
   {
-
-    Composite base = new Composite(stackedPane, SWT.NONE);
-    base.setLayout(new FillLayout());
-   
-    JFreeChart chart = createChart();
-    ChartComposite  _chartComposite = new ChartComposite(base, SWT.NONE, chart, true)
+    // remove any existing base items
+    if(chartHolder != null)
+    {
+      for (Control control : chartHolder.getChildren()) 
+      {
+        control.dispose();
+      }
+    }
+      
+    // and now repopulate
+    JFreeChart chart =  new ChartBuilder(charts).build();
+    @SuppressWarnings("unused")
+    ChartComposite  _chartComposite = new ChartComposite(chartHolder, SWT.NONE, chart, true)
     {
       @Override
       public void mouseUp(MouseEvent event)
@@ -117,16 +127,39 @@ public class StackedChartsView extends ViewPart
       }
     };
     
-    
-    
-    return base;
+    chartHolder.pack(true);
+    chartHolder.layout();
   }
 
-  private JFreeChart createChart()
+  protected Control createChartView()
   {
+
+    chartHolder = new Composite(stackedPane, SWT.NONE);
+    chartHolder.setLayout(new FillLayout());
+   
+//    JFreeChart chart = createChart();
+//    @SuppressWarnings("unused")
+//    ChartComposite  _chartComposite = new ChartComposite(chartHolder, SWT.NONE, chart, true)
+//    {
+//      @Override
+//      public void mouseUp(MouseEvent event)
+//      {
+//        super.mouseUp(event);
+//        JFreeChart c = getChart();
+//        if (c != null)
+//        {
+//          c.setNotify(true); // force redraw
+//        }
+//      }
+//    };
     
-    return new ChartBuilder(ChartBuilder.createDummyModel()).build();
+    return chartHolder;
   }
+
+//  private JFreeChart createChart()
+//  {
+//    return new ChartBuilder(ChartBuilder.createDummyModel()).build();
+//  }
 
   protected Control createEditView()
   {
