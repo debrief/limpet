@@ -3,11 +3,18 @@
 package info.limpet.stackedcharts.model.impl;
 
 import info.limpet.stackedcharts.model.AbstractAnnotation;
+import info.limpet.stackedcharts.model.Chart;
 import info.limpet.stackedcharts.model.StackedchartsPackage;
+import java.util.Collection;
 import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.notify.NotificationChain;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
+import org.eclipse.emf.ecore.util.EObjectContainmentEList;
+import org.eclipse.emf.ecore.util.InternalEList;
 
 /**
  * <!-- begin-user-doc -->
@@ -19,6 +26,7 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
  * <ul>
  *   <li>{@link info.limpet.stackedcharts.model.impl.AbstractAnnotationImpl#getName <em>Name</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.impl.AbstractAnnotationImpl#getColor <em>Color</em>}</li>
+ *   <li>{@link info.limpet.stackedcharts.model.impl.AbstractAnnotationImpl#getAppearsIn <em>Appears In</em>}</li>
  * </ul>
  *
  * @generated
@@ -63,6 +71,16 @@ public abstract class AbstractAnnotationImpl extends MinimalEObjectImpl.Containe
 	 * @ordered
 	 */
 	protected String color = COLOR_EDEFAULT;
+
+	/**
+	 * The cached value of the '{@link #getAppearsIn() <em>Appears In</em>}' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getAppearsIn()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<Chart> appearsIn;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -130,6 +148,32 @@ public abstract class AbstractAnnotationImpl extends MinimalEObjectImpl.Containe
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EList<Chart> getAppearsIn() {
+		if (appearsIn == null) {
+			appearsIn = new EObjectContainmentEList<Chart>(Chart.class, this, StackedchartsPackage.ABSTRACT_ANNOTATION__APPEARS_IN);
+		}
+		return appearsIn;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
+		switch (featureID) {
+			case StackedchartsPackage.ABSTRACT_ANNOTATION__APPEARS_IN:
+				return ((InternalEList<?>)getAppearsIn()).basicRemove(otherEnd, msgs);
+		}
+		return super.eInverseRemove(otherEnd, featureID, msgs);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
@@ -137,6 +181,8 @@ public abstract class AbstractAnnotationImpl extends MinimalEObjectImpl.Containe
 				return getName();
 			case StackedchartsPackage.ABSTRACT_ANNOTATION__COLOR:
 				return getColor();
+			case StackedchartsPackage.ABSTRACT_ANNOTATION__APPEARS_IN:
+				return getAppearsIn();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -156,6 +202,10 @@ public abstract class AbstractAnnotationImpl extends MinimalEObjectImpl.Containe
 			case StackedchartsPackage.ABSTRACT_ANNOTATION__COLOR:
 				setColor((String)newValue);
 				return;
+			case StackedchartsPackage.ABSTRACT_ANNOTATION__APPEARS_IN:
+				getAppearsIn().clear();
+				getAppearsIn().addAll((Collection<? extends Chart>)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -174,6 +224,9 @@ public abstract class AbstractAnnotationImpl extends MinimalEObjectImpl.Containe
 			case StackedchartsPackage.ABSTRACT_ANNOTATION__COLOR:
 				setColor(COLOR_EDEFAULT);
 				return;
+			case StackedchartsPackage.ABSTRACT_ANNOTATION__APPEARS_IN:
+				getAppearsIn().clear();
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -190,6 +243,8 @@ public abstract class AbstractAnnotationImpl extends MinimalEObjectImpl.Containe
 				return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
 			case StackedchartsPackage.ABSTRACT_ANNOTATION__COLOR:
 				return COLOR_EDEFAULT == null ? color != null : !COLOR_EDEFAULT.equals(color);
+			case StackedchartsPackage.ABSTRACT_ANNOTATION__APPEARS_IN:
+				return appearsIn != null && !appearsIn.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}

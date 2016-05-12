@@ -466,6 +466,15 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EReference getAbstractAnnotation_AppearsIn() {
+		return (EReference)abstractAnnotationEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getZone() {
 		return zoneEClass;
 	}
@@ -850,6 +859,7 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
 		abstractAnnotationEClass = createEClass(ABSTRACT_ANNOTATION);
 		createEAttribute(abstractAnnotationEClass, ABSTRACT_ANNOTATION__NAME);
 		createEAttribute(abstractAnnotationEClass, ABSTRACT_ANNOTATION__COLOR);
+		createEReference(abstractAnnotationEClass, ABSTRACT_ANNOTATION__APPEARS_IN);
 
 		zoneEClass = createEClass(ZONE);
 		createEAttribute(zoneEClass, ZONE__START);
@@ -968,6 +978,7 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
 		initEClass(abstractAnnotationEClass, AbstractAnnotation.class, "AbstractAnnotation", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getAbstractAnnotation_Name(), ecorePackage.getEString(), "name", null, 0, 1, AbstractAnnotation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getAbstractAnnotation_Color(), ecorePackage.getEString(), "color", null, 0, 1, AbstractAnnotation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getAbstractAnnotation_AppearsIn(), this.getChart(), null, "appearsIn", null, 0, -1, AbstractAnnotation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(zoneEClass, Zone.class, "Zone", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getZone_Start(), ecorePackage.getEDouble(), "start", null, 0, 1, Zone.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

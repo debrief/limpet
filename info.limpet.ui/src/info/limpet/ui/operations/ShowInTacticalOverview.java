@@ -19,6 +19,7 @@ import info.limpet.IContext;
 import info.limpet.IOperation;
 import info.limpet.IStore;
 import info.limpet.IStoreItem;
+import info.limpet.ITemporalObjectCollection;
 import info.limpet.ITemporalQuantityCollection;
 import info.limpet.data.commands.AbstractCommand;
 import info.limpet.data.operations.CollectionComplianceTests;
@@ -327,7 +328,10 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
           StoreGroup sensor = (StoreGroup) thisG;
           if (sensor.size() != 1)
           {
-            // and lastly the sensor chart
+            ITemporalObjectCollection<Object> cuts = (ITemporalObjectCollection<Object>) sensor.get(0);
+            
+            
+            
           }
         }
       }

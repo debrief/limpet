@@ -533,13 +533,22 @@ public interface StackedchartsPackage extends EPackage {
 	int ABSTRACT_ANNOTATION__COLOR = 1;
 
 	/**
+	 * The feature id for the '<em><b>Appears In</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ABSTRACT_ANNOTATION__APPEARS_IN = 2;
+
+	/**
 	 * The number of structural features of the '<em>Abstract Annotation</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ABSTRACT_ANNOTATION_FEATURE_COUNT = 2;
+	int ABSTRACT_ANNOTATION_FEATURE_COUNT = 3;
 
 	/**
 	 * The number of operations of the '<em>Abstract Annotation</em>' class.
@@ -577,6 +586,15 @@ public interface StackedchartsPackage extends EPackage {
 	 * @ordered
 	 */
 	int ZONE__COLOR = ABSTRACT_ANNOTATION__COLOR;
+
+	/**
+	 * The feature id for the '<em><b>Appears In</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ZONE__APPEARS_IN = ABSTRACT_ANNOTATION__APPEARS_IN;
 
 	/**
 	 * The feature id for the '<em><b>Start</b></em>' attribute.
@@ -641,6 +659,15 @@ public interface StackedchartsPackage extends EPackage {
 	 * @ordered
 	 */
 	int MARKER__COLOR = ABSTRACT_ANNOTATION__COLOR;
+
+	/**
+	 * The feature id for the '<em><b>Appears In</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MARKER__APPEARS_IN = ABSTRACT_ANNOTATION__APPEARS_IN;
 
 	/**
 	 * The feature id for the '<em><b>Value</b></em>' attribute.
@@ -1035,6 +1062,15 @@ public interface StackedchartsPackage extends EPackage {
 	int SCATTER_SET__COLOR = ABSTRACT_ANNOTATION__COLOR;
 
 	/**
+	 * The feature id for the '<em><b>Appears In</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SCATTER_SET__APPEARS_IN = ABSTRACT_ANNOTATION__APPEARS_IN;
+
+	/**
 	 * The feature id for the '<em><b>Datums</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1406,6 +1442,17 @@ public interface StackedchartsPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getAbstractAnnotation_Color();
+
+	/**
+	 * Returns the meta object for the containment reference list '{@link info.limpet.stackedcharts.model.AbstractAnnotation#getAppearsIn <em>Appears In</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference list '<em>Appears In</em>'.
+	 * @see info.limpet.stackedcharts.model.AbstractAnnotation#getAppearsIn()
+	 * @see #getAbstractAnnotation()
+	 * @generated
+	 */
+	EReference getAbstractAnnotation_AppearsIn();
 
 	/**
 	 * Returns the meta object for class '{@link info.limpet.stackedcharts.model.Zone <em>Zone</em>}'.
@@ -2017,6 +2064,14 @@ public interface StackedchartsPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute ABSTRACT_ANNOTATION__COLOR = eINSTANCE.getAbstractAnnotation_Color();
+
+		/**
+		 * The meta object literal for the '<em><b>Appears In</b></em>' containment reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference ABSTRACT_ANNOTATION__APPEARS_IN = eINSTANCE.getAbstractAnnotation_AppearsIn();
 
 		/**
 		 * The meta object literal for the '{@link info.limpet.stackedcharts.model.impl.ZoneImpl <em>Zone</em>}' class.
