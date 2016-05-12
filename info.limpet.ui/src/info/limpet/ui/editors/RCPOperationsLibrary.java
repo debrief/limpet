@@ -5,6 +5,7 @@ import info.limpet.IStoreItem;
 import info.limpet.ui.analysis_view.AnalysisView;
 import info.limpet.ui.data_frequency.DataFrequencyView;
 import info.limpet.ui.operations.ShowInNamedView;
+import info.limpet.ui.operations.ShowInTacticalOverview;
 import info.limpet.ui.range_slider.RangeSliderView;
 import info.limpet.ui.time_frequency.TimeFrequencyView;
 import info.limpet.ui.xy_plot.XyPlotView;
@@ -54,6 +55,7 @@ public class RCPOperationsLibrary
     analysis.add(new ShowInNamedView("Show in Analysis View", AnalysisView.ID));
     analysis
         .add(new ShowInNamedView("Show in Range Slider", RangeSliderView.ID));
+    analysis.add(new ShowInTacticalOverview("Show in Tactical Overview"));
     return analysis;
   }
 }

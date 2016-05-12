@@ -9,7 +9,7 @@
             category="info.limpet.ui"
             class="info.limpet.stackedcharts.core.view.StackedChartsView"
             icon="icons/stacked-chart.png"
-            id="info.limpet.stackedcharts.core.StackedChartsView"
+            id="info.limpet.StackedChartsView"
             name="Stacked Charts"
             restorable="true">
       </view>
