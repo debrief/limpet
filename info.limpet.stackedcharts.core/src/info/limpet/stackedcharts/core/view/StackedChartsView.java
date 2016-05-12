@@ -23,6 +23,8 @@ public class StackedChartsView extends ViewPart
 
   public static final int CHART_VIEW = 1;
   public static final int EDIT_VIEW = 2;
+  
+  public static final String ID = "info.limpet.StackedChartsView";
 
   private StackedPane stackedPane;
 
