@@ -30,9 +30,11 @@ import info.limpet.stackedcharts.model.Chart;
 import info.limpet.stackedcharts.model.ChartSet;
 import info.limpet.stackedcharts.model.DataItem;
 import info.limpet.stackedcharts.model.Dataset;
+import info.limpet.stackedcharts.model.Datum;
 import info.limpet.stackedcharts.model.DependentAxis;
 import info.limpet.stackedcharts.model.IndependentAxis;
 import info.limpet.stackedcharts.model.Orientation;
+import info.limpet.stackedcharts.model.ScatterSet;
 import info.limpet.stackedcharts.model.StackedchartsFactory;
 
 import java.util.ArrayList;
@@ -328,10 +330,20 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
           StoreGroup sensor = (StoreGroup) thisG;
           if (sensor.size() != 1)
           {
+            ScatterSet scatter = factory.createScatterSet();
             ITemporalObjectCollection<Object> cuts = (ITemporalObjectCollection<Object>) sensor.get(0);
+
+            Iterator<Long> times = cuts.getTimes().iterator();
+            while (times.hasNext())
+            {
+              Long long1 = (Long) times.next();
+              Datum item = factory.createDatum();
+              item.setVal(long1);
+              scatter.getDatums().add(item);
+            }
             
-            
-            
+            timeAxis.getAnnotations().add(scatter);
+            scatter.getAppearsIn().add(res.getCharts().get(0));
           }
         }
       }
