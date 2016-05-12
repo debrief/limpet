@@ -19,17 +19,22 @@ import info.limpet.IContext;
 import info.limpet.IOperation;
 import info.limpet.IStore;
 import info.limpet.IStoreItem;
+import info.limpet.ITemporalObjectCollection;
 import info.limpet.ITemporalQuantityCollection;
 import info.limpet.data.commands.AbstractCommand;
 import info.limpet.data.operations.CollectionComplianceTests;
 import info.limpet.data.store.InMemoryStore.StoreGroup;
 import info.limpet.stackedcharts.core.view.StackedChartsView;
+import info.limpet.stackedcharts.model.AxisType;
 import info.limpet.stackedcharts.model.Chart;
 import info.limpet.stackedcharts.model.ChartSet;
 import info.limpet.stackedcharts.model.DataItem;
 import info.limpet.stackedcharts.model.Dataset;
+import info.limpet.stackedcharts.model.Datum;
 import info.limpet.stackedcharts.model.DependentAxis;
+import info.limpet.stackedcharts.model.IndependentAxis;
 import info.limpet.stackedcharts.model.Orientation;
+import info.limpet.stackedcharts.model.ScatterSet;
 import info.limpet.stackedcharts.model.StackedchartsFactory;
 
 import java.util.ArrayList;
@@ -233,6 +238,12 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
 
     ChartSet res = factory.createChartSet();
     res.setOrientation(Orientation.VERTICAL);
+    
+    IndependentAxis timeAxis = factory.createIndependentAxis();
+    
+    // ok, make it a time axis
+    timeAxis.setAxisType(AxisType.TIME);
+    res.setSharedAxis(timeAxis);
 
     // ok, start looking deeper
     StoreGroup sg = (StoreGroup) selection.get(0);
@@ -281,7 +292,6 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
             DependentAxis atbAxis = factory.createDependentAxis();
             atbAxis.setName("ATB");
             relativeChart.getMinAxes().add(atbAxis);
-
             
             DependentAxis brgRateAxis = factory.createDependentAxis();
             brgRateAxis.setName("Bearing Rate");
@@ -320,7 +330,20 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
           StoreGroup sensor = (StoreGroup) thisG;
           if (sensor.size() != 1)
           {
-            // and lastly the sensor chart
+            ScatterSet scatter = factory.createScatterSet();
+            ITemporalObjectCollection<Object> cuts = (ITemporalObjectCollection<Object>) sensor.get(0);
+
+            Iterator<Long> times = cuts.getTimes().iterator();
+            while (times.hasNext())
+            {
+              Long long1 = (Long) times.next();
+              Datum item = factory.createDatum();
+              item.setVal(long1);
+              scatter.getDatums().add(item);
+            }
+            
+            timeAxis.getAnnotations().add(scatter);
+            scatter.getAppearsIn().add(res.getCharts().get(0));
           }
         }
       }
