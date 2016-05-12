@@ -268,13 +268,22 @@ public interface StackedchartsPackage extends EPackage {
 	int ABSTRACT_AXIS__ANNOTATIONS = 6;
 
 	/**
+	 * The feature id for the '<em><b>Axis Type</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ABSTRACT_AXIS__AXIS_TYPE = 7;
+
+	/**
 	 * The number of structural features of the '<em>Abstract Axis</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ABSTRACT_AXIS_FEATURE_COUNT = 7;
+	int ABSTRACT_AXIS_FEATURE_COUNT = 8;
 
 	/**
 	 * The number of operations of the '<em>Abstract Axis</em>' class.
@@ -357,6 +366,15 @@ public interface StackedchartsPackage extends EPackage {
 	 * @ordered
 	 */
 	int DEPENDENT_AXIS__ANNOTATIONS = ABSTRACT_AXIS__ANNOTATIONS;
+
+	/**
+	 * The feature id for the '<em><b>Axis Type</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int DEPENDENT_AXIS__AXIS_TYPE = ABSTRACT_AXIS__AXIS_TYPE;
 
 	/**
 	 * The feature id for the '<em><b>Datasets</b></em>' reference list.
@@ -962,6 +980,15 @@ public interface StackedchartsPackage extends EPackage {
 	int INDEPENDENT_AXIS__ANNOTATIONS = ABSTRACT_AXIS__ANNOTATIONS;
 
 	/**
+	 * The feature id for the '<em><b>Axis Type</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int INDEPENDENT_AXIS__AXIS_TYPE = ABSTRACT_AXIS__AXIS_TYPE;
+
+	/**
 	 * The number of structural features of the '<em>Independent Axis</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1120,6 +1147,17 @@ public interface StackedchartsPackage extends EPackage {
 	 * @generated
 	 */
 	int LINE_TYPE = 19;
+
+
+	/**
+	 * The meta object id for the '{@link info.limpet.stackedcharts.model.AxisType <em>Axis Type</em>}' enum.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see info.limpet.stackedcharts.model.AxisType
+	 * @see info.limpet.stackedcharts.model.impl.StackedchartsPackageImpl#getAxisType()
+	 * @generated
+	 */
+	int AXIS_TYPE = 20;
 
 
 	/**
@@ -1617,6 +1655,17 @@ public interface StackedchartsPackage extends EPackage {
 	EReference getAbstractAxis_Annotations();
 
 	/**
+	 * Returns the meta object for the attribute '{@link info.limpet.stackedcharts.model.AbstractAxis#getAxisType <em>Axis Type</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Axis Type</em>'.
+	 * @see info.limpet.stackedcharts.model.AbstractAxis#getAxisType()
+	 * @see #getAbstractAxis()
+	 * @generated
+	 */
+	EAttribute getAbstractAxis_AxisType();
+
+	/**
 	 * Returns the meta object for the attribute '{@link info.limpet.stackedcharts.model.AbstractAxis#getFont <em>Font</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1739,6 +1788,16 @@ public interface StackedchartsPackage extends EPackage {
 	 * @generated
 	 */
 	EEnum getLineType();
+
+	/**
+	 * Returns the meta object for enum '{@link info.limpet.stackedcharts.model.AxisType <em>Axis Type</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for enum '<em>Axis Type</em>'.
+	 * @see info.limpet.stackedcharts.model.AxisType
+	 * @generated
+	 */
+	EEnum getAxisType();
 
 	/**
 	 * Returns the factory that creates the instances of the model.
@@ -2156,6 +2215,14 @@ public interface StackedchartsPackage extends EPackage {
 		EReference ABSTRACT_AXIS__ANNOTATIONS = eINSTANCE.getAbstractAxis_Annotations();
 
 		/**
+		 * The meta object literal for the '<em><b>Axis Type</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ABSTRACT_AXIS__AXIS_TYPE = eINSTANCE.getAbstractAxis_AxisType();
+
+		/**
 		 * The meta object literal for the '<em><b>Font</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -2266,6 +2333,16 @@ public interface StackedchartsPackage extends EPackage {
 		 * @generated
 		 */
 		EEnum LINE_TYPE = eINSTANCE.getLineType();
+
+		/**
+		 * The meta object literal for the '{@link info.limpet.stackedcharts.model.AxisType <em>Axis Type</em>}' enum.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see info.limpet.stackedcharts.model.AxisType
+		 * @see info.limpet.stackedcharts.model.impl.StackedchartsPackageImpl#getAxisType()
+		 * @generated
+		 */
+		EEnum AXIS_TYPE = eINSTANCE.getAxisType();
 
 	}
 

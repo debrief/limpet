@@ -6,6 +6,7 @@ import info.limpet.stackedcharts.model.AbstractAnnotation;
 import info.limpet.stackedcharts.model.AbstractAxis;
 import info.limpet.stackedcharts.model.AxisDirection;
 import info.limpet.stackedcharts.model.AxisScale;
+import info.limpet.stackedcharts.model.AxisType;
 import info.limpet.stackedcharts.model.StackedchartsPackage;
 
 import java.util.Collection;
@@ -36,6 +37,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link info.limpet.stackedcharts.model.impl.AbstractAxisImpl#getFont <em>Font</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.impl.AbstractAxisImpl#getColor <em>Color</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.impl.AbstractAxisImpl#getAnnotations <em>Annotations</em>}</li>
+ *   <li>{@link info.limpet.stackedcharts.model.impl.AbstractAxisImpl#getAxisType <em>Axis Type</em>}</li>
  * </ul>
  *
  * @generated
@@ -172,6 +174,26 @@ public abstract class AbstractAxisImpl extends MinimalEObjectImpl.Container impl
 	protected EList<AbstractAnnotation> annotations;
 
 	/**
+	 * The default value of the '{@link #getAxisType() <em>Axis Type</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getAxisType()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final AxisType AXIS_TYPE_EDEFAULT = AxisType.NUMBER;
+
+	/**
+	 * The cached value of the '{@link #getAxisType() <em>Axis Type</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getAxisType()
+	 * @generated
+	 * @ordered
+	 */
+	protected AxisType axisType = AXIS_TYPE_EDEFAULT;
+
+	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -291,6 +313,27 @@ public abstract class AbstractAxisImpl extends MinimalEObjectImpl.Container impl
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public AxisType getAxisType() {
+		return axisType;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setAxisType(AxisType newAxisType) {
+		AxisType oldAxisType = axisType;
+		axisType = newAxisType == null ? AXIS_TYPE_EDEFAULT : newAxisType;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, StackedchartsPackage.ABSTRACT_AXIS__AXIS_TYPE, oldAxisType, axisType));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public String getFont() {
 		return font;
 	}
@@ -364,6 +407,8 @@ public abstract class AbstractAxisImpl extends MinimalEObjectImpl.Container impl
 				return getColor();
 			case StackedchartsPackage.ABSTRACT_AXIS__ANNOTATIONS:
 				return getAnnotations();
+			case StackedchartsPackage.ABSTRACT_AXIS__AXIS_TYPE:
+				return getAxisType();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -399,6 +444,9 @@ public abstract class AbstractAxisImpl extends MinimalEObjectImpl.Container impl
 				getAnnotations().clear();
 				getAnnotations().addAll((Collection<? extends AbstractAnnotation>)newValue);
 				return;
+			case StackedchartsPackage.ABSTRACT_AXIS__AXIS_TYPE:
+				setAxisType((AxisType)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -432,6 +480,9 @@ public abstract class AbstractAxisImpl extends MinimalEObjectImpl.Container impl
 			case StackedchartsPackage.ABSTRACT_AXIS__ANNOTATIONS:
 				getAnnotations().clear();
 				return;
+			case StackedchartsPackage.ABSTRACT_AXIS__AXIS_TYPE:
+				setAxisType(AXIS_TYPE_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -458,6 +509,8 @@ public abstract class AbstractAxisImpl extends MinimalEObjectImpl.Container impl
 				return COLOR_EDEFAULT == null ? color != null : !COLOR_EDEFAULT.equals(color);
 			case StackedchartsPackage.ABSTRACT_AXIS__ANNOTATIONS:
 				return annotations != null && !annotations.isEmpty();
+			case StackedchartsPackage.ABSTRACT_AXIS__AXIS_TYPE:
+				return axisType != AXIS_TYPE_EDEFAULT;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -484,6 +537,8 @@ public abstract class AbstractAxisImpl extends MinimalEObjectImpl.Container impl
 		result.append(font);
 		result.append(", color: ");
 		result.append(color);
+		result.append(", axisType: ");
+		result.append(axisType);
 		result.append(')');
 		return result.toString();
 	}

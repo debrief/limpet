@@ -93,6 +93,8 @@ public class StackedchartsFactoryImpl extends EFactoryImpl implements Stackedcha
 				return createMarkerStyleFromString(eDataType, initialValue);
 			case StackedchartsPackage.LINE_TYPE:
 				return createLineTypeFromString(eDataType, initialValue);
+			case StackedchartsPackage.AXIS_TYPE:
+				return createAxisTypeFromString(eDataType, initialValue);
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
@@ -116,6 +118,8 @@ public class StackedchartsFactoryImpl extends EFactoryImpl implements Stackedcha
 				return convertMarkerStyleToString(eDataType, instanceValue);
 			case StackedchartsPackage.LINE_TYPE:
 				return convertLineTypeToString(eDataType, instanceValue);
+			case StackedchartsPackage.AXIS_TYPE:
+				return convertAxisTypeToString(eDataType, instanceValue);
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
@@ -348,6 +352,26 @@ public class StackedchartsFactoryImpl extends EFactoryImpl implements Stackedcha
 	 * @generated
 	 */
 	public String convertLineTypeToString(EDataType eDataType, Object instanceValue) {
+		return instanceValue == null ? null : instanceValue.toString();
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public AxisType createAxisTypeFromString(EDataType eDataType, String initialValue) {
+		AxisType result = AxisType.get(initialValue);
+		if (result == null) throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
+		return result;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String convertAxisTypeToString(EDataType eDataType, Object instanceValue) {
 		return instanceValue == null ? null : instanceValue.toString();
 	}
 

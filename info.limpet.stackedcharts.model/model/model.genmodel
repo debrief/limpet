@@ -30,6 +30,10 @@
       <genEnumLiterals ecoreEnumLiteral="model.ecore#//LineType/Dotted"/>
       <genEnumLiterals ecoreEnumLiteral="model.ecore#//LineType/Dashed"/>
     </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="model.ecore#//AxisType">
+      <genEnumLiterals ecoreEnumLiteral="model.ecore#//AxisType/Number"/>
+      <genEnumLiterals ecoreEnumLiteral="model.ecore#//AxisType/Time"/>
+    </genEnums>
     <genClasses ecoreClass="model.ecore#//ChartSet">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference model.ecore#//ChartSet/charts"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//ChartSet/orientation"/>
@@ -89,6 +93,7 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//AbstractAxis/font"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//AbstractAxis/color"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference model.ecore#//AbstractAxis/annotations"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//AbstractAxis/axisType"/>
     </genClasses>
     <genClasses ecoreClass="model.ecore#//IndependentAxis"/>
     <genClasses ecoreClass="model.ecore#//ScatterSet">

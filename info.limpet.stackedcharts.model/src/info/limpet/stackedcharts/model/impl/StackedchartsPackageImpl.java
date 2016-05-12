@@ -6,6 +6,7 @@ import info.limpet.stackedcharts.model.AbstractAnnotation;
 import info.limpet.stackedcharts.model.AbstractAxis;
 import info.limpet.stackedcharts.model.AxisDirection;
 import info.limpet.stackedcharts.model.AxisScale;
+import info.limpet.stackedcharts.model.AxisType;
 import info.limpet.stackedcharts.model.Chart;
 import info.limpet.stackedcharts.model.ChartSet;
 import info.limpet.stackedcharts.model.DataItem;
@@ -181,6 +182,13 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
 	 * @generated
 	 */
 	private EEnum lineTypeEEnum = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EEnum axisTypeEEnum = null;
 
 	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
@@ -665,6 +673,15 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EAttribute getAbstractAxis_AxisType() {
+		return (EAttribute)abstractAxisEClass.getEStructuralFeatures().get(7);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EAttribute getAbstractAxis_Font() {
 		return (EAttribute)abstractAxisEClass.getEStructuralFeatures().get(4);
 	}
@@ -773,6 +790,15 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EEnum getAxisType() {
+		return axisTypeEEnum;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public StackedchartsFactory getStackedchartsFactory() {
 		return (StackedchartsFactory)getEFactoryInstance();
 	}
@@ -855,6 +881,7 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
 		createEAttribute(abstractAxisEClass, ABSTRACT_AXIS__FONT);
 		createEAttribute(abstractAxisEClass, ABSTRACT_AXIS__COLOR);
 		createEReference(abstractAxisEClass, ABSTRACT_AXIS__ANNOTATIONS);
+		createEAttribute(abstractAxisEClass, ABSTRACT_AXIS__AXIS_TYPE);
 
 		independentAxisEClass = createEClass(INDEPENDENT_AXIS);
 
@@ -870,6 +897,7 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
 		axisDirectionEEnum = createEEnum(AXIS_DIRECTION);
 		markerStyleEEnum = createEEnum(MARKER_STYLE);
 		lineTypeEEnum = createEEnum(LINE_TYPE);
+		axisTypeEEnum = createEEnum(AXIS_TYPE);
 	}
 
 	/**
@@ -971,6 +999,7 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
 		initEAttribute(getAbstractAxis_Font(), ecorePackage.getEString(), "font", null, 0, 1, AbstractAxis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getAbstractAxis_Color(), ecorePackage.getEString(), "color", null, 0, 1, AbstractAxis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getAbstractAxis_Annotations(), this.getAbstractAnnotation(), null, "annotations", null, 0, -1, AbstractAxis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getAbstractAxis_AxisType(), this.getAxisType(), "axisType", null, 0, 1, AbstractAxis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(independentAxisEClass, IndependentAxis.class, "IndependentAxis", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
@@ -1003,6 +1032,10 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
 		addEEnumLiteral(lineTypeEEnum, LineType.SOLID);
 		addEEnumLiteral(lineTypeEEnum, LineType.DOTTED);
 		addEEnumLiteral(lineTypeEEnum, LineType.DASHED);
+
+		initEEnum(axisTypeEEnum, AxisType.class, "AxisType");
+		addEEnumLiteral(axisTypeEEnum, AxisType.NUMBER);
+		addEEnumLiteral(axisTypeEEnum, AxisType.TIME);
 
 		// Create resource
 		createResource(eNS_URI);

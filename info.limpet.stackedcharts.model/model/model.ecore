@@ -102,6 +102,7 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="color" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="annotations" upperBound="-1"
         eType="#//AbstractAnnotation" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="axisType" eType="#//AxisType"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="IndependentAxis" eSuperTypes="#//AbstractAxis"/>
   <eClassifiers xsi:type="ecore:EEnum" name="AxisDirection">
@@ -131,5 +132,20 @@
     <eLiterals name="Solid"/>
     <eLiterals name="Dotted" value="2"/>
     <eLiterals name="Dashed" value="3"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="AxisType">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="The type of data displayed on an axis&#xA;"/>
+    </eAnnotations>
+    <eLiterals name="Number">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Plain numeric data"/>
+      </eAnnotations>
+    </eLiterals>
+    <eLiterals name="Time" value="1">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Time related data, shown on a date-time axis"/>
+      </eAnnotations>
+    </eLiterals>
   </eClassifiers>
 </ecore:EPackage>

@@ -21,6 +21,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link info.limpet.stackedcharts.model.AbstractAxis#getFont <em>Font</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.AbstractAxis#getColor <em>Color</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.AbstractAxis#getAnnotations <em>Annotations</em>}</li>
+ *   <li>{@link info.limpet.stackedcharts.model.AbstractAxis#getAxisType <em>Axis Type</em>}</li>
  * </ul>
  *
  * @see info.limpet.stackedcharts.model.StackedchartsPackage#getAbstractAxis()
@@ -153,6 +154,35 @@ public interface AbstractAxis extends EObject {
 	 * @generated
 	 */
 	EList<AbstractAnnotation> getAnnotations();
+
+	/**
+	 * Returns the value of the '<em><b>Axis Type</b></em>' attribute.
+	 * The literals are from the enumeration {@link info.limpet.stackedcharts.model.AxisType}.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Axis Type</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Axis Type</em>' attribute.
+	 * @see info.limpet.stackedcharts.model.AxisType
+	 * @see #setAxisType(AxisType)
+	 * @see info.limpet.stackedcharts.model.StackedchartsPackage#getAbstractAxis_AxisType()
+	 * @model
+	 * @generated
+	 */
+	AxisType getAxisType();
+
+	/**
+	 * Sets the value of the '{@link info.limpet.stackedcharts.model.AbstractAxis#getAxisType <em>Axis Type</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Axis Type</em>' attribute.
+	 * @see info.limpet.stackedcharts.model.AxisType
+	 * @see #getAxisType()
+	 * @generated
+	 */
+	void setAxisType(AxisType value);
 
 	/**
 	 * Returns the value of the '<em><b>Font</b></em>' attribute.
