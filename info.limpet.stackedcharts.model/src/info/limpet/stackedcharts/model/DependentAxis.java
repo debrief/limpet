@@ -13,7 +13,6 @@ import org.eclipse.emf.common.util.EList;
  * The following features are supported:
  * </p>
  * <ul>
- *   <li>{@link info.limpet.stackedcharts.model.DependentAxis#getParent <em>Parent</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.DependentAxis#getDatasets <em>Datasets</em>}</li>
  * </ul>
  *
@@ -22,34 +21,6 @@ import org.eclipse.emf.common.util.EList;
  * @generated
  */
 public interface DependentAxis extends AbstractAxis {
-	/**
-	 * Returns the value of the '<em><b>Parent</b></em>' container reference.
-	 * It is bidirectional and its opposite is '{@link info.limpet.stackedcharts.model.Chart#getMaxAxes <em>Max Axes</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Parent</em>' container reference isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Parent</em>' container reference.
-	 * @see #setParent(Chart)
-	 * @see info.limpet.stackedcharts.model.StackedchartsPackage#getDependentAxis_Parent()
-	 * @see info.limpet.stackedcharts.model.Chart#getMaxAxes
-	 * @model opposite="maxAxes" transient="false"
-	 * @generated
-	 */
-	Chart getParent();
-
-	/**
-	 * Sets the value of the '{@link info.limpet.stackedcharts.model.DependentAxis#getParent <em>Parent</em>}' container reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Parent</em>' container reference.
-	 * @see #getParent()
-	 * @generated
-	 */
-	void setParent(Chart value);
-
 	/**
 	 * Returns the value of the '<em><b>Datasets</b></em>' reference list.
 	 * The list contents are of type {@link info.limpet.stackedcharts.model.Dataset}.

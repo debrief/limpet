@@ -359,22 +359,13 @@ public interface StackedchartsPackage extends EPackage {
 	int DEPENDENT_AXIS__ANNOTATIONS = ABSTRACT_AXIS__ANNOTATIONS;
 
 	/**
-	 * The feature id for the '<em><b>Parent</b></em>' container reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int DEPENDENT_AXIS__PARENT = ABSTRACT_AXIS_FEATURE_COUNT + 0;
-
-	/**
 	 * The feature id for the '<em><b>Datasets</b></em>' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int DEPENDENT_AXIS__DATASETS = ABSTRACT_AXIS_FEATURE_COUNT + 1;
+	int DEPENDENT_AXIS__DATASETS = ABSTRACT_AXIS_FEATURE_COUNT + 0;
 
 	/**
 	 * The number of structural features of the '<em>Dependent Axis</em>' class.
@@ -383,7 +374,7 @@ public interface StackedchartsPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int DEPENDENT_AXIS_FEATURE_COUNT = ABSTRACT_AXIS_FEATURE_COUNT + 2;
+	int DEPENDENT_AXIS_FEATURE_COUNT = ABSTRACT_AXIS_FEATURE_COUNT + 1;
 
 	/**
 	 * The number of operations of the '<em>Dependent Axis</em>' class.
@@ -1261,17 +1252,6 @@ public interface StackedchartsPackage extends EPackage {
 	EClass getDependentAxis();
 
 	/**
-	 * Returns the meta object for the container reference '{@link info.limpet.stackedcharts.model.DependentAxis#getParent <em>Parent</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the container reference '<em>Parent</em>'.
-	 * @see info.limpet.stackedcharts.model.DependentAxis#getParent()
-	 * @see #getDependentAxis()
-	 * @generated
-	 */
-	EReference getDependentAxis_Parent();
-
-	/**
 	 * Returns the meta object for the reference list '{@link info.limpet.stackedcharts.model.DependentAxis#getDatasets <em>Datasets</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1884,14 +1864,6 @@ public interface StackedchartsPackage extends EPackage {
 		 * @generated
 		 */
 		EClass DEPENDENT_AXIS = eINSTANCE.getDependentAxis();
-
-		/**
-		 * The meta object literal for the '<em><b>Parent</b></em>' container reference feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference DEPENDENT_AXIS__PARENT = eINSTANCE.getDependentAxis_Parent();
 
 		/**
 		 * The meta object literal for the '<em><b>Datasets</b></em>' reference list feature.

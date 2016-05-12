@@ -58,7 +58,6 @@ public interface Chart extends EObject {
 	/**
 	 * Returns the value of the '<em><b>Max Axes</b></em>' containment reference list.
 	 * The list contents are of type {@link info.limpet.stackedcharts.model.DependentAxis}.
-	 * It is bidirectional and its opposite is '{@link info.limpet.stackedcharts.model.DependentAxis#getParent <em>Parent</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <p>
 	 * If the meaning of the '<em>Max Axes</em>' containment reference list isn't clear,
@@ -67,8 +66,7 @@ public interface Chart extends EObject {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Max Axes</em>' containment reference list.
 	 * @see info.limpet.stackedcharts.model.StackedchartsPackage#getChart_MaxAxes()
-	 * @see info.limpet.stackedcharts.model.DependentAxis#getParent
-	 * @model opposite="parent" containment="true"
+	 * @model containment="true"
 	 * @generated
 	 */
 	EList<DependentAxis> getMaxAxes();

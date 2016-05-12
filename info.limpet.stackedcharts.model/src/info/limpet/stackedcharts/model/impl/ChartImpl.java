@@ -21,7 +21,6 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
-import org.eclipse.emf.ecore.util.EObjectContainmentWithInverseEList;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.util.InternalEList;
 
@@ -170,7 +169,7 @@ public class ChartImpl extends MinimalEObjectImpl.Container implements Chart {
 	 */
 	public EList<DependentAxis> getMaxAxes() {
 		if (maxAxes == null) {
-			maxAxes = new EObjectContainmentWithInverseEList<DependentAxis>(DependentAxis.class, this, StackedchartsPackage.CHART__MAX_AXES, StackedchartsPackage.DEPENDENT_AXIS__PARENT);
+			maxAxes = new EObjectContainmentEList<DependentAxis>(DependentAxis.class, this, StackedchartsPackage.CHART__MAX_AXES);
 		}
 		return maxAxes;
 	}
@@ -242,8 +241,6 @@ public class ChartImpl extends MinimalEObjectImpl.Container implements Chart {
 				if (eInternalContainer() != null)
 					msgs = eBasicRemoveFromContainer(msgs);
 				return basicSetParent((ChartSet)otherEnd, msgs);
-			case StackedchartsPackage.CHART__MAX_AXES:
-				return ((InternalEList<InternalEObject>)(InternalEList<?>)getMaxAxes()).basicAdd(otherEnd, msgs);
 		}
 		return super.eInverseAdd(otherEnd, featureID, msgs);
 	}
