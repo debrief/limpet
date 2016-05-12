@@ -1,5 +1,7 @@
 package info.limpet.stackedcharts.core.view;
 
+import info.limpet.stackedcharts.model.ChartSet;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -7,9 +9,10 @@ import org.eclipse.nebula.effects.stw.Transition;
 import org.eclipse.nebula.effects.stw.TransitionManager;
 import org.eclipse.nebula.effects.stw.Transitionable;
 import org.eclipse.nebula.effects.stw.transitions.CubicRotationTransition;
-import org.eclipse.nebula.effects.stw.transitions.SlideTransition;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -17,17 +20,22 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.part.ViewPart;
+import org.jfree.chart.JFreeChart;
+import org.jfree.experimental.chart.swt.ChartComposite;
 
 public class StackedChartsView extends ViewPart
 {
 
   public static final int CHART_VIEW = 1;
   public static final int EDIT_VIEW = 2;
+  
+  public static final String ID = "info.limpet.StackedChartsView";
 
   private StackedPane stackedPane;
 
   // effects
   protected TransitionManager transitionManager = null;
+  private Composite chartHolder;
 
   @Override
   public void createPartControl(Composite parent)
@@ -90,18 +98,68 @@ public class StackedChartsView extends ViewPart
     }
 
   }
+  
+  public void setModel(ChartSet charts)
+  {
+    // remove any existing base items
+    if(chartHolder != null)
+    {
+      for (Control control : chartHolder.getChildren()) 
+      {
+        control.dispose();
+      }
+    }
+      
+    // and now repopulate
+    JFreeChart chart =  new ChartBuilder(charts).build();
+    @SuppressWarnings("unused")
+    ChartComposite  _chartComposite = new ChartComposite(chartHolder, SWT.NONE, chart, true)
+    {
+      @Override
+      public void mouseUp(MouseEvent event)
+      {
+        super.mouseUp(event);
+        JFreeChart c = getChart();
+        if (c != null)
+        {
+          c.setNotify(true); // force redraw
+        }
+      }
+    };
+    
+    chartHolder.pack(true);
+    chartHolder.layout();
+  }
 
   protected Control createChartView()
   {
 
-    Composite base = new Composite(stackedPane, SWT.NONE);
-    base.setLayout(new GridLayout());
-    Label label = new Label(base, SWT.NONE);
-    label.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, true));
-
-    label.setText("TODO: Chart UI ");
-    return base;
+    chartHolder = new Composite(stackedPane, SWT.NONE);
+    chartHolder.setLayout(new FillLayout());
+   
+//    JFreeChart chart = createChart();
+//    @SuppressWarnings("unused")
+//    ChartComposite  _chartComposite = new ChartComposite(chartHolder, SWT.NONE, chart, true)
+//    {
+//      @Override
+//      public void mouseUp(MouseEvent event)
+//      {
+//        super.mouseUp(event);
+//        JFreeChart c = getChart();
+//        if (c != null)
+//        {
+//          c.setNotify(true); // force redraw
+//        }
+//      }
+//    };
+    
+    return chartHolder;
   }
+
+//  private JFreeChart createChart()
+//  {
+//    return new ChartBuilder(ChartBuilder.createDummyModel()).build();
+//  }
 
   protected Control createEditView()
   {

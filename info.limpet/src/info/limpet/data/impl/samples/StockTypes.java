@@ -384,6 +384,12 @@ public class StockTypes
       {
         super(name, precedent, Dimensionless.UNIT);
       }
+      
+      public DimensionlessDouble()
+      {
+        this(null, null);
+      }
+
     }
 
     public static class AccelerationMSecSec extends
