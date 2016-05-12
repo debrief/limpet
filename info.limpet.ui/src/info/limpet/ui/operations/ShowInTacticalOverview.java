@@ -14,7 +14,6 @@
  *****************************************************************************/
 package info.limpet.ui.operations;
 
-import info.limpet.ICollection;
 import info.limpet.ICommand;
 import info.limpet.IContext;
 import info.limpet.IOperation;
@@ -30,12 +29,17 @@ import info.limpet.stackedcharts.model.ChartSet;
 import info.limpet.stackedcharts.model.DataItem;
 import info.limpet.stackedcharts.model.Dataset;
 import info.limpet.stackedcharts.model.DependentAxis;
+import info.limpet.stackedcharts.model.Orientation;
 import info.limpet.stackedcharts.model.StackedchartsFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.measure.Measurable;
+import javax.measure.quantity.Quantity;
+import javax.measure.unit.Unit;
 
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
@@ -199,7 +203,6 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
         // double check it's what we're after
         if (theView instanceof StackedChartsView)
         {
-          @SuppressWarnings("unused")
           StackedChartsView cv = (StackedChartsView) theView;
 
           // create the charts set model
@@ -209,6 +212,7 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
           {
             // set follow selection to off
             // cv.follow(getInputs());
+            cv.setModel(model);
           }
 
         }
@@ -228,6 +232,7 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
     StackedchartsFactory factory = StackedchartsFactory.eINSTANCE;
 
     ChartSet res = factory.createChartSet();
+    res.setOrientation(Orientation.VERTICAL);
 
     // ok, start looking deeper
     StoreGroup sg = (StoreGroup) selection.get(0);
@@ -244,29 +249,43 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
         if (thisG.getName().equals("Primary"))
         {
           StoreGroup primary = (StoreGroup) thisG;
-          createStateChart(factory, primary, "Primary State");
+          createStateChart(factory, primary, "Primary State", res);
         }
         else if (thisG.getName().equals("Secondary"))
         {
           StoreGroup primary = (StoreGroup) thisG;
-          createStateChart(factory, primary, "Secondary State");
+          createStateChart(factory, primary, "Secondary State", res);
         }
         else if (thisG.getName().equals("Relative"))
         {
           StoreGroup relative = (StoreGroup) thisG;
-          if (relative.size() != 5)
+          if (relative.size() == 5)
           {
             // ok, create the primary chart
-            Chart priChart = factory.createChart();
-            priChart.setName("Relative");
+            Chart relativeChart = factory.createChart();
+            res.getCharts().add(relativeChart);
+            relativeChart.setName("Relative");
 
             // and the axes
             DependentAxis rangeAxis = factory.createDependentAxis();
-            priChart.getMinAxes().add(rangeAxis);
+            rangeAxis.setName("Range");
+            relativeChart.getMinAxes().add(rangeAxis);
             DependentAxis brgAxis = factory.createDependentAxis();
-            priChart.getMinAxes().add(brgAxis);
+            brgAxis.setName("Bearing");
+            relativeChart.getMinAxes().add(brgAxis);
+
+            DependentAxis relBrgAxis = factory.createDependentAxis();
+            relBrgAxis.setName("Rel Bearing");
+            relativeChart.getMinAxes().add(relBrgAxis);
+
+            DependentAxis atbAxis = factory.createDependentAxis();
+            atbAxis.setName("ATB");
+            relativeChart.getMinAxes().add(atbAxis);
+
+            
             DependentAxis brgRateAxis = factory.createDependentAxis();
-            priChart.getMinAxes().add(brgRateAxis);
+            brgRateAxis.setName("Bearing Rate");
+            relativeChart.getMinAxes().add(brgRateAxis);
 
             // now sort out the data series
             Iterator<IStoreItem> dIter = relative.children().iterator();
@@ -275,23 +294,23 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
               IStoreItem iStoreItem = (IStoreItem) dIter.next();
               if (iStoreItem.getName().equals("Range"))
               {
-                createDataset(factory, iStoreItem, "Range", rangeAxis);
+                createDataset(factory, iStoreItem, "Range", rangeAxis, res);
               }
               else if (iStoreItem.getName().equals("Bearing"))
               {
-                createDataset(factory, iStoreItem, "Bearing", brgAxis);
+                createDataset(factory, iStoreItem, "Bearing", brgAxis, res);
               }
               else if (iStoreItem.getName().equals("Rel Brg"))
               {
-                createDataset(factory, iStoreItem, "Rel Brg", brgAxis);
+                createDataset(factory, iStoreItem, "Rel Brg", relBrgAxis, res);
               }
               else if (iStoreItem.getName().equals("ATB"))
               {
-                createDataset(factory, iStoreItem, "ATB", brgAxis);
+                createDataset(factory, iStoreItem, "ATB", atbAxis, res);
               }
               else if (iStoreItem.getName().equals("Brg Rate"))
               {
-                createDataset(factory, iStoreItem, "Brg Rate", brgRateAxis);
+                createDataset(factory, iStoreItem, "Brg Rate", brgRateAxis, res);
               }
             }
           }
@@ -311,45 +330,51 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
   }
 
   protected static void createStateChart(StackedchartsFactory factory,
-      StoreGroup primary, String chartName)
+      StoreGroup group, String chartName, ChartSet set)
   {
-    if (primary.size() == 3)
+    if (group.size() == 3)
     {
       // ok, create the primary chart
-      Chart priChart = factory.createChart();
-      priChart.setName(chartName);
+      Chart chart = factory.createChart();
+      set.getCharts().add(chart);
+      
+      chart.setName(chartName);
 
       // and the axes
       DependentAxis courseAxis = factory.createDependentAxis();
-      priChart.getMinAxes().add(courseAxis);
+      chart.getMinAxes().add(courseAxis);
+      courseAxis.setName("Course");
       DependentAxis speedAxis = factory.createDependentAxis();
-      priChart.getMaxAxes().add(speedAxis);
+      speedAxis.setName("Speed");
+      chart.getMaxAxes().add(speedAxis);
       DependentAxis depthAxis = factory.createDependentAxis();
-      priChart.getMinAxes().add(depthAxis);
+      depthAxis.setName("Depth");
+      chart.getMinAxes().add(depthAxis);
 
       // now sort out the data series
-      Iterator<IStoreItem> dIter = primary.children().iterator();
+      Iterator<IStoreItem> dIter = group.children().iterator();
       while (dIter.hasNext())
       {
         IStoreItem iStoreItem = (IStoreItem) dIter.next();
-        if (iStoreItem.getName().equals("Course"))
+        final String thisName = iStoreItem.getName();
+        if (thisName.contains("Course"))
         {
-          createDataset(factory, iStoreItem, "Course", courseAxis);
+          createDataset(factory, iStoreItem, thisName, courseAxis, set);
         }
-        else if (iStoreItem.getName().equals("Speed"))
+        else if (thisName.contains("Speed"))
         {
-          createDataset(factory, iStoreItem, "Speed", speedAxis);
+          createDataset(factory, iStoreItem, thisName, speedAxis, set);
         }
-        else if (iStoreItem.getName().equals("Depth"))
+        else if (thisName.contains("Depth"))
         {
-          createDataset(factory, iStoreItem, "Depth", depthAxis);
+          createDataset(factory, iStoreItem, thisName, depthAxis, set);
         }
       }
     }
   }
 
   protected static void createDataset(StackedchartsFactory factory,
-      IStoreItem iStoreItem, String name, DependentAxis axis)
+      IStoreItem iStoreItem, String name, DependentAxis axis, ChartSet chartSet)
   {
     ITemporalQuantityCollection<?> it =
         (ITemporalQuantityCollection<?>) iStoreItem;
@@ -362,7 +387,11 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
     for (int i = 0; i < times.size(); i++)
     {
       double time = times.get(i);
-      double value = (Double) values.get(i);
+      
+      @SuppressWarnings("unchecked")
+      Measurable<Quantity> quantity = (Measurable<Quantity>) values.get(i);
+      @SuppressWarnings("unchecked")
+      double value = quantity.doubleValue((Unit<Quantity>) it.getUnits());
       DataItem newI = factory.createDataItem();
       newI.setDependentVal(value);
       newI.setIndependentVal(time);
@@ -371,6 +400,9 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
 
     // and it to an axis
     axis.getDatasets().add(newD);
+    
+    // and add the dataset to the central chartset
+    chartSet.getDatasets().add(newD);
   }
 
 }
