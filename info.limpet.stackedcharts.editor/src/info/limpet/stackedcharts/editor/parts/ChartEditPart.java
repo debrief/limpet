@@ -2,12 +2,18 @@ package info.limpet.stackedcharts.editor.parts;
 
 import info.limpet.stackedcharts.editor.figures.ChartFigure;
 import info.limpet.stackedcharts.model.Chart;
+import info.limpet.stackedcharts.model.StackedchartsPackage;
 
 import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.draw2d.IFigure;
+import org.eclipse.emf.common.notify.Adapter;
+import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.notify.Notifier;
+import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
+import org.eclipse.gef.editpolicies.NonResizableEditPolicy;
 
 public class ChartEditPart extends AbstractGraphicalEditPart
 {
@@ -15,6 +21,22 @@ public class ChartEditPart extends AbstractGraphicalEditPart
   public enum ChartPanePosition
   {
     LEFT, RIGHT
+  }
+
+  private ChartAdapter adapter = new ChartAdapter();
+
+  @Override
+  public void activate()
+  {
+    super.activate();
+    getChart().eAdapters().add(adapter);
+  }
+
+  @Override
+  public void deactivate()
+  {
+    getChart().eAdapters().remove(adapter);
+    super.deactivate();
   }
 
   @Override
@@ -26,6 +48,12 @@ public class ChartEditPart extends AbstractGraphicalEditPart
   @Override
   protected void createEditPolicies()
   {
+    installEditPolicy(EditPolicy.COMPONENT_ROLE, new NonResizableEditPolicy());
+  }
+
+  private Chart getChart()
+  {
+    return (Chart) getModel();
   }
 
   @Override
@@ -37,7 +65,41 @@ public class ChartEditPart extends AbstractGraphicalEditPart
   @Override
   protected void refreshVisuals()
   {
-    String name = ((Chart) getModel()).getName();
+    String name = getChart().getName();
     ((ChartFigure) getFigure()).setName(name);
   }
+
+  public class ChartAdapter implements Adapter
+  {
+
+    @Override
+    public void notifyChanged(Notification notification)
+    {
+      int featureId = notification.getFeatureID(StackedchartsPackage.class);
+      switch (featureId)
+      {
+      case StackedchartsPackage.CHART__NAME:
+        refreshVisuals();
+      }
+    }
+
+    @Override
+    public Notifier getTarget()
+    {
+      return getChart();
+    }
+
+    @Override
+    public void setTarget(Notifier newTarget)
+    {
+      // Do nothing.
+    }
+
+    @Override
+    public boolean isAdapterForType(Object type)
+    {
+      return type.equals(Chart.class);
+    }
+  }
+
 }

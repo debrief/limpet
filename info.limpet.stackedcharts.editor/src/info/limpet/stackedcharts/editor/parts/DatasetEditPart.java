@@ -1,11 +1,13 @@
 package info.limpet.stackedcharts.editor.parts;
 
-import org.eclipse.draw2d.IFigure;
-import org.eclipse.draw2d.PositionConstants;
-import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
-
 import info.limpet.stackedcharts.editor.figures.VerticalLabel;
 import info.limpet.stackedcharts.model.Dataset;
+
+import org.eclipse.draw2d.IFigure;
+import org.eclipse.draw2d.PositionConstants;
+import org.eclipse.gef.EditPolicy;
+import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
+import org.eclipse.gef.editpolicies.NonResizableEditPolicy;
 
 public class DatasetEditPart extends AbstractGraphicalEditPart
 {
@@ -21,6 +23,7 @@ public class DatasetEditPart extends AbstractGraphicalEditPart
   @Override
   protected void createEditPolicies()
   {
+    installEditPolicy(EditPolicy.COMPONENT_ROLE, new NonResizableEditPolicy());
   }
 
   @Override

@@ -4,6 +4,7 @@ import info.limpet.stackedcharts.editor.parts.StackedChartsEditPartFactory;
 import info.limpet.stackedcharts.model.ChartSet;
 
 import java.io.IOException;
+import java.util.EventObject;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -11,18 +12,24 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.gef.DefaultEditDomain;
+import org.eclipse.gef.commands.CommandStack;
 import org.eclipse.gef.palette.PaletteRoot;
 import org.eclipse.gef.ui.parts.GraphicalEditorWithFlyoutPalette;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.views.properties.IPropertySheetPage;
+import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor;
+import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
 
 public class StackedchartsEditor extends GraphicalEditorWithFlyoutPalette
+    implements ITabbedPropertySheetPageContributor
 {
 
   private Resource emfResource;
   private ChartSet chartSet;
+  private TabbedPropertySheetPage propertySheetPage;
 
   public StackedchartsEditor()
   {
@@ -39,8 +46,20 @@ public class StackedchartsEditor extends GraphicalEditorWithFlyoutPalette
   @Override
   public void doSave(IProgressMonitor monitor)
   {
-    // TODO Auto-generated method stub
+    if (emfResource == null)
+    {
+      return;
+    }
 
+    try
+    {
+      emfResource.save(null);
+    }
+    catch (IOException e)
+    {
+      e.printStackTrace();
+    }
+    getCommandStack().markSaveLocation();
   }
 
   @Override
@@ -69,10 +88,19 @@ public class StackedchartsEditor extends GraphicalEditorWithFlyoutPalette
   }
 
   @Override
+  public void commandStackChanged(EventObject event)
+  {
+    firePropertyChange(PROP_DIRTY);
+    super.commandStackChanged(event);
+  }
+
+  @Override
   protected void initializeGraphicalViewer()
   {
     super.initializeGraphicalViewer();
     getGraphicalViewer().setContents(chartSet);
+
+    propertySheetPage = new TabbedPropertySheetPage(this);
   }
 
   @Override
@@ -80,5 +108,25 @@ public class StackedchartsEditor extends GraphicalEditorWithFlyoutPalette
   {
     super.configureGraphicalViewer();
     getGraphicalViewer().setEditPartFactory(new StackedChartsEditPartFactory());
+  }
+
+  @Override
+  public Object getAdapter(Class type)
+  {
+    if (type == IPropertySheetPage.class)
+    {
+      return propertySheetPage;
+    }
+    else if (type == CommandStack.class)
+    {
+      return getEditDomain().getCommandStack();
+    }
+    return super.getAdapter(type);
+  }
+
+  @Override
+  public String getContributorId()
+  {
+    return getSite().getId();
   }
 }

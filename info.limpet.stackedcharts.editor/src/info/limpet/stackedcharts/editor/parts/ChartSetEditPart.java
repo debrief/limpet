@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.eclipse.draw2d.FlowLayout;
 import org.eclipse.draw2d.IFigure;
+import org.eclipse.draw2d.MarginBorder;
 import org.eclipse.draw2d.RectangleFigure;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 
@@ -16,10 +17,12 @@ public class ChartSetEditPart extends AbstractGraphicalEditPart
   protected IFigure createFigure()
   {
     RectangleFigure rectangle = new RectangleFigure();
+    rectangle.setBorder(new MarginBorder(10));
     rectangle.setOutline(false);
     FlowLayout flowLayout = new FlowLayout();
     flowLayout.setMinorSpacing(20);
     flowLayout.setHorizontal(false);
+    flowLayout.setStretchMinorAxis(true);
     rectangle.setLayoutManager(flowLayout);
     return rectangle;
   }

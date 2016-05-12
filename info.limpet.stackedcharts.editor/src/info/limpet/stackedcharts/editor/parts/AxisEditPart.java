@@ -6,7 +6,9 @@ import org.eclipse.draw2d.FlowLayout;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.RectangleFigure;
+import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
+import org.eclipse.gef.editpolicies.NonResizableEditPolicy;
 import org.eclipse.swt.graphics.Image;
 
 import info.limpet.stackedcharts.editor.Activator;
@@ -63,8 +65,7 @@ public class AxisEditPart extends AbstractGraphicalEditPart
   @Override
   protected void createEditPolicies()
   {
-    // TODO Auto-generated method stub
-
+    installEditPolicy(EditPolicy.COMPONENT_ROLE, new NonResizableEditPolicy());
   }
 
   @Override

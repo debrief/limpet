@@ -21,6 +21,7 @@ public class ChartPaneEditPart extends AbstractGraphicalEditPart
     RectangleFigure figure = new RectangleFigure();
     FlowLayout layoutManager = new FlowLayout();
     layoutManager.setHorizontal(true);
+    layoutManager.setStretchMinorAxis(true);
     figure.setLayoutManager(layoutManager);
     return figure;
   }
