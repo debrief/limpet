@@ -31,6 +31,9 @@
     <module>info.limpet.product</module>
     <module>info.limpet.sample_data</module>
     <module>info.limpet.report</module>
+    <module>info.limpet.stackedcharts.model</module>
+    <module>info.limpet.stackedcharts.core</module>
+    <module>info.limpet.stackedcharts.editor</module>
   </modules>
 
   <build>
