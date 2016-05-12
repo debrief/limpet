@@ -24,11 +24,13 @@ import info.limpet.data.commands.AbstractCommand;
 import info.limpet.data.operations.CollectionComplianceTests;
 import info.limpet.data.store.InMemoryStore.StoreGroup;
 import info.limpet.stackedcharts.core.view.StackedChartsView;
+import info.limpet.stackedcharts.model.AxisType;
 import info.limpet.stackedcharts.model.Chart;
 import info.limpet.stackedcharts.model.ChartSet;
 import info.limpet.stackedcharts.model.DataItem;
 import info.limpet.stackedcharts.model.Dataset;
 import info.limpet.stackedcharts.model.DependentAxis;
+import info.limpet.stackedcharts.model.IndependentAxis;
 import info.limpet.stackedcharts.model.Orientation;
 import info.limpet.stackedcharts.model.StackedchartsFactory;
 
@@ -233,6 +235,10 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
 
     ChartSet res = factory.createChartSet();
     res.setOrientation(Orientation.VERTICAL);
+    
+    IndependentAxis timeAxis = factory.createIndependentAxis();
+    timeAxis.setAxisType(AxisType.TIME);
+    res.setSharedAxis(timeAxis);
 
     // ok, start looking deeper
     StoreGroup sg = (StoreGroup) selection.get(0);
@@ -281,7 +287,6 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
             DependentAxis atbAxis = factory.createDependentAxis();
             atbAxis.setName("ATB");
             relativeChart.getMinAxes().add(atbAxis);
-
             
             DependentAxis brgRateAxis = factory.createDependentAxis();
             brgRateAxis.setName("Bearing Rate");

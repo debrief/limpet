@@ -18,6 +18,7 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.AxisLocation;
 import org.jfree.chart.axis.DateAxis;
 import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.CombinedDomainXYPlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
@@ -51,9 +52,21 @@ public class ChartBuilder
     }
     else
     {
-      // TODO: set sharedAxis config to parentAxis
-      DateAxis parentAxis = new DateAxis(sharedAxis.getName());
-      plot = new CombinedDomainXYPlot(parentAxis);
+      final ValueAxis axis;
+      switch (sharedAxis.getAxisType())
+      {
+      case NUMBER:
+        axis = new NumberAxis(sharedAxis.getName());
+        break;
+      case TIME:
+        axis = new DateAxis(sharedAxis.getName());
+        break;
+      default:
+        System.err.println("UNEXPECTED AXIS TYPE RECEIVED");
+        axis = null;
+      }
+
+      plot = new CombinedDomainXYPlot(axis);
     }
     EList<Chart> charts = chartsSet.getCharts();
     for (Chart chart : charts)
@@ -61,7 +74,8 @@ public class ChartBuilder
       // sub plots
       
       // TODO - we have to build up multiple axes, according to the minAxes
-      // & maxAxes
+      // & maxAxes.  See the above code that creates the correct axis type
+      // for the axis in the model
 
       final XYItemRenderer renderer = new StandardXYItemRenderer();
       final NumberAxis chartAxis = new NumberAxis(chart.getName());
