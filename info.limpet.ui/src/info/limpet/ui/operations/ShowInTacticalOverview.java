@@ -218,6 +218,20 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
             // set follow selection to off
             // cv.follow(getInputs());
             cv.setModel(model);
+            
+//            // take a copy of the model
+//            URI resourceURI = URI.createFileURI("/home/ian/tacticalOverview.stackedcharts");
+//            Resource resource = new ResourceSetImpl().createResource(resourceURI);
+//            System.out.println("saving to:" + resourceURI.toFileString());
+//            resource.getContents().add(model);
+//            try
+//            {
+//              resource.save(null);
+//            }
+//            catch (IOException e)
+//            {
+//              e.printStackTrace();
+//            }
           }
 
         }
@@ -331,6 +345,7 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
           if (sensor.size() != 1)
           {
             ScatterSet scatter = factory.createScatterSet();
+            @SuppressWarnings("unchecked")
             ITemporalObjectCollection<Object> cuts = (ITemporalObjectCollection<Object>) sensor.get(0);
 
             Iterator<Long> times = cuts.getTimes().iterator();
