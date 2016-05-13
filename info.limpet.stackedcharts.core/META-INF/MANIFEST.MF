@@ -22,6 +22,5 @@ Bundle-Vendor: MWC
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ClassPath: libs/org.eclipse.nebula.effects.stw_1.0.0.201604151927.jar,
  .
-
 Export-Package: info.limpet.stackedcharts.core,
  info.limpet.stackedcharts.core.view
