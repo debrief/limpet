@@ -209,8 +209,6 @@
                                          dir="${source-location}/info.limpet.stackedcharts.model/target/classes" />
                                       <fileset
                                          dir="${source-location}/info.limpet.stackedcharts.editor/target/classes" />
-                                      <fileset
-                                         dir="${source-location}/info.limpet.stackedcharts.model.tests/target/classes" />
                                    </classfiles>
                                    <sourcefiles
                                         encoding="UTF-8">
@@ -228,8 +226,6 @@
                                          dir="${source-location}/info.limpet.stackedcharts.model/src/" />
                                       <fileset
                                          dir="${source-location}/info.limpet.stackedcharts.editor/src/" />
-                                      <fileset
-                                         dir="${source-location}/info.limpet.stackedcharts.model.tests/src/" />
                                    </sourcefiles>
                                </structure>
                                <html destdir="../target/jacoco/report" />
