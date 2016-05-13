@@ -139,6 +139,15 @@ public interface StackedchartsFactory extends EFactory {
 	Datum createDatum();
 
 	/**
+	 * Returns a new object of class '<em>Selective Annotation</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Selective Annotation</em>'.
+	 * @generated
+	 */
+	SelectiveAnnotation createSelectiveAnnotation();
+
+	/**
 	 * Returns the package supported by this factory.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

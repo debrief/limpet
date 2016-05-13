@@ -2,7 +2,6 @@
  */
 package info.limpet.stackedcharts.model;
 
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 
 /**
@@ -20,7 +19,6 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link info.limpet.stackedcharts.model.AbstractAxis#getDirection <em>Direction</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.AbstractAxis#getFont <em>Font</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.AbstractAxis#getColor <em>Color</em>}</li>
- *   <li>{@link info.limpet.stackedcharts.model.AbstractAxis#getAnnotations <em>Annotations</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.AbstractAxis#getAxisType <em>Axis Type</em>}</li>
  * </ul>
  *
@@ -138,22 +136,6 @@ public interface AbstractAxis extends EObject {
 	 * @generated
 	 */
 	void setDirection(AxisDirection value);
-
-	/**
-	 * Returns the value of the '<em><b>Annotations</b></em>' containment reference list.
-	 * The list contents are of type {@link info.limpet.stackedcharts.model.AbstractAnnotation}.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Annotations</em>' reference isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Annotations</em>' containment reference list.
-	 * @see info.limpet.stackedcharts.model.StackedchartsPackage#getAbstractAxis_Annotations()
-	 * @model containment="true"
-	 * @generated
-	 */
-	EList<AbstractAnnotation> getAnnotations();
 
 	/**
 	 * Returns the value of the '<em><b>Axis Type</b></em>' attribute.

@@ -2,7 +2,6 @@
  */
 package info.limpet.stackedcharts.model;
 
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 
 /**
@@ -20,7 +19,6 @@ import org.eclipse.emf.ecore.EObject;
  * <ul>
  *   <li>{@link info.limpet.stackedcharts.model.AbstractAnnotation#getName <em>Name</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.AbstractAnnotation#getColor <em>Color</em>}</li>
- *   <li>{@link info.limpet.stackedcharts.model.AbstractAnnotation#getAppearsIn <em>Appears In</em>}</li>
  * </ul>
  *
  * @see info.limpet.stackedcharts.model.StackedchartsPackage#getAbstractAnnotation()
@@ -79,20 +77,5 @@ public interface AbstractAnnotation extends EObject {
 	 * @generated
 	 */
 	void setColor(String value);
-
-	/**
-	 * Returns the value of the '<em><b>Appears In</b></em>' containment reference list.
-	 * The list contents are of type {@link info.limpet.stackedcharts.model.Chart}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * <!-- begin-model-doc -->
-	 * a list of which  charts this annotation appears in (or null for all charts)
-	 * <!-- end-model-doc -->
-	 * @return the value of the '<em>Appears In</em>' containment reference list.
-	 * @see info.limpet.stackedcharts.model.StackedchartsPackage#getAbstractAnnotation_AppearsIn()
-	 * @model containment="true"
-	 * @generated
-	 */
-	EList<Chart> getAppearsIn();
 
 } // AbstractAnnotation

@@ -2,25 +2,15 @@
  */
 package info.limpet.stackedcharts.model.impl;
 
-import info.limpet.stackedcharts.model.AbstractAnnotation;
 import info.limpet.stackedcharts.model.AbstractAxis;
 import info.limpet.stackedcharts.model.AxisDirection;
 import info.limpet.stackedcharts.model.AxisScale;
 import info.limpet.stackedcharts.model.AxisType;
 import info.limpet.stackedcharts.model.StackedchartsPackage;
-
-import java.util.Collection;
 import org.eclipse.emf.common.notify.Notification;
-import org.eclipse.emf.common.notify.NotificationChain;
-
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.InternalEObject;
-
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
-import org.eclipse.emf.ecore.util.EObjectContainmentEList;
-import org.eclipse.emf.ecore.util.InternalEList;
 
 /**
  * <!-- begin-user-doc -->
@@ -36,7 +26,6 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link info.limpet.stackedcharts.model.impl.AbstractAxisImpl#getDirection <em>Direction</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.impl.AbstractAxisImpl#getFont <em>Font</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.impl.AbstractAxisImpl#getColor <em>Color</em>}</li>
- *   <li>{@link info.limpet.stackedcharts.model.impl.AbstractAxisImpl#getAnnotations <em>Annotations</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.impl.AbstractAxisImpl#getAxisType <em>Axis Type</em>}</li>
  * </ul>
  *
@@ -162,16 +151,6 @@ public abstract class AbstractAxisImpl extends MinimalEObjectImpl.Container impl
 	 * @ordered
 	 */
 	protected String color = COLOR_EDEFAULT;
-
-	/**
-	 * The cached value of the '{@link #getAnnotations() <em>Annotations</em>}' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getAnnotations()
-	 * @generated
-	 * @ordered
-	 */
-	protected EList<AbstractAnnotation> annotations;
 
 	/**
 	 * The default value of the '{@link #getAxisType() <em>Axis Type</em>}' attribute.
@@ -301,18 +280,6 @@ public abstract class AbstractAxisImpl extends MinimalEObjectImpl.Container impl
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EList<AbstractAnnotation> getAnnotations() {
-		if (annotations == null) {
-			annotations = new EObjectContainmentEList<AbstractAnnotation>(AbstractAnnotation.class, this, StackedchartsPackage.ABSTRACT_AXIS__ANNOTATIONS);
-		}
-		return annotations;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public AxisType getAxisType() {
 		return axisType;
 	}
@@ -377,20 +344,6 @@ public abstract class AbstractAxisImpl extends MinimalEObjectImpl.Container impl
 	 * @generated
 	 */
 	@Override
-	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
-		switch (featureID) {
-			case StackedchartsPackage.ABSTRACT_AXIS__ANNOTATIONS:
-				return ((InternalEList<?>)getAnnotations()).basicRemove(otherEnd, msgs);
-		}
-		return super.eInverseRemove(otherEnd, featureID, msgs);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
 			case StackedchartsPackage.ABSTRACT_AXIS__SCALE:
@@ -405,8 +358,6 @@ public abstract class AbstractAxisImpl extends MinimalEObjectImpl.Container impl
 				return getFont();
 			case StackedchartsPackage.ABSTRACT_AXIS__COLOR:
 				return getColor();
-			case StackedchartsPackage.ABSTRACT_AXIS__ANNOTATIONS:
-				return getAnnotations();
 			case StackedchartsPackage.ABSTRACT_AXIS__AXIS_TYPE:
 				return getAxisType();
 		}
@@ -439,10 +390,6 @@ public abstract class AbstractAxisImpl extends MinimalEObjectImpl.Container impl
 				return;
 			case StackedchartsPackage.ABSTRACT_AXIS__COLOR:
 				setColor((String)newValue);
-				return;
-			case StackedchartsPackage.ABSTRACT_AXIS__ANNOTATIONS:
-				getAnnotations().clear();
-				getAnnotations().addAll((Collection<? extends AbstractAnnotation>)newValue);
 				return;
 			case StackedchartsPackage.ABSTRACT_AXIS__AXIS_TYPE:
 				setAxisType((AxisType)newValue);
@@ -477,9 +424,6 @@ public abstract class AbstractAxisImpl extends MinimalEObjectImpl.Container impl
 			case StackedchartsPackage.ABSTRACT_AXIS__COLOR:
 				setColor(COLOR_EDEFAULT);
 				return;
-			case StackedchartsPackage.ABSTRACT_AXIS__ANNOTATIONS:
-				getAnnotations().clear();
-				return;
 			case StackedchartsPackage.ABSTRACT_AXIS__AXIS_TYPE:
 				setAxisType(AXIS_TYPE_EDEFAULT);
 				return;
@@ -507,8 +451,6 @@ public abstract class AbstractAxisImpl extends MinimalEObjectImpl.Container impl
 				return FONT_EDEFAULT == null ? font != null : !FONT_EDEFAULT.equals(font);
 			case StackedchartsPackage.ABSTRACT_AXIS__COLOR:
 				return COLOR_EDEFAULT == null ? color != null : !COLOR_EDEFAULT.equals(color);
-			case StackedchartsPackage.ABSTRACT_AXIS__ANNOTATIONS:
-				return annotations != null && !annotations.isEmpty();
 			case StackedchartsPackage.ABSTRACT_AXIS__AXIS_TYPE:
 				return axisType != AXIS_TYPE_EDEFAULT;
 		}
