@@ -1066,9 +1066,12 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
 		addEEnumLiteral(axisDirectionEEnum, AxisDirection.DESCENDING);
 
 		initEEnum(markerStyleEEnum, MarkerStyle.class, "MarkerStyle");
-		addEEnumLiteral(markerStyleEEnum, MarkerStyle.CIRCLE);
-		addEEnumLiteral(markerStyleEEnum, MarkerStyle.SQUARE);
 		addEEnumLiteral(markerStyleEEnum, MarkerStyle.NONE);
+		addEEnumLiteral(markerStyleEEnum, MarkerStyle.SQUARE);
+		addEEnumLiteral(markerStyleEEnum, MarkerStyle.CIRCLE);
+		addEEnumLiteral(markerStyleEEnum, MarkerStyle.TRIANGLE);
+		addEEnumLiteral(markerStyleEEnum, MarkerStyle.CROSS);
+		addEEnumLiteral(markerStyleEEnum, MarkerStyle.DIAMOND);
 
 		initEEnum(lineTypeEEnum, LineType.class, "LineType");
 		addEEnumLiteral(lineTypeEEnum, LineType.NONE);

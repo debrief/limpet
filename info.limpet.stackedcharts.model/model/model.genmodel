@@ -3,7 +3,7 @@
     xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/info.limpet.stackedcharts.model/src" modelPluginID="info.limpet.stackedcharts.model"
     modelName="Model" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
     importerID="org.eclipse.emf.importer.ecore" complianceLevel="7.0" copyrightFields="false"
-    operationReflection="true" importOrganizing="true">
+    operationReflection="true">
   <foreignModel>model.ecore</foreignModel>
   <genPackages prefix="Stackedcharts" basePackage="info.limpet.stackedcharts" disposableProviderFactory="true"
       ecorePackage="model.ecore#/">
@@ -20,9 +20,12 @@
       <genEnumLiterals ecoreEnumLiteral="model.ecore#//AxisDirection/Descending"/>
     </genEnums>
     <genEnums typeSafeEnumCompatible="false" ecoreEnum="model.ecore#//MarkerStyle">
-      <genEnumLiterals ecoreEnumLiteral="model.ecore#//MarkerStyle/Circle"/>
-      <genEnumLiterals ecoreEnumLiteral="model.ecore#//MarkerStyle/Square"/>
       <genEnumLiterals ecoreEnumLiteral="model.ecore#//MarkerStyle/None"/>
+      <genEnumLiterals ecoreEnumLiteral="model.ecore#//MarkerStyle/Square"/>
+      <genEnumLiterals ecoreEnumLiteral="model.ecore#//MarkerStyle/Circle"/>
+      <genEnumLiterals ecoreEnumLiteral="model.ecore#//MarkerStyle/Triangle"/>
+      <genEnumLiterals ecoreEnumLiteral="model.ecore#//MarkerStyle/Cross"/>
+      <genEnumLiterals ecoreEnumLiteral="model.ecore#//MarkerStyle/Diamond"/>
     </genEnums>
     <genEnums typeSafeEnumCompatible="false" ecoreEnum="model.ecore#//LineType">
       <genEnumLiterals ecoreEnumLiteral="model.ecore#//LineType/None"/>

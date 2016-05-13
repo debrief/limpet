@@ -7,11 +7,15 @@ import info.limpet.stackedcharts.model.Dataset;
 import info.limpet.stackedcharts.model.DependentAxis;
 import info.limpet.stackedcharts.model.IndependentAxis;
 import info.limpet.stackedcharts.model.Marker;
+import info.limpet.stackedcharts.model.MarkerStyle;
 import info.limpet.stackedcharts.model.Orientation;
+import info.limpet.stackedcharts.model.PlainStyling;
 import info.limpet.stackedcharts.model.SelectiveAnnotation;
 import info.limpet.stackedcharts.model.StackedchartsFactory;
+import info.limpet.stackedcharts.model.Styling;
 import info.limpet.stackedcharts.model.Zone;
 
+import java.awt.Color;
 import java.util.Date;
 
 import org.eclipse.emf.common.util.EList;
@@ -41,7 +45,6 @@ public class ChartBuilder
   public ChartBuilder(ChartSet chartsSet)
   {
     this.chartsSet = chartsSet;
-
   }
 
   /** helper class that can handle either temporal or non-temporal datasets
@@ -219,6 +222,62 @@ public class ChartBuilder
     for (Dataset dataset : datasets)
     {
       final Series series = helper.createSeries(axis.getName());
+      
+      Styling styling = dataset.getStyling();
+      if(styling != null)
+      {
+      	if(styling instanceof PlainStyling)
+      	{
+					PlainStyling ps = (PlainStyling) styling;
+					String hexColor = ps.getColor();
+
+					@SuppressWarnings("unused")
+					Color thisColor = null;
+
+					if (hexColor != null)
+					{
+						thisColor = hex2Rgb(hexColor);
+					}
+					// TODO: use this color in the renderer
+      	}
+      	else
+      	{
+      		System.err.println("Linear colors not implemented");
+      	}
+      	
+				// and the marker?
+				@SuppressWarnings("unused")
+				double size = styling.getMarkerSize();
+				MarkerStyle marker = styling.getMarkerStyle();
+
+				if (marker != null)
+				{
+					// TODO: assign the correct JFreeChart marker
+					// for the supplied value
+					switch (marker)
+					{
+					case NONE:
+						break;
+					case SQUARE:
+						break;
+					case CIRCLE:
+						break;
+					case TRIANGLE:
+						break;
+					case CROSS:
+						break;
+					case DIAMOND:
+						break;
+					default:
+
+					}
+				}
+      	
+      	// TODO create a renderer for this series, using the
+      	// specified color, marker & marker size
+      	
+      }
+      
       helper.storeSeries(collection, series);
       EList<DataItem> measurements = dataset.getMeasurements();
       for (DataItem dataItem : measurements)
@@ -342,4 +401,15 @@ public class ChartBuilder
     return chartsSet;
   }
 
+   /**
+    * 
+    * @param colorStr e.g. "#FFFFFF"
+    * @return 
+    */
+   private static Color hex2Rgb(String colorStr) {
+       return new Color(
+               Integer.valueOf( colorStr.substring( 1, 3 ), 16 ),
+               Integer.valueOf( colorStr.substring( 3, 5 ), 16 ),
+               Integer.valueOf( colorStr.substring( 5, 7 ), 16 ) );
+   }
 }

@@ -19,26 +19,6 @@ import org.eclipse.emf.common.util.Enumerator;
  */
 public enum MarkerStyle implements Enumerator {
 	/**
-	 * The '<em><b>Circle</b></em>' literal object.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #CIRCLE_VALUE
-	 * @generated
-	 * @ordered
-	 */
-	CIRCLE(0, "Circle", "Circle"),
-
-	/**
-	 * The '<em><b>Square</b></em>' literal object.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #SQUARE_VALUE
-	 * @generated
-	 * @ordered
-	 */
-	SQUARE(1, "Square", "Square"),
-
-	/**
 	 * The '<em><b>None</b></em>' literal object.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -46,22 +26,62 @@ public enum MarkerStyle implements Enumerator {
 	 * @generated
 	 * @ordered
 	 */
-	NONE(2, "None", "None");
-
-	/**
-	 * The '<em><b>Circle</b></em>' literal value.
+	NONE(0, "None", "None"), /**
+	 * The '<em><b>Square</b></em>' literal object.
 	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of '<em><b>Circle</b></em>' literal object isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
 	 * <!-- end-user-doc -->
-	 * @see #CIRCLE
-	 * @model name="Circle"
+	 * @see #SQUARE_VALUE
 	 * @generated
 	 * @ordered
 	 */
-	public static final int CIRCLE_VALUE = 0;
+	SQUARE(1, "Square", "Square"), /**
+	 * The '<em><b>Circle</b></em>' literal object.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #CIRCLE_VALUE
+	 * @generated
+	 * @ordered
+	 */
+	CIRCLE(2, "Circle", "Circle"), /**
+	 * The '<em><b>Triangle</b></em>' literal object.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #TRIANGLE_VALUE
+	 * @generated
+	 * @ordered
+	 */
+	TRIANGLE(3, "Triangle", "Triangle"), /**
+	 * The '<em><b>Cross</b></em>' literal object.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #CROSS_VALUE
+	 * @generated
+	 * @ordered
+	 */
+	CROSS(4, "Cross", "Cross"), /**
+	 * The '<em><b>Diamond</b></em>' literal object.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #DIAMOND_VALUE
+	 * @generated
+	 * @ordered
+	 */
+	DIAMOND(5, "Diamond", "Diamond");
+
+	/**
+	 * The '<em><b>None</b></em>' literal value.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of '<em><b>None</b></em>' literal object isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @see #NONE
+	 * @model name="None"
+	 * @generated
+	 * @ordered
+	 */
+	public static final int NONE_VALUE = 0;
 
 	/**
 	 * The '<em><b>Square</b></em>' literal value.
@@ -79,19 +99,64 @@ public enum MarkerStyle implements Enumerator {
 	public static final int SQUARE_VALUE = 1;
 
 	/**
-	 * The '<em><b>None</b></em>' literal value.
+	 * The '<em><b>Circle</b></em>' literal value.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of '<em><b>None</b></em>' literal object isn't clear,
+	 * If the meaning of '<em><b>Circle</b></em>' literal object isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @see #NONE
-	 * @model name="None"
+	 * @see #CIRCLE
+	 * @model name="Circle"
 	 * @generated
 	 * @ordered
 	 */
-	public static final int NONE_VALUE = 2;
+	public static final int CIRCLE_VALUE = 2;
+
+	/**
+	 * The '<em><b>Triangle</b></em>' literal value.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of '<em><b>Triangle</b></em>' literal object isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @see #TRIANGLE
+	 * @model name="Triangle"
+	 * @generated
+	 * @ordered
+	 */
+	public static final int TRIANGLE_VALUE = 3;
+
+	/**
+	 * The '<em><b>Cross</b></em>' literal value.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of '<em><b>Cross</b></em>' literal object isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @see #CROSS
+	 * @model name="Cross"
+	 * @generated
+	 * @ordered
+	 */
+	public static final int CROSS_VALUE = 4;
+
+	/**
+	 * The '<em><b>Diamond</b></em>' literal value.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of '<em><b>Diamond</b></em>' literal object isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @see #DIAMOND
+	 * @model name="Diamond"
+	 * @generated
+	 * @ordered
+	 */
+	public static final int DIAMOND_VALUE = 5;
 
 	/**
 	 * An array of all the '<em><b>Marker Style</b></em>' enumerators.
@@ -101,9 +166,12 @@ public enum MarkerStyle implements Enumerator {
 	 */
 	private static final MarkerStyle[] VALUES_ARRAY =
 		new MarkerStyle[] {
-			CIRCLE,
-			SQUARE,
 			NONE,
+			SQUARE,
+			CIRCLE,
+			TRIANGLE,
+			CROSS,
+			DIAMOND,
 		};
 
 	/**
@@ -160,9 +228,12 @@ public enum MarkerStyle implements Enumerator {
 	 */
 	public static MarkerStyle get(int value) {
 		switch (value) {
-			case CIRCLE_VALUE: return CIRCLE;
-			case SQUARE_VALUE: return SQUARE;
 			case NONE_VALUE: return NONE;
+			case SQUARE_VALUE: return SQUARE;
+			case CIRCLE_VALUE: return CIRCLE;
+			case TRIANGLE_VALUE: return TRIANGLE;
+			case CROSS_VALUE: return CROSS;
+			case DIAMOND_VALUE: return DIAMOND;
 		}
 		return null;
 	}

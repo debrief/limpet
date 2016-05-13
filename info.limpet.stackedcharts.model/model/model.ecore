@@ -124,9 +124,12 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="val" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="MarkerStyle">
-    <eLiterals name="Circle"/>
+    <eLiterals name="None"/>
     <eLiterals name="Square" value="1"/>
-    <eLiterals name="None" value="2"/>
+    <eLiterals name="Circle" value="2"/>
+    <eLiterals name="Triangle" value="3" literal="Triangle"/>
+    <eLiterals name="Cross" value="4" literal="Cross"/>
+    <eLiterals name="Diamond" value="5" literal="Diamond"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="LineType">
     <eLiterals name="None" value="1"/>
