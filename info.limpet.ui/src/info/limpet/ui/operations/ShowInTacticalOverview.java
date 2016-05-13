@@ -35,6 +35,7 @@ import info.limpet.stackedcharts.model.DependentAxis;
 import info.limpet.stackedcharts.model.IndependentAxis;
 import info.limpet.stackedcharts.model.Orientation;
 import info.limpet.stackedcharts.model.ScatterSet;
+import info.limpet.stackedcharts.model.SelectiveAnnotation;
 import info.limpet.stackedcharts.model.StackedchartsFactory;
 
 import java.util.ArrayList;
@@ -357,8 +358,10 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
               scatter.getDatums().add(item);
             }
             
-            timeAxis.getAnnotations().add(scatter);
-            scatter.getAppearsIn().add(res.getCharts().get(0));
+            SelectiveAnnotation sel = factory.createSelectiveAnnotation();
+            sel.setAnnotation(scatter);
+            sel.getAppearsIn().add(res.getCharts().get(0));
+            timeAxis.getAnnotations().add(sel);
           }
         }
       }
@@ -438,9 +441,6 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
 
     // and it to an axis
     axis.getDatasets().add(newD);
-    
-    // and add the dataset to the central chartset
-    chartSet.getDatasets().add(newD);
   }
 
 }
