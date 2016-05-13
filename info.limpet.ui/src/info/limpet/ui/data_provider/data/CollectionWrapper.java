@@ -16,7 +16,6 @@ package info.limpet.ui.data_provider.data;
 
 import info.limpet.ICollection;
 import info.limpet.IStoreItem;
-import info.limpet.stackedcharts.model.Dataset;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ui.views.properties.IPropertySource;

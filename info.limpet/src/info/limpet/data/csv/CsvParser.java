@@ -50,14 +50,17 @@ public class CsvParser
   // 21/09/2015 07:00:31
   private static final DateFormat DATE_FORMAT = new SimpleDateFormat(
       "dd/MM/yyyy hh:mm:ss");
-  private static final DateFormat TIME_FORMAT = new SimpleDateFormat("hh:mm:ss");
+  private static final DateFormat TIME_FORMAT =
+      new SimpleDateFormat("hh:mm:ss");
   private ArrayList<DataImporter> _candidates;
 
   public List<IStoreItem> parse(String filePath) throws IOException
   {
     final List<IStoreItem> res = new ArrayList<IStoreItem>();
     final File inFile = new File(filePath);
-    final Reader in =   new InputStreamReader(new FileInputStream(inFile), Charset.forName("UTF-8"));
+    final Reader in =
+        new InputStreamReader(new FileInputStream(inFile), Charset
+            .forName("UTF-8"));
     final String fullFileName = inFile.getName();
     final String fileName = filePrefix(fullFileName);
     final Iterable<CSVRecord> records = CSVFormat.DEFAULT.parse(in);
@@ -82,7 +85,7 @@ public class CsvParser
     List<ICollection> series = new ArrayList<ICollection>();
 
     boolean isTime = false;
-    DateFormat customDateFormat = null; 
+    DateFormat customDateFormat = null;
 
     for (CSVRecord record : records)
     {
@@ -95,13 +98,14 @@ public class CsvParser
         if (time != null && time.toLowerCase().startsWith("time"))
         {
           // is it plain time?
-          if(!time.toLowerCase().equals("time"))
+          if (!time.toLowerCase().equals("time"))
           {
             // ok, see if we have a time format string
-            if(time.contains("(") && time.contains(")"))
+            if (time.contains("(") && time.contains(")"))
             {
               // ok, extract the format string
-              String formatStr = time.substring(time.indexOf("(")+1, time.indexOf(")"));
+              String formatStr =
+                  time.substring(time.indexOf("(") + 1, time.indexOf(")"));
               customDateFormat = new SimpleDateFormat(formatStr);
             }
           }
@@ -319,7 +323,6 @@ public class CsvParser
     return res;
   }
 
-  
   public static DateFormat getDateFormat()
   {
     return DATE_FORMAT;
