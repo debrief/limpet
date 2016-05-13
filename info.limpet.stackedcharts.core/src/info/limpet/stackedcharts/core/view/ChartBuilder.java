@@ -8,6 +8,7 @@ import info.limpet.stackedcharts.model.DependentAxis;
 import info.limpet.stackedcharts.model.IndependentAxis;
 import info.limpet.stackedcharts.model.Marker;
 import info.limpet.stackedcharts.model.Orientation;
+import info.limpet.stackedcharts.model.SelectiveAnnotation;
 import info.limpet.stackedcharts.model.StackedchartsFactory;
 import info.limpet.stackedcharts.model.Zone;
 
@@ -252,7 +253,6 @@ public class ChartBuilder
     Dataset temperatureVsDepth1 = factory.createDataset();
     temperatureVsDepth1.setName("Temp vs Depth");
     yAxis1.getDatasets().add(temperatureVsDepth1);
-    chartsSet.getDatasets().add(temperatureVsDepth1);
 
     DataItem item1 = factory.createDataItem();
     item1.setIndependentVal(1000);
@@ -277,7 +277,6 @@ public class ChartBuilder
     Dataset salinityVsDepth1 = factory.createDataset();
     salinityVsDepth1.setName("Salinity Vs Depth");
     yAxis2.getDatasets().add(salinityVsDepth1);
-    chartsSet.getDatasets().add(salinityVsDepth1);
 
 
     item1 = factory.createDataItem();
@@ -306,12 +305,16 @@ public class ChartBuilder
     Marker marker = factory.createMarker();
     marker.setValue(1200);
     marker.setName("A marker");
-    shared.getAnnotations().add(marker);
+    SelectiveAnnotation sel = factory.createSelectiveAnnotation();
+    sel.setAnnotation(marker);
+    shared.getAnnotations().add(sel);
     Zone zone = factory.createZone();
     zone.setStart(2100);
     zone.setEnd(2500);
     zone.setName("A Zone");    
-    shared.getAnnotations().add(zone);
+    sel = factory.createSelectiveAnnotation();
+    sel.setAnnotation(zone);
+    shared.getAnnotations().add(sel);
 
     DependentAxis yAxis = factory.createDependentAxis();
     yAxis.setName("Pressure");
@@ -320,7 +323,6 @@ public class ChartBuilder
     Dataset pressureVsDepth = factory.createDataset();
     pressureVsDepth.setName("Pressure vs Depth");
     yAxis.getDatasets().add(pressureVsDepth);
-    chartsSet.getDatasets().add(pressureVsDepth);
 
     DataItem item = factory.createDataItem();
     item.setIndependentVal(1000);
