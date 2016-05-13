@@ -8,6 +8,7 @@ import info.limpet.stackedcharts.model.DependentAxis;
 import info.limpet.stackedcharts.model.IndependentAxis;
 import info.limpet.stackedcharts.model.Marker;
 import info.limpet.stackedcharts.model.Orientation;
+import info.limpet.stackedcharts.model.SelectiveAnnotation;
 import info.limpet.stackedcharts.model.StackedchartsFactory;
 import info.limpet.stackedcharts.model.Zone;
 
@@ -24,9 +25,13 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.StandardXYItemRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
+import org.jfree.data.general.Series;
 import org.jfree.data.time.Millisecond;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
+import org.jfree.data.xy.XYDataset;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
 
 public class ChartBuilder
 {
@@ -39,61 +44,161 @@ public class ChartBuilder
 
   }
 
+  /** helper class that can handle either temporal or non-temporal datasets
+   * 
+   * @author ian
+   *
+   */
+  private static interface ChartHelper
+  {
+    /** create the correct type of axis
+     * 
+     * @param name
+     * @return
+     */
+    ValueAxis createAxis(String name);
+    void addItem(Series series, DataItem item);
+    Series createSeries(String name);
+    XYDataset createCollection();
+    void storeSeries(XYDataset collection, Series series);
+  }
+  
+  private static class NumberHelper implements ChartHelper
+  {
+
+    @Override
+    public ValueAxis createAxis(String name)
+    {
+      return new NumberAxis(name);
+    }
+
+    @Override
+    public void addItem(Series series, DataItem item)
+    {
+      XYSeries ns = (XYSeries) series;
+      ns.add(item.getIndependentVal(), item.getDependentVal());
+    }
+
+    @Override
+    public Series createSeries(String name)
+    {
+      return new XYSeries(name);
+    }
+
+    @Override
+    public XYDataset createCollection()
+    {
+      return new XYSeriesCollection();
+    }
+
+    @Override
+    public void storeSeries(XYDataset collection, Series series)
+    {
+      XYSeriesCollection cc = (XYSeriesCollection) collection;
+      cc.addSeries((XYSeries)series);
+    }
+    
+  }
+  private static class TimeHelper implements ChartHelper
+  {
+
+    @Override
+    public ValueAxis createAxis(String name)
+    {
+      return new DateAxis(name);
+    }
+
+    @Override
+    public void addItem(Series series, DataItem item)
+    {
+      TimeSeries ns = (TimeSeries) series;
+      long time = (long) item.getIndependentVal();
+      Millisecond milli = new Millisecond(new Date(time));
+      ns.add(milli, item.getDependentVal());
+    }
+
+    @Override
+    public Series createSeries(String name)
+    {
+      return new TimeSeries(name);
+    }
+
+    @Override
+    public XYDataset createCollection()
+    {
+      return new TimeSeriesCollection();
+    }
+
+    @Override
+    public void storeSeries(XYDataset collection, Series series)
+    {
+      TimeSeriesCollection cc = (TimeSeriesCollection) collection;
+      cc.addSeries((TimeSeries)series);
+    }
+  }
+  
   public JFreeChart build()
   {
 
     IndependentAxis sharedAxis = chartsSet.getSharedAxis();
-    final CombinedDomainXYPlot plot;
+
+    final ChartHelper helper;
+    final ValueAxis axis;
 
     if (sharedAxis == null)
     {
-      DateAxis parentAxis = new DateAxis("Time");
-      plot = new CombinedDomainXYPlot(parentAxis);
+      axis = new DateAxis("Time");
+      helper = new NumberHelper();
     }
     else
     {
-      final ValueAxis axis;
       switch (sharedAxis.getAxisType())
       {
       case NUMBER:
-        axis = new NumberAxis(sharedAxis.getName());
+        helper = new NumberHelper();
         break;
       case TIME:
-        axis = new DateAxis(sharedAxis.getName());
+        helper = new TimeHelper();
         break;
       default:
         System.err.println("UNEXPECTED AXIS TYPE RECEIVED");
-        axis = null;
+        helper = new NumberHelper();
       }
-
-      plot = new CombinedDomainXYPlot(axis);
+      
+      axis = helper.createAxis(sharedAxis.getName());
     }
+    
+    final CombinedDomainXYPlot plot = new CombinedDomainXYPlot(axis);
+
+    
     EList<Chart> charts = chartsSet.getCharts();
     for (Chart chart : charts)
     {
-      // sub plots
-      
       // TODO - we have to build up multiple axes, according to the minAxes
-      // & maxAxes.  See the above code that creates the correct axis type
-      // for the axis in the model
-
+      // & maxAxes  
+      //
+      // so, we don't just create one chartAxis. We will loop through the 
+      // minAxes & maxAxes, and we will create JFreeChart axes on the left/right
+      // side as necessary
+      //
+      // we also need to tell JFreeChart which dataset (series) goes on which axis.
+      //
+      // But, we don't have a plot object yet.  So, I think we'll have to build
+      // up a list of axes, then add them to the plot at the end.
+      
       final XYItemRenderer renderer = new StandardXYItemRenderer();
-      final NumberAxis chartAxis = new NumberAxis(chart.getName());
-      final TimeSeriesCollection collection = new TimeSeriesCollection();
+      final ValueAxis chartAxis = new NumberAxis(chart.getName());
+      final XYDataset collection = helper.createCollection();
       EList<DependentAxis> minAxes = chart.getMinAxes();
       for (DependentAxis dependentAxis : minAxes)
       {
-        final TimeSeries series = new TimeSeries(dependentAxis.getName());
-        collection.addSeries(series);
-        buildAxsis(dependentAxis, series);
+        buildAxis(helper, dependentAxis, collection);
       }
       
       EList<DependentAxis> maxAxes = chart.getMaxAxes();
       for (DependentAxis dependentAxis : maxAxes)
       {
-        final TimeSeries series = new TimeSeries(dependentAxis.getName());
-        collection.addSeries(series);
-        buildAxsis(dependentAxis, series);
+        buildAxis(helper, dependentAxis, collection);
       }
 
       final XYPlot subplot = new XYPlot(collection, null, chartAxis, renderer);
@@ -108,19 +213,17 @@ public class ChartBuilder
     return new JFreeChart(plot);
   }
 
-  private void buildAxsis(DependentAxis dependentAxis, final TimeSeries series)
+  private void buildAxis(ChartHelper helper, DependentAxis axis, XYDataset collection)
   {
-    EList<Dataset> datasets = dependentAxis.getDatasets();
+    EList<Dataset> datasets = axis.getDatasets();
     for (Dataset dataset : datasets)
     {
+      final Series series = helper.createSeries(axis.getName());
+      helper.storeSeries(collection, series);
       EList<DataItem> measurements = dataset.getMeasurements();
       for (DataItem dataItem : measurements)
       {
-        // sort out the time
-        Millisecond time = new Millisecond(new Date((long)dataItem.getIndependentVal()));
-        
-        series
-            .add(time, dataItem.getDependentVal());
+        helper.addItem(series,  dataItem);
       }
     }
   }
@@ -150,7 +253,6 @@ public class ChartBuilder
     Dataset temperatureVsDepth1 = factory.createDataset();
     temperatureVsDepth1.setName("Temp vs Depth");
     yAxis1.getDatasets().add(temperatureVsDepth1);
-    chartsSet.getDatasets().add(temperatureVsDepth1);
 
     DataItem item1 = factory.createDataItem();
     item1.setIndependentVal(1000);
@@ -175,7 +277,6 @@ public class ChartBuilder
     Dataset salinityVsDepth1 = factory.createDataset();
     salinityVsDepth1.setName("Salinity Vs Depth");
     yAxis2.getDatasets().add(salinityVsDepth1);
-    chartsSet.getDatasets().add(salinityVsDepth1);
 
 
     item1 = factory.createDataItem();
@@ -204,12 +305,16 @@ public class ChartBuilder
     Marker marker = factory.createMarker();
     marker.setValue(1200);
     marker.setName("A marker");
-    shared.getAnnotations().add(marker);
+    SelectiveAnnotation sel = factory.createSelectiveAnnotation();
+    sel.setAnnotation(marker);
+    shared.getAnnotations().add(sel);
     Zone zone = factory.createZone();
     zone.setStart(2100);
     zone.setEnd(2500);
     zone.setName("A Zone");    
-    shared.getAnnotations().add(zone);
+    sel = factory.createSelectiveAnnotation();
+    sel.setAnnotation(zone);
+    shared.getAnnotations().add(sel);
 
     DependentAxis yAxis = factory.createDependentAxis();
     yAxis.setName("Pressure");
@@ -218,7 +323,6 @@ public class ChartBuilder
     Dataset pressureVsDepth = factory.createDataset();
     pressureVsDepth.setName("Pressure vs Depth");
     yAxis.getDatasets().add(pressureVsDepth);
-    chartsSet.getDatasets().add(pressureVsDepth);
 
     DataItem item = factory.createDataItem();
     item.setIndependentVal(1000);

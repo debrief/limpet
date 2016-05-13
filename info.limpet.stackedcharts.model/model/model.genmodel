@@ -38,7 +38,6 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference model.ecore#//ChartSet/charts"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//ChartSet/orientation"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference model.ecore#//ChartSet/sharedAxis"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference model.ecore#//ChartSet/datasets"/>
     </genClasses>
     <genClasses ecoreClass="model.ecore#//Chart">
       <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference model.ecore#//Chart/parent"/>
@@ -49,6 +48,7 @@
     </genClasses>
     <genClasses ecoreClass="model.ecore#//DependentAxis">
       <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference model.ecore#//DependentAxis/datasets"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference model.ecore#//DependentAxis/annotations"/>
     </genClasses>
     <genClasses ecoreClass="model.ecore#//Dataset">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//Dataset/name"/>
@@ -62,7 +62,6 @@
     <genClasses ecoreClass="model.ecore#//AbstractAnnotation">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//AbstractAnnotation/name"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//AbstractAnnotation/color"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference model.ecore#//AbstractAnnotation/appearsIn"/>
     </genClasses>
     <genClasses ecoreClass="model.ecore#//Zone">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//Zone/start"/>
@@ -93,15 +92,20 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//AbstractAxis/direction"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//AbstractAxis/font"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//AbstractAxis/color"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference model.ecore#//AbstractAxis/annotations"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//AbstractAxis/axisType"/>
     </genClasses>
-    <genClasses ecoreClass="model.ecore#//IndependentAxis"/>
+    <genClasses ecoreClass="model.ecore#//IndependentAxis">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference model.ecore#//IndependentAxis/annotations"/>
+    </genClasses>
     <genClasses ecoreClass="model.ecore#//ScatterSet">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference model.ecore#//ScatterSet/datums"/>
     </genClasses>
     <genClasses ecoreClass="model.ecore#//Datum">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//Datum/val"/>
+    </genClasses>
+    <genClasses ecoreClass="model.ecore#//SelectiveAnnotation">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference model.ecore#//SelectiveAnnotation/annotation"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference model.ecore#//SelectiveAnnotation/appearsIn"/>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>

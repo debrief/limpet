@@ -70,6 +70,7 @@ public class StackedchartsFactoryImpl extends EFactoryImpl implements Stackedcha
 			case StackedchartsPackage.INDEPENDENT_AXIS: return createIndependentAxis();
 			case StackedchartsPackage.SCATTER_SET: return createScatterSet();
 			case StackedchartsPackage.DATUM: return createDatum();
+			case StackedchartsPackage.SELECTIVE_ANNOTATION: return createSelectiveAnnotation();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -253,6 +254,16 @@ public class StackedchartsFactoryImpl extends EFactoryImpl implements Stackedcha
 	public Datum createDatum() {
 		DatumImpl datum = new DatumImpl();
 		return datum;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public SelectiveAnnotation createSelectiveAnnotation() {
+		SelectiveAnnotationImpl selectiveAnnotation = new SelectiveAnnotationImpl();
+		return selectiveAnnotation;
 	}
 
 	/**

@@ -4,7 +4,6 @@ package info.limpet.stackedcharts.model.impl;
 
 import info.limpet.stackedcharts.model.Chart;
 import info.limpet.stackedcharts.model.ChartSet;
-import info.limpet.stackedcharts.model.Dataset;
 import info.limpet.stackedcharts.model.IndependentAxis;
 import info.limpet.stackedcharts.model.Orientation;
 import info.limpet.stackedcharts.model.StackedchartsPackage;
@@ -21,7 +20,6 @@ import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
-import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.EObjectContainmentWithInverseEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
@@ -36,7 +34,6 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link info.limpet.stackedcharts.model.impl.ChartSetImpl#getCharts <em>Charts</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.impl.ChartSetImpl#getOrientation <em>Orientation</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.impl.ChartSetImpl#getSharedAxis <em>Shared Axis</em>}</li>
- *   <li>{@link info.limpet.stackedcharts.model.impl.ChartSetImpl#getDatasets <em>Datasets</em>}</li>
  * </ul>
  *
  * @generated
@@ -81,16 +78,6 @@ public class ChartSetImpl extends MinimalEObjectImpl.Container implements ChartS
 	 * @ordered
 	 */
 	protected IndependentAxis sharedAxis;
-
-	/**
-	 * The cached value of the '{@link #getDatasets() <em>Datasets</em>}' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getDatasets()
-	 * @generated
-	 * @ordered
-	 */
-	protected EList<Dataset> datasets;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -192,18 +179,6 @@ public class ChartSetImpl extends MinimalEObjectImpl.Container implements ChartS
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EList<Dataset> getDatasets() {
-		if (datasets == null) {
-			datasets = new EObjectContainmentEList<Dataset>(Dataset.class, this, StackedchartsPackage.CHART_SET__DATASETS);
-		}
-		return datasets;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
@@ -226,8 +201,6 @@ public class ChartSetImpl extends MinimalEObjectImpl.Container implements ChartS
 				return ((InternalEList<?>)getCharts()).basicRemove(otherEnd, msgs);
 			case StackedchartsPackage.CHART_SET__SHARED_AXIS:
 				return basicSetSharedAxis(null, msgs);
-			case StackedchartsPackage.CHART_SET__DATASETS:
-				return ((InternalEList<?>)getDatasets()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -246,8 +219,6 @@ public class ChartSetImpl extends MinimalEObjectImpl.Container implements ChartS
 				return getOrientation();
 			case StackedchartsPackage.CHART_SET__SHARED_AXIS:
 				return getSharedAxis();
-			case StackedchartsPackage.CHART_SET__DATASETS:
-				return getDatasets();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -271,10 +242,6 @@ public class ChartSetImpl extends MinimalEObjectImpl.Container implements ChartS
 			case StackedchartsPackage.CHART_SET__SHARED_AXIS:
 				setSharedAxis((IndependentAxis)newValue);
 				return;
-			case StackedchartsPackage.CHART_SET__DATASETS:
-				getDatasets().clear();
-				getDatasets().addAll((Collection<? extends Dataset>)newValue);
-				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -296,9 +263,6 @@ public class ChartSetImpl extends MinimalEObjectImpl.Container implements ChartS
 			case StackedchartsPackage.CHART_SET__SHARED_AXIS:
 				setSharedAxis((IndependentAxis)null);
 				return;
-			case StackedchartsPackage.CHART_SET__DATASETS:
-				getDatasets().clear();
-				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -317,8 +281,6 @@ public class ChartSetImpl extends MinimalEObjectImpl.Container implements ChartS
 				return orientation != ORIENTATION_EDEFAULT;
 			case StackedchartsPackage.CHART_SET__SHARED_AXIS:
 				return sharedAxis != null;
-			case StackedchartsPackage.CHART_SET__DATASETS:
-				return datasets != null && !datasets.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}

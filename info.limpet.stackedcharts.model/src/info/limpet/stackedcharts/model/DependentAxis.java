@@ -14,6 +14,7 @@ import org.eclipse.emf.common.util.EList;
  * </p>
  * <ul>
  *   <li>{@link info.limpet.stackedcharts.model.DependentAxis#getDatasets <em>Datasets</em>}</li>
+ *   <li>{@link info.limpet.stackedcharts.model.DependentAxis#getAnnotations <em>Annotations</em>}</li>
  * </ul>
  *
  * @see info.limpet.stackedcharts.model.StackedchartsPackage#getDependentAxis()
@@ -36,5 +37,21 @@ public interface DependentAxis extends AbstractAxis {
 	 * @generated
 	 */
 	EList<Dataset> getDatasets();
+
+	/**
+	 * Returns the value of the '<em><b>Annotations</b></em>' containment reference list.
+	 * The list contents are of type {@link info.limpet.stackedcharts.model.AbstractAnnotation}.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Annotations</em>' containment reference list isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Annotations</em>' containment reference list.
+	 * @see info.limpet.stackedcharts.model.StackedchartsPackage#getDependentAxis_Annotations()
+	 * @model containment="true"
+	 * @generated
+	 */
+	EList<AbstractAnnotation> getAnnotations();
 
 } // DependentAxis

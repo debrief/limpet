@@ -35,6 +35,7 @@ import info.limpet.stackedcharts.model.DependentAxis;
 import info.limpet.stackedcharts.model.IndependentAxis;
 import info.limpet.stackedcharts.model.Orientation;
 import info.limpet.stackedcharts.model.ScatterSet;
+import info.limpet.stackedcharts.model.SelectiveAnnotation;
 import info.limpet.stackedcharts.model.StackedchartsFactory;
 
 import java.util.ArrayList;
@@ -218,6 +219,20 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
             // set follow selection to off
             // cv.follow(getInputs());
             cv.setModel(model);
+            
+//            // take a copy of the model
+//            URI resourceURI = URI.createFileURI("/home/ian/tacticalOverview.stackedcharts");
+//            Resource resource = new ResourceSetImpl().createResource(resourceURI);
+//            System.out.println("saving to:" + resourceURI.toFileString());
+//            resource.getContents().add(model);
+//            try
+//            {
+//              resource.save(null);
+//            }
+//            catch (IOException e)
+//            {
+//              e.printStackTrace();
+//            }
           }
 
         }
@@ -331,6 +346,7 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
           if (sensor.size() != 1)
           {
             ScatterSet scatter = factory.createScatterSet();
+            @SuppressWarnings("unchecked")
             ITemporalObjectCollection<Object> cuts = (ITemporalObjectCollection<Object>) sensor.get(0);
 
             Iterator<Long> times = cuts.getTimes().iterator();
@@ -342,8 +358,10 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
               scatter.getDatums().add(item);
             }
             
-            timeAxis.getAnnotations().add(scatter);
-            scatter.getAppearsIn().add(res.getCharts().get(0));
+            SelectiveAnnotation sel = factory.createSelectiveAnnotation();
+            sel.setAnnotation(scatter);
+            sel.getAppearsIn().add(res.getCharts().get(0));
+            timeAxis.getAnnotations().add(sel);
           }
         }
       }
@@ -423,9 +441,6 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
 
     // and it to an axis
     axis.getDatasets().add(newD);
-    
-    // and add the dataset to the central chartset
-    chartSet.getDatasets().add(newD);
   }
 
 }
