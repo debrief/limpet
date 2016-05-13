@@ -39,7 +39,7 @@ public class StylingImpl extends MinimalEObjectImpl.Container implements Styling
 	 * @generated
 	 * @ordered
 	 */
-	protected static final MarkerStyle MARKER_STYLE_EDEFAULT = MarkerStyle.CIRCLE;
+	protected static final MarkerStyle MARKER_STYLE_EDEFAULT = MarkerStyle.NONE;
 
 	/**
 	 * The cached value of the '{@link #getMarkerStyle() <em>Marker Style</em>}' attribute.
