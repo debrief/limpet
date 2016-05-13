@@ -128,7 +128,7 @@ public class StackedChartsView extends ViewPart
     };
     
     chartHolder.pack(true);
-    chartHolder.layout();
+    chartHolder.getParent().layout();
   }
 
   protected Control createChartView()
