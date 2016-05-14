@@ -192,16 +192,20 @@ public class ChartBuilder
       final XYItemRenderer renderer = new StandardXYItemRenderer();
       final ValueAxis chartAxis = new NumberAxis(chart.getName());
       final XYDataset collection = helper.createCollection();
+      
       EList<DependentAxis> minAxes = chart.getMinAxes();
+      int index = 0;
       for (DependentAxis dependentAxis : minAxes)
       {
-        buildAxis(helper, dependentAxis, collection);
+        buildAxis(helper, dependentAxis, collection,renderer,index);
+        index++;
       }
       
       EList<DependentAxis> maxAxes = chart.getMaxAxes();
       for (DependentAxis dependentAxis : maxAxes)
       {
-        buildAxis(helper, dependentAxis, collection);
+        buildAxis(helper, dependentAxis, collection,renderer,index);
+        index++;
       }
 
       final XYPlot subplot = new XYPlot(collection, null, chartAxis, renderer);
@@ -216,7 +220,7 @@ public class ChartBuilder
     return new JFreeChart(plot);
   }
 
-  private void buildAxis(ChartHelper helper, DependentAxis axis, XYDataset collection)
+  private void buildAxis(ChartHelper helper, DependentAxis axis, XYDataset collection,XYItemRenderer renderer,int index)
   {
     EList<Dataset> datasets = axis.getDatasets();
     for (Dataset dataset : datasets)
@@ -238,7 +242,7 @@ public class ChartBuilder
 					{
 						thisColor = hex2Rgb(hexColor);
 					}
-					// TODO: use this color in the renderer
+					renderer.setSeriesPaint(index, thisColor);
       	}
       	else
       	{
