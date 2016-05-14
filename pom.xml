@@ -31,6 +31,11 @@
     <module>info.limpet.product</module>
     <module>info.limpet.sample_data</module>
     <module>info.limpet.report</module>
+    <module>org.mwc.cmap.jfreechart</module>
+    <module>info.limpet.stackedcharts.model</module>
+    <module>info.limpet.stackedcharts.core</module>
+    <module>info.limpet.stackedcharts.editor</module>
+   
   </modules>
 
   <build>
@@ -198,6 +203,12 @@
                                          dir="${source-location}/info.limpet.ui/target/classes" />
                                       <fileset
                                          dir="${source-location}/info.limpet.test/target/classes" />
+                                      <fileset
+                                         dir="${source-location}/info.limpet.stackedcharts.core/target/classes" />
+                                      <fileset
+                                         dir="${source-location}/info.limpet.stackedcharts.model/target/classes" />
+                                      <fileset
+                                         dir="${source-location}/info.limpet.stackedcharts.editor/target/classes" />
                                    </classfiles>
                                    <sourcefiles
                                         encoding="UTF-8">
@@ -209,6 +220,12 @@
                                          dir="${source-location}/info.limpet.ui/src/" />
                                       <fileset
                                          dir="${source-location}/info.limpet.test/src/" />
+                                      <fileset
+                                         dir="${source-location}/info.limpet.stackedcharts.core/src/" />
+                                      <fileset
+                                         dir="${source-location}/info.limpet.stackedcharts.model/src/" />
+                                      <fileset
+                                         dir="${source-location}/info.limpet.stackedcharts.editor/src/" />
                                    </sourcefiles>
                                </structure>
                                <html destdir="../target/jacoco/report" />
