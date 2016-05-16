@@ -40,6 +40,7 @@ import info.limpet.stackedcharts.model.ScatterSet;
 import info.limpet.stackedcharts.model.SelectiveAnnotation;
 import info.limpet.stackedcharts.model.StackedchartsFactory;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -49,6 +50,9 @@ import javax.measure.Measurable;
 import javax.measure.quantity.Quantity;
 import javax.measure.unit.Unit;
 
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
@@ -222,19 +226,19 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
             // cv.follow(getInputs());
             cv.setModel(model);
             
-//            // take a copy of the model
-//            URI resourceURI = URI.createFileURI("/home/ian/tacticalOverview.stackedcharts");
-//            Resource resource = new ResourceSetImpl().createResource(resourceURI);
-//            System.out.println("saving to:" + resourceURI.toFileString());
-//            resource.getContents().add(model);
-//            try
-//            {
-//              resource.save(null);
-//            }
-//            catch (IOException e)
-//            {
-//              e.printStackTrace();
-//            }
+            // take a copy of the model
+            URI resourceURI = URI.createFileURI("/home/ian/tacticalOverview.stackedcharts");
+            Resource resource = new ResourceSetImpl().createResource(resourceURI);
+            System.out.println("saving to:" + resourceURI.toFileString());
+            resource.getContents().add(model);
+            try
+            {
+              resource.save(null);
+            }
+            catch (IOException e)
+            {
+              e.printStackTrace();
+            }
           }
 
         }
@@ -297,19 +301,12 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
             // and the axes
             DependentAxis rangeAxis = factory.createDependentAxis();
             rangeAxis.setName("Range");
-            relativeChart.getMinAxes().add(rangeAxis);
+            relativeChart.getMaxAxes().add(rangeAxis);
+            
             DependentAxis brgAxis = factory.createDependentAxis();
             brgAxis.setName("Bearing");
             relativeChart.getMinAxes().add(brgAxis);
 
-            DependentAxis relBrgAxis = factory.createDependentAxis();
-            relBrgAxis.setName("Rel Bearing");
-            relativeChart.getMinAxes().add(relBrgAxis);
-
-            DependentAxis atbAxis = factory.createDependentAxis();
-            atbAxis.setName("ATB");
-            relativeChart.getMinAxes().add(atbAxis);
-            
             DependentAxis brgRateAxis = factory.createDependentAxis();
             brgRateAxis.setName("Bearing Rate");
             relativeChart.getMinAxes().add(brgRateAxis);
@@ -331,12 +328,12 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
               }
               else if (iStoreItem.getName().equals("Rel Brg"))
               {
-                createDataset(factory, iStoreItem, "Rel Brg", relBrgAxis, res,
+                createDataset(factory, iStoreItem, "Rel Brg", brgAxis, res,
                 		null, MarkerStyle.CIRCLE);
               }
               else if (iStoreItem.getName().equals("ATB"))
               {
-                createDataset(factory, iStoreItem, "ATB", atbAxis, res,
+                createDataset(factory, iStoreItem, "ATB", brgAxis, res,
                 		null, MarkerStyle.CROSS);
               }
               else if (iStoreItem.getName().equals("Brg Rate"))
@@ -350,7 +347,7 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
         else if (thisG.getName().equals("Sensor"))
         {
           StoreGroup sensor = (StoreGroup) thisG;
-          if (sensor.size() != 1)
+          if (sensor.size() == 1)
           {
             ScatterSet scatter = factory.createScatterSet();
             @SuppressWarnings("unchecked")

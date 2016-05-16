@@ -108,7 +108,7 @@
     </genClasses>
     <genClasses ecoreClass="model.ecore#//SelectiveAnnotation">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference model.ecore#//SelectiveAnnotation/annotation"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference model.ecore#//SelectiveAnnotation/appearsIn"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference model.ecore#//SelectiveAnnotation/appearsIn"/>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>
