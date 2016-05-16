@@ -179,17 +179,7 @@ public class ChartBuilder
     EList<Chart> charts = chartsSet.getCharts();
     for (Chart chart : charts)
     {
-      // TODO - we have to build up multiple axes, according to the minAxes
-      // & maxAxes  
-      //
-      // so, we don't just create one chartAxis. We will loop through the 
-      // minAxes & maxAxes, and we will create JFreeChart axes on the left/right
-      // side as necessary
-      //
-      // we also need to tell JFreeChart which dataset (series) goes on which axis.
-      //
-      // But, we don't have a plot object yet.  So, I think we'll have to build
-      // up a list of axes, then add them to the plot at the end.
+      
       
       final XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
       
