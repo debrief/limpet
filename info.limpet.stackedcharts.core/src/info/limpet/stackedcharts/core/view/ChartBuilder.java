@@ -183,25 +183,36 @@ public class ChartBuilder
       
       final XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
       
-      final XYDataset collection = helper.createCollection();
+     
       
       EList<DependentAxis> minAxes = chart.getMinAxes();
       
-      final XYPlot subplot = new XYPlot(collection, null, null, renderer);
+      final XYPlot subplot = new XYPlot(null, null, null, renderer);
       int indexSeries = 0;
       int indexAxis = 0;
       for (DependentAxis dependentAxis : minAxes)
       {
-        int currSeriesIndex = indexSeries;
+        ChartHelper axeshelper=null;
+        switch (dependentAxis.getAxisType())
+        {
+        case NUMBER:
+          axeshelper = new NumberHelper();
+          break;
+        case TIME:
+          axeshelper = new TimeHelper();
+          break;
+        default:
+          System.err.println("UNEXPECTED AXIS TYPE RECEIVED");
+          axeshelper = new NumberHelper();
+        }
+        final XYDataset collection = axeshelper.createCollection();
+       
         final ValueAxis chartAxis = new NumberAxis(dependentAxis.getName());
-        indexSeries =  buildAxis(helper, dependentAxis, collection,renderer,indexSeries);
+        indexSeries =  buildAxis(axeshelper, dependentAxis, collection,renderer,indexSeries);
+        subplot.setDataset(indexAxis, collection);
         subplot.setRangeAxis(indexAxis, chartAxis);
         subplot.setRangeAxisLocation(indexAxis,AxisLocation.BOTTOM_OR_LEFT);
-        for (int i = currSeriesIndex; i < indexSeries; i++)
-        {
-          subplot.mapDatasetToRangeAxis(indexAxis, i);
-          
-        }
+        
         indexAxis++;
       }
       
@@ -209,16 +220,28 @@ public class ChartBuilder
       for (DependentAxis dependentAxis : maxAxes)
       {
 
-        int currSeriesIndex = indexSeries;
+        ChartHelper axeshelper=null;
+        switch (dependentAxis.getAxisType())
+        {
+        case NUMBER:
+          axeshelper = new NumberHelper();
+          break;
+        case TIME:
+          axeshelper = new TimeHelper();
+          break;
+        default:
+          System.err.println("UNEXPECTED AXIS TYPE RECEIVED");
+          axeshelper = new NumberHelper();
+        }
+        final XYDataset collection = axeshelper.createCollection();
+        
+      
         final ValueAxis chartAxis = new NumberAxis(dependentAxis.getName());
-        indexSeries =  buildAxis(helper, dependentAxis, collection,renderer,indexSeries);
+        indexSeries =  buildAxis(axeshelper, dependentAxis, collection,renderer,indexSeries);
+        subplot.setDataset(indexAxis, collection);
         subplot.setRangeAxis(indexAxis, chartAxis);
         subplot.setRangeAxisLocation(indexAxis,AxisLocation.TOP_OR_RIGHT);
-        for (int i = currSeriesIndex; i < indexSeries; i++)
-        {
-          subplot.mapDatasetToRangeAxis(indexAxis, i);
-          
-        }
+       
         indexAxis++;
       }
 
