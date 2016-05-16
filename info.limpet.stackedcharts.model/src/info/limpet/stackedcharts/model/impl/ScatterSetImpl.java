@@ -33,118 +33,124 @@ import org.eclipse.emf.ecore.util.InternalEList;
  */
 public class ScatterSetImpl extends AbstractAnnotationImpl implements ScatterSet {
 	/**
-	 * The cached value of the '{@link #getDatums() <em>Datums</em>}' containment reference list.
-	 * <!-- begin-user-doc -->
+   * The cached value of the '{@link #getDatums() <em>Datums</em>}' containment reference list.
+   * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getDatums()
-	 * @generated
-	 * @ordered
-	 */
+   * @see #getDatums()
+   * @generated
+   * @ordered
+   */
 	protected EList<Datum> datums;
 
 	/**
-	 * <!-- begin-user-doc -->
+   * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+   * @generated
+   */
 	protected ScatterSetImpl() {
-		super();
-	}
+    super();
+  }
 
 	/**
-	 * <!-- begin-user-doc -->
+   * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+   * @generated
+   */
 	@Override
 	protected EClass eStaticClass() {
-		return StackedchartsPackage.Literals.SCATTER_SET;
-	}
+    return StackedchartsPackage.Literals.SCATTER_SET;
+  }
 
 	/**
-	 * <!-- begin-user-doc -->
+   * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+   * @generated
+   */
 	public EList<Datum> getDatums() {
-		if (datums == null) {
-			datums = new EObjectContainmentEList<Datum>(Datum.class, this, StackedchartsPackage.SCATTER_SET__DATUMS);
-		}
-		return datums;
-	}
+    if (datums == null)
+    {
+      datums = new EObjectContainmentEList<Datum>(Datum.class, this, StackedchartsPackage.SCATTER_SET__DATUMS);
+    }
+    return datums;
+  }
 
 	/**
-	 * <!-- begin-user-doc -->
+   * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+   * @generated
+   */
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
-		switch (featureID) {
-			case StackedchartsPackage.SCATTER_SET__DATUMS:
-				return ((InternalEList<?>)getDatums()).basicRemove(otherEnd, msgs);
-		}
-		return super.eInverseRemove(otherEnd, featureID, msgs);
-	}
+    switch (featureID)
+    {
+      case StackedchartsPackage.SCATTER_SET__DATUMS:
+        return ((InternalEList<?>)getDatums()).basicRemove(otherEnd, msgs);
+    }
+    return super.eInverseRemove(otherEnd, featureID, msgs);
+  }
 
 	/**
-	 * <!-- begin-user-doc -->
+   * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+   * @generated
+   */
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
-		switch (featureID) {
-			case StackedchartsPackage.SCATTER_SET__DATUMS:
-				return getDatums();
-		}
-		return super.eGet(featureID, resolve, coreType);
-	}
+    switch (featureID)
+    {
+      case StackedchartsPackage.SCATTER_SET__DATUMS:
+        return getDatums();
+    }
+    return super.eGet(featureID, resolve, coreType);
+  }
 
 	/**
-	 * <!-- begin-user-doc -->
+   * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+   * @generated
+   */
 	@SuppressWarnings("unchecked")
 	@Override
 	public void eSet(int featureID, Object newValue) {
-		switch (featureID) {
-			case StackedchartsPackage.SCATTER_SET__DATUMS:
-				getDatums().clear();
-				getDatums().addAll((Collection<? extends Datum>)newValue);
-				return;
-		}
-		super.eSet(featureID, newValue);
-	}
+    switch (featureID)
+    {
+      case StackedchartsPackage.SCATTER_SET__DATUMS:
+        getDatums().clear();
+        getDatums().addAll((Collection<? extends Datum>)newValue);
+        return;
+    }
+    super.eSet(featureID, newValue);
+  }
 
 	/**
-	 * <!-- begin-user-doc -->
+   * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+   * @generated
+   */
 	@Override
 	public void eUnset(int featureID) {
-		switch (featureID) {
-			case StackedchartsPackage.SCATTER_SET__DATUMS:
-				getDatums().clear();
-				return;
-		}
-		super.eUnset(featureID);
-	}
+    switch (featureID)
+    {
+      case StackedchartsPackage.SCATTER_SET__DATUMS:
+        getDatums().clear();
+        return;
+    }
+    super.eUnset(featureID);
+  }
 
 	/**
-	 * <!-- begin-user-doc -->
+   * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+   * @generated
+   */
 	@Override
 	public boolean eIsSet(int featureID) {
-		switch (featureID) {
-			case StackedchartsPackage.SCATTER_SET__DATUMS:
-				return datums != null && !datums.isEmpty();
-		}
-		return super.eIsSet(featureID);
-	}
+    switch (featureID)
+    {
+      case StackedchartsPackage.SCATTER_SET__DATUMS:
+        return datums != null && !datums.isEmpty();
+    }
+    return super.eIsSet(featureID);
+  }
 
 } //ScatterSetImpl

@@ -26,71 +26,71 @@ import org.eclipse.emf.ecore.EObject;
  */
 public interface Dataset extends EObject {
 	/**
-	 * Returns the value of the '<em><b>Name</b></em>' attribute.
-	 * <!-- begin-user-doc -->
+   * Returns the value of the '<em><b>Name</b></em>' attribute.
+   * <!-- begin-user-doc -->
 	 * <p>
 	 * If the meaning of the '<em>Name</em>' attribute isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Name</em>' attribute.
-	 * @see #setName(String)
-	 * @see info.limpet.stackedcharts.model.StackedchartsPackage#getDataset_Name()
-	 * @model
-	 * @generated
-	 */
+   * @return the value of the '<em>Name</em>' attribute.
+   * @see #setName(String)
+   * @see info.limpet.stackedcharts.model.StackedchartsPackage#getDataset_Name()
+   * @model
+   * @generated
+   */
 	String getName();
 
 	/**
-	 * Sets the value of the '{@link info.limpet.stackedcharts.model.Dataset#getName <em>Name</em>}' attribute.
-	 * <!-- begin-user-doc -->
+   * Sets the value of the '{@link info.limpet.stackedcharts.model.Dataset#getName <em>Name</em>}' attribute.
+   * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Name</em>' attribute.
-	 * @see #getName()
-	 * @generated
-	 */
+   * @param value the new value of the '<em>Name</em>' attribute.
+   * @see #getName()
+   * @generated
+   */
 	void setName(String value);
 
 	/**
-	 * Returns the value of the '<em><b>Measurements</b></em>' containment reference list.
-	 * The list contents are of type {@link info.limpet.stackedcharts.model.DataItem}.
-	 * <!-- begin-user-doc -->
+   * Returns the value of the '<em><b>Measurements</b></em>' containment reference list.
+   * The list contents are of type {@link info.limpet.stackedcharts.model.DataItem}.
+   * <!-- begin-user-doc -->
 	 * <p>
 	 * If the meaning of the '<em>Measurements</em>' containment reference list isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Measurements</em>' containment reference list.
-	 * @see info.limpet.stackedcharts.model.StackedchartsPackage#getDataset_Measurements()
-	 * @model containment="true"
-	 * @generated
-	 */
+   * @return the value of the '<em>Measurements</em>' containment reference list.
+   * @see info.limpet.stackedcharts.model.StackedchartsPackage#getDataset_Measurements()
+   * @model containment="true"
+   * @generated
+   */
 	EList<DataItem> getMeasurements();
 
 	/**
-	 * Returns the value of the '<em><b>Styling</b></em>' containment reference.
-	 * <!-- begin-user-doc -->
+   * Returns the value of the '<em><b>Styling</b></em>' containment reference.
+   * <!-- begin-user-doc -->
 	 * <p>
 	 * If the meaning of the '<em>Styling</em>' containment reference isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Styling</em>' containment reference.
-	 * @see #setStyling(Styling)
-	 * @see info.limpet.stackedcharts.model.StackedchartsPackage#getDataset_Styling()
-	 * @model containment="true" required="true"
-	 * @generated
-	 */
+   * @return the value of the '<em>Styling</em>' containment reference.
+   * @see #setStyling(Styling)
+   * @see info.limpet.stackedcharts.model.StackedchartsPackage#getDataset_Styling()
+   * @model containment="true" required="true"
+   * @generated
+   */
 	Styling getStyling();
 
 	/**
-	 * Sets the value of the '{@link info.limpet.stackedcharts.model.Dataset#getStyling <em>Styling</em>}' containment reference.
-	 * <!-- begin-user-doc -->
+   * Sets the value of the '{@link info.limpet.stackedcharts.model.Dataset#getStyling <em>Styling</em>}' containment reference.
+   * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Styling</em>' containment reference.
-	 * @see #getStyling()
-	 * @generated
-	 */
+   * @param value the new value of the '<em>Styling</em>' containment reference.
+   * @see #getStyling()
+   * @generated
+   */
 	void setStyling(Styling value);
 
 } // Dataset

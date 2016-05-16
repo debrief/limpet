@@ -39,183 +39,191 @@ import org.eclipse.emf.ecore.util.InternalEList;
  */
 public class SelectiveAnnotationImpl extends MinimalEObjectImpl.Container implements SelectiveAnnotation {
 	/**
-	 * The cached value of the '{@link #getAnnotation() <em>Annotation</em>}' containment reference.
-	 * <!-- begin-user-doc -->
+   * The cached value of the '{@link #getAnnotation() <em>Annotation</em>}' containment reference.
+   * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getAnnotation()
-	 * @generated
-	 * @ordered
-	 */
+   * @see #getAnnotation()
+   * @generated
+   * @ordered
+   */
 	protected AbstractAnnotation annotation;
 
 	/**
-	 * The cached value of the '{@link #getAppearsIn() <em>Appears In</em>}' containment reference list.
-	 * <!-- begin-user-doc -->
+   * The cached value of the '{@link #getAppearsIn() <em>Appears In</em>}' containment reference list.
+   * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getAppearsIn()
-	 * @generated
-	 * @ordered
-	 */
+   * @see #getAppearsIn()
+   * @generated
+   * @ordered
+   */
 	protected EList<Chart> appearsIn;
 
 	/**
-	 * <!-- begin-user-doc -->
+   * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+   * @generated
+   */
 	protected SelectiveAnnotationImpl() {
-		super();
-	}
+    super();
+  }
 
 	/**
-	 * <!-- begin-user-doc -->
+   * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+   * @generated
+   */
 	@Override
 	protected EClass eStaticClass() {
-		return StackedchartsPackage.Literals.SELECTIVE_ANNOTATION;
-	}
+    return StackedchartsPackage.Literals.SELECTIVE_ANNOTATION;
+  }
 
 	/**
-	 * <!-- begin-user-doc -->
+   * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+   * @generated
+   */
 	public AbstractAnnotation getAnnotation() {
-		return annotation;
-	}
+    return annotation;
+  }
 
 	/**
-	 * <!-- begin-user-doc -->
+   * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+   * @generated
+   */
 	public NotificationChain basicSetAnnotation(AbstractAnnotation newAnnotation, NotificationChain msgs) {
-		AbstractAnnotation oldAnnotation = annotation;
-		annotation = newAnnotation;
-		if (eNotificationRequired()) {
-			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, StackedchartsPackage.SELECTIVE_ANNOTATION__ANNOTATION, oldAnnotation, newAnnotation);
-			if (msgs == null) msgs = notification; else msgs.add(notification);
-		}
-		return msgs;
-	}
+    AbstractAnnotation oldAnnotation = annotation;
+    annotation = newAnnotation;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, StackedchartsPackage.SELECTIVE_ANNOTATION__ANNOTATION, oldAnnotation, newAnnotation);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
 
 	/**
-	 * <!-- begin-user-doc -->
+   * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+   * @generated
+   */
 	public void setAnnotation(AbstractAnnotation newAnnotation) {
-		if (newAnnotation != annotation) {
-			NotificationChain msgs = null;
-			if (annotation != null)
-				msgs = ((InternalEObject)annotation).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - StackedchartsPackage.SELECTIVE_ANNOTATION__ANNOTATION, null, msgs);
-			if (newAnnotation != null)
-				msgs = ((InternalEObject)newAnnotation).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - StackedchartsPackage.SELECTIVE_ANNOTATION__ANNOTATION, null, msgs);
-			msgs = basicSetAnnotation(newAnnotation, msgs);
-			if (msgs != null) msgs.dispatch();
-		}
-		else if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, StackedchartsPackage.SELECTIVE_ANNOTATION__ANNOTATION, newAnnotation, newAnnotation));
-	}
+    if (newAnnotation != annotation)
+    {
+      NotificationChain msgs = null;
+      if (annotation != null)
+        msgs = ((InternalEObject)annotation).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - StackedchartsPackage.SELECTIVE_ANNOTATION__ANNOTATION, null, msgs);
+      if (newAnnotation != null)
+        msgs = ((InternalEObject)newAnnotation).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - StackedchartsPackage.SELECTIVE_ANNOTATION__ANNOTATION, null, msgs);
+      msgs = basicSetAnnotation(newAnnotation, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, StackedchartsPackage.SELECTIVE_ANNOTATION__ANNOTATION, newAnnotation, newAnnotation));
+  }
 
 	/**
-	 * <!-- begin-user-doc -->
+   * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+   * @generated
+   */
 	public EList<Chart> getAppearsIn() {
-		if (appearsIn == null) {
-			appearsIn = new EObjectContainmentEList<Chart>(Chart.class, this, StackedchartsPackage.SELECTIVE_ANNOTATION__APPEARS_IN);
-		}
-		return appearsIn;
-	}
+    if (appearsIn == null)
+    {
+      appearsIn = new EObjectContainmentEList<Chart>(Chart.class, this, StackedchartsPackage.SELECTIVE_ANNOTATION__APPEARS_IN);
+    }
+    return appearsIn;
+  }
 
 	/**
-	 * <!-- begin-user-doc -->
+   * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+   * @generated
+   */
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
-		switch (featureID) {
-			case StackedchartsPackage.SELECTIVE_ANNOTATION__ANNOTATION:
-				return basicSetAnnotation(null, msgs);
-			case StackedchartsPackage.SELECTIVE_ANNOTATION__APPEARS_IN:
-				return ((InternalEList<?>)getAppearsIn()).basicRemove(otherEnd, msgs);
-		}
-		return super.eInverseRemove(otherEnd, featureID, msgs);
-	}
+    switch (featureID)
+    {
+      case StackedchartsPackage.SELECTIVE_ANNOTATION__ANNOTATION:
+        return basicSetAnnotation(null, msgs);
+      case StackedchartsPackage.SELECTIVE_ANNOTATION__APPEARS_IN:
+        return ((InternalEList<?>)getAppearsIn()).basicRemove(otherEnd, msgs);
+    }
+    return super.eInverseRemove(otherEnd, featureID, msgs);
+  }
 
 	/**
-	 * <!-- begin-user-doc -->
+   * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+   * @generated
+   */
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
-		switch (featureID) {
-			case StackedchartsPackage.SELECTIVE_ANNOTATION__ANNOTATION:
-				return getAnnotation();
-			case StackedchartsPackage.SELECTIVE_ANNOTATION__APPEARS_IN:
-				return getAppearsIn();
-		}
-		return super.eGet(featureID, resolve, coreType);
-	}
+    switch (featureID)
+    {
+      case StackedchartsPackage.SELECTIVE_ANNOTATION__ANNOTATION:
+        return getAnnotation();
+      case StackedchartsPackage.SELECTIVE_ANNOTATION__APPEARS_IN:
+        return getAppearsIn();
+    }
+    return super.eGet(featureID, resolve, coreType);
+  }
 
 	/**
-	 * <!-- begin-user-doc -->
+   * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+   * @generated
+   */
 	@SuppressWarnings("unchecked")
 	@Override
 	public void eSet(int featureID, Object newValue) {
-		switch (featureID) {
-			case StackedchartsPackage.SELECTIVE_ANNOTATION__ANNOTATION:
-				setAnnotation((AbstractAnnotation)newValue);
-				return;
-			case StackedchartsPackage.SELECTIVE_ANNOTATION__APPEARS_IN:
-				getAppearsIn().clear();
-				getAppearsIn().addAll((Collection<? extends Chart>)newValue);
-				return;
-		}
-		super.eSet(featureID, newValue);
-	}
+    switch (featureID)
+    {
+      case StackedchartsPackage.SELECTIVE_ANNOTATION__ANNOTATION:
+        setAnnotation((AbstractAnnotation)newValue);
+        return;
+      case StackedchartsPackage.SELECTIVE_ANNOTATION__APPEARS_IN:
+        getAppearsIn().clear();
+        getAppearsIn().addAll((Collection<? extends Chart>)newValue);
+        return;
+    }
+    super.eSet(featureID, newValue);
+  }
 
 	/**
-	 * <!-- begin-user-doc -->
+   * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+   * @generated
+   */
 	@Override
 	public void eUnset(int featureID) {
-		switch (featureID) {
-			case StackedchartsPackage.SELECTIVE_ANNOTATION__ANNOTATION:
-				setAnnotation((AbstractAnnotation)null);
-				return;
-			case StackedchartsPackage.SELECTIVE_ANNOTATION__APPEARS_IN:
-				getAppearsIn().clear();
-				return;
-		}
-		super.eUnset(featureID);
-	}
+    switch (featureID)
+    {
+      case StackedchartsPackage.SELECTIVE_ANNOTATION__ANNOTATION:
+        setAnnotation((AbstractAnnotation)null);
+        return;
+      case StackedchartsPackage.SELECTIVE_ANNOTATION__APPEARS_IN:
+        getAppearsIn().clear();
+        return;
+    }
+    super.eUnset(featureID);
+  }
 
 	/**
-	 * <!-- begin-user-doc -->
+   * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+   * @generated
+   */
 	@Override
 	public boolean eIsSet(int featureID) {
-		switch (featureID) {
-			case StackedchartsPackage.SELECTIVE_ANNOTATION__ANNOTATION:
-				return annotation != null;
-			case StackedchartsPackage.SELECTIVE_ANNOTATION__APPEARS_IN:
-				return appearsIn != null && !appearsIn.isEmpty();
-		}
-		return super.eIsSet(featureID);
-	}
+    switch (featureID)
+    {
+      case StackedchartsPackage.SELECTIVE_ANNOTATION__ANNOTATION:
+        return annotation != null;
+      case StackedchartsPackage.SELECTIVE_ANNOTATION__APPEARS_IN:
+        return appearsIn != null && !appearsIn.isEmpty();
+    }
+    return super.eIsSet(featureID);
+  }
 
 } //SelectiveAnnotationImpl

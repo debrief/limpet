@@ -16,6 +16,8 @@ import info.limpet.stackedcharts.model.Styling;
 import info.limpet.stackedcharts.model.Zone;
 
 import java.awt.Color;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.Rectangle2D;
 import java.util.Date;
 
 import org.eclipse.emf.common.util.EList;
@@ -27,8 +29,7 @@ import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.CombinedDomainXYPlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.renderer.xy.StandardXYItemRenderer;
-import org.jfree.chart.renderer.xy.XYItemRenderer;
+import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.general.Series;
 import org.jfree.data.time.Millisecond;
 import org.jfree.data.time.TimeSeries;
@@ -36,6 +37,7 @@ import org.jfree.data.time.TimeSeriesCollection;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
+import org.jfree.util.ShapeUtilities;
 
 public class ChartBuilder
 {
@@ -189,19 +191,23 @@ public class ChartBuilder
       // But, we don't have a plot object yet.  So, I think we'll have to build
       // up a list of axes, then add them to the plot at the end.
       
-      final XYItemRenderer renderer = new StandardXYItemRenderer();
+      final XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
       final ValueAxis chartAxis = new NumberAxis(chart.getName());
       final XYDataset collection = helper.createCollection();
+      
       EList<DependentAxis> minAxes = chart.getMinAxes();
+      int index = 0;
       for (DependentAxis dependentAxis : minAxes)
       {
-        buildAxis(helper, dependentAxis, collection);
+        buildAxis(helper, dependentAxis, collection,renderer,index);
+        index++;
       }
       
       EList<DependentAxis> maxAxes = chart.getMaxAxes();
       for (DependentAxis dependentAxis : maxAxes)
       {
-        buildAxis(helper, dependentAxis, collection);
+        buildAxis(helper, dependentAxis, collection,renderer,index);
+        index++;
       }
 
       final XYPlot subplot = new XYPlot(collection, null, chartAxis, renderer);
@@ -216,7 +222,7 @@ public class ChartBuilder
     return new JFreeChart(plot);
   }
 
-  private void buildAxis(ChartHelper helper, DependentAxis axis, XYDataset collection)
+  private void buildAxis(ChartHelper helper, DependentAxis axis, XYDataset collection,XYLineAndShapeRenderer renderer,int index)
   {
     EList<Dataset> datasets = axis.getDatasets();
     for (Dataset dataset : datasets)
@@ -238,43 +244,55 @@ public class ChartBuilder
 					{
 						thisColor = hex2Rgb(hexColor);
 					}
-					// TODO: use this color in the renderer
+					renderer.setSeriesPaint(index, thisColor);
       	}
       	else
       	{
       		System.err.println("Linear colors not implemented");
       	}
-      	
-				// and the marker?
+        
+			
 				@SuppressWarnings("unused")
 				double size = styling.getMarkerSize();
+				 if(size==0)
+         {
+           size = 2;//default
+         }
 				MarkerStyle marker = styling.getMarkerStyle();
 
 				if (marker != null)
 				{
-					// TODO: assign the correct JFreeChart marker
-					// for the supplied value
+					
 					switch (marker)
 					{
 					case NONE:
+					  renderer.setSeriesShapesVisible(index, false);
 						break;
 					case SQUARE:
+					 
+					  renderer.setSeriesShape(index, new Rectangle2D.Double(0,0,size,size));
+            
 						break;
 					case CIRCLE:
+					  
+					  renderer.setSeriesShape(index, new Ellipse2D.Double(0,0,size,size));
 						break;
 					case TRIANGLE:
+					  
+					  renderer.setSeriesShape(index, ShapeUtilities.createUpTriangle((float)size));
 						break;
 					case CROSS:
+					  renderer.setSeriesShape(index, ShapeUtilities.createRegularCross((float)size,(float)size));
 						break;
 					case DIAMOND:
+					  renderer.setSeriesShape(index, ShapeUtilities.createDiamond((float)size));
 						break;
 					default:
-
+					  renderer.setSeriesShapesVisible(index, false);
 					}
 				}
       	
-      	// TODO create a renderer for this series, using the
-      	// specified color, marker & marker size
+     
       	
       }
       
