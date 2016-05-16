@@ -40,265 +40,274 @@ import org.eclipse.emf.ecore.util.InternalEList;
  */
 public class ChartSetImpl extends MinimalEObjectImpl.Container implements ChartSet {
 	/**
-	 * The cached value of the '{@link #getCharts() <em>Charts</em>}' containment reference list.
-	 * <!-- begin-user-doc -->
+   * The cached value of the '{@link #getCharts() <em>Charts</em>}' containment reference list.
+   * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getCharts()
-	 * @generated
-	 * @ordered
-	 */
+   * @see #getCharts()
+   * @generated
+   * @ordered
+   */
 	protected EList<Chart> charts;
 
 	/**
-	 * The default value of the '{@link #getOrientation() <em>Orientation</em>}' attribute.
-	 * <!-- begin-user-doc -->
+   * The default value of the '{@link #getOrientation() <em>Orientation</em>}' attribute.
+   * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getOrientation()
-	 * @generated
-	 * @ordered
-	 */
+   * @see #getOrientation()
+   * @generated
+   * @ordered
+   */
 	protected static final Orientation ORIENTATION_EDEFAULT = Orientation.HORIZONTAL;
 
 	/**
-	 * The cached value of the '{@link #getOrientation() <em>Orientation</em>}' attribute.
-	 * <!-- begin-user-doc -->
+   * The cached value of the '{@link #getOrientation() <em>Orientation</em>}' attribute.
+   * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getOrientation()
-	 * @generated
-	 * @ordered
-	 */
+   * @see #getOrientation()
+   * @generated
+   * @ordered
+   */
 	protected Orientation orientation = ORIENTATION_EDEFAULT;
 
 	/**
-	 * The cached value of the '{@link #getSharedAxis() <em>Shared Axis</em>}' containment reference.
-	 * <!-- begin-user-doc -->
+   * The cached value of the '{@link #getSharedAxis() <em>Shared Axis</em>}' containment reference.
+   * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getSharedAxis()
-	 * @generated
-	 * @ordered
-	 */
+   * @see #getSharedAxis()
+   * @generated
+   * @ordered
+   */
 	protected IndependentAxis sharedAxis;
 
 	/**
-	 * <!-- begin-user-doc -->
+   * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+   * @generated
+   */
 	protected ChartSetImpl() {
-		super();
-	}
+    super();
+  }
 
 	/**
-	 * <!-- begin-user-doc -->
+   * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+   * @generated
+   */
 	@Override
 	protected EClass eStaticClass() {
-		return StackedchartsPackage.Literals.CHART_SET;
-	}
+    return StackedchartsPackage.Literals.CHART_SET;
+  }
 
 	/**
-	 * <!-- begin-user-doc -->
+   * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+   * @generated
+   */
 	public EList<Chart> getCharts() {
-		if (charts == null) {
-			charts = new EObjectContainmentWithInverseEList<Chart>(Chart.class, this, StackedchartsPackage.CHART_SET__CHARTS, StackedchartsPackage.CHART__PARENT);
-		}
-		return charts;
-	}
+    if (charts == null)
+    {
+      charts = new EObjectContainmentWithInverseEList<Chart>(Chart.class, this, StackedchartsPackage.CHART_SET__CHARTS, StackedchartsPackage.CHART__PARENT);
+    }
+    return charts;
+  }
 
 	/**
-	 * <!-- begin-user-doc -->
+   * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+   * @generated
+   */
 	public Orientation getOrientation() {
-		return orientation;
-	}
+    return orientation;
+  }
 
 	/**
-	 * <!-- begin-user-doc -->
+   * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+   * @generated
+   */
 	public void setOrientation(Orientation newOrientation) {
-		Orientation oldOrientation = orientation;
-		orientation = newOrientation == null ? ORIENTATION_EDEFAULT : newOrientation;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, StackedchartsPackage.CHART_SET__ORIENTATION, oldOrientation, orientation));
-	}
+    Orientation oldOrientation = orientation;
+    orientation = newOrientation == null ? ORIENTATION_EDEFAULT : newOrientation;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, StackedchartsPackage.CHART_SET__ORIENTATION, oldOrientation, orientation));
+  }
 
 	/**
-	 * <!-- begin-user-doc -->
+   * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+   * @generated
+   */
 	public IndependentAxis getSharedAxis() {
-		return sharedAxis;
-	}
+    return sharedAxis;
+  }
 
 	/**
-	 * <!-- begin-user-doc -->
+   * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+   * @generated
+   */
 	public NotificationChain basicSetSharedAxis(IndependentAxis newSharedAxis, NotificationChain msgs) {
-		IndependentAxis oldSharedAxis = sharedAxis;
-		sharedAxis = newSharedAxis;
-		if (eNotificationRequired()) {
-			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, StackedchartsPackage.CHART_SET__SHARED_AXIS, oldSharedAxis, newSharedAxis);
-			if (msgs == null) msgs = notification; else msgs.add(notification);
-		}
-		return msgs;
-	}
+    IndependentAxis oldSharedAxis = sharedAxis;
+    sharedAxis = newSharedAxis;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, StackedchartsPackage.CHART_SET__SHARED_AXIS, oldSharedAxis, newSharedAxis);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
 
 	/**
-	 * <!-- begin-user-doc -->
+   * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+   * @generated
+   */
 	public void setSharedAxis(IndependentAxis newSharedAxis) {
-		if (newSharedAxis != sharedAxis) {
-			NotificationChain msgs = null;
-			if (sharedAxis != null)
-				msgs = ((InternalEObject)sharedAxis).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - StackedchartsPackage.CHART_SET__SHARED_AXIS, null, msgs);
-			if (newSharedAxis != null)
-				msgs = ((InternalEObject)newSharedAxis).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - StackedchartsPackage.CHART_SET__SHARED_AXIS, null, msgs);
-			msgs = basicSetSharedAxis(newSharedAxis, msgs);
-			if (msgs != null) msgs.dispatch();
-		}
-		else if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, StackedchartsPackage.CHART_SET__SHARED_AXIS, newSharedAxis, newSharedAxis));
-	}
+    if (newSharedAxis != sharedAxis)
+    {
+      NotificationChain msgs = null;
+      if (sharedAxis != null)
+        msgs = ((InternalEObject)sharedAxis).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - StackedchartsPackage.CHART_SET__SHARED_AXIS, null, msgs);
+      if (newSharedAxis != null)
+        msgs = ((InternalEObject)newSharedAxis).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - StackedchartsPackage.CHART_SET__SHARED_AXIS, null, msgs);
+      msgs = basicSetSharedAxis(newSharedAxis, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, StackedchartsPackage.CHART_SET__SHARED_AXIS, newSharedAxis, newSharedAxis));
+  }
 
 	/**
-	 * <!-- begin-user-doc -->
+   * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+   * @generated
+   */
 	@SuppressWarnings("unchecked")
 	@Override
 	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
-		switch (featureID) {
-			case StackedchartsPackage.CHART_SET__CHARTS:
-				return ((InternalEList<InternalEObject>)(InternalEList<?>)getCharts()).basicAdd(otherEnd, msgs);
-		}
-		return super.eInverseAdd(otherEnd, featureID, msgs);
-	}
+    switch (featureID)
+    {
+      case StackedchartsPackage.CHART_SET__CHARTS:
+        return ((InternalEList<InternalEObject>)(InternalEList<?>)getCharts()).basicAdd(otherEnd, msgs);
+    }
+    return super.eInverseAdd(otherEnd, featureID, msgs);
+  }
 
 	/**
-	 * <!-- begin-user-doc -->
+   * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+   * @generated
+   */
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
-		switch (featureID) {
-			case StackedchartsPackage.CHART_SET__CHARTS:
-				return ((InternalEList<?>)getCharts()).basicRemove(otherEnd, msgs);
-			case StackedchartsPackage.CHART_SET__SHARED_AXIS:
-				return basicSetSharedAxis(null, msgs);
-		}
-		return super.eInverseRemove(otherEnd, featureID, msgs);
-	}
+    switch (featureID)
+    {
+      case StackedchartsPackage.CHART_SET__CHARTS:
+        return ((InternalEList<?>)getCharts()).basicRemove(otherEnd, msgs);
+      case StackedchartsPackage.CHART_SET__SHARED_AXIS:
+        return basicSetSharedAxis(null, msgs);
+    }
+    return super.eInverseRemove(otherEnd, featureID, msgs);
+  }
 
 	/**
-	 * <!-- begin-user-doc -->
+   * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+   * @generated
+   */
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
-		switch (featureID) {
-			case StackedchartsPackage.CHART_SET__CHARTS:
-				return getCharts();
-			case StackedchartsPackage.CHART_SET__ORIENTATION:
-				return getOrientation();
-			case StackedchartsPackage.CHART_SET__SHARED_AXIS:
-				return getSharedAxis();
-		}
-		return super.eGet(featureID, resolve, coreType);
-	}
+    switch (featureID)
+    {
+      case StackedchartsPackage.CHART_SET__CHARTS:
+        return getCharts();
+      case StackedchartsPackage.CHART_SET__ORIENTATION:
+        return getOrientation();
+      case StackedchartsPackage.CHART_SET__SHARED_AXIS:
+        return getSharedAxis();
+    }
+    return super.eGet(featureID, resolve, coreType);
+  }
 
 	/**
-	 * <!-- begin-user-doc -->
+   * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+   * @generated
+   */
 	@SuppressWarnings("unchecked")
 	@Override
 	public void eSet(int featureID, Object newValue) {
-		switch (featureID) {
-			case StackedchartsPackage.CHART_SET__CHARTS:
-				getCharts().clear();
-				getCharts().addAll((Collection<? extends Chart>)newValue);
-				return;
-			case StackedchartsPackage.CHART_SET__ORIENTATION:
-				setOrientation((Orientation)newValue);
-				return;
-			case StackedchartsPackage.CHART_SET__SHARED_AXIS:
-				setSharedAxis((IndependentAxis)newValue);
-				return;
-		}
-		super.eSet(featureID, newValue);
-	}
+    switch (featureID)
+    {
+      case StackedchartsPackage.CHART_SET__CHARTS:
+        getCharts().clear();
+        getCharts().addAll((Collection<? extends Chart>)newValue);
+        return;
+      case StackedchartsPackage.CHART_SET__ORIENTATION:
+        setOrientation((Orientation)newValue);
+        return;
+      case StackedchartsPackage.CHART_SET__SHARED_AXIS:
+        setSharedAxis((IndependentAxis)newValue);
+        return;
+    }
+    super.eSet(featureID, newValue);
+  }
 
 	/**
-	 * <!-- begin-user-doc -->
+   * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+   * @generated
+   */
 	@Override
 	public void eUnset(int featureID) {
-		switch (featureID) {
-			case StackedchartsPackage.CHART_SET__CHARTS:
-				getCharts().clear();
-				return;
-			case StackedchartsPackage.CHART_SET__ORIENTATION:
-				setOrientation(ORIENTATION_EDEFAULT);
-				return;
-			case StackedchartsPackage.CHART_SET__SHARED_AXIS:
-				setSharedAxis((IndependentAxis)null);
-				return;
-		}
-		super.eUnset(featureID);
-	}
+    switch (featureID)
+    {
+      case StackedchartsPackage.CHART_SET__CHARTS:
+        getCharts().clear();
+        return;
+      case StackedchartsPackage.CHART_SET__ORIENTATION:
+        setOrientation(ORIENTATION_EDEFAULT);
+        return;
+      case StackedchartsPackage.CHART_SET__SHARED_AXIS:
+        setSharedAxis((IndependentAxis)null);
+        return;
+    }
+    super.eUnset(featureID);
+  }
 
 	/**
-	 * <!-- begin-user-doc -->
+   * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+   * @generated
+   */
 	@Override
 	public boolean eIsSet(int featureID) {
-		switch (featureID) {
-			case StackedchartsPackage.CHART_SET__CHARTS:
-				return charts != null && !charts.isEmpty();
-			case StackedchartsPackage.CHART_SET__ORIENTATION:
-				return orientation != ORIENTATION_EDEFAULT;
-			case StackedchartsPackage.CHART_SET__SHARED_AXIS:
-				return sharedAxis != null;
-		}
-		return super.eIsSet(featureID);
-	}
+    switch (featureID)
+    {
+      case StackedchartsPackage.CHART_SET__CHARTS:
+        return charts != null && !charts.isEmpty();
+      case StackedchartsPackage.CHART_SET__ORIENTATION:
+        return orientation != ORIENTATION_EDEFAULT;
+      case StackedchartsPackage.CHART_SET__SHARED_AXIS:
+        return sharedAxis != null;
+    }
+    return super.eIsSet(featureID);
+  }
 
 	/**
-	 * <!-- begin-user-doc -->
+   * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+   * @generated
+   */
 	@Override
 	public String toString() {
-		if (eIsProxy()) return super.toString();
+    if (eIsProxy()) return super.toString();
 
-		StringBuffer result = new StringBuffer(super.toString());
-		result.append(" (orientation: ");
-		result.append(orientation);
-		result.append(')');
-		return result.toString();
-	}
+    StringBuffer result = new StringBuffer(super.toString());
+    result.append(" (orientation: ");
+    result.append(orientation);
+    result.append(')');
+    return result.toString();
+  }
 
 } //ChartSetImpl

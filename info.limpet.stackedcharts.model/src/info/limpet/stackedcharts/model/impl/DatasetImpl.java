@@ -40,250 +40,258 @@ import org.eclipse.emf.ecore.util.InternalEList;
  */
 public class DatasetImpl extends MinimalEObjectImpl.Container implements Dataset {
 	/**
-	 * The default value of the '{@link #getName() <em>Name</em>}' attribute.
-	 * <!-- begin-user-doc -->
+   * The default value of the '{@link #getName() <em>Name</em>}' attribute.
+   * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getName()
-	 * @generated
-	 * @ordered
-	 */
+   * @see #getName()
+   * @generated
+   * @ordered
+   */
 	protected static final String NAME_EDEFAULT = null;
 
 	/**
-	 * The cached value of the '{@link #getName() <em>Name</em>}' attribute.
-	 * <!-- begin-user-doc -->
+   * The cached value of the '{@link #getName() <em>Name</em>}' attribute.
+   * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getName()
-	 * @generated
-	 * @ordered
-	 */
+   * @see #getName()
+   * @generated
+   * @ordered
+   */
 	protected String name = NAME_EDEFAULT;
 
 	/**
-	 * The cached value of the '{@link #getMeasurements() <em>Measurements</em>}' containment reference list.
-	 * <!-- begin-user-doc -->
+   * The cached value of the '{@link #getMeasurements() <em>Measurements</em>}' containment reference list.
+   * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getMeasurements()
-	 * @generated
-	 * @ordered
-	 */
+   * @see #getMeasurements()
+   * @generated
+   * @ordered
+   */
 	protected EList<DataItem> measurements;
 
 	/**
-	 * The cached value of the '{@link #getStyling() <em>Styling</em>}' containment reference.
-	 * <!-- begin-user-doc -->
+   * The cached value of the '{@link #getStyling() <em>Styling</em>}' containment reference.
+   * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getStyling()
-	 * @generated
-	 * @ordered
-	 */
+   * @see #getStyling()
+   * @generated
+   * @ordered
+   */
 	protected Styling styling;
 
 	/**
-	 * <!-- begin-user-doc -->
+   * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+   * @generated
+   */
 	protected DatasetImpl() {
-		super();
-	}
+    super();
+  }
 
 	/**
-	 * <!-- begin-user-doc -->
+   * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+   * @generated
+   */
 	@Override
 	protected EClass eStaticClass() {
-		return StackedchartsPackage.Literals.DATASET;
-	}
+    return StackedchartsPackage.Literals.DATASET;
+  }
 
 	/**
-	 * <!-- begin-user-doc -->
+   * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+   * @generated
+   */
 	public String getName() {
-		return name;
-	}
+    return name;
+  }
 
 	/**
-	 * <!-- begin-user-doc -->
+   * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+   * @generated
+   */
 	public void setName(String newName) {
-		String oldName = name;
-		name = newName;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, StackedchartsPackage.DATASET__NAME, oldName, name));
-	}
+    String oldName = name;
+    name = newName;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, StackedchartsPackage.DATASET__NAME, oldName, name));
+  }
 
 	/**
-	 * <!-- begin-user-doc -->
+   * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+   * @generated
+   */
 	public EList<DataItem> getMeasurements() {
-		if (measurements == null) {
-			measurements = new EObjectContainmentEList<DataItem>(DataItem.class, this, StackedchartsPackage.DATASET__MEASUREMENTS);
-		}
-		return measurements;
-	}
+    if (measurements == null)
+    {
+      measurements = new EObjectContainmentEList<DataItem>(DataItem.class, this, StackedchartsPackage.DATASET__MEASUREMENTS);
+    }
+    return measurements;
+  }
 
 	/**
-	 * <!-- begin-user-doc -->
+   * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+   * @generated
+   */
 	public Styling getStyling() {
-		return styling;
-	}
+    return styling;
+  }
 
 	/**
-	 * <!-- begin-user-doc -->
+   * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+   * @generated
+   */
 	public NotificationChain basicSetStyling(Styling newStyling, NotificationChain msgs) {
-		Styling oldStyling = styling;
-		styling = newStyling;
-		if (eNotificationRequired()) {
-			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, StackedchartsPackage.DATASET__STYLING, oldStyling, newStyling);
-			if (msgs == null) msgs = notification; else msgs.add(notification);
-		}
-		return msgs;
-	}
+    Styling oldStyling = styling;
+    styling = newStyling;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, StackedchartsPackage.DATASET__STYLING, oldStyling, newStyling);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
 
 	/**
-	 * <!-- begin-user-doc -->
+   * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+   * @generated
+   */
 	public void setStyling(Styling newStyling) {
-		if (newStyling != styling) {
-			NotificationChain msgs = null;
-			if (styling != null)
-				msgs = ((InternalEObject)styling).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - StackedchartsPackage.DATASET__STYLING, null, msgs);
-			if (newStyling != null)
-				msgs = ((InternalEObject)newStyling).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - StackedchartsPackage.DATASET__STYLING, null, msgs);
-			msgs = basicSetStyling(newStyling, msgs);
-			if (msgs != null) msgs.dispatch();
-		}
-		else if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, StackedchartsPackage.DATASET__STYLING, newStyling, newStyling));
-	}
+    if (newStyling != styling)
+    {
+      NotificationChain msgs = null;
+      if (styling != null)
+        msgs = ((InternalEObject)styling).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - StackedchartsPackage.DATASET__STYLING, null, msgs);
+      if (newStyling != null)
+        msgs = ((InternalEObject)newStyling).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - StackedchartsPackage.DATASET__STYLING, null, msgs);
+      msgs = basicSetStyling(newStyling, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, StackedchartsPackage.DATASET__STYLING, newStyling, newStyling));
+  }
 
 	/**
-	 * <!-- begin-user-doc -->
+   * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+   * @generated
+   */
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
-		switch (featureID) {
-			case StackedchartsPackage.DATASET__MEASUREMENTS:
-				return ((InternalEList<?>)getMeasurements()).basicRemove(otherEnd, msgs);
-			case StackedchartsPackage.DATASET__STYLING:
-				return basicSetStyling(null, msgs);
-		}
-		return super.eInverseRemove(otherEnd, featureID, msgs);
-	}
+    switch (featureID)
+    {
+      case StackedchartsPackage.DATASET__MEASUREMENTS:
+        return ((InternalEList<?>)getMeasurements()).basicRemove(otherEnd, msgs);
+      case StackedchartsPackage.DATASET__STYLING:
+        return basicSetStyling(null, msgs);
+    }
+    return super.eInverseRemove(otherEnd, featureID, msgs);
+  }
 
 	/**
-	 * <!-- begin-user-doc -->
+   * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+   * @generated
+   */
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
-		switch (featureID) {
-			case StackedchartsPackage.DATASET__NAME:
-				return getName();
-			case StackedchartsPackage.DATASET__MEASUREMENTS:
-				return getMeasurements();
-			case StackedchartsPackage.DATASET__STYLING:
-				return getStyling();
-		}
-		return super.eGet(featureID, resolve, coreType);
-	}
+    switch (featureID)
+    {
+      case StackedchartsPackage.DATASET__NAME:
+        return getName();
+      case StackedchartsPackage.DATASET__MEASUREMENTS:
+        return getMeasurements();
+      case StackedchartsPackage.DATASET__STYLING:
+        return getStyling();
+    }
+    return super.eGet(featureID, resolve, coreType);
+  }
 
 	/**
-	 * <!-- begin-user-doc -->
+   * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+   * @generated
+   */
 	@SuppressWarnings("unchecked")
 	@Override
 	public void eSet(int featureID, Object newValue) {
-		switch (featureID) {
-			case StackedchartsPackage.DATASET__NAME:
-				setName((String)newValue);
-				return;
-			case StackedchartsPackage.DATASET__MEASUREMENTS:
-				getMeasurements().clear();
-				getMeasurements().addAll((Collection<? extends DataItem>)newValue);
-				return;
-			case StackedchartsPackage.DATASET__STYLING:
-				setStyling((Styling)newValue);
-				return;
-		}
-		super.eSet(featureID, newValue);
-	}
+    switch (featureID)
+    {
+      case StackedchartsPackage.DATASET__NAME:
+        setName((String)newValue);
+        return;
+      case StackedchartsPackage.DATASET__MEASUREMENTS:
+        getMeasurements().clear();
+        getMeasurements().addAll((Collection<? extends DataItem>)newValue);
+        return;
+      case StackedchartsPackage.DATASET__STYLING:
+        setStyling((Styling)newValue);
+        return;
+    }
+    super.eSet(featureID, newValue);
+  }
 
 	/**
-	 * <!-- begin-user-doc -->
+   * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+   * @generated
+   */
 	@Override
 	public void eUnset(int featureID) {
-		switch (featureID) {
-			case StackedchartsPackage.DATASET__NAME:
-				setName(NAME_EDEFAULT);
-				return;
-			case StackedchartsPackage.DATASET__MEASUREMENTS:
-				getMeasurements().clear();
-				return;
-			case StackedchartsPackage.DATASET__STYLING:
-				setStyling((Styling)null);
-				return;
-		}
-		super.eUnset(featureID);
-	}
+    switch (featureID)
+    {
+      case StackedchartsPackage.DATASET__NAME:
+        setName(NAME_EDEFAULT);
+        return;
+      case StackedchartsPackage.DATASET__MEASUREMENTS:
+        getMeasurements().clear();
+        return;
+      case StackedchartsPackage.DATASET__STYLING:
+        setStyling((Styling)null);
+        return;
+    }
+    super.eUnset(featureID);
+  }
 
 	/**
-	 * <!-- begin-user-doc -->
+   * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+   * @generated
+   */
 	@Override
 	public boolean eIsSet(int featureID) {
-		switch (featureID) {
-			case StackedchartsPackage.DATASET__NAME:
-				return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
-			case StackedchartsPackage.DATASET__MEASUREMENTS:
-				return measurements != null && !measurements.isEmpty();
-			case StackedchartsPackage.DATASET__STYLING:
-				return styling != null;
-		}
-		return super.eIsSet(featureID);
-	}
+    switch (featureID)
+    {
+      case StackedchartsPackage.DATASET__NAME:
+        return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
+      case StackedchartsPackage.DATASET__MEASUREMENTS:
+        return measurements != null && !measurements.isEmpty();
+      case StackedchartsPackage.DATASET__STYLING:
+        return styling != null;
+    }
+    return super.eIsSet(featureID);
+  }
 
 	/**
-	 * <!-- begin-user-doc -->
+   * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+   * @generated
+   */
 	@Override
 	public String toString() {
-		if (eIsProxy()) return super.toString();
+    if (eIsProxy()) return super.toString();
 
-		StringBuffer result = new StringBuffer(super.toString());
-		result.append(" (name: ");
-		result.append(name);
-		result.append(')');
-		return result.toString();
-	}
+    StringBuffer result = new StringBuffer(super.toString());
+    result.append(" (name: ");
+    result.append(name);
+    result.append(')');
+    return result.toString();
+  }
 
 } //DatasetImpl

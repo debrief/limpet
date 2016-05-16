@@ -25,191 +25,195 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
  */
 public abstract class AbstractAnnotationImpl extends MinimalEObjectImpl.Container implements AbstractAnnotation {
 	/**
-	 * The default value of the '{@link #getName() <em>Name</em>}' attribute.
-	 * <!-- begin-user-doc -->
+   * The default value of the '{@link #getName() <em>Name</em>}' attribute.
+   * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getName()
-	 * @generated
-	 * @ordered
-	 */
+   * @see #getName()
+   * @generated
+   * @ordered
+   */
 	protected static final String NAME_EDEFAULT = null;
 
 	/**
-	 * The cached value of the '{@link #getName() <em>Name</em>}' attribute.
-	 * <!-- begin-user-doc -->
+   * The cached value of the '{@link #getName() <em>Name</em>}' attribute.
+   * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getName()
-	 * @generated
-	 * @ordered
-	 */
+   * @see #getName()
+   * @generated
+   * @ordered
+   */
 	protected String name = NAME_EDEFAULT;
 
 	/**
-	 * The default value of the '{@link #getColor() <em>Color</em>}' attribute.
-	 * <!-- begin-user-doc -->
+   * The default value of the '{@link #getColor() <em>Color</em>}' attribute.
+   * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getColor()
-	 * @generated
-	 * @ordered
-	 */
+   * @see #getColor()
+   * @generated
+   * @ordered
+   */
 	protected static final String COLOR_EDEFAULT = null;
 
 	/**
-	 * The cached value of the '{@link #getColor() <em>Color</em>}' attribute.
-	 * <!-- begin-user-doc -->
+   * The cached value of the '{@link #getColor() <em>Color</em>}' attribute.
+   * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getColor()
-	 * @generated
-	 * @ordered
-	 */
+   * @see #getColor()
+   * @generated
+   * @ordered
+   */
 	protected String color = COLOR_EDEFAULT;
 
 	/**
-	 * <!-- begin-user-doc -->
+   * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+   * @generated
+   */
 	protected AbstractAnnotationImpl() {
-		super();
-	}
+    super();
+  }
 
 	/**
-	 * <!-- begin-user-doc -->
+   * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+   * @generated
+   */
 	@Override
 	protected EClass eStaticClass() {
-		return StackedchartsPackage.Literals.ABSTRACT_ANNOTATION;
-	}
+    return StackedchartsPackage.Literals.ABSTRACT_ANNOTATION;
+  }
 
 	/**
-	 * <!-- begin-user-doc -->
+   * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+   * @generated
+   */
 	public String getName() {
-		return name;
-	}
+    return name;
+  }
 
 	/**
-	 * <!-- begin-user-doc -->
+   * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+   * @generated
+   */
 	public void setName(String newName) {
-		String oldName = name;
-		name = newName;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, StackedchartsPackage.ABSTRACT_ANNOTATION__NAME, oldName, name));
-	}
+    String oldName = name;
+    name = newName;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, StackedchartsPackage.ABSTRACT_ANNOTATION__NAME, oldName, name));
+  }
 
 	/**
-	 * <!-- begin-user-doc -->
+   * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+   * @generated
+   */
 	public String getColor() {
-		return color;
-	}
+    return color;
+  }
 
 	/**
-	 * <!-- begin-user-doc -->
+   * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+   * @generated
+   */
 	public void setColor(String newColor) {
-		String oldColor = color;
-		color = newColor;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, StackedchartsPackage.ABSTRACT_ANNOTATION__COLOR, oldColor, color));
-	}
+    String oldColor = color;
+    color = newColor;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, StackedchartsPackage.ABSTRACT_ANNOTATION__COLOR, oldColor, color));
+  }
 
 	/**
-	 * <!-- begin-user-doc -->
+   * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+   * @generated
+   */
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
-		switch (featureID) {
-			case StackedchartsPackage.ABSTRACT_ANNOTATION__NAME:
-				return getName();
-			case StackedchartsPackage.ABSTRACT_ANNOTATION__COLOR:
-				return getColor();
-		}
-		return super.eGet(featureID, resolve, coreType);
-	}
+    switch (featureID)
+    {
+      case StackedchartsPackage.ABSTRACT_ANNOTATION__NAME:
+        return getName();
+      case StackedchartsPackage.ABSTRACT_ANNOTATION__COLOR:
+        return getColor();
+    }
+    return super.eGet(featureID, resolve, coreType);
+  }
 
 	/**
-	 * <!-- begin-user-doc -->
+   * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+   * @generated
+   */
 	@SuppressWarnings("unchecked")
 	@Override
 	public void eSet(int featureID, Object newValue) {
-		switch (featureID) {
-			case StackedchartsPackage.ABSTRACT_ANNOTATION__NAME:
-				setName((String)newValue);
-				return;
-			case StackedchartsPackage.ABSTRACT_ANNOTATION__COLOR:
-				setColor((String)newValue);
-				return;
-		}
-		super.eSet(featureID, newValue);
-	}
+    switch (featureID)
+    {
+      case StackedchartsPackage.ABSTRACT_ANNOTATION__NAME:
+        setName((String)newValue);
+        return;
+      case StackedchartsPackage.ABSTRACT_ANNOTATION__COLOR:
+        setColor((String)newValue);
+        return;
+    }
+    super.eSet(featureID, newValue);
+  }
 
 	/**
-	 * <!-- begin-user-doc -->
+   * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+   * @generated
+   */
 	@Override
 	public void eUnset(int featureID) {
-		switch (featureID) {
-			case StackedchartsPackage.ABSTRACT_ANNOTATION__NAME:
-				setName(NAME_EDEFAULT);
-				return;
-			case StackedchartsPackage.ABSTRACT_ANNOTATION__COLOR:
-				setColor(COLOR_EDEFAULT);
-				return;
-		}
-		super.eUnset(featureID);
-	}
+    switch (featureID)
+    {
+      case StackedchartsPackage.ABSTRACT_ANNOTATION__NAME:
+        setName(NAME_EDEFAULT);
+        return;
+      case StackedchartsPackage.ABSTRACT_ANNOTATION__COLOR:
+        setColor(COLOR_EDEFAULT);
+        return;
+    }
+    super.eUnset(featureID);
+  }
 
 	/**
-	 * <!-- begin-user-doc -->
+   * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+   * @generated
+   */
 	@Override
 	public boolean eIsSet(int featureID) {
-		switch (featureID) {
-			case StackedchartsPackage.ABSTRACT_ANNOTATION__NAME:
-				return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
-			case StackedchartsPackage.ABSTRACT_ANNOTATION__COLOR:
-				return COLOR_EDEFAULT == null ? color != null : !COLOR_EDEFAULT.equals(color);
-		}
-		return super.eIsSet(featureID);
-	}
+    switch (featureID)
+    {
+      case StackedchartsPackage.ABSTRACT_ANNOTATION__NAME:
+        return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
+      case StackedchartsPackage.ABSTRACT_ANNOTATION__COLOR:
+        return COLOR_EDEFAULT == null ? color != null : !COLOR_EDEFAULT.equals(color);
+    }
+    return super.eIsSet(featureID);
+  }
 
 	/**
-	 * <!-- begin-user-doc -->
+   * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+   * @generated
+   */
 	@Override
 	public String toString() {
-		if (eIsProxy()) return super.toString();
+    if (eIsProxy()) return super.toString();
 
-		StringBuffer result = new StringBuffer(super.toString());
-		result.append(" (name: ");
-		result.append(name);
-		result.append(", color: ");
-		result.append(color);
-		result.append(')');
-		return result.toString();
-	}
+    StringBuffer result = new StringBuffer(super.toString());
+    result.append(" (name: ");
+    result.append(name);
+    result.append(", color: ");
+    result.append(color);
+    result.append(')');
+    return result.toString();
+  }
 
 } //AbstractAnnotationImpl
