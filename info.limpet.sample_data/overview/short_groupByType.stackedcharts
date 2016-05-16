@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ASCII"?>
 <stackedcharts:ChartSet xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:stackedcharts="stackedcharts" orientation="Vertical">
   <charts name="Speed Depth">
-    <maxAxes name="Speed">
+    <minAxes name="Speed">
       <datasets name="Pri_Speed">
         <measurements independentVal="1.248236122E12" dependentVal="4.88" />
         <measurements independentVal="1.248236205E12" dependentVal="4.93" />
@@ -99,8 +99,8 @@
         <measurements independentVal="1.248240349E12" dependentVal="4.0" />
         <styling xsi:type="stackedcharts:PlainStyling" markerStyle="Cross" color="#0000FF" />
       </datasets>
-    </maxAxes>
-    <minAxes name="Depth">
+    </minAxes>
+    <maxAxes name="Depth">
       <datasets name="Pri_Depth">
         <measurements independentVal="1.248236122E12" dependentVal="31.0" />
         <measurements independentVal="1.248236205E12" dependentVal="31.0" />
@@ -198,7 +198,7 @@
         <measurements independentVal="1.248240349E12" dependentVal="31.0" />
         <styling xsi:type="stackedcharts:PlainStyling" markerStyle="Diamond" color="#0000FF" />
       </datasets>
-    </minAxes>
+    </maxAxes>
   </charts>
   <charts name="Course">
     <minAxes name="Course">
