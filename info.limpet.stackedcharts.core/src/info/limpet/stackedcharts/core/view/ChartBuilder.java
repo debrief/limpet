@@ -210,7 +210,7 @@ public class ChartBuilder
         final XYDataset collection = axeshelper.createCollection();
        
         final ValueAxis chartAxis = new NumberAxis(dependentAxis.getName());
-        indexSeries =  buildAxis(axeshelper, dependentAxis, collection,renderer,indexSeries);
+        buildAxis(axeshelper, dependentAxis, collection,renderer,indexSeries);
         subplot.setDataset(indexAxis, collection);
         subplot.setRangeAxis(indexAxis, chartAxis);
         subplot.setRenderer(indexAxis, renderer);
@@ -241,7 +241,7 @@ public class ChartBuilder
         
       
         final ValueAxis chartAxis = new NumberAxis(dependentAxis.getName());
-        indexSeries =  buildAxis(axeshelper, dependentAxis, collection,renderer,indexSeries);
+         buildAxis(axeshelper, dependentAxis, collection,renderer,indexSeries);
         subplot.setDataset(indexAxis, collection);
         subplot.setRangeAxis(indexAxis, chartAxis);
         subplot.setRenderer(indexAxis, renderer);
@@ -262,7 +262,7 @@ public class ChartBuilder
     return new JFreeChart(plot);
   }
 
-  private int buildAxis(ChartHelper helper, DependentAxis axis,
+  private void buildAxis(ChartHelper helper, DependentAxis axis,
       XYDataset collection, XYLineAndShapeRenderer renderer, int index)
   {
     
@@ -270,7 +270,7 @@ public class ChartBuilder
     for (Dataset dataset : datasets)
     {
       final Series series = helper.createSeries(dataset.getName());
-      index++;
+     
       Styling styling = dataset.getStyling();
       if(styling != null)
       {
@@ -331,7 +331,7 @@ public class ChartBuilder
 					}
 				}
       	
-     
+				 index++;
       	
       }
       
@@ -342,7 +342,6 @@ public class ChartBuilder
         helper.addItem(series,  dataItem);
       }
     }
-    return index;
   }
   
   
