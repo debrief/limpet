@@ -16,7 +16,7 @@ public class ChartFigure extends RectangleFigure
     setLayoutManager(new BorderLayout());
     chartNameLabel = new Label();
     add(chartNameLabel, BorderLayout.TOP);
-    Label previewLabel = new Label("                    Preview                    ");
+    Label previewLabel = new Label("Preview");
     previewLabel.setForegroundColor(Display.getDefault().getSystemColor(
         SWT.COLOR_RED));
     add(previewLabel, BorderLayout.CENTER);

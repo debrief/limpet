@@ -1,25 +1,23 @@
 package info.limpet.stackedcharts.editor.parts;
 
-import java.util.List;
-
-import org.eclipse.draw2d.FlowLayout;
-import org.eclipse.draw2d.IFigure;
-import org.eclipse.draw2d.Label;
-import org.eclipse.draw2d.RectangleFigure;
-import org.eclipse.gef.EditPolicy;
-import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
-import org.eclipse.gef.editpolicies.NonResizableEditPolicy;
-import org.eclipse.swt.graphics.Image;
-
-import info.limpet.stackedcharts.editor.Activator;
+import info.limpet.stackedcharts.editor.figures.ArrowFigure;
 import info.limpet.stackedcharts.editor.figures.VerticalLabel;
 import info.limpet.stackedcharts.model.DependentAxis;
 
+import java.util.List;
+
+import org.eclipse.draw2d.FlowLayout;
+import org.eclipse.draw2d.GridData;
+import org.eclipse.draw2d.GridLayout;
+import org.eclipse.draw2d.IFigure;
+import org.eclipse.draw2d.RectangleFigure;
+import org.eclipse.gef.EditPolicy;
+import org.eclipse.gef.GraphicalEditPart;
+import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
+import org.eclipse.gef.editpolicies.NonResizableEditPolicy;
+
 public class AxisEditPart extends AbstractGraphicalEditPart
 {
-
-  private static final Image AXIS_IMG = Activator.imageDescriptorFromPlugin(
-      Activator.PLUGIN_ID, "icons/axis.png").createImage();
 
   private RectangleFigure datasetsPane;
 
@@ -30,21 +28,25 @@ public class AxisEditPart extends AbstractGraphicalEditPart
   {
     RectangleFigure figure = new RectangleFigure();
     figure.setOutline(false);
-    FlowLayout layoutManager = new FlowLayout();
-    layoutManager.setHorizontal(true);
-    layoutManager.setStretchMinorAxis(true);
+    GridLayout layoutManager = new GridLayout(3, false);
     figure.setLayoutManager(layoutManager);
 
     datasetsPane = new RectangleFigure();
     datasetsPane.setOutline(false);
-    layoutManager = new FlowLayout();
-    layoutManager.setHorizontal(true);
-    layoutManager.setStretchMinorAxis(true);
-    datasetsPane.setLayoutManager(layoutManager);
+    FlowLayout datasetsPaneLayout = new FlowLayout();
+    datasetsPaneLayout.setHorizontal(true);
+    datasetsPaneLayout.setStretchMinorAxis(true);
+    datasetsPane.setLayoutManager(datasetsPaneLayout);
     figure.add(datasetsPane);
 
-    figure.add(new Label(AXIS_IMG));
+    ArrowFigure arrowFigure = new ArrowFigure();
+    layoutManager.setConstraint(arrowFigure, new GridData(GridData.FILL,
+        GridData.FILL, false, true));
+    figure.add(arrowFigure);
+
     axisNameLabel = new VerticalLabel();
+    layoutManager.setConstraint(axisNameLabel, new GridData(GridData.FILL,
+        GridData.FILL, true, true));
     figure.add(axisNameLabel);
 
     return figure;
@@ -54,6 +56,9 @@ public class AxisEditPart extends AbstractGraphicalEditPart
   protected void refreshVisuals()
   {
     axisNameLabel.setText(((DependentAxis) getModel()).getName());
+
+    ((GraphicalEditPart) getParent()).setLayoutConstraint(this, figure,
+        new GridData(GridData.CENTER, GridData.FILL, false, true));
   }
 
   @Override

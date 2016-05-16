@@ -1,14 +1,14 @@
 package info.limpet.stackedcharts.editor.parts;
 
-import info.limpet.stackedcharts.model.ChartSet;
-
 import java.util.List;
 
-import org.eclipse.draw2d.FlowLayout;
+import org.eclipse.draw2d.GridLayout;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.MarginBorder;
 import org.eclipse.draw2d.RectangleFigure;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
+
+import info.limpet.stackedcharts.model.ChartSet;
 
 public class ChartSetEditPart extends AbstractGraphicalEditPart
 {
@@ -19,11 +19,8 @@ public class ChartSetEditPart extends AbstractGraphicalEditPart
     RectangleFigure rectangle = new RectangleFigure();
     rectangle.setBorder(new MarginBorder(10));
     rectangle.setOutline(false);
-    FlowLayout flowLayout = new FlowLayout();
-    flowLayout.setMinorSpacing(20);
-    flowLayout.setHorizontal(false);
-    flowLayout.setStretchMinorAxis(true);
-    rectangle.setLayoutManager(flowLayout);
+    GridLayout layout = new GridLayout();
+    rectangle.setLayoutManager(layout);
     return rectangle;
   }
 
