@@ -1100,7 +1100,7 @@ public interface StackedchartsPackage extends EPackage {
 	int SELECTIVE_ANNOTATION__ANNOTATION = 0;
 
 	/**
-   * The feature id for the '<em><b>Appears In</b></em>' containment reference list.
+   * The feature id for the '<em><b>Appears In</b></em>' reference list.
    * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
    * @generated
@@ -1789,10 +1789,10 @@ public interface StackedchartsPackage extends EPackage {
 	EReference getSelectiveAnnotation_Annotation();
 
 	/**
-   * Returns the meta object for the containment reference list '{@link info.limpet.stackedcharts.model.SelectiveAnnotation#getAppearsIn <em>Appears In</em>}'.
+   * Returns the meta object for the reference list '{@link info.limpet.stackedcharts.model.SelectiveAnnotation#getAppearsIn <em>Appears In</em>}'.
    * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-   * @return the meta object for the containment reference list '<em>Appears In</em>'.
+   * @return the meta object for the reference list '<em>Appears In</em>'.
    * @see info.limpet.stackedcharts.model.SelectiveAnnotation#getAppearsIn()
    * @see #getSelectiveAnnotation()
    * @generated
@@ -2363,7 +2363,7 @@ public interface StackedchartsPackage extends EPackage {
 		EReference SELECTIVE_ANNOTATION__ANNOTATION = eINSTANCE.getSelectiveAnnotation_Annotation();
 
 		/**
-     * The meta object literal for the '<em><b>Appears In</b></em>' containment reference list feature.
+     * The meta object literal for the '<em><b>Appears In</b></em>' reference list feature.
      * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
      * @generated

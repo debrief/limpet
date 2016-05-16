@@ -21,6 +21,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
+import org.eclipse.emf.ecore.util.EObjectResolvingEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
 /**
@@ -49,7 +50,7 @@ public class SelectiveAnnotationImpl extends MinimalEObjectImpl.Container implem
 	protected AbstractAnnotation annotation;
 
 	/**
-   * The cached value of the '{@link #getAppearsIn() <em>Appears In</em>}' containment reference list.
+   * The cached value of the '{@link #getAppearsIn() <em>Appears In</em>}' reference list.
    * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
    * @see #getAppearsIn()
@@ -130,7 +131,7 @@ public class SelectiveAnnotationImpl extends MinimalEObjectImpl.Container implem
 	public EList<Chart> getAppearsIn() {
     if (appearsIn == null)
     {
-      appearsIn = new EObjectContainmentEList<Chart>(Chart.class, this, StackedchartsPackage.SELECTIVE_ANNOTATION__APPEARS_IN);
+      appearsIn = new EObjectResolvingEList<Chart>(Chart.class, this, StackedchartsPackage.SELECTIVE_ANNOTATION__APPEARS_IN);
     }
     return appearsIn;
   }
@@ -146,8 +147,6 @@ public class SelectiveAnnotationImpl extends MinimalEObjectImpl.Container implem
     {
       case StackedchartsPackage.SELECTIVE_ANNOTATION__ANNOTATION:
         return basicSetAnnotation(null, msgs);
-      case StackedchartsPackage.SELECTIVE_ANNOTATION__APPEARS_IN:
-        return ((InternalEList<?>)getAppearsIn()).basicRemove(otherEnd, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
