@@ -28,7 +28,7 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="DependentAxis" eSuperTypes="#//AbstractAxis">
     <eStructuralFeatures xsi:type="ecore:EReference" name="datasets" upperBound="-1"
-        eType="#//Dataset"/>
+        eType="#//Dataset" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="annotations" upperBound="-1"
         eType="#//AbstractAnnotation" containment="true"/>
   </eClassifiers>
