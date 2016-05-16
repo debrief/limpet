@@ -165,7 +165,8 @@ public enum MarkerStyle implements Enumerator {
    * @generated
    */
   private static final MarkerStyle[] VALUES_ARRAY =
-    new MarkerStyle[] {
+    new MarkerStyle[]
+    {
       NONE,
       SQUARE,
       CIRCLE,
@@ -191,9 +192,11 @@ public enum MarkerStyle implements Enumerator {
    * @generated
    */
   public static MarkerStyle get(String literal) {
-    for (int i = 0; i < VALUES_ARRAY.length; ++i) {
+    for (int i = 0; i < VALUES_ARRAY.length; ++i)
+    {
       MarkerStyle result = VALUES_ARRAY[i];
-      if (result.toString().equals(literal)) {
+      if (result.toString().equals(literal))
+      {
         return result;
       }
     }
@@ -209,9 +212,11 @@ public enum MarkerStyle implements Enumerator {
    * @generated
    */
   public static MarkerStyle getByName(String name) {
-    for (int i = 0; i < VALUES_ARRAY.length; ++i) {
+    for (int i = 0; i < VALUES_ARRAY.length; ++i)
+    {
       MarkerStyle result = VALUES_ARRAY[i];
-      if (result.getName().equals(name)) {
+      if (result.getName().equals(name))
+      {
         return result;
       }
     }
@@ -227,7 +232,8 @@ public enum MarkerStyle implements Enumerator {
    * @generated
    */
   public static MarkerStyle get(int value) {
-    switch (value) {
+    switch (value)
+    {
       case NONE_VALUE: return NONE;
       case SQUARE_VALUE: return SQUARE;
       case CIRCLE_VALUE: return CIRCLE;

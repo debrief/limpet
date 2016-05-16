@@ -954,151 +954,6 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
    * @generated
    */
 	public void initializePackageContents() {
-<<<<<<< 3183637e9aff4f63ceac4fbe16334e67e9bf8735
-		if (isInitialized) return;
-		isInitialized = true;
-
-		// Initialize package
-		setName(eNAME);
-		setNsPrefix(eNS_PREFIX);
-		setNsURI(eNS_URI);
-
-		// Obtain other dependent packages
-		XMLTypePackage theXMLTypePackage = (XMLTypePackage)EPackage.Registry.INSTANCE.getEPackage(XMLTypePackage.eNS_URI);
-
-		// Create type parameters
-
-		// Set bounds for type parameters
-
-		// Add supertypes to classes
-		dependentAxisEClass.getESuperTypes().add(this.getAbstractAxis());
-		zoneEClass.getESuperTypes().add(this.getAbstractAnnotation());
-		markerEClass.getESuperTypes().add(this.getAbstractAnnotation());
-		plainStylingEClass.getESuperTypes().add(this.getStyling());
-		linearStylingEClass.getESuperTypes().add(this.getStyling());
-		independentAxisEClass.getESuperTypes().add(this.getAbstractAxis());
-		scatterSetEClass.getESuperTypes().add(this.getAbstractAnnotation());
-
-		// Initialize classes, features, and operations; add parameters
-		initEClass(chartSetEClass, ChartSet.class, "ChartSet", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEReference(getChartSet_Charts(), this.getChart(), this.getChart_Parent(), "charts", null, 0, -1, ChartSet.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getChartSet_Orientation(), this.getOrientation(), "orientation", "Horizontal", 0, 1, ChartSet.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getChartSet_SharedAxis(), this.getIndependentAxis(), null, "sharedAxis", null, 0, 1, ChartSet.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-		initEClass(chartEClass, Chart.class, "Chart", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEReference(getChart_Parent(), this.getChartSet(), this.getChartSet_Charts(), "parent", null, 0, 1, Chart.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getChart_MaxAxes(), this.getDependentAxis(), null, "maxAxes", null, 0, -1, Chart.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getChart_Name(), ecorePackage.getEString(), "name", null, 0, 1, Chart.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getChart_Title(), ecorePackage.getEString(), "title", null, 0, 1, Chart.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getChart_MinAxes(), this.getDependentAxis(), null, "minAxes", null, 0, -1, Chart.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-		initEClass(dependentAxisEClass, DependentAxis.class, "DependentAxis", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEReference(getDependentAxis_Datasets(), this.getDataset(), null, "datasets", null, 0, -1, DependentAxis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getDependentAxis_Annotations(), this.getAbstractAnnotation(), null, "annotations", null, 0, -1, DependentAxis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-		initEClass(datasetEClass, Dataset.class, "Dataset", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getDataset_Name(), ecorePackage.getEString(), "name", null, 0, 1, Dataset.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getDataset_Measurements(), this.getDataItem(), null, "measurements", null, 0, -1, Dataset.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getDataset_Styling(), this.getStyling(), null, "styling", null, 1, 1, Dataset.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-		initEClass(dataItemEClass, DataItem.class, "DataItem", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getDataItem_IndependentVal(), ecorePackage.getEDouble(), "independentVal", null, 0, 1, DataItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getDataItem_DependentVal(), ecorePackage.getEDouble(), "dependentVal", null, 0, 1, DataItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-		initEClass(abstractAnnotationEClass, AbstractAnnotation.class, "AbstractAnnotation", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getAbstractAnnotation_Name(), ecorePackage.getEString(), "name", null, 0, 1, AbstractAnnotation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getAbstractAnnotation_Color(), ecorePackage.getEString(), "color", null, 0, 1, AbstractAnnotation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-		initEClass(zoneEClass, Zone.class, "Zone", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getZone_Start(), ecorePackage.getEDouble(), "start", null, 0, 1, Zone.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getZone_End(), ecorePackage.getEDouble(), "end", null, 0, 1, Zone.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-		initEClass(markerEClass, Marker.class, "Marker", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getMarker_Value(), ecorePackage.getEDouble(), "value", null, 0, 1, Marker.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-		initEClass(stylingEClass, Styling.class, "Styling", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getStyling_MarkerStyle(), this.getMarkerStyle(), "markerStyle", null, 0, 1, Styling.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getStyling_MarkerSize(), theXMLTypePackage.getDouble(), "markerSize", null, 0, 1, Styling.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getStyling_LineThickness(), theXMLTypePackage.getDouble(), "lineThickness", "0.0", 0, 1, Styling.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getStyling_LineStyle(), this.getLineType(), "lineStyle", null, 0, 1, Styling.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-		initEClass(plainStylingEClass, PlainStyling.class, "PlainStyling", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getPlainStyling_Color(), ecorePackage.getEString(), "color", null, 0, 1, PlainStyling.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-		initEClass(linearStylingEClass, LinearStyling.class, "LinearStyling", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getLinearStyling_StartColor(), ecorePackage.getEString(), "startColor", null, 0, 1, LinearStyling.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getLinearStyling_EndColor(), ecorePackage.getEString(), "endColor", null, 0, 1, LinearStyling.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getLinearStyling_StartVal(), ecorePackage.getEDouble(), "startVal", null, 0, 1, LinearStyling.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getLinearStyling_EndVal(), ecorePackage.getEDouble(), "endVal", null, 0, 1, LinearStyling.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-		initEClass(abstractAxisEClass, AbstractAxis.class, "AbstractAxis", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getAbstractAxis_Scale(), this.getAxisScale(), "scale", null, 0, 1, AbstractAxis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getAbstractAxis_Name(), ecorePackage.getEString(), "name", null, 0, 1, AbstractAxis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getAbstractAxis_AutoScale(), theXMLTypePackage.getBoolean(), "autoScale", null, 0, 1, AbstractAxis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getAbstractAxis_Direction(), this.getAxisDirection(), "direction", null, 0, 1, AbstractAxis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getAbstractAxis_Font(), ecorePackage.getEString(), "font", null, 0, 1, AbstractAxis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getAbstractAxis_Color(), ecorePackage.getEString(), "color", null, 0, 1, AbstractAxis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getAbstractAxis_AxisType(), this.getAxisType(), "axisType", null, 0, 1, AbstractAxis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-		initEClass(independentAxisEClass, IndependentAxis.class, "IndependentAxis", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEReference(getIndependentAxis_Annotations(), this.getSelectiveAnnotation(), null, "annotations", null, 0, -1, IndependentAxis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-		initEClass(scatterSetEClass, ScatterSet.class, "ScatterSet", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEReference(getScatterSet_Datums(), this.getDatum(), null, "datums", null, 0, -1, ScatterSet.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-		initEClass(datumEClass, Datum.class, "Datum", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getDatum_Val(), ecorePackage.getEDouble(), "val", null, 0, 1, Datum.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-		initEClass(selectiveAnnotationEClass, SelectiveAnnotation.class, "SelectiveAnnotation", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEReference(getSelectiveAnnotation_Annotation(), this.getAbstractAnnotation(), null, "annotation", null, 1, 1, SelectiveAnnotation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getSelectiveAnnotation_AppearsIn(), this.getChart(), null, "appearsIn", null, 0, -1, SelectiveAnnotation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-		// Initialize enums and add enum literals
-		initEEnum(axisScaleEEnum, AxisScale.class, "AxisScale");
-		addEEnumLiteral(axisScaleEEnum, AxisScale.LINEAR);
-		addEEnumLiteral(axisScaleEEnum, AxisScale.LOG);
-
-		initEEnum(orientationEEnum, Orientation.class, "Orientation");
-		addEEnumLiteral(orientationEEnum, Orientation.HORIZONTAL);
-		addEEnumLiteral(orientationEEnum, Orientation.VERTICAL);
-
-		initEEnum(axisDirectionEEnum, AxisDirection.class, "AxisDirection");
-		addEEnumLiteral(axisDirectionEEnum, AxisDirection.ASCENDING);
-		addEEnumLiteral(axisDirectionEEnum, AxisDirection.DESCENDING);
-
-		initEEnum(markerStyleEEnum, MarkerStyle.class, "MarkerStyle");
-		addEEnumLiteral(markerStyleEEnum, MarkerStyle.NONE);
-		addEEnumLiteral(markerStyleEEnum, MarkerStyle.SQUARE);
-		addEEnumLiteral(markerStyleEEnum, MarkerStyle.CIRCLE);
-		addEEnumLiteral(markerStyleEEnum, MarkerStyle.TRIANGLE);
-		addEEnumLiteral(markerStyleEEnum, MarkerStyle.CROSS);
-		addEEnumLiteral(markerStyleEEnum, MarkerStyle.DIAMOND);
-
-		initEEnum(lineTypeEEnum, LineType.class, "LineType");
-		addEEnumLiteral(lineTypeEEnum, LineType.NONE);
-		addEEnumLiteral(lineTypeEEnum, LineType.SOLID);
-		addEEnumLiteral(lineTypeEEnum, LineType.DOTTED);
-		addEEnumLiteral(lineTypeEEnum, LineType.DASHED);
-
-		initEEnum(axisTypeEEnum, AxisType.class, "AxisType");
-		addEEnumLiteral(axisTypeEEnum, AxisType.NUMBER);
-		addEEnumLiteral(axisTypeEEnum, AxisType.TIME);
-
-		// Create resource
-		createResource(eNS_URI);
-
-		// Create annotations
-		// http:///org/eclipse/emf/ecore/util/ExtendedMetaData
-		createExtendedMetaDataAnnotations();
-	}
-
-	/**
-	 * Initializes the annotations for <b>http:///org/eclipse/emf/ecore/util/ExtendedMetaData</b>.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-=======
     if (isInitialized) return;
     isInitialized = true;
 
@@ -1211,9 +1066,12 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
     addEEnumLiteral(axisDirectionEEnum, AxisDirection.DESCENDING);
 
     initEEnum(markerStyleEEnum, MarkerStyle.class, "MarkerStyle");
-    addEEnumLiteral(markerStyleEEnum, MarkerStyle.CIRCLE);
-    addEEnumLiteral(markerStyleEEnum, MarkerStyle.SQUARE);
     addEEnumLiteral(markerStyleEEnum, MarkerStyle.NONE);
+    addEEnumLiteral(markerStyleEEnum, MarkerStyle.SQUARE);
+    addEEnumLiteral(markerStyleEEnum, MarkerStyle.CIRCLE);
+    addEEnumLiteral(markerStyleEEnum, MarkerStyle.TRIANGLE);
+    addEEnumLiteral(markerStyleEEnum, MarkerStyle.CROSS);
+    addEEnumLiteral(markerStyleEEnum, MarkerStyle.DIAMOND);
 
     initEEnum(lineTypeEEnum, LineType.class, "LineType");
     addEEnumLiteral(lineTypeEEnum, LineType.NONE);
@@ -1239,7 +1097,6 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
 	 * <!-- end-user-doc -->
    * @generated
    */
->>>>>>> 4bd8380b400a6996f30f31a1e9435239c847efd0
 	protected void createExtendedMetaDataAnnotations() {
     String source = "http:///org/eclipse/emf/ecore/util/ExtendedMetaData";	
     addAnnotation
