@@ -197,20 +197,19 @@ public class ChartBuilder
       
       EList<DependentAxis> minAxes = chart.getMinAxes();
       
-      // TODO: index here only increments for each Axis, It needs to increment for 
-      // each Series that is created.  Maybe store it in the helper?
+      
       int index = 0;
       for (DependentAxis dependentAxis : minAxes)
       {
-        buildAxis(helper, dependentAxis, collection,renderer,index);
-        index++;
+        index =  buildAxis(helper, dependentAxis, collection,renderer,index);
+       
       }
       
       EList<DependentAxis> maxAxes = chart.getMaxAxes();
       for (DependentAxis dependentAxis : maxAxes)
       {
-        buildAxis(helper, dependentAxis, collection,renderer,index);
-        index++;
+        index =  buildAxis(helper, dependentAxis, collection,renderer,index);
+       
       }
 
       final XYPlot subplot = new XYPlot(collection, null, chartAxis, renderer);
@@ -225,14 +224,14 @@ public class ChartBuilder
     return new JFreeChart(plot);
   }
 
-  private void buildAxis(ChartHelper helper, DependentAxis axis,
+  private int buildAxis(ChartHelper helper, DependentAxis axis,
       XYDataset collection, XYLineAndShapeRenderer renderer, int index)
   {
     EList<Dataset> datasets = axis.getDatasets();
     for (Dataset dataset : datasets)
     {
       final Series series = helper.createSeries(dataset.getName());
-      
+      index++;
       Styling styling = dataset.getStyling();
       if(styling != null)
       {
@@ -304,6 +303,7 @@ public class ChartBuilder
         helper.addItem(series,  dataItem);
       }
     }
+    return index;
   }
   
   
