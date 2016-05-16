@@ -196,6 +196,9 @@ public class ChartBuilder
       final XYDataset collection = helper.createCollection();
       
       EList<DependentAxis> minAxes = chart.getMinAxes();
+      
+      // TODO: index here only increments for each Axis, It needs to increment for 
+      // each Series that is created.  Maybe store it in the helper?
       int index = 0;
       for (DependentAxis dependentAxis : minAxes)
       {
@@ -222,12 +225,13 @@ public class ChartBuilder
     return new JFreeChart(plot);
   }
 
-  private void buildAxis(ChartHelper helper, DependentAxis axis, XYDataset collection,XYLineAndShapeRenderer renderer,int index)
+  private void buildAxis(ChartHelper helper, DependentAxis axis,
+      XYDataset collection, XYLineAndShapeRenderer renderer, int index)
   {
     EList<Dataset> datasets = axis.getDatasets();
     for (Dataset dataset : datasets)
     {
-      final Series series = helper.createSeries(axis.getName());
+      final Series series = helper.createSeries(dataset.getName());
       
       Styling styling = dataset.getStyling();
       if(styling != null)
@@ -237,7 +241,6 @@ public class ChartBuilder
 					PlainStyling ps = (PlainStyling) styling;
 					String hexColor = ps.getColor();
 
-					@SuppressWarnings("unused")
 					Color thisColor = null;
 
 					if (hexColor != null)
@@ -250,9 +253,7 @@ public class ChartBuilder
       	{
       		System.err.println("Linear colors not implemented");
       	}
-        
 			
-				@SuppressWarnings("unused")
 				double size = styling.getMarkerSize();
 				 if(size==0)
          {
