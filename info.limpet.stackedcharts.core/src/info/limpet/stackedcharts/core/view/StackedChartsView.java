@@ -1,5 +1,6 @@
 package info.limpet.stackedcharts.core.view;
 
+import info.limpet.stackedcharts.editor.StackedchartsEditControl;
 import info.limpet.stackedcharts.model.ChartSet;
 
 import java.io.File;
@@ -27,12 +28,9 @@ import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.part.ViewPart;
 import org.jfree.chart.JFreeChart;
@@ -51,6 +49,7 @@ public class StackedChartsView extends ViewPart
   // effects
   protected TransitionManager transitionManager = null;
   private Composite chartHolder;
+  private StackedchartsEditControl chartEditor;
 
   @Override
   public void createPartControl(Composite parent)
@@ -243,6 +242,8 @@ public class StackedChartsView extends ViewPart
 
   public void setModel(ChartSet charts)
   {
+    chartEditor.setModel(charts);
+    
     // remove any existing base items
     if (chartHolder != null)
     {
@@ -307,12 +308,8 @@ public class StackedChartsView extends ViewPart
 
   protected Control createEditView()
   {
-    Composite base = new Composite(stackedPane, SWT.NONE);
-    base.setLayout(new GridLayout());
-    Label label = new Label(base, SWT.NONE);
-    label.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, true));
-    label.setText("TODO: Edit UI ");
-    return base;
+    chartEditor = new StackedchartsEditControl(stackedPane);
+    return chartEditor;
   }
 
   @Override
