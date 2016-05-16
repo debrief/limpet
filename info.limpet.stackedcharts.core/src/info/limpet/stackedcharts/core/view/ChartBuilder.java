@@ -192,28 +192,48 @@ public class ChartBuilder
       // up a list of axes, then add them to the plot at the end.
       
       final XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
-      final ValueAxis chartAxis = new NumberAxis(chart.getName());
+      
       final XYDataset collection = helper.createCollection();
       
       EList<DependentAxis> minAxes = chart.getMinAxes();
       
-      
-      int index = 0;
+      final XYPlot subplot = new XYPlot(collection, null, null, renderer);
+      int indexSeries = 0;
+      int indexAxis = 0;
       for (DependentAxis dependentAxis : minAxes)
       {
-        index =  buildAxis(helper, dependentAxis, collection,renderer,index);
-       
+        int currSeriesIndex = indexSeries;
+        final ValueAxis chartAxis = new NumberAxis(dependentAxis.getName());
+        indexSeries =  buildAxis(helper, dependentAxis, collection,renderer,indexSeries);
+        subplot.setRangeAxis(indexAxis, chartAxis);
+        subplot.setRangeAxisLocation(indexAxis,AxisLocation.BOTTOM_OR_LEFT);
+        for (int i = currSeriesIndex; i < indexSeries; i++)
+        {
+          subplot.mapDatasetToRangeAxis(indexAxis, i);
+          
+        }
+        indexAxis++;
       }
       
       EList<DependentAxis> maxAxes = chart.getMaxAxes();
       for (DependentAxis dependentAxis : maxAxes)
       {
-        index =  buildAxis(helper, dependentAxis, collection,renderer,index);
-       
+
+        int currSeriesIndex = indexSeries;
+        final ValueAxis chartAxis = new NumberAxis(dependentAxis.getName());
+        indexSeries =  buildAxis(helper, dependentAxis, collection,renderer,indexSeries);
+        subplot.setRangeAxis(indexAxis, chartAxis);
+        subplot.setRangeAxisLocation(indexAxis,AxisLocation.TOP_OR_RIGHT);
+        for (int i = currSeriesIndex; i < indexSeries; i++)
+        {
+          subplot.mapDatasetToRangeAxis(indexAxis, i);
+          
+        }
+        indexAxis++;
       }
 
-      final XYPlot subplot = new XYPlot(collection, null, chartAxis, renderer);
-      subplot.setRangeAxisLocation(AxisLocation.BOTTOM_OR_LEFT);
+     
+     // 
       plot.add(subplot);
     }
 
@@ -227,6 +247,7 @@ public class ChartBuilder
   private int buildAxis(ChartHelper helper, DependentAxis axis,
       XYDataset collection, XYLineAndShapeRenderer renderer, int index)
   {
+    
     EList<Dataset> datasets = axis.getDatasets();
     for (Dataset dataset : datasets)
     {
