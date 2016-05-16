@@ -14,3 +14,4 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.emf.ecore.xmi,
  org.eclipse.ui.views.properties.tabbed
 Bundle-ActivationPolicy: lazy
+Export-Package: info.limpet.stackedcharts.editor

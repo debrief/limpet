@@ -7,13 +7,17 @@ import info.limpet.stackedcharts.model.StackedchartsPackage;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.draw2d.BorderLayout;
+import org.eclipse.draw2d.GridData;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.gef.EditPolicy;
+import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 import org.eclipse.gef.editpolicies.NonResizableEditPolicy;
+import org.eclipse.swt.SWT;
 
 public class ChartEditPart extends AbstractGraphicalEditPart
 {
@@ -67,6 +71,15 @@ public class ChartEditPart extends AbstractGraphicalEditPart
   {
     String name = getChart().getName();
     ((ChartFigure) getFigure()).setName(name);
+    
+    GridData gridData = new GridData();
+    gridData.grabExcessHorizontalSpace = true;
+    gridData.grabExcessVerticalSpace = true;
+    gridData.horizontalAlignment = SWT.FILL;
+    gridData.verticalAlignment = SWT.FILL;
+    
+    ((GraphicalEditPart) getParent()).setLayoutConstraint(this, figure,
+        gridData);
   }
 
   public class ChartAdapter implements Adapter

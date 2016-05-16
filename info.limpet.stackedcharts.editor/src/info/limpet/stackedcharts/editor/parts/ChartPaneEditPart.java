@@ -1,16 +1,16 @@
 package info.limpet.stackedcharts.editor.parts;
 
+import info.limpet.stackedcharts.editor.parts.ChartEditPart.ChartPanePosition;
+import info.limpet.stackedcharts.model.Chart;
+
 import java.util.List;
 
 import org.eclipse.draw2d.BorderLayout;
-import org.eclipse.draw2d.FlowLayout;
+import org.eclipse.draw2d.GridLayout;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.RectangleFigure;
 import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
-
-import info.limpet.stackedcharts.editor.parts.ChartEditPart.ChartPanePosition;
-import info.limpet.stackedcharts.model.Chart;
 
 public class ChartPaneEditPart extends AbstractGraphicalEditPart
 {
@@ -19,9 +19,8 @@ public class ChartPaneEditPart extends AbstractGraphicalEditPart
   protected IFigure createFigure()
   {
     RectangleFigure figure = new RectangleFigure();
-    FlowLayout layoutManager = new FlowLayout();
-    layoutManager.setHorizontal(true);
-    layoutManager.setStretchMinorAxis(true);
+    figure.setOutline(false);
+    GridLayout layoutManager = new GridLayout();
     figure.setLayoutManager(layoutManager);
     return figure;
   }
@@ -46,6 +45,8 @@ public class ChartPaneEditPart extends AbstractGraphicalEditPart
       ((GraphicalEditPart) getParent()).setLayoutConstraint(this, figure,
           BorderLayout.RIGHT);
     }
+    
+    ((GridLayout)getFigure().getLayoutManager()).numColumns = getModelChildren().size();
   }
 
   @Override
