@@ -40,7 +40,6 @@ import info.limpet.stackedcharts.model.ScatterSet;
 import info.limpet.stackedcharts.model.SelectiveAnnotation;
 import info.limpet.stackedcharts.model.StackedchartsFactory;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -50,9 +49,6 @@ import javax.measure.Measurable;
 import javax.measure.quantity.Quantity;
 import javax.measure.unit.Unit;
 
-import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
@@ -226,19 +222,19 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
             // cv.follow(getInputs());
             cv.setModel(model);
             
-            // take a copy of the model
-            URI resourceURI = URI.createFileURI("/home/ian/tacticalOverview.stackedcharts");
-            Resource resource = new ResourceSetImpl().createResource(resourceURI);
-            System.out.println("saving to:" + resourceURI.toFileString());
-            resource.getContents().add(model);
-            try
-            {
-              resource.save(null);
-            }
-            catch (IOException e)
-            {
-              e.printStackTrace();
-            }
+//            // take a copy of the model
+//            URI resourceURI = URI.createFileURI("/home/ian/tacticalOverview.stackedcharts");
+//            Resource resource = new ResourceSetImpl().createResource(resourceURI);
+//            System.out.println("saving to:" + resourceURI.toFileString());
+//            resource.getContents().add(model);
+//            try
+//            {
+//              resource.save(null);
+//            }
+//            catch (IOException e)
+//            {
+//              e.printStackTrace();
+//            }
           }
 
         }
