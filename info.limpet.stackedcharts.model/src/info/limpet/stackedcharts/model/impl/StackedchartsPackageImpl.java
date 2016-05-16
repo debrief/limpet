@@ -1050,7 +1050,7 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
 
     initEClass(selectiveAnnotationEClass, SelectiveAnnotation.class, "SelectiveAnnotation", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getSelectiveAnnotation_Annotation(), this.getAbstractAnnotation(), null, "annotation", null, 1, 1, SelectiveAnnotation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getSelectiveAnnotation_AppearsIn(), this.getChart(), null, "appearsIn", null, 0, -1, SelectiveAnnotation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getSelectiveAnnotation_AppearsIn(), this.getChart(), null, "appearsIn", null, 0, -1, SelectiveAnnotation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     // Initialize enums and add enum literals
     initEEnum(axisScaleEEnum, AxisScale.class, "AxisScale");

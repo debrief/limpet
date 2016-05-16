@@ -54,16 +54,16 @@ public interface SelectiveAnnotation extends EObject {
 	void setAnnotation(AbstractAnnotation value);
 
 	/**
-   * Returns the value of the '<em><b>Appears In</b></em>' containment reference list.
+   * Returns the value of the '<em><b>Appears In</b></em>' reference list.
    * The list contents are of type {@link info.limpet.stackedcharts.model.Chart}.
    * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
    * <!-- begin-model-doc -->
    * a list of which  charts this annotation appears in (or null for all charts)
    * <!-- end-model-doc -->
-   * @return the value of the '<em>Appears In</em>' containment reference list.
+   * @return the value of the '<em>Appears In</em>' reference list.
    * @see info.limpet.stackedcharts.model.StackedchartsPackage#getSelectiveAnnotation_AppearsIn()
-   * @model containment="true"
+   * @model
    * @generated
    */
 	EList<Chart> getAppearsIn();

@@ -297,19 +297,12 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
             // and the axes
             DependentAxis rangeAxis = factory.createDependentAxis();
             rangeAxis.setName("Range");
-            relativeChart.getMinAxes().add(rangeAxis);
+            relativeChart.getMaxAxes().add(rangeAxis);
+            
             DependentAxis brgAxis = factory.createDependentAxis();
             brgAxis.setName("Bearing");
             relativeChart.getMinAxes().add(brgAxis);
 
-            DependentAxis relBrgAxis = factory.createDependentAxis();
-            relBrgAxis.setName("Rel Bearing");
-            relativeChart.getMinAxes().add(relBrgAxis);
-
-            DependentAxis atbAxis = factory.createDependentAxis();
-            atbAxis.setName("ATB");
-            relativeChart.getMinAxes().add(atbAxis);
-            
             DependentAxis brgRateAxis = factory.createDependentAxis();
             brgRateAxis.setName("Bearing Rate");
             relativeChart.getMinAxes().add(brgRateAxis);
@@ -331,12 +324,12 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
               }
               else if (iStoreItem.getName().equals("Rel Brg"))
               {
-                createDataset(factory, iStoreItem, "Rel Brg", relBrgAxis, res,
+                createDataset(factory, iStoreItem, "Rel Brg", brgAxis, res,
                 		null, MarkerStyle.CIRCLE);
               }
               else if (iStoreItem.getName().equals("ATB"))
               {
-                createDataset(factory, iStoreItem, "ATB", atbAxis, res,
+                createDataset(factory, iStoreItem, "ATB", brgAxis, res,
                 		null, MarkerStyle.CROSS);
               }
               else if (iStoreItem.getName().equals("Brg Rate"))
@@ -350,7 +343,7 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
         else if (thisG.getName().equals("Sensor"))
         {
           StoreGroup sensor = (StoreGroup) thisG;
-          if (sensor.size() != 1)
+          if (sensor.size() == 1)
           {
             ScatterSet scatter = factory.createScatterSet();
             @SuppressWarnings("unchecked")
