@@ -181,17 +181,19 @@ public class ChartBuilder
     {
       
       
-      final XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
+     
       
      
       
       EList<DependentAxis> minAxes = chart.getMinAxes();
       
-      final XYPlot subplot = new XYPlot(null, null, null, renderer);
-      int indexSeries = 0;
+      final XYPlot subplot = new XYPlot(null, null, null, null);
+     
       int indexAxis = 0;
       for (DependentAxis dependentAxis : minAxes)
       {
+        final XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
+        int indexSeries = 0;
         ChartHelper axeshelper=null;
         switch (dependentAxis.getAxisType())
         {
@@ -211,6 +213,7 @@ public class ChartBuilder
         indexSeries =  buildAxis(axeshelper, dependentAxis, collection,renderer,indexSeries);
         subplot.setDataset(indexAxis, collection);
         subplot.setRangeAxis(indexAxis, chartAxis);
+        subplot.setRenderer(indexAxis, renderer);
         subplot.setRangeAxisLocation(indexAxis,AxisLocation.BOTTOM_OR_LEFT);
         
         indexAxis++;
@@ -219,7 +222,8 @@ public class ChartBuilder
       EList<DependentAxis> maxAxes = chart.getMaxAxes();
       for (DependentAxis dependentAxis : maxAxes)
       {
-
+        final XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
+        int indexSeries = 0;
         ChartHelper axeshelper=null;
         switch (dependentAxis.getAxisType())
         {
@@ -240,6 +244,7 @@ public class ChartBuilder
         indexSeries =  buildAxis(axeshelper, dependentAxis, collection,renderer,indexSeries);
         subplot.setDataset(indexAxis, collection);
         subplot.setRangeAxis(indexAxis, chartAxis);
+        subplot.setRenderer(indexAxis, renderer);
         subplot.setRangeAxisLocation(indexAxis,AxisLocation.TOP_OR_RIGHT);
        
         indexAxis++;
