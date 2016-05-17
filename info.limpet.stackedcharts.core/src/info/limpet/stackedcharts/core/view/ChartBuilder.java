@@ -58,27 +58,31 @@ public class ChartBuilder
      */
     ValueAxis createAxis(String name);
 
-    /** add this item to this series
+    /**
+     * add this item to this series
      * 
      * @param series
      * @param item
      */
     void addItem(Series series, DataItem item);
 
-    /** create a series with the specified name
+    /**
+     * create a series with the specified name
      * 
      * @param name
      * @return
      */
     Series createSeries(String name);
 
-    /** create a new collection of datasets (seroes)
+    /**
+     * create a new collection of datasets (seroes)
      * 
      * @return
      */
     XYDataset createCollection();
 
-    /** put the series into the collection
+    /**
+     * put the series into the collection
      * 
      * @param collection
      * @param series
@@ -86,11 +90,11 @@ public class ChartBuilder
     void storeSeries(XYDataset collection, Series series);
   }
 
-  
-  /** support generation of a stacked chart with a shared number axis
+  /**
+   * support generation of a stacked chart with a shared number axis
    * 
    * @author ian
-   *
+   * 
    */
   private static class NumberHelper implements ChartHelper
   {
@@ -129,10 +133,11 @@ public class ChartBuilder
 
   }
 
-  /** support generation of a stacked chart with a shared time axis
+  /**
+   * support generation of a stacked chart with a shared time axis
    * 
    * @author ian
-   *
+   * 
    */
   private static class TimeHelper implements ChartHelper
   {
@@ -172,8 +177,10 @@ public class ChartBuilder
     }
   }
 
-  /** create a chart from our dataset
-   * @param chartsSet 
+  /**
+   * create a chart from our dataset
+   * 
+   * @param chartsSet
    * 
    * @return
    */
@@ -212,7 +219,7 @@ public class ChartBuilder
     for (final Chart chart : charts)
     {
       final XYPlot subplot = new XYPlot(null, null, null, null);
-      
+
       // keep track of how many axes we create
       int indexAxis = 0;
 
@@ -247,9 +254,12 @@ public class ChartBuilder
 
   /**
    * 
-   * @param subplot target plot for index 
-   * @param indexAxis  index of new axis 
-   * @param dependentAxis model object of DependentAxis
+   * @param subplot
+   *          target plot for index
+   * @param indexAxis
+   *          index of new axis
+   * @param dependentAxis
+   *          model object of DependentAxis
    */
   private static void createDependentAxis(final XYPlot subplot, int indexAxis,
       DependentAxis dependentAxis)
@@ -272,8 +282,8 @@ public class ChartBuilder
     final XYDataset collection = axeshelper.createCollection();
 
     final ValueAxis chartAxis = new NumberAxis(dependentAxis.getName());
-    addDatasetToAxis(axeshelper, dependentAxis.getDatasets(), collection, renderer,
-        indexSeries);
+    addDatasetToAxis(axeshelper, dependentAxis.getDatasets(), collection,
+        renderer, indexSeries);
     subplot.setDataset(indexAxis, collection);
     subplot.setRangeAxis(indexAxis, chartAxis);
     subplot.setRenderer(indexAxis, renderer);
@@ -293,10 +303,11 @@ public class ChartBuilder
    * @param seriesIndex
    *          counter for current series being assigned
    * 
-   * build axis dataset via adding series to Series & config renderer for styles
+   *          build axis dataset via adding series to Series & config renderer for styles
    */
-  private static void addDatasetToAxis(final ChartHelper helper, final EList<Dataset> datasets,
-      final XYDataset collection, final XYLineAndShapeRenderer renderer, int seriesIndex)
+  private static void addDatasetToAxis(final ChartHelper helper,
+      final EList<Dataset> datasets, final XYDataset collection,
+      final XYLineAndShapeRenderer renderer, int seriesIndex)
   {
     for (Dataset dataset : datasets)
     {
@@ -308,7 +319,7 @@ public class ChartBuilder
         {
           final PlainStyling ps = (PlainStyling) styling;
           final String hexColor = ps.getColor();
-          
+
           Color thisColor = null;
           if (hexColor != null)
           {
@@ -326,7 +337,7 @@ public class ChartBuilder
         {
           size = 2;// default
         }
-        
+
         final MarkerStyle marker = styling.getMarkerStyle();
         if (marker != null)
         {
@@ -336,20 +347,20 @@ public class ChartBuilder
             renderer.setSeriesShapesVisible(seriesIndex, false);
             break;
           case SQUARE:
-            renderer.setSeriesShape(seriesIndex, new Rectangle2D.Double(0, 0, size,
-                size));
+            renderer.setSeriesShape(seriesIndex, new Rectangle2D.Double(0, 0,
+                size, size));
             break;
           case CIRCLE:
-            renderer.setSeriesShape(seriesIndex, new Ellipse2D.Double(0, 0, size,
-                size));
+            renderer.setSeriesShape(seriesIndex, new Ellipse2D.Double(0, 0,
+                size, size));
             break;
           case TRIANGLE:
             renderer.setSeriesShape(seriesIndex, ShapeUtilities
                 .createUpTriangle((float) size));
             break;
           case CROSS:
-            renderer.setSeriesShape(seriesIndex, ShapeUtilities.createRegularCross(
-                (float) size, (float) size));
+            renderer.setSeriesShape(seriesIndex, ShapeUtilities
+                .createRegularCross((float) size, (float) size));
             break;
           case DIAMOND:
             renderer.setSeriesShape(seriesIndex, ShapeUtilities
