@@ -38,11 +38,8 @@ import org.jfree.util.ShapeUtilities;
 public class ChartBuilder
 {
 
-  private final ChartSet chartsSet;
-
-  public ChartBuilder(ChartSet chartsSet)
+  private ChartBuilder()
   {
-    this.chartsSet = chartsSet;
   }
 
   /**
@@ -90,6 +87,11 @@ public class ChartBuilder
   }
 
   
+  /** support generation of a stacked chart with a shared number axis
+   * 
+   * @author ian
+   *
+   */
   private static class NumberHelper implements ChartHelper
   {
 
@@ -127,6 +129,11 @@ public class ChartBuilder
 
   }
 
+  /** support generation of a stacked chart with a shared time axis
+   * 
+   * @author ian
+   *
+   */
   private static class TimeHelper implements ChartHelper
   {
 
@@ -166,25 +173,24 @@ public class ChartBuilder
   }
 
   /** create a chart from our dataset
+   * @param chartsSet 
    * 
    * @return
    */
-  public JFreeChart build()
+  public static JFreeChart build(ChartSet chartsSet)
   {
-
-    IndependentAxis sharedAxis = chartsSet.getSharedAxis();
-
+    IndependentAxis sharedAxisModel = chartsSet.getSharedAxis();
     final ChartHelper helper;
-    final ValueAxis axis;
+    final ValueAxis sharedAxis;
 
-    if (sharedAxis == null)
+    if (sharedAxisModel == null)
     {
-      axis = new DateAxis("Time");
+      sharedAxis = new DateAxis("Time");
       helper = new NumberHelper();
     }
     else
     {
-      switch (sharedAxis.getAxisType())
+      switch (sharedAxisModel.getAxisType())
       {
       case NUMBER:
         helper = new NumberHelper();
@@ -196,33 +202,34 @@ public class ChartBuilder
         System.err.println("UNEXPECTED AXIS TYPE RECEIVED");
         helper = new NumberHelper();
       }
-
-      axis = helper.createAxis(sharedAxis.getName());
+      sharedAxis = helper.createAxis(sharedAxisModel.getName());
     }
 
-    final CombinedDomainXYPlot plot = new CombinedDomainXYPlot(axis);
+    final CombinedDomainXYPlot plot = new CombinedDomainXYPlot(sharedAxis);
 
+    // now loop through the charts
     EList<Chart> charts = chartsSet.getCharts();
-    for (Chart chart : charts)
+    for (final Chart chart : charts)
     {
       final XYPlot subplot = new XYPlot(null, null, null, null);
-
+      
+      // keep track of how many axes we create
       int indexAxis = 0;
 
       // min axis create on bottom or left
-      EList<DependentAxis> minAxes = chart.getMinAxes();
-      for (DependentAxis dependentAxis : minAxes)
+      final EList<DependentAxis> minAxes = chart.getMinAxes();
+      for (final DependentAxis axis : minAxes)
       {
-        createAxis(subplot, indexAxis, dependentAxis);
+        createDependentAxis(subplot, indexAxis, axis);
         subplot.setRangeAxisLocation(indexAxis, AxisLocation.BOTTOM_OR_LEFT);
         indexAxis++;
       }
 
       // max axis create on top or right
-      EList<DependentAxis> maxAxes = chart.getMaxAxes();
-      for (DependentAxis dependentAxis : maxAxes)
+      final EList<DependentAxis> maxAxes = chart.getMaxAxes();
+      for (final DependentAxis axis : maxAxes)
       {
-        createAxis(subplot, indexAxis, dependentAxis);
+        createDependentAxis(subplot, indexAxis, axis);
         subplot.setRangeAxisLocation(indexAxis, AxisLocation.TOP_OR_RIGHT);
         indexAxis++;
       }
@@ -244,7 +251,7 @@ public class ChartBuilder
    * @param indexAxis  index of new axis 
    * @param dependentAxis model object of DependentAxis
    */
-  private void createAxis(final XYPlot subplot, int indexAxis,
+  private static void createDependentAxis(final XYPlot subplot, int indexAxis,
       DependentAxis dependentAxis)
   {
     final XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
@@ -288,7 +295,7 @@ public class ChartBuilder
    * 
    * build axis dataset via adding series to Series & config renderer for styles
    */
-  private void addDatasetToAxis(final ChartHelper helper, final EList<Dataset> datasets,
+  private static void addDatasetToAxis(final ChartHelper helper, final EList<Dataset> datasets,
       final XYDataset collection, final XYLineAndShapeRenderer renderer, int seriesIndex)
   {
     for (Dataset dataset : datasets)
@@ -299,11 +306,10 @@ public class ChartBuilder
       {
         if (styling instanceof PlainStyling)
         {
-          PlainStyling ps = (PlainStyling) styling;
-          String hexColor = ps.getColor();
-
+          final PlainStyling ps = (PlainStyling) styling;
+          final String hexColor = ps.getColor();
+          
           Color thisColor = null;
-
           if (hexColor != null)
           {
             thisColor = hex2Rgb(hexColor);
