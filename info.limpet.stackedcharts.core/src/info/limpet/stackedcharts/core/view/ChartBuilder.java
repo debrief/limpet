@@ -215,6 +215,7 @@ public class ChartBuilder
         subplot.setRangeAxis(indexAxis, chartAxis);
         subplot.setRenderer(indexAxis, renderer);
         subplot.setRangeAxisLocation(indexAxis,AxisLocation.BOTTOM_OR_LEFT);
+        subplot.mapDatasetToRangeAxis(indexAxis, indexAxis);
         
         indexAxis++;
       }
@@ -246,7 +247,8 @@ public class ChartBuilder
         subplot.setRangeAxis(indexAxis, chartAxis);
         subplot.setRenderer(indexAxis, renderer);
         subplot.setRangeAxisLocation(indexAxis,AxisLocation.TOP_OR_RIGHT);
-       
+        subplot.mapDatasetToRangeAxis(indexAxis, indexAxis);
+        
         indexAxis++;
       }
 
