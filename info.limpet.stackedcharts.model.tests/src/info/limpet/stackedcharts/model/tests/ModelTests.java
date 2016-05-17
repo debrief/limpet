@@ -18,9 +18,11 @@ import info.limpet.stackedcharts.model.Chart;
 import info.limpet.stackedcharts.model.ChartSet;
 import info.limpet.stackedcharts.model.DataItem;
 import info.limpet.stackedcharts.model.Dataset;
+import info.limpet.stackedcharts.model.Datum;
 import info.limpet.stackedcharts.model.DependentAxis;
 import info.limpet.stackedcharts.model.IndependentAxis;
 import info.limpet.stackedcharts.model.Marker;
+import info.limpet.stackedcharts.model.ScatterSet;
 import info.limpet.stackedcharts.model.SelectiveAnnotation;
 import info.limpet.stackedcharts.model.StackedchartsFactory;
 import info.limpet.stackedcharts.model.StackedchartsPackage;
@@ -111,13 +113,13 @@ public class ModelTests
     chartsSet.setSharedAxis(depthAxis);
 
     // first chart
-    Chart chart1 = factory.createChart();
-    chart1.setName("Temperature & Salinity");
-    chartsSet.getCharts().add(chart1);
+    Chart tempChart = factory.createChart();
+    tempChart.setName("Temperature & Salinity");
+    chartsSet.getCharts().add(tempChart);
 
     DependentAxis yAxis1 = factory.createDependentAxis();
     yAxis1.setName("Temperature");
-    chart1.getMinAxes().add(yAxis1);
+    tempChart.getMinAxes().add(yAxis1);
 
     Dataset temperatureVsDepth1 = factory.createDataset();
     temperatureVsDepth1.setName("Temp vs Depth");
@@ -141,7 +143,7 @@ public class ModelTests
     // second axis/dataset on this first graph
     DependentAxis yAxis2 = factory.createDependentAxis();
     yAxis2.setName("Salinity");
-    chart1.getMaxAxes().add(yAxis2);
+    tempChart.getMaxAxes().add(yAxis2);
 
     Dataset salinityVsDepth1 = factory.createDataset();
     salinityVsDepth1.setName("Salinity Vs Depth");
@@ -164,9 +166,9 @@ public class ModelTests
     
     // create a second chart
     // first chart
-    Chart chart = factory.createChart();
-    chart.setName("Pressure Gradient");
-    chartsSet.getCharts().add(chart);
+    Chart pressureChart = factory.createChart();
+    pressureChart.setName("Pressure Gradient");
+    chartsSet.getCharts().add(pressureChart);
     
     // have a go at an annotation on the x axis
     IndependentAxis shared = chartsSet.getSharedAxis();
@@ -186,7 +188,7 @@ public class ModelTests
 
     DependentAxis yAxis = factory.createDependentAxis();
     yAxis.setName("Pressure");
-    chart.getMinAxes().add(yAxis);
+    pressureChart.getMinAxes().add(yAxis);
 
     Dataset pressureVsDepth = factory.createDataset();
     pressureVsDepth.setName("Pressure vs Depth");
@@ -206,6 +208,45 @@ public class ModelTests
     item.setIndependentVal(3000);
     item.setDependentVal(100);
     pressureVsDepth.getMeasurements().add(item);
+    
+    // have a go at a scatter set
+    ScatterSet scatter = factory.createScatterSet();
+    scatter.setName("Pressure Markers");
+    Datum datum = factory.createDatum();
+    datum.setVal(1650d);
+    scatter.getDatums().add(datum);
+    datum = factory.createDatum();
+    datum.setVal(1700d);
+    scatter.getDatums().add(datum);
+    datum = factory.createDatum();
+    datum.setVal(1720d);
+    scatter.getDatums().add(datum);
+    datum = factory.createDatum();
+    datum.setVal(1790d);
+    scatter.getDatums().add(datum);    
+    SelectiveAnnotation sa = factory.createSelectiveAnnotation();
+    sa.setAnnotation(scatter);
+    sa.getAppearsIn().add(pressureChart);
+    chartsSet.getSharedAxis().getAnnotations().add(sa);
+    
+    // and another one
+    scatter = factory.createScatterSet();
+    scatter.setName("Common Markers");
+    datum = factory.createDatum();
+    datum.setVal(1650d);
+    scatter.getDatums().add(datum);
+    datum = factory.createDatum();
+    datum.setVal(1700d);
+    scatter.getDatums().add(datum);
+    datum = factory.createDatum();
+    datum.setVal(1720d);
+    scatter.getDatums().add(datum);
+    datum = factory.createDatum();
+    datum.setVal(1790d);
+    scatter.getDatums().add(datum);    
+    sa = factory.createSelectiveAnnotation();
+    sa.setAnnotation(scatter);
+    chartsSet.getSharedAxis().getAnnotations().add(sa);
     
     return chartsSet;
   }
