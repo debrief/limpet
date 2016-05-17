@@ -5,6 +5,7 @@ import info.limpet.stackedcharts.model.Chart;
 import info.limpet.stackedcharts.model.ChartSet;
 import info.limpet.stackedcharts.model.DataItem;
 import info.limpet.stackedcharts.model.Dataset;
+import info.limpet.stackedcharts.model.Datum;
 import info.limpet.stackedcharts.model.DependentAxis;
 import info.limpet.stackedcharts.model.IndependentAxis;
 import info.limpet.stackedcharts.model.MarkerStyle;
@@ -18,6 +19,7 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.emf.common.util.EList;
@@ -271,7 +273,7 @@ public class ChartBuilder
           }
 
         }
-        addAnnotationToPlot(subplot, annotations,false);
+        addAnnotationToPlot(subplot, annotations, false);
 
       }
 
@@ -320,7 +322,7 @@ public class ChartBuilder
         renderer, indexSeries);
 
     EList<AbstractAnnotation> annotations = dependentAxis.getAnnotations();
-    addAnnotationToPlot(subplot, annotations,true);
+    addAnnotationToPlot(subplot, annotations, true);
     subplot.setDataset(indexAxis, collection);
     subplot.setRangeAxis(indexAxis, chartAxis);
     subplot.setRenderer(indexAxis, renderer);
@@ -368,7 +370,7 @@ public class ChartBuilder
         mrk.setLabelAnchor(RectangleAnchor.TOP);
 
         mrk.setLabelOffset(new RectangleInsets(2, 2, 2, 2));
-        if(isRangeAnnotation)
+        if (isRangeAnnotation)
           subplot.addRangeMarker(mrk, Layer.FOREGROUND);
         else
           subplot.addDomainMarker(mrk, Layer.FOREGROUND);
@@ -390,13 +392,43 @@ public class ChartBuilder
         mrk.setLabelAnchor(RectangleAnchor.CENTER);
         mrk.setLabelOffset(new RectangleInsets(2, 2, 2, 2));
 
-        if(isRangeAnnotation)
+        if (isRangeAnnotation)
           subplot.addRangeMarker(mrk, Layer.FOREGROUND);
         else
           subplot.addDomainMarker(mrk, Layer.FOREGROUND);
       }
+      // build ScatterSet
+      else if (annotation instanceof info.limpet.stackedcharts.model.ScatterSet)
+      {
+        info.limpet.stackedcharts.model.ScatterSet marker =
+            (info.limpet.stackedcharts.model.ScatterSet) annotation;
 
-      // TODO: ScatterSet Marker impl in JfreeChart
+        EList<Datum> datums = marker.getDatums();
+        boolean addLabel = true;
+        for (Datum datum : datums)
+        {
+          Marker mrk = new ValueMarker(datum.getVal());
+          // only add label for first Marker
+          if (addLabel)
+          {
+            mrk.setLabel(annotation.getName());
+            addLabel = false;
+          }
+
+          mrk.setPaint(awtColor == null ? Color.GRAY : awtColor);
+
+          // move Text Anchor
+          mrk.setLabelTextAnchor(TextAnchor.TOP_RIGHT);
+          mrk.setLabelAnchor(RectangleAnchor.TOP);
+
+          mrk.setLabelOffset(new RectangleInsets(2, 2, 2, 2));
+          if (isRangeAnnotation)
+            subplot.addRangeMarker(mrk, Layer.FOREGROUND);
+          else
+            subplot.addDomainMarker(mrk, Layer.FOREGROUND);
+        }
+
+      }
 
     }
 
