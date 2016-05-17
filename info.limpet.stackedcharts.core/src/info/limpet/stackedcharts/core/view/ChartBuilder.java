@@ -6,14 +6,10 @@ import info.limpet.stackedcharts.model.DataItem;
 import info.limpet.stackedcharts.model.Dataset;
 import info.limpet.stackedcharts.model.DependentAxis;
 import info.limpet.stackedcharts.model.IndependentAxis;
-import info.limpet.stackedcharts.model.Marker;
 import info.limpet.stackedcharts.model.MarkerStyle;
 import info.limpet.stackedcharts.model.Orientation;
 import info.limpet.stackedcharts.model.PlainStyling;
-import info.limpet.stackedcharts.model.SelectiveAnnotation;
-import info.limpet.stackedcharts.model.StackedchartsFactory;
 import info.limpet.stackedcharts.model.Styling;
-import info.limpet.stackedcharts.model.Zone;
 
 import java.awt.Color;
 import java.awt.geom.Ellipse2D;
@@ -65,12 +61,31 @@ public class ChartBuilder
      */
     ValueAxis createAxis(String name);
 
+    /** add this item to this series
+     * 
+     * @param series
+     * @param item
+     */
     void addItem(Series series, DataItem item);
 
+    /** create a series with the specified name
+     * 
+     * @param name
+     * @return
+     */
     Series createSeries(String name);
 
+    /** create a new collection of datasets (seroes)
+     * 
+     * @return
+     */
     XYDataset createCollection();
 
+    /** put the series into the collection
+     * 
+     * @param collection
+     * @param series
+     */
     void storeSeries(XYDataset collection, Series series);
   }
 
@@ -150,6 +165,10 @@ public class ChartBuilder
     }
   }
 
+  /** create a chart from our dataset
+   * 
+   * @return
+   */
   public JFreeChart build()
   {
 
@@ -221,8 +240,8 @@ public class ChartBuilder
 
   /**
    * 
-   * @param subplot plot object need to be genereated 
-   * @param indexAxis  axis index to be created
+   * @param subplot target plot for index 
+   * @param indexAxis  index of new axis 
    * @param dependentAxis model object of DependentAxis
    */
   private void createAxis(final XYPlot subplot, int indexAxis,
@@ -246,7 +265,7 @@ public class ChartBuilder
     final XYDataset collection = axeshelper.createCollection();
 
     final ValueAxis chartAxis = new NumberAxis(dependentAxis.getName());
-    buildAxisDataset(axeshelper, dependentAxis, collection, renderer,
+    addDatasetToAxis(axeshelper, dependentAxis.getDatasets(), collection, renderer,
         indexSeries);
     subplot.setDataset(indexAxis, collection);
     subplot.setRangeAxis(indexAxis, chartAxis);
@@ -258,25 +277,24 @@ public class ChartBuilder
    * 
    * @param helper
    *          Helper object to map between axis types
-   * @param axis
+   * @param datasets
+   *          list of datasets to add to this axis
    * @param collection
    *          XYDataset need to be fill with Series
    * @param renderer
    *          axis renderer
-   * @param index
+   * @param seriesIndex
+   *          counter for current series being assigned
    * 
-   *          build axis dataset via adding series to Series & config renderer for styles
+   * build axis dataset via adding series to Series & config renderer for styles
    */
-  private void buildAxisDataset(ChartHelper helper, DependentAxis axis,
-      XYDataset collection, XYLineAndShapeRenderer renderer, int index)
+  private void addDatasetToAxis(final ChartHelper helper, final EList<Dataset> datasets,
+      final XYDataset collection, final XYLineAndShapeRenderer renderer, int seriesIndex)
   {
-
-    EList<Dataset> datasets = axis.getDatasets();
     for (Dataset dataset : datasets)
     {
       final Series series = helper.createSeries(dataset.getName());
-
-      Styling styling = dataset.getStyling();
+      final Styling styling = dataset.getStyling();
       if (styling != null)
       {
         if (styling instanceof PlainStyling)
@@ -290,7 +308,7 @@ public class ChartBuilder
           {
             thisColor = hex2Rgb(hexColor);
           }
-          renderer.setSeriesPaint(index, thisColor);
+          renderer.setSeriesPaint(seriesIndex, thisColor);
         }
         else
         {
@@ -302,49 +320,41 @@ public class ChartBuilder
         {
           size = 2;// default
         }
-        MarkerStyle marker = styling.getMarkerStyle();
-
+        
+        final MarkerStyle marker = styling.getMarkerStyle();
         if (marker != null)
         {
-
           switch (marker)
           {
           case NONE:
-            renderer.setSeriesShapesVisible(index, false);
+            renderer.setSeriesShapesVisible(seriesIndex, false);
             break;
           case SQUARE:
-
-            renderer.setSeriesShape(index, new Rectangle2D.Double(0, 0, size,
+            renderer.setSeriesShape(seriesIndex, new Rectangle2D.Double(0, 0, size,
                 size));
-
             break;
           case CIRCLE:
-
-            renderer.setSeriesShape(index, new Ellipse2D.Double(0, 0, size,
+            renderer.setSeriesShape(seriesIndex, new Ellipse2D.Double(0, 0, size,
                 size));
             break;
           case TRIANGLE:
-
-            renderer.setSeriesShape(index, ShapeUtilities
+            renderer.setSeriesShape(seriesIndex, ShapeUtilities
                 .createUpTriangle((float) size));
             break;
           case CROSS:
-            renderer.setSeriesShape(index, ShapeUtilities.createRegularCross(
+            renderer.setSeriesShape(seriesIndex, ShapeUtilities.createRegularCross(
                 (float) size, (float) size));
             break;
           case DIAMOND:
-            renderer.setSeriesShape(index, ShapeUtilities
+            renderer.setSeriesShape(seriesIndex, ShapeUtilities
                 .createDiamond((float) size));
             break;
           default:
-            renderer.setSeriesShapesVisible(index, false);
+            renderer.setSeriesShapesVisible(seriesIndex, false);
           }
         }
-
-        index++;
-
+        seriesIndex++;
       }
-
       helper.storeSeries(collection, series);
       EList<DataItem> measurements = dataset.getMeasurements();
       for (DataItem dataItem : measurements)
