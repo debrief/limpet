@@ -360,7 +360,7 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
             
             SelectiveAnnotation sel = factory.createSelectiveAnnotation();
             sel.setAnnotation(scatter);
-            sel.getAppearsIn().add(res.getCharts().get(0));
+            sel.getAppearsIn().add(res.getCharts().get(res.getCharts().size()-1));
             timeAxis.getAnnotations().add(sel);
           }
         }
