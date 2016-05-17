@@ -66,7 +66,6 @@ public class ModelTests
     axes = chart.getMaxAxes();
     DependentAxis axis2 = axes.get(0);
     Assert.assertEquals("correct name", "Salinity", axis2.getName());
-
   }
 
   @Test
@@ -186,13 +185,13 @@ public class ModelTests
     sel.setAnnotation(zone);
     shared.getAnnotations().add(sel);
 
-    DependentAxis yAxis = factory.createDependentAxis();
-    yAxis.setName("Pressure");
-    pressureChart.getMinAxes().add(yAxis);
+    DependentAxis pressureAxis = factory.createDependentAxis();
+    pressureAxis.setName("Pressure");
+    pressureChart.getMinAxes().add(pressureAxis);
 
     Dataset pressureVsDepth = factory.createDataset();
     pressureVsDepth.setName("Pressure vs Depth");
-    yAxis.getDatasets().add(pressureVsDepth);
+    pressureAxis.getDatasets().add(pressureVsDepth);
 
     DataItem item = factory.createDataItem();
     item.setIndependentVal(1000);
@@ -233,21 +232,40 @@ public class ModelTests
     scatter = factory.createScatterSet();
     scatter.setName("Common Markers");
     datum = factory.createDatum();
-    datum.setVal(1650d);
+    datum.setVal(650d);
     scatter.getDatums().add(datum);
     datum = factory.createDatum();
-    datum.setVal(1700d);
+    datum.setVal(700d);
     scatter.getDatums().add(datum);
     datum = factory.createDatum();
-    datum.setVal(1720d);
+    datum.setVal(720d);
     scatter.getDatums().add(datum);
     datum = factory.createDatum();
-    datum.setVal(1790d);
+    datum.setVal(790d);
     scatter.getDatums().add(datum);    
     sa = factory.createSelectiveAnnotation();
     sa.setAnnotation(scatter);
     chartsSet.getSharedAxis().getAnnotations().add(sa);
     
+    // oh, try markers on the dependent axis
+    ScatterSet pScatter = factory.createScatterSet();
+    datum = factory.createDatum();
+    datum.setVal(100d);
+    pScatter.getDatums().add(datum);
+    datum = factory.createDatum();
+    datum.setVal(500d);
+    pScatter.getDatums().add(datum);
+    pressureAxis.getAnnotations().add(pScatter);
+
+    // hey, how about a zone on the dependent axis?
+    Zone pZone = factory.createZone();
+    pZone.setStart(380);
+    pZone.setEnd(450);
+    pZone.setColor("#33FF33");
+    pZone.setName("Pixel Zone");
+    pressureAxis.getAnnotations().add(pZone);
+    
+
     return chartsSet;
   }
 
