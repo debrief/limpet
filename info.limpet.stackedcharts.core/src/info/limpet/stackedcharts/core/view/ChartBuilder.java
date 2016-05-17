@@ -6,14 +6,10 @@ import info.limpet.stackedcharts.model.DataItem;
 import info.limpet.stackedcharts.model.Dataset;
 import info.limpet.stackedcharts.model.DependentAxis;
 import info.limpet.stackedcharts.model.IndependentAxis;
-import info.limpet.stackedcharts.model.Marker;
 import info.limpet.stackedcharts.model.MarkerStyle;
 import info.limpet.stackedcharts.model.Orientation;
 import info.limpet.stackedcharts.model.PlainStyling;
-import info.limpet.stackedcharts.model.SelectiveAnnotation;
-import info.limpet.stackedcharts.model.StackedchartsFactory;
 import info.limpet.stackedcharts.model.Styling;
-import info.limpet.stackedcharts.model.Zone;
 
 import java.awt.Color;
 import java.awt.geom.Ellipse2D;
@@ -42,32 +38,64 @@ import org.jfree.util.ShapeUtilities;
 public class ChartBuilder
 {
 
-  private final ChartSet chartsSet;
-
-  public ChartBuilder(ChartSet chartsSet)
+  private ChartBuilder()
   {
-    this.chartsSet = chartsSet;
   }
 
-  /** helper class that can handle either temporal or non-temporal datasets
+  /**
+   * helper class that can handle either temporal or non-temporal datasets
    * 
    * @author ian
-   *
+   * 
    */
   private static interface ChartHelper
   {
-    /** create the correct type of axis
+    /**
+     * create the correct type of axis
      * 
      * @param name
      * @return
      */
     ValueAxis createAxis(String name);
+
+    /**
+     * add this item to this series
+     * 
+     * @param series
+     * @param item
+     */
     void addItem(Series series, DataItem item);
+
+    /**
+     * create a series with the specified name
+     * 
+     * @param name
+     * @return
+     */
     Series createSeries(String name);
+
+    /**
+     * create a new collection of datasets (seroes)
+     * 
+     * @return
+     */
     XYDataset createCollection();
+
+    /**
+     * put the series into the collection
+     * 
+     * @param collection
+     * @param series
+     */
     void storeSeries(XYDataset collection, Series series);
   }
-  
+
+  /**
+   * support generation of a stacked chart with a shared number axis
+   * 
+   * @author ian
+   * 
+   */
   private static class NumberHelper implements ChartHelper
   {
 
@@ -100,10 +128,17 @@ public class ChartBuilder
     public void storeSeries(XYDataset collection, Series series)
     {
       XYSeriesCollection cc = (XYSeriesCollection) collection;
-      cc.addSeries((XYSeries)series);
+      cc.addSeries((XYSeries) series);
     }
-    
+
   }
+
+  /**
+   * support generation of a stacked chart with a shared time axis
+   * 
+   * @author ian
+   * 
+   */
   private static class TimeHelper implements ChartHelper
   {
 
@@ -138,26 +173,31 @@ public class ChartBuilder
     public void storeSeries(XYDataset collection, Series series)
     {
       TimeSeriesCollection cc = (TimeSeriesCollection) collection;
-      cc.addSeries((TimeSeries)series);
+      cc.addSeries((TimeSeries) series);
     }
   }
-  
-  public JFreeChart build()
+
+  /**
+   * create a chart from our dataset
+   * 
+   * @param chartsSet
+   * 
+   * @return
+   */
+  public static JFreeChart build(ChartSet chartsSet)
   {
-
-    IndependentAxis sharedAxis = chartsSet.getSharedAxis();
-
+    IndependentAxis sharedAxisModel = chartsSet.getSharedAxis();
     final ChartHelper helper;
-    final ValueAxis axis;
+    final ValueAxis sharedAxis;
 
-    if (sharedAxis == null)
+    if (sharedAxisModel == null)
     {
-      axis = new DateAxis("Time");
+      sharedAxis = new DateAxis("Time");
       helper = new NumberHelper();
     }
     else
     {
-      switch (sharedAxis.getAxisType())
+      switch (sharedAxisModel.getAxisType())
       {
       case NUMBER:
         helper = new NumberHelper();
@@ -169,49 +209,39 @@ public class ChartBuilder
         System.err.println("UNEXPECTED AXIS TYPE RECEIVED");
         helper = new NumberHelper();
       }
-      
-      axis = helper.createAxis(sharedAxis.getName());
+      sharedAxis = helper.createAxis(sharedAxisModel.getName());
     }
-    
-    final CombinedDomainXYPlot plot = new CombinedDomainXYPlot(axis);
 
-    
+    final CombinedDomainXYPlot plot = new CombinedDomainXYPlot(sharedAxis);
+
+    // now loop through the charts
     EList<Chart> charts = chartsSet.getCharts();
-    for (Chart chart : charts)
+    for (final Chart chart : charts)
     {
-      // TODO - we have to build up multiple axes, according to the minAxes
-      // & maxAxes  
-      //
-      // so, we don't just create one chartAxis. We will loop through the 
-      // minAxes & maxAxes, and we will create JFreeChart axes on the left/right
-      // side as necessary
-      //
-      // we also need to tell JFreeChart which dataset (series) goes on which axis.
-      //
-      // But, we don't have a plot object yet.  So, I think we'll have to build
-      // up a list of axes, then add them to the plot at the end.
-      
-      final XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
-      final ValueAxis chartAxis = new NumberAxis(chart.getName());
-      final XYDataset collection = helper.createCollection();
-      
-      EList<DependentAxis> minAxes = chart.getMinAxes();
-      int index = 0;
-      for (DependentAxis dependentAxis : minAxes)
+      final XYPlot subplot = new XYPlot(null, null, null, null);
+
+      // keep track of how many axes we create
+      int indexAxis = 0;
+
+      // min axis create on bottom or left
+      final EList<DependentAxis> minAxes = chart.getMinAxes();
+      for (final DependentAxis axis : minAxes)
       {
-        buildAxis(helper, dependentAxis, collection,renderer,index);
-        index++;
-      }
-      
-      EList<DependentAxis> maxAxes = chart.getMaxAxes();
-      for (DependentAxis dependentAxis : maxAxes)
-      {
-        buildAxis(helper, dependentAxis, collection,renderer,index);
-        index++;
+        createDependentAxis(subplot, indexAxis, axis);
+        subplot.setRangeAxisLocation(indexAxis, AxisLocation.BOTTOM_OR_LEFT);
+        indexAxis++;
       }
 
-      final XYPlot subplot = new XYPlot(collection, null, chartAxis, renderer);
-      subplot.setRangeAxisLocation(AxisLocation.BOTTOM_OR_LEFT);
+      // max axis create on top or right
+      final EList<DependentAxis> maxAxes = chart.getMaxAxes();
+      for (final DependentAxis axis : maxAxes)
+      {
+        createDependentAxis(subplot, indexAxis, axis);
+        subplot.setRangeAxisLocation(indexAxis, AxisLocation.TOP_OR_RIGHT);
+        indexAxis++;
+      }
+
+      // add chart to stack
       plot.add(subplot);
     }
 
@@ -222,212 +252,145 @@ public class ChartBuilder
     return new JFreeChart(plot);
   }
 
-  private void buildAxis(ChartHelper helper, DependentAxis axis, XYDataset collection,XYLineAndShapeRenderer renderer,int index)
+  /**
+   * 
+   * @param subplot
+   *          target plot for index
+   * @param indexAxis
+   *          index of new axis
+   * @param dependentAxis
+   *          model object of DependentAxis
+   */
+  private static void createDependentAxis(final XYPlot subplot, int indexAxis,
+      DependentAxis dependentAxis)
   {
-    EList<Dataset> datasets = axis.getDatasets();
+    final XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
+    int indexSeries = 0;
+    ChartHelper axeshelper = null;
+    switch (dependentAxis.getAxisType())
+    {
+    case NUMBER:
+      axeshelper = new NumberHelper();
+      break;
+    case TIME:
+      axeshelper = new TimeHelper();
+      break;
+    default:
+      System.err.println("UNEXPECTED AXIS TYPE RECEIVED");
+      axeshelper = new NumberHelper();
+    }
+    final XYDataset collection = axeshelper.createCollection();
+
+    final ValueAxis chartAxis = new NumberAxis(dependentAxis.getName());
+    addDatasetToAxis(axeshelper, dependentAxis.getDatasets(), collection,
+        renderer, indexSeries);
+    subplot.setDataset(indexAxis, collection);
+    subplot.setRangeAxis(indexAxis, chartAxis);
+    subplot.setRenderer(indexAxis, renderer);
+    subplot.mapDatasetToRangeAxis(indexAxis, indexAxis);
+  }
+
+  /**
+   * 
+   * @param helper
+   *          Helper object to map between axis types
+   * @param datasets
+   *          list of datasets to add to this axis
+   * @param collection
+   *          XYDataset need to be fill with Series
+   * @param renderer
+   *          axis renderer
+   * @param seriesIndex
+   *          counter for current series being assigned
+   * 
+   *          build axis dataset via adding series to Series & config renderer for styles
+   */
+  private static void addDatasetToAxis(final ChartHelper helper,
+      final EList<Dataset> datasets, final XYDataset collection,
+      final XYLineAndShapeRenderer renderer, int seriesIndex)
+  {
     for (Dataset dataset : datasets)
     {
-      final Series series = helper.createSeries(axis.getName());
-      
-      Styling styling = dataset.getStyling();
-      if(styling != null)
+      final Series series = helper.createSeries(dataset.getName());
+      final Styling styling = dataset.getStyling();
+      if (styling != null)
       {
-      	if(styling instanceof PlainStyling)
-      	{
-					PlainStyling ps = (PlainStyling) styling;
-					String hexColor = ps.getColor();
+        if (styling instanceof PlainStyling)
+        {
+          final PlainStyling ps = (PlainStyling) styling;
+          final String hexColor = ps.getColor();
 
-					@SuppressWarnings("unused")
-					Color thisColor = null;
+          Color thisColor = null;
+          if (hexColor != null)
+          {
+            thisColor = hex2Rgb(hexColor);
+          }
+          renderer.setSeriesPaint(seriesIndex, thisColor);
+        }
+        else
+        {
+          System.err.println("Linear colors not implemented");
+        }
 
-					if (hexColor != null)
-					{
-						thisColor = hex2Rgb(hexColor);
-					}
-					renderer.setSeriesPaint(index, thisColor);
-      	}
-      	else
-      	{
-      		System.err.println("Linear colors not implemented");
-      	}
-        
-			
-				@SuppressWarnings("unused")
-				double size = styling.getMarkerSize();
-				 if(size==0)
-         {
-           size = 2;//default
-         }
-				MarkerStyle marker = styling.getMarkerStyle();
+        double size = styling.getMarkerSize();
+        if (size == 0)
+        {
+          size = 2;// default
+        }
 
-				if (marker != null)
-				{
-					
-					switch (marker)
-					{
-					case NONE:
-					  renderer.setSeriesShapesVisible(index, false);
-						break;
-					case SQUARE:
-					 
-					  renderer.setSeriesShape(index, new Rectangle2D.Double(0,0,size,size));
-            
-						break;
-					case CIRCLE:
-					  
-					  renderer.setSeriesShape(index, new Ellipse2D.Double(0,0,size,size));
-						break;
-					case TRIANGLE:
-					  
-					  renderer.setSeriesShape(index, ShapeUtilities.createUpTriangle((float)size));
-						break;
-					case CROSS:
-					  renderer.setSeriesShape(index, ShapeUtilities.createRegularCross((float)size,(float)size));
-						break;
-					case DIAMOND:
-					  renderer.setSeriesShape(index, ShapeUtilities.createDiamond((float)size));
-						break;
-					default:
-					  renderer.setSeriesShapesVisible(index, false);
-					}
-				}
-      	
-     
-      	
+        final MarkerStyle marker = styling.getMarkerStyle();
+        if (marker != null)
+        {
+          switch (marker)
+          {
+          case NONE:
+            renderer.setSeriesShapesVisible(seriesIndex, false);
+            break;
+          case SQUARE:
+            renderer.setSeriesShape(seriesIndex, new Rectangle2D.Double(0, 0,
+                size, size));
+            break;
+          case CIRCLE:
+            renderer.setSeriesShape(seriesIndex, new Ellipse2D.Double(0, 0,
+                size, size));
+            break;
+          case TRIANGLE:
+            renderer.setSeriesShape(seriesIndex, ShapeUtilities
+                .createUpTriangle((float) size));
+            break;
+          case CROSS:
+            renderer.setSeriesShape(seriesIndex, ShapeUtilities
+                .createRegularCross((float) size, (float) size));
+            break;
+          case DIAMOND:
+            renderer.setSeriesShape(seriesIndex, ShapeUtilities
+                .createDiamond((float) size));
+            break;
+          default:
+            renderer.setSeriesShapesVisible(seriesIndex, false);
+          }
+        }
+        seriesIndex++;
       }
-      
       helper.storeSeries(collection, series);
       EList<DataItem> measurements = dataset.getMeasurements();
       for (DataItem dataItem : measurements)
       {
-        helper.addItem(series,  dataItem);
+        helper.addItem(series, dataItem);
       }
     }
   }
-  
-  
-   static ChartSet createDummyModel()
+
+  /**
+   * 
+   * @param colorStr
+   *          e.g. "#FFFFFF"
+   * @return awt.Color Object
+   */
+  private static Color hex2Rgb(String colorStr)
   {
-    StackedchartsFactory factory = StackedchartsFactory.eINSTANCE;
-
-    ChartSet chartsSet = factory.createChartSet();
-    chartsSet.setOrientation(Orientation.VERTICAL);
-
-    // set the common x axis
-    IndependentAxis depthAxis = factory.createIndependentAxis();
-    depthAxis.setName("Depth");
-    chartsSet.setSharedAxis(depthAxis);
-
-    // first chart
-    Chart chart1 = factory.createChart();
-    chart1.setName("Temperature & Salinity");
-    chartsSet.getCharts().add(chart1);
-
-    DependentAxis yAxis1 = factory.createDependentAxis();
-    yAxis1.setName("Temperature");
-    chart1.getMinAxes().add(yAxis1);
-
-    Dataset temperatureVsDepth1 = factory.createDataset();
-    temperatureVsDepth1.setName("Temp vs Depth");
-    yAxis1.getDatasets().add(temperatureVsDepth1);
-
-    DataItem item1 = factory.createDataItem();
-    item1.setIndependentVal(1000);
-    item1.setDependentVal(1030);
-    temperatureVsDepth1.getMeasurements().add(item1);
-
-    item1 = factory.createDataItem();
-    item1.setIndependentVal(2000);
-    item1.setDependentVal(2050);
-    temperatureVsDepth1.getMeasurements().add(item1);
-
-    item1 = factory.createDataItem();
-    item1.setIndependentVal(3000);
-    item1.setDependentVal(3060);
-    temperatureVsDepth1.getMeasurements().add(item1);
-    
-    // second axis/dataset on this first graph
-    DependentAxis yAxis2 = factory.createDependentAxis();
-    yAxis2.setName("Salinity");
-    chart1.getMaxAxes().add(yAxis2);
-
-    Dataset salinityVsDepth1 = factory.createDataset();
-    salinityVsDepth1.setName("Salinity Vs Depth");
-    yAxis2.getDatasets().add(salinityVsDepth1);
-
-
-    item1 = factory.createDataItem();
-    item1.setIndependentVal(1000);
-    item1.setDependentVal(3000);
-    salinityVsDepth1.getMeasurements().add(item1);
-
-    item1 = factory.createDataItem();
-    item1.setIndependentVal(2000);
-    item1.setDependentVal(5000);
-    salinityVsDepth1.getMeasurements().add(item1);
-
-    item1 = factory.createDataItem();
-    item1.setIndependentVal(3000);
-    item1.setDependentVal(9000);
-    salinityVsDepth1.getMeasurements().add(item1);
-    
-    // create a second chart
-    // first chart
-    Chart chart = factory.createChart();
-    chart.setName("Pressure Gradient");
-    chartsSet.getCharts().add(chart);
-    
-    // have a go at an annotation on the x axis
-    IndependentAxis shared = chartsSet.getSharedAxis();
-    Marker marker = factory.createMarker();
-    marker.setValue(1200);
-    marker.setName("A marker");
-    SelectiveAnnotation sel = factory.createSelectiveAnnotation();
-    sel.setAnnotation(marker);
-    shared.getAnnotations().add(sel);
-    Zone zone = factory.createZone();
-    zone.setStart(2100);
-    zone.setEnd(2500);
-    zone.setName("A Zone");    
-    sel = factory.createSelectiveAnnotation();
-    sel.setAnnotation(zone);
-    shared.getAnnotations().add(sel);
-
-    DependentAxis yAxis = factory.createDependentAxis();
-    yAxis.setName("Pressure");
-    chart.getMinAxes().add(yAxis);
-
-    Dataset pressureVsDepth = factory.createDataset();
-    pressureVsDepth.setName("Pressure vs Depth");
-    yAxis.getDatasets().add(pressureVsDepth);
-
-    DataItem item = factory.createDataItem();
-    item.setIndependentVal(1000);
-    item.setDependentVal(400);
-    pressureVsDepth.getMeasurements().add(item);
-
-    item = factory.createDataItem();
-    item.setIndependentVal(2000);
-    item.setDependentVal(500);
-    pressureVsDepth.getMeasurements().add(item);
-
-    item = factory.createDataItem();
-    item.setIndependentVal(3000);
-    item.setDependentVal(100);
-    pressureVsDepth.getMeasurements().add(item);
-    
-    return chartsSet;
+    return new Color(Integer.valueOf(colorStr.substring(1, 3), 16), Integer
+        .valueOf(colorStr.substring(3, 5), 16), Integer.valueOf(colorStr
+        .substring(5, 7), 16));
   }
-
-   /**
-    * 
-    * @param colorStr e.g. "#FFFFFF"
-    * @return 
-    */
-   private static Color hex2Rgb(String colorStr) {
-       return new Color(
-               Integer.valueOf( colorStr.substring( 1, 3 ), 16 ),
-               Integer.valueOf( colorStr.substring( 3, 5 ), 16 ),
-               Integer.valueOf( colorStr.substring( 5, 7 ), 16 ) );
-   }
 }

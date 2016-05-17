@@ -254,7 +254,7 @@ public class StackedChartsView extends ViewPart
     }
 
     // and now repopulate
-    JFreeChart chart = new ChartBuilder(charts).build();
+    JFreeChart chart = ChartBuilder.build(charts);
     @SuppressWarnings("unused")
     ChartComposite _chartComposite =
         new ChartComposite(chartHolder, SWT.NONE, chart, true)
