@@ -19,7 +19,6 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.emf.common.util.EList;
@@ -271,10 +270,8 @@ public class ChartBuilder
           {
             annotations.add(selectiveAnnotation.getAnnotation());
           }
-
         }
         addAnnotationToPlot(subplot, annotations, false);
-
       }
 
       // add chart to stack
@@ -342,9 +339,8 @@ public class ChartBuilder
   private static void addAnnotationToPlot(final XYPlot subplot,
       final List<AbstractAnnotation> annotations, boolean isRangeAnnotation)
   {
-    for (AbstractAnnotation annotation : annotations)
+    for (final AbstractAnnotation annotation : annotations)
     {
-
       // convert hex Color to awt
       final String hexColor = annotation.getColor();
 
@@ -354,9 +350,9 @@ public class ChartBuilder
         awtColor = hex2Rgb(hexColor);
       }
 
-      // build value Marker
       if (annotation instanceof info.limpet.stackedcharts.model.Marker)
       {
+        // build value Marker
         info.limpet.stackedcharts.model.Marker marker =
             (info.limpet.stackedcharts.model.Marker) annotation;
 
@@ -375,9 +371,9 @@ public class ChartBuilder
         else
           subplot.addDomainMarker(mrk, Layer.FOREGROUND);
       }
-      // build Zone
       else if (annotation instanceof info.limpet.stackedcharts.model.Zone)
       {
+        // build Zone
         info.limpet.stackedcharts.model.Zone zone =
             (info.limpet.stackedcharts.model.Zone) annotation;
 
@@ -397,9 +393,9 @@ public class ChartBuilder
         else
           subplot.addDomainMarker(mrk, Layer.FOREGROUND);
       }
-      // build ScatterSet
       else if (annotation instanceof info.limpet.stackedcharts.model.ScatterSet)
       {
+        // build ScatterSet
         info.limpet.stackedcharts.model.ScatterSet marker =
             (info.limpet.stackedcharts.model.ScatterSet) annotation;
 
