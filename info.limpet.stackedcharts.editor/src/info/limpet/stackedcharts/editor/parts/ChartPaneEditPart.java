@@ -1,8 +1,5 @@
 package info.limpet.stackedcharts.editor.parts;
 
-import info.limpet.stackedcharts.editor.parts.ChartEditPart.ChartPanePosition;
-import info.limpet.stackedcharts.model.Chart;
-
 import java.util.List;
 
 import org.eclipse.draw2d.BorderLayout;
@@ -11,6 +8,9 @@ import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.RectangleFigure;
 import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
+
+import info.limpet.stackedcharts.editor.parts.ChartEditPart.ChartPanePosition;
+import info.limpet.stackedcharts.model.Chart;
 
 public class ChartPaneEditPart extends AbstractGraphicalEditPart
 {
@@ -21,6 +21,9 @@ public class ChartPaneEditPart extends AbstractGraphicalEditPart
     RectangleFigure figure = new RectangleFigure();
     figure.setOutline(false);
     GridLayout layoutManager = new GridLayout();
+    // zero margin, in order to connect the dependent axes to the shared one
+    layoutManager.marginHeight = 0;
+    layoutManager.marginWidth = 0;
     figure.setLayoutManager(layoutManager);
     return figure;
   }
@@ -45,8 +48,9 @@ public class ChartPaneEditPart extends AbstractGraphicalEditPart
       ((GraphicalEditPart) getParent()).setLayoutConstraint(this, figure,
           BorderLayout.RIGHT);
     }
-    
-    ((GridLayout)getFigure().getLayoutManager()).numColumns = getModelChildren().size();
+
+    ((GridLayout) getFigure().getLayoutManager()).numColumns =
+        getModelChildren().size();
   }
 
   @Override

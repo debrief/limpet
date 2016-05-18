@@ -32,5 +32,6 @@ public class ArrowFigure extends Figure
     points.addPoint(top.getCopy().translate(4, 10));
     points.addPoint(top.getCopy().translate(-4, 10));
     graphics.fillPolygon(points);
+
   }
 }

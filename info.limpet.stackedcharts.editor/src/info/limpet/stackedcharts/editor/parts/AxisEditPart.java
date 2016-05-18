@@ -29,6 +29,9 @@ public class AxisEditPart extends AbstractGraphicalEditPart
     RectangleFigure figure = new RectangleFigure();
     figure.setOutline(false);
     GridLayout layoutManager = new GridLayout(3, false);
+    // zero margin, in order to connect the dependent axes to the shared one
+    layoutManager.marginHeight = 0;
+    layoutManager.marginWidth = 0;
     figure.setLayoutManager(layoutManager);
 
     datasetsPane = new RectangleFigure();

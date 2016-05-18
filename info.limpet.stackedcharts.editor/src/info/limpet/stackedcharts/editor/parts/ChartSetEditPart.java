@@ -7,6 +7,8 @@ import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.MarginBorder;
 import org.eclipse.draw2d.RectangleFigure;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Display;
 
 import info.limpet.stackedcharts.model.ChartSet;
 
@@ -21,6 +23,8 @@ public class ChartSetEditPart extends AbstractGraphicalEditPart
     rectangle.setOutline(false);
     GridLayout layout = new GridLayout();
     rectangle.setLayoutManager(layout);
+    rectangle.setBackgroundColor(Display.getDefault().getSystemColor(
+        SWT.COLOR_WIDGET_BACKGROUND));
     return rectangle;
   }
 
