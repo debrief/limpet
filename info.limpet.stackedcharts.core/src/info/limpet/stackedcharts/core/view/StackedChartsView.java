@@ -6,6 +6,7 @@ import info.limpet.stackedcharts.model.ChartSet;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -49,7 +50,9 @@ public class StackedChartsView extends ViewPart
   // effects
   protected TransitionManager transitionManager = null;
   private Composite chartHolder;
-  private StackedchartsEditControl chartEditor;
+  private Composite editorHolder;
+  private ChartSet charts;
+  private AtomicBoolean initEditor = new AtomicBoolean(true);
 
   @Override
   public void createPartControl(Composite parent)
@@ -133,39 +136,36 @@ public class StackedChartsView extends ViewPart
         if (fileTransfer.isSupportedType(event.currentDataType))
         {
           String[] files = (String[]) event.data;
-          
-            // *.stackedcharts
-            if (files.length == 1 && files[0].endsWith("stackedcharts"))
+
+          // *.stackedcharts
+          if (files.length == 1 && files[0].endsWith("stackedcharts"))
+          {
+            File file = new File(files[0]);
+            Resource resource =
+                new ResourceSetImpl().createResource(URI.createURI(file.toURI()
+                    .toString()));
+            try
             {
-              File file = new File(files[0]);
-              Resource resource =
-                  new ResourceSetImpl().createResource(URI.createURI(file
-                      .toURI().toString()));
-              try
-              {
-                resource.load(new HashMap<>());
-                ChartSet chartsSet = (ChartSet) resource.getContents().get(0);
-                setModel(chartsSet);
-              }
-              catch (IOException e)
-              {
-                e.printStackTrace();
-                MessageDialog.openError(
-                    Display.getCurrent().getActiveShell(), "Error", e
-                        .getMessage());
-                
-              }
-              
+              resource.load(new HashMap<>());
+              ChartSet chartsSet = (ChartSet) resource.getContents().get(0);
+              setModel(chartsSet);
             }
+            catch (IOException e)
+            {
+              e.printStackTrace();
+              MessageDialog.openError(Display.getCurrent().getActiveShell(),
+                  "Error", e.getMessage());
+
+            }
+
           }
-        
+        }
 
       }
 
       @Override
       public void dragOver(DropTargetEvent event)
       {
-        
 
       }
 
@@ -235,19 +235,56 @@ public class StackedChartsView extends ViewPart
   {
     if (stackedPane != null && !stackedPane.isDisposed())
     {
+      // if switch to edit mode make sure to init editor
+      if (view == EDIT_VIEW)
+      {
+        initEditorView();
+      }
       stackedPane.showPane(view);
     }
 
   }
 
+  private void initEditorView()
+  {
+    if (initEditor.getAndSet(false))
+    {
+      // remove any existing base items
+      if (editorHolder != null)
+      {
+        for (Control control : editorHolder.getChildren())
+        {
+          control.dispose();
+        }
+      }
+
+      //create gef base editor 
+      StackedchartsEditControl chartEditor =
+          new StackedchartsEditControl(editorHolder);
+      chartEditor.setModel(charts);
+      editorHolder.pack(true);
+      editorHolder.getParent().layout();
+    }
+  }
+
   public void setModel(ChartSet charts)
   {
-    chartEditor.setModel(charts);
-    
-    // remove any existing base items
+    this.charts = charts;
+    //mark editor to recreate 
+    initEditor.set(true);
+
+    // remove any existing base items on view holder
     if (chartHolder != null)
     {
       for (Control control : chartHolder.getChildren())
+      {
+        control.dispose();
+      }
+    }
+    // remove any existing base items on editor holder
+    if (editorHolder != null)
+    {
+      for (Control control : editorHolder.getChildren())
       {
         control.dispose();
       }
@@ -282,34 +319,15 @@ public class StackedChartsView extends ViewPart
     chartHolder = new Composite(stackedPane, SWT.NONE);
     chartHolder.setLayout(new FillLayout());
 
-    // JFreeChart chart = createChart();
-    // @SuppressWarnings("unused")
-    // ChartComposite _chartComposite = new ChartComposite(chartHolder, SWT.NONE, chart, true)
-    // {
-    // @Override
-    // public void mouseUp(MouseEvent event)
-    // {
-    // super.mouseUp(event);
-    // JFreeChart c = getChart();
-    // if (c != null)
-    // {
-    // c.setNotify(true); // force redraw
-    // }
-    // }
-    // };
-
     return chartHolder;
   }
 
-  // private JFreeChart createChart()
-  // {
-  // return new ChartBuilder(ChartBuilder.createDummyModel()).build();
-  // }
-
   protected Control createEditView()
   {
-    chartEditor = new StackedchartsEditControl(stackedPane);
-    return chartEditor;
+    editorHolder = new Composite(stackedPane, SWT.NONE);
+    editorHolder.setLayout(new FillLayout());
+
+    return editorHolder;
   }
 
   @Override
