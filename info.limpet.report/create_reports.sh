@@ -4,16 +4,14 @@
 	touch .nojekyll
 	mkdir 1.0
 	cd 1.0
-	cp ../../info.limpet.product/target/repository/content.jar .
-	cp ../../info.limpet.product/target/repository/artifacts.jar .
+	cp ../../info.limpet.site/target/repository/content.jar .
+	cp ../../info.limpet.site/target/repository/artifacts.jar .
 	mkdir binary
 	cp ../../info.limpet.product/target/repository/binary/* binary
 	mkdir features
-	cp ../../info.limpet.product/target/repository/features/info.limpet* features
-	cp ../../info.limpet.product/target/repository/features/org.geotools* features
+	cp ../../info.limpet.site/target/repository/features/* features
 	mkdir plugins
-	cp ../../info.limpet.product/target/repository/plugins/info.limpet* plugins
-	cp ../../info.limpet.product/target/repository/plugins/org.geotools* plugins
+	cp ../../info.limpet.site/target/repository/plugins/* plugins
 	cp ../../info.limpet.product/www/* .
 	cd ..
 	rm -rf coverage
