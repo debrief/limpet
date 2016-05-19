@@ -33,8 +33,7 @@
     <module>info.limpet.report</module>
     <module>org.mwc.cmap.jfreechart</module>
     <module>info.limpet.stackedcharts.model</module>
-    <module>info.limpet.stackedcharts.core</module>
-    <module>info.limpet.stackedcharts.editor</module>
+    <module>info.limpet.stackedcharts.ui</module>
    
   </modules>
 
