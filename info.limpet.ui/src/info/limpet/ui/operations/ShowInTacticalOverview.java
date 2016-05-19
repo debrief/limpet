@@ -24,7 +24,6 @@ import info.limpet.ITemporalQuantityCollection;
 import info.limpet.data.commands.AbstractCommand;
 import info.limpet.data.operations.CollectionComplianceTests;
 import info.limpet.data.store.InMemoryStore.StoreGroup;
-import info.limpet.stackedcharts.core.view.StackedChartsView;
 import info.limpet.stackedcharts.model.AxisType;
 import info.limpet.stackedcharts.model.Chart;
 import info.limpet.stackedcharts.model.ChartSet;
@@ -39,6 +38,7 @@ import info.limpet.stackedcharts.model.PlainStyling;
 import info.limpet.stackedcharts.model.ScatterSet;
 import info.limpet.stackedcharts.model.SelectiveAnnotation;
 import info.limpet.stackedcharts.model.StackedchartsFactory;
+import info.limpet.stackedcharts.ui.view.StackedChartsView;
 
 import java.util.ArrayList;
 import java.util.Collection;
