@@ -12,7 +12,7 @@
 	<name>Limpet RCP Product</name>
 
 	<packaging>eclipse-repository</packaging>
-	
+
 	<build>
 		<plugins>
 			<plugin>
@@ -26,11 +26,11 @@
 						<macosx>tar.gz</macosx>
 					</formats>
 					<products>
-      						<product>
+						<product>
 							<id>Limpet</id>
-							<rootFolder>Limpet</rootFolder>`
-      						</product>
-    					</products>
+							<rootFolder>Limpet</rootFolder>
+						</product>
+					</products>
 				</configuration>
 				<executions>
 					<execution>
@@ -46,6 +46,14 @@
 						</goals>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-p2-publisher-plugin</artifactId>
+				<version>${tycho.version}</version>
+				<configuration>
+					<publishArtifacts>true</publishArtifacts>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
