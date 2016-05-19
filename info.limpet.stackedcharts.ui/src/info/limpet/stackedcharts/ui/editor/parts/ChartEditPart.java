@@ -52,7 +52,8 @@ public class ChartEditPart extends AbstractGraphicalEditPart
   @Override
   protected void createEditPolicies()
   {
-    installEditPolicy(EditPolicy.COMPONENT_ROLE, new NonResizableEditPolicy());
+    installEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE,
+        new NonResizableEditPolicy());
   }
 
   private Chart getChart()

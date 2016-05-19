@@ -22,6 +22,8 @@ public class ChartSetEditPart extends AbstractGraphicalEditPart
     rectangle.setBorder(new MarginBorder(10));
     rectangle.setOutline(false);
     GridLayout layout = new GridLayout();
+    layout.horizontalSpacing = 10;
+    layout.verticalSpacing = 10;
     rectangle.setLayoutManager(layout);
     rectangle.setBackgroundColor(Display.getDefault().getSystemColor(
         SWT.COLOR_WIDGET_BACKGROUND));

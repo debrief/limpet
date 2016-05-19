@@ -1,6 +1,8 @@
 package info.limpet.stackedcharts.ui.editor.parts;
 
+import info.limpet.stackedcharts.model.Chart;
 import info.limpet.stackedcharts.model.DependentAxis;
+import info.limpet.stackedcharts.model.StackedchartsPackage;
 import info.limpet.stackedcharts.ui.editor.figures.ArrowFigure;
 import info.limpet.stackedcharts.ui.editor.figures.VerticalLabel;
 
@@ -11,6 +13,9 @@ import org.eclipse.draw2d.GridData;
 import org.eclipse.draw2d.GridLayout;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.RectangleFigure;
+import org.eclipse.emf.common.notify.Adapter;
+import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
@@ -22,6 +27,27 @@ public class AxisEditPart extends AbstractGraphicalEditPart
   private RectangleFigure datasetsPane;
 
   private VerticalLabel axisNameLabel;
+
+  private AxisAdapter adapter = new AxisAdapter();
+
+  @Override
+  public void activate()
+  {
+    super.activate();
+    getAxis().eAdapters().add(adapter);
+  }
+
+  @Override
+  public void deactivate()
+  {
+    getAxis().eAdapters().remove(adapter);
+    super.deactivate();
+  }
+
+  protected DependentAxis getAxis()
+  {
+    return (DependentAxis) getModel();
+  }
 
   @Override
   protected IFigure createFigure()
@@ -58,7 +84,7 @@ public class AxisEditPart extends AbstractGraphicalEditPart
   @Override
   protected void refreshVisuals()
   {
-    axisNameLabel.setText(((DependentAxis) getModel()).getName());
+    axisNameLabel.setText(getAxis().getName());
 
     ((GraphicalEditPart) getParent()).setLayoutConstraint(this, figure,
         new GridData(GridData.CENTER, GridData.FILL, false, true));
@@ -73,12 +99,45 @@ public class AxisEditPart extends AbstractGraphicalEditPart
   @Override
   protected void createEditPolicies()
   {
-    installEditPolicy(EditPolicy.COMPONENT_ROLE, new NonResizableEditPolicy());
+    installEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE,
+        new NonResizableEditPolicy());
   }
 
   @Override
   protected List getModelChildren()
   {
-    return ((DependentAxis) getModel()).getDatasets();
+    return getAxis().getDatasets();
+  }
+
+  public class AxisAdapter implements Adapter
+  {
+
+    @Override
+    public void notifyChanged(Notification notification)
+    {
+      int featureId = notification.getFeatureID(StackedchartsPackage.class);
+      switch (featureId)
+      {
+      case StackedchartsPackage.DEPENDENT_AXIS__DATASETS:
+        refreshChildren();
+      }
+    }
+
+    @Override
+    public Notifier getTarget()
+    {
+      return getAxis();
+    }
+
+    @Override
+    public void setTarget(Notifier newTarget)
+    {
+    }
+
+    @Override
+    public boolean isAdapterForType(Object type)
+    {
+      return type.equals(DependentAxis.class);
+    }
   }
 }
