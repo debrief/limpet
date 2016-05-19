@@ -16,7 +16,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.net,
  org.apache.commons.logging,
  info.limpet.stackedcharts.model,
- info.limpet.stackedcharts.core
+ info.limpet.stackedcharts.ui
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: MWC
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
