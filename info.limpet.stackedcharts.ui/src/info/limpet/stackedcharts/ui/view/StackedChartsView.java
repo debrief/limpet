@@ -360,6 +360,13 @@ public class StackedChartsView extends ViewPart
         }
         else
         {
+          // recreate the model
+          // TODO: let's not re-create the model each time we revert 
+          // to the view mode. let's create listeners, so the
+          // chart has discrete updates in response to 
+          // model changes
+          setModel(charts);    
+          
           selectView(CHART_VIEW);
           setText("Edit");
 
