@@ -2,30 +2,23 @@ package info.limpet.stackedcharts.ui.editor.commands;
 
 import info.limpet.stackedcharts.model.Chart;
 
-import org.eclipse.gef.commands.Command;
-
-public class ChangeChartNameCommand extends Command
+public class ChangeChartNameCommand extends ChartCommand<Chart, String>
 {
-  private final Chart chart;
-  private final String oldName;
-  private final String newName;
 
   public ChangeChartNameCommand(Chart chart, String newName)
   {
-    this.chart = chart;
-    this.oldName = chart.getName();
-    this.newName = newName;
+    super(chart, newName);
   }
 
   @Override
-  public void execute()
+  protected String getValue(Chart subject)
   {
-    chart.setName(newName);
+    return subject.getName();
   }
 
   @Override
-  public void undo()
+  protected void setValue(Chart subject, String attribute)
   {
-    chart.setName(oldName);
+    subject.setName(attribute);
   }
 }
