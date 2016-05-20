@@ -1,5 +1,10 @@
 package info.limpet.stackedcharts.ui.editor.parts;
 
+import info.limpet.stackedcharts.model.Dataset;
+import info.limpet.stackedcharts.model.DependentAxis;
+import info.limpet.stackedcharts.ui.editor.commands.DeleteDatasetsFromAxisCommand;
+import info.limpet.stackedcharts.ui.editor.figures.DatasetFigure;
+
 import org.eclipse.draw2d.ActionEvent;
 import org.eclipse.draw2d.ActionListener;
 import org.eclipse.draw2d.IFigure;
@@ -10,11 +15,6 @@ import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 import org.eclipse.gef.editpolicies.ComponentEditPolicy;
 import org.eclipse.gef.editpolicies.NonResizableEditPolicy;
 import org.eclipse.gef.requests.GroupRequest;
-
-import info.limpet.stackedcharts.model.Dataset;
-import info.limpet.stackedcharts.model.DependentAxis;
-import info.limpet.stackedcharts.ui.editor.commands.DeleteDatasetFromAxisCommand;
-import info.limpet.stackedcharts.ui.editor.figures.DatasetFigure;
 
 public class DatasetEditPart extends AbstractGraphicalEditPart implements
     ActionListener
@@ -37,8 +37,8 @@ public class DatasetEditPart extends AbstractGraphicalEditPart implements
       {
         Dataset dataset = (Dataset) getHost().getModel();
         DependentAxis parent = (DependentAxis) getHost().getParent().getModel();
-        DeleteDatasetFromAxisCommand cmd = new DeleteDatasetFromAxisCommand(
-            dataset, parent);
+        DeleteDatasetsFromAxisCommand cmd =
+            new DeleteDatasetsFromAxisCommand(parent, dataset);
         return cmd;
       }
     });
@@ -47,8 +47,12 @@ public class DatasetEditPart extends AbstractGraphicalEditPart implements
   @Override
   protected void refreshVisuals()
   {
-    Dataset dataset = (Dataset) getModel();
-    ((DatasetFigure) getFigure()).setName("Dataset " + dataset.getName());
+    ((DatasetFigure) getFigure()).setName("Dataset " + getDataset().getName());
+  }
+
+  protected Dataset getDataset()
+  {
+    return (Dataset) getModel();
   }
 
   @Override
