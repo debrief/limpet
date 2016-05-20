@@ -1,10 +1,10 @@
 package info.limpet.stackedcharts.ui.editor.parts;
 
-import info.limpet.stackedcharts.model.Chart;
 import info.limpet.stackedcharts.model.DependentAxis;
 import info.limpet.stackedcharts.model.StackedchartsPackage;
 import info.limpet.stackedcharts.ui.editor.figures.ArrowFigure;
 import info.limpet.stackedcharts.ui.editor.figures.VerticalLabel;
+import info.limpet.stackedcharts.ui.editor.policies.AxisContainerEditPolicy;
 
 import java.util.List;
 
@@ -20,9 +20,15 @@ import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 import org.eclipse.gef.editpolicies.NonResizableEditPolicy;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.widgets.Display;
 
 public class AxisEditPart extends AbstractGraphicalEditPart
 {
+
+  public static final Color BACKGROUND_COLOR = Display.getDefault()
+      .getSystemColor(SWT.COLOR_WHITE);
 
   private RectangleFigure datasetsPane;
 
@@ -53,6 +59,8 @@ public class AxisEditPart extends AbstractGraphicalEditPart
   protected IFigure createFigure()
   {
     RectangleFigure figure = new RectangleFigure();
+    figure.setBackgroundColor(BACKGROUND_COLOR);
+
     figure.setOutline(false);
     GridLayout layoutManager = new GridLayout(3, false);
     // zero margin, in order to connect the dependent axes to the shared one
@@ -101,6 +109,8 @@ public class AxisEditPart extends AbstractGraphicalEditPart
   {
     installEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE,
         new NonResizableEditPolicy());
+
+    installEditPolicy(EditPolicy.CONTAINER_ROLE, new AxisContainerEditPolicy());
   }
 
   @Override
