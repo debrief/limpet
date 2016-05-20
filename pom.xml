@@ -14,6 +14,7 @@
     <tycho-repo.url>https://oss.sonatype.org/content/groups/public/</tycho-repo.url>
     <jacoco.destFile>../target/jacoco.exec</jacoco.destFile>
     <coverage.filter>info.limpet.*</coverage.filter>
+    <limpet.base.version>${project.version}</limpet.base.version>
   </properties>
 
   <modules>
