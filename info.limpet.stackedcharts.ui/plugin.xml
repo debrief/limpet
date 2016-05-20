@@ -22,6 +22,16 @@
       </propertyContributor>
    </extension>
    <extension
+         point="org.eclipse.ui.views.properties.tabbed.propertyContributor">
+      <propertyContributor
+            contributorId="info.limpet.stackedcharts.editor"
+            labelProvider="info.limpet.stackedcharts.ui.editor.properties.AbstractAxisPropertiesLabelProvider"
+            typeMapper="info.limpet.stackedcharts.ui.editor.properties.ChartTypeMapper">
+         <propertyCategory
+               category="Axis Properties"></propertyCategory>
+      </propertyContributor>
+   </extension>
+   <extension
          point="org.eclipse.ui.views.properties.tabbed.propertyTabs">
       <propertyTabs
             contributorId="info.limpet.stackedcharts.editor">
@@ -42,6 +52,20 @@
                tab="info.limpet.stackedcharts.editor.propertyTab">
             <input
                   type="info.limpet.stackedcharts.model.Chart">
+            </input>
+         </propertySection>
+      </propertySections>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views.properties.tabbed.propertySections">
+      <propertySections
+            contributorId="info.limpet.stackedcharts.editor">
+         <propertySection
+               class="info.limpet.stackedcharts.ui.editor.properties.AbstractAxisPropertySection"
+               id="info.limpet.stackedcharts.editor.propertySectionAbstractAxis"
+               tab="info.limpet.stackedcharts.editor.propertyTab">
+            <input
+                  type="info.limpet.stackedcharts.model.AbstractAxis">
             </input>
          </propertySection>
       </propertySections>

@@ -6,6 +6,7 @@ import org.eclipse.ui.views.properties.tabbed.AbstractTypeMapper;
 public class ChartTypeMapper extends AbstractTypeMapper
 {
 
+  @SuppressWarnings("rawtypes")
   @Override
   public Class mapType(Object object)
   {
