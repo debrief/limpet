@@ -5,6 +5,7 @@ import info.limpet.stackedcharts.ui.editor.commands.ChartCommand;
 import java.util.List;
 
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.common.util.Enumerator;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EEnum;
@@ -73,10 +74,9 @@ abstract public class GenericPropertySection<Element extends EObject> extends
 
   /** get our specific list of properties
    * 
-   * @param element
    * @return
    */
-  abstract protected List<CombinedProperty> getProperties(EObject element);
+  abstract protected List<CombinedProperty> getProperties();
 
   /** generate the properties, plus their editors
    * 
@@ -87,7 +87,7 @@ abstract public class GenericPropertySection<Element extends EObject> extends
       TabbedPropertySheetWidgetFactory factory)
   {
     // retrieve the properties
-    myProps = getProperties(element);
+    myProps = getProperties();
 
     // now create them
     for (final CombinedProperty thisProp : myProps)
@@ -104,7 +104,7 @@ abstract public class GenericPropertySection<Element extends EObject> extends
         @Override
         public void focusLost(FocusEvent e)
         {
-          if (thisProp.isModified())// !thisText.getText().equals(element.getName()))
+          if (thisProp.isModified(element))// !thisText.getText().equals(element.getName()))
           {
             CommandStack commandStack =
                 (CommandStack) getPart().getAdapter(CommandStack.class);
@@ -125,7 +125,7 @@ abstract public class GenericPropertySection<Element extends EObject> extends
     for (CombinedProperty thisProp : myProps)
     {
       // refresh this property
-      thisProp.refresh();
+      thisProp.refresh(element);
     }
   }
 
@@ -146,26 +146,20 @@ abstract public class GenericPropertySection<Element extends EObject> extends
      */
     protected final EAttribute attribute;
     
-    /** the object that is being edited
-     * 
-     */
-    protected final EObject subject;
-    
     /** a UI-control-specific helper object
      * 
      */
     protected ControlHelper controlHelper;
 
-    protected CombinedProperty(EAttribute attribute, EObject subject)
+    protected CombinedProperty(EAttribute attribute)
     {
-      this(attribute.getName(), attribute, subject);
+      this(attribute.getName(), attribute);
     }
     
-    protected CombinedProperty(String name, EAttribute attribute, EObject subject)
+    protected CombinedProperty(String name, EAttribute attribute)
     {
       this.name = name;
       this.attribute = attribute;
-      this.subject = subject;
 
       // sort out the correct type of helper
       EClassifier eType = attribute.getEType();
@@ -176,7 +170,7 @@ abstract public class GenericPropertySection<Element extends EObject> extends
       else if(eType instanceof EDataTypeImpl)
       {
         // check the data type
-        if(eType.getName().equals("String"))
+        if(eType.getName().equals("EString"))
         {
           controlHelper = new TextHelper();
         }
@@ -185,6 +179,12 @@ abstract public class GenericPropertySection<Element extends EObject> extends
           controlHelper = new BooleanHelper();
         }
       }
+      
+      if(controlHelper == null)
+      {
+        System.err.println("NOTE: failed to create helper for:" + name);
+      }
+      
     }
 
     /** create our control
@@ -200,18 +200,20 @@ abstract public class GenericPropertySection<Element extends EObject> extends
     }
 
     /** refresh the control
+     * @param subject 
      * 
      */
-    public void refresh()
+    public void refresh(EObject subject)
     {
       controlHelper.refresh(subject, attribute);
     }
 
     /** has the control been modified?
+     * @param subject 
      * 
      * @return
      */
-    public boolean isModified()
+    public boolean isModified(EObject subject)
     {
       return controlHelper.isModified(subject, attribute);
     }
@@ -276,7 +278,13 @@ abstract public class GenericPropertySection<Element extends EObject> extends
     @Override
     public void refresh(EObject subject, EAttribute attribute)
     {
-      control.setText((String) subject.eGet(attribute));
+      
+      String curVal = (String) subject.eGet(attribute);
+      if(curVal == null)
+      {
+        curVal = "";
+      }
+      control.setText(curVal);
     }
 
     @Override
@@ -363,12 +371,12 @@ abstract public class GenericPropertySection<Element extends EObject> extends
     @Override
     public void refresh(EObject subject, EAttribute attribute)
     {
-      EEnumLiteral curVal = (EEnumLiteral) subject.eGet(attribute);
+      final Enumerator thisVal = (Enumerator) subject.eGet(attribute);
       EList<EEnumLiteral> literals = enumType.getELiterals();
       for (int i = 0; i < literals.size(); i++)
       {
         final EEnumLiteral thisE = literals.get(i);
-        if (thisE.equals(curVal))
+        if (thisE.getLiteral().equals(thisVal.getLiteral()))
         {
           control.select(i);
           return;

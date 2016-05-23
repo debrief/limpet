@@ -6,29 +6,27 @@ import info.limpet.stackedcharts.model.impl.StackedchartsPackageImpl;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.emf.ecore.EObject;
-
 public class AbstractAxisPropertySection extends GenericPropertySection<AbstractAxis>
 {
-  protected List<CombinedProperty> getProperties(EObject element)
+  protected List<CombinedProperty> getProperties()
   {
     List<CombinedProperty> props = new ArrayList<CombinedProperty>();
     
     // build up our list of properties
     props.add(new CombinedProperty(StackedchartsPackageImpl.init()
-        .getAbstractAxis_Name(), element));
+        .getAbstractAxis_Name()));
     props.add(new CombinedProperty(StackedchartsPackageImpl.init()
-        .getAbstractAxis_Color(), element));
+        .getAbstractAxis_Color()));
     props.add(new CombinedProperty(StackedchartsPackageImpl.init()
-        .getAbstractAxis_Font(), element));
+        .getAbstractAxis_Font()));
 
     // hey, try a boolean editor!
     props.add(new CombinedProperty(StackedchartsPackageImpl.init()
-        .getAbstractAxis_Direction(), element));
+        .getAbstractAxis_Direction()));
     props.add(new CombinedProperty(StackedchartsPackageImpl.init()
-        .getAbstractAxis_AutoScale(), element));
+        .getAbstractAxis_AutoScale()));
     props.add(new CombinedProperty(StackedchartsPackageImpl.init()
-        .getAbstractAxis_AxisType(), element));
+        .getAbstractAxis_AxisType()));
     
     return props;
   }
