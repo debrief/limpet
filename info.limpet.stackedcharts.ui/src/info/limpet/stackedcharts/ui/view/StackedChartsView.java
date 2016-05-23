@@ -5,16 +5,24 @@ import info.limpet.stackedcharts.ui.editor.StackedchartsEditControl;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.gef.commands.CommandStack;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.nebula.effects.stw.Transition;
 import org.eclipse.nebula.effects.stw.TransitionManager;
 import org.eclipse.nebula.effects.stw.Transitionable;
@@ -34,10 +42,14 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.views.properties.IPropertySheetPage;
+import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor;
+import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
 import org.jfree.chart.JFreeChart;
 import org.jfree.experimental.chart.swt.ChartComposite;
 
-public class StackedChartsView extends ViewPart
+public class StackedChartsView extends ViewPart implements
+    ITabbedPropertySheetPageContributor, ISelectionProvider
 {
 
   public static final int CHART_VIEW = 1;
@@ -54,14 +66,23 @@ public class StackedChartsView extends ViewPart
   private ChartSet charts;
   private AtomicBoolean initEditor = new AtomicBoolean(true);
 
+  private StackedchartsEditControl chartEditor;
+  private TabbedPropertySheetPage propertySheetPage;
+
+  private List<ISelectionChangedListener> selectionListeners =
+      new ArrayList<ISelectionChangedListener>();
+
   @Override
   public void createPartControl(Composite parent)
   {
 
+    getViewSite().setSelectionProvider(this);//setup proxy selection provider
     stackedPane = new StackedPane(parent);
 
     stackedPane.add(CHART_VIEW, createChartView());
     stackedPane.add(EDIT_VIEW, createEditView());
+
+    propertySheetPage = new TabbedPropertySheetPage(this);
     selectView(CHART_VIEW);
     contributeToActionBars();
 
@@ -241,6 +262,9 @@ public class StackedChartsView extends ViewPart
         initEditorView();
       }
       stackedPane.showPane(view);
+      // fire selection change to refresh properties view
+      fireSelectionChnaged();
+
     }
 
   }
@@ -257,10 +281,20 @@ public class StackedChartsView extends ViewPart
           control.dispose();
         }
       }
+      // create gef base editor
+      chartEditor = new StackedchartsEditControl(editorHolder);
+      // proxy editor selection to view site
+      chartEditor.getViewer().addSelectionChangedListener(
+          new ISelectionChangedListener()
+          {
 
-      //create gef base editor 
-      StackedchartsEditControl chartEditor =
-          new StackedchartsEditControl(editorHolder);
+            @Override
+            public void selectionChanged(SelectionChangedEvent event)
+            {
+              fireSelectionChnaged();
+
+            }
+          });
       chartEditor.setModel(charts);
       editorHolder.pack(true);
       editorHolder.getParent().layout();
@@ -270,7 +304,7 @@ public class StackedChartsView extends ViewPart
   public void setModel(ChartSet charts)
   {
     this.charts = charts;
-    //mark editor to recreate 
+    // mark editor to recreate
     initEditor.set(true);
 
     // remove any existing base items on view holder
@@ -361,12 +395,12 @@ public class StackedChartsView extends ViewPart
         else
         {
           // recreate the model
-          // TODO: let's not re-create the model each time we revert 
+          // TODO: let's not re-create the model each time we revert
           // to the view mode. let's create listeners, so the
-          // chart has discrete updates in response to 
+          // chart has discrete updates in response to
           // model changes
-          setModel(charts);    
-          
+          setModel(charts);
+
           selectView(CHART_VIEW);
           setText("Edit");
 
@@ -381,6 +415,82 @@ public class StackedChartsView extends ViewPart
     IActionBars bars = getViewSite().getActionBars();
     fillLocalPullDown(bars.getMenuManager());
     fillLocalToolBar(bars.getToolBarManager());
+  }
+
+  @SuppressWarnings("rawtypes")
+  public Object getAdapter(Class type)
+  {
+
+    
+    if (type == CommandStack.class)
+    {
+      //if view mode is editor,Proxy CommandStack object from editor domain
+      if (!initEditor.get() && stackedPane.getActiveControlKey() == EDIT_VIEW)
+      {
+        return chartEditor.getViewer().getEditDomain().getCommandStack();
+      }
+    }
+    if (type == IPropertySheetPage.class)
+    {
+      return propertySheetPage;
+    }
+    return super.getAdapter(type);
+  }
+
+  @Override
+  public String getContributorId()
+  {
+    return getViewSite().getId();
+  }
+
+  @Override
+  public void addSelectionChangedListener(ISelectionChangedListener listener)
+  {
+    selectionListeners.add(listener);
+
+  }
+
+  @Override
+  public ISelection getSelection()
+  {
+    if (!initEditor.get() && stackedPane.getActiveControlKey() == EDIT_VIEW)
+    {
+      return chartEditor.getViewer().getSelection();
+    }
+    // if chart view need to provide selection info via properties view, change empty selection to
+    // represent object of chart view selection.
+    return new StructuredSelection();// empty selection
+  }
+
+  @Override
+  public void
+      removeSelectionChangedListener(ISelectionChangedListener listener)
+  {
+    selectionListeners.remove(listener);
+
+  }
+
+  @Override
+  public void setSelection(ISelection selection)
+  {
+    if (!initEditor.get())
+    {
+      chartEditor.getViewer().setSelection(selection);
+    }
+
+  }
+
+  /**
+   * View Selection provider where it proxy between selected view
+   */
+  protected void fireSelectionChnaged()
+  {
+    final ISelection selection = getSelection();
+    for (ISelectionChangedListener listener : new ArrayList<>(
+        selectionListeners))
+    {
+      listener.selectionChanged(new SelectionChangedEvent(this, selection));
+    }
   }
 
 }
