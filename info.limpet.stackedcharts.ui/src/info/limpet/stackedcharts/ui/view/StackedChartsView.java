@@ -421,9 +421,11 @@ public class StackedChartsView extends ViewPart implements
   public Object getAdapter(Class type)
   {
 
-    if (!initEditor.get() && stackedPane.getActiveControlKey() == EDIT_VIEW)
+    
+    if (type == CommandStack.class)
     {
-      if (type == CommandStack.class)
+      //if view mode is editor,Proxy CommandStack object from editor domain
+      if (!initEditor.get() && stackedPane.getActiveControlKey() == EDIT_VIEW)
       {
         return chartEditor.getViewer().getEditDomain().getCommandStack();
       }
