@@ -235,6 +235,7 @@ Library.
       <feature id="info.limpet.feature"/>
       <feature id="info.limpet.rcp.feature"/>
       <feature id="info.limpet.ui.feature"/>
+      <feature id="info.limpet.feature.libs"/>
    </features>
 
    <configurations>

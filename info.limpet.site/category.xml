@@ -12,5 +12,8 @@
    <feature url="features/info.limpet.ui.feature_0.0.0.jar" id="info.limpet.ui.feature" version="0.0.0">
       <category name="info.limpet.updatesite"/>
    </feature>
+   <feature url="features/info.limpet.feature.libs_1.0.6.qualifier.jar" id="info.limpet.feature.libs" version="1.0.6.qualifier">
+      <category name="info.limpet.updatesite"/>
+   </feature>
    <category-def name="info.limpet.updatesite" label="Lightweight InforMation ProcEssing Toolkit - Limpet"/>
 </site>

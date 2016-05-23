@@ -26,6 +26,7 @@
     <module>info.limpet.ui</module>
     <module>info.limpet.test</module>
     <module>info.limpet.feature</module>
+    <module>info.limpet.feature.libs</module>
     <module>info.limpet.rcp.feature</module>
     <module>info.limpet.ui.feature</module>
     <module>info.limpet.site</module>
