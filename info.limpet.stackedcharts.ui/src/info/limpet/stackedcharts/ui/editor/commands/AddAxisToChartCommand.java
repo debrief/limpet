@@ -69,8 +69,6 @@ public class AddAxisToChartCommand extends Command
         sources[ctr++] = source;
       }
 
-      source.remove(ds);
-
       // now add it to the new host
       destination.add(ds);
     }
@@ -84,8 +82,6 @@ public class AddAxisToChartCommand extends Command
     int ctr = 0;
     for (DependentAxis ds : axes)
     {
-      destination.remove(ds);
-
       // and add it to its host
       EList<DependentAxis> newHost = sources[ctr++];
       newHost.add(ds);
