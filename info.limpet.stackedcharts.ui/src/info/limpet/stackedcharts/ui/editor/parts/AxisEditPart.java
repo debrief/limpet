@@ -5,18 +5,16 @@ import info.limpet.stackedcharts.model.DependentAxis;
 import info.limpet.stackedcharts.model.StackedchartsPackage;
 import info.limpet.stackedcharts.ui.editor.commands.DeleteAxisFromChartCommand;
 import info.limpet.stackedcharts.ui.editor.figures.ArrowFigure;
-import info.limpet.stackedcharts.ui.editor.figures.VerticalLabel;
+import info.limpet.stackedcharts.ui.editor.figures.AxisNameFigure;
 import info.limpet.stackedcharts.ui.editor.policies.AxisContainerEditPolicy;
 
 import java.util.List;
 
 import org.eclipse.draw2d.ActionListener;
-import org.eclipse.draw2d.Button;
 import org.eclipse.draw2d.FlowLayout;
 import org.eclipse.draw2d.GridData;
 import org.eclipse.draw2d.GridLayout;
 import org.eclipse.draw2d.IFigure;
-import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.RectangleFigure;
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notification;
@@ -41,7 +39,7 @@ public class AxisEditPart extends AbstractGraphicalEditPart implements ActionLis
 
   private RectangleFigure datasetsPane;
 
-  private VerticalLabel axisNameLabel;
+  private AxisNameFigure axisNameLabel;
 
   private AxisAdapter adapter = new AxisAdapter();
 
@@ -71,7 +69,7 @@ public class AxisEditPart extends AbstractGraphicalEditPart implements ActionLis
     figure.setBackgroundColor(BACKGROUND_COLOR);
 
     figure.setOutline(false);
-    GridLayout layoutManager = new GridLayout(4, false);
+    GridLayout layoutManager = new GridLayout(3, false);
     // zero margin, in order to connect the dependent axes to the shared one
     layoutManager.marginHeight = 0;
     layoutManager.marginWidth = 0;
@@ -89,26 +87,19 @@ public class AxisEditPart extends AbstractGraphicalEditPart implements ActionLis
     layoutManager.setConstraint(arrowFigure, new GridData(GridData.FILL,
         GridData.FILL, false, true));
     figure.add(arrowFigure);
-
-    axisNameLabel = new VerticalLabel();
-    layoutManager.setConstraint(axisNameLabel, new GridData(GridData.FILL,
+    
+    axisNameLabel = new AxisNameFigure(this);
+    layoutManager.setConstraint(axisNameLabel, new GridData(GridData.BEGINNING,
         GridData.FILL, true, true));
     figure.add(axisNameLabel);
     
-    Button button = new Button("X");
-    layoutManager.setConstraint(button, new GridData(GridData.FILL,
-        GridData.FILL, true, true));
-    button.setToolTip(new Label("Remove the axis from this chart"));
-    button.addActionListener(this);
-    figure.add(button);
-
     return figure;
   }
 
   @Override
   protected void refreshVisuals()
   {
-    axisNameLabel.setText(getAxis().getName());
+    axisNameLabel.setName(getAxis().getName());
 
     ((GraphicalEditPart) getParent()).setLayoutConstraint(this, figure,
         new GridData(GridData.CENTER, GridData.FILL, false, true));
