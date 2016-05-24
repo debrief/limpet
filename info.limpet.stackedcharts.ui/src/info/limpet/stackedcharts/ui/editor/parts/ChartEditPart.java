@@ -7,7 +7,6 @@ import info.limpet.stackedcharts.ui.editor.figures.ChartFigure;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.draw2d.BorderLayout;
 import org.eclipse.draw2d.GridData;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.emf.common.notify.Adapter;
@@ -61,6 +60,7 @@ public class ChartEditPart extends AbstractGraphicalEditPart
     return (Chart) getModel();
   }
 
+  @SuppressWarnings("rawtypes")
   @Override
   protected List getModelChildren()
   {

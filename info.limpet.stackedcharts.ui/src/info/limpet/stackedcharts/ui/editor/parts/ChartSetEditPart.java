@@ -35,6 +35,7 @@ public class ChartSetEditPart extends AbstractGraphicalEditPart
   {
   }
 
+  @SuppressWarnings("rawtypes")
   @Override
   protected List getModelChildren()
   {

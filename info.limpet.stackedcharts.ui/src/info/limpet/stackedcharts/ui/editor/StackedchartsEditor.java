@@ -110,6 +110,7 @@ public class StackedchartsEditor extends GraphicalEditorWithFlyoutPalette
     getGraphicalViewer().setEditPartFactory(new StackedChartsEditPartFactory());
   }
 
+  @SuppressWarnings("rawtypes")
   @Override
   public Object getAdapter(Class type)
   {

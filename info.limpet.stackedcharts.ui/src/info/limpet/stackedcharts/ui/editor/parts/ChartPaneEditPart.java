@@ -53,6 +53,7 @@ public class ChartPaneEditPart extends AbstractGraphicalEditPart
         getModelChildren().size();
   }
 
+  @SuppressWarnings("rawtypes")
   @Override
   protected List getModelChildren()
   {

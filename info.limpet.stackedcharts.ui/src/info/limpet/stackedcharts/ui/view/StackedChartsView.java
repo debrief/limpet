@@ -176,7 +176,6 @@ public class StackedChartsView extends ViewPart implements
               e.printStackTrace();
               MessageDialog.openError(Display.getCurrent().getActiveShell(),
                   "Error", e.getMessage());
-
             }
           }
         }
@@ -296,7 +295,7 @@ public class StackedChartsView extends ViewPart implements
 
   protected void fillLocalToolBar(final IToolBarManager manager)
   {
-    manager.add(new Action("Edit")
+    manager.add(new Action("Edit", SWT.TOGGLE)
     {
       @Override
       public void run()
@@ -304,7 +303,7 @@ public class StackedChartsView extends ViewPart implements
         if (stackedPane.getActiveControlKey() == CHART_VIEW)
         {
           selectView(EDIT_VIEW);
-          setText("Chart");
+          setText("View");
           manager.update(true);
         }
         else
@@ -314,15 +313,27 @@ public class StackedChartsView extends ViewPart implements
           // to the view mode. let's create listeners, so the
           // chart has discrete updates in response to
           // model changes
-          setModel(charts);
+          
+          // double check we have a charts model
+          if(charts != null)
+          {
+            setModel(charts);
+          }
 
           selectView(CHART_VIEW);
           setText("Edit");
-
           manager.update(true);
         }
       }
     });
+
+    // add the (mock) export buttons
+    final Action toPNG = new Action("PNG"){};
+    toPNG.setToolTipText("Export the chart set to clipboard as bitmap image");
+    manager.add(toPNG);
+    final Action toWMF = new Action("WMF"){};
+    toWMF.setToolTipText("Export the chart set to clipboard as vector image");
+    manager.add(toWMF);
   }
 
   /**
