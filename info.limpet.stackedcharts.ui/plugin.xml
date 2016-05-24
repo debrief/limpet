@@ -12,67 +12,6 @@
       </editor>
    </extension>
    <extension
-         point="org.eclipse.ui.views.properties.tabbed.propertyContributor">
-      <propertyContributor
-            contributorId="info.limpet.StackedChartsView"
-            labelProvider="info.limpet.stackedcharts.ui.editor.properties.ChartPropertiesLabelProvider"
-            typeMapper="info.limpet.stackedcharts.ui.editor.properties.ChartTypeMapper">
-         <propertyCategory
-               category="Chart Properties"></propertyCategory>
-      </propertyContributor>
-   </extension>
-   <extension
-         point="org.eclipse.ui.views.properties.tabbed.propertyContributor">
-      <propertyContributor
-            contributorId="info.limpet.StackedChartsView"
-            labelProvider="info.limpet.stackedcharts.ui.editor.properties.AbstractAxisPropertiesLabelProvider"
-            typeMapper="info.limpet.stackedcharts.ui.editor.properties.ChartTypeMapper">
-         <propertyCategory
-               category="Axis Properties"></propertyCategory>
-      </propertyContributor>
-   </extension>
-   <extension
-         point="org.eclipse.ui.views.properties.tabbed.propertyTabs">
-    
-      <propertyTabs
-            contributorId="info.limpet.StackedChartsView">
-         <propertyTab
-               category="Chart Properties"
-               id="info.limpet.stackedcharts.editor.propertyTab"
-               label="General">
-         </propertyTab>
-      </propertyTabs>
-   </extension>
-   <extension
-         point="org.eclipse.ui.views.properties.tabbed.propertySections">
-  
-      <propertySections
-            contributorId="info.limpet.StackedChartsView">
-         <propertySection
-               class="info.limpet.stackedcharts.ui.editor.properties.ChartPropertySection"
-               id="info.limpet.stackedcharts.editor.propertySectionChart"
-               tab="info.limpet.stackedcharts.editor.propertyTab">
-            <input
-                  type="info.limpet.stackedcharts.model.Chart">
-            </input>
-         </propertySection>
-      </propertySections>
-   </extension>
-   <extension
-         point="org.eclipse.ui.views.properties.tabbed.propertySections">
-      <propertySections
-            contributorId="info.limpet.StackedChartsView">
-         <propertySection
-               class="info.limpet.stackedcharts.ui.editor.properties.AbstractAxisPropertySection"
-               id="info.limpet.stackedcharts.editor.propertySectionAbstractAxis"
-               tab="info.limpet.stackedcharts.editor.propertyTab">
-            <input
-                  type="info.limpet.stackedcharts.model.AbstractAxis">
-            </input>
-         </propertySection>
-      </propertySections>
-   </extension>
-   <extension
          point="org.eclipse.ui.views">
       <view
             allowMultiple="true"
