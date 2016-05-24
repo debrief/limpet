@@ -14,6 +14,7 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.gef.commands.CommandStack;
+import org.eclipse.gef.editparts.AbstractEditPart;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -44,7 +45,6 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor;
-import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
 import org.jfree.chart.JFreeChart;
 import org.jfree.experimental.chart.swt.ChartComposite;
 
@@ -67,7 +67,6 @@ public class StackedChartsView extends ViewPart implements
   private AtomicBoolean initEditor = new AtomicBoolean(true);
 
   private StackedchartsEditControl chartEditor;
-  private TabbedPropertySheetPage propertySheetPage;
 
   private List<ISelectionChangedListener> selectionListeners =
       new ArrayList<ISelectionChangedListener>();
@@ -82,7 +81,6 @@ public class StackedChartsView extends ViewPart implements
     stackedPane.add(CHART_VIEW, createChartView());
     stackedPane.add(EDIT_VIEW, createEditView());
 
-    propertySheetPage = new TabbedPropertySheetPage(this);
     selectView(CHART_VIEW);
     contributeToActionBars();
 
@@ -256,10 +254,10 @@ public class StackedChartsView extends ViewPart implements
   {
     if (stackedPane != null && !stackedPane.isDisposed())
     {
-      // if switch to edit mode make sure to init editor
+      // if switch to edit mode make sure to init editor model
       if (view == EDIT_VIEW)
       {
-        initEditorView();
+        initEditorViewModel();
       }
       stackedPane.showPane(view);
       // fire selection change to refresh properties view
@@ -269,36 +267,18 @@ public class StackedChartsView extends ViewPart implements
 
   }
 
-  private void initEditorView()
+  
+  private void initEditorViewModel()
   {
     if (initEditor.getAndSet(false))
     {
-      // remove any existing base items
-      if (editorHolder != null)
-      {
-        for (Control control : editorHolder.getChildren())
-        {
-          control.dispose();
-        }
-      }
-      // create gef base editor
-      chartEditor = new StackedchartsEditControl(editorHolder);
-      // proxy editor selection to view site
-      chartEditor.getViewer().addSelectionChangedListener(
-          new ISelectionChangedListener()
-          {
-
-            @Override
-            public void selectionChanged(SelectionChangedEvent event)
-            {
-              fireSelectionChnaged();
-
-            }
-          });
+      
+      
       chartEditor.setModel(charts);
-      editorHolder.pack(true);
-      editorHolder.getParent().layout();
+      
     }
+    editorHolder.pack(true);
+    editorHolder.getParent().layout();
   }
 
   public void setModel(ChartSet charts)
@@ -315,14 +295,7 @@ public class StackedChartsView extends ViewPart implements
         control.dispose();
       }
     }
-    // remove any existing base items on editor holder
-    if (editorHolder != null)
-    {
-      for (Control control : editorHolder.getChildren())
-      {
-        control.dispose();
-      }
-    }
+    
 
     // and now repopulate
     JFreeChart chart = ChartBuilder.build(charts);
@@ -360,7 +333,20 @@ public class StackedChartsView extends ViewPart implements
   {
     editorHolder = new Composite(stackedPane, SWT.NONE);
     editorHolder.setLayout(new FillLayout());
+    // create gef base editor
+    chartEditor = new StackedchartsEditControl(editorHolder);
+    // proxy editor selection to view site
+    chartEditor.getViewer().addSelectionChangedListener(
+        new ISelectionChangedListener()
+        {
 
+          @Override
+          public void selectionChanged(SelectionChangedEvent event)
+          {
+            fireSelectionChnaged();
+
+          }
+        });
     return editorHolder;
   }
 
@@ -421,16 +407,17 @@ public class StackedChartsView extends ViewPart implements
   public Object getAdapter(Class type)
   {
 
-    if (!initEditor.get() && stackedPane.getActiveControlKey() == EDIT_VIEW)
+    
+    if (type == CommandStack.class)
     {
-      if (type == CommandStack.class)
-      {
+      
         return chartEditor.getViewer().getEditDomain().getCommandStack();
-      }
+      
     }
     if (type == IPropertySheetPage.class)
     {
-      return propertySheetPage;
+      
+      return   chartEditor.getPropertySheetPage();
     }
     return super.getAdapter(type);
   }
@@ -453,7 +440,7 @@ public class StackedChartsView extends ViewPart implements
   {
     if (!initEditor.get() && stackedPane.getActiveControlKey() == EDIT_VIEW)
     {
-      return chartEditor.getViewer().getSelection();
+      return chartEditor.getSelection();
     }
     // if chart view need to provide selection info via properties view, change empty selection to
     // represent object of chart view selection.
