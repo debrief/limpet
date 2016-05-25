@@ -33,10 +33,6 @@
       <genEnumLiterals ecoreEnumLiteral="model.ecore#//LineType/Dotted"/>
       <genEnumLiterals ecoreEnumLiteral="model.ecore#//LineType/Dashed"/>
     </genEnums>
-    <genEnums typeSafeEnumCompatible="false" ecoreEnum="model.ecore#//AxisType">
-      <genEnumLiterals ecoreEnumLiteral="model.ecore#//AxisType/Number"/>
-      <genEnumLiterals ecoreEnumLiteral="model.ecore#//AxisType/Time"/>
-    </genEnums>
     <genClasses ecoreClass="model.ecore#//ChartSet">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference model.ecore#//ChartSet/charts"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//ChartSet/orientation"/>
@@ -95,7 +91,7 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//AbstractAxis/direction"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//AbstractAxis/font"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//AbstractAxis/color"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//AbstractAxis/axisType"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference model.ecore#//AbstractAxis/axistype2"/>
     </genClasses>
     <genClasses ecoreClass="model.ecore#//IndependentAxis">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference model.ecore#//IndependentAxis/annotations"/>
@@ -110,5 +106,14 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference model.ecore#//SelectiveAnnotation/annotation"/>
       <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference model.ecore#//SelectiveAnnotation/appearsIn"/>
     </genClasses>
+    <genClasses ecoreClass="model.ecore#//AxisType2"/>
+    <genClasses ecoreClass="model.ecore#//DateAxis">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//DateAxis/dateFormat"/>
+    </genClasses>
+    <genClasses ecoreClass="model.ecore#//NumberAxis">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//NumberAxis/numberFormat"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//NumberAxis/autoIncludesZero"/>
+    </genClasses>
+    <genClasses ecoreClass="model.ecore#//AngleAxis"/>
   </genPackages>
 </genmodel:GenModel>
