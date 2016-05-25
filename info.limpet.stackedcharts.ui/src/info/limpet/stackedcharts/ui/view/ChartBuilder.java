@@ -211,11 +211,11 @@ public class ChartBuilder
     else
     {
       AxisType axisType = sharedAxisModel.getAxisType();
-      if(axisType instanceof NumberAxis)
+      if(axisType instanceof info.limpet.stackedcharts.model.NumberAxis)
       {
         helper = new NumberHelper();
       }
-      else if(axisType instanceof DateAxis)
+      else if(axisType instanceof info.limpet.stackedcharts.model.DateAxis)
       {
         helper = new TimeHelper();
       }
@@ -313,11 +313,11 @@ public class ChartBuilder
     final ChartHelper axeshelper;
     
     AxisType axisType = dependentAxis.getAxisType();
-    if(axisType instanceof NumberAxis)
+    if(axisType instanceof info.limpet.stackedcharts.model.NumberAxis)
     {
       axeshelper = new NumberHelper();
     }
-    else if(axisType instanceof DateAxis)
+    else if(axisType instanceof info.limpet.stackedcharts.model.DateAxis)
     {
       axeshelper = new TimeHelper();
     }
