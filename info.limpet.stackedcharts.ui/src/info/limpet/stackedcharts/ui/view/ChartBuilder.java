@@ -280,7 +280,7 @@ public class ChartBuilder
           sharedAxisModel.getAnnotations();
 
       List<AbstractAnnotation> annotations =
-          new ArrayList<>(selectiveAnnotations.size());
+          new ArrayList<>();
       for (SelectiveAnnotation selectiveAnnotation : selectiveAnnotations)
       {
         EList<Chart> appearsIn = selectiveAnnotation.getAppearsIn();
