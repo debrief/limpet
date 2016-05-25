@@ -1,5 +1,7 @@
 package info.limpet.stackedcharts.ui.editor.figures;
 
+import info.limpet.stackedcharts.model.Chart;
+
 import org.eclipse.draw2d.BorderLayout;
 import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.Label;
@@ -15,17 +17,18 @@ public class ChartFigure extends RectangleFigure
   private Label chartNameLabel;
   private static volatile Font boldFont;
 
-  public ChartFigure()
+  public ChartFigure(Chart chart)
   {
     setBackgroundColor(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
     setOutline(false);
     setLayoutManager(new BorderLayout());
     chartNameLabel = new Label();
     add(chartNameLabel, BorderLayout.TOP);
-    Label previewLabel = new Label("Preview");
-    previewLabel.setForegroundColor(Display.getDefault().getSystemColor(
-        SWT.COLOR_RED));
-    add(previewLabel, BorderLayout.CENTER);
+    JFreeChartFigure chartFigure = new JFreeChartFigure(chart) ;
+//    Label previewLabel = new Label("Preview");
+//    previewLabel.setForegroundColor(Display.getDefault().getSystemColor(
+//        SWT.COLOR_RED));
+    add(chartFigure, BorderLayout.CENTER);
   }
 
   public void setName(String name)

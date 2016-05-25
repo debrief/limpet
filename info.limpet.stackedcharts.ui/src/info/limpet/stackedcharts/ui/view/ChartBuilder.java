@@ -211,11 +211,11 @@ public class ChartBuilder
     else
     {
       AxisType axisType = sharedAxisModel.getAxisType();
-      if(axisType instanceof info.limpet.stackedcharts.model.NumberAxis)
+      if (axisType instanceof info.limpet.stackedcharts.model.NumberAxis)
       {
         helper = new NumberHelper();
       }
-      else if(axisType instanceof info.limpet.stackedcharts.model.DateAxis)
+      else if (axisType instanceof info.limpet.stackedcharts.model.DateAxis)
       {
         helper = new TimeHelper();
       }
@@ -245,6 +245,57 @@ public class ChartBuilder
         ? PlotOrientation.VERTICAL : PlotOrientation.HORIZONTAL);
 
     return new JFreeChart(plot);
+  }
+
+  /**
+   * create a chart from chart object for preview
+   * 
+   * @param chart
+   * 
+   * @return
+   */
+  public static JFreeChart build(Chart chart)
+  {
+
+    IndependentAxis sharedAxisModel = chart.getParent().getSharedAxis();
+    final ChartHelper helper;
+    final ValueAxis sharedAxis;
+
+    if (sharedAxisModel == null)
+    {
+      sharedAxis = new DateAxis("Time");
+      helper = new NumberHelper();
+    }
+    else
+    {
+      AxisType axisType = sharedAxisModel.getAxisType();
+      if (axisType instanceof info.limpet.stackedcharts.model.NumberAxis)
+      {
+        helper = new NumberHelper();
+      }
+      else if (axisType instanceof info.limpet.stackedcharts.model.DateAxis)
+      {
+        helper = new TimeHelper();
+      }
+      else
+      {
+        System.err.println("UNEXPECTED AXIS TYPE RECEIVED");
+        helper = new NumberHelper();
+      }
+      sharedAxis = helper.createAxis(sharedAxisModel.getName());
+    }
+    sharedAxis.setVisible(false);
+    final CombinedDomainXYPlot plot = new CombinedDomainXYPlot(sharedAxis);
+
+    // create this chart
+    final XYPlot subplot = createChart(sharedAxisModel, chart);
+
+    // add chart to stack
+    plot.add(subplot);
+
+    JFreeChart jFreeChart = new JFreeChart(plot);
+    jFreeChart.getLegend().setVisible(false);
+    return jFreeChart;
   }
 
   protected static XYPlot createChart(IndependentAxis sharedAxisModel,
@@ -279,8 +330,7 @@ public class ChartBuilder
       EList<SelectiveAnnotation> selectiveAnnotations =
           sharedAxisModel.getAnnotations();
 
-      List<AbstractAnnotation> annotations =
-          new ArrayList<>();
+      List<AbstractAnnotation> annotations = new ArrayList<>();
       for (SelectiveAnnotation selectiveAnnotation : selectiveAnnotations)
       {
         EList<Chart> appearsIn = selectiveAnnotation.getAppearsIn();
@@ -311,13 +361,13 @@ public class ChartBuilder
     final XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
     int indexSeries = 0;
     final ChartHelper axeshelper;
-    
+
     AxisType axisType = dependentAxis.getAxisType();
-    if(axisType instanceof info.limpet.stackedcharts.model.NumberAxis)
+    if (axisType instanceof info.limpet.stackedcharts.model.NumberAxis)
     {
       axeshelper = new NumberHelper();
     }
-    else if(axisType instanceof info.limpet.stackedcharts.model.DateAxis)
+    else if (axisType instanceof info.limpet.stackedcharts.model.DateAxis)
     {
       axeshelper = new TimeHelper();
     }
@@ -420,12 +470,12 @@ public class ChartBuilder
 
           Color thisColor = datum.getColor();
           final Color colorToUse = thisColor == null ? color : thisColor;
-          
+
           // apply some transparency to the color
           final Color transColor =
               new Color(colorToUse.getRed(), colorToUse.getGreen(), colorToUse
                   .getBlue(), 60);
-          
+
           mrk.setPaint(transColor);
 
           // move Text Anchor
