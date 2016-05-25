@@ -5,6 +5,7 @@ package info.limpet.stackedcharts.model.impl;
 import info.limpet.stackedcharts.model.LinearStyling;
 import info.limpet.stackedcharts.model.StackedchartsPackage;
 
+import java.awt.Color;
 import org.eclipse.emf.common.notify.Notification;
 
 import org.eclipse.emf.ecore.EClass;
@@ -37,7 +38,7 @@ public class LinearStylingImpl extends StylingImpl implements LinearStyling
    * @generated
    * @ordered
    */
-  protected static final String START_COLOR_EDEFAULT = null;
+  protected static final Color START_COLOR_EDEFAULT = null;
 
   /**
    * The cached value of the '{@link #getStartColor() <em>Start Color</em>}' attribute.
@@ -47,7 +48,7 @@ public class LinearStylingImpl extends StylingImpl implements LinearStyling
    * @generated
    * @ordered
    */
-  protected String startColor = START_COLOR_EDEFAULT;
+  protected Color startColor = START_COLOR_EDEFAULT;
 
   /**
    * The default value of the '{@link #getEndColor() <em>End Color</em>}' attribute.
@@ -57,7 +58,7 @@ public class LinearStylingImpl extends StylingImpl implements LinearStyling
    * @generated
    * @ordered
    */
-  protected static final String END_COLOR_EDEFAULT = null;
+  protected static final Color END_COLOR_EDEFAULT = null;
 
   /**
    * The cached value of the '{@link #getEndColor() <em>End Color</em>}' attribute.
@@ -67,7 +68,7 @@ public class LinearStylingImpl extends StylingImpl implements LinearStyling
    * @generated
    * @ordered
    */
-  protected String endColor = END_COLOR_EDEFAULT;
+  protected Color endColor = END_COLOR_EDEFAULT;
 
   /**
    * The default value of the '{@link #getStartVal() <em>Start Val</em>}' attribute.
@@ -135,7 +136,7 @@ public class LinearStylingImpl extends StylingImpl implements LinearStyling
    * <!-- end-user-doc -->
    * @generated
    */
-  public String getStartColor()
+  public Color getStartColor()
   {
     return startColor;
   }
@@ -145,9 +146,9 @@ public class LinearStylingImpl extends StylingImpl implements LinearStyling
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setStartColor(String newStartColor)
+  public void setStartColor(Color newStartColor)
   {
-    String oldStartColor = startColor;
+    Color oldStartColor = startColor;
     startColor = newStartColor;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, StackedchartsPackage.LINEAR_STYLING__START_COLOR, oldStartColor, startColor));
@@ -158,7 +159,7 @@ public class LinearStylingImpl extends StylingImpl implements LinearStyling
    * <!-- end-user-doc -->
    * @generated
    */
-  public String getEndColor()
+  public Color getEndColor()
   {
     return endColor;
   }
@@ -168,9 +169,9 @@ public class LinearStylingImpl extends StylingImpl implements LinearStyling
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setEndColor(String newEndColor)
+  public void setEndColor(Color newEndColor)
   {
-    String oldEndColor = endColor;
+    Color oldEndColor = endColor;
     endColor = newEndColor;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, StackedchartsPackage.LINEAR_STYLING__END_COLOR, oldEndColor, endColor));
@@ -255,10 +256,10 @@ public class LinearStylingImpl extends StylingImpl implements LinearStyling
     switch (featureID)
     {
       case StackedchartsPackage.LINEAR_STYLING__START_COLOR:
-        setStartColor((String)newValue);
+        setStartColor((Color)newValue);
         return;
       case StackedchartsPackage.LINEAR_STYLING__END_COLOR:
-        setEndColor((String)newValue);
+        setEndColor((Color)newValue);
         return;
       case StackedchartsPackage.LINEAR_STYLING__START_VAL:
         setStartVal((Double)newValue);

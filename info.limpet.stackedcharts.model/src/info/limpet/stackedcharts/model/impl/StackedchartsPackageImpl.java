@@ -30,8 +30,10 @@ import info.limpet.stackedcharts.model.StackedchartsPackage;
 import info.limpet.stackedcharts.model.Styling;
 import info.limpet.stackedcharts.model.Zone;
 
+import java.awt.Color;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
@@ -222,6 +224,13 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
    * @generated
    */
   private EEnum lineTypeEEnum = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EDataType colorEDataType = null;
 
   /**
    * Creates an instance of the model <b>Package</b>, registered with
@@ -984,6 +993,16 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
    * <!-- end-user-doc -->
    * @generated
    */
+  public EDataType getColor()
+  {
+    return colorEDataType;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public StackedchartsFactory getStackedchartsFactory()
   {
     return (StackedchartsFactory)getEFactoryInstance();
@@ -1099,6 +1118,9 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
     axisDirectionEEnum = createEEnum(AXIS_DIRECTION);
     markerStyleEEnum = createEEnum(MARKER_STYLE);
     lineTypeEEnum = createEEnum(LINE_TYPE);
+
+    // Create data types
+    colorEDataType = createEDataType(COLOR);
   }
 
   /**
@@ -1188,11 +1210,11 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
     initEAttribute(getStyling_LineStyle(), this.getLineType(), "lineStyle", null, 0, 1, Styling.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(plainStylingEClass, PlainStyling.class, "PlainStyling", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEAttribute(getPlainStyling_Color(), ecorePackage.getEString(), "color", null, 0, 1, PlainStyling.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getPlainStyling_Color(), this.getColor(), "color", null, 0, 1, PlainStyling.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(linearStylingEClass, LinearStyling.class, "LinearStyling", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEAttribute(getLinearStyling_StartColor(), ecorePackage.getEString(), "startColor", null, 0, 1, LinearStyling.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getLinearStyling_EndColor(), ecorePackage.getEString(), "endColor", null, 0, 1, LinearStyling.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getLinearStyling_StartColor(), this.getColor(), "startColor", null, 0, 1, LinearStyling.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getLinearStyling_EndColor(), this.getColor(), "endColor", null, 0, 1, LinearStyling.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getLinearStyling_StartVal(), ecorePackage.getEDouble(), "startVal", null, 0, 1, LinearStyling.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getLinearStyling_EndVal(), ecorePackage.getEDouble(), "endVal", null, 0, 1, LinearStyling.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
@@ -1202,7 +1224,7 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
     initEAttribute(getAbstractAxis_AutoScale(), theXMLTypePackage.getBoolean(), "autoScale", null, 0, 1, AbstractAxis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getAbstractAxis_Direction(), this.getAxisDirection(), "direction", null, 0, 1, AbstractAxis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getAbstractAxis_Font(), ecorePackage.getEString(), "font", null, 0, 1, AbstractAxis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getAbstractAxis_Color(), ecorePackage.getEString(), "color", null, 0, 1, AbstractAxis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getAbstractAxis_Color(), this.getColor(), "color", null, 0, 1, AbstractAxis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getAbstractAxis_Axistype(), this.getAxisType(), null, "axistype", null, 0, 1, AbstractAxis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(independentAxisEClass, IndependentAxis.class, "IndependentAxis", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -1255,6 +1277,9 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
     addEEnumLiteral(lineTypeEEnum, LineType.SOLID);
     addEEnumLiteral(lineTypeEEnum, LineType.DOTTED);
     addEEnumLiteral(lineTypeEEnum, LineType.DASHED);
+
+    // Initialize data types
+    initEDataType(colorEDataType, Color.class, "Color", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 
     // Create resource
     createResource(eNS_URI);

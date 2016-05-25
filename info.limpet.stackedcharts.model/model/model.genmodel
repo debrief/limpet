@@ -33,6 +33,7 @@
       <genEnumLiterals ecoreEnumLiteral="model.ecore#//LineType/Dotted"/>
       <genEnumLiterals ecoreEnumLiteral="model.ecore#//LineType/Dashed"/>
     </genEnums>
+    <genDataTypes ecoreDataType="model.ecore#//Color"/>
     <genClasses ecoreClass="model.ecore#//ChartSet">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference model.ecore#//ChartSet/charts"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//ChartSet/orientation"/>

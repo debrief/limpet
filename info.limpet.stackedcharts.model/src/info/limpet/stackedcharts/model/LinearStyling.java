@@ -2,6 +2,8 @@
  */
 package info.limpet.stackedcharts.model;
 
+import java.awt.Color;
+
 
 /**
  * <!-- begin-user-doc -->
@@ -33,12 +35,12 @@ public interface LinearStyling extends Styling
    * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Start Color</em>' attribute.
-   * @see #setStartColor(String)
+   * @see #setStartColor(Color)
    * @see info.limpet.stackedcharts.model.StackedchartsPackage#getLinearStyling_StartColor()
-   * @model
+   * @model dataType="info.limpet.stackedcharts.model.Color"
    * @generated
    */
-  String getStartColor();
+  Color getStartColor();
 
   /**
    * Sets the value of the '{@link info.limpet.stackedcharts.model.LinearStyling#getStartColor <em>Start Color</em>}' attribute.
@@ -48,7 +50,7 @@ public interface LinearStyling extends Styling
    * @see #getStartColor()
    * @generated
    */
-  void setStartColor(String value);
+  void setStartColor(Color value);
 
   /**
    * Returns the value of the '<em><b>End Color</b></em>' attribute.
@@ -59,12 +61,12 @@ public interface LinearStyling extends Styling
    * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>End Color</em>' attribute.
-   * @see #setEndColor(String)
+   * @see #setEndColor(Color)
    * @see info.limpet.stackedcharts.model.StackedchartsPackage#getLinearStyling_EndColor()
-   * @model
+   * @model dataType="info.limpet.stackedcharts.model.Color"
    * @generated
    */
-  String getEndColor();
+  Color getEndColor();
 
   /**
    * Sets the value of the '{@link info.limpet.stackedcharts.model.LinearStyling#getEndColor <em>End Color</em>}' attribute.
@@ -74,7 +76,7 @@ public interface LinearStyling extends Styling
    * @see #getEndColor()
    * @generated
    */
-  void setEndColor(String value);
+  void setEndColor(Color value);
 
   /**
    * Returns the value of the '<em><b>Start Val</b></em>' attribute.

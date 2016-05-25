@@ -8,6 +8,7 @@ import info.limpet.stackedcharts.model.AxisScale;
 import info.limpet.stackedcharts.model.AxisType;
 import info.limpet.stackedcharts.model.StackedchartsPackage;
 
+import java.awt.Color;
 import java.util.Collection;
 
 import org.eclipse.emf.common.notify.Notification;
@@ -153,7 +154,7 @@ public abstract class AbstractAxisImpl extends MinimalEObjectImpl.Container impl
    * @generated
    * @ordered
    */
-  protected static final String COLOR_EDEFAULT = null;
+  protected static final Color COLOR_EDEFAULT = null;
 
   /**
    * The cached value of the '{@link #getColor() <em>Color</em>}' attribute.
@@ -163,7 +164,7 @@ public abstract class AbstractAxisImpl extends MinimalEObjectImpl.Container impl
    * @generated
    * @ordered
    */
-  protected String color = COLOR_EDEFAULT;
+  protected Color color = COLOR_EDEFAULT;
 
   /**
    * The cached value of the '{@link #getAxistype() <em>Axistype</em>}' containment reference.
@@ -316,7 +317,7 @@ public abstract class AbstractAxisImpl extends MinimalEObjectImpl.Container impl
    * <!-- end-user-doc -->
    * @generated
    */
-  public String getColor()
+  public Color getColor()
   {
     return color;
   }
@@ -326,9 +327,9 @@ public abstract class AbstractAxisImpl extends MinimalEObjectImpl.Container impl
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setColor(String newColor)
+  public void setColor(Color newColor)
   {
-    String oldColor = color;
+    Color oldColor = color;
     color = newColor;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, StackedchartsPackage.ABSTRACT_AXIS__COLOR, oldColor, color));
@@ -453,7 +454,7 @@ public abstract class AbstractAxisImpl extends MinimalEObjectImpl.Container impl
         setFont((String)newValue);
         return;
       case StackedchartsPackage.ABSTRACT_AXIS__COLOR:
-        setColor((String)newValue);
+        setColor((Color)newValue);
         return;
       case StackedchartsPackage.ABSTRACT_AXIS__AXISTYPE:
         setAxistype((AxisType)newValue);

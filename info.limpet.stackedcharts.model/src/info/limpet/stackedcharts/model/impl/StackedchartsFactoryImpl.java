@@ -4,6 +4,7 @@ package info.limpet.stackedcharts.model.impl;
 
 import info.limpet.stackedcharts.model.*;
 
+import java.awt.Color;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
@@ -107,6 +108,8 @@ public class StackedchartsFactoryImpl extends EFactoryImpl implements Stackedcha
         return createMarkerStyleFromString(eDataType, initialValue);
       case StackedchartsPackage.LINE_TYPE:
         return createLineTypeFromString(eDataType, initialValue);
+      case StackedchartsPackage.COLOR:
+        return createColorFromString(eDataType, initialValue);
       default:
         throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
     }
@@ -132,6 +135,8 @@ public class StackedchartsFactoryImpl extends EFactoryImpl implements Stackedcha
         return convertMarkerStyleToString(eDataType, instanceValue);
       case StackedchartsPackage.LINE_TYPE:
         return convertLineTypeToString(eDataType, instanceValue);
+      case StackedchartsPackage.COLOR:
+        return convertColorToString(eDataType, instanceValue);
       default:
         throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
     }
@@ -432,6 +437,26 @@ public class StackedchartsFactoryImpl extends EFactoryImpl implements Stackedcha
   public String convertLineTypeToString(EDataType eDataType, Object instanceValue)
   {
     return instanceValue == null ? null : instanceValue.toString();
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public Color createColorFromString(EDataType eDataType, String initialValue)
+  {
+    return (Color)super.createFromString(eDataType, initialValue);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public String convertColorToString(EDataType eDataType, Object instanceValue)
+  {
+    return super.convertToString(eDataType, instanceValue);
   }
 
   /**

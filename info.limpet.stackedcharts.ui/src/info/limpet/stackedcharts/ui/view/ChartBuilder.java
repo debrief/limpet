@@ -1,6 +1,7 @@
 package info.limpet.stackedcharts.ui.view;
 
 import info.limpet.stackedcharts.model.AbstractAnnotation;
+import info.limpet.stackedcharts.model.AxisType;
 import info.limpet.stackedcharts.model.Chart;
 import info.limpet.stackedcharts.model.ChartSet;
 import info.limpet.stackedcharts.model.DataItem;
@@ -209,15 +210,17 @@ public class ChartBuilder
     }
     else
     {
-      switch (sharedAxisModel.getAxisType())
+      AxisType axisType = sharedAxisModel.getAxistype();
+      if(axisType instanceof NumberAxis)
       {
-      case NUMBER:
         helper = new NumberHelper();
-        break;
-      case TIME:
+      }
+      else if(axisType instanceof DateAxis)
+      {
         helper = new TimeHelper();
-        break;
-      default:
+      }
+      else
+      {
         System.err.println("UNEXPECTED AXIS TYPE RECEIVED");
         helper = new NumberHelper();
       }
@@ -299,16 +302,19 @@ public class ChartBuilder
   {
     final XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
     int indexSeries = 0;
-    ChartHelper axeshelper = null;
-    switch (dependentAxis.getAxisType())
+    final ChartHelper axeshelper;
+    
+    AxisType axisType = dependentAxis.getAxistype();
+    if(axisType instanceof NumberAxis)
     {
-    case NUMBER:
       axeshelper = new NumberHelper();
-      break;
-    case TIME:
+    }
+    else if(axisType instanceof DateAxis)
+    {
       axeshelper = new TimeHelper();
-      break;
-    default:
+    }
+    else
+    {
       System.err.println("UNEXPECTED AXIS TYPE RECEIVED");
       axeshelper = new NumberHelper();
     }
@@ -458,14 +464,7 @@ public class ChartBuilder
         if (styling instanceof PlainStyling)
         {
           final PlainStyling ps = (PlainStyling) styling;
-          final String hexColor = ps.getColor();
-
-          Color thisColor = null;
-          if (hexColor != null)
-          {
-            thisColor = hex2Rgb(hexColor);
-          }
-          renderer.setSeriesPaint(seriesIndex, thisColor);
+          renderer.setSeriesPaint(seriesIndex, ps.getColor());
         }
         else
         {

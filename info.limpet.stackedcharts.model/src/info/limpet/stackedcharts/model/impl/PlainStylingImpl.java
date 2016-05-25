@@ -5,6 +5,7 @@ package info.limpet.stackedcharts.model.impl;
 import info.limpet.stackedcharts.model.PlainStyling;
 import info.limpet.stackedcharts.model.StackedchartsPackage;
 
+import java.awt.Color;
 import org.eclipse.emf.common.notify.Notification;
 
 import org.eclipse.emf.ecore.EClass;
@@ -34,7 +35,7 @@ public class PlainStylingImpl extends StylingImpl implements PlainStyling
    * @generated
    * @ordered
    */
-  protected static final String COLOR_EDEFAULT = null;
+  protected static final Color COLOR_EDEFAULT = null;
 
   /**
    * The cached value of the '{@link #getColor() <em>Color</em>}' attribute.
@@ -44,7 +45,7 @@ public class PlainStylingImpl extends StylingImpl implements PlainStyling
    * @generated
    * @ordered
    */
-  protected String color = COLOR_EDEFAULT;
+  protected Color color = COLOR_EDEFAULT;
 
   /**
    * <!-- begin-user-doc -->
@@ -72,7 +73,7 @@ public class PlainStylingImpl extends StylingImpl implements PlainStyling
    * <!-- end-user-doc -->
    * @generated
    */
-  public String getColor()
+  public Color getColor()
   {
     return color;
   }
@@ -82,9 +83,9 @@ public class PlainStylingImpl extends StylingImpl implements PlainStyling
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setColor(String newColor)
+  public void setColor(Color newColor)
   {
-    String oldColor = color;
+    Color oldColor = color;
     color = newColor;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, StackedchartsPackage.PLAIN_STYLING__COLOR, oldColor, color));
@@ -117,7 +118,7 @@ public class PlainStylingImpl extends StylingImpl implements PlainStyling
     switch (featureID)
     {
       case StackedchartsPackage.PLAIN_STYLING__COLOR:
-        setColor((String)newValue);
+        setColor((Color)newValue);
         return;
     }
     super.eSet(featureID, newValue);

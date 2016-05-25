@@ -2,6 +2,8 @@
  */
 package info.limpet.stackedcharts.model;
 
+import java.awt.Color;
+
 
 /**
  * <!-- begin-user-doc -->
@@ -30,12 +32,12 @@ public interface PlainStyling extends Styling
    * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Color</em>' attribute.
-   * @see #setColor(String)
+   * @see #setColor(Color)
    * @see info.limpet.stackedcharts.model.StackedchartsPackage#getPlainStyling_Color()
-   * @model
+   * @model dataType="info.limpet.stackedcharts.model.Color"
    * @generated
    */
-  String getColor();
+  Color getColor();
 
   /**
    * Sets the value of the '{@link info.limpet.stackedcharts.model.PlainStyling#getColor <em>Color</em>}' attribute.
@@ -45,6 +47,6 @@ public interface PlainStyling extends Styling
    * @see #getColor()
    * @generated
    */
-  void setColor(String value);
+  void setColor(Color value);
 
 } // PlainStyling

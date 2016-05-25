@@ -1076,7 +1076,7 @@
           <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EClass']/@style"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EClass']"/>
-        <ownedElements xmi:type="diagram:DNodeListElement" xmi:id="_fjpqsBNeEea13aVd91dE-g" name="color : EString" tooltipText="">
+        <ownedElements xmi:type="diagram:DNodeListElement" xmi:id="_fjpqsBNeEea13aVd91dE-g" name="color : Color" tooltipText="">
           <target xmi:type="ecore:EAttribute" href="model.ecore#//PlainStyling/color"/>
           <semanticElements xmi:type="ecore:EAttribute" href="model.ecore#//PlainStyling/color"/>
           <ownedStyle xmi:type="diagram:BundledImage" xmi:id="_fjpqsRNeEea13aVd91dE-g" labelAlignment="LEFT">
@@ -1095,7 +1095,7 @@
           <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EClass']/@style"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EClass']"/>
-        <ownedElements xmi:type="diagram:DNodeListElement" xmi:id="_fjqRwBNeEea13aVd91dE-g" name="startColor : EString" tooltipText="">
+        <ownedElements xmi:type="diagram:DNodeListElement" xmi:id="_fjqRwBNeEea13aVd91dE-g" name="startColor : Color" tooltipText="">
           <target xmi:type="ecore:EAttribute" href="model.ecore#//LinearStyling/startColor"/>
           <semanticElements xmi:type="ecore:EAttribute" href="model.ecore#//LinearStyling/startColor"/>
           <ownedStyle xmi:type="diagram:BundledImage" xmi:id="_fjqRwRNeEea13aVd91dE-g" labelAlignment="LEFT">
@@ -1103,7 +1103,7 @@
           </ownedStyle>
           <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EClass']/@subNodeMappings[name='EC%20EAttribute']"/>
         </ownedElements>
-        <ownedElements xmi:type="diagram:DNodeListElement" xmi:id="_fjq40BNeEea13aVd91dE-g" name="endColor : EString" tooltipText="">
+        <ownedElements xmi:type="diagram:DNodeListElement" xmi:id="_fjq40BNeEea13aVd91dE-g" name="endColor : Color" tooltipText="">
           <target xmi:type="ecore:EAttribute" href="model.ecore#//LinearStyling/endColor"/>
           <semanticElements xmi:type="ecore:EAttribute" href="model.ecore#//LinearStyling/endColor"/>
           <ownedStyle xmi:type="diagram:BundledImage" xmi:id="_fjq40RNeEea13aVd91dE-g" labelAlignment="LEFT">
@@ -1291,7 +1291,7 @@
           </ownedStyle>
           <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EClass']/@subNodeMappings[name='EC%20EAttribute']"/>
         </ownedElements>
-        <ownedElements xmi:type="diagram:DNodeListElement" xmi:id="_NIclwBOBEeal4orqSlvugA" name="color : EString" tooltipText="">
+        <ownedElements xmi:type="diagram:DNodeListElement" xmi:id="_NIclwBOBEeal4orqSlvugA" name="color : Color" tooltipText="">
           <target xmi:type="ecore:EAttribute" href="model.ecore#//AbstractAxis/color"/>
           <semanticElements xmi:type="ecore:EAttribute" href="model.ecore#//AbstractAxis/color"/>
           <ownedStyle xmi:type="diagram:BundledImage" xmi:id="_N-om4BOBEeal4orqSlvugA" labelAlignment="LEFT">

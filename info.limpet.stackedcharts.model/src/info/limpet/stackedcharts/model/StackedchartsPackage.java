@@ -4,6 +4,7 @@ package info.limpet.stackedcharts.model;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
@@ -1336,6 +1337,17 @@ public interface StackedchartsPackage extends EPackage
 
 
   /**
+   * The meta object id for the '<em>Color</em>' data type.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see java.awt.Color
+   * @see info.limpet.stackedcharts.model.impl.StackedchartsPackageImpl#getColor()
+   * @generated
+   */
+  int COLOR = 25;
+
+
+  /**
    * Returns the meta object for class '{@link info.limpet.stackedcharts.model.ChartSet <em>Chart Set</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -2070,6 +2082,17 @@ public interface StackedchartsPackage extends EPackage
   EEnum getLineType();
 
   /**
+   * Returns the meta object for data type '{@link java.awt.Color <em>Color</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for data type '<em>Color</em>'.
+   * @see java.awt.Color
+   * @model instanceClass="java.awt.Color"
+   * @generated
+   */
+  EDataType getColor();
+
+  /**
    * Returns the factory that creates the instances of the model.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -2694,6 +2717,16 @@ public interface StackedchartsPackage extends EPackage
      * @generated
      */
     EEnum LINE_TYPE = eINSTANCE.getLineType();
+
+    /**
+     * The meta object literal for the '<em>Color</em>' data type.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see java.awt.Color
+     * @see info.limpet.stackedcharts.model.impl.StackedchartsPackageImpl#getColor()
+     * @generated
+     */
+    EDataType COLOR = eINSTANCE.getColor();
 
   }
 
