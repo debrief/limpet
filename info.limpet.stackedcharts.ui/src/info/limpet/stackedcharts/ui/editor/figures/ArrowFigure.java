@@ -25,12 +25,15 @@ public class ArrowFigure extends Figure
     super.paintFigure(graphics);
     Rectangle clientArea = getClientArea();
     Point top = clientArea.getTop();
+    final int oldWid = graphics.getLineWidth();
+    graphics.setLineWidth(3);
     graphics.drawLine(clientArea.getBottom(), top);
+    graphics.setLineWidth(oldWid);
 
     PointList points = new PointList();
     points.addPoint(top);
-    points.addPoint(top.getCopy().translate(4, 10));
-    points.addPoint(top.getCopy().translate(-4, 10));
+    points.addPoint(top.getCopy().translate(8, 10));
+    points.addPoint(top.getCopy().translate(-8, 10));
     graphics.fillPolygon(points);
 
   }
