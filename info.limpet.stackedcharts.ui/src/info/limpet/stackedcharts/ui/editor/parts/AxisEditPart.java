@@ -89,8 +89,6 @@ public class AxisEditPart extends AbstractGraphicalEditPart implements ActionLis
     figure.add(arrowFigure);
     
     axisNameLabel = new AxisNameFigure(this);
-    layoutManager.setConstraint(axisNameLabel, new GridData(GridData.BEGINNING,
-        GridData.FILL, true, true));
     figure.add(axisNameLabel);
     
     return figure;
