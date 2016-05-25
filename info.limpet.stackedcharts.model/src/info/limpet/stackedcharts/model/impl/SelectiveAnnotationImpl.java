@@ -20,9 +20,7 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
-import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.EObjectResolvingEList;
-import org.eclipse.emf.ecore.util.InternalEList;
 
 /**
  * <!-- begin-user-doc -->
@@ -38,61 +36,66 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *
  * @generated
  */
-public class SelectiveAnnotationImpl extends MinimalEObjectImpl.Container implements SelectiveAnnotation {
-	/**
+public class SelectiveAnnotationImpl extends MinimalEObjectImpl.Container implements SelectiveAnnotation
+{
+  /**
    * The cached value of the '{@link #getAnnotation() <em>Annotation</em>}' containment reference.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @see #getAnnotation()
    * @generated
    * @ordered
    */
-	protected AbstractAnnotation annotation;
+  protected AbstractAnnotation annotation;
 
-	/**
+  /**
    * The cached value of the '{@link #getAppearsIn() <em>Appears In</em>}' reference list.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @see #getAppearsIn()
    * @generated
    * @ordered
    */
-	protected EList<Chart> appearsIn;
+  protected EList<Chart> appearsIn;
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	protected SelectiveAnnotationImpl() {
+  protected SelectiveAnnotationImpl()
+  {
     super();
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@Override
-	protected EClass eStaticClass() {
+  @Override
+  protected EClass eStaticClass()
+  {
     return StackedchartsPackage.Literals.SELECTIVE_ANNOTATION;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public AbstractAnnotation getAnnotation() {
+  public AbstractAnnotation getAnnotation()
+  {
     return annotation;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public NotificationChain basicSetAnnotation(AbstractAnnotation newAnnotation, NotificationChain msgs) {
+  public NotificationChain basicSetAnnotation(AbstractAnnotation newAnnotation, NotificationChain msgs)
+  {
     AbstractAnnotation oldAnnotation = annotation;
     annotation = newAnnotation;
     if (eNotificationRequired())
@@ -103,12 +106,13 @@ public class SelectiveAnnotationImpl extends MinimalEObjectImpl.Container implem
     return msgs;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public void setAnnotation(AbstractAnnotation newAnnotation) {
+  public void setAnnotation(AbstractAnnotation newAnnotation)
+  {
     if (newAnnotation != annotation)
     {
       NotificationChain msgs = null;
@@ -123,12 +127,13 @@ public class SelectiveAnnotationImpl extends MinimalEObjectImpl.Container implem
       eNotify(new ENotificationImpl(this, Notification.SET, StackedchartsPackage.SELECTIVE_ANNOTATION__ANNOTATION, newAnnotation, newAnnotation));
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public EList<Chart> getAppearsIn() {
+  public EList<Chart> getAppearsIn()
+  {
     if (appearsIn == null)
     {
       appearsIn = new EObjectResolvingEList<Chart>(Chart.class, this, StackedchartsPackage.SELECTIVE_ANNOTATION__APPEARS_IN);
@@ -136,13 +141,14 @@ public class SelectiveAnnotationImpl extends MinimalEObjectImpl.Container implem
     return appearsIn;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@Override
-	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
+  @Override
+  public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
+  {
     switch (featureID)
     {
       case StackedchartsPackage.SELECTIVE_ANNOTATION__ANNOTATION:
@@ -151,13 +157,14 @@ public class SelectiveAnnotationImpl extends MinimalEObjectImpl.Container implem
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@Override
-	public Object eGet(int featureID, boolean resolve, boolean coreType) {
+  @Override
+  public Object eGet(int featureID, boolean resolve, boolean coreType)
+  {
     switch (featureID)
     {
       case StackedchartsPackage.SELECTIVE_ANNOTATION__ANNOTATION:
@@ -168,14 +175,15 @@ public class SelectiveAnnotationImpl extends MinimalEObjectImpl.Container implem
     return super.eGet(featureID, resolve, coreType);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@SuppressWarnings("unchecked")
-	@Override
-	public void eSet(int featureID, Object newValue) {
+  @SuppressWarnings("unchecked")
+  @Override
+  public void eSet(int featureID, Object newValue)
+  {
     switch (featureID)
     {
       case StackedchartsPackage.SELECTIVE_ANNOTATION__ANNOTATION:
@@ -189,13 +197,14 @@ public class SelectiveAnnotationImpl extends MinimalEObjectImpl.Container implem
     super.eSet(featureID, newValue);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@Override
-	public void eUnset(int featureID) {
+  @Override
+  public void eUnset(int featureID)
+  {
     switch (featureID)
     {
       case StackedchartsPackage.SELECTIVE_ANNOTATION__ANNOTATION:
@@ -208,13 +217,14 @@ public class SelectiveAnnotationImpl extends MinimalEObjectImpl.Container implem
     super.eUnset(featureID);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@Override
-	public boolean eIsSet(int featureID) {
+  @Override
+  public boolean eIsSet(int featureID)
+  {
     switch (featureID)
     {
       case StackedchartsPackage.SELECTIVE_ANNOTATION__ANNOTATION:

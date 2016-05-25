@@ -25,115 +25,123 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  *
  * @generated
  */
-public class ZoneImpl extends AbstractAnnotationImpl implements Zone {
-	/**
+public class ZoneImpl extends AbstractAnnotationImpl implements Zone
+{
+  /**
    * The default value of the '{@link #getStart() <em>Start</em>}' attribute.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @see #getStart()
    * @generated
    * @ordered
    */
-	protected static final double START_EDEFAULT = 0.0;
+  protected static final double START_EDEFAULT = 0.0;
 
-	/**
+  /**
    * The cached value of the '{@link #getStart() <em>Start</em>}' attribute.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @see #getStart()
    * @generated
    * @ordered
    */
-	protected double start = START_EDEFAULT;
+  protected double start = START_EDEFAULT;
 
-	/**
+  /**
    * The default value of the '{@link #getEnd() <em>End</em>}' attribute.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @see #getEnd()
    * @generated
    * @ordered
    */
-	protected static final double END_EDEFAULT = 0.0;
+  protected static final double END_EDEFAULT = 0.0;
 
-	/**
+  /**
    * The cached value of the '{@link #getEnd() <em>End</em>}' attribute.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @see #getEnd()
    * @generated
    * @ordered
    */
-	protected double end = END_EDEFAULT;
+  protected double end = END_EDEFAULT;
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	protected ZoneImpl() {
+  protected ZoneImpl()
+  {
     super();
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@Override
-	protected EClass eStaticClass() {
+  @Override
+  protected EClass eStaticClass()
+  {
     return StackedchartsPackage.Literals.ZONE;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public double getStart() {
+  public double getStart()
+  {
     return start;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public void setStart(double newStart) {
+  public void setStart(double newStart)
+  {
     double oldStart = start;
     start = newStart;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, StackedchartsPackage.ZONE__START, oldStart, start));
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public double getEnd() {
+  public double getEnd()
+  {
     return end;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public void setEnd(double newEnd) {
+  public void setEnd(double newEnd)
+  {
     double oldEnd = end;
     end = newEnd;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, StackedchartsPackage.ZONE__END, oldEnd, end));
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@Override
-	public Object eGet(int featureID, boolean resolve, boolean coreType) {
+  @Override
+  public Object eGet(int featureID, boolean resolve, boolean coreType)
+  {
     switch (featureID)
     {
       case StackedchartsPackage.ZONE__START:
@@ -144,13 +152,14 @@ public class ZoneImpl extends AbstractAnnotationImpl implements Zone {
     return super.eGet(featureID, resolve, coreType);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@Override
-	public void eSet(int featureID, Object newValue) {
+  @Override
+  public void eSet(int featureID, Object newValue)
+  {
     switch (featureID)
     {
       case StackedchartsPackage.ZONE__START:
@@ -163,13 +172,14 @@ public class ZoneImpl extends AbstractAnnotationImpl implements Zone {
     super.eSet(featureID, newValue);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@Override
-	public void eUnset(int featureID) {
+  @Override
+  public void eUnset(int featureID)
+  {
     switch (featureID)
     {
       case StackedchartsPackage.ZONE__START:
@@ -182,13 +192,14 @@ public class ZoneImpl extends AbstractAnnotationImpl implements Zone {
     super.eUnset(featureID);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@Override
-	public boolean eIsSet(int featureID) {
+  @Override
+  public boolean eIsSet(int featureID)
+  {
     switch (featureID)
     {
       case StackedchartsPackage.ZONE__START:
@@ -199,13 +210,14 @@ public class ZoneImpl extends AbstractAnnotationImpl implements Zone {
     return super.eIsSet(featureID);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@Override
-	public String toString() {
+  @Override
+  public String toString()
+  {
     if (eIsProxy()) return super.toString();
 
     StringBuffer result = new StringBuffer(super.toString());
