@@ -297,14 +297,17 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
             // and the axes
             DependentAxis rangeAxis = factory.createDependentAxis();
             rangeAxis.setName("Range");
+            rangeAxis.setAxisType(factory.createNumberAxis());
             relativeChart.getMaxAxes().add(rangeAxis);
             
             DependentAxis brgAxis = factory.createDependentAxis();
             brgAxis.setName("Bearing");
+            brgAxis.setAxisType(factory.createNumberAxis());
             relativeChart.getMinAxes().add(brgAxis);
 
             DependentAxis brgRateAxis = factory.createDependentAxis();
             brgRateAxis.setName("Bearing Rate");
+            brgRateAxis.setAxisType(factory.createNumberAxis());
             relativeChart.getMinAxes().add(brgRateAxis);
 
             // now sort out the data series
@@ -383,11 +386,14 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
       // and the axes
       DependentAxis courseAxis = factory.createDependentAxis();
       chart.getMinAxes().add(courseAxis);
+      courseAxis.setAxisType(factory.createNumberAxis());
       courseAxis.setName("Course");
       DependentAxis speedAxis = factory.createDependentAxis();
       speedAxis.setName("Speed");
+      speedAxis.setAxisType(factory.createNumberAxis());
       chart.getMaxAxes().add(speedAxis);
       DependentAxis depthAxis = factory.createDependentAxis();
+      depthAxis.setAxisType(factory.createNumberAxis());
       depthAxis.setName("Depth");
       chart.getMinAxes().add(depthAxis);
 
