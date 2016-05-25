@@ -1,10 +1,10 @@
 package info.limpet.stackedcharts.ui.editor.parts;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.draw2d.GridLayout;
 import org.eclipse.draw2d.IFigure;
-import org.eclipse.draw2d.MarginBorder;
 import org.eclipse.draw2d.RectangleFigure;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 import org.eclipse.swt.SWT;
@@ -15,16 +15,34 @@ import info.limpet.stackedcharts.model.ChartSet;
 public class ChartSetEditPart extends AbstractGraphicalEditPart
 {
 
+  /**
+   * Wraps the charts, so that they are displayed in a separate container and not together with the
+   * shared axis.
+   */
+  public static class ChartsWrapper
+  {
+    private final List charts;
+
+    public ChartsWrapper(List charts)
+    {
+      this.charts = charts;
+    }
+
+    public List getCharts()
+    {
+      return charts;
+    }
+  }
+
   @Override
   protected IFigure createFigure()
   {
     RectangleFigure rectangle = new RectangleFigure();
-    rectangle.setBorder(new MarginBorder(10));
     rectangle.setOutline(false);
-    GridLayout layout = new GridLayout();
-    layout.horizontalSpacing = 10;
-    layout.verticalSpacing = 10;
-    rectangle.setLayoutManager(layout);
+    GridLayout gridLayout = new GridLayout();
+    gridLayout.marginHeight = 10;
+    gridLayout.marginWidth = 10;
+    rectangle.setLayoutManager(gridLayout);
     rectangle.setBackgroundColor(Display.getDefault().getSystemColor(
         SWT.COLOR_WIDGET_BACKGROUND));
     return rectangle;
@@ -35,10 +53,17 @@ public class ChartSetEditPart extends AbstractGraphicalEditPart
   {
   }
 
-  @SuppressWarnings("rawtypes")
+  @SuppressWarnings(
+  {"rawtypes", "unchecked"})
   @Override
   protected List getModelChildren()
   {
-    return ((ChartSet) getModel()).getCharts();
+    // 2 model children - the charts, displayed in a separate container and the shared (independent
+    // axis) shown on the bottom
+    List modelChildren = new ArrayList<>();
+    ChartSet chartSet = (ChartSet) getModel();
+    modelChildren.add(new ChartsWrapper(chartSet.getCharts()));
+    modelChildren.add(chartSet.getSharedAxis());
+    return modelChildren;
   }
 }

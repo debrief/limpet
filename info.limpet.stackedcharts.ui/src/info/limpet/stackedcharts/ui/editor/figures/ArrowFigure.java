@@ -11,9 +11,23 @@ import org.eclipse.swt.widgets.Display;
 
 public class ArrowFigure extends Figure
 {
-  public ArrowFigure()
+
+  private static final int ARROW_HEAD_LENGTH = 10;
+  private static final int ARROW_HEAD_HALF_WIDTH = 8;
+
+  private final boolean horizontal;
+
+  public ArrowFigure(boolean horizontal)
   {
-    setPreferredSize(20, -1);
+    this.horizontal = horizontal;
+    if (horizontal)
+    {
+      setPreferredSize(-1, 20);
+    }
+    else
+    {
+      setPreferredSize(20, -1);
+    }
     Color color = Display.getDefault().getSystemColor(SWT.COLOR_DARK_GRAY);
     setBackgroundColor(color);
     setForegroundColor(color);
@@ -25,16 +39,32 @@ public class ArrowFigure extends Figure
     super.paintFigure(graphics);
     Rectangle clientArea = getClientArea();
     Point top = clientArea.getTop();
+    Point right = clientArea.getRight();
     final int oldWid = graphics.getLineWidth();
     graphics.setLineWidth(3);
-    graphics.drawLine(clientArea.getBottom(), top);
-    graphics.setLineWidth(oldWid);
 
     PointList points = new PointList();
-    points.addPoint(top);
-    points.addPoint(top.getCopy().translate(8, 10));
-    points.addPoint(top.getCopy().translate(-8, 10));
+    if (horizontal)
+    {
+      graphics.drawLine(clientArea.getLeft(), right);
+      points.addPoint(right);
+      points.addPoint(right.getCopy().translate(-ARROW_HEAD_LENGTH,
+          -ARROW_HEAD_HALF_WIDTH));
+      points.addPoint(right.getCopy().translate(-ARROW_HEAD_LENGTH,
+          ARROW_HEAD_HALF_WIDTH));
+    }
+    else
+    {
+      graphics.drawLine(clientArea.getBottom(), top);
+      points.addPoint(top);
+      points.addPoint(top.getCopy().translate(ARROW_HEAD_HALF_WIDTH,
+          ARROW_HEAD_LENGTH));
+      points.addPoint(top.getCopy().translate(-ARROW_HEAD_HALF_WIDTH,
+          ARROW_HEAD_LENGTH));
+    }
     graphics.fillPolygon(points);
+
+    graphics.setLineWidth(oldWid);
 
   }
 }

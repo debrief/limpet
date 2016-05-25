@@ -1,13 +1,5 @@
 package info.limpet.stackedcharts.ui.editor.parts;
 
-import info.limpet.stackedcharts.model.Chart;
-import info.limpet.stackedcharts.model.DependentAxis;
-import info.limpet.stackedcharts.model.StackedchartsPackage;
-import info.limpet.stackedcharts.ui.editor.commands.DeleteAxisFromChartCommand;
-import info.limpet.stackedcharts.ui.editor.figures.ArrowFigure;
-import info.limpet.stackedcharts.ui.editor.figures.AxisNameFigure;
-import info.limpet.stackedcharts.ui.editor.policies.AxisContainerEditPolicy;
-
 import java.util.List;
 
 import org.eclipse.draw2d.ActionListener;
@@ -33,6 +25,14 @@ import org.eclipse.gef.requests.GroupRequest;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
+
+import info.limpet.stackedcharts.model.Chart;
+import info.limpet.stackedcharts.model.DependentAxis;
+import info.limpet.stackedcharts.model.StackedchartsPackage;
+import info.limpet.stackedcharts.ui.editor.commands.DeleteAxisFromChartCommand;
+import info.limpet.stackedcharts.ui.editor.figures.ArrowFigure;
+import info.limpet.stackedcharts.ui.editor.figures.AxisNameFigure;
+import info.limpet.stackedcharts.ui.editor.policies.AxisContainerEditPolicy;
 
 public class AxisEditPart extends AbstractGraphicalEditPart implements ActionListener
 {
@@ -91,7 +91,7 @@ public class AxisEditPart extends AbstractGraphicalEditPart implements ActionLis
     datasetsPane.setLayoutManager(datasetsPaneLayout);
     figure.add(datasetsPane);
 
-    ArrowFigure arrowFigure = new ArrowFigure();
+    ArrowFigure arrowFigure = new ArrowFigure(false);
     layoutManager.setConstraint(arrowFigure, new GridData(GridData.FILL,
         GridData.FILL, false, true));
     figure.add(arrowFigure);

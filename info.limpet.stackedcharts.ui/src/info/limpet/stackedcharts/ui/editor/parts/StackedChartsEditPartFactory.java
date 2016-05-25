@@ -1,12 +1,13 @@
 package info.limpet.stackedcharts.ui.editor.parts;
 
+import org.eclipse.gef.EditPart;
+import org.eclipse.gef.EditPartFactory;
+
 import info.limpet.stackedcharts.model.Chart;
 import info.limpet.stackedcharts.model.ChartSet;
 import info.limpet.stackedcharts.model.Dataset;
 import info.limpet.stackedcharts.model.DependentAxis;
-
-import org.eclipse.gef.EditPart;
-import org.eclipse.gef.EditPartFactory;
+import info.limpet.stackedcharts.model.IndependentAxis;
 
 public class StackedChartsEditPartFactory implements EditPartFactory
 {
@@ -36,6 +37,15 @@ public class StackedChartsEditPartFactory implements EditPartFactory
     {
       editPart = new DatasetEditPart();
     }
+    else if (model instanceof ChartSetEditPart.ChartsWrapper)
+    {
+      editPart = new ChartsPanelEditPart();
+    }
+    else if (model instanceof IndependentAxis)
+    { 
+      editPart = new SharedAxisEditPart();
+    }
+
 
     if (editPart != null)
     {
