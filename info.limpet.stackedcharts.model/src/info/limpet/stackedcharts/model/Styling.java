@@ -56,6 +56,7 @@ public interface Styling extends EObject
 
   /**
    * Returns the value of the '<em><b>Marker Size</b></em>' attribute.
+   * The default value is <code>"3"</code>.
    * <!-- begin-user-doc -->
    * <p>
    * If the meaning of the '<em>Marker Size</em>' attribute isn't clear,
@@ -65,7 +66,7 @@ public interface Styling extends EObject
    * @return the value of the '<em>Marker Size</em>' attribute.
    * @see #setMarkerSize(double)
    * @see info.limpet.stackedcharts.model.StackedchartsPackage#getStyling_MarkerSize()
-   * @model dataType="org.eclipse.emf.ecore.xml.type.Double"
+   * @model default="3" dataType="org.eclipse.emf.ecore.xml.type.Double"
    * @generated
    */
   double getMarkerSize();
@@ -82,7 +83,7 @@ public interface Styling extends EObject
 
   /**
    * Returns the value of the '<em><b>Line Thickness</b></em>' attribute.
-   * The default value is <code>"0.0"</code>.
+   * The default value is <code>"1"</code>.
    * <!-- begin-user-doc -->
    * <p>
    * If the meaning of the '<em>Line Thickness</em>' attribute isn't clear,
@@ -92,7 +93,7 @@ public interface Styling extends EObject
    * @return the value of the '<em>Line Thickness</em>' attribute.
    * @see #setLineThickness(double)
    * @see info.limpet.stackedcharts.model.StackedchartsPackage#getStyling_LineThickness()
-   * @model default="0.0" dataType="org.eclipse.emf.ecore.xml.type.Double"
+   * @model default="1" dataType="org.eclipse.emf.ecore.xml.type.Double"
    * @generated
    */
   double getLineThickness();
@@ -109,6 +110,7 @@ public interface Styling extends EObject
 
   /**
    * Returns the value of the '<em><b>Line Style</b></em>' attribute.
+   * The default value is <code>"Solid"</code>.
    * The literals are from the enumeration {@link info.limpet.stackedcharts.model.LineType}.
    * <!-- begin-user-doc -->
    * <p>
@@ -120,7 +122,7 @@ public interface Styling extends EObject
    * @see info.limpet.stackedcharts.model.LineType
    * @see #setLineStyle(LineType)
    * @see info.limpet.stackedcharts.model.StackedchartsPackage#getStyling_LineStyle()
-   * @model
+   * @model default="Solid"
    * @generated
    */
   LineType getLineStyle();

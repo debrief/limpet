@@ -59,7 +59,7 @@ public class ChartSetImpl extends MinimalEObjectImpl.Container implements ChartS
    * @generated
    * @ordered
    */
-  protected static final Orientation ORIENTATION_EDEFAULT = Orientation.HORIZONTAL;
+  protected static final Orientation ORIENTATION_EDEFAULT = Orientation.VERTICAL;
 
   /**
    * The cached value of the '{@link #getOrientation() <em>Orientation</em>}' attribute.

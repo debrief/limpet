@@ -829,7 +829,7 @@
           <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EClass']/@style"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EClass']"/>
-        <ownedElements xmi:type="diagram:DNodeListElement" xmi:id="_7Sz7kBNtEeal4orqSlvugA" name="orientation : Orientation = Horizontal" tooltipText="">
+        <ownedElements xmi:type="diagram:DNodeListElement" xmi:id="_7Sz7kBNtEeal4orqSlvugA" name="orientation : Orientation = Vertical" tooltipText="">
           <target xmi:type="ecore:EAttribute" href="model.ecore#//ChartSet/orientation"/>
           <semanticElements xmi:type="ecore:EAttribute" href="model.ecore#//ChartSet/orientation"/>
           <ownedStyle xmi:type="diagram:BundledImage" xmi:id="_-Ry1MBNtEeal4orqSlvugA" labelAlignment="LEFT">
@@ -1041,7 +1041,7 @@
           </ownedStyle>
           <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EClass']/@subNodeMappings[name='EC%20EAttribute']"/>
         </ownedElements>
-        <ownedElements xmi:type="diagram:DNodeListElement" xmi:id="_AZX9ABN_Eeal4orqSlvugA" name="markerSize : Double = 0.0" tooltipText="">
+        <ownedElements xmi:type="diagram:DNodeListElement" xmi:id="_AZX9ABN_Eeal4orqSlvugA" name="markerSize : Double = 3" tooltipText="">
           <target xmi:type="ecore:EAttribute" href="model.ecore#//Styling/markerSize"/>
           <semanticElements xmi:type="ecore:EAttribute" href="model.ecore#//Styling/markerSize"/>
           <ownedStyle xmi:type="diagram:BundledImage" xmi:id="_CbEvABN_Eeal4orqSlvugA" labelAlignment="LEFT">
@@ -1049,7 +1049,7 @@
           </ownedStyle>
           <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EClass']/@subNodeMappings[name='EC%20EAttribute']"/>
         </ownedElements>
-        <ownedElements xmi:type="diagram:DNodeListElement" xmi:id="_Q4O8IBN_Eeal4orqSlvugA" name="lineThickness : Double = 0.0" tooltipText="">
+        <ownedElements xmi:type="diagram:DNodeListElement" xmi:id="_Q4O8IBN_Eeal4orqSlvugA" name="lineThickness : Double = 1" tooltipText="">
           <target xmi:type="ecore:EAttribute" href="model.ecore#//Styling/lineThickness"/>
           <semanticElements xmi:type="ecore:EAttribute" href="model.ecore#//Styling/lineThickness"/>
           <ownedStyle xmi:type="diagram:BundledImage" xmi:id="_S31cYBN_Eeal4orqSlvugA" labelAlignment="LEFT">
@@ -1057,7 +1057,7 @@
           </ownedStyle>
           <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EClass']/@subNodeMappings[name='EC%20EAttribute']"/>
         </ownedElements>
-        <ownedElements xmi:type="diagram:DNodeListElement" xmi:id="_0kHw0BN_Eeal4orqSlvugA" name="lineStyle : LineType = None" tooltipText="">
+        <ownedElements xmi:type="diagram:DNodeListElement" xmi:id="_0kHw0BN_Eeal4orqSlvugA" name="lineStyle : LineType = Solid" tooltipText="">
           <target xmi:type="ecore:EAttribute" href="model.ecore#//Styling/lineStyle"/>
           <semanticElements xmi:type="ecore:EAttribute" href="model.ecore#//Styling/lineStyle"/>
           <ownedStyle xmi:type="diagram:BundledImage" xmi:id="_4gyasBN_Eeal4orqSlvugA" labelAlignment="LEFT">

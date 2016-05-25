@@ -51,7 +51,7 @@ public interface ChartSet extends EObject
 
   /**
    * Returns the value of the '<em><b>Orientation</b></em>' attribute.
-   * The default value is <code>"Horizontal"</code>.
+   * The default value is <code>"Vertical"</code>.
    * The literals are from the enumeration {@link info.limpet.stackedcharts.model.Orientation}.
    * <!-- begin-user-doc -->
    * <p>
@@ -63,7 +63,7 @@ public interface ChartSet extends EObject
    * @see info.limpet.stackedcharts.model.Orientation
    * @see #setOrientation(Orientation)
    * @see info.limpet.stackedcharts.model.StackedchartsPackage#getChartSet_Orientation()
-   * @model default="Horizontal"
+   * @model default="Vertical"
    * @generated
    */
   Orientation getOrientation();

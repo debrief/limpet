@@ -60,7 +60,7 @@ public class StylingImpl extends MinimalEObjectImpl.Container implements Styling
    * @generated
    * @ordered
    */
-  protected static final double MARKER_SIZE_EDEFAULT = 0.0;
+  protected static final double MARKER_SIZE_EDEFAULT = 3.0;
 
   /**
    * The cached value of the '{@link #getMarkerSize() <em>Marker Size</em>}' attribute.
@@ -80,7 +80,7 @@ public class StylingImpl extends MinimalEObjectImpl.Container implements Styling
    * @generated
    * @ordered
    */
-  protected static final double LINE_THICKNESS_EDEFAULT = 0.0;
+  protected static final double LINE_THICKNESS_EDEFAULT = 1.0;
 
   /**
    * The cached value of the '{@link #getLineThickness() <em>Line Thickness</em>}' attribute.
@@ -100,7 +100,7 @@ public class StylingImpl extends MinimalEObjectImpl.Container implements Styling
    * @generated
    * @ordered
    */
-  protected static final LineType LINE_STYLE_EDEFAULT = LineType.NONE;
+  protected static final LineType LINE_STYLE_EDEFAULT = LineType.SOLID;
 
   /**
    * The cached value of the '{@link #getLineStyle() <em>Line Style</em>}' attribute.
