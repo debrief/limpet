@@ -1065,13 +1065,22 @@ public interface StackedchartsPackage extends EPackage
   int DATUM__VAL = 0;
 
   /**
+   * The feature id for the '<em><b>Color</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int DATUM__COLOR = 1;
+
+  /**
    * The number of structural features of the '<em>Datum</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int DATUM_FEATURE_COUNT = 1;
+  int DATUM_FEATURE_COUNT = 2;
 
   /**
    * The number of operations of the '<em>Datum</em>' class.
@@ -1927,6 +1936,17 @@ public interface StackedchartsPackage extends EPackage
   EAttribute getDatum_Val();
 
   /**
+   * Returns the meta object for the attribute '{@link info.limpet.stackedcharts.model.Datum#getColor <em>Color</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Color</em>'.
+   * @see info.limpet.stackedcharts.model.Datum#getColor()
+   * @see #getDatum()
+   * @generated
+   */
+  EAttribute getDatum_Color();
+
+  /**
    * Returns the meta object for class '{@link info.limpet.stackedcharts.model.SelectiveAnnotation <em>Selective Annotation</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -2577,6 +2597,14 @@ public interface StackedchartsPackage extends EPackage
      * @generated
      */
     EAttribute DATUM__VAL = eINSTANCE.getDatum_Val();
+
+    /**
+     * The meta object literal for the '<em><b>Color</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute DATUM__COLOR = eINSTANCE.getDatum_Color();
 
     /**
      * The meta object literal for the '{@link info.limpet.stackedcharts.model.impl.SelectiveAnnotationImpl <em>Selective Annotation</em>}' class.

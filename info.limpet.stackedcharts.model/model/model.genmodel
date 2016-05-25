@@ -102,6 +102,7 @@
     </genClasses>
     <genClasses ecoreClass="model.ecore#//Datum">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//Datum/val"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//Datum/color"/>
     </genClasses>
     <genClasses ecoreClass="model.ecore#//SelectiveAnnotation">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference model.ecore#//SelectiveAnnotation/annotation"/>
