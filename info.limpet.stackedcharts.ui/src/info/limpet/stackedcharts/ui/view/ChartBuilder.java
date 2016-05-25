@@ -230,49 +230,8 @@ public class ChartBuilder
     EList<Chart> charts = chartsSet.getCharts();
     for (final Chart chart : charts)
     {
-      final XYPlot subplot = new XYPlot(null, null, null, null);
-
-      // keep track of how many axes we create
-      int indexAxis = 0;
-
-      // min axis create on bottom or left
-      final EList<DependentAxis> minAxes = chart.getMinAxes();
-      for (final DependentAxis axis : minAxes)
-      {
-        createDependentAxis(subplot, indexAxis, axis);
-        subplot.setRangeAxisLocation(indexAxis, AxisLocation.BOTTOM_OR_LEFT);
-        indexAxis++;
-      }
-
-      // max axis create on top or right
-      final EList<DependentAxis> maxAxes = chart.getMaxAxes();
-      for (final DependentAxis axis : maxAxes)
-      {
-        createDependentAxis(subplot, indexAxis, axis);
-        subplot.setRangeAxisLocation(indexAxis, AxisLocation.TOP_OR_RIGHT);
-        indexAxis++;
-      }
-
-      if (sharedAxisModel != null)
-      {
-        // build selective annotations to plot
-        EList<SelectiveAnnotation> selectiveAnnotations =
-            sharedAxisModel.getAnnotations();
-
-        List<AbstractAnnotation> annotations =
-            new ArrayList<>(selectiveAnnotations.size());
-        for (SelectiveAnnotation selectiveAnnotation : selectiveAnnotations)
-        {
-          EList<Chart> appearsIn = selectiveAnnotation.getAppearsIn();
-          // check selective option to see is this applicable to current chart
-          if (appearsIn == null || appearsIn.isEmpty()
-              || appearsIn.contains(chart))
-          {
-            annotations.add(selectiveAnnotation.getAnnotation());
-          }
-        }
-        addAnnotationToPlot(subplot, annotations, false);
-      }
+      // create this chart
+      final XYPlot subplot = createChart(sharedAxisModel, chart);
 
       // add chart to stack
       plot.add(subplot);
@@ -283,6 +242,55 @@ public class ChartBuilder
         ? PlotOrientation.VERTICAL : PlotOrientation.HORIZONTAL);
 
     return new JFreeChart(plot);
+  }
+
+  protected static XYPlot createChart(IndependentAxis sharedAxisModel,
+      final Chart chart)
+  {
+    final XYPlot subplot = new XYPlot(null, null, null, null);
+
+    // keep track of how many axes we create
+    int indexAxis = 0;
+
+    // min axis create on bottom or left
+    final EList<DependentAxis> minAxes = chart.getMinAxes();
+    for (final DependentAxis axis : minAxes)
+    {
+      createDependentAxis(subplot, indexAxis, axis);
+      subplot.setRangeAxisLocation(indexAxis, AxisLocation.BOTTOM_OR_LEFT);
+      indexAxis++;
+    }
+
+    // max axis create on top or right
+    final EList<DependentAxis> maxAxes = chart.getMaxAxes();
+    for (final DependentAxis axis : maxAxes)
+    {
+      createDependentAxis(subplot, indexAxis, axis);
+      subplot.setRangeAxisLocation(indexAxis, AxisLocation.TOP_OR_RIGHT);
+      indexAxis++;
+    }
+
+    if (sharedAxisModel != null)
+    {
+      // build selective annotations to plot
+      EList<SelectiveAnnotation> selectiveAnnotations =
+          sharedAxisModel.getAnnotations();
+
+      List<AbstractAnnotation> annotations =
+          new ArrayList<>(selectiveAnnotations.size());
+      for (SelectiveAnnotation selectiveAnnotation : selectiveAnnotations)
+      {
+        EList<Chart> appearsIn = selectiveAnnotation.getAppearsIn();
+        // check selective option to see is this applicable to current chart
+        if (appearsIn == null || appearsIn.isEmpty()
+            || appearsIn.contains(chart))
+        {
+          annotations.add(selectiveAnnotation.getAnnotation());
+        }
+      }
+      addAnnotationToPlot(subplot, annotations, false);
+    }
+    return subplot;
   }
 
   /**
