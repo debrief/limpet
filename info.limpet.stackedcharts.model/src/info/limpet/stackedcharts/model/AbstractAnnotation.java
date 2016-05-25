@@ -2,6 +2,7 @@
  */
 package info.limpet.stackedcharts.model;
 
+import java.awt.Color;
 import org.eclipse.emf.ecore.EObject;
 
 /**
@@ -62,12 +63,12 @@ public interface AbstractAnnotation extends EObject
    * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Color</em>' attribute.
-   * @see #setColor(String)
+   * @see #setColor(Color)
    * @see info.limpet.stackedcharts.model.StackedchartsPackage#getAbstractAnnotation_Color()
-   * @model
+   * @model dataType="info.limpet.stackedcharts.model.Color"
    * @generated
    */
-  String getColor();
+  Color getColor();
 
   /**
    * Sets the value of the '{@link info.limpet.stackedcharts.model.AbstractAnnotation#getColor <em>Color</em>}' attribute.
@@ -77,6 +78,6 @@ public interface AbstractAnnotation extends EObject
    * @see #getColor()
    * @generated
    */
-  void setColor(String value);
+  void setColor(Color value);
 
 } // AbstractAnnotation
