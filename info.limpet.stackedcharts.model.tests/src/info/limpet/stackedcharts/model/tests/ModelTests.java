@@ -1,5 +1,6 @@
 package info.limpet.stackedcharts.model.tests;
 
+import java.awt.Color;
 import java.io.IOException;
 import java.util.HashMap;
 
@@ -261,7 +262,7 @@ public class ModelTests
     Zone pZone = factory.createZone();
     pZone.setStart(380);
     pZone.setEnd(450);
-    pZone.setColor("#33FF33");
+    pZone.setColor(Color.yellow);
     pZone.setName("Pixel Zone");
     pressureAxis.getAnnotations().add(pZone);
     

@@ -26,7 +26,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
 
 public class StackedchartsEditControl extends Composite
@@ -66,7 +65,6 @@ public class StackedchartsEditControl extends Composite
         .addAdapterFactory(new ReflectiveItemProviderAdapterFactory());
     emfEditingDomain =
         new AdapterFactoryEditingDomain(adapterFactory, commandStack);
-
   }
 
   /**
@@ -82,7 +80,6 @@ public class StackedchartsEditControl extends Composite
         public void setSelectionToViewer(List<?> selection)
         {
           StackedchartsEditControl.this.setSelectionToViewer(selection);
-
         }
       };
       propertySheetPage

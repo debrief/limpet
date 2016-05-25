@@ -31,42 +31,46 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *
  * @generated
  */
-public class ScatterSetImpl extends AbstractAnnotationImpl implements ScatterSet {
-	/**
+public class ScatterSetImpl extends AbstractAnnotationImpl implements ScatterSet
+{
+  /**
    * The cached value of the '{@link #getDatums() <em>Datums</em>}' containment reference list.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @see #getDatums()
    * @generated
    * @ordered
    */
-	protected EList<Datum> datums;
+  protected EList<Datum> datums;
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	protected ScatterSetImpl() {
+  protected ScatterSetImpl()
+  {
     super();
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@Override
-	protected EClass eStaticClass() {
+  @Override
+  protected EClass eStaticClass()
+  {
     return StackedchartsPackage.Literals.SCATTER_SET;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public EList<Datum> getDatums() {
+  public EList<Datum> getDatums()
+  {
     if (datums == null)
     {
       datums = new EObjectContainmentEList<Datum>(Datum.class, this, StackedchartsPackage.SCATTER_SET__DATUMS);
@@ -74,13 +78,14 @@ public class ScatterSetImpl extends AbstractAnnotationImpl implements ScatterSet
     return datums;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@Override
-	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
+  @Override
+  public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
+  {
     switch (featureID)
     {
       case StackedchartsPackage.SCATTER_SET__DATUMS:
@@ -89,13 +94,14 @@ public class ScatterSetImpl extends AbstractAnnotationImpl implements ScatterSet
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@Override
-	public Object eGet(int featureID, boolean resolve, boolean coreType) {
+  @Override
+  public Object eGet(int featureID, boolean resolve, boolean coreType)
+  {
     switch (featureID)
     {
       case StackedchartsPackage.SCATTER_SET__DATUMS:
@@ -104,14 +110,15 @@ public class ScatterSetImpl extends AbstractAnnotationImpl implements ScatterSet
     return super.eGet(featureID, resolve, coreType);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@SuppressWarnings("unchecked")
-	@Override
-	public void eSet(int featureID, Object newValue) {
+  @SuppressWarnings("unchecked")
+  @Override
+  public void eSet(int featureID, Object newValue)
+  {
     switch (featureID)
     {
       case StackedchartsPackage.SCATTER_SET__DATUMS:
@@ -122,13 +129,14 @@ public class ScatterSetImpl extends AbstractAnnotationImpl implements ScatterSet
     super.eSet(featureID, newValue);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@Override
-	public void eUnset(int featureID) {
+  @Override
+  public void eUnset(int featureID)
+  {
     switch (featureID)
     {
       case StackedchartsPackage.SCATTER_SET__DATUMS:
@@ -138,13 +146,14 @@ public class ScatterSetImpl extends AbstractAnnotationImpl implements ScatterSet
     super.eUnset(featureID);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@Override
-	public boolean eIsSet(int featureID) {
+  @Override
+  public boolean eIsSet(int featureID)
+  {
     switch (featureID)
     {
       case StackedchartsPackage.SCATTER_SET__DATUMS:

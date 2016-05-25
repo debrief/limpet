@@ -14,7 +14,6 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.gef.commands.CommandStack;
-import org.eclipse.gef.editparts.AbstractEditPart;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -64,75 +63,24 @@ public class StackedChartsView extends ViewPart implements
   private Composite chartHolder;
   private Composite editorHolder;
   private ChartSet charts;
-  private AtomicBoolean initEditor = new AtomicBoolean(true);
+  private final AtomicBoolean initEditor = new AtomicBoolean(true);
 
   private StackedchartsEditControl chartEditor;
 
-  private List<ISelectionChangedListener> selectionListeners =
+  private final List<ISelectionChangedListener> selectionListeners =
       new ArrayList<ISelectionChangedListener>();
 
   @Override
-  public void createPartControl(Composite parent)
+  public void addSelectionChangedListener(
+      final ISelectionChangedListener listener)
   {
-
-    getViewSite().setSelectionProvider(this);//setup proxy selection provider
-    stackedPane = new StackedPane(parent);
-
-    stackedPane.add(CHART_VIEW, createChartView());
-    stackedPane.add(EDIT_VIEW, createEditView());
-
-    selectView(CHART_VIEW);
-    contributeToActionBars();
-
-    // Drop Support for *.stackedcharts
-    connectFileDropSupport(stackedPane);
-
-    // see https://github.com/debrief/limpet/issues/265
-    if (!System.getProperty("os.name").toLowerCase().contains("mac"))
-    {
-      transitionManager = new TransitionManager(new Transitionable()
-      {
-        public void addSelectionListener(SelectionListener listener)
-        {
-          stackedPane.addSelectionListener(listener);
-        }
-
-        public Control getControl(int index)
-        {
-          return stackedPane.getControl(index);
-        }
-
-        public Composite getComposite()
-        {
-          return stackedPane;
-        }
-
-        public int getSelection()
-        {
-          return stackedPane.getActiveControlKey();
-        }
-
-        public void setSelection(int index)
-        {
-          stackedPane.showPane(index, false);
-        }
-
-        public double getDirection(int toIndex, int fromIndex)
-        {
-          return toIndex == CHART_VIEW ? Transition.DIR_RIGHT
-              : Transition.DIR_LEFT;
-        }
-      });
-      // new SlideTransition(_tm)
-      transitionManager.setTransition(new CubicRotationTransition(
-          transitionManager));
-    }
+    selectionListeners.add(listener);
 
   }
 
-  protected void connectFileDropSupport(Control compoent)
+  protected void connectFileDropSupport(final Control compoent)
   {
-    DropTarget target =
+    final DropTarget target =
         new DropTarget(compoent, DND.DROP_MOVE | DND.DROP_COPY
             | DND.DROP_DEFAULT);
     final FileTransfer fileTransfer = FileTransfer.getInstance();
@@ -140,86 +88,8 @@ public class StackedChartsView extends ViewPart implements
     {fileTransfer});
     target.addDropListener(new DropTargetListener()
     {
-
       @Override
-      public void dropAccept(DropTargetEvent event)
-      {
-        // TODO Auto-generated method stub
-
-      }
-
-      @Override
-      public void drop(DropTargetEvent event)
-      {
-
-        if (fileTransfer.isSupportedType(event.currentDataType))
-        {
-          String[] files = (String[]) event.data;
-
-          // *.stackedcharts
-          if (files.length == 1 && files[0].endsWith("stackedcharts"))
-          {
-            File file = new File(files[0]);
-            Resource resource =
-                new ResourceSetImpl().createResource(URI.createURI(file.toURI()
-                    .toString()));
-            try
-            {
-              resource.load(new HashMap<>());
-              ChartSet chartsSet = (ChartSet) resource.getContents().get(0);
-              setModel(chartsSet);
-            }
-            catch (IOException e)
-            {
-              e.printStackTrace();
-              MessageDialog.openError(Display.getCurrent().getActiveShell(),
-                  "Error", e.getMessage());
-
-            }
-
-          }
-        }
-
-      }
-
-      @Override
-      public void dragOver(DropTargetEvent event)
-      {
-
-      }
-
-      @Override
-      public void dragOperationChanged(DropTargetEvent event)
-      {
-        if (event.detail == DND.DROP_DEFAULT)
-        {
-          if ((event.operations & DND.DROP_COPY) != 0)
-          {
-            event.detail = DND.DROP_COPY;
-          }
-          else
-          {
-            event.detail = DND.DROP_NONE;
-          }
-        }
-        if (fileTransfer.isSupportedType(event.currentDataType))
-        {
-          if (event.detail != DND.DROP_COPY)
-          {
-            event.detail = DND.DROP_NONE;
-          }
-        }
-
-      }
-
-      @Override
-      public void dragLeave(DropTargetEvent event)
-      {
-
-      }
-
-      @Override
-      public void dragEnter(DropTargetEvent event)
+      public void dragEnter(final DropTargetEvent event)
       {
         if (event.detail == DND.DROP_DEFAULT)
         {
@@ -245,87 +115,93 @@ public class StackedChartsView extends ViewPart implements
             break;
           }
         }
+      }
 
+      @Override
+      public void dragLeave(final DropTargetEvent event)
+      {
+      }
+
+      @Override
+      public void dragOperationChanged(final DropTargetEvent event)
+      {
+        if (event.detail == DND.DROP_DEFAULT)
+        {
+          if ((event.operations & DND.DROP_COPY) != 0)
+          {
+            event.detail = DND.DROP_COPY;
+          }
+          else
+          {
+            event.detail = DND.DROP_NONE;
+          }
+        }
+        if (fileTransfer.isSupportedType(event.currentDataType))
+        {
+          if (event.detail != DND.DROP_COPY)
+          {
+            event.detail = DND.DROP_NONE;
+          }
+        }
+      }
+
+      @Override
+      public void dragOver(final DropTargetEvent event)
+      {
+      }
+
+      @Override
+      public void drop(final DropTargetEvent event)
+      {
+        if (fileTransfer.isSupportedType(event.currentDataType))
+        {
+          final String[] files = (String[]) event.data;
+
+          // *.stackedcharts
+          if (files.length == 1 && files[0].endsWith("stackedcharts"))
+          {
+            final File file = new File(files[0]);
+            final Resource resource =
+                new ResourceSetImpl().createResource(URI.createURI(file.toURI()
+                    .toString()));
+            try
+            {
+              resource.load(new HashMap<>());
+              final ChartSet chartsSet =
+                  (ChartSet) resource.getContents().get(0);
+              setModel(chartsSet);
+            }
+            catch (final IOException e)
+            {
+              e.printStackTrace();
+              MessageDialog.openError(Display.getCurrent().getActiveShell(),
+                  "Error", e.getMessage());
+            }
+          }
+        }
+      }
+
+      @Override
+      public void dropAccept(final DropTargetEvent event)
+      {
       }
     });
   }
 
-  public void selectView(int view)
+  protected void contributeToActionBars()
   {
-    if (stackedPane != null && !stackedPane.isDisposed())
-    {
-      // if switch to edit mode make sure to init editor model
-      if (view == EDIT_VIEW)
-      {
-        initEditorViewModel();
-      }
-      stackedPane.showPane(view);
-      // fire selection change to refresh properties view
-      fireSelectionChnaged();
-
-    }
-
-  }
-
-  
-  private void initEditorViewModel()
-  {
-    if (initEditor.getAndSet(false))
-    {
-      
-      
-      chartEditor.setModel(charts);
-      
-    }
-    editorHolder.pack(true);
-    editorHolder.getParent().layout();
-  }
-
-  public void setModel(ChartSet charts)
-  {
-    this.charts = charts;
-    // mark editor to recreate
-    initEditor.set(true);
-
-    // remove any existing base items on view holder
-    if (chartHolder != null)
-    {
-      for (Control control : chartHolder.getChildren())
-      {
-        control.dispose();
-      }
-    }
-    
-
-    // and now repopulate
-    JFreeChart chart = ChartBuilder.build(charts);
-    @SuppressWarnings("unused")
-    ChartComposite _chartComposite =
-        new ChartComposite(chartHolder, SWT.NONE, chart, true)
-        {
-          @Override
-          public void mouseUp(MouseEvent event)
-          {
-            super.mouseUp(event);
-            JFreeChart c = getChart();
-            if (c != null)
-            {
-              c.setNotify(true); // force redraw
-            }
-          }
-        };
-
-    chartHolder.pack(true);
-    chartHolder.getParent().layout();
-    selectView(CHART_VIEW);
+    final IActionBars bars = getViewSite().getActionBars();
+    fillLocalPullDown(bars.getMenuManager());
+    fillLocalToolBar(bars.getToolBarManager());
   }
 
   protected Control createChartView()
   {
-
+    // defer creation of the actual chart until we receive
+    // some model data. So, just have an empty panel 
+    // to start with
     chartHolder = new Composite(stackedPane, SWT.NONE);
     chartHolder.setLayout(new FillLayout());
-
     return chartHolder;
   }
 
@@ -339,9 +215,8 @@ public class StackedChartsView extends ViewPart implements
     chartEditor.getViewer().addSelectionChangedListener(
         new ISelectionChangedListener()
         {
-
           @Override
-          public void selectionChanged(SelectionChangedEvent event)
+          public void selectionChanged(final SelectionChangedEvent event)
           {
             fireSelectionChnaged();
 
@@ -351,23 +226,76 @@ public class StackedChartsView extends ViewPart implements
   }
 
   @Override
-  public void setFocus()
+  public void createPartControl(final Composite parent)
   {
-    if (stackedPane != null && !stackedPane.isDisposed())
-    {
-      stackedPane.forceFocus();
-    }
 
+    getViewSite().setSelectionProvider(this);// setup proxy selection provider
+    stackedPane = new StackedPane(parent);
+
+    stackedPane.add(CHART_VIEW, createChartView());
+    stackedPane.add(EDIT_VIEW, createEditView());
+
+    selectView(CHART_VIEW);
+    contributeToActionBars();
+
+    // Drop Support for *.stackedcharts
+    connectFileDropSupport(stackedPane);
+
+    // see https://github.com/debrief/limpet/issues/265
+    if (!System.getProperty("os.name").toLowerCase().contains("mac"))
+    {
+      transitionManager = new TransitionManager(new Transitionable()
+      {
+        @Override
+        public void addSelectionListener(final SelectionListener listener)
+        {
+          stackedPane.addSelectionListener(listener);
+        }
+
+        @Override
+        public Composite getComposite()
+        {
+          return stackedPane;
+        }
+
+        @Override
+        public Control getControl(final int index)
+        {
+          return stackedPane.getControl(index);
+        }
+
+        @Override
+        public double getDirection(final int toIndex, final int fromIndex)
+        {
+          return toIndex == CHART_VIEW ? Transition.DIR_RIGHT
+              : Transition.DIR_LEFT;
+        }
+
+        @Override
+        public int getSelection()
+        {
+          return stackedPane.getActiveControlKey();
+        }
+
+        @Override
+        public void setSelection(final int index)
+        {
+          stackedPane.showPane(index, false);
+        }
+      });
+      // new SlideTransition(_tm)
+      transitionManager.setTransition(new CubicRotationTransition(
+          transitionManager));
+    }
   }
 
-  protected void fillLocalPullDown(IMenuManager manager)
+  protected void fillLocalPullDown(final IMenuManager manager)
   {
-
   }
 
   protected void fillLocalToolBar(final IToolBarManager manager)
   {
-    manager.add(new Action("Edit")
+    manager.add(new Action("Edit", SWT.TOGGLE)
     {
       @Override
       public void run()
@@ -375,7 +303,7 @@ public class StackedChartsView extends ViewPart implements
         if (stackedPane.getActiveControlKey() == CHART_VIEW)
         {
           selectView(EDIT_VIEW);
-          setText("Chart");
+          setText("View");
           manager.update(true);
         }
         else
@@ -385,39 +313,53 @@ public class StackedChartsView extends ViewPart implements
           // to the view mode. let's create listeners, so the
           // chart has discrete updates in response to
           // model changes
-          setModel(charts);
+          
+          // double check we have a charts model
+          if(charts != null)
+          {
+            setModel(charts);
+          }
 
           selectView(CHART_VIEW);
           setText("Edit");
-
           manager.update(true);
         }
       }
     });
+
+    // add the (mock) export buttons
+    final Action toPNG = new Action("PNG"){};
+    toPNG.setToolTipText("Export the chart set to clipboard as bitmap image");
+    manager.add(toPNG);
+    final Action toWMF = new Action("WMF"){};
+    toWMF.setToolTipText("Export the chart set to clipboard as vector image");
+    manager.add(toWMF);
   }
 
-  protected void contributeToActionBars()
+  /**
+   * View Selection provider where it proxy between selected view
+   */
+  protected void fireSelectionChnaged()
   {
-    IActionBars bars = getViewSite().getActionBars();
-    fillLocalPullDown(bars.getMenuManager());
-    fillLocalToolBar(bars.getToolBarManager());
+    final ISelection selection = getSelection();
+    for (final ISelectionChangedListener listener : new ArrayList<>(
+        selectionListeners))
+    {
+      listener.selectionChanged(new SelectionChangedEvent(this, selection));
+    }
   }
 
+  @Override
   @SuppressWarnings("rawtypes")
-  public Object getAdapter(Class type)
+  public Object getAdapter(final Class type)
   {
-
-    
     if (type == CommandStack.class)
     {
-      
-        return chartEditor.getViewer().getEditDomain().getCommandStack();
-      
+      return chartEditor.getViewer().getEditDomain().getCommandStack();
     }
     if (type == IPropertySheetPage.class)
     {
-      
-      return   chartEditor.getPropertySheetPage();
+      return chartEditor.getPropertySheetPage();
     }
     return super.getAdapter(type);
   }
@@ -426,13 +368,6 @@ public class StackedChartsView extends ViewPart implements
   public String getContributorId()
   {
     return getViewSite().getId();
-  }
-
-  @Override
-  public void addSelectionChangedListener(ISelectionChangedListener listener)
-  {
-    selectionListeners.add(listener);
-
   }
 
   @Override
@@ -447,35 +382,91 @@ public class StackedChartsView extends ViewPart implements
     return new StructuredSelection();// empty selection
   }
 
-  @Override
-  public void
-      removeSelectionChangedListener(ISelectionChangedListener listener)
+  private void initEditorViewModel()
   {
-    selectionListeners.remove(listener);
-
+    if (initEditor.getAndSet(false))
+    {
+      chartEditor.setModel(charts);
+    }
+    editorHolder.pack(true);
+    editorHolder.getParent().layout();
   }
 
   @Override
-  public void setSelection(ISelection selection)
+  public void removeSelectionChangedListener(
+      final ISelectionChangedListener listener)
+  {
+    selectionListeners.remove(listener);
+  }
+
+  public void selectView(final int view)
+  {
+    if (stackedPane != null && !stackedPane.isDisposed())
+    {
+      // if switch to edit mode make sure to init editor model
+      if (view == EDIT_VIEW)
+      {
+        initEditorViewModel();
+      }
+      stackedPane.showPane(view);
+      // fire selection change to refresh properties view
+      fireSelectionChnaged();
+    }
+  }
+
+  @Override
+  public void setFocus()
+  {
+    if (stackedPane != null && !stackedPane.isDisposed())
+    {
+      stackedPane.forceFocus();
+    }
+  }
+
+  public void setModel(final ChartSet charts)
+  {
+    this.charts = charts;
+    // mark editor to recreate
+    initEditor.set(true);
+
+    // remove any existing base items on view holder
+    if (chartHolder != null)
+    {
+      for (final Control control : chartHolder.getChildren())
+      {
+        control.dispose();
+      }
+    }
+
+    // and now repopulate
+    final JFreeChart chart = ChartBuilder.build(charts);
+    @SuppressWarnings("unused")
+    final ChartComposite _chartComposite =
+        new ChartComposite(chartHolder, SWT.NONE, chart, true)
+        {
+          @Override
+          public void mouseUp(final MouseEvent event)
+          {
+            super.mouseUp(event);
+            final JFreeChart c = getChart();
+            if (c != null)
+            {
+              c.setNotify(true); // force redraw
+            }
+          }
+        };
+
+    chartHolder.pack(true);
+    chartHolder.getParent().layout();
+    selectView(CHART_VIEW);
+  }
+
+  @Override
+  public void setSelection(final ISelection selection)
   {
     if (!initEditor.get())
     {
       chartEditor.getViewer().setSelection(selection);
     }
-
   }
-
-  /**
-   * View Selection provider where it proxy between selected view
-   */
-  protected void fireSelectionChnaged()
-  {
-    final ISelection selection = getSelection();
-    for (ISelectionChangedListener listener : new ArrayList<>(
-        selectionListeners))
-    {
-      listener.selectionChanged(new SelectionChangedEvent(this, selection));
-    }
-  }
-
 }

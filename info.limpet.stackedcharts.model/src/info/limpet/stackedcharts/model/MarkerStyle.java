@@ -17,7 +17,8 @@ import org.eclipse.emf.common.util.Enumerator;
  * @model
  * @generated
  */
-public enum MarkerStyle implements Enumerator {
+public enum MarkerStyle implements Enumerator
+{
   /**
    * The '<em><b>None</b></em>' literal object.
    * <!-- begin-user-doc -->
@@ -26,7 +27,9 @@ public enum MarkerStyle implements Enumerator {
    * @generated
    * @ordered
    */
-  NONE(0, "None", "None"), /**
+  NONE(0, "None", "None"),
+
+  /**
    * The '<em><b>Square</b></em>' literal object.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -34,7 +37,9 @@ public enum MarkerStyle implements Enumerator {
    * @generated
    * @ordered
    */
-  SQUARE(1, "Square", "Square"), /**
+  SQUARE(1, "Square", "Square"),
+
+  /**
    * The '<em><b>Circle</b></em>' literal object.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -42,7 +47,9 @@ public enum MarkerStyle implements Enumerator {
    * @generated
    * @ordered
    */
-  CIRCLE(2, "Circle", "Circle"), /**
+  CIRCLE(2, "Circle", "Circle"),
+
+  /**
    * The '<em><b>Triangle</b></em>' literal object.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -50,7 +57,9 @@ public enum MarkerStyle implements Enumerator {
    * @generated
    * @ordered
    */
-  TRIANGLE(3, "Triangle", "Triangle"), /**
+  TRIANGLE(3, "Triangle", "Triangle"),
+
+  /**
    * The '<em><b>Cross</b></em>' literal object.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -58,7 +67,9 @@ public enum MarkerStyle implements Enumerator {
    * @generated
    * @ordered
    */
-  CROSS(4, "Cross", "Cross"), /**
+  CROSS(4, "Cross", "Cross"),
+
+  /**
    * The '<em><b>Diamond</b></em>' literal object.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -191,7 +202,8 @@ public enum MarkerStyle implements Enumerator {
    * @return the matching enumerator or <code>null</code>.
    * @generated
    */
-  public static MarkerStyle get(String literal) {
+  public static MarkerStyle get(String literal)
+  {
     for (int i = 0; i < VALUES_ARRAY.length; ++i)
     {
       MarkerStyle result = VALUES_ARRAY[i];
@@ -211,7 +223,8 @@ public enum MarkerStyle implements Enumerator {
    * @return the matching enumerator or <code>null</code>.
    * @generated
    */
-  public static MarkerStyle getByName(String name) {
+  public static MarkerStyle getByName(String name)
+  {
     for (int i = 0; i < VALUES_ARRAY.length; ++i)
     {
       MarkerStyle result = VALUES_ARRAY[i];
@@ -231,7 +244,8 @@ public enum MarkerStyle implements Enumerator {
    * @return the matching enumerator or <code>null</code>.
    * @generated
    */
-  public static MarkerStyle get(int value) {
+  public static MarkerStyle get(int value)
+  {
     switch (value)
     {
       case NONE_VALUE: return NONE;
@@ -271,7 +285,8 @@ public enum MarkerStyle implements Enumerator {
    * <!-- end-user-doc -->
    * @generated
    */
-  private MarkerStyle(int value, String name, String literal) {
+  private MarkerStyle(int value, String name, String literal)
+  {
     this.value = value;
     this.name = name;
     this.literal = literal;
@@ -282,7 +297,8 @@ public enum MarkerStyle implements Enumerator {
    * <!-- end-user-doc -->
    * @generated
    */
-  public int getValue() {
+  public int getValue()
+  {
     return value;
   }
 
@@ -291,7 +307,8 @@ public enum MarkerStyle implements Enumerator {
    * <!-- end-user-doc -->
    * @generated
    */
-  public String getName() {
+  public String getName()
+  {
     return name;
   }
 
@@ -300,7 +317,8 @@ public enum MarkerStyle implements Enumerator {
    * <!-- end-user-doc -->
    * @generated
    */
-  public String getLiteral() {
+  public String getLiteral()
+  {
     return literal;
   }
 
@@ -311,7 +329,8 @@ public enum MarkerStyle implements Enumerator {
    * @generated
    */
   @Override
-  public String toString() {
+  public String toString()
+  {
     return literal;
   }
   

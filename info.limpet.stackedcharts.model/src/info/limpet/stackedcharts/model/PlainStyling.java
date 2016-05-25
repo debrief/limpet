@@ -2,6 +2,8 @@
  */
 package info.limpet.stackedcharts.model;
 
+import java.awt.Color;
+
 
 /**
  * <!-- begin-user-doc -->
@@ -19,31 +21,32 @@ package info.limpet.stackedcharts.model;
  * @model
  * @generated
  */
-public interface PlainStyling extends Styling {
-	/**
+public interface PlainStyling extends Styling
+{
+  /**
    * Returns the value of the '<em><b>Color</b></em>' attribute.
    * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Color</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Color</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
    * @return the value of the '<em>Color</em>' attribute.
-   * @see #setColor(String)
+   * @see #setColor(Color)
    * @see info.limpet.stackedcharts.model.StackedchartsPackage#getPlainStyling_Color()
-   * @model
+   * @model dataType="info.limpet.stackedcharts.model.Color"
    * @generated
    */
-	String getColor();
+  Color getColor();
 
-	/**
+  /**
    * Sets the value of the '{@link info.limpet.stackedcharts.model.PlainStyling#getColor <em>Color</em>}' attribute.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @param value the new value of the '<em>Color</em>' attribute.
    * @see #getColor()
    * @generated
    */
-	void setColor(String value);
+  void setColor(Color value);
 
 } // PlainStyling

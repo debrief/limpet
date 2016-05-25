@@ -20,6 +20,7 @@ import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
+
 import org.eclipse.emf.ecore.util.EObjectContainmentWithInverseEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
@@ -38,72 +39,76 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *
  * @generated
  */
-public class ChartSetImpl extends MinimalEObjectImpl.Container implements ChartSet {
-	/**
+public class ChartSetImpl extends MinimalEObjectImpl.Container implements ChartSet
+{
+  /**
    * The cached value of the '{@link #getCharts() <em>Charts</em>}' containment reference list.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @see #getCharts()
    * @generated
    * @ordered
    */
-	protected EList<Chart> charts;
+  protected EList<Chart> charts;
 
-	/**
+  /**
    * The default value of the '{@link #getOrientation() <em>Orientation</em>}' attribute.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @see #getOrientation()
    * @generated
    * @ordered
    */
-	protected static final Orientation ORIENTATION_EDEFAULT = Orientation.HORIZONTAL;
+  protected static final Orientation ORIENTATION_EDEFAULT = Orientation.VERTICAL;
 
-	/**
+  /**
    * The cached value of the '{@link #getOrientation() <em>Orientation</em>}' attribute.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @see #getOrientation()
    * @generated
    * @ordered
    */
-	protected Orientation orientation = ORIENTATION_EDEFAULT;
+  protected Orientation orientation = ORIENTATION_EDEFAULT;
 
-	/**
+  /**
    * The cached value of the '{@link #getSharedAxis() <em>Shared Axis</em>}' containment reference.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @see #getSharedAxis()
    * @generated
    * @ordered
    */
-	protected IndependentAxis sharedAxis;
+  protected IndependentAxis sharedAxis;
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	protected ChartSetImpl() {
+  protected ChartSetImpl()
+  {
     super();
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@Override
-	protected EClass eStaticClass() {
+  @Override
+  protected EClass eStaticClass()
+  {
     return StackedchartsPackage.Literals.CHART_SET;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public EList<Chart> getCharts() {
+  public EList<Chart> getCharts()
+  {
     if (charts == null)
     {
       charts = new EObjectContainmentWithInverseEList<Chart>(Chart.class, this, StackedchartsPackage.CHART_SET__CHARTS, StackedchartsPackage.CHART__PARENT);
@@ -111,42 +116,46 @@ public class ChartSetImpl extends MinimalEObjectImpl.Container implements ChartS
     return charts;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public Orientation getOrientation() {
+  public Orientation getOrientation()
+  {
     return orientation;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public void setOrientation(Orientation newOrientation) {
+  public void setOrientation(Orientation newOrientation)
+  {
     Orientation oldOrientation = orientation;
     orientation = newOrientation == null ? ORIENTATION_EDEFAULT : newOrientation;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, StackedchartsPackage.CHART_SET__ORIENTATION, oldOrientation, orientation));
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public IndependentAxis getSharedAxis() {
+  public IndependentAxis getSharedAxis()
+  {
     return sharedAxis;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public NotificationChain basicSetSharedAxis(IndependentAxis newSharedAxis, NotificationChain msgs) {
+  public NotificationChain basicSetSharedAxis(IndependentAxis newSharedAxis, NotificationChain msgs)
+  {
     IndependentAxis oldSharedAxis = sharedAxis;
     sharedAxis = newSharedAxis;
     if (eNotificationRequired())
@@ -157,12 +166,13 @@ public class ChartSetImpl extends MinimalEObjectImpl.Container implements ChartS
     return msgs;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public void setSharedAxis(IndependentAxis newSharedAxis) {
+  public void setSharedAxis(IndependentAxis newSharedAxis)
+  {
     if (newSharedAxis != sharedAxis)
     {
       NotificationChain msgs = null;
@@ -177,14 +187,15 @@ public class ChartSetImpl extends MinimalEObjectImpl.Container implements ChartS
       eNotify(new ENotificationImpl(this, Notification.SET, StackedchartsPackage.CHART_SET__SHARED_AXIS, newSharedAxis, newSharedAxis));
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@SuppressWarnings("unchecked")
-	@Override
-	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
+  @SuppressWarnings("unchecked")
+  @Override
+  public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs)
+  {
     switch (featureID)
     {
       case StackedchartsPackage.CHART_SET__CHARTS:
@@ -193,13 +204,14 @@ public class ChartSetImpl extends MinimalEObjectImpl.Container implements ChartS
     return super.eInverseAdd(otherEnd, featureID, msgs);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@Override
-	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
+  @Override
+  public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
+  {
     switch (featureID)
     {
       case StackedchartsPackage.CHART_SET__CHARTS:
@@ -210,13 +222,14 @@ public class ChartSetImpl extends MinimalEObjectImpl.Container implements ChartS
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@Override
-	public Object eGet(int featureID, boolean resolve, boolean coreType) {
+  @Override
+  public Object eGet(int featureID, boolean resolve, boolean coreType)
+  {
     switch (featureID)
     {
       case StackedchartsPackage.CHART_SET__CHARTS:
@@ -229,14 +242,15 @@ public class ChartSetImpl extends MinimalEObjectImpl.Container implements ChartS
     return super.eGet(featureID, resolve, coreType);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@SuppressWarnings("unchecked")
-	@Override
-	public void eSet(int featureID, Object newValue) {
+  @SuppressWarnings("unchecked")
+  @Override
+  public void eSet(int featureID, Object newValue)
+  {
     switch (featureID)
     {
       case StackedchartsPackage.CHART_SET__CHARTS:
@@ -253,13 +267,14 @@ public class ChartSetImpl extends MinimalEObjectImpl.Container implements ChartS
     super.eSet(featureID, newValue);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@Override
-	public void eUnset(int featureID) {
+  @Override
+  public void eUnset(int featureID)
+  {
     switch (featureID)
     {
       case StackedchartsPackage.CHART_SET__CHARTS:
@@ -275,13 +290,14 @@ public class ChartSetImpl extends MinimalEObjectImpl.Container implements ChartS
     super.eUnset(featureID);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@Override
-	public boolean eIsSet(int featureID) {
+  @Override
+  public boolean eIsSet(int featureID)
+  {
     switch (featureID)
     {
       case StackedchartsPackage.CHART_SET__CHARTS:
@@ -294,13 +310,14 @@ public class ChartSetImpl extends MinimalEObjectImpl.Container implements ChartS
     return super.eIsSet(featureID);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@Override
-	public String toString() {
+  @Override
+  public String toString()
+  {
     if (eIsProxy()) return super.toString();
 
     StringBuffer result = new StringBuffer(super.toString());

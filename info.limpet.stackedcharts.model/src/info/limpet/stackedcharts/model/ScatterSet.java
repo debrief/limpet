@@ -25,21 +25,22 @@ import org.eclipse.emf.common.util.EList;
  * @model
  * @generated
  */
-public interface ScatterSet extends AbstractAnnotation {
-	/**
+public interface ScatterSet extends AbstractAnnotation
+{
+  /**
    * Returns the value of the '<em><b>Datums</b></em>' containment reference list.
    * The list contents are of type {@link info.limpet.stackedcharts.model.Datum}.
    * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Datums</em>' containment reference list isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Datums</em>' containment reference list isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
    * @return the value of the '<em>Datums</em>' containment reference list.
    * @see info.limpet.stackedcharts.model.StackedchartsPackage#getScatterSet_Datums()
    * @model containment="true"
    * @generated
    */
-	EList<Datum> getDatums();
+  EList<Datum> getDatums();
 
 } // ScatterSet

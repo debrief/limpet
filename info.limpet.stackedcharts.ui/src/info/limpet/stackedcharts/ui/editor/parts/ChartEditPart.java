@@ -4,15 +4,16 @@ import info.limpet.stackedcharts.model.Chart;
 import info.limpet.stackedcharts.model.StackedchartsPackage;
 import info.limpet.stackedcharts.ui.editor.figures.ChartFigure;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.draw2d.BorderLayout;
 import org.eclipse.draw2d.GridData;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.Notifier;
+import org.eclipse.gef.EditPart;
 import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
@@ -62,7 +63,7 @@ public class ChartEditPart extends AbstractGraphicalEditPart
   }
 
   @Override
-  protected List getModelChildren()
+  protected List<ChartPanePosition> getModelChildren()
   {
     return Arrays.asList(ChartPanePosition.values());
   }
@@ -72,15 +73,37 @@ public class ChartEditPart extends AbstractGraphicalEditPart
   {
     String name = getChart().getName();
     ((ChartFigure) getFigure()).setName(name);
-    
+
     GridData gridData = new GridData();
     gridData.grabExcessHorizontalSpace = true;
     gridData.grabExcessVerticalSpace = true;
     gridData.horizontalAlignment = SWT.FILL;
     gridData.verticalAlignment = SWT.FILL;
-    
+
     ((GraphicalEditPart) getParent()).setLayoutConstraint(this, figure,
         gridData);
+
+  }
+
+  protected void refreshChildren()
+  {
+    // remove all Childs
+    @SuppressWarnings("unchecked")
+    List<EditPart> children = getChildren();
+    for (EditPart object : new ArrayList<EditPart>(children))
+    {
+      removeChild(object);
+    }
+    //add back all model elements 
+    List<ChartPanePosition> modelObjects = getModelChildren();
+    for (int i = 0; i < modelObjects.size(); i++)
+    {
+
+      addChild(createChild(modelObjects.get(i)), i);
+
+    }
+    
+    ((ChartFigure) getFigure()).getLayoutManager().layout(getFigure());
   }
 
   public class ChartAdapter implements Adapter
@@ -94,6 +117,13 @@ public class ChartEditPart extends AbstractGraphicalEditPart
       {
       case StackedchartsPackage.CHART__NAME:
         refreshVisuals();
+        break;
+      case StackedchartsPackage.CHART__MAX_AXES:
+        refreshChildren();
+        break;
+      case StackedchartsPackage.CHART__MIN_AXES:
+        refreshChildren();
+        break;
       }
     }
 

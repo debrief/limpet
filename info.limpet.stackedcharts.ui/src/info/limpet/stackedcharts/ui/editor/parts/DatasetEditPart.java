@@ -47,7 +47,7 @@ public class DatasetEditPart extends AbstractGraphicalEditPart implements
   @Override
   protected void refreshVisuals()
   {
-    ((DatasetFigure) getFigure()).setName("Dataset " + getDataset().getName());
+    ((DatasetFigure) getFigure()).setName("Dataset: " + getDataset().getName());
   }
 
   protected Dataset getDataset()

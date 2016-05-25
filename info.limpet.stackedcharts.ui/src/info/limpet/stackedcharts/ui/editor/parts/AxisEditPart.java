@@ -1,30 +1,40 @@
 package info.limpet.stackedcharts.ui.editor.parts;
 
+import info.limpet.stackedcharts.model.Chart;
 import info.limpet.stackedcharts.model.DependentAxis;
 import info.limpet.stackedcharts.model.StackedchartsPackage;
+import info.limpet.stackedcharts.ui.editor.commands.DeleteAxisFromChartCommand;
 import info.limpet.stackedcharts.ui.editor.figures.ArrowFigure;
-import info.limpet.stackedcharts.ui.editor.figures.VerticalLabel;
+import info.limpet.stackedcharts.ui.editor.figures.AxisNameFigure;
 import info.limpet.stackedcharts.ui.editor.policies.AxisContainerEditPolicy;
 
 import java.util.List;
 
+import org.eclipse.draw2d.ActionListener;
+import org.eclipse.draw2d.Border;
 import org.eclipse.draw2d.FlowLayout;
 import org.eclipse.draw2d.GridData;
 import org.eclipse.draw2d.GridLayout;
 import org.eclipse.draw2d.IFigure;
+import org.eclipse.draw2d.LineBorder;
 import org.eclipse.draw2d.RectangleFigure;
+import org.eclipse.draw2d.SimpleLoweredBorder;
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.GraphicalEditPart;
+import org.eclipse.gef.commands.Command;
+import org.eclipse.gef.commands.CommandStack;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
+import org.eclipse.gef.editpolicies.ComponentEditPolicy;
 import org.eclipse.gef.editpolicies.NonResizableEditPolicy;
+import org.eclipse.gef.requests.GroupRequest;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
 
-public class AxisEditPart extends AbstractGraphicalEditPart
+public class AxisEditPart extends AbstractGraphicalEditPart implements ActionListener
 {
 
   public static final Color BACKGROUND_COLOR = Display.getDefault()
@@ -32,7 +42,7 @@ public class AxisEditPart extends AbstractGraphicalEditPart
 
   private RectangleFigure datasetsPane;
 
-  private VerticalLabel axisNameLabel;
+  private AxisNameFigure axisNameLabel;
 
   private AxisAdapter adapter = new AxisAdapter();
 
@@ -60,6 +70,9 @@ public class AxisEditPart extends AbstractGraphicalEditPart
   {
     RectangleFigure figure = new RectangleFigure();
     figure.setBackgroundColor(BACKGROUND_COLOR);
+    Color borderCol = Display.getCurrent().getSystemColor(SWT.COLOR_GRAY);
+    Border figureBorder = new LineBorder(borderCol, 2);
+    figure.setBorder(figureBorder);
 
     figure.setOutline(false);
     GridLayout layoutManager = new GridLayout(3, false);
@@ -70,6 +83,8 @@ public class AxisEditPart extends AbstractGraphicalEditPart
 
     datasetsPane = new RectangleFigure();
     datasetsPane.setOutline(false);
+    final SimpleLoweredBorder datasetBorder = new SimpleLoweredBorder(3);
+    datasetsPane.setBorder(datasetBorder);
     FlowLayout datasetsPaneLayout = new FlowLayout();
     datasetsPaneLayout.setHorizontal(true);
     datasetsPaneLayout.setStretchMinorAxis(true);
@@ -80,19 +95,17 @@ public class AxisEditPart extends AbstractGraphicalEditPart
     layoutManager.setConstraint(arrowFigure, new GridData(GridData.FILL,
         GridData.FILL, false, true));
     figure.add(arrowFigure);
-
-    axisNameLabel = new VerticalLabel();
-    layoutManager.setConstraint(axisNameLabel, new GridData(GridData.FILL,
-        GridData.FILL, true, true));
+    
+    axisNameLabel = new AxisNameFigure(this);
     figure.add(axisNameLabel);
-
+    
     return figure;
   }
 
   @Override
   protected void refreshVisuals()
   {
-    axisNameLabel.setText(getAxis().getName());
+    axisNameLabel.setName("Axis: " + getAxis().getName());
 
     ((GraphicalEditPart) getParent()).setLayoutConstraint(this, figure,
         new GridData(GridData.CENTER, GridData.FILL, false, true));
@@ -111,8 +124,21 @@ public class AxisEditPart extends AbstractGraphicalEditPart
         new NonResizableEditPolicy());
 
     installEditPolicy(EditPolicy.CONTAINER_ROLE, new AxisContainerEditPolicy());
+    
+    installEditPolicy(EditPolicy.COMPONENT_ROLE, new ComponentEditPolicy()
+    {
+      protected Command createDeleteCommand(GroupRequest deleteRequest)
+      {
+        DependentAxis dataset = (DependentAxis) getHost().getModel();
+        Chart parent = (Chart) dataset.eContainer();
+        DeleteAxisFromChartCommand cmd =
+            new DeleteAxisFromChartCommand(parent, dataset);
+        return cmd;
+      }
+    });
   }
 
+  @SuppressWarnings("rawtypes")
   @Override
   protected List getModelChildren()
   {
@@ -150,4 +176,16 @@ public class AxisEditPart extends AbstractGraphicalEditPart
       return type.equals(DependentAxis.class);
     }
   }
+
+  @Override
+  public void actionPerformed(org.eclipse.draw2d.ActionEvent event)
+  {
+    Command deleteCommand = getCommand(new GroupRequest(REQ_DELETE));
+    if (deleteCommand != null)
+    {
+      CommandStack commandStack = getViewer().getEditDomain().getCommandStack();
+      commandStack.execute(deleteCommand);
+    }
+  }
+
 }

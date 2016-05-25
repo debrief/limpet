@@ -6,11 +6,14 @@ import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.RectangleFigure;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Display;
 
 public class ChartFigure extends RectangleFigure
 {
   private Label chartNameLabel;
+  private static volatile Font boldFont;
 
   public ChartFigure()
   {
@@ -28,6 +31,15 @@ public class ChartFigure extends RectangleFigure
   public void setName(String name)
   {
     chartNameLabel.setText("Chart " + name);
+     // cache font for AxisNameFigure
+    if (boldFont == null)
+    {
+      FontData fontData = chartNameLabel.getFont().getFontData()[0];
+      boldFont =
+          new Font(Display.getCurrent(), new FontData(fontData.getName(),
+              fontData.getHeight(), SWT.BOLD));
+    }
+    chartNameLabel.setFont(boldFont);
   }
 
   @Override

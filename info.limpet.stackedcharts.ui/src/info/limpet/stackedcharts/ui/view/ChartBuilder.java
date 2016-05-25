@@ -1,6 +1,7 @@
 package info.limpet.stackedcharts.ui.view;
 
 import info.limpet.stackedcharts.model.AbstractAnnotation;
+import info.limpet.stackedcharts.model.AxisType;
 import info.limpet.stackedcharts.model.Chart;
 import info.limpet.stackedcharts.model.ChartSet;
 import info.limpet.stackedcharts.model.DataItem;
@@ -209,15 +210,17 @@ public class ChartBuilder
     }
     else
     {
-      switch (sharedAxisModel.getAxisType())
+      AxisType axisType = sharedAxisModel.getAxisType();
+      if(axisType instanceof info.limpet.stackedcharts.model.NumberAxis)
       {
-      case NUMBER:
         helper = new NumberHelper();
-        break;
-      case TIME:
+      }
+      else if(axisType instanceof info.limpet.stackedcharts.model.DateAxis)
+      {
         helper = new TimeHelper();
-        break;
-      default:
+      }
+      else
+      {
         System.err.println("UNEXPECTED AXIS TYPE RECEIVED");
         helper = new NumberHelper();
       }
@@ -230,49 +233,8 @@ public class ChartBuilder
     EList<Chart> charts = chartsSet.getCharts();
     for (final Chart chart : charts)
     {
-      final XYPlot subplot = new XYPlot(null, null, null, null);
-
-      // keep track of how many axes we create
-      int indexAxis = 0;
-
-      // min axis create on bottom or left
-      final EList<DependentAxis> minAxes = chart.getMinAxes();
-      for (final DependentAxis axis : minAxes)
-      {
-        createDependentAxis(subplot, indexAxis, axis);
-        subplot.setRangeAxisLocation(indexAxis, AxisLocation.BOTTOM_OR_LEFT);
-        indexAxis++;
-      }
-
-      // max axis create on top or right
-      final EList<DependentAxis> maxAxes = chart.getMaxAxes();
-      for (final DependentAxis axis : maxAxes)
-      {
-        createDependentAxis(subplot, indexAxis, axis);
-        subplot.setRangeAxisLocation(indexAxis, AxisLocation.TOP_OR_RIGHT);
-        indexAxis++;
-      }
-
-      if (sharedAxisModel != null)
-      {
-        // build selective annotations to plot
-        EList<SelectiveAnnotation> selectiveAnnotations =
-            sharedAxisModel.getAnnotations();
-
-        List<AbstractAnnotation> annotations =
-            new ArrayList<>(selectiveAnnotations.size());
-        for (SelectiveAnnotation selectiveAnnotation : selectiveAnnotations)
-        {
-          EList<Chart> appearsIn = selectiveAnnotation.getAppearsIn();
-          // check selective option to see is this applicable to current chart
-          if (appearsIn == null || appearsIn.isEmpty()
-              || appearsIn.contains(chart))
-          {
-            annotations.add(selectiveAnnotation.getAnnotation());
-          }
-        }
-        addAnnotationToPlot(subplot, annotations, false);
-      }
+      // create this chart
+      final XYPlot subplot = createChart(sharedAxisModel, chart);
 
       // add chart to stack
       plot.add(subplot);
@@ -283,6 +245,55 @@ public class ChartBuilder
         ? PlotOrientation.VERTICAL : PlotOrientation.HORIZONTAL);
 
     return new JFreeChart(plot);
+  }
+
+  protected static XYPlot createChart(IndependentAxis sharedAxisModel,
+      final Chart chart)
+  {
+    final XYPlot subplot = new XYPlot(null, null, null, null);
+
+    // keep track of how many axes we create
+    int indexAxis = 0;
+
+    // min axis create on bottom or left
+    final EList<DependentAxis> minAxes = chart.getMinAxes();
+    for (final DependentAxis axis : minAxes)
+    {
+      createDependentAxis(subplot, indexAxis, axis);
+      subplot.setRangeAxisLocation(indexAxis, AxisLocation.BOTTOM_OR_LEFT);
+      indexAxis++;
+    }
+
+    // max axis create on top or right
+    final EList<DependentAxis> maxAxes = chart.getMaxAxes();
+    for (final DependentAxis axis : maxAxes)
+    {
+      createDependentAxis(subplot, indexAxis, axis);
+      subplot.setRangeAxisLocation(indexAxis, AxisLocation.TOP_OR_RIGHT);
+      indexAxis++;
+    }
+
+    if (sharedAxisModel != null)
+    {
+      // build selective annotations to plot
+      EList<SelectiveAnnotation> selectiveAnnotations =
+          sharedAxisModel.getAnnotations();
+
+      List<AbstractAnnotation> annotations =
+          new ArrayList<>(selectiveAnnotations.size());
+      for (SelectiveAnnotation selectiveAnnotation : selectiveAnnotations)
+      {
+        EList<Chart> appearsIn = selectiveAnnotation.getAppearsIn();
+        // check selective option to see is this applicable to current chart
+        if (appearsIn == null || appearsIn.isEmpty()
+            || appearsIn.contains(chart))
+        {
+          annotations.add(selectiveAnnotation.getAnnotation());
+        }
+      }
+      addAnnotationToPlot(subplot, annotations, false);
+    }
+    return subplot;
   }
 
   /**
@@ -299,16 +310,19 @@ public class ChartBuilder
   {
     final XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
     int indexSeries = 0;
-    ChartHelper axeshelper = null;
-    switch (dependentAxis.getAxisType())
+    final ChartHelper axeshelper;
+    
+    AxisType axisType = dependentAxis.getAxisType();
+    if(axisType instanceof info.limpet.stackedcharts.model.NumberAxis)
     {
-    case NUMBER:
       axeshelper = new NumberHelper();
-      break;
-    case TIME:
+    }
+    else if(axisType instanceof info.limpet.stackedcharts.model.DateAxis)
+    {
       axeshelper = new TimeHelper();
-      break;
-    default:
+    }
+    else
+    {
       System.err.println("UNEXPECTED AXIS TYPE RECEIVED");
       axeshelper = new NumberHelper();
     }
@@ -341,14 +355,7 @@ public class ChartBuilder
   {
     for (final AbstractAnnotation annotation : annotations)
     {
-      // convert hex Color to awt
-      final String hexColor = annotation.getColor();
-
-      Color awtColor = null;
-      if (hexColor != null)
-      {
-        awtColor = hex2Rgb(hexColor);
-      }
+      Color color = annotation.getColor();
 
       if (annotation instanceof info.limpet.stackedcharts.model.Marker)
       {
@@ -359,7 +366,7 @@ public class ChartBuilder
         Marker mrk = new ValueMarker(marker.getValue());
         mrk.setLabel(annotation.getName());
 
-        mrk.setPaint(awtColor == null ? Color.GRAY : awtColor);
+        mrk.setPaint(color == null ? Color.GRAY : color);
 
         // move Text Anchor
         mrk.setLabelTextAnchor(TextAnchor.TOP_RIGHT);
@@ -380,8 +387,8 @@ public class ChartBuilder
         Marker mrk = new IntervalMarker(zone.getStart(), zone.getEnd());
         mrk.setLabel(annotation.getName());
 
-        if (awtColor != null)
-          mrk.setPaint(awtColor);
+        if (color != null)
+          mrk.setPaint(color);
 
         // move Text & Label Anchor
         mrk.setLabelTextAnchor(TextAnchor.CENTER);
@@ -411,7 +418,7 @@ public class ChartBuilder
             addLabel = false;
           }
 
-          mrk.setPaint(awtColor == null ? Color.GRAY : awtColor);
+          mrk.setPaint(color == null ? Color.GRAY : color);
 
           // move Text Anchor
           mrk.setLabelTextAnchor(TextAnchor.TOP_RIGHT);
@@ -458,14 +465,7 @@ public class ChartBuilder
         if (styling instanceof PlainStyling)
         {
           final PlainStyling ps = (PlainStyling) styling;
-          final String hexColor = ps.getColor();
-
-          Color thisColor = null;
-          if (hexColor != null)
-          {
-            thisColor = hex2Rgb(hexColor);
-          }
-          renderer.setSeriesPaint(seriesIndex, thisColor);
+          renderer.setSeriesPaint(seriesIndex, ps.getColor());
         }
         else
         {
@@ -519,18 +519,5 @@ public class ChartBuilder
         helper.addItem(series, dataItem);
       }
     }
-  }
-
-  /**
-   * 
-   * @param colorStr
-   *          e.g. "#FFFFFF"
-   * @return awt.Color Object
-   */
-  private static Color hex2Rgb(String colorStr)
-  {
-    return new Color(Integer.valueOf(colorStr.substring(1, 3), 16), Integer
-        .valueOf(colorStr.substring(3, 5), 16), Integer.valueOf(colorStr
-        .substring(5, 7), 16));
   }
 }
