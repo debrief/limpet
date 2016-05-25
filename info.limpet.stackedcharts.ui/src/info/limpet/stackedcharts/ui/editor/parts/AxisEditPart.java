@@ -11,11 +11,14 @@ import info.limpet.stackedcharts.ui.editor.policies.AxisContainerEditPolicy;
 import java.util.List;
 
 import org.eclipse.draw2d.ActionListener;
+import org.eclipse.draw2d.Border;
 import org.eclipse.draw2d.FlowLayout;
 import org.eclipse.draw2d.GridData;
 import org.eclipse.draw2d.GridLayout;
 import org.eclipse.draw2d.IFigure;
+import org.eclipse.draw2d.LineBorder;
 import org.eclipse.draw2d.RectangleFigure;
+import org.eclipse.draw2d.SimpleLoweredBorder;
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.Notifier;
@@ -67,6 +70,9 @@ public class AxisEditPart extends AbstractGraphicalEditPart implements ActionLis
   {
     RectangleFigure figure = new RectangleFigure();
     figure.setBackgroundColor(BACKGROUND_COLOR);
+    Color borderCol = Display.getCurrent().getSystemColor(SWT.COLOR_GRAY);
+    Border figureBorder = new LineBorder(borderCol, 2);
+    figure.setBorder(figureBorder);
 
     figure.setOutline(false);
     GridLayout layoutManager = new GridLayout(3, false);
@@ -77,6 +83,8 @@ public class AxisEditPart extends AbstractGraphicalEditPart implements ActionLis
 
     datasetsPane = new RectangleFigure();
     datasetsPane.setOutline(false);
+    final SimpleLoweredBorder datasetBorder = new SimpleLoweredBorder(3);
+    datasetsPane.setBorder(datasetBorder);
     FlowLayout datasetsPaneLayout = new FlowLayout();
     datasetsPaneLayout.setHorizontal(true);
     datasetsPaneLayout.setStretchMinorAxis(true);
@@ -97,7 +105,7 @@ public class AxisEditPart extends AbstractGraphicalEditPart implements ActionLis
   @Override
   protected void refreshVisuals()
   {
-    axisNameLabel.setName(getAxis().getName());
+    axisNameLabel.setName("Axis: " + getAxis().getName());
 
     ((GraphicalEditPart) getParent()).setLayoutConstraint(this, figure,
         new GridData(GridData.CENTER, GridData.FILL, false, true));
