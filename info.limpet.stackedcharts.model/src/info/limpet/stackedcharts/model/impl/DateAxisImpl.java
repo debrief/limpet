@@ -2,7 +2,7 @@
  */
 package info.limpet.stackedcharts.model.impl;
 
-import info.limpet.stackedcharts.model.Marker;
+import info.limpet.stackedcharts.model.DateAxis;
 import info.limpet.stackedcharts.model.StackedchartsPackage;
 
 import org.eclipse.emf.common.notify.Notification;
@@ -13,45 +13,45 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Marker</b></em>'.
+ * An implementation of the model object '<em><b>Date Axis</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link info.limpet.stackedcharts.model.impl.MarkerImpl#getValue <em>Value</em>}</li>
+ *   <li>{@link info.limpet.stackedcharts.model.impl.DateAxisImpl#getDateFormat <em>Date Format</em>}</li>
  * </ul>
  *
  * @generated
  */
-public class MarkerImpl extends AbstractAnnotationImpl implements Marker
+public class DateAxisImpl extends AxisTypeImpl implements DateAxis
 {
   /**
-   * The default value of the '{@link #getValue() <em>Value</em>}' attribute.
+   * The default value of the '{@link #getDateFormat() <em>Date Format</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getValue()
+   * @see #getDateFormat()
    * @generated
    * @ordered
    */
-  protected static final double VALUE_EDEFAULT = 0.0;
+  protected static final String DATE_FORMAT_EDEFAULT = null;
 
   /**
-   * The cached value of the '{@link #getValue() <em>Value</em>}' attribute.
+   * The cached value of the '{@link #getDateFormat() <em>Date Format</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getValue()
+   * @see #getDateFormat()
    * @generated
    * @ordered
    */
-  protected double value = VALUE_EDEFAULT;
+  protected String dateFormat = DATE_FORMAT_EDEFAULT;
 
   /**
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    */
-  protected MarkerImpl()
+  protected DateAxisImpl()
   {
     super();
   }
@@ -64,7 +64,7 @@ public class MarkerImpl extends AbstractAnnotationImpl implements Marker
   @Override
   protected EClass eStaticClass()
   {
-    return StackedchartsPackage.Literals.MARKER;
+    return StackedchartsPackage.Literals.DATE_AXIS;
   }
 
   /**
@@ -72,9 +72,9 @@ public class MarkerImpl extends AbstractAnnotationImpl implements Marker
    * <!-- end-user-doc -->
    * @generated
    */
-  public double getValue()
+  public String getDateFormat()
   {
-    return value;
+    return dateFormat;
   }
 
   /**
@@ -82,12 +82,12 @@ public class MarkerImpl extends AbstractAnnotationImpl implements Marker
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setValue(double newValue)
+  public void setDateFormat(String newDateFormat)
   {
-    double oldValue = value;
-    value = newValue;
+    String oldDateFormat = dateFormat;
+    dateFormat = newDateFormat;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, StackedchartsPackage.MARKER__VALUE, oldValue, value));
+      eNotify(new ENotificationImpl(this, Notification.SET, StackedchartsPackage.DATE_AXIS__DATE_FORMAT, oldDateFormat, dateFormat));
   }
 
   /**
@@ -100,8 +100,8 @@ public class MarkerImpl extends AbstractAnnotationImpl implements Marker
   {
     switch (featureID)
     {
-      case StackedchartsPackage.MARKER__VALUE:
-        return getValue();
+      case StackedchartsPackage.DATE_AXIS__DATE_FORMAT:
+        return getDateFormat();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -116,8 +116,8 @@ public class MarkerImpl extends AbstractAnnotationImpl implements Marker
   {
     switch (featureID)
     {
-      case StackedchartsPackage.MARKER__VALUE:
-        setValue((Double)newValue);
+      case StackedchartsPackage.DATE_AXIS__DATE_FORMAT:
+        setDateFormat((String)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -133,8 +133,8 @@ public class MarkerImpl extends AbstractAnnotationImpl implements Marker
   {
     switch (featureID)
     {
-      case StackedchartsPackage.MARKER__VALUE:
-        setValue(VALUE_EDEFAULT);
+      case StackedchartsPackage.DATE_AXIS__DATE_FORMAT:
+        setDateFormat(DATE_FORMAT_EDEFAULT);
         return;
     }
     super.eUnset(featureID);
@@ -150,8 +150,8 @@ public class MarkerImpl extends AbstractAnnotationImpl implements Marker
   {
     switch (featureID)
     {
-      case StackedchartsPackage.MARKER__VALUE:
-        return value != VALUE_EDEFAULT;
+      case StackedchartsPackage.DATE_AXIS__DATE_FORMAT:
+        return DATE_FORMAT_EDEFAULT == null ? dateFormat != null : !DATE_FORMAT_EDEFAULT.equals(dateFormat);
     }
     return super.eIsSet(featureID);
   }
@@ -167,10 +167,10 @@ public class MarkerImpl extends AbstractAnnotationImpl implements Marker
     if (eIsProxy()) return super.toString();
 
     StringBuffer result = new StringBuffer(super.toString());
-    result.append(" (value: ");
-    result.append(value);
+    result.append(" (dateFormat: ");
+    result.append(dateFormat);
     result.append(')');
     return result.toString();
   }
 
-} //MarkerImpl
+} //DateAxisImpl

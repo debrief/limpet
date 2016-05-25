@@ -8,11 +8,14 @@ import info.limpet.stackedcharts.model.DependentAxis;
 import info.limpet.stackedcharts.model.StackedchartsPackage;
 
 import java.util.Collection;
+
 import org.eclipse.emf.common.notify.NotificationChain;
+
 import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
+
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
@@ -30,52 +33,56 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *
  * @generated
  */
-public class DependentAxisImpl extends AbstractAxisImpl implements DependentAxis {
-	/**
+public class DependentAxisImpl extends AbstractAxisImpl implements DependentAxis
+{
+  /**
    * The cached value of the '{@link #getDatasets() <em>Datasets</em>}' containment reference list.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @see #getDatasets()
    * @generated
    * @ordered
    */
-	protected EList<Dataset> datasets;
+  protected EList<Dataset> datasets;
 
-	/**
+  /**
    * The cached value of the '{@link #getAnnotations() <em>Annotations</em>}' containment reference list.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @see #getAnnotations()
    * @generated
    * @ordered
    */
-	protected EList<AbstractAnnotation> annotations;
+  protected EList<AbstractAnnotation> annotations;
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	protected DependentAxisImpl() {
+  protected DependentAxisImpl()
+  {
     super();
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@Override
-	protected EClass eStaticClass() {
+  @Override
+  protected EClass eStaticClass()
+  {
     return StackedchartsPackage.Literals.DEPENDENT_AXIS;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public EList<Dataset> getDatasets() {
+  public EList<Dataset> getDatasets()
+  {
     if (datasets == null)
     {
       datasets = new EObjectContainmentEList<Dataset>(Dataset.class, this, StackedchartsPackage.DEPENDENT_AXIS__DATASETS);
@@ -83,12 +90,13 @@ public class DependentAxisImpl extends AbstractAxisImpl implements DependentAxis
     return datasets;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public EList<AbstractAnnotation> getAnnotations() {
+  public EList<AbstractAnnotation> getAnnotations()
+  {
     if (annotations == null)
     {
       annotations = new EObjectContainmentEList<AbstractAnnotation>(AbstractAnnotation.class, this, StackedchartsPackage.DEPENDENT_AXIS__ANNOTATIONS);
@@ -96,13 +104,14 @@ public class DependentAxisImpl extends AbstractAxisImpl implements DependentAxis
     return annotations;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@Override
-	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
+  @Override
+  public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
+  {
     switch (featureID)
     {
       case StackedchartsPackage.DEPENDENT_AXIS__DATASETS:
@@ -113,13 +122,14 @@ public class DependentAxisImpl extends AbstractAxisImpl implements DependentAxis
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@Override
-	public Object eGet(int featureID, boolean resolve, boolean coreType) {
+  @Override
+  public Object eGet(int featureID, boolean resolve, boolean coreType)
+  {
     switch (featureID)
     {
       case StackedchartsPackage.DEPENDENT_AXIS__DATASETS:
@@ -130,14 +140,15 @@ public class DependentAxisImpl extends AbstractAxisImpl implements DependentAxis
     return super.eGet(featureID, resolve, coreType);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@SuppressWarnings("unchecked")
-	@Override
-	public void eSet(int featureID, Object newValue) {
+  @SuppressWarnings("unchecked")
+  @Override
+  public void eSet(int featureID, Object newValue)
+  {
     switch (featureID)
     {
       case StackedchartsPackage.DEPENDENT_AXIS__DATASETS:
@@ -152,13 +163,14 @@ public class DependentAxisImpl extends AbstractAxisImpl implements DependentAxis
     super.eSet(featureID, newValue);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@Override
-	public void eUnset(int featureID) {
+  @Override
+  public void eUnset(int featureID)
+  {
     switch (featureID)
     {
       case StackedchartsPackage.DEPENDENT_AXIS__DATASETS:
@@ -171,13 +183,14 @@ public class DependentAxisImpl extends AbstractAxisImpl implements DependentAxis
     super.eUnset(featureID);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@Override
-	public boolean eIsSet(int featureID) {
+  @Override
+  public boolean eIsSet(int featureID)
+  {
     switch (featureID)
     {
       case StackedchartsPackage.DEPENDENT_AXIS__DATASETS:

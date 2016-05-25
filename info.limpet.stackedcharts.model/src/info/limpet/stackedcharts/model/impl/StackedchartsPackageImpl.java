@@ -4,6 +4,7 @@ package info.limpet.stackedcharts.model.impl;
 
 import info.limpet.stackedcharts.model.AbstractAnnotation;
 import info.limpet.stackedcharts.model.AbstractAxis;
+import info.limpet.stackedcharts.model.AngleAxis;
 import info.limpet.stackedcharts.model.AxisDirection;
 import info.limpet.stackedcharts.model.AxisScale;
 import info.limpet.stackedcharts.model.AxisType;
@@ -11,6 +12,7 @@ import info.limpet.stackedcharts.model.Chart;
 import info.limpet.stackedcharts.model.ChartSet;
 import info.limpet.stackedcharts.model.DataItem;
 import info.limpet.stackedcharts.model.Dataset;
+import info.limpet.stackedcharts.model.DateAxis;
 import info.limpet.stackedcharts.model.Datum;
 import info.limpet.stackedcharts.model.DependentAxis;
 import info.limpet.stackedcharts.model.IndependentAxis;
@@ -18,6 +20,7 @@ import info.limpet.stackedcharts.model.LineType;
 import info.limpet.stackedcharts.model.LinearStyling;
 import info.limpet.stackedcharts.model.Marker;
 import info.limpet.stackedcharts.model.MarkerStyle;
+import info.limpet.stackedcharts.model.NumberAxis;
 import info.limpet.stackedcharts.model.Orientation;
 import info.limpet.stackedcharts.model.PlainStyling;
 import info.limpet.stackedcharts.model.ScatterSet;
@@ -43,162 +46,184 @@ import org.eclipse.emf.ecore.xml.type.XMLTypePackage;
  * <!-- end-user-doc -->
  * @generated
  */
-public class StackedchartsPackageImpl extends EPackageImpl implements StackedchartsPackage {
-	/**
+public class StackedchartsPackageImpl extends EPackageImpl implements StackedchartsPackage
+{
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	private EClass chartSetEClass = null;
+  private EClass chartSetEClass = null;
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	private EClass chartEClass = null;
+  private EClass chartEClass = null;
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	private EClass dependentAxisEClass = null;
+  private EClass dependentAxisEClass = null;
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	private EClass datasetEClass = null;
+  private EClass datasetEClass = null;
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	private EClass dataItemEClass = null;
+  private EClass dataItemEClass = null;
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	private EClass abstractAnnotationEClass = null;
+  private EClass abstractAnnotationEClass = null;
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	private EClass zoneEClass = null;
+  private EClass zoneEClass = null;
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	private EClass markerEClass = null;
+  private EClass markerEClass = null;
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	private EClass stylingEClass = null;
+  private EClass stylingEClass = null;
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	private EClass plainStylingEClass = null;
+  private EClass plainStylingEClass = null;
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	private EClass linearStylingEClass = null;
+  private EClass linearStylingEClass = null;
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	private EClass abstractAxisEClass = null;
+  private EClass abstractAxisEClass = null;
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	private EClass independentAxisEClass = null;
+  private EClass independentAxisEClass = null;
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	private EClass scatterSetEClass = null;
+  private EClass scatterSetEClass = null;
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	private EClass datumEClass = null;
+  private EClass datumEClass = null;
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	private EClass selectiveAnnotationEClass = null;
+  private EClass selectiveAnnotationEClass = null;
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	private EEnum axisScaleEEnum = null;
+  private EClass axisTypeEClass = null;
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	private EEnum orientationEEnum = null;
+  private EClass dateAxisEClass = null;
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	private EEnum axisDirectionEEnum = null;
+  private EClass numberAxisEClass = null;
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	private EEnum markerStyleEEnum = null;
+  private EClass angleAxisEClass = null;
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	private EEnum lineTypeEEnum = null;
+  private EEnum axisScaleEEnum = null;
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	private EEnum axisTypeEEnum = null;
+  private EEnum orientationEEnum = null;
 
-	/**
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EEnum axisDirectionEEnum = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EEnum markerStyleEEnum = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EEnum lineTypeEEnum = null;
+
+  /**
    * Creates an instance of the model <b>Package</b>, registered with
    * {@link org.eclipse.emf.ecore.EPackage.Registry EPackage.Registry} by the package
    * package URI value.
@@ -207,36 +232,38 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
    * initialization of the package, or returns the registered package,
    * if one already exists.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @see org.eclipse.emf.ecore.EPackage.Registry
    * @see info.limpet.stackedcharts.model.StackedchartsPackage#eNS_URI
    * @see #init()
    * @generated
    */
-	private StackedchartsPackageImpl() {
+  private StackedchartsPackageImpl()
+  {
     super(eNS_URI, StackedchartsFactory.eINSTANCE);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	private static boolean isInited = false;
+  private static boolean isInited = false;
 
-	/**
+  /**
    * Creates, registers, and initializes the <b>Package</b> for this model, and for any others upon which it depends.
    * 
    * <p>This method is used to initialize {@link StackedchartsPackage#eINSTANCE} when that field is accessed.
    * Clients should not invoke it directly. Instead, they should simply access that field to obtain the package.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @see #eNS_URI
    * @see #createPackageContents()
    * @see #initializePackageContents()
    * @generated
    */
-	public static StackedchartsPackage init() {
+  public static StackedchartsPackage init()
+  {
     if (isInited) return (StackedchartsPackage)EPackage.Registry.INSTANCE.getEPackage(StackedchartsPackage.eNS_URI);
 
     // Obtain or create and register package
@@ -262,597 +289,722 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
     return theStackedchartsPackage;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public EClass getChartSet() {
+  public EClass getChartSet()
+  {
     return chartSetEClass;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public EReference getChartSet_Charts() {
+  public EReference getChartSet_Charts()
+  {
     return (EReference)chartSetEClass.getEStructuralFeatures().get(0);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public EAttribute getChartSet_Orientation() {
+  public EAttribute getChartSet_Orientation()
+  {
     return (EAttribute)chartSetEClass.getEStructuralFeatures().get(1);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public EReference getChartSet_SharedAxis() {
+  public EReference getChartSet_SharedAxis()
+  {
     return (EReference)chartSetEClass.getEStructuralFeatures().get(2);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public EClass getChart() {
+  public EClass getChart()
+  {
     return chartEClass;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public EReference getChart_Parent() {
+  public EReference getChart_Parent()
+  {
     return (EReference)chartEClass.getEStructuralFeatures().get(0);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public EReference getChart_MaxAxes() {
+  public EReference getChart_MaxAxes()
+  {
     return (EReference)chartEClass.getEStructuralFeatures().get(1);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public EAttribute getChart_Name() {
+  public EAttribute getChart_Name()
+  {
     return (EAttribute)chartEClass.getEStructuralFeatures().get(2);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public EAttribute getChart_Title() {
+  public EAttribute getChart_Title()
+  {
     return (EAttribute)chartEClass.getEStructuralFeatures().get(3);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public EReference getChart_MinAxes() {
+  public EReference getChart_MinAxes()
+  {
     return (EReference)chartEClass.getEStructuralFeatures().get(4);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public EClass getDependentAxis() {
+  public EClass getDependentAxis()
+  {
     return dependentAxisEClass;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public EReference getDependentAxis_Datasets() {
+  public EReference getDependentAxis_Datasets()
+  {
     return (EReference)dependentAxisEClass.getEStructuralFeatures().get(0);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public EReference getDependentAxis_Annotations() {
+  public EReference getDependentAxis_Annotations()
+  {
     return (EReference)dependentAxisEClass.getEStructuralFeatures().get(1);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public EClass getDataset() {
+  public EClass getDataset()
+  {
     return datasetEClass;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public EAttribute getDataset_Name() {
+  public EAttribute getDataset_Name()
+  {
     return (EAttribute)datasetEClass.getEStructuralFeatures().get(0);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public EReference getDataset_Measurements() {
+  public EReference getDataset_Measurements()
+  {
     return (EReference)datasetEClass.getEStructuralFeatures().get(1);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public EReference getDataset_Styling() {
+  public EReference getDataset_Styling()
+  {
     return (EReference)datasetEClass.getEStructuralFeatures().get(2);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public EClass getDataItem() {
+  public EClass getDataItem()
+  {
     return dataItemEClass;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public EAttribute getDataItem_IndependentVal() {
+  public EAttribute getDataItem_IndependentVal()
+  {
     return (EAttribute)dataItemEClass.getEStructuralFeatures().get(0);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public EAttribute getDataItem_DependentVal() {
+  public EAttribute getDataItem_DependentVal()
+  {
     return (EAttribute)dataItemEClass.getEStructuralFeatures().get(1);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public EClass getAbstractAnnotation() {
+  public EClass getAbstractAnnotation()
+  {
     return abstractAnnotationEClass;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public EAttribute getAbstractAnnotation_Name() {
+  public EAttribute getAbstractAnnotation_Name()
+  {
     return (EAttribute)abstractAnnotationEClass.getEStructuralFeatures().get(0);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public EAttribute getAbstractAnnotation_Color() {
+  public EAttribute getAbstractAnnotation_Color()
+  {
     return (EAttribute)abstractAnnotationEClass.getEStructuralFeatures().get(1);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public EClass getZone() {
+  public EClass getZone()
+  {
     return zoneEClass;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public EAttribute getZone_Start() {
+  public EAttribute getZone_Start()
+  {
     return (EAttribute)zoneEClass.getEStructuralFeatures().get(0);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public EAttribute getZone_End() {
+  public EAttribute getZone_End()
+  {
     return (EAttribute)zoneEClass.getEStructuralFeatures().get(1);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public EClass getMarker() {
+  public EClass getMarker()
+  {
     return markerEClass;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public EAttribute getMarker_Value() {
+  public EAttribute getMarker_Value()
+  {
     return (EAttribute)markerEClass.getEStructuralFeatures().get(0);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public EClass getStyling() {
+  public EClass getStyling()
+  {
     return stylingEClass;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public EAttribute getStyling_MarkerStyle() {
+  public EAttribute getStyling_MarkerStyle()
+  {
     return (EAttribute)stylingEClass.getEStructuralFeatures().get(0);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public EAttribute getStyling_MarkerSize() {
+  public EAttribute getStyling_MarkerSize()
+  {
     return (EAttribute)stylingEClass.getEStructuralFeatures().get(1);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public EAttribute getStyling_LineThickness() {
+  public EAttribute getStyling_LineThickness()
+  {
     return (EAttribute)stylingEClass.getEStructuralFeatures().get(2);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public EAttribute getStyling_LineStyle() {
+  public EAttribute getStyling_LineStyle()
+  {
     return (EAttribute)stylingEClass.getEStructuralFeatures().get(3);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public EClass getPlainStyling() {
+  public EClass getPlainStyling()
+  {
     return plainStylingEClass;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public EAttribute getPlainStyling_Color() {
+  public EAttribute getPlainStyling_Color()
+  {
     return (EAttribute)plainStylingEClass.getEStructuralFeatures().get(0);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public EClass getLinearStyling() {
+  public EClass getLinearStyling()
+  {
     return linearStylingEClass;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public EAttribute getLinearStyling_StartColor() {
+  public EAttribute getLinearStyling_StartColor()
+  {
     return (EAttribute)linearStylingEClass.getEStructuralFeatures().get(0);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public EAttribute getLinearStyling_EndColor() {
+  public EAttribute getLinearStyling_EndColor()
+  {
     return (EAttribute)linearStylingEClass.getEStructuralFeatures().get(1);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public EAttribute getLinearStyling_StartVal() {
+  public EAttribute getLinearStyling_StartVal()
+  {
     return (EAttribute)linearStylingEClass.getEStructuralFeatures().get(2);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public EAttribute getLinearStyling_EndVal() {
+  public EAttribute getLinearStyling_EndVal()
+  {
     return (EAttribute)linearStylingEClass.getEStructuralFeatures().get(3);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public EClass getAbstractAxis() {
+  public EClass getAbstractAxis()
+  {
     return abstractAxisEClass;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public EAttribute getAbstractAxis_Scale() {
+  public EAttribute getAbstractAxis_Scale()
+  {
     return (EAttribute)abstractAxisEClass.getEStructuralFeatures().get(0);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public EAttribute getAbstractAxis_Name() {
+  public EAttribute getAbstractAxis_Name()
+  {
     return (EAttribute)abstractAxisEClass.getEStructuralFeatures().get(1);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public EAttribute getAbstractAxis_AutoScale() {
+  public EAttribute getAbstractAxis_AutoScale()
+  {
     return (EAttribute)abstractAxisEClass.getEStructuralFeatures().get(2);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public EAttribute getAbstractAxis_Direction() {
+  public EAttribute getAbstractAxis_Direction()
+  {
     return (EAttribute)abstractAxisEClass.getEStructuralFeatures().get(3);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public EAttribute getAbstractAxis_AxisType() {
-    return (EAttribute)abstractAxisEClass.getEStructuralFeatures().get(6);
-  }
-
-	/**
-   * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-   * @generated
-   */
-	public EAttribute getAbstractAxis_Font() {
+  public EAttribute getAbstractAxis_Font()
+  {
     return (EAttribute)abstractAxisEClass.getEStructuralFeatures().get(4);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public EAttribute getAbstractAxis_Color() {
+  public EAttribute getAbstractAxis_Color()
+  {
     return (EAttribute)abstractAxisEClass.getEStructuralFeatures().get(5);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public EClass getIndependentAxis() {
+  public EReference getAbstractAxis_Axistype2()
+  {
+    return (EReference)abstractAxisEClass.getEStructuralFeatures().get(6);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getIndependentAxis()
+  {
     return independentAxisEClass;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public EReference getIndependentAxis_Annotations() {
+  public EReference getIndependentAxis_Annotations()
+  {
     return (EReference)independentAxisEClass.getEStructuralFeatures().get(0);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public EClass getScatterSet() {
+  public EClass getScatterSet()
+  {
     return scatterSetEClass;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public EReference getScatterSet_Datums() {
+  public EReference getScatterSet_Datums()
+  {
     return (EReference)scatterSetEClass.getEStructuralFeatures().get(0);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public EClass getDatum() {
+  public EClass getDatum()
+  {
     return datumEClass;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public EAttribute getDatum_Val() {
+  public EAttribute getDatum_Val()
+  {
     return (EAttribute)datumEClass.getEStructuralFeatures().get(0);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public EClass getSelectiveAnnotation() {
+  public EClass getSelectiveAnnotation()
+  {
     return selectiveAnnotationEClass;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public EReference getSelectiveAnnotation_Annotation() {
+  public EReference getSelectiveAnnotation_Annotation()
+  {
     return (EReference)selectiveAnnotationEClass.getEStructuralFeatures().get(0);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public EReference getSelectiveAnnotation_AppearsIn() {
+  public EReference getSelectiveAnnotation_AppearsIn()
+  {
     return (EReference)selectiveAnnotationEClass.getEStructuralFeatures().get(1);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public EEnum getAxisScale() {
+  public EClass getAxisType()
+  {
+    return axisTypeEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getDateAxis()
+  {
+    return dateAxisEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getDateAxis_DateFormat()
+  {
+    return (EAttribute)dateAxisEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getNumberAxis()
+  {
+    return numberAxisEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getNumberAxis_NumberFormat()
+  {
+    return (EAttribute)numberAxisEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getNumberAxis_AutoIncludesZero()
+  {
+    return (EAttribute)numberAxisEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getAngleAxis()
+  {
+    return angleAxisEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EEnum getAxisScale()
+  {
     return axisScaleEEnum;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public EEnum getOrientation() {
+  public EEnum getOrientation()
+  {
     return orientationEEnum;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public EEnum getAxisDirection() {
+  public EEnum getAxisDirection()
+  {
     return axisDirectionEEnum;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public EEnum getMarkerStyle() {
+  public EEnum getMarkerStyle()
+  {
     return markerStyleEEnum;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public EEnum getLineType() {
+  public EEnum getLineType()
+  {
     return lineTypeEEnum;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public EEnum getAxisType() {
-    return axisTypeEEnum;
-  }
-
-	/**
-   * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-   * @generated
-   */
-	public StackedchartsFactory getStackedchartsFactory() {
+  public StackedchartsFactory getStackedchartsFactory()
+  {
     return (StackedchartsFactory)getEFactoryInstance();
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	private boolean isCreated = false;
+  private boolean isCreated = false;
 
-	/**
+  /**
    * Creates the meta-model objects for the package.  This method is
    * guarded to have no affect on any invocation but its first.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public void createPackageContents() {
+  public void createPackageContents()
+  {
     if (isCreated) return;
     isCreated = true;
 
@@ -915,7 +1067,7 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
     createEAttribute(abstractAxisEClass, ABSTRACT_AXIS__DIRECTION);
     createEAttribute(abstractAxisEClass, ABSTRACT_AXIS__FONT);
     createEAttribute(abstractAxisEClass, ABSTRACT_AXIS__COLOR);
-    createEAttribute(abstractAxisEClass, ABSTRACT_AXIS__AXIS_TYPE);
+    createEReference(abstractAxisEClass, ABSTRACT_AXIS__AXISTYPE2);
 
     independentAxisEClass = createEClass(INDEPENDENT_AXIS);
     createEReference(independentAxisEClass, INDEPENDENT_AXIS__ANNOTATIONS);
@@ -930,30 +1082,41 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
     createEReference(selectiveAnnotationEClass, SELECTIVE_ANNOTATION__ANNOTATION);
     createEReference(selectiveAnnotationEClass, SELECTIVE_ANNOTATION__APPEARS_IN);
 
+    axisTypeEClass = createEClass(AXIS_TYPE);
+
+    dateAxisEClass = createEClass(DATE_AXIS);
+    createEAttribute(dateAxisEClass, DATE_AXIS__DATE_FORMAT);
+
+    numberAxisEClass = createEClass(NUMBER_AXIS);
+    createEAttribute(numberAxisEClass, NUMBER_AXIS__NUMBER_FORMAT);
+    createEAttribute(numberAxisEClass, NUMBER_AXIS__AUTO_INCLUDES_ZERO);
+
+    angleAxisEClass = createEClass(ANGLE_AXIS);
+
     // Create enums
     axisScaleEEnum = createEEnum(AXIS_SCALE);
     orientationEEnum = createEEnum(ORIENTATION);
     axisDirectionEEnum = createEEnum(AXIS_DIRECTION);
     markerStyleEEnum = createEEnum(MARKER_STYLE);
     lineTypeEEnum = createEEnum(LINE_TYPE);
-    axisTypeEEnum = createEEnum(AXIS_TYPE);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	private boolean isInitialized = false;
+  private boolean isInitialized = false;
 
-	/**
+  /**
    * Complete the initialization of the package and its meta-model.  This
    * method is guarded to have no affect on any invocation but its first.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public void initializePackageContents() {
+  public void initializePackageContents()
+  {
     if (isInitialized) return;
     isInitialized = true;
 
@@ -977,6 +1140,9 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
     linearStylingEClass.getESuperTypes().add(this.getStyling());
     independentAxisEClass.getESuperTypes().add(this.getAbstractAxis());
     scatterSetEClass.getESuperTypes().add(this.getAbstractAnnotation());
+    dateAxisEClass.getESuperTypes().add(this.getAxisType());
+    numberAxisEClass.getESuperTypes().add(this.getAxisType());
+    angleAxisEClass.getESuperTypes().add(this.getNumberAxis());
 
     // Initialize classes, features, and operations; add parameters
     initEClass(chartSetEClass, ChartSet.class, "ChartSet", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -1037,7 +1203,7 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
     initEAttribute(getAbstractAxis_Direction(), this.getAxisDirection(), "direction", null, 0, 1, AbstractAxis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getAbstractAxis_Font(), ecorePackage.getEString(), "font", null, 0, 1, AbstractAxis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getAbstractAxis_Color(), ecorePackage.getEString(), "color", null, 0, 1, AbstractAxis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getAbstractAxis_AxisType(), this.getAxisType(), "axisType", null, 0, 1, AbstractAxis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getAbstractAxis_Axistype2(), this.getAxisType(), null, "axistype2", null, 0, -1, AbstractAxis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(independentAxisEClass, IndependentAxis.class, "IndependentAxis", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getIndependentAxis_Annotations(), this.getSelectiveAnnotation(), null, "annotations", null, 0, -1, IndependentAxis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1051,6 +1217,17 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
     initEClass(selectiveAnnotationEClass, SelectiveAnnotation.class, "SelectiveAnnotation", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getSelectiveAnnotation_Annotation(), this.getAbstractAnnotation(), null, "annotation", null, 1, 1, SelectiveAnnotation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getSelectiveAnnotation_AppearsIn(), this.getChart(), null, "appearsIn", null, 0, -1, SelectiveAnnotation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(axisTypeEClass, AxisType.class, "AxisType", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+
+    initEClass(dateAxisEClass, DateAxis.class, "DateAxis", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getDateAxis_DateFormat(), theXMLTypePackage.getString(), "dateFormat", null, 0, 1, DateAxis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(numberAxisEClass, NumberAxis.class, "NumberAxis", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getNumberAxis_NumberFormat(), theXMLTypePackage.getString(), "numberFormat", null, 0, 1, NumberAxis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getNumberAxis_AutoIncludesZero(), theXMLTypePackage.getBoolean(), "autoIncludesZero", null, 0, 1, NumberAxis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(angleAxisEClass, AngleAxis.class, "AngleAxis", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
     // Initialize enums and add enum literals
     initEEnum(axisScaleEEnum, AxisScale.class, "AxisScale");
@@ -1079,10 +1256,6 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
     addEEnumLiteral(lineTypeEEnum, LineType.DOTTED);
     addEEnumLiteral(lineTypeEEnum, LineType.DASHED);
 
-    initEEnum(axisTypeEEnum, AxisType.class, "AxisType");
-    addEEnumLiteral(axisTypeEEnum, AxisType.NUMBER);
-    addEEnumLiteral(axisTypeEEnum, AxisType.TIME);
-
     // Create resource
     createResource(eNS_URI);
 
@@ -1091,13 +1264,14 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
     createExtendedMetaDataAnnotations();
   }
 
-	/**
+  /**
    * Initializes the annotations for <b>http:///org/eclipse/emf/ecore/util/ExtendedMetaData</b>.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	protected void createExtendedMetaDataAnnotations() {
+  protected void createExtendedMetaDataAnnotations()
+  {
     String source = "http:///org/eclipse/emf/ecore/util/ExtendedMetaData";	
     addAnnotation
       (getChartSet_Charts(), 

@@ -41,112 +41,118 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *
  * @generated
  */
-public class ChartImpl extends MinimalEObjectImpl.Container implements Chart {
-	/**
+public class ChartImpl extends MinimalEObjectImpl.Container implements Chart
+{
+  /**
    * The cached value of the '{@link #getMaxAxes() <em>Max Axes</em>}' containment reference list.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @see #getMaxAxes()
    * @generated
    * @ordered
    */
-	protected EList<DependentAxis> maxAxes;
+  protected EList<DependentAxis> maxAxes;
 
-	/**
+  /**
    * The default value of the '{@link #getName() <em>Name</em>}' attribute.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @see #getName()
    * @generated
    * @ordered
    */
-	protected static final String NAME_EDEFAULT = null;
+  protected static final String NAME_EDEFAULT = null;
 
-	/**
+  /**
    * The cached value of the '{@link #getName() <em>Name</em>}' attribute.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @see #getName()
    * @generated
    * @ordered
    */
-	protected String name = NAME_EDEFAULT;
+  protected String name = NAME_EDEFAULT;
 
-	/**
+  /**
    * The default value of the '{@link #getTitle() <em>Title</em>}' attribute.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @see #getTitle()
    * @generated
    * @ordered
    */
-	protected static final String TITLE_EDEFAULT = null;
+  protected static final String TITLE_EDEFAULT = null;
 
-	/**
+  /**
    * The cached value of the '{@link #getTitle() <em>Title</em>}' attribute.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @see #getTitle()
    * @generated
    * @ordered
    */
-	protected String title = TITLE_EDEFAULT;
+  protected String title = TITLE_EDEFAULT;
 
-	/**
+  /**
    * The cached value of the '{@link #getMinAxes() <em>Min Axes</em>}' containment reference list.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @see #getMinAxes()
    * @generated
    * @ordered
    */
-	protected EList<DependentAxis> minAxes;
+  protected EList<DependentAxis> minAxes;
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	protected ChartImpl() {
+  protected ChartImpl()
+  {
     super();
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@Override
-	protected EClass eStaticClass() {
+  @Override
+  protected EClass eStaticClass()
+  {
     return StackedchartsPackage.Literals.CHART;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public ChartSet getParent() {
+  public ChartSet getParent()
+  {
     if (eContainerFeatureID() != StackedchartsPackage.CHART__PARENT) return null;
     return (ChartSet)eInternalContainer();
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public NotificationChain basicSetParent(ChartSet newParent, NotificationChain msgs) {
+  public NotificationChain basicSetParent(ChartSet newParent, NotificationChain msgs)
+  {
     msgs = eBasicSetContainer((InternalEObject)newParent, StackedchartsPackage.CHART__PARENT, msgs);
     return msgs;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public void setParent(ChartSet newParent) {
+  public void setParent(ChartSet newParent)
+  {
     if (newParent != eInternalContainer() || (eContainerFeatureID() != StackedchartsPackage.CHART__PARENT && newParent != null))
     {
       if (EcoreUtil.isAncestor(this, newParent))
@@ -163,12 +169,13 @@ public class ChartImpl extends MinimalEObjectImpl.Container implements Chart {
       eNotify(new ENotificationImpl(this, Notification.SET, StackedchartsPackage.CHART__PARENT, newParent, newParent));
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public EList<DependentAxis> getMaxAxes() {
+  public EList<DependentAxis> getMaxAxes()
+  {
     if (maxAxes == null)
     {
       maxAxes = new EObjectContainmentEList<DependentAxis>(DependentAxis.class, this, StackedchartsPackage.CHART__MAX_AXES);
@@ -176,54 +183,59 @@ public class ChartImpl extends MinimalEObjectImpl.Container implements Chart {
     return maxAxes;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public String getName() {
+  public String getName()
+  {
     return name;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public void setName(String newName) {
+  public void setName(String newName)
+  {
     String oldName = name;
     name = newName;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, StackedchartsPackage.CHART__NAME, oldName, name));
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public String getTitle() {
+  public String getTitle()
+  {
     return title;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public void setTitle(String newTitle) {
+  public void setTitle(String newTitle)
+  {
     String oldTitle = title;
     title = newTitle;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, StackedchartsPackage.CHART__TITLE, oldTitle, title));
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public EList<DependentAxis> getMinAxes() {
+  public EList<DependentAxis> getMinAxes()
+  {
     if (minAxes == null)
     {
       minAxes = new EObjectContainmentEList<DependentAxis>(DependentAxis.class, this, StackedchartsPackage.CHART__MIN_AXES);
@@ -231,14 +243,14 @@ public class ChartImpl extends MinimalEObjectImpl.Container implements Chart {
     return minAxes;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@SuppressWarnings("unchecked")
-	@Override
-	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
+  @Override
+  public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs)
+  {
     switch (featureID)
     {
       case StackedchartsPackage.CHART__PARENT:
@@ -249,13 +261,14 @@ public class ChartImpl extends MinimalEObjectImpl.Container implements Chart {
     return super.eInverseAdd(otherEnd, featureID, msgs);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@Override
-	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
+  @Override
+  public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
+  {
     switch (featureID)
     {
       case StackedchartsPackage.CHART__PARENT:
@@ -268,13 +281,14 @@ public class ChartImpl extends MinimalEObjectImpl.Container implements Chart {
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@Override
-	public NotificationChain eBasicRemoveFromContainerFeature(NotificationChain msgs) {
+  @Override
+  public NotificationChain eBasicRemoveFromContainerFeature(NotificationChain msgs)
+  {
     switch (eContainerFeatureID())
     {
       case StackedchartsPackage.CHART__PARENT:
@@ -283,13 +297,14 @@ public class ChartImpl extends MinimalEObjectImpl.Container implements Chart {
     return super.eBasicRemoveFromContainerFeature(msgs);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@Override
-	public Object eGet(int featureID, boolean resolve, boolean coreType) {
+  @Override
+  public Object eGet(int featureID, boolean resolve, boolean coreType)
+  {
     switch (featureID)
     {
       case StackedchartsPackage.CHART__PARENT:
@@ -306,14 +321,15 @@ public class ChartImpl extends MinimalEObjectImpl.Container implements Chart {
     return super.eGet(featureID, resolve, coreType);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@SuppressWarnings("unchecked")
-	@Override
-	public void eSet(int featureID, Object newValue) {
+  @SuppressWarnings("unchecked")
+  @Override
+  public void eSet(int featureID, Object newValue)
+  {
     switch (featureID)
     {
       case StackedchartsPackage.CHART__PARENT:
@@ -337,13 +353,14 @@ public class ChartImpl extends MinimalEObjectImpl.Container implements Chart {
     super.eSet(featureID, newValue);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@Override
-	public void eUnset(int featureID) {
+  @Override
+  public void eUnset(int featureID)
+  {
     switch (featureID)
     {
       case StackedchartsPackage.CHART__PARENT:
@@ -365,13 +382,14 @@ public class ChartImpl extends MinimalEObjectImpl.Container implements Chart {
     super.eUnset(featureID);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@Override
-	public boolean eIsSet(int featureID) {
+  @Override
+  public boolean eIsSet(int featureID)
+  {
     switch (featureID)
     {
       case StackedchartsPackage.CHART__PARENT:
@@ -388,13 +406,14 @@ public class ChartImpl extends MinimalEObjectImpl.Container implements Chart {
     return super.eIsSet(featureID);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@Override
-	public String toString() {
+  @Override
+  public String toString()
+  {
     if (eIsProxy()) return super.toString();
 
     StringBuffer result = new StringBuffer(super.toString());

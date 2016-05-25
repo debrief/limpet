@@ -7,10 +7,22 @@ import info.limpet.stackedcharts.model.AxisDirection;
 import info.limpet.stackedcharts.model.AxisScale;
 import info.limpet.stackedcharts.model.AxisType;
 import info.limpet.stackedcharts.model.StackedchartsPackage;
+
+import java.util.Collection;
+
 import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.notify.NotificationChain;
+
+import org.eclipse.emf.common.util.EList;
+
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.InternalEObject;
+
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
+
+import org.eclipse.emf.ecore.util.EObjectContainmentEList;
+import org.eclipse.emf.ecore.util.InternalEList;
 
 /**
  * <!-- begin-user-doc -->
@@ -26,325 +38,340 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
  *   <li>{@link info.limpet.stackedcharts.model.impl.AbstractAxisImpl#getDirection <em>Direction</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.impl.AbstractAxisImpl#getFont <em>Font</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.impl.AbstractAxisImpl#getColor <em>Color</em>}</li>
- *   <li>{@link info.limpet.stackedcharts.model.impl.AbstractAxisImpl#getAxisType <em>Axis Type</em>}</li>
+ *   <li>{@link info.limpet.stackedcharts.model.impl.AbstractAxisImpl#getAxistype2 <em>Axistype2</em>}</li>
  * </ul>
  *
  * @generated
  */
-public abstract class AbstractAxisImpl extends MinimalEObjectImpl.Container implements AbstractAxis {
-	/**
+public abstract class AbstractAxisImpl extends MinimalEObjectImpl.Container implements AbstractAxis
+{
+  /**
    * The default value of the '{@link #getScale() <em>Scale</em>}' attribute.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @see #getScale()
    * @generated
    * @ordered
    */
-	protected static final AxisScale SCALE_EDEFAULT = AxisScale.LINEAR;
+  protected static final AxisScale SCALE_EDEFAULT = AxisScale.LINEAR;
 
-	/**
+  /**
    * The cached value of the '{@link #getScale() <em>Scale</em>}' attribute.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @see #getScale()
    * @generated
    * @ordered
    */
-	protected AxisScale scale = SCALE_EDEFAULT;
+  protected AxisScale scale = SCALE_EDEFAULT;
 
-	/**
+  /**
    * The default value of the '{@link #getName() <em>Name</em>}' attribute.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @see #getName()
    * @generated
    * @ordered
    */
-	protected static final String NAME_EDEFAULT = null;
+  protected static final String NAME_EDEFAULT = null;
 
-	/**
+  /**
    * The cached value of the '{@link #getName() <em>Name</em>}' attribute.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @see #getName()
    * @generated
    * @ordered
    */
-	protected String name = NAME_EDEFAULT;
+  protected String name = NAME_EDEFAULT;
 
-	/**
+  /**
    * The default value of the '{@link #isAutoScale() <em>Auto Scale</em>}' attribute.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @see #isAutoScale()
    * @generated
    * @ordered
    */
-	protected static final boolean AUTO_SCALE_EDEFAULT = false;
+  protected static final boolean AUTO_SCALE_EDEFAULT = false;
 
-	/**
+  /**
    * The cached value of the '{@link #isAutoScale() <em>Auto Scale</em>}' attribute.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @see #isAutoScale()
    * @generated
    * @ordered
    */
-	protected boolean autoScale = AUTO_SCALE_EDEFAULT;
+  protected boolean autoScale = AUTO_SCALE_EDEFAULT;
 
-	/**
+  /**
    * The default value of the '{@link #getDirection() <em>Direction</em>}' attribute.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @see #getDirection()
    * @generated
    * @ordered
    */
-	protected static final AxisDirection DIRECTION_EDEFAULT = AxisDirection.ASCENDING;
+  protected static final AxisDirection DIRECTION_EDEFAULT = AxisDirection.ASCENDING;
 
-	/**
+  /**
    * The cached value of the '{@link #getDirection() <em>Direction</em>}' attribute.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @see #getDirection()
    * @generated
    * @ordered
    */
-	protected AxisDirection direction = DIRECTION_EDEFAULT;
+  protected AxisDirection direction = DIRECTION_EDEFAULT;
 
-	/**
+  /**
    * The default value of the '{@link #getFont() <em>Font</em>}' attribute.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @see #getFont()
    * @generated
    * @ordered
    */
-	protected static final String FONT_EDEFAULT = null;
+  protected static final String FONT_EDEFAULT = null;
 
-	/**
+  /**
    * The cached value of the '{@link #getFont() <em>Font</em>}' attribute.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @see #getFont()
    * @generated
    * @ordered
    */
-	protected String font = FONT_EDEFAULT;
+  protected String font = FONT_EDEFAULT;
 
-	/**
+  /**
    * The default value of the '{@link #getColor() <em>Color</em>}' attribute.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @see #getColor()
    * @generated
    * @ordered
    */
-	protected static final String COLOR_EDEFAULT = null;
+  protected static final String COLOR_EDEFAULT = null;
 
-	/**
+  /**
    * The cached value of the '{@link #getColor() <em>Color</em>}' attribute.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @see #getColor()
    * @generated
    * @ordered
    */
-	protected String color = COLOR_EDEFAULT;
+  protected String color = COLOR_EDEFAULT;
 
-	/**
-   * The default value of the '{@link #getAxisType() <em>Axis Type</em>}' attribute.
+  /**
+   * The cached value of the '{@link #getAxistype2() <em>Axistype2</em>}' containment reference list.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-   * @see #getAxisType()
+   * <!-- end-user-doc -->
+   * @see #getAxistype2()
    * @generated
    * @ordered
    */
-	protected static final AxisType AXIS_TYPE_EDEFAULT = AxisType.NUMBER;
+  protected EList<AxisType> axistype2;
 
-	/**
-   * The cached value of the '{@link #getAxisType() <em>Axis Type</em>}' attribute.
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-   * @see #getAxisType()
-   * @generated
-   * @ordered
-   */
-	protected AxisType axisType = AXIS_TYPE_EDEFAULT;
-
-	/**
-   * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	protected AbstractAxisImpl() {
+  protected AbstractAxisImpl()
+  {
     super();
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@Override
-	protected EClass eStaticClass() {
+  @Override
+  protected EClass eStaticClass()
+  {
     return StackedchartsPackage.Literals.ABSTRACT_AXIS;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public AxisScale getScale() {
+  public AxisScale getScale()
+  {
     return scale;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public void setScale(AxisScale newScale) {
+  public void setScale(AxisScale newScale)
+  {
     AxisScale oldScale = scale;
     scale = newScale == null ? SCALE_EDEFAULT : newScale;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, StackedchartsPackage.ABSTRACT_AXIS__SCALE, oldScale, scale));
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public String getName() {
+  public String getName()
+  {
     return name;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public void setName(String newName) {
+  public void setName(String newName)
+  {
     String oldName = name;
     name = newName;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, StackedchartsPackage.ABSTRACT_AXIS__NAME, oldName, name));
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public boolean isAutoScale() {
+  public boolean isAutoScale()
+  {
     return autoScale;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public void setAutoScale(boolean newAutoScale) {
+  public void setAutoScale(boolean newAutoScale)
+  {
     boolean oldAutoScale = autoScale;
     autoScale = newAutoScale;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, StackedchartsPackage.ABSTRACT_AXIS__AUTO_SCALE, oldAutoScale, autoScale));
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public AxisDirection getDirection() {
+  public AxisDirection getDirection()
+  {
     return direction;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public void setDirection(AxisDirection newDirection) {
+  public void setDirection(AxisDirection newDirection)
+  {
     AxisDirection oldDirection = direction;
     direction = newDirection == null ? DIRECTION_EDEFAULT : newDirection;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, StackedchartsPackage.ABSTRACT_AXIS__DIRECTION, oldDirection, direction));
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public AxisType getAxisType() {
-    return axisType;
-  }
-
-	/**
-   * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-   * @generated
-   */
-	public void setAxisType(AxisType newAxisType) {
-    AxisType oldAxisType = axisType;
-    axisType = newAxisType == null ? AXIS_TYPE_EDEFAULT : newAxisType;
-    if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, StackedchartsPackage.ABSTRACT_AXIS__AXIS_TYPE, oldAxisType, axisType));
-  }
-
-	/**
-   * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-   * @generated
-   */
-	public String getFont() {
+  public String getFont()
+  {
     return font;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public void setFont(String newFont) {
+  public void setFont(String newFont)
+  {
     String oldFont = font;
     font = newFont;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, StackedchartsPackage.ABSTRACT_AXIS__FONT, oldFont, font));
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public String getColor() {
+  public String getColor()
+  {
     return color;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public void setColor(String newColor) {
+  public void setColor(String newColor)
+  {
     String oldColor = color;
     color = newColor;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, StackedchartsPackage.ABSTRACT_AXIS__COLOR, oldColor, color));
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@Override
-	public Object eGet(int featureID, boolean resolve, boolean coreType) {
+  public EList<AxisType> getAxistype2()
+  {
+    if (axistype2 == null)
+    {
+      axistype2 = new EObjectContainmentEList<AxisType>(AxisType.class, this, StackedchartsPackage.ABSTRACT_AXIS__AXISTYPE2);
+    }
+    return axistype2;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
+  {
+    switch (featureID)
+    {
+      case StackedchartsPackage.ABSTRACT_AXIS__AXISTYPE2:
+        return ((InternalEList<?>)getAxistype2()).basicRemove(otherEnd, msgs);
+    }
+    return super.eInverseRemove(otherEnd, featureID, msgs);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public Object eGet(int featureID, boolean resolve, boolean coreType)
+  {
     switch (featureID)
     {
       case StackedchartsPackage.ABSTRACT_AXIS__SCALE:
@@ -359,20 +386,21 @@ public abstract class AbstractAxisImpl extends MinimalEObjectImpl.Container impl
         return getFont();
       case StackedchartsPackage.ABSTRACT_AXIS__COLOR:
         return getColor();
-      case StackedchartsPackage.ABSTRACT_AXIS__AXIS_TYPE:
-        return getAxisType();
+      case StackedchartsPackage.ABSTRACT_AXIS__AXISTYPE2:
+        return getAxistype2();
     }
     return super.eGet(featureID, resolve, coreType);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@SuppressWarnings("unchecked")
-	@Override
-	public void eSet(int featureID, Object newValue) {
+  @SuppressWarnings("unchecked")
+  @Override
+  public void eSet(int featureID, Object newValue)
+  {
     switch (featureID)
     {
       case StackedchartsPackage.ABSTRACT_AXIS__SCALE:
@@ -393,20 +421,22 @@ public abstract class AbstractAxisImpl extends MinimalEObjectImpl.Container impl
       case StackedchartsPackage.ABSTRACT_AXIS__COLOR:
         setColor((String)newValue);
         return;
-      case StackedchartsPackage.ABSTRACT_AXIS__AXIS_TYPE:
-        setAxisType((AxisType)newValue);
+      case StackedchartsPackage.ABSTRACT_AXIS__AXISTYPE2:
+        getAxistype2().clear();
+        getAxistype2().addAll((Collection<? extends AxisType>)newValue);
         return;
     }
     super.eSet(featureID, newValue);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@Override
-	public void eUnset(int featureID) {
+  @Override
+  public void eUnset(int featureID)
+  {
     switch (featureID)
     {
       case StackedchartsPackage.ABSTRACT_AXIS__SCALE:
@@ -427,20 +457,21 @@ public abstract class AbstractAxisImpl extends MinimalEObjectImpl.Container impl
       case StackedchartsPackage.ABSTRACT_AXIS__COLOR:
         setColor(COLOR_EDEFAULT);
         return;
-      case StackedchartsPackage.ABSTRACT_AXIS__AXIS_TYPE:
-        setAxisType(AXIS_TYPE_EDEFAULT);
+      case StackedchartsPackage.ABSTRACT_AXIS__AXISTYPE2:
+        getAxistype2().clear();
         return;
     }
     super.eUnset(featureID);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@Override
-	public boolean eIsSet(int featureID) {
+  @Override
+  public boolean eIsSet(int featureID)
+  {
     switch (featureID)
     {
       case StackedchartsPackage.ABSTRACT_AXIS__SCALE:
@@ -455,19 +486,20 @@ public abstract class AbstractAxisImpl extends MinimalEObjectImpl.Container impl
         return FONT_EDEFAULT == null ? font != null : !FONT_EDEFAULT.equals(font);
       case StackedchartsPackage.ABSTRACT_AXIS__COLOR:
         return COLOR_EDEFAULT == null ? color != null : !COLOR_EDEFAULT.equals(color);
-      case StackedchartsPackage.ABSTRACT_AXIS__AXIS_TYPE:
-        return axisType != AXIS_TYPE_EDEFAULT;
+      case StackedchartsPackage.ABSTRACT_AXIS__AXISTYPE2:
+        return axistype2 != null && !axistype2.isEmpty();
     }
     return super.eIsSet(featureID);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@Override
-	public String toString() {
+  @Override
+  public String toString()
+  {
     if (eIsProxy()) return super.toString();
 
     StringBuffer result = new StringBuffer(super.toString());
@@ -483,8 +515,6 @@ public abstract class AbstractAxisImpl extends MinimalEObjectImpl.Container impl
     result.append(font);
     result.append(", color: ");
     result.append(color);
-    result.append(", axisType: ");
-    result.append(axisType);
     result.append(')');
     return result.toString();
   }

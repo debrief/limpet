@@ -20,87 +20,89 @@ import org.eclipse.emf.common.util.Enumerator;
  * @model
  * @generated
  */
-public enum Orientation implements Enumerator {
-	/**
+public enum Orientation implements Enumerator
+{
+  /**
    * The '<em><b>Horizontal</b></em>' literal object.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @see #HORIZONTAL_VALUE
    * @generated
    * @ordered
    */
-	HORIZONTAL(0, "Horizontal", "Horizontal"),
+  HORIZONTAL(0, "Horizontal", "Horizontal"),
 
-	/**
+  /**
    * The '<em><b>Vertical</b></em>' literal object.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @see #VERTICAL_VALUE
    * @generated
    * @ordered
    */
-	VERTICAL(0, "Vertical", "Vertical");
+  VERTICAL(0, "Vertical", "Vertical");
 
-	/**
+  /**
    * The '<em><b>Horizontal</b></em>' literal value.
    * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of '<em><b>Horizontal</b></em>' literal object isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
+   * <p>
+   * If the meaning of '<em><b>Horizontal</b></em>' literal object isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
    * @see #HORIZONTAL
    * @model name="Horizontal"
    * @generated
    * @ordered
    */
-	public static final int HORIZONTAL_VALUE = 0;
+  public static final int HORIZONTAL_VALUE = 0;
 
-	/**
+  /**
    * The '<em><b>Vertical</b></em>' literal value.
    * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of '<em><b>Vertical</b></em>' literal object isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
+   * <p>
+   * If the meaning of '<em><b>Vertical</b></em>' literal object isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
    * @see #VERTICAL
    * @model name="Vertical"
    * @generated
    * @ordered
    */
-	public static final int VERTICAL_VALUE = 0;
+  public static final int VERTICAL_VALUE = 0;
 
-	/**
+  /**
    * An array of all the '<em><b>Orientation</b></em>' enumerators.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	private static final Orientation[] VALUES_ARRAY =
-		new Orientation[]
+  private static final Orientation[] VALUES_ARRAY =
+    new Orientation[]
     {
       HORIZONTAL,
       VERTICAL,
     };
 
-	/**
+  /**
    * A public read-only list of all the '<em><b>Orientation</b></em>' enumerators.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public static final List<Orientation> VALUES = Collections.unmodifiableList(Arrays.asList(VALUES_ARRAY));
+  public static final List<Orientation> VALUES = Collections.unmodifiableList(Arrays.asList(VALUES_ARRAY));
 
-	/**
+  /**
    * Returns the '<em><b>Orientation</b></em>' literal with the specified literal value.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @param literal the literal.
    * @return the matching enumerator or <code>null</code>.
    * @generated
    */
-	public static Orientation get(String literal) {
+  public static Orientation get(String literal)
+  {
     for (int i = 0; i < VALUES_ARRAY.length; ++i)
     {
       Orientation result = VALUES_ARRAY[i];
@@ -112,15 +114,16 @@ public enum Orientation implements Enumerator {
     return null;
   }
 
-	/**
+  /**
    * Returns the '<em><b>Orientation</b></em>' literal with the specified name.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @param name the name.
    * @return the matching enumerator or <code>null</code>.
    * @generated
    */
-	public static Orientation getByName(String name) {
+  public static Orientation getByName(String name)
+  {
     for (int i = 0; i < VALUES_ARRAY.length; ++i)
     {
       Orientation result = VALUES_ARRAY[i];
@@ -132,15 +135,16 @@ public enum Orientation implements Enumerator {
     return null;
   }
 
-	/**
+  /**
    * Returns the '<em><b>Orientation</b></em>' literal with the specified integer value.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @param value the integer value.
    * @return the matching enumerator or <code>null</code>.
    * @generated
    */
-	public static Orientation get(int value) {
+  public static Orientation get(int value)
+  {
     switch (value)
     {
       case HORIZONTAL_VALUE: return HORIZONTAL;
@@ -148,75 +152,80 @@ public enum Orientation implements Enumerator {
     return null;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	private final int value;
+  private final int value;
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	private final String name;
+  private final String name;
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	private final String literal;
+  private final String literal;
 
-	/**
+  /**
    * Only this class can construct instances.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	private Orientation(int value, String name, String literal) {
+  private Orientation(int value, String name, String literal)
+  {
     this.value = value;
     this.name = name;
     this.literal = literal;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public int getValue() {
+  public int getValue()
+  {
     return value;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public String getName() {
+  public String getName()
+  {
     return name;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public String getLiteral() {
+  public String getLiteral()
+  {
     return literal;
   }
 
-	/**
+  /**
    * Returns the literal value of the enumerator, which is its string representation.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@Override
-	public String toString() {
+  @Override
+  public String toString()
+  {
     return literal;
   }
-	
+  
 } //Orientation

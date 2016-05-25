@@ -2,6 +2,8 @@
  */
 package info.limpet.stackedcharts.model;
 
+import org.eclipse.emf.common.util.EList;
+
 import org.eclipse.emf.ecore.EObject;
 
 /**
@@ -19,23 +21,24 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link info.limpet.stackedcharts.model.AbstractAxis#getDirection <em>Direction</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.AbstractAxis#getFont <em>Font</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.AbstractAxis#getColor <em>Color</em>}</li>
- *   <li>{@link info.limpet.stackedcharts.model.AbstractAxis#getAxisType <em>Axis Type</em>}</li>
+ *   <li>{@link info.limpet.stackedcharts.model.AbstractAxis#getAxistype2 <em>Axistype2</em>}</li>
  * </ul>
  *
  * @see info.limpet.stackedcharts.model.StackedchartsPackage#getAbstractAxis()
  * @model abstract="true"
  * @generated
  */
-public interface AbstractAxis extends EObject {
-	/**
+public interface AbstractAxis extends EObject
+{
+  /**
    * Returns the value of the '<em><b>Scale</b></em>' attribute.
    * The literals are from the enumeration {@link info.limpet.stackedcharts.model.AxisScale}.
    * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Scale</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Scale</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
    * @return the value of the '<em>Scale</em>' attribute.
    * @see info.limpet.stackedcharts.model.AxisScale
    * @see #setScale(AxisScale)
@@ -43,80 +46,80 @@ public interface AbstractAxis extends EObject {
    * @model
    * @generated
    */
-	AxisScale getScale();
+  AxisScale getScale();
 
-	/**
+  /**
    * Sets the value of the '{@link info.limpet.stackedcharts.model.AbstractAxis#getScale <em>Scale</em>}' attribute.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @param value the new value of the '<em>Scale</em>' attribute.
    * @see info.limpet.stackedcharts.model.AxisScale
    * @see #getScale()
    * @generated
    */
-	void setScale(AxisScale value);
+  void setScale(AxisScale value);
 
-	/**
+  /**
    * Returns the value of the '<em><b>Name</b></em>' attribute.
    * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Name</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Name</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
    * @return the value of the '<em>Name</em>' attribute.
    * @see #setName(String)
    * @see info.limpet.stackedcharts.model.StackedchartsPackage#getAbstractAxis_Name()
    * @model
    * @generated
    */
-	String getName();
+  String getName();
 
-	/**
+  /**
    * Sets the value of the '{@link info.limpet.stackedcharts.model.AbstractAxis#getName <em>Name</em>}' attribute.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @param value the new value of the '<em>Name</em>' attribute.
    * @see #getName()
    * @generated
    */
-	void setName(String value);
+  void setName(String value);
 
-	/**
+  /**
    * Returns the value of the '<em><b>Auto Scale</b></em>' attribute.
    * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Auto Scale</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Auto Scale</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
    * @return the value of the '<em>Auto Scale</em>' attribute.
    * @see #setAutoScale(boolean)
    * @see info.limpet.stackedcharts.model.StackedchartsPackage#getAbstractAxis_AutoScale()
    * @model dataType="org.eclipse.emf.ecore.xml.type.Boolean"
    * @generated
    */
-	boolean isAutoScale();
+  boolean isAutoScale();
 
-	/**
+  /**
    * Sets the value of the '{@link info.limpet.stackedcharts.model.AbstractAxis#isAutoScale <em>Auto Scale</em>}' attribute.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @param value the new value of the '<em>Auto Scale</em>' attribute.
    * @see #isAutoScale()
    * @generated
    */
-	void setAutoScale(boolean value);
+  void setAutoScale(boolean value);
 
-	/**
+  /**
    * Returns the value of the '<em><b>Direction</b></em>' attribute.
    * The literals are from the enumeration {@link info.limpet.stackedcharts.model.AxisDirection}.
    * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Direction</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Direction</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
    * @return the value of the '<em>Direction</em>' attribute.
    * @see info.limpet.stackedcharts.model.AxisDirection
    * @see #setDirection(AxisDirection)
@@ -124,98 +127,85 @@ public interface AbstractAxis extends EObject {
    * @model
    * @generated
    */
-	AxisDirection getDirection();
+  AxisDirection getDirection();
 
-	/**
+  /**
    * Sets the value of the '{@link info.limpet.stackedcharts.model.AbstractAxis#getDirection <em>Direction</em>}' attribute.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @param value the new value of the '<em>Direction</em>' attribute.
    * @see info.limpet.stackedcharts.model.AxisDirection
    * @see #getDirection()
    * @generated
    */
-	void setDirection(AxisDirection value);
+  void setDirection(AxisDirection value);
 
-	/**
-   * Returns the value of the '<em><b>Axis Type</b></em>' attribute.
-   * The literals are from the enumeration {@link info.limpet.stackedcharts.model.AxisType}.
-   * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Axis Type</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-   * @return the value of the '<em>Axis Type</em>' attribute.
-   * @see info.limpet.stackedcharts.model.AxisType
-   * @see #setAxisType(AxisType)
-   * @see info.limpet.stackedcharts.model.StackedchartsPackage#getAbstractAxis_AxisType()
-   * @model
-   * @generated
-   */
-	AxisType getAxisType();
-
-	/**
-   * Sets the value of the '{@link info.limpet.stackedcharts.model.AbstractAxis#getAxisType <em>Axis Type</em>}' attribute.
-   * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Axis Type</em>' attribute.
-   * @see info.limpet.stackedcharts.model.AxisType
-   * @see #getAxisType()
-   * @generated
-   */
-	void setAxisType(AxisType value);
-
-	/**
+  /**
    * Returns the value of the '<em><b>Font</b></em>' attribute.
    * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Font</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Font</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
    * @return the value of the '<em>Font</em>' attribute.
    * @see #setFont(String)
    * @see info.limpet.stackedcharts.model.StackedchartsPackage#getAbstractAxis_Font()
    * @model
    * @generated
    */
-	String getFont();
+  String getFont();
 
-	/**
+  /**
    * Sets the value of the '{@link info.limpet.stackedcharts.model.AbstractAxis#getFont <em>Font</em>}' attribute.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @param value the new value of the '<em>Font</em>' attribute.
    * @see #getFont()
    * @generated
    */
-	void setFont(String value);
+  void setFont(String value);
 
-	/**
+  /**
    * Returns the value of the '<em><b>Color</b></em>' attribute.
    * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Color</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Color</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
    * @return the value of the '<em>Color</em>' attribute.
    * @see #setColor(String)
    * @see info.limpet.stackedcharts.model.StackedchartsPackage#getAbstractAxis_Color()
    * @model
    * @generated
    */
-	String getColor();
+  String getColor();
 
-	/**
+  /**
    * Sets the value of the '{@link info.limpet.stackedcharts.model.AbstractAxis#getColor <em>Color</em>}' attribute.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @param value the new value of the '<em>Color</em>' attribute.
    * @see #getColor()
    * @generated
    */
-	void setColor(String value);
+  void setColor(String value);
+
+  /**
+   * Returns the value of the '<em><b>Axistype2</b></em>' containment reference list.
+   * The list contents are of type {@link info.limpet.stackedcharts.model.AxisType}.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Axistype2</em>' containment reference list isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Axistype2</em>' containment reference list.
+   * @see info.limpet.stackedcharts.model.StackedchartsPackage#getAbstractAxis_Axistype2()
+   * @model containment="true"
+   * @generated
+   */
+  EList<AxisType> getAxistype2();
 
 } // AbstractAxis

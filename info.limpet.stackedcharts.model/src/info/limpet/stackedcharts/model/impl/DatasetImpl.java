@@ -38,93 +38,99 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *
  * @generated
  */
-public class DatasetImpl extends MinimalEObjectImpl.Container implements Dataset {
-	/**
+public class DatasetImpl extends MinimalEObjectImpl.Container implements Dataset
+{
+  /**
    * The default value of the '{@link #getName() <em>Name</em>}' attribute.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @see #getName()
    * @generated
    * @ordered
    */
-	protected static final String NAME_EDEFAULT = null;
+  protected static final String NAME_EDEFAULT = null;
 
-	/**
+  /**
    * The cached value of the '{@link #getName() <em>Name</em>}' attribute.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @see #getName()
    * @generated
    * @ordered
    */
-	protected String name = NAME_EDEFAULT;
+  protected String name = NAME_EDEFAULT;
 
-	/**
+  /**
    * The cached value of the '{@link #getMeasurements() <em>Measurements</em>}' containment reference list.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @see #getMeasurements()
    * @generated
    * @ordered
    */
-	protected EList<DataItem> measurements;
+  protected EList<DataItem> measurements;
 
-	/**
+  /**
    * The cached value of the '{@link #getStyling() <em>Styling</em>}' containment reference.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @see #getStyling()
    * @generated
    * @ordered
    */
-	protected Styling styling;
+  protected Styling styling;
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	protected DatasetImpl() {
+  protected DatasetImpl()
+  {
     super();
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@Override
-	protected EClass eStaticClass() {
+  @Override
+  protected EClass eStaticClass()
+  {
     return StackedchartsPackage.Literals.DATASET;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public String getName() {
+  public String getName()
+  {
     return name;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public void setName(String newName) {
+  public void setName(String newName)
+  {
     String oldName = name;
     name = newName;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, StackedchartsPackage.DATASET__NAME, oldName, name));
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public EList<DataItem> getMeasurements() {
+  public EList<DataItem> getMeasurements()
+  {
     if (measurements == null)
     {
       measurements = new EObjectContainmentEList<DataItem>(DataItem.class, this, StackedchartsPackage.DATASET__MEASUREMENTS);
@@ -132,21 +138,23 @@ public class DatasetImpl extends MinimalEObjectImpl.Container implements Dataset
     return measurements;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public Styling getStyling() {
+  public Styling getStyling()
+  {
     return styling;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public NotificationChain basicSetStyling(Styling newStyling, NotificationChain msgs) {
+  public NotificationChain basicSetStyling(Styling newStyling, NotificationChain msgs)
+  {
     Styling oldStyling = styling;
     styling = newStyling;
     if (eNotificationRequired())
@@ -157,12 +165,13 @@ public class DatasetImpl extends MinimalEObjectImpl.Container implements Dataset
     return msgs;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public void setStyling(Styling newStyling) {
+  public void setStyling(Styling newStyling)
+  {
     if (newStyling != styling)
     {
       NotificationChain msgs = null;
@@ -177,13 +186,14 @@ public class DatasetImpl extends MinimalEObjectImpl.Container implements Dataset
       eNotify(new ENotificationImpl(this, Notification.SET, StackedchartsPackage.DATASET__STYLING, newStyling, newStyling));
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@Override
-	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
+  @Override
+  public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
+  {
     switch (featureID)
     {
       case StackedchartsPackage.DATASET__MEASUREMENTS:
@@ -194,13 +204,14 @@ public class DatasetImpl extends MinimalEObjectImpl.Container implements Dataset
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@Override
-	public Object eGet(int featureID, boolean resolve, boolean coreType) {
+  @Override
+  public Object eGet(int featureID, boolean resolve, boolean coreType)
+  {
     switch (featureID)
     {
       case StackedchartsPackage.DATASET__NAME:
@@ -213,14 +224,15 @@ public class DatasetImpl extends MinimalEObjectImpl.Container implements Dataset
     return super.eGet(featureID, resolve, coreType);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@SuppressWarnings("unchecked")
-	@Override
-	public void eSet(int featureID, Object newValue) {
+  @SuppressWarnings("unchecked")
+  @Override
+  public void eSet(int featureID, Object newValue)
+  {
     switch (featureID)
     {
       case StackedchartsPackage.DATASET__NAME:
@@ -237,13 +249,14 @@ public class DatasetImpl extends MinimalEObjectImpl.Container implements Dataset
     super.eSet(featureID, newValue);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@Override
-	public void eUnset(int featureID) {
+  @Override
+  public void eUnset(int featureID)
+  {
     switch (featureID)
     {
       case StackedchartsPackage.DATASET__NAME:
@@ -259,13 +272,14 @@ public class DatasetImpl extends MinimalEObjectImpl.Container implements Dataset
     super.eUnset(featureID);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@Override
-	public boolean eIsSet(int featureID) {
+  @Override
+  public boolean eIsSet(int featureID)
+  {
     switch (featureID)
     {
       case StackedchartsPackage.DATASET__NAME:
@@ -278,13 +292,14 @@ public class DatasetImpl extends MinimalEObjectImpl.Container implements Dataset
     return super.eIsSet(featureID);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@Override
-	public String toString() {
+  @Override
+  public String toString()
+  {
     if (eIsProxy()) return super.toString();
 
     StringBuffer result = new StringBuffer(super.toString());

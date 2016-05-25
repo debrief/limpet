@@ -30,197 +30,209 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
  *
  * @generated
  */
-public class StylingImpl extends MinimalEObjectImpl.Container implements Styling {
-	/**
+public class StylingImpl extends MinimalEObjectImpl.Container implements Styling
+{
+  /**
    * The default value of the '{@link #getMarkerStyle() <em>Marker Style</em>}' attribute.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @see #getMarkerStyle()
    * @generated
    * @ordered
    */
-	protected static final MarkerStyle MARKER_STYLE_EDEFAULT = MarkerStyle.NONE;
+  protected static final MarkerStyle MARKER_STYLE_EDEFAULT = MarkerStyle.NONE;
 
-	/**
+  /**
    * The cached value of the '{@link #getMarkerStyle() <em>Marker Style</em>}' attribute.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @see #getMarkerStyle()
    * @generated
    * @ordered
    */
-	protected MarkerStyle markerStyle = MARKER_STYLE_EDEFAULT;
+  protected MarkerStyle markerStyle = MARKER_STYLE_EDEFAULT;
 
-	/**
+  /**
    * The default value of the '{@link #getMarkerSize() <em>Marker Size</em>}' attribute.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @see #getMarkerSize()
    * @generated
    * @ordered
    */
-	protected static final double MARKER_SIZE_EDEFAULT = 0.0;
+  protected static final double MARKER_SIZE_EDEFAULT = 0.0;
 
-	/**
+  /**
    * The cached value of the '{@link #getMarkerSize() <em>Marker Size</em>}' attribute.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @see #getMarkerSize()
    * @generated
    * @ordered
    */
-	protected double markerSize = MARKER_SIZE_EDEFAULT;
+  protected double markerSize = MARKER_SIZE_EDEFAULT;
 
-	/**
+  /**
    * The default value of the '{@link #getLineThickness() <em>Line Thickness</em>}' attribute.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @see #getLineThickness()
    * @generated
    * @ordered
    */
-	protected static final double LINE_THICKNESS_EDEFAULT = 0.0;
+  protected static final double LINE_THICKNESS_EDEFAULT = 0.0;
 
-	/**
+  /**
    * The cached value of the '{@link #getLineThickness() <em>Line Thickness</em>}' attribute.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @see #getLineThickness()
    * @generated
    * @ordered
    */
-	protected double lineThickness = LINE_THICKNESS_EDEFAULT;
+  protected double lineThickness = LINE_THICKNESS_EDEFAULT;
 
-	/**
+  /**
    * The default value of the '{@link #getLineStyle() <em>Line Style</em>}' attribute.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @see #getLineStyle()
    * @generated
    * @ordered
    */
-	protected static final LineType LINE_STYLE_EDEFAULT = LineType.NONE;
+  protected static final LineType LINE_STYLE_EDEFAULT = LineType.NONE;
 
-	/**
+  /**
    * The cached value of the '{@link #getLineStyle() <em>Line Style</em>}' attribute.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @see #getLineStyle()
    * @generated
    * @ordered
    */
-	protected LineType lineStyle = LINE_STYLE_EDEFAULT;
+  protected LineType lineStyle = LINE_STYLE_EDEFAULT;
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	protected StylingImpl() {
+  protected StylingImpl()
+  {
     super();
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@Override
-	protected EClass eStaticClass() {
+  @Override
+  protected EClass eStaticClass()
+  {
     return StackedchartsPackage.Literals.STYLING;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public MarkerStyle getMarkerStyle() {
+  public MarkerStyle getMarkerStyle()
+  {
     return markerStyle;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public void setMarkerStyle(MarkerStyle newMarkerStyle) {
+  public void setMarkerStyle(MarkerStyle newMarkerStyle)
+  {
     MarkerStyle oldMarkerStyle = markerStyle;
     markerStyle = newMarkerStyle == null ? MARKER_STYLE_EDEFAULT : newMarkerStyle;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, StackedchartsPackage.STYLING__MARKER_STYLE, oldMarkerStyle, markerStyle));
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public double getMarkerSize() {
+  public double getMarkerSize()
+  {
     return markerSize;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public void setMarkerSize(double newMarkerSize) {
+  public void setMarkerSize(double newMarkerSize)
+  {
     double oldMarkerSize = markerSize;
     markerSize = newMarkerSize;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, StackedchartsPackage.STYLING__MARKER_SIZE, oldMarkerSize, markerSize));
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public double getLineThickness() {
+  public double getLineThickness()
+  {
     return lineThickness;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public void setLineThickness(double newLineThickness) {
+  public void setLineThickness(double newLineThickness)
+  {
     double oldLineThickness = lineThickness;
     lineThickness = newLineThickness;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, StackedchartsPackage.STYLING__LINE_THICKNESS, oldLineThickness, lineThickness));
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public LineType getLineStyle() {
+  public LineType getLineStyle()
+  {
     return lineStyle;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public void setLineStyle(LineType newLineStyle) {
+  public void setLineStyle(LineType newLineStyle)
+  {
     LineType oldLineStyle = lineStyle;
     lineStyle = newLineStyle == null ? LINE_STYLE_EDEFAULT : newLineStyle;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, StackedchartsPackage.STYLING__LINE_STYLE, oldLineStyle, lineStyle));
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@Override
-	public Object eGet(int featureID, boolean resolve, boolean coreType) {
+  @Override
+  public Object eGet(int featureID, boolean resolve, boolean coreType)
+  {
     switch (featureID)
     {
       case StackedchartsPackage.STYLING__MARKER_STYLE:
@@ -235,13 +247,14 @@ public class StylingImpl extends MinimalEObjectImpl.Container implements Styling
     return super.eGet(featureID, resolve, coreType);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@Override
-	public void eSet(int featureID, Object newValue) {
+  @Override
+  public void eSet(int featureID, Object newValue)
+  {
     switch (featureID)
     {
       case StackedchartsPackage.STYLING__MARKER_STYLE:
@@ -260,13 +273,14 @@ public class StylingImpl extends MinimalEObjectImpl.Container implements Styling
     super.eSet(featureID, newValue);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@Override
-	public void eUnset(int featureID) {
+  @Override
+  public void eUnset(int featureID)
+  {
     switch (featureID)
     {
       case StackedchartsPackage.STYLING__MARKER_STYLE:
@@ -285,13 +299,14 @@ public class StylingImpl extends MinimalEObjectImpl.Container implements Styling
     super.eUnset(featureID);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@Override
-	public boolean eIsSet(int featureID) {
+  @Override
+  public boolean eIsSet(int featureID)
+  {
     switch (featureID)
     {
       case StackedchartsPackage.STYLING__MARKER_STYLE:
@@ -306,13 +321,14 @@ public class StylingImpl extends MinimalEObjectImpl.Container implements Styling
     return super.eIsSet(featureID);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@Override
-	public String toString() {
+  @Override
+  public String toString()
+  {
     if (eIsProxy()) return super.toString();
 
     StringBuffer result = new StringBuffer(super.toString());

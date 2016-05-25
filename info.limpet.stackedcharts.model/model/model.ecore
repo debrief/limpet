@@ -101,7 +101,7 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="font" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="color" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="axistype2" upperBound="-1"
-        eType="#//AxisType2" containment="true"/>
+        eType="#//AxisType" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="IndependentAxis" eSuperTypes="#//AbstractAxis">
     <eStructuralFeatures xsi:type="ecore:EReference" name="annotations" upperBound="-1"
@@ -155,11 +155,11 @@
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="AxisType2" abstract="true"/>
-  <eClassifiers xsi:type="ecore:EClass" name="DateAxis" eSuperTypes="#//AxisType2">
+  <eClassifiers xsi:type="ecore:EClass" name="AxisType" abstract="true"/>
+  <eClassifiers xsi:type="ecore:EClass" name="DateAxis" eSuperTypes="#//AxisType">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="dateFormat" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="NumberAxis" eSuperTypes="#//AxisType2">
+  <eClassifiers xsi:type="ecore:EClass" name="NumberAxis" eSuperTypes="#//AxisType">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="numberFormat" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="autoIncludesZero" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Boolean"/>
   </eClassifiers>

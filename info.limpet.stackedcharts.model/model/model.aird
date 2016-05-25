@@ -1625,9 +1625,9 @@
         </ownedStyle>
         <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@edgeMappings[name='EC_EReference']"/>
       </ownedDiagramElements>
-      <ownedDiagramElements xmi:type="diagram:DNodeList" xmi:id="_lo11wCJQEeaobI4RYkiLEA" name="AxisType2" tooltipText="" incomingEdges="_n8_CoCJQEeaobI4RYkiLEA _2M-9gCJQEeaobI4RYkiLEA _AI2wwCJREeaobI4RYkiLEA" width="12" height="10">
-        <target xmi:type="ecore:EClass" href="model.ecore#//AxisType2"/>
-        <semanticElements xmi:type="ecore:EClass" href="model.ecore#//AxisType2"/>
+      <ownedDiagramElements xmi:type="diagram:DNodeList" xmi:id="_lo11wCJQEeaobI4RYkiLEA" name="AxisType" tooltipText="" incomingEdges="_n8_CoCJQEeaobI4RYkiLEA _2M-9gCJQEeaobI4RYkiLEA _AI2wwCJREeaobI4RYkiLEA" width="12" height="10">
+        <target xmi:type="ecore:EClass" href="model.ecore#//AxisType"/>
+        <semanticElements xmi:type="ecore:EClass" href="model.ecore#//AxisType"/>
         <ownedStyle xmi:type="diagram:FlatContainerStyle" xmi:id="_nFmusCJQEeaobI4RYkiLEA" iconPath="/org.eclipse.emf.ecoretools.design/icons/full/obj16/EClass_abstract.gif" borderSize="1" borderSizeComputationExpression="1" borderColor="125,125,125" backgroundStyle="Liquid" foregroundColor="228,228,228">
           <labelFormat>italic</labelFormat>
           <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EClass']/@conditionnalStyles.1/@style"/>
