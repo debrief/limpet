@@ -418,7 +418,15 @@ public class ChartBuilder
             addLabel = false;
           }
 
-          mrk.setPaint(color == null ? Color.GRAY : color);
+          Color thisColor = datum.getColor();
+          final Color colorToUse = thisColor == null ? color : thisColor;
+          
+          // apply some transparency to the color
+          final Color transColor =
+              new Color(colorToUse.getRed(), colorToUse.getGreen(), colorToUse
+                  .getBlue(), 60);
+          
+          mrk.setPaint(transColor);
 
           // move Text Anchor
           mrk.setLabelTextAnchor(TextAnchor.TOP_RIGHT);

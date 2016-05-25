@@ -30,7 +30,7 @@ public class ChartFigure extends RectangleFigure
 
   public void setName(String name)
   {
-    chartNameLabel.setText("Chart " + name);
+    chartNameLabel.setText("Chart: " + name);
      // cache font for AxisNameFigure
     if (boldFont == null)
     {
