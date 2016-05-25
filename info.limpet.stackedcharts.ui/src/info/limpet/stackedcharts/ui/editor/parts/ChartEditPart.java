@@ -12,6 +12,7 @@ import org.eclipse.draw2d.IFigure;
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.Notifier;
+import org.eclipse.gef.EditPart;
 import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
@@ -72,15 +73,28 @@ public class ChartEditPart extends AbstractGraphicalEditPart
   {
     String name = getChart().getName();
     ((ChartFigure) getFigure()).setName(name);
-    
+
     GridData gridData = new GridData();
     gridData.grabExcessHorizontalSpace = true;
     gridData.grabExcessVerticalSpace = true;
     gridData.horizontalAlignment = SWT.FILL;
     gridData.verticalAlignment = SWT.FILL;
-    
+
     ((GraphicalEditPart) getParent()).setLayoutConstraint(this, figure,
         gridData);
+
+  }
+
+  protected void refreshChildren()
+  {
+    //as enumused as Children it will not refresh , force part to refresh by remove Childs 
+    @SuppressWarnings("unchecked")
+    List<EditPart> children = getChildren();
+    for (EditPart object : children)
+    {
+      removeChild(object);
+    }
+    super.refreshChildren();
   }
 
   public class ChartAdapter implements Adapter
@@ -94,6 +108,13 @@ public class ChartEditPart extends AbstractGraphicalEditPart
       {
       case StackedchartsPackage.CHART__NAME:
         refreshVisuals();
+        break;
+      case StackedchartsPackage.CHART__MAX_AXES:
+        refreshChildren();
+        break;
+      case StackedchartsPackage.CHART__MIN_AXES:
+        refreshChildren();
+        break;
       }
     }
 

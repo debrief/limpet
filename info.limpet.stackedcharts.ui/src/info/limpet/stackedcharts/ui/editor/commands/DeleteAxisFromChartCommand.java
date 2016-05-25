@@ -9,6 +9,8 @@ public class DeleteAxisFromChartCommand extends Command
 {
   private final DependentAxis[] datasets;
   private final Chart parent;
+  private boolean onMin = false;
+  private boolean onMax = false;
 
   public DeleteAxisFromChartCommand(Chart parent, DependentAxis... datasets)
   {
@@ -21,7 +23,17 @@ public class DeleteAxisFromChartCommand extends Command
   {
     for (DependentAxis ds : datasets)
     {
-      parent.getMinAxes().remove(ds);
+      if (parent.getMinAxes().contains(ds))
+      {
+        onMin = true;
+        parent.getMinAxes().remove(ds);
+      }
+      if (parent.getMaxAxes().contains(ds))
+      {
+        onMax = true;
+        parent.getMaxAxes().remove(ds);
+      }
+
       parent.getMaxAxes().remove(ds);
     }
   }
@@ -29,7 +41,16 @@ public class DeleteAxisFromChartCommand extends Command
   @Override
   public void undo()
   {
-    // TODO: support undo
-    throw new RuntimeException("Method not implemented");
+    for (DependentAxis ds : datasets)
+    {
+      if (onMin)
+      {
+        parent.getMinAxes().add(ds);
+      }
+      if (onMax)
+      {
+        parent.getMaxAxes().add(ds);
+      }
+    }
   }
 }
