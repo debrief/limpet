@@ -4,6 +4,7 @@ import info.limpet.stackedcharts.model.Chart;
 import info.limpet.stackedcharts.model.StackedchartsPackage;
 import info.limpet.stackedcharts.ui.editor.figures.ChartFigure;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -61,9 +62,8 @@ public class ChartEditPart extends AbstractGraphicalEditPart
     return (Chart) getModel();
   }
 
-  @SuppressWarnings("rawtypes")
   @Override
-  protected List getModelChildren()
+  protected List<ChartPanePosition> getModelChildren()
   {
     return Arrays.asList(ChartPanePosition.values());
   }
@@ -87,14 +87,23 @@ public class ChartEditPart extends AbstractGraphicalEditPart
 
   protected void refreshChildren()
   {
-    //as enumused as Children it will not refresh , force part to refresh by remove Childs 
+    // remove all Childs
     @SuppressWarnings("unchecked")
     List<EditPart> children = getChildren();
-    for (EditPart object : children)
+    for (EditPart object : new ArrayList<EditPart>(children))
     {
       removeChild(object);
     }
-    super.refreshChildren();
+    //add back all model elements 
+    List<ChartPanePosition> modelObjects = getModelChildren();
+    for (int i = 0; i < modelObjects.size(); i++)
+    {
+
+      addChild(createChild(modelObjects.get(i)), i);
+
+    }
+    
+    ((ChartFigure) getFigure()).getLayoutManager().layout(getFigure());
   }
 
   public class ChartAdapter implements Adapter
