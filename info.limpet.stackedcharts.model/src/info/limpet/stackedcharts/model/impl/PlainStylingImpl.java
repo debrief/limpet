@@ -5,6 +5,7 @@ package info.limpet.stackedcharts.model.impl;
 import info.limpet.stackedcharts.model.PlainStyling;
 import info.limpet.stackedcharts.model.StackedchartsPackage;
 
+import java.awt.Color;
 import org.eclipse.emf.common.notify.Notification;
 
 import org.eclipse.emf.ecore.EClass;
@@ -24,74 +25,80 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  *
  * @generated
  */
-public class PlainStylingImpl extends StylingImpl implements PlainStyling {
-	/**
+public class PlainStylingImpl extends StylingImpl implements PlainStyling
+{
+  /**
    * The default value of the '{@link #getColor() <em>Color</em>}' attribute.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @see #getColor()
    * @generated
    * @ordered
    */
-	protected static final String COLOR_EDEFAULT = null;
+  protected static final Color COLOR_EDEFAULT = null;
 
-	/**
+  /**
    * The cached value of the '{@link #getColor() <em>Color</em>}' attribute.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @see #getColor()
    * @generated
    * @ordered
    */
-	protected String color = COLOR_EDEFAULT;
+  protected Color color = COLOR_EDEFAULT;
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	protected PlainStylingImpl() {
+  protected PlainStylingImpl()
+  {
     super();
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@Override
-	protected EClass eStaticClass() {
+  @Override
+  protected EClass eStaticClass()
+  {
     return StackedchartsPackage.Literals.PLAIN_STYLING;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public String getColor() {
+  public Color getColor()
+  {
     return color;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public void setColor(String newColor) {
-    String oldColor = color;
+  public void setColor(Color newColor)
+  {
+    Color oldColor = color;
     color = newColor;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, StackedchartsPackage.PLAIN_STYLING__COLOR, oldColor, color));
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@Override
-	public Object eGet(int featureID, boolean resolve, boolean coreType) {
+  @Override
+  public Object eGet(int featureID, boolean resolve, boolean coreType)
+  {
     switch (featureID)
     {
       case StackedchartsPackage.PLAIN_STYLING__COLOR:
@@ -100,29 +107,31 @@ public class PlainStylingImpl extends StylingImpl implements PlainStyling {
     return super.eGet(featureID, resolve, coreType);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@Override
-	public void eSet(int featureID, Object newValue) {
+  @Override
+  public void eSet(int featureID, Object newValue)
+  {
     switch (featureID)
     {
       case StackedchartsPackage.PLAIN_STYLING__COLOR:
-        setColor((String)newValue);
+        setColor((Color)newValue);
         return;
     }
     super.eSet(featureID, newValue);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@Override
-	public void eUnset(int featureID) {
+  @Override
+  public void eUnset(int featureID)
+  {
     switch (featureID)
     {
       case StackedchartsPackage.PLAIN_STYLING__COLOR:
@@ -132,13 +141,14 @@ public class PlainStylingImpl extends StylingImpl implements PlainStyling {
     super.eUnset(featureID);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@Override
-	public boolean eIsSet(int featureID) {
+  @Override
+  public boolean eIsSet(int featureID)
+  {
     switch (featureID)
     {
       case StackedchartsPackage.PLAIN_STYLING__COLOR:
@@ -147,13 +157,14 @@ public class PlainStylingImpl extends StylingImpl implements PlainStyling {
     return super.eIsSet(featureID);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@Override
-	public String toString() {
+  @Override
+  public String toString()
+  {
     if (eIsProxy()) return super.toString();
 
     StringBuffer result = new StringBuffer(super.toString());

@@ -7,10 +7,14 @@ import info.limpet.stackedcharts.model.SelectiveAnnotation;
 import info.limpet.stackedcharts.model.StackedchartsPackage;
 
 import java.util.Collection;
+
 import org.eclipse.emf.common.notify.NotificationChain;
+
 import org.eclipse.emf.common.util.EList;
+
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
+
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
@@ -27,41 +31,46 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *
  * @generated
  */
-public class IndependentAxisImpl extends AbstractAxisImpl implements IndependentAxis {
-	/**
+public class IndependentAxisImpl extends AbstractAxisImpl implements IndependentAxis
+{
+  /**
    * The cached value of the '{@link #getAnnotations() <em>Annotations</em>}' containment reference list.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @see #getAnnotations()
    * @generated
    * @ordered
    */
-	protected EList<SelectiveAnnotation> annotations;
-	/**
+  protected EList<SelectiveAnnotation> annotations;
+
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	protected IndependentAxisImpl() {
+  protected IndependentAxisImpl()
+  {
     super();
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@Override
-	protected EClass eStaticClass() {
+  @Override
+  protected EClass eStaticClass()
+  {
     return StackedchartsPackage.Literals.INDEPENDENT_AXIS;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public EList<SelectiveAnnotation> getAnnotations() {
+  public EList<SelectiveAnnotation> getAnnotations()
+  {
     if (annotations == null)
     {
       annotations = new EObjectContainmentEList<SelectiveAnnotation>(SelectiveAnnotation.class, this, StackedchartsPackage.INDEPENDENT_AXIS__ANNOTATIONS);
@@ -69,13 +78,14 @@ public class IndependentAxisImpl extends AbstractAxisImpl implements Independent
     return annotations;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@Override
-	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
+  @Override
+  public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
+  {
     switch (featureID)
     {
       case StackedchartsPackage.INDEPENDENT_AXIS__ANNOTATIONS:
@@ -84,13 +94,14 @@ public class IndependentAxisImpl extends AbstractAxisImpl implements Independent
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@Override
-	public Object eGet(int featureID, boolean resolve, boolean coreType) {
+  @Override
+  public Object eGet(int featureID, boolean resolve, boolean coreType)
+  {
     switch (featureID)
     {
       case StackedchartsPackage.INDEPENDENT_AXIS__ANNOTATIONS:
@@ -99,14 +110,15 @@ public class IndependentAxisImpl extends AbstractAxisImpl implements Independent
     return super.eGet(featureID, resolve, coreType);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@SuppressWarnings("unchecked")
-	@Override
-	public void eSet(int featureID, Object newValue) {
+  @SuppressWarnings("unchecked")
+  @Override
+  public void eSet(int featureID, Object newValue)
+  {
     switch (featureID)
     {
       case StackedchartsPackage.INDEPENDENT_AXIS__ANNOTATIONS:
@@ -117,13 +129,14 @@ public class IndependentAxisImpl extends AbstractAxisImpl implements Independent
     super.eSet(featureID, newValue);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@Override
-	public void eUnset(int featureID) {
+  @Override
+  public void eUnset(int featureID)
+  {
     switch (featureID)
     {
       case StackedchartsPackage.INDEPENDENT_AXIS__ANNOTATIONS:
@@ -133,13 +146,14 @@ public class IndependentAxisImpl extends AbstractAxisImpl implements Independent
     super.eUnset(featureID);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@Override
-	public boolean eIsSet(int featureID) {
+  @Override
+  public boolean eIsSet(int featureID)
+  {
     switch (featureID)
     {
       case StackedchartsPackage.INDEPENDENT_AXIS__ANNOTATIONS:

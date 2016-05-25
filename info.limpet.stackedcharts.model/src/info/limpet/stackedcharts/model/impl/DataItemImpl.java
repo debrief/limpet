@@ -26,115 +26,123 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
  *
  * @generated
  */
-public class DataItemImpl extends MinimalEObjectImpl.Container implements DataItem {
-	/**
+public class DataItemImpl extends MinimalEObjectImpl.Container implements DataItem
+{
+  /**
    * The default value of the '{@link #getIndependentVal() <em>Independent Val</em>}' attribute.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @see #getIndependentVal()
    * @generated
    * @ordered
    */
-	protected static final double INDEPENDENT_VAL_EDEFAULT = 0.0;
+  protected static final double INDEPENDENT_VAL_EDEFAULT = 0.0;
 
-	/**
+  /**
    * The cached value of the '{@link #getIndependentVal() <em>Independent Val</em>}' attribute.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @see #getIndependentVal()
    * @generated
    * @ordered
    */
-	protected double independentVal = INDEPENDENT_VAL_EDEFAULT;
+  protected double independentVal = INDEPENDENT_VAL_EDEFAULT;
 
-	/**
+  /**
    * The default value of the '{@link #getDependentVal() <em>Dependent Val</em>}' attribute.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @see #getDependentVal()
    * @generated
    * @ordered
    */
-	protected static final double DEPENDENT_VAL_EDEFAULT = 0.0;
+  protected static final double DEPENDENT_VAL_EDEFAULT = 0.0;
 
-	/**
+  /**
    * The cached value of the '{@link #getDependentVal() <em>Dependent Val</em>}' attribute.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @see #getDependentVal()
    * @generated
    * @ordered
    */
-	protected double dependentVal = DEPENDENT_VAL_EDEFAULT;
+  protected double dependentVal = DEPENDENT_VAL_EDEFAULT;
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	protected DataItemImpl() {
+  protected DataItemImpl()
+  {
     super();
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@Override
-	protected EClass eStaticClass() {
+  @Override
+  protected EClass eStaticClass()
+  {
     return StackedchartsPackage.Literals.DATA_ITEM;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public double getIndependentVal() {
+  public double getIndependentVal()
+  {
     return independentVal;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public void setIndependentVal(double newIndependentVal) {
+  public void setIndependentVal(double newIndependentVal)
+  {
     double oldIndependentVal = independentVal;
     independentVal = newIndependentVal;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, StackedchartsPackage.DATA_ITEM__INDEPENDENT_VAL, oldIndependentVal, independentVal));
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public double getDependentVal() {
+  public double getDependentVal()
+  {
     return dependentVal;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public void setDependentVal(double newDependentVal) {
+  public void setDependentVal(double newDependentVal)
+  {
     double oldDependentVal = dependentVal;
     dependentVal = newDependentVal;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, StackedchartsPackage.DATA_ITEM__DEPENDENT_VAL, oldDependentVal, dependentVal));
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@Override
-	public Object eGet(int featureID, boolean resolve, boolean coreType) {
+  @Override
+  public Object eGet(int featureID, boolean resolve, boolean coreType)
+  {
     switch (featureID)
     {
       case StackedchartsPackage.DATA_ITEM__INDEPENDENT_VAL:
@@ -145,13 +153,14 @@ public class DataItemImpl extends MinimalEObjectImpl.Container implements DataIt
     return super.eGet(featureID, resolve, coreType);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@Override
-	public void eSet(int featureID, Object newValue) {
+  @Override
+  public void eSet(int featureID, Object newValue)
+  {
     switch (featureID)
     {
       case StackedchartsPackage.DATA_ITEM__INDEPENDENT_VAL:
@@ -164,13 +173,14 @@ public class DataItemImpl extends MinimalEObjectImpl.Container implements DataIt
     super.eSet(featureID, newValue);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@Override
-	public void eUnset(int featureID) {
+  @Override
+  public void eUnset(int featureID)
+  {
     switch (featureID)
     {
       case StackedchartsPackage.DATA_ITEM__INDEPENDENT_VAL:
@@ -183,13 +193,14 @@ public class DataItemImpl extends MinimalEObjectImpl.Container implements DataIt
     super.eUnset(featureID);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@Override
-	public boolean eIsSet(int featureID) {
+  @Override
+  public boolean eIsSet(int featureID)
+  {
     switch (featureID)
     {
       case StackedchartsPackage.DATA_ITEM__INDEPENDENT_VAL:
@@ -200,13 +211,14 @@ public class DataItemImpl extends MinimalEObjectImpl.Container implements DataIt
     return super.eIsSet(featureID);
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@Override
-	public String toString() {
+  @Override
+  public String toString()
+  {
     if (eIsProxy()) return super.toString();
 
     StringBuffer result = new StringBuffer(super.toString());

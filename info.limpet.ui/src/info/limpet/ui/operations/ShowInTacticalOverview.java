@@ -24,7 +24,6 @@ import info.limpet.ITemporalQuantityCollection;
 import info.limpet.data.commands.AbstractCommand;
 import info.limpet.data.operations.CollectionComplianceTests;
 import info.limpet.data.store.InMemoryStore.StoreGroup;
-import info.limpet.stackedcharts.model.AxisType;
 import info.limpet.stackedcharts.model.Chart;
 import info.limpet.stackedcharts.model.ChartSet;
 import info.limpet.stackedcharts.model.DataItem;
@@ -40,6 +39,7 @@ import info.limpet.stackedcharts.model.SelectiveAnnotation;
 import info.limpet.stackedcharts.model.StackedchartsFactory;
 import info.limpet.stackedcharts.ui.view.StackedChartsView;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -259,7 +259,7 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
     IndependentAxis timeAxis = factory.createIndependentAxis();
     
     // ok, make it a time axis
-    timeAxis.setAxisType(AxisType.TIME);
+    timeAxis.setAxistype(factory.createDateAxis());
     res.setSharedAxis(timeAxis);
 
     // ok, start looking deeper
@@ -277,12 +277,12 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
         if (thisG.getName().equals("Primary"))
         {
           StoreGroup primary = (StoreGroup) thisG;
-          createStateChart(factory, primary, "Primary State", res, "#FF0000");
+          createStateChart(factory, primary, "Primary State", res, Color.blue);
         }
         else if (thisG.getName().equals("Secondary"))
         {
           StoreGroup primary = (StoreGroup) thisG;
-          createStateChart(factory, primary, "Secondary State", res, "#0000FF");
+          createStateChart(factory, primary, "Secondary State", res, Color.red);
         }
         else if (thisG.getName().equals("Relative"))
         {
@@ -371,7 +371,7 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
   }
 
   protected static void createStateChart(StackedchartsFactory factory,
-      StoreGroup group, String chartName, ChartSet set, String color)
+      StoreGroup group, String chartName, ChartSet set, java.awt.Color color)
   {
     if (group.size() == 3)
     {
@@ -418,7 +418,7 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
 
   protected static void createDataset(StackedchartsFactory factory,
       IStoreItem iStoreItem, String name, DependentAxis axis, 
-      ChartSet chartSet, String color, MarkerStyle marker)
+      ChartSet chartSet, java.awt.Color color, MarkerStyle marker)
   {
     ITemporalQuantityCollection<?> it =
         (ITemporalQuantityCollection<?>) iStoreItem;

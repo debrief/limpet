@@ -17,115 +17,116 @@ import org.eclipse.emf.common.util.Enumerator;
  * @model
  * @generated
  */
-public enum LineType implements Enumerator {
-	/**
+public enum LineType implements Enumerator
+{
+  /**
    * The '<em><b>None</b></em>' literal object.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @see #NONE_VALUE
    * @generated
    * @ordered
    */
-	NONE(1, "None", "None"),
+  NONE(1, "None", "None"),
 
-	/**
+  /**
    * The '<em><b>Solid</b></em>' literal object.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @see #SOLID_VALUE
    * @generated
    * @ordered
    */
-	SOLID(0, "Solid", "Solid"),
+  SOLID(0, "Solid", "Solid"),
 
-	/**
+  /**
    * The '<em><b>Dotted</b></em>' literal object.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @see #DOTTED_VALUE
    * @generated
    * @ordered
    */
-	DOTTED(2, "Dotted", "Dotted"),
+  DOTTED(2, "Dotted", "Dotted"),
 
-	/**
+  /**
    * The '<em><b>Dashed</b></em>' literal object.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @see #DASHED_VALUE
    * @generated
    * @ordered
    */
-	DASHED(3, "Dashed", "Dashed");
+  DASHED(3, "Dashed", "Dashed");
 
-	/**
+  /**
    * The '<em><b>None</b></em>' literal value.
    * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of '<em><b>None</b></em>' literal object isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
+   * <p>
+   * If the meaning of '<em><b>None</b></em>' literal object isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
    * @see #NONE
    * @model name="None"
    * @generated
    * @ordered
    */
-	public static final int NONE_VALUE = 1;
+  public static final int NONE_VALUE = 1;
 
-	/**
+  /**
    * The '<em><b>Solid</b></em>' literal value.
    * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of '<em><b>Solid</b></em>' literal object isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
+   * <p>
+   * If the meaning of '<em><b>Solid</b></em>' literal object isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
    * @see #SOLID
    * @model name="Solid"
    * @generated
    * @ordered
    */
-	public static final int SOLID_VALUE = 0;
+  public static final int SOLID_VALUE = 0;
 
-	/**
+  /**
    * The '<em><b>Dotted</b></em>' literal value.
    * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of '<em><b>Dotted</b></em>' literal object isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
+   * <p>
+   * If the meaning of '<em><b>Dotted</b></em>' literal object isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
    * @see #DOTTED
    * @model name="Dotted"
    * @generated
    * @ordered
    */
-	public static final int DOTTED_VALUE = 2;
+  public static final int DOTTED_VALUE = 2;
 
-	/**
+  /**
    * The '<em><b>Dashed</b></em>' literal value.
    * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of '<em><b>Dashed</b></em>' literal object isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
+   * <p>
+   * If the meaning of '<em><b>Dashed</b></em>' literal object isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
    * @see #DASHED
    * @model name="Dashed"
    * @generated
    * @ordered
    */
-	public static final int DASHED_VALUE = 3;
+  public static final int DASHED_VALUE = 3;
 
-	/**
+  /**
    * An array of all the '<em><b>Line Type</b></em>' enumerators.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	private static final LineType[] VALUES_ARRAY =
-		new LineType[]
+  private static final LineType[] VALUES_ARRAY =
+    new LineType[]
     {
       NONE,
       SOLID,
@@ -133,23 +134,24 @@ public enum LineType implements Enumerator {
       DASHED,
     };
 
-	/**
+  /**
    * A public read-only list of all the '<em><b>Line Type</b></em>' enumerators.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public static final List<LineType> VALUES = Collections.unmodifiableList(Arrays.asList(VALUES_ARRAY));
+  public static final List<LineType> VALUES = Collections.unmodifiableList(Arrays.asList(VALUES_ARRAY));
 
-	/**
+  /**
    * Returns the '<em><b>Line Type</b></em>' literal with the specified literal value.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @param literal the literal.
    * @return the matching enumerator or <code>null</code>.
    * @generated
    */
-	public static LineType get(String literal) {
+  public static LineType get(String literal)
+  {
     for (int i = 0; i < VALUES_ARRAY.length; ++i)
     {
       LineType result = VALUES_ARRAY[i];
@@ -161,15 +163,16 @@ public enum LineType implements Enumerator {
     return null;
   }
 
-	/**
+  /**
    * Returns the '<em><b>Line Type</b></em>' literal with the specified name.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @param name the name.
    * @return the matching enumerator or <code>null</code>.
    * @generated
    */
-	public static LineType getByName(String name) {
+  public static LineType getByName(String name)
+  {
     for (int i = 0; i < VALUES_ARRAY.length; ++i)
     {
       LineType result = VALUES_ARRAY[i];
@@ -181,15 +184,16 @@ public enum LineType implements Enumerator {
     return null;
   }
 
-	/**
+  /**
    * Returns the '<em><b>Line Type</b></em>' literal with the specified integer value.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @param value the integer value.
    * @return the matching enumerator or <code>null</code>.
    * @generated
    */
-	public static LineType get(int value) {
+  public static LineType get(int value)
+  {
     switch (value)
     {
       case NONE_VALUE: return NONE;
@@ -200,75 +204,80 @@ public enum LineType implements Enumerator {
     return null;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	private final int value;
+  private final int value;
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	private final String name;
+  private final String name;
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	private final String literal;
+  private final String literal;
 
-	/**
+  /**
    * Only this class can construct instances.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	private LineType(int value, String name, String literal) {
+  private LineType(int value, String name, String literal)
+  {
     this.value = value;
     this.name = name;
     this.literal = literal;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public int getValue() {
+  public int getValue()
+  {
     return value;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public String getName() {
+  public String getName()
+  {
     return name;
   }
 
-	/**
+  /**
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	public String getLiteral() {
+  public String getLiteral()
+  {
     return literal;
   }
 
-	/**
+  /**
    * Returns the literal value of the enumerator, which is its string representation.
    * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-	@Override
-	public String toString() {
+  @Override
+  public String toString()
+  {
     return literal;
   }
-	
+  
 } //LineType
