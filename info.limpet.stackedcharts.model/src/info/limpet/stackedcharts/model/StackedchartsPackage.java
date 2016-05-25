@@ -251,13 +251,13 @@ public interface StackedchartsPackage extends EPackage
   int ABSTRACT_AXIS__COLOR = 5;
 
   /**
-   * The feature id for the '<em><b>Axistype2</b></em>' containment reference list.
+   * The feature id for the '<em><b>Axistype</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int ABSTRACT_AXIS__AXISTYPE2 = 6;
+  int ABSTRACT_AXIS__AXISTYPE = 6;
 
   /**
    * The number of structural features of the '<em>Abstract Axis</em>' class.
@@ -342,13 +342,13 @@ public interface StackedchartsPackage extends EPackage
   int DEPENDENT_AXIS__COLOR = ABSTRACT_AXIS__COLOR;
 
   /**
-   * The feature id for the '<em><b>Axistype2</b></em>' containment reference list.
+   * The feature id for the '<em><b>Axistype</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int DEPENDENT_AXIS__AXISTYPE2 = ABSTRACT_AXIS__AXISTYPE2;
+  int DEPENDENT_AXIS__AXISTYPE = ABSTRACT_AXIS__AXISTYPE;
 
   /**
    * The feature id for the '<em><b>Datasets</b></em>' containment reference list.
@@ -954,13 +954,13 @@ public interface StackedchartsPackage extends EPackage
   int INDEPENDENT_AXIS__COLOR = ABSTRACT_AXIS__COLOR;
 
   /**
-   * The feature id for the '<em><b>Axistype2</b></em>' containment reference list.
+   * The feature id for the '<em><b>Axistype</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int INDEPENDENT_AXIS__AXISTYPE2 = ABSTRACT_AXIS__AXISTYPE2;
+  int INDEPENDENT_AXIS__AXISTYPE = ABSTRACT_AXIS__AXISTYPE;
 
   /**
    * The feature id for the '<em><b>Annotations</b></em>' containment reference list.
@@ -1841,15 +1841,15 @@ public interface StackedchartsPackage extends EPackage
   EAttribute getAbstractAxis_Color();
 
   /**
-   * Returns the meta object for the containment reference list '{@link info.limpet.stackedcharts.model.AbstractAxis#getAxistype2 <em>Axistype2</em>}'.
+   * Returns the meta object for the containment reference '{@link info.limpet.stackedcharts.model.AbstractAxis#getAxistype <em>Axistype</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the containment reference list '<em>Axistype2</em>'.
-   * @see info.limpet.stackedcharts.model.AbstractAxis#getAxistype2()
+   * @return the meta object for the containment reference '<em>Axistype</em>'.
+   * @see info.limpet.stackedcharts.model.AbstractAxis#getAxistype()
    * @see #getAbstractAxis()
    * @generated
    */
-  EReference getAbstractAxis_Axistype2();
+  EReference getAbstractAxis_Axistype();
 
   /**
    * Returns the meta object for class '{@link info.limpet.stackedcharts.model.IndependentAxis <em>Independent Axis</em>}'.
@@ -2494,12 +2494,12 @@ public interface StackedchartsPackage extends EPackage
     EAttribute ABSTRACT_AXIS__COLOR = eINSTANCE.getAbstractAxis_Color();
 
     /**
-     * The meta object literal for the '<em><b>Axistype2</b></em>' containment reference list feature.
+     * The meta object literal for the '<em><b>Axistype</b></em>' containment reference feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EReference ABSTRACT_AXIS__AXISTYPE2 = eINSTANCE.getAbstractAxis_Axistype2();
+    EReference ABSTRACT_AXIS__AXISTYPE = eINSTANCE.getAbstractAxis_Axistype();
 
     /**
      * The meta object literal for the '{@link info.limpet.stackedcharts.model.impl.IndependentAxisImpl <em>Independent Axis</em>}' class.

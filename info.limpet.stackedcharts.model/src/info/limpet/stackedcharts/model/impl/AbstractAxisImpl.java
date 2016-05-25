@@ -38,7 +38,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link info.limpet.stackedcharts.model.impl.AbstractAxisImpl#getDirection <em>Direction</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.impl.AbstractAxisImpl#getFont <em>Font</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.impl.AbstractAxisImpl#getColor <em>Color</em>}</li>
- *   <li>{@link info.limpet.stackedcharts.model.impl.AbstractAxisImpl#getAxistype2 <em>Axistype2</em>}</li>
+ *   <li>{@link info.limpet.stackedcharts.model.impl.AbstractAxisImpl#getAxistype <em>Axistype</em>}</li>
  * </ul>
  *
  * @generated
@@ -166,14 +166,14 @@ public abstract class AbstractAxisImpl extends MinimalEObjectImpl.Container impl
   protected String color = COLOR_EDEFAULT;
 
   /**
-   * The cached value of the '{@link #getAxistype2() <em>Axistype2</em>}' containment reference list.
+   * The cached value of the '{@link #getAxistype() <em>Axistype</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getAxistype2()
+   * @see #getAxistype()
    * @generated
    * @ordered
    */
-  protected EList<AxisType> axistype2;
+  protected AxisType axistype;
 
   /**
    * <!-- begin-user-doc -->
@@ -339,13 +339,47 @@ public abstract class AbstractAxisImpl extends MinimalEObjectImpl.Container impl
    * <!-- end-user-doc -->
    * @generated
    */
-  public EList<AxisType> getAxistype2()
+  public AxisType getAxistype()
   {
-    if (axistype2 == null)
+    return axistype;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetAxistype(AxisType newAxistype, NotificationChain msgs)
+  {
+    AxisType oldAxistype = axistype;
+    axistype = newAxistype;
+    if (eNotificationRequired())
     {
-      axistype2 = new EObjectContainmentEList<AxisType>(AxisType.class, this, StackedchartsPackage.ABSTRACT_AXIS__AXISTYPE2);
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, StackedchartsPackage.ABSTRACT_AXIS__AXISTYPE, oldAxistype, newAxistype);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
     }
-    return axistype2;
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setAxistype(AxisType newAxistype)
+  {
+    if (newAxistype != axistype)
+    {
+      NotificationChain msgs = null;
+      if (axistype != null)
+        msgs = ((InternalEObject)axistype).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - StackedchartsPackage.ABSTRACT_AXIS__AXISTYPE, null, msgs);
+      if (newAxistype != null)
+        msgs = ((InternalEObject)newAxistype).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - StackedchartsPackage.ABSTRACT_AXIS__AXISTYPE, null, msgs);
+      msgs = basicSetAxistype(newAxistype, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, StackedchartsPackage.ABSTRACT_AXIS__AXISTYPE, newAxistype, newAxistype));
   }
 
   /**
@@ -358,8 +392,8 @@ public abstract class AbstractAxisImpl extends MinimalEObjectImpl.Container impl
   {
     switch (featureID)
     {
-      case StackedchartsPackage.ABSTRACT_AXIS__AXISTYPE2:
-        return ((InternalEList<?>)getAxistype2()).basicRemove(otherEnd, msgs);
+      case StackedchartsPackage.ABSTRACT_AXIS__AXISTYPE:
+        return basicSetAxistype(null, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -386,8 +420,8 @@ public abstract class AbstractAxisImpl extends MinimalEObjectImpl.Container impl
         return getFont();
       case StackedchartsPackage.ABSTRACT_AXIS__COLOR:
         return getColor();
-      case StackedchartsPackage.ABSTRACT_AXIS__AXISTYPE2:
-        return getAxistype2();
+      case StackedchartsPackage.ABSTRACT_AXIS__AXISTYPE:
+        return getAxistype();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -421,9 +455,8 @@ public abstract class AbstractAxisImpl extends MinimalEObjectImpl.Container impl
       case StackedchartsPackage.ABSTRACT_AXIS__COLOR:
         setColor((String)newValue);
         return;
-      case StackedchartsPackage.ABSTRACT_AXIS__AXISTYPE2:
-        getAxistype2().clear();
-        getAxistype2().addAll((Collection<? extends AxisType>)newValue);
+      case StackedchartsPackage.ABSTRACT_AXIS__AXISTYPE:
+        setAxistype((AxisType)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -457,8 +490,8 @@ public abstract class AbstractAxisImpl extends MinimalEObjectImpl.Container impl
       case StackedchartsPackage.ABSTRACT_AXIS__COLOR:
         setColor(COLOR_EDEFAULT);
         return;
-      case StackedchartsPackage.ABSTRACT_AXIS__AXISTYPE2:
-        getAxistype2().clear();
+      case StackedchartsPackage.ABSTRACT_AXIS__AXISTYPE:
+        setAxistype((AxisType)null);
         return;
     }
     super.eUnset(featureID);
@@ -486,8 +519,8 @@ public abstract class AbstractAxisImpl extends MinimalEObjectImpl.Container impl
         return FONT_EDEFAULT == null ? font != null : !FONT_EDEFAULT.equals(font);
       case StackedchartsPackage.ABSTRACT_AXIS__COLOR:
         return COLOR_EDEFAULT == null ? color != null : !COLOR_EDEFAULT.equals(color);
-      case StackedchartsPackage.ABSTRACT_AXIS__AXISTYPE2:
-        return axistype2 != null && !axistype2.isEmpty();
+      case StackedchartsPackage.ABSTRACT_AXIS__AXISTYPE:
+        return axistype != null;
     }
     return super.eIsSet(featureID);
   }

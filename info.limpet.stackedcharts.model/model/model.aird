@@ -1634,9 +1634,9 @@
         </ownedStyle>
         <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EClass']"/>
       </ownedDiagramElements>
-      <ownedDiagramElements xmi:type="diagram:DEdge" xmi:id="_n8_CoCJQEeaobI4RYkiLEA" name="[0..*] axistype2" sourceNode="_R121QBNvEeal4orqSlvugA" targetNode="_lo11wCJQEeaobI4RYkiLEA">
-        <target xmi:type="ecore:EReference" href="model.ecore#//AbstractAxis/axistype2"/>
-        <semanticElements xmi:type="ecore:EReference" href="model.ecore#//AbstractAxis/axistype2"/>
+      <ownedDiagramElements xmi:type="diagram:DEdge" xmi:id="_n8_CoCJQEeaobI4RYkiLEA" name="[0..1] axistype" sourceNode="_R121QBNvEeal4orqSlvugA" targetNode="_lo11wCJQEeaobI4RYkiLEA">
+        <target xmi:type="ecore:EReference" href="model.ecore#//AbstractAxis/axistype"/>
+        <semanticElements xmi:type="ecore:EReference" href="model.ecore#//AbstractAxis/axistype"/>
         <ownedStyle xmi:type="diagram:EdgeStyle" xmi:id="_n8_CoSJQEeaobI4RYkiLEA" description="_fj3GEBNeEea13aVd91dE-g" sourceArrow="FillDiamond" routingStyle="manhattan" strokeColor="0,0,0">
           <centerLabelStyle xmi:type="diagram:CenterLabelStyle" xmi:id="_n8_CoiJQEeaobI4RYkiLEA" showIcon="false">
             <customFeatures>labelSize</customFeatures>
