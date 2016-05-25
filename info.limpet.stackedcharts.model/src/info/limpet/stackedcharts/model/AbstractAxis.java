@@ -22,7 +22,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link info.limpet.stackedcharts.model.AbstractAxis#getDirection <em>Direction</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.AbstractAxis#getFont <em>Font</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.AbstractAxis#getColor <em>Color</em>}</li>
- *   <li>{@link info.limpet.stackedcharts.model.AbstractAxis#getAxistype <em>Axistype</em>}</li>
+ *   <li>{@link info.limpet.stackedcharts.model.AbstractAxis#getAxisType <em>Axis Type</em>}</li>
  * </ul>
  *
  * @see info.limpet.stackedcharts.model.StackedchartsPackage#getAbstractAxis()
@@ -194,29 +194,29 @@ public interface AbstractAxis extends EObject
   void setColor(Color value);
 
   /**
-   * Returns the value of the '<em><b>Axistype</b></em>' containment reference.
+   * Returns the value of the '<em><b>Axis Type</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <p>
-   * If the meaning of the '<em>Axistype</em>' containment reference list isn't clear,
+   * If the meaning of the '<em>Axis Type</em>' containment reference isn't clear,
    * there really should be more of a description here...
    * </p>
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Axistype</em>' containment reference.
-   * @see #setAxistype(AxisType)
-   * @see info.limpet.stackedcharts.model.StackedchartsPackage#getAbstractAxis_Axistype()
+   * @return the value of the '<em>Axis Type</em>' containment reference.
+   * @see #setAxisType(AxisType)
+   * @see info.limpet.stackedcharts.model.StackedchartsPackage#getAbstractAxis_AxisType()
    * @model containment="true"
    * @generated
    */
-  AxisType getAxistype();
+  AxisType getAxisType();
 
   /**
-   * Sets the value of the '{@link info.limpet.stackedcharts.model.AbstractAxis#getAxistype <em>Axistype</em>}' containment reference.
+   * Sets the value of the '{@link info.limpet.stackedcharts.model.AbstractAxis#getAxisType <em>Axis Type</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Axistype</em>' containment reference.
-   * @see #getAxistype()
+   * @param value the new value of the '<em>Axis Type</em>' containment reference.
+   * @see #getAxisType()
    * @generated
    */
-  void setAxistype(AxisType value);
+  void setAxisType(AxisType value);
 
 } // AbstractAxis

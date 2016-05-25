@@ -773,7 +773,7 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getAbstractAxis_Axistype()
+  public EReference getAbstractAxis_AxisType()
   {
     return (EReference)abstractAxisEClass.getEStructuralFeatures().get(6);
   }
@@ -1086,7 +1086,7 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
     createEAttribute(abstractAxisEClass, ABSTRACT_AXIS__DIRECTION);
     createEAttribute(abstractAxisEClass, ABSTRACT_AXIS__FONT);
     createEAttribute(abstractAxisEClass, ABSTRACT_AXIS__COLOR);
-    createEReference(abstractAxisEClass, ABSTRACT_AXIS__AXISTYPE);
+    createEReference(abstractAxisEClass, ABSTRACT_AXIS__AXIS_TYPE);
 
     independentAxisEClass = createEClass(INDEPENDENT_AXIS);
     createEReference(independentAxisEClass, INDEPENDENT_AXIS__ANNOTATIONS);
@@ -1225,7 +1225,7 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
     initEAttribute(getAbstractAxis_Direction(), this.getAxisDirection(), "direction", null, 0, 1, AbstractAxis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getAbstractAxis_Font(), ecorePackage.getEString(), "font", null, 0, 1, AbstractAxis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getAbstractAxis_Color(), this.getColor(), "color", null, 0, 1, AbstractAxis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getAbstractAxis_Axistype(), this.getAxisType(), null, "axistype", null, 0, 1, AbstractAxis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getAbstractAxis_AxisType(), this.getAxisType(), null, "axisType", null, 0, 1, AbstractAxis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(independentAxisEClass, IndependentAxis.class, "IndependentAxis", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getIndependentAxis_Annotations(), this.getSelectiveAnnotation(), null, "annotations", null, 0, -1, IndependentAxis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

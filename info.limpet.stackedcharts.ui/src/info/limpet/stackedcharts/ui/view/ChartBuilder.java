@@ -210,7 +210,7 @@ public class ChartBuilder
     }
     else
     {
-      AxisType axisType = sharedAxisModel.getAxistype();
+      AxisType axisType = sharedAxisModel.getAxisType();
       if(axisType instanceof NumberAxis)
       {
         helper = new NumberHelper();
@@ -312,7 +312,7 @@ public class ChartBuilder
     int indexSeries = 0;
     final ChartHelper axeshelper;
     
-    AxisType axisType = dependentAxis.getAxistype();
+    AxisType axisType = dependentAxis.getAxisType();
     if(axisType instanceof NumberAxis)
     {
       axeshelper = new NumberHelper();

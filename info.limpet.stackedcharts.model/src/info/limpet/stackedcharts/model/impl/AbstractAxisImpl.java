@@ -39,7 +39,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link info.limpet.stackedcharts.model.impl.AbstractAxisImpl#getDirection <em>Direction</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.impl.AbstractAxisImpl#getFont <em>Font</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.impl.AbstractAxisImpl#getColor <em>Color</em>}</li>
- *   <li>{@link info.limpet.stackedcharts.model.impl.AbstractAxisImpl#getAxistype <em>Axistype</em>}</li>
+ *   <li>{@link info.limpet.stackedcharts.model.impl.AbstractAxisImpl#getAxisType <em>Axis Type</em>}</li>
  * </ul>
  *
  * @generated
@@ -167,14 +167,14 @@ public abstract class AbstractAxisImpl extends MinimalEObjectImpl.Container impl
   protected Color color = COLOR_EDEFAULT;
 
   /**
-   * The cached value of the '{@link #getAxistype() <em>Axistype</em>}' containment reference.
+   * The cached value of the '{@link #getAxisType() <em>Axis Type</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getAxistype()
+   * @see #getAxisType()
    * @generated
    * @ordered
    */
-  protected AxisType axistype;
+  protected AxisType axisType;
 
   /**
    * <!-- begin-user-doc -->
@@ -340,9 +340,9 @@ public abstract class AbstractAxisImpl extends MinimalEObjectImpl.Container impl
    * <!-- end-user-doc -->
    * @generated
    */
-  public AxisType getAxistype()
+  public AxisType getAxisType()
   {
-    return axistype;
+    return axisType;
   }
 
   /**
@@ -350,13 +350,13 @@ public abstract class AbstractAxisImpl extends MinimalEObjectImpl.Container impl
    * <!-- end-user-doc -->
    * @generated
    */
-  public NotificationChain basicSetAxistype(AxisType newAxistype, NotificationChain msgs)
+  public NotificationChain basicSetAxisType(AxisType newAxisType, NotificationChain msgs)
   {
-    AxisType oldAxistype = axistype;
-    axistype = newAxistype;
+    AxisType oldAxisType = axisType;
+    axisType = newAxisType;
     if (eNotificationRequired())
     {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, StackedchartsPackage.ABSTRACT_AXIS__AXISTYPE, oldAxistype, newAxistype);
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, StackedchartsPackage.ABSTRACT_AXIS__AXIS_TYPE, oldAxisType, newAxisType);
       if (msgs == null) msgs = notification; else msgs.add(notification);
     }
     return msgs;
@@ -367,20 +367,20 @@ public abstract class AbstractAxisImpl extends MinimalEObjectImpl.Container impl
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setAxistype(AxisType newAxistype)
+  public void setAxisType(AxisType newAxisType)
   {
-    if (newAxistype != axistype)
+    if (newAxisType != axisType)
     {
       NotificationChain msgs = null;
-      if (axistype != null)
-        msgs = ((InternalEObject)axistype).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - StackedchartsPackage.ABSTRACT_AXIS__AXISTYPE, null, msgs);
-      if (newAxistype != null)
-        msgs = ((InternalEObject)newAxistype).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - StackedchartsPackage.ABSTRACT_AXIS__AXISTYPE, null, msgs);
-      msgs = basicSetAxistype(newAxistype, msgs);
+      if (axisType != null)
+        msgs = ((InternalEObject)axisType).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - StackedchartsPackage.ABSTRACT_AXIS__AXIS_TYPE, null, msgs);
+      if (newAxisType != null)
+        msgs = ((InternalEObject)newAxisType).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - StackedchartsPackage.ABSTRACT_AXIS__AXIS_TYPE, null, msgs);
+      msgs = basicSetAxisType(newAxisType, msgs);
       if (msgs != null) msgs.dispatch();
     }
     else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, StackedchartsPackage.ABSTRACT_AXIS__AXISTYPE, newAxistype, newAxistype));
+      eNotify(new ENotificationImpl(this, Notification.SET, StackedchartsPackage.ABSTRACT_AXIS__AXIS_TYPE, newAxisType, newAxisType));
   }
 
   /**
@@ -393,8 +393,8 @@ public abstract class AbstractAxisImpl extends MinimalEObjectImpl.Container impl
   {
     switch (featureID)
     {
-      case StackedchartsPackage.ABSTRACT_AXIS__AXISTYPE:
-        return basicSetAxistype(null, msgs);
+      case StackedchartsPackage.ABSTRACT_AXIS__AXIS_TYPE:
+        return basicSetAxisType(null, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -421,8 +421,8 @@ public abstract class AbstractAxisImpl extends MinimalEObjectImpl.Container impl
         return getFont();
       case StackedchartsPackage.ABSTRACT_AXIS__COLOR:
         return getColor();
-      case StackedchartsPackage.ABSTRACT_AXIS__AXISTYPE:
-        return getAxistype();
+      case StackedchartsPackage.ABSTRACT_AXIS__AXIS_TYPE:
+        return getAxisType();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -456,8 +456,8 @@ public abstract class AbstractAxisImpl extends MinimalEObjectImpl.Container impl
       case StackedchartsPackage.ABSTRACT_AXIS__COLOR:
         setColor((Color)newValue);
         return;
-      case StackedchartsPackage.ABSTRACT_AXIS__AXISTYPE:
-        setAxistype((AxisType)newValue);
+      case StackedchartsPackage.ABSTRACT_AXIS__AXIS_TYPE:
+        setAxisType((AxisType)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -491,8 +491,8 @@ public abstract class AbstractAxisImpl extends MinimalEObjectImpl.Container impl
       case StackedchartsPackage.ABSTRACT_AXIS__COLOR:
         setColor(COLOR_EDEFAULT);
         return;
-      case StackedchartsPackage.ABSTRACT_AXIS__AXISTYPE:
-        setAxistype((AxisType)null);
+      case StackedchartsPackage.ABSTRACT_AXIS__AXIS_TYPE:
+        setAxisType((AxisType)null);
         return;
     }
     super.eUnset(featureID);
@@ -520,8 +520,8 @@ public abstract class AbstractAxisImpl extends MinimalEObjectImpl.Container impl
         return FONT_EDEFAULT == null ? font != null : !FONT_EDEFAULT.equals(font);
       case StackedchartsPackage.ABSTRACT_AXIS__COLOR:
         return COLOR_EDEFAULT == null ? color != null : !COLOR_EDEFAULT.equals(color);
-      case StackedchartsPackage.ABSTRACT_AXIS__AXISTYPE:
-        return axistype != null;
+      case StackedchartsPackage.ABSTRACT_AXIS__AXIS_TYPE:
+        return axisType != null;
     }
     return super.eIsSet(featureID);
   }

@@ -259,7 +259,7 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
     IndependentAxis timeAxis = factory.createIndependentAxis();
     
     // ok, make it a time axis
-    timeAxis.setAxistype(factory.createDateAxis());
+    timeAxis.setAxisType(factory.createDateAxis());
     res.setSharedAxis(timeAxis);
 
     // ok, start looking deeper
