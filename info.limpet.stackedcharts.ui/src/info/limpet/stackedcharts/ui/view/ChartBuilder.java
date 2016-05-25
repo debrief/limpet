@@ -355,14 +355,7 @@ public class ChartBuilder
   {
     for (final AbstractAnnotation annotation : annotations)
     {
-      // convert hex Color to awt
-      final String hexColor = annotation.getColor();
-
-      Color awtColor = null;
-      if (hexColor != null)
-      {
-        awtColor = hex2Rgb(hexColor);
-      }
+      Color color = annotation.getColor();
 
       if (annotation instanceof info.limpet.stackedcharts.model.Marker)
       {
@@ -373,7 +366,7 @@ public class ChartBuilder
         Marker mrk = new ValueMarker(marker.getValue());
         mrk.setLabel(annotation.getName());
 
-        mrk.setPaint(awtColor == null ? Color.GRAY : awtColor);
+        mrk.setPaint(color == null ? Color.GRAY : color);
 
         // move Text Anchor
         mrk.setLabelTextAnchor(TextAnchor.TOP_RIGHT);
@@ -394,8 +387,8 @@ public class ChartBuilder
         Marker mrk = new IntervalMarker(zone.getStart(), zone.getEnd());
         mrk.setLabel(annotation.getName());
 
-        if (awtColor != null)
-          mrk.setPaint(awtColor);
+        if (color != null)
+          mrk.setPaint(color);
 
         // move Text & Label Anchor
         mrk.setLabelTextAnchor(TextAnchor.CENTER);
@@ -425,7 +418,7 @@ public class ChartBuilder
             addLabel = false;
           }
 
-          mrk.setPaint(awtColor == null ? Color.GRAY : awtColor);
+          mrk.setPaint(color == null ? Color.GRAY : color);
 
           // move Text Anchor
           mrk.setLabelTextAnchor(TextAnchor.TOP_RIGHT);
@@ -526,18 +519,5 @@ public class ChartBuilder
         helper.addItem(series, dataItem);
       }
     }
-  }
-
-  /**
-   * 
-   * @param colorStr
-   *          e.g. "#FFFFFF"
-   * @return awt.Color Object
-   */
-  private static Color hex2Rgb(String colorStr)
-  {
-    return new Color(Integer.valueOf(colorStr.substring(1, 3), 16), Integer
-        .valueOf(colorStr.substring(3, 5), 16), Integer.valueOf(colorStr
-        .substring(5, 7), 16));
   }
 }
