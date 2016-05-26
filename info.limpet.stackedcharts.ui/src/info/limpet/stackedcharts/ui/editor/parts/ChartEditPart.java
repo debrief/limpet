@@ -47,7 +47,7 @@ public class ChartEditPart extends AbstractGraphicalEditPart
   @Override
   protected IFigure createFigure()
   {
-    return new ChartFigure();
+    return new ChartFigure(getChart());
   }
 
   @Override

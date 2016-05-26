@@ -1,5 +1,7 @@
 package info.limpet.stackedcharts.ui.editor.figures;
 
+import info.limpet.stackedcharts.model.Chart;
+
 import org.eclipse.draw2d.BorderLayout;
 import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.Label;
@@ -13,25 +15,24 @@ import org.eclipse.swt.widgets.Display;
 public class ChartFigure extends RectangleFigure
 {
   private Label chartNameLabel;
+  private JFreeChartFigure chartFigure;
   private static volatile Font boldFont;
 
-  public ChartFigure()
+  public ChartFigure(Chart chart)
   {
     setBackgroundColor(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
     setOutline(false);
     setLayoutManager(new BorderLayout());
     chartNameLabel = new Label();
     add(chartNameLabel, BorderLayout.TOP);
-    Label previewLabel = new Label("Preview");
-    previewLabel.setForegroundColor(Display.getDefault().getSystemColor(
-        SWT.COLOR_RED));
-    add(previewLabel, BorderLayout.CENTER);
+    chartFigure = new JFreeChartFigure(chart);
+    add(chartFigure, BorderLayout.CENTER);
   }
 
   public void setName(String name)
   {
     chartNameLabel.setText("Chart: " + name);
-     // cache font for AxisNameFigure
+    // cache font for AxisNameFigure
     if (boldFont == null)
     {
       FontData fontData = chartNameLabel.getFont().getFontData()[0];
@@ -40,6 +41,11 @@ public class ChartFigure extends RectangleFigure
               fontData.getHeight(), SWT.BOLD));
     }
     chartNameLabel.setFont(boldFont);
+  }
+
+  public void updateChart()
+  {
+    chartFigure.repaint();
   }
 
   @Override

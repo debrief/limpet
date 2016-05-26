@@ -106,9 +106,10 @@ public class AxisEditPart extends AbstractGraphicalEditPart implements ActionLis
   protected void refreshVisuals()
   {
     axisNameLabel.setName("Axis: " + getAxis().getName());
-
+    
     ((GraphicalEditPart) getParent()).setLayoutConstraint(this, figure,
         new GridData(GridData.CENTER, GridData.FILL, false, true));
+    ((GraphicalEditPart) getParent()).refresh();
   }
 
   @Override
@@ -156,6 +157,8 @@ public class AxisEditPart extends AbstractGraphicalEditPart implements ActionLis
       {
       case StackedchartsPackage.DEPENDENT_AXIS__DATASETS:
         refreshChildren();
+      case StackedchartsPackage.ABSTRACT_AXIS__NAME:
+        refreshVisuals();
       }
     }
 
