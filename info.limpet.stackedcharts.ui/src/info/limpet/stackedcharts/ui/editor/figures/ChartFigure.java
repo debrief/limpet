@@ -15,6 +15,7 @@ import org.eclipse.swt.widgets.Display;
 public class ChartFigure extends RectangleFigure
 {
   private Label chartNameLabel;
+  private JFreeChartFigure chartFigure;
   private static volatile Font boldFont;
 
   public ChartFigure(Chart chart)
@@ -24,17 +25,14 @@ public class ChartFigure extends RectangleFigure
     setLayoutManager(new BorderLayout());
     chartNameLabel = new Label();
     add(chartNameLabel, BorderLayout.TOP);
-    JFreeChartFigure chartFigure = new JFreeChartFigure(chart) ;
-//    Label previewLabel = new Label("Preview");
-//    previewLabel.setForegroundColor(Display.getDefault().getSystemColor(
-//        SWT.COLOR_RED));
+    chartFigure = new JFreeChartFigure(chart);
     add(chartFigure, BorderLayout.CENTER);
   }
 
   public void setName(String name)
   {
     chartNameLabel.setText("Chart: " + name);
-     // cache font for AxisNameFigure
+    // cache font for AxisNameFigure
     if (boldFont == null)
     {
       FontData fontData = chartNameLabel.getFont().getFontData()[0];
@@ -43,6 +41,11 @@ public class ChartFigure extends RectangleFigure
               fontData.getHeight(), SWT.BOLD));
     }
     chartNameLabel.setFont(boldFont);
+  }
+
+  public void updateChart()
+  {
+    chartFigure.repaint();
   }
 
   @Override
