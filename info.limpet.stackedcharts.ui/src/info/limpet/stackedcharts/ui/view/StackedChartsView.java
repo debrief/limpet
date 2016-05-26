@@ -442,7 +442,8 @@ public class StackedChartsView extends ViewPart implements
     final JFreeChart chart = ChartBuilder.build(charts);
     @SuppressWarnings("unused")
     final ChartComposite _chartComposite =
-        new ChartComposite(chartHolder, SWT.NONE, chart, true)
+        new ChartComposite(chartHolder, SWT.NONE, chart, 400, 600, 300, 200,
+            1800, 1800, true, false, true, true, true, true)
         {
           @Override
           public void mouseUp(final MouseEvent event)
