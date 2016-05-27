@@ -8,6 +8,7 @@ import info.limpet.stackedcharts.model.ChartSet;
 import info.limpet.stackedcharts.model.Dataset;
 import info.limpet.stackedcharts.model.DependentAxis;
 import info.limpet.stackedcharts.model.IndependentAxis;
+import info.limpet.stackedcharts.model.Styling;
 
 public class StackedChartsEditPartFactory implements EditPartFactory
 {
@@ -42,10 +43,13 @@ public class StackedChartsEditPartFactory implements EditPartFactory
       editPart = new ChartsPanelEditPart();
     }
     else if (model instanceof IndependentAxis)
-    { 
+    {
       editPart = new SharedAxisEditPart();
     }
-
+    else if (model instanceof Styling)
+    {
+      editPart = new StylingEditPart();
+    }
 
     if (editPart != null)
     {
