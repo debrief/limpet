@@ -1,5 +1,7 @@
 package info.limpet.stackedcharts.ui.editor.parts;
 
+import info.limpet.stackedcharts.model.ChartSet;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,11 +12,8 @@ import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 
-import info.limpet.stackedcharts.model.ChartSet;
-
 public class ChartSetEditPart extends AbstractGraphicalEditPart
 {
-
   /**
    * Wraps the charts, so that they are displayed in a separate container and not together with the
    * shared axis.
@@ -33,6 +32,20 @@ public class ChartSetEditPart extends AbstractGraphicalEditPart
       return charts;
     }
   }
+  public static class ChartSetWrapper
+  {
+    private final ChartSet charts;
+    
+    public ChartSetWrapper(ChartSet charts)
+    {
+      this.charts = charts;
+    }
+    
+    public ChartSet getcChartSet()
+    {
+      return charts;
+    }
+  }
 
   @Override
   protected IFigure createFigure()
@@ -45,8 +58,11 @@ public class ChartSetEditPart extends AbstractGraphicalEditPart
     rectangle.setLayoutManager(gridLayout);
     rectangle.setBackgroundColor(Display.getDefault().getSystemColor(
         SWT.COLOR_WIDGET_BACKGROUND));
+
     return rectangle;
   }
+
+ 
 
   @Override
   protected void createEditPolicies()
@@ -62,6 +78,7 @@ public class ChartSetEditPart extends AbstractGraphicalEditPart
     // axis) shown on the bottom
     List modelChildren = new ArrayList<>();
     ChartSet chartSet = (ChartSet) getModel();
+    modelChildren.add(new ChartSetWrapper(chartSet));
     modelChildren.add(new ChartsWrapper(chartSet.getCharts()));
     modelChildren.add(chartSet.getSharedAxis());
     return modelChildren;

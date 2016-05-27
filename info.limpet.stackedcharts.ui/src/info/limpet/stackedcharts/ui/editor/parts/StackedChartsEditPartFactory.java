@@ -41,6 +41,10 @@ public class StackedChartsEditPartFactory implements EditPartFactory
     {
       editPart = new ChartsPanelEditPart();
     }
+    else if (model instanceof ChartSetEditPart.ChartSetWrapper)
+    {
+      editPart = new ChartSetHeaderEditPart();
+    }
     else if (model instanceof IndependentAxis)
     { 
       editPart = new SharedAxisEditPart();
