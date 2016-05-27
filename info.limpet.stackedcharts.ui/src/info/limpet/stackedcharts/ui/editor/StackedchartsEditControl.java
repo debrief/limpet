@@ -1,10 +1,8 @@
 package info.limpet.stackedcharts.ui.editor;
 
-import info.limpet.stackedcharts.model.ChartSet;
-import info.limpet.stackedcharts.ui.editor.parts.StackedChartsEditPartFactory;
-
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.EventObject;
 import java.util.List;
 
 import org.eclipse.draw2d.ColorConstants;
@@ -18,15 +16,24 @@ import org.eclipse.emf.edit.ui.provider.AdapterFactoryContentProvider;
 import org.eclipse.emf.edit.ui.view.ExtendedPropertySheetPage;
 import org.eclipse.gef.EditDomain;
 import org.eclipse.gef.GraphicalViewer;
+import org.eclipse.gef.commands.CommandStackListener;
 import org.eclipse.gef.editparts.AbstractEditPart;
+import org.eclipse.gef.ui.actions.RedoAction;
+import org.eclipse.gef.ui.actions.UndoAction;
 import org.eclipse.gef.ui.parts.ScrollingGraphicalViewer;
+import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
+
+import info.limpet.stackedcharts.model.ChartSet;
+import info.limpet.stackedcharts.ui.editor.parts.StackedChartsEditPartFactory;
 
 public class StackedchartsEditControl extends Composite
 {
@@ -146,6 +153,30 @@ public class StackedchartsEditControl extends Composite
   public void setModel(ChartSet model)
   {
     viewer.setContents(model);
+
+  }
+  
+  public void init(IViewPart view)
+  {
+    IActionBars actionBars = view.getViewSite().getActionBars();
+    IToolBarManager toolBarManager = actionBars.getToolBarManager();
+
+    final UndoAction undoAction = new UndoAction(view);
+    toolBarManager.add(undoAction);
+    final RedoAction redoAction = new RedoAction(view);
+    toolBarManager.add(redoAction);
+
+    viewer.getEditDomain().getCommandStack().addCommandStackListener(
+        new CommandStackListener()
+        {
+
+          @Override
+          public void commandStackChanged(EventObject event)
+          {
+            undoAction.setEnabled(undoAction.isEnabled());
+            redoAction.setEnabled(redoAction.isEnabled());
+          }
+        });
 
   }
 }

@@ -237,6 +237,7 @@ public class StackedChartsView extends ViewPart implements
 
     selectView(CHART_VIEW);
     contributeToActionBars();
+    chartEditor.init(this);
 
     // Drop Support for *.stackedcharts
     connectFileDropSupport(stackedPane);

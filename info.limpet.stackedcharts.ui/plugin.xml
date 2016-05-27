@@ -2,16 +2,6 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
-         point="org.eclipse.ui.editors">
-      <editor
-            class="info.limpet.stackedcharts.ui.editor.StackedchartsEditor"
-            default="false"
-            extensions=".stackedcharts"
-            id="info.limpet.stackedcharts.editor"
-            name="Stackedcharts Editor">
-      </editor>
-   </extension>
-   <extension
          point="org.eclipse.ui.views">
       <view
             allowMultiple="true"
