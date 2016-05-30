@@ -1,5 +1,6 @@
 package info.limpet.stackedcharts.ui.editor.parts;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.draw2d.BorderLayout;
@@ -14,6 +15,30 @@ import info.limpet.stackedcharts.ui.editor.parts.ChartEditPart.ChartPanePosition
 
 public class ChartPaneEditPart extends AbstractGraphicalEditPart
 {
+  
+  
+  public static class AxisLandingPad
+  {
+    final Chart chart;
+    final ChartEditPart.ChartPanePosition pos;
+    
+    public AxisLandingPad(Chart chart,ChartEditPart.ChartPanePosition pos)
+    {
+      this.chart=chart;
+      this.pos=pos;
+    }
+    
+    public Chart getChart()
+    {
+      return chart;
+    }
+    
+    public ChartEditPart.ChartPanePosition getPos()
+    {
+      return pos;
+    }
+    
+  }
 
   @Override
   protected IFigure createFigure()
@@ -59,8 +84,22 @@ public class ChartPaneEditPart extends AbstractGraphicalEditPart
   {
 
     Chart chart = (Chart) getParent().getModel();
+
     ChartEditPart.ChartPanePosition pos = (ChartPanePosition) getModel();
-    return pos == ChartPanePosition.LEFT ? chart.getMinAxes() : chart
-        .getMaxAxes();
+    switch (pos)
+    {
+    case LEFT:
+      return chart.getMinAxes().size() == 0 ? Arrays.asList(new AxisLandingPad(chart, pos)) : chart
+          .getMinAxes();
+
+    case RIGHT:
+
+      return chart.getMaxAxes().size() == 0 ? Arrays.asList(new AxisLandingPad(chart, pos)) : chart
+          .getMaxAxes();
+
+    }
+
+    return Arrays.asList();
+
   }
 }
