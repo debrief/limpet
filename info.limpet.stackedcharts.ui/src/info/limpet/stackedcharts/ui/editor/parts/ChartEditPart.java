@@ -1,13 +1,17 @@
 package info.limpet.stackedcharts.ui.editor.parts;
 
 import info.limpet.stackedcharts.model.Chart;
+import info.limpet.stackedcharts.model.ChartSet;
 import info.limpet.stackedcharts.model.StackedchartsPackage;
+import info.limpet.stackedcharts.ui.editor.commands.DeleteChartCommand;
 import info.limpet.stackedcharts.ui.editor.figures.ChartFigure;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.draw2d.ActionEvent;
+import org.eclipse.draw2d.ActionListener;
 import org.eclipse.draw2d.GridData;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.emf.common.notify.Adapter;
@@ -16,11 +20,15 @@ import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.GraphicalEditPart;
+import org.eclipse.gef.commands.Command;
+import org.eclipse.gef.commands.CommandStack;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
+import org.eclipse.gef.editpolicies.ComponentEditPolicy;
 import org.eclipse.gef.editpolicies.NonResizableEditPolicy;
+import org.eclipse.gef.requests.GroupRequest;
 import org.eclipse.swt.SWT;
 
-public class ChartEditPart extends AbstractGraphicalEditPart
+public class ChartEditPart extends AbstractGraphicalEditPart implements ActionListener
 {
 
   public enum ChartPanePosition
@@ -47,7 +55,7 @@ public class ChartEditPart extends AbstractGraphicalEditPart
   @Override
   protected IFigure createFigure()
   {
-    return new ChartFigure(getChart());
+    return new ChartFigure(getChart(),this);
   }
 
   @Override
@@ -55,6 +63,17 @@ public class ChartEditPart extends AbstractGraphicalEditPart
   {
     installEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE,
         new NonResizableEditPolicy());
+    
+    installEditPolicy(EditPolicy.COMPONENT_ROLE, new ComponentEditPolicy()
+    {
+      protected Command createDeleteCommand(GroupRequest deleteRequest)
+      {
+        Chart chart = getChart();
+        ChartSet parent = chart.getParent();
+        DeleteChartCommand deleteChartCommand = new DeleteChartCommand(parent, chart);
+        return deleteChartCommand;
+      }
+    });
   }
 
   private Chart getChart()
@@ -104,6 +123,19 @@ public class ChartEditPart extends AbstractGraphicalEditPart
     }
     
     ((ChartFigure) getFigure()).getLayoutManager().layout(getFigure());
+  }
+  
+  
+  @Override
+  public void actionPerformed(ActionEvent event)
+  {
+    Command deleteCommand = getCommand(new GroupRequest(REQ_DELETE));
+    if (deleteCommand != null)
+    {
+      CommandStack commandStack = getViewer().getEditDomain().getCommandStack();
+      commandStack.execute(deleteCommand);
+    }
+    
   }
 
   public class ChartAdapter implements Adapter

@@ -1,6 +1,7 @@
 package info.limpet.stackedcharts.ui.editor.parts;
 
 import info.limpet.stackedcharts.model.ChartSet;
+import info.limpet.stackedcharts.model.StackedchartsPackage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,6 +9,9 @@ import java.util.List;
 import org.eclipse.draw2d.GridLayout;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.RectangleFigure;
+import org.eclipse.emf.common.notify.Adapter;
+import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
@@ -32,21 +36,44 @@ public class ChartSetEditPart extends AbstractGraphicalEditPart
       return charts;
     }
   }
+
   public static class ChartSetWrapper
   {
     private final ChartSet charts;
-    
+
     public ChartSetWrapper(ChartSet charts)
     {
       this.charts = charts;
     }
-    
+
     public ChartSet getcChartSet()
     {
       return charts;
     }
   }
 
+  
+  private ChartSetAdapter adapter = new ChartSetAdapter();
+
+  @Override
+  public void activate()
+  {
+    super.activate();
+    getChartSet().eAdapters().add(adapter);
+  }
+
+  @Override
+  public void deactivate()
+  {
+    getChartSet().eAdapters().remove(adapter);
+    super.deactivate();
+  }
+  
+  ChartSet getChartSet()
+  {
+    return (ChartSet) getModel();
+  }
+  
   @Override
   protected IFigure createFigure()
   {
@@ -62,11 +89,43 @@ public class ChartSetEditPart extends AbstractGraphicalEditPart
     return rectangle;
   }
 
- 
-
   @Override
   protected void createEditPolicies()
   {
+  }
+
+  public class ChartSetAdapter implements Adapter
+  {
+
+    @Override
+    public void notifyChanged(Notification notification)
+    {
+      int featureId = notification.getFeatureID(StackedchartsPackage.class);
+      switch (featureId)
+      {
+      case StackedchartsPackage.CHART_SET__CHARTS:
+        refreshChildren();
+        break;
+      }
+    }
+
+    @Override
+    public Notifier getTarget()
+    {
+      return (ChartSet) getModel();
+    }
+
+    @Override
+    public void setTarget(Notifier newTarget)
+    {
+      // Do nothing.
+    }
+
+    @Override
+    public boolean isAdapterForType(Object type)
+    {
+      return type.equals(ChartSet.class);
+    }
   }
 
   @SuppressWarnings(
