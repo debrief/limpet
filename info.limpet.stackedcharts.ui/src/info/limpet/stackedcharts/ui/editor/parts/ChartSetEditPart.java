@@ -1,5 +1,6 @@
 package info.limpet.stackedcharts.ui.editor.parts;
 
+import info.limpet.stackedcharts.model.Chart;
 import info.limpet.stackedcharts.model.ChartSet;
 import info.limpet.stackedcharts.model.StackedchartsPackage;
 
@@ -24,14 +25,14 @@ public class ChartSetEditPart extends AbstractGraphicalEditPart
    */
   public static class ChartsWrapper
   {
-    private final List charts;
+    private final List<Chart> charts;
 
-    public ChartsWrapper(List charts)
+    public ChartsWrapper(List<Chart> charts)
     {
       this.charts = charts;
     }
 
-    public List getCharts()
+    public List<Chart> getCharts()
     {
       return charts;
     }
@@ -94,6 +95,12 @@ public class ChartSetEditPart extends AbstractGraphicalEditPart
   {
   }
 
+  @Override
+  public ChartSet getModel()
+  {
+    return (ChartSet )super.getModel();
+  }
+  
   public class ChartSetAdapter implements Adapter
   {
 
@@ -112,7 +119,7 @@ public class ChartSetEditPart extends AbstractGraphicalEditPart
     @Override
     public Notifier getTarget()
     {
-      return (ChartSet) getModel();
+      return  getModel();
     }
 
     @Override
@@ -136,7 +143,7 @@ public class ChartSetEditPart extends AbstractGraphicalEditPart
     // 2 model children - the charts, displayed in a separate container and the shared (independent
     // axis) shown on the bottom
     List modelChildren = new ArrayList<>();
-    ChartSet chartSet = (ChartSet) getModel();
+    ChartSet chartSet = getModel();
     modelChildren.add(new ChartSetWrapper(chartSet));
     modelChildren.add(new ChartsWrapper(chartSet.getCharts()));
     modelChildren.add(chartSet.getSharedAxis());

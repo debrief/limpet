@@ -57,6 +57,12 @@ public class ChartsPanelEditPart extends AbstractGraphicalEditPart
   @Override
   protected List getModelChildren()
   {
-    return ((ChartsWrapper) getModel()).getCharts();
+    return ( getModel()).getCharts();
+  }
+  
+  @Override
+  public ChartsWrapper getModel()
+  {
+    return (ChartsWrapper)super.getModel();
   }
 }
