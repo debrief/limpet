@@ -346,6 +346,11 @@ public class ChartBuilder
       }
       addAnnotationToPlot(subplot, annotations, false);
     }
+    
+    // TODO: sort out how to position this title
+//    XYTitleAnnotation title  = new XYTitleAnnotation(0, 0,  new TextTitle(chart.getName()));
+//    subplot.addAnnotation(title);
+    
     return subplot;
   }
 
