@@ -9,13 +9,16 @@ import info.limpet.stackedcharts.model.Dataset;
 import info.limpet.stackedcharts.model.Datum;
 import info.limpet.stackedcharts.model.DependentAxis;
 import info.limpet.stackedcharts.model.IndependentAxis;
+import info.limpet.stackedcharts.model.LineType;
 import info.limpet.stackedcharts.model.MarkerStyle;
 import info.limpet.stackedcharts.model.Orientation;
 import info.limpet.stackedcharts.model.PlainStyling;
 import info.limpet.stackedcharts.model.SelectiveAnnotation;
 import info.limpet.stackedcharts.model.Styling;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Stroke;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
@@ -532,13 +535,56 @@ public class ChartBuilder
         {
           System.err.println("Linear colors not implemented");
         }
-
+        
+        // legend visibility
+        final boolean isInLegend = styling.isIncludeInLegend();
+        renderer.setSeriesVisibleInLegend(seriesIndex, isInLegend);
+        
+        // line thickness
+        // line style
+        LineType lineType = styling.getLineStyle();
+        if(lineType != null)
+        {
+          final float thickness = (float) styling.getLineThickness();
+          Stroke stroke;
+          float[] pattern;
+          switch(lineType)
+          {
+          case NONE:
+            renderer.setSeriesLinesVisible(seriesIndex, false);
+            break;
+          case SOLID:
+            renderer.setSeriesLinesVisible(seriesIndex, true);
+            stroke = new BasicStroke(thickness);
+            renderer.setSeriesStroke(seriesIndex, stroke);
+            break;
+          case DOTTED:
+            renderer.setSeriesLinesVisible(seriesIndex, true);
+            pattern = new float[] {3f, 3f };
+            stroke =
+                new BasicStroke(thickness, BasicStroke.CAP_BUTT,
+                    BasicStroke.JOIN_BEVEL, 0, pattern, 0);
+            renderer.setSeriesStroke(seriesIndex, stroke);
+            break;
+          case DASHED:
+            renderer.setSeriesLinesVisible(seriesIndex, true);
+            pattern = new float[] { 8.0f, 4.0f };
+            stroke =
+                new BasicStroke(thickness, BasicStroke.CAP_BUTT,
+                    BasicStroke.JOIN_BEVEL, 0, pattern, 0);
+            renderer.setSeriesStroke(seriesIndex, stroke);
+            break;
+          }
+        }
+        
+        // marker size
         double size = styling.getMarkerSize();
         if (size == 0)
         {
           size = 2;// default
         }
 
+        // marker style
         final MarkerStyle marker = styling.getMarkerStyle();
         if (marker != null)
         {
