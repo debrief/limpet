@@ -633,6 +633,16 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
    * <!-- end-user-doc -->
    * @generated
    */
+  public EAttribute getStyling_IncludeInLegend()
+  {
+    return (EAttribute)stylingEClass.getEStructuralFeatures().get(4);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public EClass getPlainStyling()
   {
     return plainStylingEClass;
@@ -1079,6 +1089,7 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
     createEAttribute(stylingEClass, STYLING__MARKER_SIZE);
     createEAttribute(stylingEClass, STYLING__LINE_THICKNESS);
     createEAttribute(stylingEClass, STYLING__LINE_STYLE);
+    createEAttribute(stylingEClass, STYLING__INCLUDE_IN_LEGEND);
 
     plainStylingEClass = createEClass(PLAIN_STYLING);
     createEAttribute(plainStylingEClass, PLAIN_STYLING__COLOR);
@@ -1219,6 +1230,7 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
     initEAttribute(getStyling_MarkerSize(), theXMLTypePackage.getDouble(), "markerSize", "3", 0, 1, Styling.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getStyling_LineThickness(), theXMLTypePackage.getDouble(), "lineThickness", "1", 0, 1, Styling.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getStyling_LineStyle(), this.getLineType(), "lineStyle", "Solid", 0, 1, Styling.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getStyling_IncludeInLegend(), ecorePackage.getEBoolean(), "includeInLegend", "true", 0, 1, Styling.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(plainStylingEClass, PlainStyling.class, "PlainStyling", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getPlainStyling_Color(), this.getColor(), "color", null, 0, 1, PlainStyling.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

@@ -75,6 +75,7 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//Styling/markerSize"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//Styling/lineThickness"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//Styling/lineStyle"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//Styling/includeInLegend"/>
     </genClasses>
     <genClasses ecoreClass="model.ecore#//PlainStyling">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//PlainStyling/color"/>

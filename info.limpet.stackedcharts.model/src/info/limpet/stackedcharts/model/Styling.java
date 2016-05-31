@@ -17,6 +17,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link info.limpet.stackedcharts.model.Styling#getMarkerSize <em>Marker Size</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.Styling#getLineThickness <em>Line Thickness</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.Styling#getLineStyle <em>Line Style</em>}</li>
+ *   <li>{@link info.limpet.stackedcharts.model.Styling#isIncludeInLegend <em>Include In Legend</em>}</li>
  * </ul>
  *
  * @see info.limpet.stackedcharts.model.StackedchartsPackage#getStyling()
@@ -137,5 +138,32 @@ public interface Styling extends EObject
    * @generated
    */
   void setLineStyle(LineType value);
+
+  /**
+   * Returns the value of the '<em><b>Include In Legend</b></em>' attribute.
+   * The default value is <code>"true"</code>.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * <!-- begin-model-doc -->
+   * whether to include this dataset in the chart legend
+   * 
+   * <!-- end-model-doc -->
+   * @return the value of the '<em>Include In Legend</em>' attribute.
+   * @see #setIncludeInLegend(boolean)
+   * @see info.limpet.stackedcharts.model.StackedchartsPackage#getStyling_IncludeInLegend()
+   * @model default="true"
+   * @generated
+   */
+  boolean isIncludeInLegend();
+
+  /**
+   * Sets the value of the '{@link info.limpet.stackedcharts.model.Styling#isIncludeInLegend <em>Include In Legend</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Include In Legend</em>' attribute.
+   * @see #isIncludeInLegend()
+   * @generated
+   */
+  void setIncludeInLegend(boolean value);
 
 } // Styling

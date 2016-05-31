@@ -26,6 +26,7 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
  *   <li>{@link info.limpet.stackedcharts.model.impl.StylingImpl#getMarkerSize <em>Marker Size</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.impl.StylingImpl#getLineThickness <em>Line Thickness</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.impl.StylingImpl#getLineStyle <em>Line Style</em>}</li>
+ *   <li>{@link info.limpet.stackedcharts.model.impl.StylingImpl#isIncludeInLegend <em>Include In Legend</em>}</li>
  * </ul>
  *
  * @generated
@@ -111,6 +112,26 @@ public class StylingImpl extends MinimalEObjectImpl.Container implements Styling
    * @ordered
    */
   protected LineType lineStyle = LINE_STYLE_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #isIncludeInLegend() <em>Include In Legend</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isIncludeInLegend()
+   * @generated
+   * @ordered
+   */
+  protected static final boolean INCLUDE_IN_LEGEND_EDEFAULT = true;
+
+  /**
+   * The cached value of the '{@link #isIncludeInLegend() <em>Include In Legend</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isIncludeInLegend()
+   * @generated
+   * @ordered
+   */
+  protected boolean includeInLegend = INCLUDE_IN_LEGEND_EDEFAULT;
 
   /**
    * <!-- begin-user-doc -->
@@ -230,6 +251,29 @@ public class StylingImpl extends MinimalEObjectImpl.Container implements Styling
    * <!-- end-user-doc -->
    * @generated
    */
+  public boolean isIncludeInLegend()
+  {
+    return includeInLegend;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setIncludeInLegend(boolean newIncludeInLegend)
+  {
+    boolean oldIncludeInLegend = includeInLegend;
+    includeInLegend = newIncludeInLegend;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, StackedchartsPackage.STYLING__INCLUDE_IN_LEGEND, oldIncludeInLegend, includeInLegend));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   @Override
   public Object eGet(int featureID, boolean resolve, boolean coreType)
   {
@@ -243,6 +287,8 @@ public class StylingImpl extends MinimalEObjectImpl.Container implements Styling
         return getLineThickness();
       case StackedchartsPackage.STYLING__LINE_STYLE:
         return getLineStyle();
+      case StackedchartsPackage.STYLING__INCLUDE_IN_LEGEND:
+        return isIncludeInLegend();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -268,6 +314,9 @@ public class StylingImpl extends MinimalEObjectImpl.Container implements Styling
         return;
       case StackedchartsPackage.STYLING__LINE_STYLE:
         setLineStyle((LineType)newValue);
+        return;
+      case StackedchartsPackage.STYLING__INCLUDE_IN_LEGEND:
+        setIncludeInLegend((Boolean)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -295,6 +344,9 @@ public class StylingImpl extends MinimalEObjectImpl.Container implements Styling
       case StackedchartsPackage.STYLING__LINE_STYLE:
         setLineStyle(LINE_STYLE_EDEFAULT);
         return;
+      case StackedchartsPackage.STYLING__INCLUDE_IN_LEGEND:
+        setIncludeInLegend(INCLUDE_IN_LEGEND_EDEFAULT);
+        return;
     }
     super.eUnset(featureID);
   }
@@ -317,6 +369,8 @@ public class StylingImpl extends MinimalEObjectImpl.Container implements Styling
         return lineThickness != LINE_THICKNESS_EDEFAULT;
       case StackedchartsPackage.STYLING__LINE_STYLE:
         return lineStyle != LINE_STYLE_EDEFAULT;
+      case StackedchartsPackage.STYLING__INCLUDE_IN_LEGEND:
+        return includeInLegend != INCLUDE_IN_LEGEND_EDEFAULT;
     }
     return super.eIsSet(featureID);
   }
@@ -340,6 +394,8 @@ public class StylingImpl extends MinimalEObjectImpl.Container implements Styling
     result.append(lineThickness);
     result.append(", lineStyle: ");
     result.append(lineStyle);
+    result.append(", includeInLegend: ");
+    result.append(includeInLegend);
     result.append(')');
     return result.toString();
   }
