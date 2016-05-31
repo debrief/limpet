@@ -23,6 +23,7 @@ public class ChartFigure extends RectangleFigure
 
   public ChartFigure(Chart chart, ActionListener deleteListener)
   {
+    setPreferredSize(-1, 200);
     setBackgroundColor(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
     setOutline(false);
     setLayoutManager(new BorderLayout());
