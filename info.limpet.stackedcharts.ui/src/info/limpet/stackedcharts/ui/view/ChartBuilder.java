@@ -476,7 +476,7 @@ public class ChartBuilder
           {
             final Color transColor =
                 new Color(colorToUse.getRed(), colorToUse.getGreen(),
-                    colorToUse.getBlue(), 60);
+                    colorToUse.getBlue(), 120);
 
             mrk.setPaint(transColor);
           }
