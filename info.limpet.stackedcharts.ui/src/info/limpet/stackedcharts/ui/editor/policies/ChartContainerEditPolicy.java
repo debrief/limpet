@@ -70,8 +70,8 @@ public class ChartContainerEditPolicy extends ContainerEditPolicy implements
           if (o instanceof ChartEditPart)
           {
             ChartEditPart chartEditPart = (ChartEditPart) o;
-
-            int indexOfHost = charts.indexOf(getHost());
+            final ChartEditPart hostPart = getHost();            
+            int indexOfHost = charts.indexOf(hostPart.getModel());
             res.add(new MoveChartCommand(charts, chartEditPart.getModel(),
                 indexOfHost++));
           }
