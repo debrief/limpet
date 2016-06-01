@@ -445,7 +445,10 @@ public class StackedchartsFactoryImpl extends EFactoryImpl implements Stackedcha
    */
   public Color createColorFromString(EDataType eDataType, String initialValue)
   {
-    return new Color(Integer.parseInt(initialValue), true);
+    return new Color(
+        Integer.valueOf( initialValue.substring( 1, 3 ), 16 ),
+        Integer.valueOf( initialValue.substring( 3, 5 ), 16 ),
+        Integer.valueOf( initialValue.substring( 5, 7 ), 16 ) );
   }
 
   /**
@@ -454,8 +457,8 @@ public class StackedchartsFactoryImpl extends EFactoryImpl implements Stackedcha
    */
   public String convertColorToString(EDataType eDataType, Object instanceValue)
   {
-    Color theColor = (Color) instanceValue;
-    return Integer.toString(theColor.getRGB());
+    Color theColor = (Color) instanceValue;    
+    return "#"+Integer.toHexString(theColor.getRGB()).substring(2).toUpperCase();
   }
 
   /**
