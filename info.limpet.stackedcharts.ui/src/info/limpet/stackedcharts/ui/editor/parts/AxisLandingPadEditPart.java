@@ -24,18 +24,24 @@ public class AxisLandingPadEditPart extends AbstractGraphicalEditPart
 {
 
   @Override
+  protected void createEditPolicies()
+  {
+    installEditPolicy(EditPolicy.CONTAINER_ROLE, new AxisLandingPadEditPolicy());
+  }
+
+  @Override
   protected IFigure createFigure()
   {
-    RectangleFigure figure = new RectangleFigure();
+    final RectangleFigure figure = new RectangleFigure();
     figure.setOutline(false);
-    Color borderCol = Display.getCurrent().getSystemColor(SWT.COLOR_GRAY);
-    Border figureBorder = new LineBorder(borderCol, 2);
+    final Color borderCol = Display.getCurrent().getSystemColor(SWT.COLOR_GRAY);
+    final Border figureBorder = new LineBorder(borderCol, 2);
     figure.setBorder(figureBorder);
 
     figure.setLayoutManager(new BorderLayout());
-    VerticalLabel verticalLabel = new VerticalLabel();
+    final VerticalLabel verticalLabel = new VerticalLabel();
 
-    ChartPaneEditPart.AxisLandingPad pad =
+    final ChartPaneEditPart.AxisLandingPad pad =
         (ChartPaneEditPart.AxisLandingPad) getModel();
 
     verticalLabel.setText(pad.pos == ChartPanePosition.LEFT ? "Min Axis"
@@ -52,23 +58,12 @@ public class AxisLandingPadEditPart extends AbstractGraphicalEditPart
   protected List getModelChildren()
   {
     return Arrays.asList();
-
   }
 
   @Override
   protected void refreshVisuals()
   {
-
     ((GraphicalEditPart) getParent()).setLayoutConstraint(this, figure,
         new GridData(GridData.CENTER, GridData.FILL, false, true));
-
-  }
-
-  @Override
-  protected void createEditPolicies()
-  {
-
-    installEditPolicy(EditPolicy.CONTAINER_ROLE, new AxisLandingPadEditPolicy());
-
   }
 }

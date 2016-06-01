@@ -25,30 +25,27 @@ public class ChartSetHeaderEditPart extends AbstractGraphicalEditPart implements
 {
 
   @Override
-  protected IFigure createFigure()
+  public void actionPerformed(final ActionEvent event)
   {
-
-    return new ChartsetFigure(this);
-  }
-
-  @Override
-  protected void refreshVisuals()
-  {
-    GridData gridData = new GridData();
-    gridData.grabExcessHorizontalSpace = true;
-    gridData.grabExcessVerticalSpace = false;
-    gridData.horizontalAlignment = SWT.CENTER;
-    gridData.horizontalSpan = 10;
-    gridData.verticalAlignment = SWT.FILL;
-
-    ((GraphicalEditPart) getParent()).setLayoutConstraint(this, figure,
-        gridData);
+    final List<Chart> charts = getModel().getCharts();
+    final StackedchartsFactory factory = StackedchartsFactory.eINSTANCE;
+    final Chart chart = factory.createChart();
+    chart.setName("New Chart");
+    final AddChartCommand addChartCommand = new AddChartCommand(charts, chart);
+    final CommandStack commandStack =
+        getViewer().getEditDomain().getCommandStack();
+    commandStack.execute(addChartCommand);
   }
 
   @Override
   protected void createEditPolicies()
   {
+  }
 
+  @Override
+  protected IFigure createFigure()
+  {
+    return new ChartsetFigure(this);
   }
 
   @Override
@@ -58,16 +55,16 @@ public class ChartSetHeaderEditPart extends AbstractGraphicalEditPart implements
   }
 
   @Override
-  public void actionPerformed(ActionEvent event)
+  protected void refreshVisuals()
   {
-    List<Chart> charts = getModel().getCharts();
-    StackedchartsFactory factory = StackedchartsFactory.eINSTANCE;
-    Chart chart = factory.createChart();
-    chart.setName("New Chart");
-    AddChartCommand addChartCommand = new AddChartCommand(charts, chart);
-    CommandStack commandStack = getViewer().getEditDomain().getCommandStack();
-    commandStack.execute(addChartCommand);
+    final GridData gridData = new GridData();
+    gridData.grabExcessHorizontalSpace = true;
+    gridData.grabExcessVerticalSpace = false;
+    gridData.horizontalAlignment = SWT.CENTER;
+    gridData.horizontalSpan = 10;
+    gridData.verticalAlignment = SWT.FILL;
 
+    ((GraphicalEditPart) getParent()).setLayoutConstraint(this, figure,
+        gridData);
   }
-
 }

@@ -25,52 +25,48 @@ public class AxisLandingPadEditPolicy extends ContainerEditPolicy implements
 {
 
   @Override
-  public EditPart getTargetEditPart(Request request)
+  public void eraseTargetFeedback(final Request request)
   {
+    // remove the highlight
     if (REQ_ADD.equals(request.getType()))
     {
-      return getHost();
+      final AxisLandingPadEditPart axisEditPart =
+          (AxisLandingPadEditPart) getHost();
+      final IFigure figure = axisEditPart.getFigure();
+      figure.setBackgroundColor(AxisEditPart.BACKGROUND_COLOR);
     }
-    return super.getTargetEditPart(request);
   }
 
   @Override
-  protected Command getCreateCommand(CreateRequest request)
-  {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
-  protected Command getAddCommand(GroupRequest request)
+  protected Command getAddCommand(final GroupRequest request)
   {
     @SuppressWarnings("rawtypes")
-    List toAdd = request.getEditParts();
+    final List toAdd = request.getEditParts();
 
     Command res = null;
 
     if (toAdd.size() > 0)
     {
-      Object first = toAdd.get(0);
+      final Object first = toAdd.get(0);
       if (first instanceof AxisEditPart)
       {
         // find the landing side
-        AxisLandingPadEditPart landingPadEditPart =
+        final AxisLandingPadEditPart landingPadEditPart =
             (AxisLandingPadEditPart) getHost();
-        ChartPaneEditPart.AxisLandingPad pad =
+        final ChartPaneEditPart.AxisLandingPad pad =
             (ChartPaneEditPart.AxisLandingPad) landingPadEditPart.getModel();
 
         // find out which list (min/max) this axis is currently on
-        EList<DependentAxis> destination =
+        final EList<DependentAxis> destination =
             pad.getPos() == ChartPanePosition.LEFT ? pad.getChart()
                 .getMinAxes() : pad.getChart().getMaxAxes();
 
         // ok, did we find it?
         if (destination != null)
         {
-          DependentAxis[] axes = new DependentAxis[toAdd.size()];
+          final DependentAxis[] axes = new DependentAxis[toAdd.size()];
           int i = 0;
-          for (Object o : toAdd)
+          for (final Object o : toAdd)
           {
             axes[i++] = (DependentAxis) ((AxisEditPart) o).getModel();
           }
@@ -83,26 +79,31 @@ public class AxisLandingPadEditPolicy extends ContainerEditPolicy implements
   }
 
   @Override
-  public void showTargetFeedback(Request request)
+  protected Command getCreateCommand(final CreateRequest request)
+  {
+    return null;
+  }
+
+  @Override
+  public EditPart getTargetEditPart(final Request request)
+  {
+    if (REQ_ADD.equals(request.getType()))
+    {
+      return getHost();
+    }
+    return super.getTargetEditPart(request);
+  }
+
+  @Override
+  public void showTargetFeedback(final Request request)
   {
     // highlight the Axis when user is about to drop a dataset on it
     if (REQ_ADD.equals(request.getType()))
     {
-      AxisLandingPadEditPart axisEditPart = (AxisLandingPadEditPart) getHost();
-      IFigure figure = axisEditPart.getFigure();
+      final AxisLandingPadEditPart axisEditPart =
+          (AxisLandingPadEditPart) getHost();
+      final IFigure figure = axisEditPart.getFigure();
       figure.setBackgroundColor(ColorConstants.lightGray);
-    }
-  }
-
-  @Override
-  public void eraseTargetFeedback(Request request)
-  {
-    // remove the highlight
-    if (REQ_ADD.equals(request.getType()))
-    {
-      AxisLandingPadEditPart axisEditPart = (AxisLandingPadEditPart) getHost();
-      IFigure figure = axisEditPart.getFigure();
-      figure.setBackgroundColor(AxisEditPart.BACKGROUND_COLOR);
     }
   }
 
