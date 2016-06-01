@@ -3,7 +3,7 @@ package info.limpet.stackedcharts.ui.editor.policies;
 import info.limpet.stackedcharts.model.Dataset;
 import info.limpet.stackedcharts.model.DependentAxis;
 import info.limpet.stackedcharts.model.impl.ChartImpl;
-import info.limpet.stackedcharts.ui.editor.commands.AddAxisToChartCommand;
+import info.limpet.stackedcharts.ui.editor.commands.MoveAxisCommand;
 import info.limpet.stackedcharts.ui.editor.commands.AddDatasetsToAxisCommand;
 import info.limpet.stackedcharts.ui.editor.commands.DeleteDatasetsFromAxisCommand;
 import info.limpet.stackedcharts.ui.editor.parts.AxisEditPart;
@@ -100,7 +100,7 @@ public class AxisContainerEditPolicy extends ContainerEditPolicy implements
             axes[i++] = (DependentAxis) ((AxisEditPart) o).getModel();
           }
 
-          res = new AddAxisToChartCommand(destination, axes);
+          res = new MoveAxisCommand(destination, axes);
         }
       }      
     }

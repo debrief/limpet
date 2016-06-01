@@ -1,21 +1,27 @@
 package info.limpet.stackedcharts.ui.editor.policies;
 
+import info.limpet.stackedcharts.model.Dataset;
 import info.limpet.stackedcharts.model.DependentAxis;
 import info.limpet.stackedcharts.ui.editor.commands.AddAxisToChartCommand;
+import info.limpet.stackedcharts.ui.editor.commands.AddDatasetsToAxisCommand;
+import info.limpet.stackedcharts.ui.editor.commands.MoveAxisCommand;
 import info.limpet.stackedcharts.ui.editor.parts.AxisEditPart;
 import info.limpet.stackedcharts.ui.editor.parts.AxisLandingPadEditPart;
 import info.limpet.stackedcharts.ui.editor.parts.ChartEditPart.ChartPanePosition;
 import info.limpet.stackedcharts.ui.editor.parts.ChartPaneEditPart;
+import info.limpet.stackedcharts.ui.editor.parts.DatasetEditPart;
 
 import java.util.List;
 
 import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.Request;
 import org.eclipse.gef.commands.Command;
+import org.eclipse.gef.commands.CompoundCommand;
 import org.eclipse.gef.editpolicies.ContainerEditPolicy;
 import org.eclipse.gef.requests.CreateRequest;
 import org.eclipse.gef.requests.GroupRequest;
@@ -71,8 +77,46 @@ public class AxisLandingPadEditPolicy extends ContainerEditPolicy implements
             axes[i++] = (DependentAxis) ((AxisEditPart) o).getModel();
           }
 
-          res = new AddAxisToChartCommand(destination, axes);
+          res = new MoveAxisCommand(destination, axes);
         }
+      }
+      else if(first instanceof DatasetEditPart)
+      {
+        
+        
+        // find the landing side
+        final AxisLandingPadEditPart landingPadEditPart =
+            (AxisLandingPadEditPart) getHost();
+        final ChartPaneEditPart.AxisLandingPad pad =
+            (ChartPaneEditPart.AxisLandingPad) landingPadEditPart.getModel();
+
+        // find out which list (min/max) this axis is currently on
+        final EList<DependentAxis> destination =
+            pad.getPos() == ChartPanePosition.LEFT ? pad.getChart()
+                .getMinAxes() : pad.getChart().getMaxAxes();
+
+       
+        if (destination != null)
+        {
+          CompoundCommand compoundCommand  = new CompoundCommand();
+          res = compoundCommand;
+
+          if (first instanceof DatasetEditPart)
+          {
+            DatasetEditPart datasetEditPart = (DatasetEditPart) first;
+            AxisEditPart parent = (AxisEditPart) datasetEditPart.getParent();
+            Dataset dataset = (Dataset) datasetEditPart.getModel();
+            DependentAxis parentAxis = (DependentAxis) parent.getModel();
+            DependentAxis copy = EcoreUtil.copy(parentAxis);
+            copy.getDatasets().clear();
+            compoundCommand.add(new AddAxisToChartCommand(destination, copy));
+            compoundCommand.add( new AddDatasetsToAxisCommand(copy,
+                dataset));
+          }
+          
+        }
+        
+        
       }
     }
     return res;
