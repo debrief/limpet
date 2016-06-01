@@ -18,7 +18,7 @@ public class MoveChartCommand extends Command
   {
     this.chart = chart;
     this.charts = charts;
-    this.index = charts.indexOf(chart);
+    this.index = index;
   }
 
   @Override
