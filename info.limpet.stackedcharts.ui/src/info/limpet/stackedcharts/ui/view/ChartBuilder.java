@@ -215,6 +215,10 @@ public class ChartBuilder
       {
         helper = new NumberHelper();
       }
+      else if (axisType instanceof info.limpet.stackedcharts.model.AngleAxis)
+      {
+        helper = new NumberHelper();
+      }
       else if (axisType instanceof info.limpet.stackedcharts.model.DateAxis)
       {
         helper = new TimeHelper();
@@ -270,6 +274,10 @@ public class ChartBuilder
     {
       AxisType axisType = sharedAxisModel.getAxisType();
       if (axisType instanceof info.limpet.stackedcharts.model.NumberAxis)
+      {
+        helper = new NumberHelper();
+      }
+      else if (axisType instanceof info.limpet.stackedcharts.model.AngleAxis)
       {
         helper = new NumberHelper();
       }
@@ -364,6 +372,10 @@ public class ChartBuilder
 
     AxisType axisType = dependentAxis.getAxisType();
     if (axisType instanceof info.limpet.stackedcharts.model.NumberAxis)
+    {
+      axeshelper = new NumberHelper();
+    }
+    else if (axisType instanceof info.limpet.stackedcharts.model.AngleAxis)
     {
       axeshelper = new NumberHelper();
     }
