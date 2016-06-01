@@ -23,7 +23,64 @@ public class ChartContainerEditPolicy extends ContainerEditPolicy implements
 {
 
   @Override
-  public EditPart getTargetEditPart(Request request)
+  public void eraseTargetFeedback(final Request request)
+  {
+    // remove the highlight
+    if (REQ_ADD.equals(request.getType()))
+    {
+      final ChartEditPart axisEditPart = getHost();
+      final IFigure figure = axisEditPart.getFigure();
+      figure.setBackgroundColor(ChartEditPart.BACKGROUND_COLOR);
+    }
+  }
+
+  @Override
+  protected Command getAddCommand(final GroupRequest request)
+  {
+    @SuppressWarnings("rawtypes")
+    final List toAdd = request.getEditParts();
+
+    CompoundCommand res = null;
+
+    if (toAdd.size() > 0)
+    {
+      final Object first = toAdd.get(0);
+      if (first instanceof ChartEditPart)
+      {
+        res = new CompoundCommand();
+        final List<Chart> charts =
+            ((ChartsPanelEditPart) getHost().getParent()).getModel()
+                .getCharts();
+        for (final Object o : toAdd)
+        {
+          if (o instanceof ChartEditPart)
+          {
+            final ChartEditPart chartEditPart = (ChartEditPart) o;
+            final ChartEditPart hostPart = getHost();
+            int indexOfHost = charts.indexOf(hostPart.getModel());
+            res.add(new MoveChartCommand(charts, chartEditPart.getModel(),
+                indexOfHost++));
+          }
+        }
+      }
+    }
+    return res;
+  }
+
+  @Override
+  protected Command getCreateCommand(final CreateRequest request)
+  {
+    return null;
+  }
+
+  @Override
+  public ChartEditPart getHost()
+  {
+    return (ChartEditPart) super.getHost();
+  }
+
+  @Override
+  public EditPart getTargetEditPart(final Request request)
   {
     if (REQ_ADD.equals(request.getType()))
     {
@@ -36,74 +93,14 @@ public class ChartContainerEditPolicy extends ContainerEditPolicy implements
     return super.getTargetEditPart(request);
   }
 
-  public ChartEditPart getHost()
-  {
-    return (ChartEditPart) super.getHost();
-  }
-
   @Override
-  protected Command getCreateCommand(CreateRequest request)
-  {
-
-    return null;
-  }
-
-  @Override
-  protected Command getAddCommand(GroupRequest request)
-  {
-    @SuppressWarnings("rawtypes")
-    List toAdd = request.getEditParts();
-
-    CompoundCommand res = null;
-
-    if (toAdd.size() > 0)
-    {
-      Object first = toAdd.get(0);
-      if (first instanceof ChartEditPart)
-      {
-        res = new CompoundCommand();
-        List<Chart> charts =
-            ((ChartsPanelEditPart) getHost().getParent()).getModel()
-                .getCharts();
-        for (Object o : toAdd)
-        {
-          if (o instanceof ChartEditPart)
-          {
-            ChartEditPart chartEditPart = (ChartEditPart) o;
-            final ChartEditPart hostPart = getHost();            
-            int indexOfHost = charts.indexOf(hostPart.getModel());
-            res.add(new MoveChartCommand(charts, chartEditPart.getModel(),
-                indexOfHost++));
-          }
-
-        }
-
-      }
-    }
-    return res;
-  }
-
-  @Override
-  public void showTargetFeedback(Request request)
+  public void showTargetFeedback(final Request request)
   {
     if (REQ_ADD.equals(request.getType()))
     {
-      ChartEditPart axisEditPart = (ChartEditPart) getHost();
-      IFigure figure = axisEditPart.getFigure();
+      final ChartEditPart axisEditPart = getHost();
+      final IFigure figure = axisEditPart.getFigure();
       figure.setBackgroundColor(ColorConstants.lightGray);
     }
   }
-
-  @Override
-  public void eraseTargetFeedback(Request request)
-  {
-    // remove the highlight
-    if (REQ_ADD.equals(request.getType()))
-    {
-      ChartEditPart axisEditPart = getHost();
-      IFigure figure = axisEditPart.getFigure();
-      figure.setBackgroundColor(ChartEditPart.BACKGROUND_COLOR);
-    }
-  }
-
 }

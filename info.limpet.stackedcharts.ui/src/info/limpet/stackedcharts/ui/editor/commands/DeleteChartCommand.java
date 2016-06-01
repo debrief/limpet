@@ -11,7 +11,7 @@ public class DeleteChartCommand extends Command
   private final ChartSet parent;
   private int index = -1;
 
-  public DeleteChartCommand(ChartSet parent, Chart chart)
+  public DeleteChartCommand(final ChartSet parent, final Chart chart)
   {
     this.chart = chart;
     this.parent = parent;
@@ -30,7 +30,6 @@ public class DeleteChartCommand extends Command
     if (index != -1)
     {
       parent.getCharts().add(index, chart);
-
     }
     else
     {
