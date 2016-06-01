@@ -10,7 +10,7 @@ public class MoveChartCommand extends Command
 {
   private final Chart chart;
   private final List<Chart> charts;
-  private final int index;
+  private int index = -1;
   private int redoIndex = -1;
 
   public MoveChartCommand(final List<Chart> charts, final Chart chart,
@@ -18,7 +18,7 @@ public class MoveChartCommand extends Command
   {
     this.chart = chart;
     this.charts = charts;
-    this.index = index;
+    this.index = charts.indexOf(chart);
   }
 
   @Override
