@@ -27,7 +27,7 @@
         <datums val="100.0"/>
         <datums val="500.0"/>
       </annotations>
-      <annotations xsi:type="stackedcharts:Zone" name="Pixel Zone" color="-256" start="380.0" end="450.0"/>
+      <annotations xsi:type="stackedcharts:Zone" name="Pixel Zone" color="#FFFF00" start="380.0" end="450.0"/>
     </minAxes>
   </charts>
   <sharedAxis name="Depth">
