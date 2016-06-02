@@ -1,90 +1,88 @@
 package info.limpet.stackedcharts.ui.editor.commands;
 
-import info.limpet.stackedcharts.model.Chart;
 import info.limpet.stackedcharts.model.DependentAxis;
+import info.limpet.stackedcharts.model.impl.ChartImpl;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.gef.commands.Command;
 
 public class MoveAxisCommand extends Command
 {
-  private final DependentAxis[] axes;
+  private final DependentAxis axis;
   private final EList<DependentAxis> destination;
-  
-  /** keep track of where axes came from, so 
-   * operation can be undone
-   */   
-  private EList<DependentAxis>[] sources;
+  private final EList<DependentAxis> source;
+  private int index = -1;
 
-  public MoveAxisCommand(EList<DependentAxis> destination,
-      DependentAxis... axes)
+  private int redoIndex = -1;
+
+  public MoveAxisCommand(EList<DependentAxis> destination, DependentAxis axis)
   {
-    this.axes = axes;
+    this.axis = axis;
     this.destination = destination;
+    source = getHostListFor(axis);
   }
 
-  @SuppressWarnings("unchecked")
+  public MoveAxisCommand(EList<DependentAxis> destination, DependentAxis axis,
+      int index)
+  {
+    this.axis = axis;
+    this.destination = destination;
+    this.index = index;
+    source = getHostListFor(axis);
+  }
+
   @Override
   public void execute()
   {
-    boolean sourcesAssigned = false;
-    int ctr = 0;
+    redoIndex = source.indexOf(axis);
+    source.remove(axis);
 
-    if (!sourcesAssigned)
+    if (index > -1)
     {
-      sources = new EList[axes.length];
+      destination.add(index, axis);
     }
-
-    for (DependentAxis ds : axes)
+    else
     {
-      EList<DependentAxis> source = null;
-      if (sourcesAssigned)
-      {
-        source = sources[ctr++];
-      }
-      else
-      {
-        // find the current parent axis
-        final Chart parent = (Chart) ds.eContainer();
-        EList<DependentAxis> minAxes = parent.getMinAxes();
-        EList<DependentAxis> maxAxes = parent.getMaxAxes();
-
-        for (DependentAxis da : minAxes)
-        {
-          if (da.equals(ds))
-          {
-            source = minAxes;
-            break;
-          }
-        }
-        for (DependentAxis da : maxAxes)
-        {
-          if (da.equals(ds))
-          {
-            source = maxAxes;
-            break;
-          }
-        }
-
-        sources[ctr++] = source;
-      }
-
-      // now add it to the new host
-      destination.add(ds);
+      destination.add(axis);
     }
-
-    sourcesAssigned = true;
   }
 
   @Override
   public void undo()
   {
-    int ctr = 0;
-    for (DependentAxis ds : axes)
+
+    destination.remove(axis);
+
+    if (redoIndex != -1)
     {
-      // and add it to its host
-      EList<DependentAxis> newHost = sources[ctr++];
-      newHost.add(ds);
+      source.add(redoIndex, axis);
+    }
+    else
+    {
+      source.add(axis);
     }
   }
+
+  /**
+   * convenience class to find the relevant list (min/max axes) for the supplied axis
+   * 
+   * @param axis
+   * @return
+   */
+  public static EList<DependentAxis> getHostListFor(DependentAxis axis)
+  {
+    ChartImpl chart = (ChartImpl) axis.eContainer();
+    // ok, find out which item this is in
+    final EList<DependentAxis> minAxes = chart.getMinAxes();
+    final EList<DependentAxis> maxAxes = chart.getMaxAxes();
+
+    // check if max has it
+    if (maxAxes.contains(axis))
+    {
+      return maxAxes;
+    }
+
+    return minAxes;
+  }
+
 }

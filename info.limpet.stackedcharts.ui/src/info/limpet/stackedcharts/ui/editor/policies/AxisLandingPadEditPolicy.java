@@ -56,6 +56,8 @@ public class AxisLandingPadEditPolicy extends ContainerEditPolicy implements
       final Object first = toAdd.get(0);
       if (first instanceof AxisEditPart)
       {
+        CompoundCommand compoundCommand = new CompoundCommand();
+        res = compoundCommand;
         // find the landing side
         final AxisLandingPadEditPart landingPadEditPart =
             (AxisLandingPadEditPart) getHost();
@@ -70,20 +72,21 @@ public class AxisLandingPadEditPolicy extends ContainerEditPolicy implements
         // ok, did we find it?
         if (destination != null)
         {
-          final DependentAxis[] axes = new DependentAxis[toAdd.size()];
-          int i = 0;
+
           for (final Object o : toAdd)
           {
-            axes[i++] = (DependentAxis) ((AxisEditPart) o).getModel();
+            if (o instanceof AxisEditPart)
+            {
+              compoundCommand.add(new MoveAxisCommand(destination,
+                  (DependentAxis) ((AxisEditPart) o).getModel()));
+            }
           }
 
-          res = new MoveAxisCommand(destination, axes);
         }
       }
-      else if(first instanceof DatasetEditPart)
+      else if (first instanceof DatasetEditPart)
       {
-        
-        
+
         // find the landing side
         final AxisLandingPadEditPart landingPadEditPart =
             (AxisLandingPadEditPart) getHost();
@@ -95,10 +98,9 @@ public class AxisLandingPadEditPolicy extends ContainerEditPolicy implements
             pad.getPos() == ChartPanePosition.LEFT ? pad.getChart()
                 .getMinAxes() : pad.getChart().getMaxAxes();
 
-       
         if (destination != null)
         {
-          CompoundCommand compoundCommand  = new CompoundCommand();
+          CompoundCommand compoundCommand = new CompoundCommand();
           res = compoundCommand;
 
           if (first instanceof DatasetEditPart)
@@ -110,13 +112,11 @@ public class AxisLandingPadEditPolicy extends ContainerEditPolicy implements
             DependentAxis copy = EcoreUtil.copy(parentAxis);
             copy.getDatasets().clear();
             compoundCommand.add(new AddAxisToChartCommand(destination, copy));
-            compoundCommand.add( new AddDatasetsToAxisCommand(copy,
-                dataset));
+            compoundCommand.add(new AddDatasetsToAxisCommand(copy, dataset));
           }
-          
+
         }
-        
-        
+
       }
     }
     return res;
