@@ -116,6 +116,7 @@ public class DatasetEditPart extends AbstractGraphicalEditPart implements
     }
   }
 
+  @SuppressWarnings("rawtypes")
   @Override
   protected List getModelChildren()
   {

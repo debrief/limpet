@@ -10,25 +10,25 @@ public class MoveChartCommand extends Command
 {
   private final Chart chart;
   private final List<Chart> charts;
-  private int index = -1;
-  private int redoIndex = -1;
+  private final int newIndex;
+  private final int oldIndex;
 
   public MoveChartCommand(final List<Chart> charts, final Chart chart,
       final int index)
   {
     this.chart = chart;
     this.charts = charts;
-    this.index = index;
+    this.newIndex = index;
+    this.oldIndex = charts.indexOf(chart);
   }
 
   @Override
   public void execute()
   {
-    redoIndex = charts.indexOf(chart);
     charts.remove(chart);
-    if (index != -1)
+    if (newIndex != -1)
     {
-      charts.add(index, chart);
+      charts.add(newIndex, chart);
     }
     else
     {
@@ -39,11 +39,10 @@ public class MoveChartCommand extends Command
   @Override
   public void undo()
   {
-    index = charts.indexOf(chart);
     charts.remove(chart);
-    if (redoIndex != -1)
+    if (oldIndex != -1)
     {
-      charts.add(redoIndex, chart);
+      charts.add(oldIndex, chart);
     }
     else
     {

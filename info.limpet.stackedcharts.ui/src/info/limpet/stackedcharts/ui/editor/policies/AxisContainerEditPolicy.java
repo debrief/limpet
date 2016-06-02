@@ -2,14 +2,12 @@ package info.limpet.stackedcharts.ui.editor.policies;
 
 import info.limpet.stackedcharts.model.Dataset;
 import info.limpet.stackedcharts.model.DependentAxis;
-import info.limpet.stackedcharts.model.impl.ChartImpl;
 import info.limpet.stackedcharts.ui.editor.commands.AddDatasetsToAxisCommand;
 import info.limpet.stackedcharts.ui.editor.commands.DeleteDatasetsFromAxisCommand;
 import info.limpet.stackedcharts.ui.editor.commands.MoveAxisCommand;
 import info.limpet.stackedcharts.ui.editor.parts.AxisEditPart;
 import info.limpet.stackedcharts.ui.editor.parts.DatasetEditPart;
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.draw2d.ColorConstants;
@@ -66,10 +64,15 @@ public class AxisContainerEditPolicy extends ContainerEditPolicy implements
     @SuppressWarnings("rawtypes")
     List toAdd = request.getEditParts();
 
-    Command res = null;
+    final Command res;
 
     // have a peek, to see if it's a dataset, or an axis
-    if (toAdd.size() > 0)
+    if (toAdd.size() == 0)
+    {
+      // nothing selected. don't bother
+      res = null;
+    }
+    else
     {
       Object first = toAdd.get(0);
       if (first instanceof DatasetEditPart)
@@ -86,7 +89,6 @@ public class AxisContainerEditPolicy extends ContainerEditPolicy implements
       }
       else if (first instanceof AxisEditPart)
       {
-
         CompoundCommand compoundCommand = new CompoundCommand();
         res = compoundCommand;
         // find the listing we belong to
@@ -103,7 +105,6 @@ public class AxisContainerEditPolicy extends ContainerEditPolicy implements
         // ok, did we find it?
         if (destination != null)
         {
-
           for (Object o : toAdd)
           {
             if (o instanceof AxisEditPart)
@@ -115,7 +116,13 @@ public class AxisContainerEditPolicy extends ContainerEditPolicy implements
           }
         }
       }
+      else
+      {
+        // it's not a type that we're interested in. don't bother
+        res = null;
+      }
     }
+    
     return res;
   }
 

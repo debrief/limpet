@@ -8,33 +8,54 @@ import org.eclipse.gef.commands.Command;
 
 public class MoveAxisCommand extends Command
 {
+  /**
+   * convenience class to find the relevant list (min/max axes) for the supplied axis
+   * 
+   * @param axis
+   * @return
+   */
+  public static EList<DependentAxis> getHostListFor(final DependentAxis axis)
+  {
+    final ChartImpl chart = (ChartImpl) axis.eContainer();
+    // ok, find out which item this is in
+    final EList<DependentAxis> minAxes = chart.getMinAxes();
+    final EList<DependentAxis> maxAxes = chart.getMaxAxes();
+
+    // check if max has it
+    if (maxAxes.contains(axis))
+    {
+      return maxAxes;
+    }
+
+    return minAxes;
+  }
+
   private final DependentAxis axis;
   private final EList<DependentAxis> destination;
   private final EList<DependentAxis> source;
-  private int index = -1;
+  private final int index;
 
-  private int redoIndex = -1;
+  private final int redoIndex;
 
-  public MoveAxisCommand(EList<DependentAxis> destination, DependentAxis axis)
+  public MoveAxisCommand(final EList<DependentAxis> destination,
+      final DependentAxis axis)
   {
-    this.axis = axis;
-    this.destination = destination;
-    source = getHostListFor(axis);
+    this(destination, axis, -1);
   }
 
-  public MoveAxisCommand(EList<DependentAxis> destination, DependentAxis axis,
-      int index)
+  public MoveAxisCommand(final EList<DependentAxis> destination,
+      final DependentAxis axis, final int index)
   {
     this.axis = axis;
     this.destination = destination;
     this.index = index;
     source = getHostListFor(axis);
+    redoIndex = source.indexOf(axis);
   }
 
   @Override
   public void execute()
   {
-    redoIndex = source.indexOf(axis);
     source.remove(axis);
 
     if (index > -1)
@@ -50,7 +71,6 @@ public class MoveAxisCommand extends Command
   @Override
   public void undo()
   {
-
     destination.remove(axis);
 
     if (redoIndex != -1)
@@ -61,28 +81,6 @@ public class MoveAxisCommand extends Command
     {
       source.add(axis);
     }
-  }
-
-  /**
-   * convenience class to find the relevant list (min/max axes) for the supplied axis
-   * 
-   * @param axis
-   * @return
-   */
-  public static EList<DependentAxis> getHostListFor(DependentAxis axis)
-  {
-    ChartImpl chart = (ChartImpl) axis.eContainer();
-    // ok, find out which item this is in
-    final EList<DependentAxis> minAxes = chart.getMinAxes();
-    final EList<DependentAxis> maxAxes = chart.getMaxAxes();
-
-    // check if max has it
-    if (maxAxes.contains(axis))
-    {
-      return maxAxes;
-    }
-
-    return minAxes;
   }
 
 }

@@ -48,11 +48,15 @@ public class AxisLandingPadEditPolicy extends ContainerEditPolicy implements
   {
     @SuppressWarnings("rawtypes")
     final List toAdd = request.getEditParts();
+    final Command res;
 
-    Command res = null;
-
-    if (toAdd.size() > 0)
+    if (toAdd.size() == 0)
     {
+      res = null;
+    }
+    else
+    {
+        
       final Object first = toAdd.get(0);
       if (first instanceof AxisEditPart)
       {
@@ -72,7 +76,6 @@ public class AxisLandingPadEditPolicy extends ContainerEditPolicy implements
         // ok, did we find it?
         if (destination != null)
         {
-
           for (final Object o : toAdd)
           {
             if (o instanceof AxisEditPart)
@@ -81,7 +84,6 @@ public class AxisLandingPadEditPolicy extends ContainerEditPolicy implements
                   (DependentAxis) ((AxisEditPart) o).getModel()));
             }
           }
-
         }
       }
       else if (first instanceof DatasetEditPart)
@@ -105,18 +107,30 @@ public class AxisLandingPadEditPolicy extends ContainerEditPolicy implements
 
           if (first instanceof DatasetEditPart)
           {
+            // ok, it's a dataset. we need to wrap it into an axis before
+            // we can add it to the chart
             DatasetEditPart datasetEditPart = (DatasetEditPart) first;
             AxisEditPart parent = (AxisEditPart) datasetEditPart.getParent();
             Dataset dataset = (Dataset) datasetEditPart.getModel();
             DependentAxis parentAxis = (DependentAxis) parent.getModel();
-            DependentAxis copy = EcoreUtil.copy(parentAxis);
-            copy.getDatasets().clear();
-            compoundCommand.add(new AddAxisToChartCommand(destination, copy));
-            compoundCommand.add(new AddDatasetsToAxisCommand(copy, dataset));
+            
+            // take a copy of the parent axis, since we know it's suitable
+            DependentAxis newAxis = EcoreUtil.copy(parentAxis);
+            newAxis.getDatasets().clear();
+            compoundCommand.add(new AddAxisToChartCommand(destination, newAxis));
+            compoundCommand.add(new AddDatasetsToAxisCommand(newAxis, dataset));
           }
-
         }
-
+        else
+        {
+          // we don't have a target location
+          res = null;
+        }
+      }
+      else
+      {
+        // it's not a type that we're interested in
+        res = null;
       }
     }
     return res;

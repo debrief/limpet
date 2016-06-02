@@ -54,6 +54,7 @@ public class ChartsPanelEditPart extends AbstractGraphicalEditPart
         gridData);
   }
 
+  @SuppressWarnings("rawtypes")
   @Override
   protected List getModelChildren()
   {
