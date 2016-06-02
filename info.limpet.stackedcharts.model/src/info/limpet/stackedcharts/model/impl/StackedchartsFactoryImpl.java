@@ -442,21 +442,23 @@ public class StackedchartsFactoryImpl extends EFactoryImpl implements Stackedcha
   /**
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @generated
    */
   public Color createColorFromString(EDataType eDataType, String initialValue)
   {
-    return (Color)super.createFromString(eDataType, initialValue);
+    return new Color(
+        Integer.valueOf( initialValue.substring( 1, 3 ), 16 ),
+        Integer.valueOf( initialValue.substring( 3, 5 ), 16 ),
+        Integer.valueOf( initialValue.substring( 5, 7 ), 16 ) );
   }
 
   /**
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @generated
    */
   public String convertColorToString(EDataType eDataType, Object instanceValue)
   {
-    return super.convertToString(eDataType, instanceValue);
+    Color theColor = (Color) instanceValue;    
+    return "#"+Integer.toHexString(theColor.getRGB()).substring(2).toUpperCase();
   }
 
   /**

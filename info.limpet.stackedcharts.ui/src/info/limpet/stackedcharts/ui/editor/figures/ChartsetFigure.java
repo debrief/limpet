@@ -1,5 +1,7 @@
 package info.limpet.stackedcharts.ui.editor.figures;
 
+import org.eclipse.draw2d.ActionListener;
+import org.eclipse.draw2d.Button;
 import org.eclipse.draw2d.FlowLayout;
 import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.PositionConstants;
@@ -14,10 +16,10 @@ public class ChartsetFigure extends RectangleFigure
   private static volatile Font boldFont;
   private Label chartsetHeader;
 
-  public ChartsetFigure()
+  public ChartsetFigure(ActionListener addChartHandler)
   {
     setOutline(false);
-    FlowLayout layout = new FlowLayout(false);
+    FlowLayout layout = new FlowLayout(true);
     layout.setMinorAlignment(FlowLayout.ALIGN_CENTER);
     setLayoutManager(layout);
 
@@ -35,6 +37,12 @@ public class ChartsetFigure extends RectangleFigure
 
     chartsetHeader.setFont(boldFont);
     add(chartsetHeader);
+    
+    Button button = new Button("+");
+    button.setToolTip(new Label("Add new chart"));
+    button.addActionListener(addChartHandler);
+    add(button);
+
   }
 
 

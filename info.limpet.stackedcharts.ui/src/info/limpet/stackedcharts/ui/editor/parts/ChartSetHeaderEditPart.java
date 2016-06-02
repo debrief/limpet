@@ -1,39 +1,63 @@
 package info.limpet.stackedcharts.ui.editor.parts;
 
+import info.limpet.stackedcharts.model.Chart;
 import info.limpet.stackedcharts.model.ChartSet;
-import info.limpet.stackedcharts.model.IndependentAxis;
+import info.limpet.stackedcharts.model.StackedchartsFactory;
+import info.limpet.stackedcharts.ui.editor.commands.AddChartCommand;
 import info.limpet.stackedcharts.ui.editor.figures.ChartsetFigure;
 
+import java.util.List;
+
+import org.eclipse.draw2d.ActionEvent;
+import org.eclipse.draw2d.ActionListener;
 import org.eclipse.draw2d.GridData;
 import org.eclipse.draw2d.IFigure;
-import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.GraphicalEditPart;
+import org.eclipse.gef.commands.CommandStack;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
-import org.eclipse.gef.editpolicies.NonResizableEditPolicy;
 import org.eclipse.swt.SWT;
 
 /**
  * Represents header of a {@link ChartSet} object
  */
-public class ChartSetHeaderEditPart extends AbstractGraphicalEditPart
+public class ChartSetHeaderEditPart extends AbstractGraphicalEditPart implements
+    ActionListener
 {
 
-  protected IndependentAxis getAxis()
+  @Override
+  public void actionPerformed(final ActionEvent event)
   {
-    return (IndependentAxis) getModel();
+    final List<Chart> charts = getModel().getCharts();
+    final StackedchartsFactory factory = StackedchartsFactory.eINSTANCE;
+    final Chart chart = factory.createChart();
+    chart.setName("New Chart");
+    final AddChartCommand addChartCommand = new AddChartCommand(charts, chart);
+    final CommandStack commandStack =
+        getViewer().getEditDomain().getCommandStack();
+    commandStack.execute(addChartCommand);
+  }
+
+  @Override
+  protected void createEditPolicies()
+  {
   }
 
   @Override
   protected IFigure createFigure()
   {
+    return new ChartsetFigure(this);
+  }
 
-    return new ChartsetFigure();
+  @Override
+  public ChartSet getModel()
+  {
+    return ((ChartSetEditPart.ChartSetWrapper) super.getModel()).getcChartSet();
   }
 
   @Override
   protected void refreshVisuals()
   {
-    GridData gridData = new GridData();
+    final GridData gridData = new GridData();
     gridData.grabExcessHorizontalSpace = true;
     gridData.grabExcessVerticalSpace = false;
     gridData.horizontalAlignment = SWT.CENTER;
@@ -43,18 +67,4 @@ public class ChartSetHeaderEditPart extends AbstractGraphicalEditPart
     ((GraphicalEditPart) getParent()).setLayoutConstraint(this, figure,
         gridData);
   }
-
-  @Override
-  protected void createEditPolicies()
-  {
-    installEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE,
-        new NonResizableEditPolicy());
-  }
-
-  @Override
-  public Object getModel()
-  {
-    return ((ChartSetEditPart.ChartSetWrapper) super.getModel()).getcChartSet();
-  }
-
 }
