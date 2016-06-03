@@ -2,6 +2,7 @@ package info.limpet.stackedcharts.ui.editor.parts;
 
 import info.limpet.stackedcharts.model.Chart;
 import info.limpet.stackedcharts.model.ChartSet;
+import info.limpet.stackedcharts.model.Orientation;
 import info.limpet.stackedcharts.model.StackedchartsPackage;
 
 import java.util.ArrayList;
@@ -53,7 +54,16 @@ public class ChartSetEditPart extends AbstractGraphicalEditPart
     }
   }
 
-  
+  @Override
+  protected void refreshVisuals()
+  {
+    GridLayout layoutManager = (GridLayout) getFigure().getLayoutManager();
+    layoutManager.numColumns =
+        getChartSet().getOrientation() == Orientation.HORIZONTAL
+            ? getModelChildren().size() : 1;
+    layoutManager.invalidate();
+  }
+
   private ChartSetAdapter adapter = new ChartSetAdapter();
 
   @Override
@@ -69,12 +79,12 @@ public class ChartSetEditPart extends AbstractGraphicalEditPart
     getChartSet().eAdapters().remove(adapter);
     super.deactivate();
   }
-  
+
   ChartSet getChartSet()
   {
     return (ChartSet) getModel();
   }
-  
+
   @Override
   protected IFigure createFigure()
   {
@@ -98,9 +108,9 @@ public class ChartSetEditPart extends AbstractGraphicalEditPart
   @Override
   public ChartSet getModel()
   {
-    return (ChartSet )super.getModel();
+    return (ChartSet) super.getModel();
   }
-  
+
   public class ChartSetAdapter implements Adapter
   {
 
@@ -113,13 +123,16 @@ public class ChartSetEditPart extends AbstractGraphicalEditPart
       case StackedchartsPackage.CHART_SET__CHARTS:
         refreshChildren();
         break;
+      case StackedchartsPackage.CHART_SET__ORIENTATION:
+        refresh();
+        break;
       }
     }
 
     @Override
     public Notifier getTarget()
     {
-      return  getModel();
+      return getModel();
     }
 
     @Override
