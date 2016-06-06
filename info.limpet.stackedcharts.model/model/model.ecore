@@ -79,6 +79,12 @@
         defaultValueLiteral="1"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="lineStyle" eType="#//LineType"
         defaultValueLiteral="Solid"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="includeInLegend" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
+        defaultValueLiteral="true">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="whether to include this dataset in the chart legend&#xA;"/>
+      </eAnnotations>
+    </eStructuralFeatures>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="PlainStyling" eSuperTypes="#//Styling">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="color" eType="#//Color"/>

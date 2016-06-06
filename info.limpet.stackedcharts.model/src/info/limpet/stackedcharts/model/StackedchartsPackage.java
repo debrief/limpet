@@ -700,13 +700,22 @@ public interface StackedchartsPackage extends EPackage
   int STYLING__LINE_STYLE = 3;
 
   /**
+   * The feature id for the '<em><b>Include In Legend</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int STYLING__INCLUDE_IN_LEGEND = 4;
+
+  /**
    * The number of structural features of the '<em>Styling</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int STYLING_FEATURE_COUNT = 4;
+  int STYLING_FEATURE_COUNT = 5;
 
   /**
    * The number of operations of the '<em>Styling</em>' class.
@@ -762,6 +771,15 @@ public interface StackedchartsPackage extends EPackage
    * @ordered
    */
   int PLAIN_STYLING__LINE_STYLE = STYLING__LINE_STYLE;
+
+  /**
+   * The feature id for the '<em><b>Include In Legend</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int PLAIN_STYLING__INCLUDE_IN_LEGEND = STYLING__INCLUDE_IN_LEGEND;
 
   /**
    * The feature id for the '<em><b>Color</b></em>' attribute.
@@ -835,6 +853,15 @@ public interface StackedchartsPackage extends EPackage
    * @ordered
    */
   int LINEAR_STYLING__LINE_STYLE = STYLING__LINE_STYLE;
+
+  /**
+   * The feature id for the '<em><b>Include In Legend</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int LINEAR_STYLING__INCLUDE_IN_LEGEND = STYLING__INCLUDE_IN_LEGEND;
 
   /**
    * The feature id for the '<em><b>Start Color</b></em>' attribute.
@@ -1711,6 +1738,17 @@ public interface StackedchartsPackage extends EPackage
   EAttribute getStyling_LineStyle();
 
   /**
+   * Returns the meta object for the attribute '{@link info.limpet.stackedcharts.model.Styling#isIncludeInLegend <em>Include In Legend</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Include In Legend</em>'.
+   * @see info.limpet.stackedcharts.model.Styling#isIncludeInLegend()
+   * @see #getStyling()
+   * @generated
+   */
+  EAttribute getStyling_IncludeInLegend();
+
+  /**
    * Returns the meta object for class '{@link info.limpet.stackedcharts.model.PlainStyling <em>Plain Styling</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -2417,6 +2455,14 @@ public interface StackedchartsPackage extends EPackage
      * @generated
      */
     EAttribute STYLING__LINE_STYLE = eINSTANCE.getStyling_LineStyle();
+
+    /**
+     * The meta object literal for the '<em><b>Include In Legend</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute STYLING__INCLUDE_IN_LEGEND = eINSTANCE.getStyling_IncludeInLegend();
 
     /**
      * The meta object literal for the '{@link info.limpet.stackedcharts.model.impl.PlainStylingImpl <em>Plain Styling</em>}' class.
