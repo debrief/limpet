@@ -101,5 +101,9 @@
           </toolbar>
         </menuContribution>
     </extension>
+    <extension
+          point="info.limpet.stackedcharts.ui.stacked_adapter">
+       <adapter></adapter>
+    </extension>
 
 </plugin>
