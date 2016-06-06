@@ -15,19 +15,11 @@ public class ArrowFigure extends Figure
   private static final int ARROW_HEAD_LENGTH = 10;
   private static final int ARROW_HEAD_HALF_WIDTH = 8;
 
-  private final boolean horizontal;
+  private boolean horizontal;
 
   public ArrowFigure(boolean horizontal)
   {
-    this.horizontal = horizontal;
-    if (horizontal)
-    {
-      setPreferredSize(-1, 20);
-    }
-    else
-    {
-      setPreferredSize(20, -1);
-    }
+    this.setHorizontal(horizontal);
     Color color = Display.getDefault().getSystemColor(SWT.COLOR_DARK_GRAY);
     setBackgroundColor(color);
     setForegroundColor(color);
@@ -44,7 +36,7 @@ public class ArrowFigure extends Figure
     graphics.setLineWidth(3);
 
     PointList points = new PointList();
-    if (horizontal)
+    if (isHorizontal())
     {
       graphics.drawLine(clientArea.getLeft(), right);
       points.addPoint(right);
@@ -66,5 +58,24 @@ public class ArrowFigure extends Figure
 
     graphics.setLineWidth(oldWid);
 
+  }
+
+  public boolean isHorizontal()
+  {
+    return horizontal;
+  }
+
+  public void setHorizontal(boolean horizontal)
+  {
+    this.horizontal = horizontal;
+    if (horizontal)
+    {
+      setPreferredSize(-1, 20);
+    }
+    else
+    {
+      setPreferredSize(20, -1);
+    }
+    repaint();
   }
 }

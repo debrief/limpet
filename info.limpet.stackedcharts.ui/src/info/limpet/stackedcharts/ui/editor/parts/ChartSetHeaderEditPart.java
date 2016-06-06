@@ -58,11 +58,8 @@ public class ChartSetHeaderEditPart extends AbstractGraphicalEditPart implements
   protected void refreshVisuals()
   {
     final GridData gridData = new GridData();
-    gridData.grabExcessHorizontalSpace = true;
-    gridData.grabExcessVerticalSpace = false;
     gridData.horizontalAlignment = SWT.CENTER;
-    gridData.horizontalSpan = 10;
-    gridData.verticalAlignment = SWT.FILL;
+    gridData.verticalAlignment = SWT.CENTER;
 
     ((GraphicalEditPart) getParent()).setLayoutConstraint(this, figure,
         gridData);

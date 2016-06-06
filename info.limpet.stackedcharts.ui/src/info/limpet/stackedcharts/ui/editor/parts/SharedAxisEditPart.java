@@ -1,5 +1,11 @@
 package info.limpet.stackedcharts.ui.editor.parts;
 
+import info.limpet.stackedcharts.model.ChartSet;
+import info.limpet.stackedcharts.model.IndependentAxis;
+import info.limpet.stackedcharts.model.Orientation;
+import info.limpet.stackedcharts.model.StackedchartsPackage;
+import info.limpet.stackedcharts.ui.editor.figures.ArrowFigure;
+
 import org.eclipse.draw2d.GridData;
 import org.eclipse.draw2d.GridLayout;
 import org.eclipse.draw2d.IFigure;
@@ -8,6 +14,7 @@ import org.eclipse.draw2d.RectangleFigure;
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.Notifier;
+import org.eclipse.gef.EditPart;
 import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
@@ -16,11 +23,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Display;
-
-import info.limpet.stackedcharts.model.ChartSet;
-import info.limpet.stackedcharts.model.IndependentAxis;
-import info.limpet.stackedcharts.model.StackedchartsPackage;
-import info.limpet.stackedcharts.ui.editor.figures.ArrowFigure;
 
 /**
  * Represents the shared (independent) axis of a {@link ChartSet} object
@@ -33,6 +35,8 @@ public class SharedAxisEditPart extends AbstractGraphicalEditPart
   private AxisAdapter adapter = new AxisAdapter();
 
   private Label axisNameLabel;
+
+  private ArrowFigure arrowFigure;
 
   @Override
   public void activate()
@@ -63,7 +67,7 @@ public class SharedAxisEditPart extends AbstractGraphicalEditPart
     gridLayout.marginWidth = 0;
     rectangle.setLayoutManager(gridLayout);
 
-    ArrowFigure arrowFigure = new ArrowFigure(true);
+    arrowFigure = new ArrowFigure(true);
     gridLayout.setConstraint(arrowFigure, new GridData(GridData.FILL,
         GridData.FILL, true, false));
     rectangle.add(arrowFigure);
@@ -89,8 +93,9 @@ public class SharedAxisEditPart extends AbstractGraphicalEditPart
     if (boldFont == null)
     {
       FontData fontData = axisNameLabel.getFont().getFontData()[0];
-      boldFont = new Font(Display.getCurrent(), new FontData(fontData.getName(),
-          fontData.getHeight(), SWT.BOLD));
+      boldFont =
+          new Font(Display.getCurrent(), new FontData(fontData.getName(),
+              fontData.getHeight(), SWT.BOLD));
     }
     axisNameLabel.setFont(boldFont);
 
@@ -99,8 +104,12 @@ public class SharedAxisEditPart extends AbstractGraphicalEditPart
     gridData.horizontalAlignment = SWT.FILL;
     gridData.verticalAlignment = SWT.FILL;
 
-    ((GraphicalEditPart) getParent()).setLayoutConstraint(this, figure,
-        gridData);
+    EditPart parent = getParent();
+    ((GraphicalEditPart) parent).setLayoutConstraint(this, figure, gridData);
+
+    boolean horizontal =
+        ((ChartSet) parent.getModel()).getOrientation() == Orientation.HORIZONTAL;
+    arrowFigure.setHorizontal(!horizontal);
   }
 
   @Override

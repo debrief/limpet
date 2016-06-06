@@ -58,6 +58,7 @@ public class ChartSetEditPart extends AbstractGraphicalEditPart
   protected void refreshVisuals()
   {
     GridLayout layoutManager = (GridLayout) getFigure().getLayoutManager();
+    
     layoutManager.numColumns =
         getChartSet().getOrientation() == Orientation.HORIZONTAL
             ? getModelChildren().size() : 1;
