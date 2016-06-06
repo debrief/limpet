@@ -10,7 +10,7 @@ import info.limpet.stackedcharts.ui.editor.Activator;
 public class AdapterRegistry implements IStackedAdapter
 {
 
-  private static final String ADAPTER_ID = "stacked_adapter";
+  private static final String ADAPTER_ID = "info.limpet.stackedcharts.ui.stacked_adapter";
 
   @Override
   public Dataset convert(Object data)
@@ -27,7 +27,7 @@ public class AdapterRegistry implements IStackedAdapter
         if (o instanceof IStackedAdapter)
         {
           IStackedAdapter sa = (IStackedAdapter) o;
-          res = sa.convert(null);
+          res = sa.convert(data);
           if (res != null)
           {
             // success, drop out

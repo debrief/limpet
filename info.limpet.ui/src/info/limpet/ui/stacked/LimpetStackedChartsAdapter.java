@@ -4,6 +4,7 @@ import info.limpet.data.impl.TemporalQuantityCollection;
 import info.limpet.stackedcharts.model.Dataset;
 import info.limpet.stackedcharts.model.impl.StackedchartsFactoryImpl;
 import info.limpet.stackedcharts.ui.view.adapter.IStackedAdapter;
+import info.limpet.ui.data_provider.data.CollectionWrapper;
 
 public class LimpetStackedChartsAdapter implements IStackedAdapter
 {
@@ -30,6 +31,16 @@ public class LimpetStackedChartsAdapter implements IStackedAdapter
         
         // hook up listener
       }
+      //DUMMY PLEASE REMOVE
+      if(data instanceof CollectionWrapper)
+      {
+        StackedchartsFactoryImpl factory = new StackedchartsFactoryImpl();
+        res  = factory.createDataset();
+        res.setName("DnD-DUMMY");
+        // now store the data
+        
+        // hook up listener
+      }
     }
     
     return res;
@@ -42,6 +53,10 @@ public class LimpetStackedChartsAdapter implements IStackedAdapter
     
     // have a look at the type
     if(data instanceof TemporalQuantityCollection<?>)
+    {
+      res = true;
+    }
+    if(data instanceof CollectionWrapper)
     {
       res = true;
     }
