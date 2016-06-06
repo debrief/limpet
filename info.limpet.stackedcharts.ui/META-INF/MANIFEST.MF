@@ -18,6 +18,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.emf.ecore.edit
 Bundle-ActivationPolicy: lazy
 Export-Package: info.limpet.stackedcharts.ui.editor,
- info.limpet.stackedcharts.ui.view
+ info.limpet.stackedcharts.ui.view,
+ info.limpet.stackedcharts.ui.view.adapter
 Bundle-ClassPath: .,
  libs/org.eclipse.nebula.effects.stw_1.0.0.201604151927.jar
