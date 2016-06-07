@@ -1,5 +1,6 @@
 package info.limpet.ui.stacked;
 
+import info.limpet.IBaseQuantityCollection;
 import info.limpet.ICollection;
 import info.limpet.data.impl.TemporalQuantityCollection;
 import info.limpet.stackedcharts.model.DataItem;
@@ -36,10 +37,13 @@ public class LimpetStackedChartsAdapter implements IStackedAdapter
         ICollection collection = cw.getCollection();
         if(collection.isQuantity() && collection.isTemporal())
         {
+          
+          IBaseQuantityCollection<Quantity> qq = (IBaseQuantityCollection<Quantity>) collection;
+          
           // get ready to store the data
           StackedchartsFactoryImpl factory = new StackedchartsFactoryImpl();
           Dataset dataset  = factory.createDataset();
-          dataset.setName(collection.getName());
+          dataset.setName(collection.getName() + "(" + qq.getUnits() + ")");
 
           TemporalQuantityCollection<Quantity> tqc = (TemporalQuantityCollection<Quantity>) collection;
           final Unit<Quantity> hisUnits = tqc.getUnits();
@@ -63,6 +67,9 @@ public class LimpetStackedChartsAdapter implements IStackedAdapter
           {
             res = new ArrayList<Dataset>();
           }
+          
+          // give it some style
+          dataset.setStyling(factory.createPlainStyling());
               
           res.add(dataset);
         }

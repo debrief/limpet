@@ -229,6 +229,7 @@ public class ShowInStackedChartsOverview implements IOperation<IStoreItem>
       // ok, create the dataset
       Dataset dataset = factory.createDataset();
       dataset.setName(tq.getName() + "(" + tq.getUnits() + ")");
+      dataset.setStyling(factory.createPlainStyling());
       match.getDatasets().add(dataset);
 
       // and now work through the data
