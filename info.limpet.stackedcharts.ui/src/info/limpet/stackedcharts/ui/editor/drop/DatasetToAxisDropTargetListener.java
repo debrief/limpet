@@ -6,6 +6,7 @@ import info.limpet.stackedcharts.ui.editor.commands.AddDatasetsToAxisCommand;
 import info.limpet.stackedcharts.ui.editor.parts.AxisEditPart;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.draw2d.ColorConstants;
@@ -85,6 +86,18 @@ public class DatasetToAxisDropTargetListener implements
           if (o instanceof Dataset)
           {
             datasets.add((Dataset) o);
+          }
+          else if(o instanceof List<?>)
+          {
+            List<?> list = (List<?>) o;
+            for (Iterator<?> iter = list.iterator(); iter.hasNext();)
+            {
+              Object item = (Object) iter.next();
+              if(item instanceof Dataset)
+              {
+                datasets.add((Dataset) item);
+              }
+            }
           }
         }
         AxisEditPart axisEditPart = (AxisEditPart) findObjectAt;

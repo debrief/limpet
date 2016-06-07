@@ -1,11 +1,13 @@
 package info.limpet.stackedcharts.ui.view.adapter;
 
+import info.limpet.stackedcharts.model.Dataset;
+import info.limpet.stackedcharts.ui.editor.Activator;
+
+import java.util.List;
+
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-
-import info.limpet.stackedcharts.model.Dataset;
-import info.limpet.stackedcharts.ui.editor.Activator;
 
 public class AdapterRegistry implements IStackedAdapter
 {
@@ -13,9 +15,9 @@ public class AdapterRegistry implements IStackedAdapter
   private static final String ADAPTER_ID = "info.limpet.stackedcharts.ui.stacked_adapter";
 
   @Override
-  public Dataset convert(Object data)
+  public List<Dataset> convert(Object data)
   {
-    Dataset res = null;
+    List<Dataset> res = null;
     try
     {
       IConfigurationElement[] config =
@@ -28,6 +30,7 @@ public class AdapterRegistry implements IStackedAdapter
         {
           IStackedAdapter sa = (IStackedAdapter) o;
           res = sa.convert(data);
+          
           if (res != null)
           {
             // success, drop out

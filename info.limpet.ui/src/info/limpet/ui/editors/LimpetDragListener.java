@@ -14,14 +14,13 @@
  *****************************************************************************/
 package info.limpet.ui.editors;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import info.limpet.IStoreItem;
 import info.limpet.stackedcharts.ui.view.adapter.AdapterRegistry;
 import info.limpet.ui.data_provider.data.LimpetWrapper;
-import info.limpet.ui.stacked.LimpetStackedChartsAdapter;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -75,7 +74,7 @@ public class LimpetDragListener extends DragSourceAdapter
     if (LocalSelectionTransfer.getTransfer().isSupportedType(event.dataType))
     {
       AdapterRegistry adapter = new AdapterRegistry();
-      List<Object> element = new ArrayList<Object>(selection.size());
+      List<Object> element = new ArrayList<Object>();
       for (Object object : selection.toArray())
       {
         if (adapter.canConvert(object))
