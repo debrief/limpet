@@ -1,9 +1,12 @@
 package info.limpet.stackedcharts.ui.editor.drop;
 
+import info.limpet.stackedcharts.model.Chart;
 import info.limpet.stackedcharts.model.Dataset;
 import info.limpet.stackedcharts.model.DependentAxis;
 import info.limpet.stackedcharts.ui.editor.commands.AddDatasetsToAxisCommand;
 import info.limpet.stackedcharts.ui.editor.parts.AxisEditPart;
+import info.limpet.stackedcharts.ui.editor.parts.ChartEditPart;
+import info.limpet.stackedcharts.ui.editor.parts.ChartPaneEditPart;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -62,6 +65,51 @@ public class DatasetToAxisDropTargetListener implements
     }
   }
 
+  protected void addIfPossible(final AxisEditPart axis, final List<Dataset> datasets,
+      final Dataset dataset)
+  {
+    // check the axis
+    ChartPaneEditPart parent = (ChartPaneEditPart) axis.getParent();
+    ChartEditPart chartEdit = (ChartEditPart) parent.getParent();
+    Chart chart = chartEdit.getModel();
+    
+    Iterator<DependentAxis> minIt = chart.getMinAxes().iterator();
+    while (minIt.hasNext())
+    {
+      DependentAxis dAxis = (DependentAxis) minIt.next();
+      Iterator<Dataset> dIter = dAxis.getDatasets().iterator();
+      while (dIter.hasNext())
+      {
+        Dataset thisD = (Dataset) dIter.next();
+        if(thisD.getName().equals(dataset.getName()))
+        {
+          // ok, we can't add it
+          System.err.println("Not adding dataset - duplicate name");
+          return;
+        }
+      }
+    }
+
+    Iterator<DependentAxis> maxIt = chart.getMaxAxes().iterator();
+    while (maxIt.hasNext())
+    {
+      DependentAxis dAxis = (DependentAxis) maxIt.next();
+      Iterator<Dataset> dIter = dAxis.getDatasets().iterator();
+      while (dIter.hasNext())
+      {
+        Dataset thisD = (Dataset) dIter.next();
+        if(thisD.getName().equals(dataset.getName()))
+        {
+          // ok, we can't add it
+          System.err.println("Not adding dataset - duplicate name");
+          return;
+        }
+      }
+    }
+
+    datasets.add(dataset); 
+  }
+  
   @Override
   public void drop(DropTargetEvent event)
   {
@@ -80,12 +128,13 @@ public class DatasetToAxisDropTargetListener implements
 
       if (findObjectAt instanceof AxisEditPart)
       {
+        AxisEditPart axis = (AxisEditPart) findObjectAt;
         List<Dataset> datasets = new ArrayList<Dataset>(selection.size());
         for (Object o : selection.toArray())
         {
           if (o instanceof Dataset)
           {
-            datasets.add((Dataset) o);
+            addIfPossible(axis, datasets, (Dataset) o);
           }
           else if(o instanceof List<?>)
           {
@@ -95,14 +144,13 @@ public class DatasetToAxisDropTargetListener implements
               Object item = (Object) iter.next();
               if(item instanceof Dataset)
               {
-                datasets.add((Dataset) item);
+                addIfPossible(axis, datasets, (Dataset) item);
               }
             }
           }
         }
-        AxisEditPart axisEditPart = (AxisEditPart) findObjectAt;
         AddDatasetsToAxisCommand addDatasetsToAxisCommand =
-            new AddDatasetsToAxisCommand((DependentAxis) axisEditPart
+            new AddDatasetsToAxisCommand((DependentAxis) axis
                 .getModel(), datasets.toArray(new Dataset[datasets.size()]));
 
         final CommandStack commandStack =
