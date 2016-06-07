@@ -1,5 +1,11 @@
 package info.limpet.stackedcharts.ui.editor;
 
+import info.limpet.stackedcharts.model.ChartSet;
+import info.limpet.stackedcharts.ui.editor.drop.DatasetToAxisDropTargetListener;
+import info.limpet.stackedcharts.ui.editor.drop.DatasetToAxisLandingDropTargetListener;
+import info.limpet.stackedcharts.ui.editor.drop.ProxyDropTargetListener;
+import info.limpet.stackedcharts.ui.editor.parts.StackedChartsEditPartFactory;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EventObject;
@@ -32,9 +38,6 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
 
-import info.limpet.stackedcharts.model.ChartSet;
-import info.limpet.stackedcharts.ui.editor.parts.StackedChartsEditPartFactory;
-
 public class StackedchartsEditControl extends Composite
 {
 
@@ -54,6 +57,14 @@ public class StackedchartsEditControl extends Composite
     editDomain = new EditDomain();
 
     viewer = new ScrollingGraphicalViewer();
+
+    // connect external Drop support
+    // add Dataset to Axis
+
+    viewer.addDropTargetListener(new ProxyDropTargetListener(
+        new DatasetToAxisDropTargetListener(viewer),
+        new DatasetToAxisLandingDropTargetListener(viewer)));
+
     viewer.createControl(this);
     editDomain.addViewer(viewer);
 
@@ -72,6 +83,7 @@ public class StackedchartsEditControl extends Composite
         .addAdapterFactory(new ReflectiveItemProviderAdapterFactory());
     emfEditingDomain =
         new AdapterFactoryEditingDomain(adapterFactory, commandStack);
+
   }
 
   /**
@@ -155,7 +167,7 @@ public class StackedchartsEditControl extends Composite
     viewer.setContents(model);
 
   }
-  
+
   public void init(IViewPart view)
   {
     IActionBars actionBars = view.getViewSite().getActionBars();

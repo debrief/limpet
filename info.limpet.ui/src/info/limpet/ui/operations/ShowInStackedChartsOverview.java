@@ -196,13 +196,14 @@ public class ShowInStackedChartsOverview implements IOperation<IStoreItem>
           (TemporalQuantityCollection<?>) iStoreItem;
 
       // do we have a suitable axis?
-      String dimension = tq.getDimension().toString();
-      DependentAxis match = axes.get(dimension);
+      String units = tq.getUnits().toString();
+      DependentAxis match = axes.get(units);
       if (match == null)
       {
         match = factory.createDependentAxis();
-        match.setName(dimension);
-        axes.put(dimension, match);
+        match.setName(units);
+        match.setAxisType(factory.createNumberAxis());
+        axes.put(units, match);
 
         // are we due to create a new chart?
         if (currentChart.getMinAxes().size() + currentChart.getMaxAxes().size() >= 4)
@@ -227,7 +228,8 @@ public class ShowInStackedChartsOverview implements IOperation<IStoreItem>
 
       // ok, create the dataset
       Dataset dataset = factory.createDataset();
-      dataset.setName(tq.getName());
+      dataset.setName(tq.getName() + "(" + tq.getUnits() + ")");
+      dataset.setStyling(factory.createPlainStyling());
       match.getDatasets().add(dataset);
 
       // and now work through the data

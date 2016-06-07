@@ -64,6 +64,7 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.DecoratingLabelProvider;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.ISelection;
@@ -378,7 +379,7 @@ public class DataManagerEditor extends EditorPart
   {
     int ops = DND.DROP_COPY | DND.DROP_MOVE;
     Transfer[] transfers = new Transfer[]
-    {TextTransfer.getInstance()};
+    {TextTransfer.getInstance(),LocalSelectionTransfer.getTransfer()};
     viewer.addDragSupport(ops, transfers, new LimpetDragListener(viewer));
   }
 

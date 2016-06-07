@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
+   <extension-point id="stacked_adapter" name="info.limpet.stackedcharts.adapter" schema="schema/stacked_adapter.exsd"/>
    <extension
          point="org.eclipse.ui.views">
       <view
