@@ -114,7 +114,8 @@ public class DatasetToAxisLandingDropTargetListener implements
         StackedchartsFactoryImpl factory = new StackedchartsFactoryImpl();
         //TODO: Fill Axis
         DependentAxis newAxis = factory.createDependentAxis();
-        newAxis.setName("New Axis");
+        newAxis.setName("[dimensionless]");
+        newAxis.setAxisType(factory.createNumberAxis());
 
         final ChartPaneEditPart.AxisLandingPad pad =
             (ChartPaneEditPart.AxisLandingPad) axis.getModel();
