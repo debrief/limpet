@@ -10,6 +10,7 @@ import org.eclipse.draw2d.GridData;
 import org.eclipse.draw2d.GridLayout;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Label;
+import org.eclipse.draw2d.LayoutManager;
 import org.eclipse.draw2d.RectangleFigure;
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notification;
@@ -34,6 +35,8 @@ public class SharedAxisEditPart extends AbstractGraphicalEditPart
 
   private AxisAdapter adapter = new AxisAdapter();
 
+  private ChartSetAdapter chartSetAdapter = new ChartSetAdapter();
+
   private Label axisNameLabel;
 
   private ArrowFigure arrowFigure;
@@ -43,12 +46,14 @@ public class SharedAxisEditPart extends AbstractGraphicalEditPart
   {
     super.activate();
     getAxis().eAdapters().add(adapter);
+    chartSetAdapter.attachTo((ChartSet) getParent().getModel());
   }
 
   @Override
   public void deactivate()
   {
     getAxis().eAdapters().remove(adapter);
+    chartSetAdapter.attachTo(null);
     super.deactivate();
   }
 
@@ -68,8 +73,6 @@ public class SharedAxisEditPart extends AbstractGraphicalEditPart
     rectangle.setLayoutManager(gridLayout);
 
     arrowFigure = new ArrowFigure(true);
-    gridLayout.setConstraint(arrowFigure, new GridData(GridData.FILL,
-        GridData.FILL, true, false));
     rectangle.add(arrowFigure);
 
     axisNameLabel = new Label();
@@ -100,7 +103,6 @@ public class SharedAxisEditPart extends AbstractGraphicalEditPart
     axisNameLabel.setFont(boldFont);
 
     GridData gridData = new GridData();
-    gridData.grabExcessHorizontalSpace = true;
     gridData.horizontalAlignment = SWT.FILL;
     gridData.verticalAlignment = SWT.FILL;
 
@@ -110,6 +112,11 @@ public class SharedAxisEditPart extends AbstractGraphicalEditPart
     boolean horizontal =
         ((ChartSet) parent.getModel()).getOrientation() == Orientation.HORIZONTAL;
     arrowFigure.setHorizontal(!horizontal);
+
+    LayoutManager layoutManager = getFigure().getLayoutManager();
+    layoutManager.setConstraint(arrowFigure, new GridData(GridData.FILL,
+        GridData.FILL, !horizontal, horizontal));
+
   }
 
   @Override
@@ -151,4 +158,51 @@ public class SharedAxisEditPart extends AbstractGraphicalEditPart
     }
   }
 
+  public class ChartSetAdapter implements Adapter
+  {
+
+    private Notifier target;
+
+    @Override
+    public void notifyChanged(Notification notification)
+    {
+      int featureId = notification.getFeatureID(StackedchartsPackage.class);
+      switch (featureId)
+      {
+      case StackedchartsPackage.CHART_SET__ORIENTATION:
+        refreshVisuals();
+      }
+    }
+
+    @Override
+    public Notifier getTarget()
+    {
+      return target;
+    }
+
+    @Override
+    public void setTarget(Notifier newTarget)
+    {
+      this.target = newTarget;
+    }
+
+    void attachTo(Notifier newTarget)
+    {
+      if (this.target != null)
+      {
+        this.target.eAdapters().remove(this);
+      }
+      setTarget(newTarget);
+      if (this.target != null)
+      {
+        this.target.eAdapters().add(this);
+      }
+    }
+
+    @Override
+    public boolean isAdapterForType(Object type)
+    {
+      return type.equals(ChartSet.class);
+    }
+  }
 }
