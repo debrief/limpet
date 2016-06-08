@@ -25,7 +25,6 @@ import org.eclipse.gef.GraphicalViewer;
 import org.eclipse.gef.commands.CommandStack;
 import org.eclipse.gef.commands.CompoundCommand;
 import org.eclipse.jface.util.LocalSelectionTransfer;
-import org.eclipse.jface.util.TransferDropTargetListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.dnd.DND;
@@ -33,7 +32,7 @@ import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.Transfer;
 
 public class DatasetToAxisLandingDropTargetListener implements
-    TransferDropTargetListener
+    DatasetDropTargetListener
 {
   private final GraphicalViewer viewer;
   private AxisLandingPadEditPart feedback;
@@ -41,6 +40,20 @@ public class DatasetToAxisLandingDropTargetListener implements
   public DatasetToAxisLandingDropTargetListener(GraphicalViewer viewer)
   {
     this.viewer = viewer;
+  }
+
+  @Override
+  public boolean isValid(DropTargetEvent event)
+  {
+    EditPart findObjectAt = findPart(event);
+    return findObjectAt instanceof AxisLandingPadEditPart;
+  }
+  
+  @Override
+  public void reset()
+  {
+    removeFeedback(feedback);
+    feedback = null;
   }
 
   @Override
@@ -167,12 +180,12 @@ public class DatasetToAxisLandingDropTargetListener implements
   public void dragOver(DropTargetEvent event)
   {
     EditPart findObjectAt = findPart(event);
-    
-    if(feedback == findObjectAt)
+
+    if (feedback == findObjectAt)
     {
       return;
     }
-    
+
     if (findObjectAt instanceof AxisLandingPadEditPart
         && LocalSelectionTransfer.getTransfer().isSupportedType(
             event.currentDataType))
@@ -183,26 +196,28 @@ public class DatasetToAxisLandingDropTargetListener implements
       final ChartEditPart chartEdit = (ChartEditPart) parent.getParent();
       final Chart chart = chartEdit.getModel();
 
-      if (DatasetToAxisDropTargetListener.canDropSelection(chart, LocalSelectionTransfer.getTransfer()
-          .getSelection()))
+      if (DatasetToAxisDropTargetListener.canDropSelection(chart,
+          LocalSelectionTransfer.getTransfer().getSelection()))
       {
 
         removeFeedback(feedback);
         feedback = (AxisLandingPadEditPart) findObjectAt;
         addFeedback(feedback);
-
+        event.detail= DND.DROP_COPY;
       }
       else
       {
         removeFeedback(feedback);
         feedback = null;
+        event.detail= DND.DROP_NONE;
       }
     }
     else
     {
       removeFeedback(feedback);
       feedback = null;
-    }    
+      event.detail= DND.DROP_NONE;
+    }
   }
 
   private void addFeedback(AxisLandingPadEditPart figure)

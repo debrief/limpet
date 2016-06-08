@@ -19,7 +19,6 @@ import org.eclipse.gef.EditPart;
 import org.eclipse.gef.GraphicalViewer;
 import org.eclipse.gef.commands.CommandStack;
 import org.eclipse.jface.util.LocalSelectionTransfer;
-import org.eclipse.jface.util.TransferDropTargetListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.dnd.DND;
@@ -27,7 +26,7 @@ import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.Transfer;
 
 public class DatasetToAxisDropTargetListener implements
-    TransferDropTargetListener
+    DatasetDropTargetListener
 {
   private final GraphicalViewer viewer;
   private AxisEditPart feedback;
@@ -36,14 +35,28 @@ public class DatasetToAxisDropTargetListener implements
   {
     this.viewer = viewer;
   }
+  
+  @Override
+  public void reset()
+  {
+    removeFeedback(feedback);
+    feedback = null;
+  }
+  
+  @Override
+  public boolean isValid(DropTargetEvent event)
+  {
+    EditPart findObjectAt = findPart(event, viewer);
+    return findObjectAt instanceof AxisEditPart;
+  }
 
   @Override
   public void dropAccept(DropTargetEvent event)
   {
   }
 
-  public static boolean canDropSelection(final Chart chart,
-      ISelection selection)
+  public static boolean
+      canDropSelection(final Chart chart, ISelection selection)
   {
     boolean canDrop = true;
     AdapterRegistry adapter = new AdapterRegistry();
@@ -227,18 +240,20 @@ public class DatasetToAxisDropTargetListener implements
         removeFeedback(feedback);
         feedback = (AxisEditPart) findObjectAt;
         addFeedback(feedback);
-
+        event.detail= DND.DROP_COPY;
       }
       else
       {
         removeFeedback(feedback);
         feedback = null;
+        event.detail= DND.DROP_NONE;
       }
     }
     else
     {
       removeFeedback(feedback);
       feedback = null;
+      event.detail= DND.DROP_NONE;
     }
 
   }
