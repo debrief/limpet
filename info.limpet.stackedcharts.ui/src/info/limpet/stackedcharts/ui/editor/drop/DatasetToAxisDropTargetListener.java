@@ -186,6 +186,7 @@ public class DatasetToAxisDropTargetListener implements
 
       }
     }
+    feedback = null;
   }
 
   private EditPart findPart(DropTargetEvent event)
@@ -200,26 +201,30 @@ public class DatasetToAxisDropTargetListener implements
   public void dragOver(DropTargetEvent event)
   {
     EditPart findObjectAt = findPart(event);
+
+    if (feedback == findObjectAt)
+    {
+      return;
+    }
+
     if (findObjectAt instanceof AxisEditPart
         && LocalSelectionTransfer.getTransfer().isSupportedType(
             event.currentDataType)
-       
+
         && canDrop((AxisEditPart) findObjectAt, LocalSelectionTransfer
             .getTransfer().getSelection()))
     {
-      if (feedback != findObjectAt)
-      {
-        removeFeedback(feedback);
-        feedback = (AxisEditPart) findObjectAt;
 
-      }
+      removeFeedback(feedback);
+      feedback = (AxisEditPart) findObjectAt;
+
       addFeedback(feedback);
-      event.detail = DND.DROP_COPY;
+
     }
     else
     {
-      event.detail = DND.DROP_NONE;
       removeFeedback(feedback);
+      feedback = null;
     }
   }
 
@@ -248,7 +253,7 @@ public class DatasetToAxisDropTargetListener implements
   public void dragLeave(DropTargetEvent event)
   {
     removeFeedback(feedback);
-
+    feedback = null;
   }
 
   @Override
