@@ -1,5 +1,6 @@
 package info.limpet.stackedcharts.ui.editor.drop;
 
+import info.limpet.stackedcharts.model.Chart;
 import info.limpet.stackedcharts.model.Dataset;
 import info.limpet.stackedcharts.model.DependentAxis;
 import info.limpet.stackedcharts.model.impl.StackedchartsFactoryImpl;
@@ -7,6 +8,7 @@ import info.limpet.stackedcharts.ui.editor.commands.AddAxisToChartCommand;
 import info.limpet.stackedcharts.ui.editor.commands.AddDatasetsToAxisCommand;
 import info.limpet.stackedcharts.ui.editor.parts.AxisEditPart;
 import info.limpet.stackedcharts.ui.editor.parts.AxisLandingPadEditPart;
+import info.limpet.stackedcharts.ui.editor.parts.ChartEditPart;
 import info.limpet.stackedcharts.ui.editor.parts.ChartEditPart.ChartPanePosition;
 import info.limpet.stackedcharts.ui.editor.parts.ChartPaneEditPart;
 import info.limpet.stackedcharts.ui.view.adapter.AdapterRegistry;
@@ -170,24 +172,37 @@ public class DatasetToAxisLandingDropTargetListener implements
     {
       return;
     }
-    if (LocalSelectionTransfer.getTransfer().isSupportedType(
-        event.currentDataType)
-        && findObjectAt instanceof AxisLandingPadEditPart
-        && canDrop(LocalSelectionTransfer.getTransfer().getSelection()))
+    
+    if (findObjectAt instanceof AxisLandingPadEditPart
+        && LocalSelectionTransfer.getTransfer().isSupportedType(
+            event.currentDataType))
     {
+      // get the chart model
+      AxisLandingPadEditPart axis = (AxisLandingPadEditPart) findObjectAt;
+      final ChartPaneEditPart parent = (ChartPaneEditPart) axis.getParent();
+      final ChartEditPart chartEdit = (ChartEditPart) parent.getParent();
+      final Chart chart = chartEdit.getModel();
 
-     
+      if (DatasetToAxisDropTargetListener.canDropSelection(chart, LocalSelectionTransfer.getTransfer()
+          .getSelection()))
+      {
+
         removeFeedback(feedback);
         feedback = (AxisLandingPadEditPart) findObjectAt;
+        addFeedback(feedback);
 
-      
-      addFeedback(feedback);
+      }
+      else
+      {
+        removeFeedback(feedback);
+        feedback = null;
+      }
     }
     else
     {
       removeFeedback(feedback);
       feedback = null;
-    }
+    }    
   }
 
   private void addFeedback(AxisLandingPadEditPart figure)

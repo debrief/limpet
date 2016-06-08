@@ -42,19 +42,14 @@ public class DatasetToAxisDropTargetListener implements
   {
   }
 
-  private static boolean canDropSelection(final AxisEditPart axis,
+  public static boolean canDropSelection(final Chart chart,
       ISelection selection)
   {
     boolean canDrop = true;
     AdapterRegistry adapter = new AdapterRegistry();
     if (selection instanceof StructuredSelection)
     {
-      
-      // get the model
-      final ChartPaneEditPart parent = (ChartPaneEditPart) axis.getParent();
-      final ChartEditPart chartEdit = (ChartEditPart) parent.getParent();
-      final Chart chart = chartEdit.getModel();      
-      
+
       // check the selection
       for (Object obj : ((StructuredSelection) selection).toArray())
       {
@@ -105,15 +100,15 @@ public class DatasetToAxisDropTargetListener implements
     return exists;
   }
 
-  private static boolean canDropDataset(final Chart chart,
-      final Dataset dataset)
+  private static boolean
+      canDropDataset(final Chart chart, final Dataset dataset)
   {
     boolean possible = true;
 
     // check the axis
     final Iterator<DependentAxis> minIter = chart.getMinAxes().iterator();
     final Iterator<DependentAxis> maxIter = chart.getMaxAxes().iterator();
-    
+
     if (datasetAlreadyExistsOnTheseAxes(minIter, dataset.getName())
         || datasetAlreadyExistsOnTheseAxes(maxIter, dataset.getName()))
     {
@@ -163,7 +158,7 @@ public class DatasetToAxisDropTargetListener implements
 
         // build up the list of data to add
         List<Dataset> datasets = new ArrayList<Dataset>();
-        
+
         for (Object o : dragObjects)
         {
           if (o instanceof Dataset)
@@ -196,7 +191,8 @@ public class DatasetToAxisDropTargetListener implements
     feedback = null;
   }
 
-  private static EditPart findPart(DropTargetEvent event, GraphicalViewer viewer)
+  private static EditPart
+      findPart(DropTargetEvent event, GraphicalViewer viewer)
   {
     org.eclipse.swt.graphics.Point cP =
         viewer.getControl().toControl(event.x, event.y);
@@ -216,22 +212,35 @@ public class DatasetToAxisDropTargetListener implements
 
     if (findObjectAt instanceof AxisEditPart
         && LocalSelectionTransfer.getTransfer().isSupportedType(
-            event.currentDataType)
-        && canDropSelection((AxisEditPart) findObjectAt, LocalSelectionTransfer
-            .getTransfer().getSelection()))
+            event.currentDataType))
     {
+      // get the chart model
+      AxisEditPart axis = (AxisEditPart) findObjectAt;
+      final ChartPaneEditPart parent = (ChartPaneEditPart) axis.getParent();
+      final ChartEditPart chartEdit = (ChartEditPart) parent.getParent();
+      final Chart chart = chartEdit.getModel();
 
-      removeFeedback(feedback);
-      feedback = (AxisEditPart) findObjectAt;
+      if (canDropSelection(chart, LocalSelectionTransfer.getTransfer()
+          .getSelection()))
+      {
 
-      addFeedback(feedback);
+        removeFeedback(feedback);
+        feedback = (AxisEditPart) findObjectAt;
+        addFeedback(feedback);
 
+      }
+      else
+      {
+        removeFeedback(feedback);
+        feedback = null;
+      }
     }
     else
     {
       removeFeedback(feedback);
       feedback = null;
     }
+
   }
 
   private static void addFeedback(AxisEditPart figure)
