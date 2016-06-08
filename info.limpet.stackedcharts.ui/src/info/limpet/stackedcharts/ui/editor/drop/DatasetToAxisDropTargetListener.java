@@ -5,7 +5,6 @@ import info.limpet.stackedcharts.model.Dataset;
 import info.limpet.stackedcharts.model.DependentAxis;
 import info.limpet.stackedcharts.ui.editor.commands.AddDatasetsToAxisCommand;
 import info.limpet.stackedcharts.ui.editor.parts.AxisEditPart;
-import info.limpet.stackedcharts.ui.editor.parts.AxisLandingPadEditPart;
 import info.limpet.stackedcharts.ui.editor.parts.ChartEditPart;
 import info.limpet.stackedcharts.ui.editor.parts.ChartPaneEditPart;
 import info.limpet.stackedcharts.ui.view.adapter.AdapterRegistry;
@@ -43,17 +42,24 @@ public class DatasetToAxisDropTargetListener implements
   {
   }
 
-  protected boolean canDrop(final AxisEditPart axis, ISelection selection)
+  private static boolean canDropSelection(final AxisEditPart axis,
+      ISelection selection)
   {
-    boolean canDrop = false;
+    boolean canDrop = true;
     AdapterRegistry adapter = new AdapterRegistry();
     if (selection instanceof StructuredSelection)
     {
+      
+      // get the model
+      final ChartPaneEditPart parent = (ChartPaneEditPart) axis.getParent();
+      final ChartEditPart chartEdit = (ChartEditPart) parent.getParent();
+      final Chart chart = chartEdit.getModel();      
+      
+      // check the selection
       for (Object obj : ((StructuredSelection) selection).toArray())
       {
         if (adapter.canConvert(obj))
         {
-          final List<Dataset> validDatasets = new ArrayList<Dataset>();
           List<Dataset> convert = adapter.convert(obj);
           if (convert.size() == 0)
           {
@@ -61,12 +67,12 @@ public class DatasetToAxisDropTargetListener implements
           }
           for (Dataset dataset : convert)
           {
-
-            addIfPossible(axis, validDatasets, dataset);
+            if (!canDropDataset(chart, dataset))
+            {
+              canDrop = false;
+              break;
+            }
           }
-
-          canDrop = validDatasets.size() > 0;
-          break;
         }
       }
     }
@@ -74,52 +80,50 @@ public class DatasetToAxisDropTargetListener implements
     return canDrop;
   }
 
-  protected void addIfPossible(final AxisEditPart axis,
-      final List<Dataset> datasets, final Dataset dataset)
+  private static boolean datasetAlreadyExistsOnTheseAxes(
+      final Iterator<DependentAxis> axes, final String name)
   {
-    // check the axis
-    ChartPaneEditPart parent = (ChartPaneEditPart) axis.getParent();
-    ChartEditPart chartEdit = (ChartEditPart) parent.getParent();
-    Chart chart = chartEdit.getModel();
+    boolean exists = false;
 
-    Iterator<DependentAxis> minIt = chart.getMinAxes().iterator();
-    while (minIt.hasNext())
+    while (axes.hasNext())
     {
-      DependentAxis dAxis = (DependentAxis) minIt.next();
+      final DependentAxis dAxis = (DependentAxis) axes.next();
       Iterator<Dataset> dIter = dAxis.getDatasets().iterator();
       while (dIter.hasNext())
       {
         Dataset thisD = (Dataset) dIter.next();
-        if (thisD.getName().equals(dataset.getName()))
+        if (name.equals(thisD.getName()))
         {
           // ok, we can't add it
           System.err.println("Not adding dataset - duplicate name");
-          return;
+          exists = true;
+          break;
         }
       }
     }
 
-    Iterator<DependentAxis> maxIt = chart.getMaxAxes().iterator();
-    while (maxIt.hasNext())
-    {
-      DependentAxis dAxis = (DependentAxis) maxIt.next();
-      Iterator<Dataset> dIter = dAxis.getDatasets().iterator();
-      while (dIter.hasNext())
-      {
-        Dataset thisD = (Dataset) dIter.next();
-        if (thisD.getName().equals(dataset.getName()))
-        {
-          // ok, we can't add it
-          System.err.println("Not adding dataset - duplicate name");
-          return;
-        }
-      }
-    }
-
-    datasets.add(dataset);
+    return exists;
   }
 
-  public List<Object> convertSelection(StructuredSelection selection)
+  private static boolean canDropDataset(final Chart chart,
+      final Dataset dataset)
+  {
+    boolean possible = true;
+
+    // check the axis
+    final Iterator<DependentAxis> minIter = chart.getMinAxes().iterator();
+    final Iterator<DependentAxis> maxIter = chart.getMaxAxes().iterator();
+    
+    if (datasetAlreadyExistsOnTheseAxes(minIter, dataset.getName())
+        || datasetAlreadyExistsOnTheseAxes(maxIter, dataset.getName()))
+    {
+      possible = false;
+    }
+
+    return possible;
+  }
+
+  private static List<Object> convertSelection(StructuredSelection selection)
   {
     AdapterRegistry adapter = new AdapterRegistry();
     List<Object> element = new ArrayList<Object>();
@@ -151,17 +155,20 @@ public class DatasetToAxisDropTargetListener implements
 
       List<Object> dragObjects = convertSelection(sel);
 
-      EditPart findObjectAt = findPart(event);
+      EditPart findObjectAt = findPart(event, viewer);
 
       if (findObjectAt instanceof AxisEditPart)
       {
         AxisEditPart axis = (AxisEditPart) findObjectAt;
-        List<Dataset> datasets = new ArrayList<Dataset>(dragObjects.size());
+
+        // build up the list of data to add
+        List<Dataset> datasets = new ArrayList<Dataset>();
+        
         for (Object o : dragObjects)
         {
           if (o instanceof Dataset)
           {
-            addIfPossible(axis, datasets, (Dataset) o);
+            datasets.add((Dataset) o);
           }
           else if (o instanceof List<?>)
           {
@@ -171,7 +178,7 @@ public class DatasetToAxisDropTargetListener implements
               Object item = (Object) iter.next();
               if (item instanceof Dataset)
               {
-                addIfPossible(axis, datasets, (Dataset) item);
+                datasets.add((Dataset) item);
               }
             }
           }
@@ -189,7 +196,7 @@ public class DatasetToAxisDropTargetListener implements
     feedback = null;
   }
 
-  private EditPart findPart(DropTargetEvent event)
+  private static EditPart findPart(DropTargetEvent event, GraphicalViewer viewer)
   {
     org.eclipse.swt.graphics.Point cP =
         viewer.getControl().toControl(event.x, event.y);
@@ -200,7 +207,7 @@ public class DatasetToAxisDropTargetListener implements
   @Override
   public void dragOver(DropTargetEvent event)
   {
-    EditPart findObjectAt = findPart(event);
+    EditPart findObjectAt = findPart(event, viewer);
 
     if (feedback == findObjectAt)
     {
@@ -210,8 +217,7 @@ public class DatasetToAxisDropTargetListener implements
     if (findObjectAt instanceof AxisEditPart
         && LocalSelectionTransfer.getTransfer().isSupportedType(
             event.currentDataType)
-
-        && canDrop((AxisEditPart) findObjectAt, LocalSelectionTransfer
+        && canDropSelection((AxisEditPart) findObjectAt, LocalSelectionTransfer
             .getTransfer().getSelection()))
     {
 
@@ -228,7 +234,7 @@ public class DatasetToAxisDropTargetListener implements
     }
   }
 
-  private void addFeedback(AxisEditPart figure)
+  private static void addFeedback(AxisEditPart figure)
   {
     if (figure != null)
     {
@@ -236,7 +242,7 @@ public class DatasetToAxisDropTargetListener implements
     }
   }
 
-  private void removeFeedback(AxisEditPart figure)
+  private static void removeFeedback(AxisEditPart figure)
   {
     if (figure != null)
     {
