@@ -9,6 +9,7 @@ import info.limpet.stackedcharts.ui.editor.parts.AxisEditPart;
 import info.limpet.stackedcharts.ui.editor.parts.AxisLandingPadEditPart;
 import info.limpet.stackedcharts.ui.editor.parts.ChartEditPart.ChartPanePosition;
 import info.limpet.stackedcharts.ui.editor.parts.ChartPaneEditPart;
+import info.limpet.stackedcharts.ui.view.adapter.AdapterRegistry;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -23,6 +24,7 @@ import org.eclipse.gef.commands.CommandStack;
 import org.eclipse.gef.commands.CompoundCommand;
 import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.util.TransferDropTargetListener;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTargetEvent;
@@ -42,31 +44,42 @@ public class DatasetToAxisLandingDropTargetListener implements
   @Override
   public void dropAccept(DropTargetEvent event)
   {
-    if (event.detail == DND.DROP_DEFAULT)
-    {
-      if ((event.operations & DND.DROP_COPY) != 0)
-      {
-        event.detail = DND.DROP_COPY;
-      }
-      else
-      {
-        event.detail = DND.DROP_COPY;
-      }
-    }
-    for (int i = 0; i < event.dataTypes.length; i++)
-    {
-      if (LocalSelectionTransfer.getTransfer().isSupportedType(
-          event.dataTypes[i]))
-      {
-        event.currentDataType = event.dataTypes[i];
 
-        if (event.detail != DND.DROP_COPY)
+  }
+
+  protected boolean canDrop(ISelection selection)
+  {
+    boolean canDrop = false;
+    AdapterRegistry adapter = new AdapterRegistry();
+    if (selection instanceof StructuredSelection)
+    {
+      for (Object obj : ((StructuredSelection) selection).toArray())
+      {
+        if (adapter.canConvert(obj))
         {
-          event.detail = DND.DROP_COPY;
+
+          canDrop = true;
+          break;
         }
-        break;
       }
     }
+
+    return canDrop;
+  }
+
+  public List<Object> convertSelection(StructuredSelection selection)
+  {
+    AdapterRegistry adapter = new AdapterRegistry();
+    List<Object> element = new ArrayList<Object>();
+    for (Object object : selection.toArray())
+    {
+      if (adapter.canConvert(object))
+      {
+        element.add(adapter.convert(object));
+      }
+    }
+
+    return element;
   }
 
   @Override
@@ -75,21 +88,22 @@ public class DatasetToAxisLandingDropTargetListener implements
     if (LocalSelectionTransfer.getTransfer().isSupportedType(
         event.currentDataType))
     {
-      StructuredSelection selection =
+      StructuredSelection sel =
           (StructuredSelection) LocalSelectionTransfer.getTransfer()
               .getSelection();
-      if (selection.isEmpty())
+      if (sel.isEmpty())
       {
         event.detail = DND.DROP_NONE;
         return;
       }
+      List<Object> objects = convertSelection(sel);
       EditPart findObjectAt = findPart(event);
 
       if (findObjectAt instanceof AxisLandingPadEditPart)
       {
         AxisLandingPadEditPart axis = (AxisLandingPadEditPart) findObjectAt;
-        List<Dataset> datasets = new ArrayList<Dataset>(selection.size());
-        for (Object o : selection.toArray())
+        List<Dataset> datasets = new ArrayList<Dataset>(objects.size());
+        for (Object o : objects)
         {
           if (o instanceof Dataset)
           {
@@ -112,7 +126,7 @@ public class DatasetToAxisLandingDropTargetListener implements
         CompoundCommand compoundCommand = new CompoundCommand();
 
         StackedchartsFactoryImpl factory = new StackedchartsFactoryImpl();
-        //TODO: Fill Axis
+        // TODO: Fill Axis
         DependentAxis newAxis = factory.createDependentAxis();
         newAxis.setName("[dimensionless]");
         newAxis.setAxisType(factory.createNumberAxis());
@@ -150,18 +164,24 @@ public class DatasetToAxisLandingDropTargetListener implements
   public void dragOver(DropTargetEvent event)
   {
     EditPart findObjectAt = findPart(event);
-    if (findObjectAt instanceof AxisLandingPadEditPart)
+    if (LocalSelectionTransfer.getTransfer().isSupportedType(
+        event.currentDataType)
+        && findObjectAt instanceof AxisLandingPadEditPart
+        && canDrop(LocalSelectionTransfer.getTransfer().getSelection()))
     {
+
       if (feedback != findObjectAt)
       {
         removeFeedback(feedback);
         feedback = (AxisLandingPadEditPart) findObjectAt;
 
       }
+      event.detail = DND.DROP_COPY;
       addFeedback(feedback);
     }
     else
     {
+      event.detail = DND.DROP_NONE;
       removeFeedback(feedback);
     }
   }
@@ -185,25 +205,6 @@ public class DatasetToAxisLandingDropTargetListener implements
   @Override
   public void dragOperationChanged(DropTargetEvent event)
   {
-    if (event.detail == DND.DROP_DEFAULT)
-    {
-      if ((event.operations & DND.DROP_COPY) != 0)
-      {
-        event.detail = DND.DROP_COPY;
-      }
-      else
-      {
-        event.detail = DND.DROP_COPY;
-      }
-    }
-    if (LocalSelectionTransfer.getTransfer().isSupportedType(
-        event.currentDataType))
-    {
-      if (event.detail != DND.DROP_COPY)
-      {
-        event.detail = DND.DROP_COPY;
-      }
-    }
 
   }
 
