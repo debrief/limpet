@@ -21,7 +21,7 @@ public class ProxyDropTargetListener implements TransferDropTargetListener
   {
     for (DatasetDropTargetListener listener : listeners)
     {
-      if(listener.isValid(event))
+      if(listener.appliesTo(event))
         listener.dragEnter(event);
       else
         listener.reset();
@@ -34,7 +34,7 @@ public class ProxyDropTargetListener implements TransferDropTargetListener
   {
     for (DatasetDropTargetListener listener : listeners)
     {
-      if(listener.isValid(event))
+      if(listener.appliesTo(event))
         listener.dragLeave(event);
       else
         listener.reset();
@@ -47,7 +47,7 @@ public class ProxyDropTargetListener implements TransferDropTargetListener
   {
     for (DatasetDropTargetListener listener : listeners)
     {
-      if(listener.isValid(event))
+      if(listener.appliesTo(event))
         listener.dragOperationChanged(event);
       else
         listener.reset();
@@ -61,7 +61,7 @@ public class ProxyDropTargetListener implements TransferDropTargetListener
     boolean match = false;
     for (DatasetDropTargetListener listener : listeners)
     {
-      if(listener.isValid(event))
+      if(listener.appliesTo(event))
       {
         match = true;
         listener.dragOver(event);
@@ -83,8 +83,7 @@ public class ProxyDropTargetListener implements TransferDropTargetListener
   {
     for (DatasetDropTargetListener listener : listeners)
     {
-      if(listener.isValid(event))
-        if(listener.isValid(event))
+      if(listener.appliesTo(event))
           listener.drop(event);
         else
           listener.reset();
@@ -97,7 +96,7 @@ public class ProxyDropTargetListener implements TransferDropTargetListener
   {
     for (DatasetDropTargetListener listener : listeners)
     {
-      if(listener.isValid(event))
+      if(listener.appliesTo(event))
         listener.dropAccept(event);
       else
         listener.reset();
