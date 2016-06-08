@@ -1,5 +1,6 @@
 package info.limpet.ui.stacked;
 
+import info.limpet.IChangeListener;
 import info.limpet.ICollection;
 import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
@@ -20,15 +21,61 @@ import javax.measure.Measurable;
 import javax.measure.quantity.Quantity;
 import javax.measure.unit.Unit;
 
+import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.notify.impl.NotificationImpl;
+
 public class LimpetStackedChartsAdapter implements IStackedAdapter
 {
 
-  protected Dataset convertDataset(StackedchartsFactoryImpl factory, TemporalQuantityCollection<Quantity> tqc)
+  protected static class CollectionChangeListener implements IChangeListener
   {
 
+    private final TemporalQuantityCollection<Quantity> _collection;
+    private final Dataset _dataset;
+
+    public CollectionChangeListener(TemporalQuantityCollection<Quantity> collection, Dataset subject)
+    {
+      _dataset = subject;
+      _collection = collection;
+      _collection.addChangeListener(this);
+    }
+
+    @Override
+    public void dataChanged(IStoreItem subject)
+    {
+      System.out.println("change heard!");
+      
+      StackedchartsFactoryImpl factory = new StackedchartsFactoryImpl();
+      
+      // ok, repopulate the dataset
+      populateDataset(factory, _collection, _dataset);
+      
+      // and fire the notification
+//      NotificationImpl not = new NotificationImpl(Notification.SET, null, subject);
+ //     _dataset.eNotify(not);
+    }
+
+    @Override
+    public void metadataChanged(IStoreItem subject)
+    {
+      // ignore metadata change
+    }
+
+    @Override
+    public void collectionDeleted(IStoreItem subject)
+    {
+      _collection.removeChangeListener(this);
+    }
+    
+  }
+  
+  protected static void populateDataset(final StackedchartsFactoryImpl factory, final TemporalQuantityCollection<Quantity> tqc, final Dataset dataset)
+  {
     // get ready to store the data
-    Dataset dataset  = factory.createDataset();
     dataset.setName(tqc.getName() + "(" + tqc.getUnits() + ")");
+    
+    // clear the dataset
+    dataset.getMeasurements().clear();
 
     final Unit<Quantity> hisUnits = tqc.getUnits();
     Iterator<Long> times = tqc.getTimes().iterator();
@@ -37,17 +84,15 @@ public class LimpetStackedChartsAdapter implements IStackedAdapter
     {
       long thisTime = times.next();
       @SuppressWarnings("unchecked")
-      Measurable<Quantity> meas = (Measurable<Quantity>) values.next();            
-      DataItem item = factory.createDataItem();
+      final Measurable<Quantity> meas = (Measurable<Quantity>) values.next();            
+      final DataItem item = factory.createDataItem();
       item.setIndependentVal(thisTime);
-      Double value = meas.doubleValue(hisUnits);
+      final Double value = meas.doubleValue(hisUnits);
       item.setDependentVal(value);
       
       // and store it
       dataset.getMeasurements().add(item);
-    }
-    
-    return dataset;
+    }    
   }
   
   @SuppressWarnings({"unchecked"})
@@ -71,7 +116,14 @@ public class LimpetStackedChartsAdapter implements IStackedAdapter
         {
           
           TemporalQuantityCollection<Quantity> qq = (TemporalQuantityCollection<Quantity>) collection;
-          Dataset dataset = convertDataset(factory, qq);
+          final Dataset dataset = factory.createDataset();
+          populateDataset(factory, qq, dataset);
+          
+          // ok, register a listener for collection changes    
+          @SuppressWarnings("unused")
+          CollectionChangeListener newListener = new CollectionChangeListener(qq, dataset);
+
+          
           // have we got a results object yet?
           if(res == null)
           {
@@ -120,15 +172,13 @@ public class LimpetStackedChartsAdapter implements IStackedAdapter
         ICollection coll = (ICollection) data;
         if(coll.isQuantity() && coll.isTemporal())
         {
-          Dataset newD = convertDataset(factory, (TemporalQuantityCollection<Quantity>) coll);
-          if(newD != null)
+          Dataset dataset = factory.createDataset();
+          populateDataset(factory, (TemporalQuantityCollection<Quantity>) coll, dataset);
+          if(res == null)
           {
-            if(res == null)
-            {
-              res= new ArrayList<Dataset>();
-            }
-            res.add(newD);
+            res= new ArrayList<Dataset>();
           }
+          res.add(dataset);
         }
       }
     }

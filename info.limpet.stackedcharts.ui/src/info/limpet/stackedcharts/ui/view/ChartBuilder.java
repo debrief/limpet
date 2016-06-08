@@ -25,6 +25,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.eclipse.emf.common.notify.Adapter;
+import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.common.util.EList;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.AxisLocation;
@@ -104,6 +107,11 @@ public class ChartBuilder
      * @param series
      */
     void storeSeries(XYDataset collection, Series series);
+    
+    /** clear the contents of the series
+     * 
+     */
+    void clear(Series series);
   }
 
   /**
@@ -145,6 +153,13 @@ public class ChartBuilder
     {
       XYSeriesCollection cc = (XYSeriesCollection) collection;
       cc.addSeries((XYSeries) series);
+    }
+
+    @Override
+    public void clear(Series series)
+    {
+      XYSeries ns = (XYSeries) series;
+      ns.clear();      
     }
 
   }
@@ -190,6 +205,13 @@ public class ChartBuilder
     {
       TimeSeriesCollection cc = (TimeSeriesCollection) collection;
       cc.addSeries((TimeSeries) series);
+    }
+
+    @Override
+    public void clear(Series series)
+    {
+      TimeSeries ns = (TimeSeries) series;
+      ns.clear();
     }
   }
 
@@ -537,7 +559,7 @@ public class ChartBuilder
       final EList<Dataset> datasets, final XYDataset collection,
       final XYLineAndShapeRenderer renderer, int seriesIndex)
   {
-    for (Dataset dataset : datasets)
+    for (final Dataset dataset : datasets)
     {
       final Series series = helper.createSeries(dataset.getName());
       final Styling styling = dataset.getStyling();
@@ -637,11 +659,28 @@ public class ChartBuilder
         seriesIndex++;
       }
       helper.storeSeries(collection, series);
-      EList<DataItem> measurements = dataset.getMeasurements();
-      for (DataItem dataItem : measurements)
-      {
-        helper.addItem(series, dataItem);
-      }
+      
+      // store the data in the collection
+      populateCollection(helper, dataset, series);
+      
+      // also register as a listener
+      Adapter adapter = new AdapterImpl() {
+        public void notifyChanged(Notification notification) {
+          populateCollection(helper, dataset, series);
+        }
+      };      
+      dataset.eAdapters().add(adapter);
+    }
+  }
+
+  protected static void populateCollection(final ChartHelper helper,
+      Dataset dataset, final Series series)
+  {
+    helper.clear(series);
+    EList<DataItem> measurements = dataset.getMeasurements();
+    for (DataItem dataItem : measurements)
+    {
+      helper.addItem(series, dataItem);
     }
   }
 }
