@@ -2,15 +2,16 @@ package info.limpet.stackedcharts.ui.editor.drop;
 
 import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.util.TransferDropTargetListener;
+import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.Transfer;
 
 public class ProxyDropTargetListener implements TransferDropTargetListener
 {
 
-  private final TransferDropTargetListener[] listeners;
+  private final DatasetDropTargetListener[] listeners;
 
-  public ProxyDropTargetListener(TransferDropTargetListener... listeners)
+  public ProxyDropTargetListener(DatasetDropTargetListener... listeners)
   {
     this.listeners = listeners;
   }
@@ -18,9 +19,12 @@ public class ProxyDropTargetListener implements TransferDropTargetListener
   @Override
   public void dragEnter(DropTargetEvent event)
   {
-    for (TransferDropTargetListener listener : listeners)
+    for (DatasetDropTargetListener listener : listeners)
     {
-      listener.dragEnter(event);
+      if(listener.appliesTo(event))
+        listener.dragEnter(event);
+      else
+        listener.reset();
     }
 
   }
@@ -28,9 +32,12 @@ public class ProxyDropTargetListener implements TransferDropTargetListener
   @Override
   public void dragLeave(DropTargetEvent event)
   {
-    for (TransferDropTargetListener listener : listeners)
+    for (DatasetDropTargetListener listener : listeners)
     {
-      listener.dragLeave(event);
+      if(listener.appliesTo(event))
+        listener.dragLeave(event);
+      else
+        listener.reset();
     }
 
   }
@@ -38,9 +45,12 @@ public class ProxyDropTargetListener implements TransferDropTargetListener
   @Override
   public void dragOperationChanged(DropTargetEvent event)
   {
-    for (TransferDropTargetListener listener : listeners)
+    for (DatasetDropTargetListener listener : listeners)
     {
-      listener.dragOperationChanged(event);
+      if(listener.appliesTo(event))
+        listener.dragOperationChanged(event);
+      else
+        listener.reset();
     }
 
   }
@@ -48,9 +58,22 @@ public class ProxyDropTargetListener implements TransferDropTargetListener
   @Override
   public void dragOver(DropTargetEvent event)
   {
-    for (TransferDropTargetListener listener : listeners)
+    boolean match = false;
+    for (DatasetDropTargetListener listener : listeners)
     {
-      listener.dragOver(event);
+      if(listener.appliesTo(event))
+      {
+        match = true;
+        listener.dragOver(event);
+      }
+      else
+      {
+        listener.reset();
+      }
+    }
+    if(!match)
+    {
+      event.detail = DND.DROP_NONE;
     }
 
   }
@@ -58,9 +81,12 @@ public class ProxyDropTargetListener implements TransferDropTargetListener
   @Override
   public void drop(DropTargetEvent event)
   {
-    for (TransferDropTargetListener listener : listeners)
+    for (DatasetDropTargetListener listener : listeners)
     {
-      listener.drop(event);
+      if(listener.appliesTo(event))
+          listener.drop(event);
+        else
+          listener.reset();
     }
 
   }
@@ -68,9 +94,12 @@ public class ProxyDropTargetListener implements TransferDropTargetListener
   @Override
   public void dropAccept(DropTargetEvent event)
   {
-    for (TransferDropTargetListener listener : listeners)
+    for (DatasetDropTargetListener listener : listeners)
     {
-      listener.dropAccept(event);
+      if(listener.appliesTo(event))
+        listener.dropAccept(event);
+      else
+        listener.reset();
     }
 
   }

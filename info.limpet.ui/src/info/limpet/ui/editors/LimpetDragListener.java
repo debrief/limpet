@@ -39,10 +39,13 @@ public class LimpetDragListener extends DragSourceAdapter
   {
     this.viewer = viewer;
   }
+  
+  
 
   @Override
   public void dragFinished(DragSourceEvent event)
   {
+    LocalSelectionTransfer.getTransfer().setSelection(null);
     if (!event.doit)
     {
       return;
@@ -73,20 +76,9 @@ public class LimpetDragListener extends DragSourceAdapter
     }
     if (LocalSelectionTransfer.getTransfer().isSupportedType(event.dataType))
     {
-      AdapterRegistry adapter = new AdapterRegistry();
-      List<Object> element = new ArrayList<Object>();
-      for (Object object : selection.toArray())
-      {
-        if (adapter.canConvert(object))
-        {
-          element.add(adapter.convert(object));
-        }
-      }
-
-      StructuredSelection structuredSelection =
-          new StructuredSelection(element);
-      LocalSelectionTransfer.getTransfer().setSelection(structuredSelection);
-      event.data = structuredSelection;
+      
+      LocalSelectionTransfer.getTransfer().setSelection(selection);
+      event.data = selection;
     }
   }
 
@@ -96,5 +88,6 @@ public class LimpetDragListener extends DragSourceAdapter
   public void dragStart(DragSourceEvent event)
   {
     event.doit = !viewer.getSelection().isEmpty();
+    LocalSelectionTransfer.getTransfer().setSelection(viewer.getSelection());
   }
 }
