@@ -203,7 +203,7 @@ public class DatasetToAxisDropTargetListener implements
     if (findObjectAt instanceof AxisEditPart
         && LocalSelectionTransfer.getTransfer().isSupportedType(
             event.currentDataType)
-        && findObjectAt instanceof AxisLandingPadEditPart
+       
         && canDrop((AxisEditPart) findObjectAt, LocalSelectionTransfer
             .getTransfer().getSelection()))
     {
