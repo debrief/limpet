@@ -5,7 +5,6 @@ import info.limpet.stackedcharts.model.Dataset;
 import info.limpet.stackedcharts.model.DependentAxis;
 import info.limpet.stackedcharts.ui.editor.commands.AddDatasetsToAxisCommand;
 import info.limpet.stackedcharts.ui.editor.parts.AxisEditPart;
-import info.limpet.stackedcharts.ui.editor.parts.AxisLandingPadEditPart;
 import info.limpet.stackedcharts.ui.editor.parts.ChartEditPart;
 import info.limpet.stackedcharts.ui.editor.parts.ChartPaneEditPart;
 import info.limpet.stackedcharts.ui.view.adapter.AdapterRegistry;
