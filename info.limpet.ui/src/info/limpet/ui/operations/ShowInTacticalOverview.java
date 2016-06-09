@@ -55,6 +55,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.swtchart.internal.axis.Axis;
 
 public class ShowInTacticalOverview implements IOperation<IStoreItem>
 {
@@ -265,6 +266,36 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
     // ok, start looking deeper
     StoreGroup sg = (StoreGroup) selection.get(0);
 
+    // create our state charts
+    Chart crsePlot = factory.createChart();
+    crsePlot.setName("Course");
+    DependentAxis crseAxis = factory.createDependentAxis();
+    crseAxis.setAxisType(factory.createNumberAxis());
+    crseAxis.setName("Course (Degs)");
+    crsePlot.getMinAxes().add(crseAxis);
+    res.getCharts().add(crsePlot);
+    
+    Chart speedDepthPlot = factory.createChart();
+    speedDepthPlot.setName("Speed/Depth");
+    res.getCharts().add(speedDepthPlot);
+    DependentAxis speedAxis = factory.createDependentAxis();
+    speedAxis.setAxisType(factory.createNumberAxis());
+    speedAxis.setName("Speed (Kts)");
+    speedDepthPlot.getMinAxes().add(speedAxis);
+    DependentAxis depthAxis = factory.createDependentAxis();
+    depthAxis.setName("Depth (m)");
+    depthAxis.setAxisType(factory.createNumberAxis());
+    speedDepthPlot.getMaxAxes().add(depthAxis);
+    
+    // create our range plot
+    Chart rangePlot = factory.createChart();
+    rangePlot.setName("Range");
+    DependentAxis rangeAxis = factory.createDependentAxis();
+    rangeAxis.setAxisType(factory.createNumberAxis());
+    rangeAxis.setName("Range (m)");
+    rangePlot.getMinAxes().add(rangeAxis);
+    res.getCharts().add(rangePlot);
+    
     List<IStoreItem> children = sg.children();
     Iterator<IStoreItem> iter = children.iterator();
     while (iter.hasNext())
@@ -277,12 +308,12 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
         if (thisG.getName().equals("Primary"))
         {
           StoreGroup primary = (StoreGroup) thisG;
-          createStateChart(factory, primary, "Primary State", res, Color.blue);
+          createStateChart(factory, crseAxis, speedAxis, depthAxis, primary, "Primary State", res, Color.blue);
         }
         else if (thisG.getName().equals("Secondary"))
         {
           StoreGroup primary = (StoreGroup) thisG;
-          createStateChart(factory, primary, "Secondary State", res, Color.red);
+          createStateChart(factory, crseAxis, speedAxis, depthAxis, primary, "Secondary State", res, Color.red);
         }
         else if (thisG.getName().equals("Relative"))
         {
@@ -294,12 +325,6 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
             relativeChart.setName("Relative");
             res.getCharts().add(relativeChart);
 
-            // and the axes
-            DependentAxis rangeAxis = factory.createDependentAxis();
-            rangeAxis.setName("Range");
-            rangeAxis.setAxisType(factory.createNumberAxis());
-            relativeChart.getMaxAxes().add(rangeAxis);
-            
             DependentAxis brgAxis = factory.createDependentAxis();
             brgAxis.setName("Bearing");
             brgAxis.setAxisType(factory.createNumberAxis());
@@ -318,27 +343,27 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
               if (iStoreItem.getName().equals("Range"))
               {
                 createDataset(factory, iStoreItem, "Range", rangeAxis, res,
-                		null, MarkerStyle.TRIANGLE);
+                		null, MarkerStyle.TRIANGLE, false);
               }
               else if (iStoreItem.getName().equals("Bearing"))
               {
                 createDataset(factory, iStoreItem, "Bearing", brgAxis, res,
-                		null, MarkerStyle.SQUARE);
+                		null, MarkerStyle.SQUARE, true);
               }
               else if (iStoreItem.getName().equals("Rel Brg"))
               {
                 createDataset(factory, iStoreItem, "Rel Brg", brgAxis, res,
-                		null, MarkerStyle.CIRCLE);
+                		null, MarkerStyle.CIRCLE, true);
               }
               else if (iStoreItem.getName().equals("ATB"))
               {
                 createDataset(factory, iStoreItem, "ATB", brgAxis, res,
-                		null, MarkerStyle.CROSS);
+                		null, MarkerStyle.CROSS, true);
               }
               else if (iStoreItem.getName().equals("Brg Rate"))
               {
                 createDataset(factory, iStoreItem, "Brg Rate", brgRateAxis, res,
-                		null, MarkerStyle.DIAMOND);
+                		null, MarkerStyle.DIAMOND, true);
               }
             }
           }
@@ -374,29 +399,10 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
   }
 
   protected static void createStateChart(StackedchartsFactory factory,
-      StoreGroup group, String chartName, ChartSet set, java.awt.Color color)
+      DependentAxis crseAxis, DependentAxis speedAxis, DependentAxis depthAxis, StoreGroup group, String chartName, ChartSet set, java.awt.Color color)
   {
     if (group.size() == 3)
     {
-      // ok, create the primary chart
-      Chart chart = factory.createChart();
-      chart.setName(chartName);
-      set.getCharts().add(chart);
-
-      // and the axes
-      DependentAxis courseAxis = factory.createDependentAxis();
-      chart.getMinAxes().add(courseAxis);
-      courseAxis.setAxisType(factory.createNumberAxis());
-      courseAxis.setName("Course");
-      DependentAxis speedAxis = factory.createDependentAxis();
-      speedAxis.setName("Speed");
-      speedAxis.setAxisType(factory.createNumberAxis());
-      chart.getMaxAxes().add(speedAxis);
-      DependentAxis depthAxis = factory.createDependentAxis();
-      depthAxis.setAxisType(factory.createNumberAxis());
-      depthAxis.setName("Depth");
-      chart.getMinAxes().add(depthAxis);
-
       // now sort out the data series
       Iterator<IStoreItem> dIter = group.children().iterator();
       while (dIter.hasNext())
@@ -405,18 +411,18 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
         final String thisName = iStoreItem.getName();
         if (thisName.contains("Course"))
         {
-          createDataset(factory, iStoreItem, thisName, courseAxis, set, 
-          		color, MarkerStyle.SQUARE);
+          createDataset(factory, iStoreItem, thisName, crseAxis, set, 
+          		color, MarkerStyle.NONE, false);
         }
         else if (thisName.contains("Speed"))
         {
           createDataset(factory, iStoreItem, thisName, speedAxis, set,
-          		color, MarkerStyle.CROSS);
+          		color, MarkerStyle.CROSS, true);
         }
         else if (thisName.contains("Depth"))
         {
           createDataset(factory, iStoreItem, thisName, depthAxis, set,
-          		color, MarkerStyle.DIAMOND);
+          		color, MarkerStyle.DIAMOND, true);
         }
       }
     }
@@ -424,7 +430,8 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
 
   protected static void createDataset(StackedchartsFactory factory,
       IStoreItem iStoreItem, String name, DependentAxis axis, 
-      ChartSet chartSet, java.awt.Color color, MarkerStyle marker)
+      ChartSet chartSet, java.awt.Color color, MarkerStyle marker,
+      boolean showInLegend)
   {
     ITemporalQuantityCollection<?> it =
         (ITemporalQuantityCollection<?>) iStoreItem;
@@ -437,6 +444,8 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
     PlainStyling styling = factory.createPlainStyling();
     styling.setColor(color);
     styling.setMarkerStyle(marker);
+    styling.setIncludeInLegend(showInLegend);
+    styling.setLineThickness(2d);
 		newD.setStyling(styling);
     
     for (int i = 0; i < times.size(); i++)
