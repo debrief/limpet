@@ -1,5 +1,7 @@
 package info.limpet.stackedcharts.ui.editor.figures;
 
+import info.limpet.stackedcharts.ui.editor.StackedchartsImages;
+
 import org.eclipse.draw2d.ActionListener;
 import org.eclipse.draw2d.Button;
 import org.eclipse.draw2d.FlowLayout;
@@ -23,7 +25,7 @@ public class AxisNameFigure extends RectangleFigure
     layout.setMinorAlignment(FlowLayout.ALIGN_CENTER);
     setLayoutManager(layout);
 
-    Button button = new Button("X");
+    Button button = new Button(StackedchartsImages.getImage(StackedchartsImages.DESC_DELETE));
     button.setToolTip(new Label("Remove this axis from the chart"));
     button.addActionListener(deleteHandler);
     add(button);
@@ -34,6 +36,8 @@ public class AxisNameFigure extends RectangleFigure
     verticalLabel.setTextAlignment(PositionConstants.TOP);
 
     add(verticalLabel);
+    Label image = new Label(StackedchartsImages.getImage(StackedchartsImages.DESC_AXIS));
+    add(image);
   }
 
   public void setName(String name)

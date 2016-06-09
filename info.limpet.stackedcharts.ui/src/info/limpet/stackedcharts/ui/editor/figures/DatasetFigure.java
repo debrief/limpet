@@ -1,7 +1,10 @@
 package info.limpet.stackedcharts.ui.editor.figures;
 
+import info.limpet.stackedcharts.ui.editor.StackedchartsImages;
+
 import org.eclipse.draw2d.Cursors;
 import org.eclipse.draw2d.FlowLayout;
+import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.MouseEvent;
 import org.eclipse.draw2d.MouseMotionListener;
 import org.eclipse.draw2d.PositionConstants;
@@ -55,6 +58,9 @@ public class DatasetFigure extends RectangleFigure
       {
       }
     });
+    
+    Label image = new Label(StackedchartsImages.getImage(StackedchartsImages.DESC_DATASET));
+    add(image);
   }
 
   public void setName(String name)

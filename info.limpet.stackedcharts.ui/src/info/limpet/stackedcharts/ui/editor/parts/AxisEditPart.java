@@ -105,7 +105,7 @@ public class AxisEditPart extends AbstractGraphicalEditPart implements
   @Override
   protected void refreshVisuals()
   {
-    axisNameLabel.setName("Axis: " + getAxis().getName());
+    axisNameLabel.setName( getAxis().getName());
 
     GraphicalEditPart parent = (GraphicalEditPart) getParent();
 
