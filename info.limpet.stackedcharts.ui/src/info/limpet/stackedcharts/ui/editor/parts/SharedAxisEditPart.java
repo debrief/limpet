@@ -4,6 +4,7 @@ import info.limpet.stackedcharts.model.ChartSet;
 import info.limpet.stackedcharts.model.IndependentAxis;
 import info.limpet.stackedcharts.model.Orientation;
 import info.limpet.stackedcharts.model.StackedchartsPackage;
+import info.limpet.stackedcharts.ui.editor.StackedchartsImages;
 import info.limpet.stackedcharts.ui.editor.figures.ArrowFigure;
 
 import org.eclipse.draw2d.GridData;
@@ -11,6 +12,7 @@ import org.eclipse.draw2d.GridLayout;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.LayoutManager;
+import org.eclipse.draw2d.PositionConstants;
 import org.eclipse.draw2d.RectangleFigure;
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notification;
@@ -75,9 +77,14 @@ public class SharedAxisEditPart extends AbstractGraphicalEditPart
     arrowFigure = new ArrowFigure(true);
     rectangle.add(arrowFigure);
 
+    // and the text label
     axisNameLabel = new Label();
-    gridLayout.setConstraint(axisNameLabel, new GridData(GridData.CENTER,
-        GridData.BEGINNING, false, false));
+
+    axisNameLabel.setIcon(StackedchartsImages.getImage(StackedchartsImages.DESC_AXIS));
+    axisNameLabel.setTextAlignment(PositionConstants.CENTER);
+    axisNameLabel.setIconAlignment(PositionConstants.CENTER);
+    gridLayout.setConstraint(axisNameLabel, new GridData(GridData.FILL,
+        GridData.FILL, true, false));
     rectangle.add(axisNameLabel);
 
     return rectangle;

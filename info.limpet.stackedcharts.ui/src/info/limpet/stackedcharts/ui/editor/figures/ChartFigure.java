@@ -1,6 +1,7 @@
 package info.limpet.stackedcharts.ui.editor.figures;
 
 import info.limpet.stackedcharts.model.Chart;
+import info.limpet.stackedcharts.ui.editor.StackedchartsImages;
 
 import org.eclipse.draw2d.ActionListener;
 import org.eclipse.draw2d.BorderLayout;
@@ -38,7 +39,7 @@ public class ChartFigure extends RectangleFigure
 
     chartNameLabel = new Label();
     rectangleFigure.add(chartNameLabel);
-    final Button button = new Button("X");
+    final Button button = new Button(StackedchartsImages.getImage(StackedchartsImages.DESC_DELETE));
     button.setToolTip(new Label("Remove this chart from the chart set"));
     button.addActionListener(deleteListener);
     rectangleFigure.add(button);
@@ -63,7 +64,8 @@ public class ChartFigure extends RectangleFigure
 
   public void setName(final String name)
   {
-    chartNameLabel.setText("Chart: " + name);
+    chartNameLabel.setIcon(StackedchartsImages.getImage(StackedchartsImages.DESC_CHART));
+    chartNameLabel.setText( name);
     // cache font for AxisNameFigure
     if (boldFont == null)
     {

@@ -25,6 +25,7 @@ import info.limpet.stackedcharts.model.Dataset;
 import info.limpet.stackedcharts.model.DependentAxis;
 import info.limpet.stackedcharts.model.StackedchartsPackage;
 import info.limpet.stackedcharts.model.Styling;
+import info.limpet.stackedcharts.ui.editor.StackedchartsImages;
 import info.limpet.stackedcharts.ui.editor.commands.DeleteDatasetsFromAxisCommand;
 import info.limpet.stackedcharts.ui.editor.figures.DatasetFigure;
 
@@ -45,8 +46,8 @@ public class DatasetEditPart extends AbstractGraphicalEditPart implements
     layout.setMinorAlignment(FlowLayout.ALIGN_CENTER);
     figure.setLayoutManager(layout);
 
-    Button button = new Button("X");
-    button.setToolTip(new Label("Remote the dataset from this axis"));
+    Button button = new Button(StackedchartsImages.getImage(StackedchartsImages.DESC_DELETE));
+    button.setToolTip(new Label("Remove the dataset from this axis"));
     button.addActionListener(this);
     figure.add(button);
 
@@ -97,7 +98,7 @@ public class DatasetEditPart extends AbstractGraphicalEditPart implements
   @Override
   protected void refreshVisuals()
   {
-    contentPane.setName("Dataset: " + getDataset().getName());
+    contentPane.setName(getDataset().getName());
   }
 
   protected Dataset getDataset()
