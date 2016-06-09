@@ -14,7 +14,6 @@ public class StackedchartsImages
   {
   }
 
-  public final static String ICONS_PATH = "icons/"; //$NON-NLS-1$
   public final static String GEF_PATH = "icons/gef/"; //$NON-NLS-1$
 
   private final static ImageRegistry PLUGIN_REGISTRY = new ImageRegistry();
