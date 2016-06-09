@@ -55,7 +55,6 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-import org.swtchart.internal.axis.Axis;
 
 public class ShowInTacticalOverview implements IOperation<IStoreItem>
 {
@@ -343,27 +342,27 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
               if (iStoreItem.getName().equals("Range"))
               {
                 createDataset(factory, iStoreItem, "Range", rangeAxis, res,
-                		null, MarkerStyle.TRIANGLE, false);
+                		null, MarkerStyle.NONE, false);
               }
               else if (iStoreItem.getName().equals("Bearing"))
               {
                 createDataset(factory, iStoreItem, "Bearing", brgAxis, res,
-                		null, MarkerStyle.SQUARE, true);
+                		null, MarkerStyle.NONE, true);
               }
               else if (iStoreItem.getName().equals("Rel Brg"))
               {
                 createDataset(factory, iStoreItem, "Rel Brg", brgAxis, res,
-                		null, MarkerStyle.CIRCLE, true);
+                		null, MarkerStyle.NONE, true);
               }
               else if (iStoreItem.getName().equals("ATB"))
               {
                 createDataset(factory, iStoreItem, "ATB", brgAxis, res,
-                		null, MarkerStyle.CROSS, true);
+                		null, MarkerStyle.NONE, true);
               }
               else if (iStoreItem.getName().equals("Brg Rate"))
               {
                 createDataset(factory, iStoreItem, "Brg Rate", brgRateAxis, res,
-                		null, MarkerStyle.DIAMOND, true);
+                		null, MarkerStyle.NONE, true);
               }
             }
           }
