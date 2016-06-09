@@ -47,7 +47,7 @@ public class DatasetEditPart extends AbstractGraphicalEditPart implements
     figure.setLayoutManager(layout);
 
     Button button = new Button(StackedchartsImages.getImage(StackedchartsImages.DESC_DELETE));
-    button.setToolTip(new Label("Remote the dataset from this axis"));
+    button.setToolTip(new Label("Remove the dataset from this axis"));
     button.addActionListener(this);
     figure.add(button);
 
@@ -98,7 +98,7 @@ public class DatasetEditPart extends AbstractGraphicalEditPart implements
   @Override
   protected void refreshVisuals()
   {
-    contentPane.setName("Dataset: " + getDataset().getName());
+    contentPane.setName(getDataset().getName());
   }
 
   protected Dataset getDataset()
