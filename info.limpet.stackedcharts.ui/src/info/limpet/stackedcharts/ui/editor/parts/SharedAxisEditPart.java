@@ -4,6 +4,7 @@ import info.limpet.stackedcharts.model.ChartSet;
 import info.limpet.stackedcharts.model.IndependentAxis;
 import info.limpet.stackedcharts.model.Orientation;
 import info.limpet.stackedcharts.model.StackedchartsPackage;
+import info.limpet.stackedcharts.ui.editor.StackedchartsImages;
 import info.limpet.stackedcharts.ui.editor.figures.ArrowFigure;
 
 import org.eclipse.draw2d.GridData;
@@ -75,10 +76,30 @@ public class SharedAxisEditPart extends AbstractGraphicalEditPart
     arrowFigure = new ArrowFigure(true);
     rectangle.add(arrowFigure);
 
+    // create holder for the name and the label
+    RectangleFigure second_row = new RectangleFigure();
+    second_row.setOutline(false);
+    gridLayout = new GridLayout();
+    gridLayout.numColumns = 2;
+    gridLayout.marginHeight = 0;
+    gridLayout.marginWidth = 0;
+    second_row.setLayoutManager(gridLayout);
+
+    rectangle.add(second_row);
+
+    // ok, now add the image
+    Label image =
+        new Label(StackedchartsImages.getImage(StackedchartsImages.DESC_AXIS));
+    gridLayout.setConstraint(image, new GridData(GridData.CENTER,
+        GridData.CENTER, false, false));
+    second_row.add(image);
+
+    // and the text label
     axisNameLabel = new Label();
+
     gridLayout.setConstraint(axisNameLabel, new GridData(GridData.CENTER,
-        GridData.BEGINNING, false, false));
-    rectangle.add(axisNameLabel);
+        GridData.BEGINNING, true, false));
+    second_row.add(axisNameLabel);
 
     return rectangle;
   }
