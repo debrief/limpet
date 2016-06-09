@@ -15,16 +15,12 @@
 package info.limpet.ui.editors;
 
 import info.limpet.IStoreItem;
-import info.limpet.stackedcharts.ui.view.adapter.AdapterRegistry;
 import info.limpet.ui.data_provider.data.LimpetWrapper;
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.dnd.DragSourceAdapter;
 import org.eclipse.swt.dnd.DragSourceEvent;
