@@ -53,6 +53,6 @@ public class StackedchartsImages
   public static final ImageDescriptor DESC_PAINT =
       create(GEF_PATH, "paint.png"); //$NON-NLS-1$
   public static final ImageDescriptor DESC_DATASET = create(GEF_PATH,
-      "paint.png"); //$NON-NLS-1$ //FIXME UPDATE DATASET ICON
+      "dataset.png"); //$NON-NLS-1$ //FIXME UPDATE DATASET ICON
 
 }
