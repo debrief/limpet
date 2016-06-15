@@ -1,6 +1,6 @@
 package info.limpet.stackedcharts.ui.editor.parts;
 
-import info.limpet.stackedcharts.ui.editor.figures.VerticalLabel;
+import info.limpet.stackedcharts.ui.editor.figures.DirectionalLabel;
 import info.limpet.stackedcharts.ui.editor.parts.ChartEditPart.ChartPanePosition;
 import info.limpet.stackedcharts.ui.editor.policies.AxisLandingPadEditPolicy;
 
@@ -39,12 +39,12 @@ public class AxisLandingPadEditPart extends AbstractGraphicalEditPart
     figure.setBorder(figureBorder);
 
     figure.setLayoutManager(new BorderLayout());
-    final VerticalLabel verticalLabel = new VerticalLabel();
+    final DirectionalLabel verticalLabel = new DirectionalLabel();
 
     final ChartPaneEditPart.AxisLandingPad pad =
         (ChartPaneEditPart.AxisLandingPad) getModel();
 
-    verticalLabel.setText(pad.pos == ChartPanePosition.LEFT ? "Min Axis"
+    verticalLabel.setText(pad.pos == ChartPanePosition.MIN ? "Min Axis"
         : "Max Axis");
     figure.setPreferredSize(30, 80);
 

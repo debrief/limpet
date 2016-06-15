@@ -70,7 +70,7 @@ public class AxisLandingPadEditPolicy extends ContainerEditPolicy implements
 
         // find out which list (min/max) this axis is currently on
         final EList<DependentAxis> destination =
-            pad.getPos() == ChartPanePosition.LEFT ? pad.getChart()
+            pad.getPos() == ChartPanePosition.MIN ? pad.getChart()
                 .getMinAxes() : pad.getChart().getMaxAxes();
 
         // ok, did we find it?
@@ -97,7 +97,7 @@ public class AxisLandingPadEditPolicy extends ContainerEditPolicy implements
 
         // find out which list (min/max) this axis is currently on
         final EList<DependentAxis> destination =
-            pad.getPos() == ChartPanePosition.LEFT ? pad.getChart()
+            pad.getPos() == ChartPanePosition.MIN ? pad.getChart()
                 .getMinAxes() : pad.getChart().getMaxAxes();
 
         if (destination != null)

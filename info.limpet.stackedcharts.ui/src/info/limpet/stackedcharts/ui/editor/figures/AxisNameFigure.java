@@ -16,7 +16,7 @@ import org.eclipse.swt.widgets.Display;
 public class AxisNameFigure extends RectangleFigure
 {
   private static volatile Font boldFont;
-  private VerticalLabel verticalLabel;
+  private DirectionalLabel verticalLabel;
 
   public AxisNameFigure(ActionListener deleteHandler)
   {
@@ -30,7 +30,7 @@ public class AxisNameFigure extends RectangleFigure
     button.addActionListener(deleteHandler);
     add(button);
 
-    verticalLabel = new VerticalLabel();
+    verticalLabel = new DirectionalLabel();
    
    
     verticalLabel.setTextAlignment(PositionConstants.TOP);

@@ -1,6 +1,8 @@
 package info.limpet.stackedcharts.ui.editor.parts;
 
 import info.limpet.stackedcharts.model.Chart;
+import info.limpet.stackedcharts.model.ChartSet;
+import info.limpet.stackedcharts.model.Orientation;
 import info.limpet.stackedcharts.ui.editor.parts.ChartEditPart.ChartPanePosition;
 
 import java.util.Arrays;
@@ -66,11 +68,11 @@ public class ChartPaneEditPart extends AbstractGraphicalEditPart
     final ChartEditPart.ChartPanePosition pos = (ChartPanePosition) getModel();
     switch (pos)
     {
-    case LEFT:
+    case MIN:
       return chart.getMinAxes().size() == 0 ? Arrays.asList(new AxisLandingPad(
           chart, pos)) : chart.getMinAxes();
 
-    case RIGHT:
+    case MAX:
       return chart.getMaxAxes().size() == 0 ? Arrays.asList(new AxisLandingPad(
           chart, pos)) : chart.getMaxAxes();
     }
@@ -83,15 +85,19 @@ public class ChartPaneEditPart extends AbstractGraphicalEditPart
   {
     final ChartEditPart.ChartPanePosition pos = (ChartPanePosition) getModel();
     final IFigure figure = getFigure();
-    if (pos == ChartPanePosition.LEFT)
+    
+    ChartSet chartSet = ((Chart)getParent().getModel()).getParent();
+    boolean vertical = chartSet.getOrientation() == Orientation.VERTICAL;
+    
+    if (pos == ChartPanePosition.MIN)
     {
       ((GraphicalEditPart) getParent()).setLayoutConstraint(this, figure,
-          BorderLayout.LEFT);
+          vertical ? BorderLayout.LEFT : BorderLayout.BOTTOM);
     }
     else
     {
       ((GraphicalEditPart) getParent()).setLayoutConstraint(this, figure,
-          BorderLayout.RIGHT);
+          vertical ? BorderLayout.RIGHT : BorderLayout.TOP);
     }
 
     ((GridLayout) getFigure().getLayoutManager()).numColumns =

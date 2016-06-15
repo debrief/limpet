@@ -1,19 +1,11 @@
 package info.limpet.stackedcharts.ui.editor.parts;
 
-import info.limpet.stackedcharts.model.ChartSet;
-import info.limpet.stackedcharts.model.IndependentAxis;
-import info.limpet.stackedcharts.model.Orientation;
-import info.limpet.stackedcharts.model.StackedchartsPackage;
-import info.limpet.stackedcharts.ui.editor.StackedchartsImages;
-import info.limpet.stackedcharts.ui.editor.figures.ArrowFigure;
-
 import org.eclipse.draw2d.GridData;
 import org.eclipse.draw2d.GridLayout;
 import org.eclipse.draw2d.IFigure;
-import org.eclipse.draw2d.Label;
-import org.eclipse.draw2d.LayoutManager;
 import org.eclipse.draw2d.PositionConstants;
 import org.eclipse.draw2d.RectangleFigure;
+import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.Notifier;
@@ -27,6 +19,14 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Display;
 
+import info.limpet.stackedcharts.model.ChartSet;
+import info.limpet.stackedcharts.model.IndependentAxis;
+import info.limpet.stackedcharts.model.Orientation;
+import info.limpet.stackedcharts.model.StackedchartsPackage;
+import info.limpet.stackedcharts.ui.editor.StackedchartsImages;
+import info.limpet.stackedcharts.ui.editor.figures.ArrowFigure;
+import info.limpet.stackedcharts.ui.editor.figures.DirectionalLabel;
+
 /**
  * Represents the shared (independent) axis of a {@link ChartSet} object
  */
@@ -39,7 +39,7 @@ public class SharedAxisEditPart extends AbstractGraphicalEditPart
 
   private ChartSetAdapter chartSetAdapter = new ChartSetAdapter();
 
-  private Label axisNameLabel;
+  private DirectionalLabel axisNameLabel;
 
   private ArrowFigure arrowFigure;
 
@@ -76,17 +76,16 @@ public class SharedAxisEditPart extends AbstractGraphicalEditPart
 
     arrowFigure = new ArrowFigure(true);
     rectangle.add(arrowFigure);
-
+    
     // and the text label
-    axisNameLabel = new Label();
+    axisNameLabel = new DirectionalLabel();
 
-    axisNameLabel.setIcon(StackedchartsImages.getImage(StackedchartsImages.DESC_AXIS));
+    axisNameLabel.setIcon(StackedchartsImages.getImage(
+        StackedchartsImages.DESC_AXIS));
     axisNameLabel.setTextAlignment(PositionConstants.CENTER);
     axisNameLabel.setIconAlignment(PositionConstants.CENTER);
-    gridLayout.setConstraint(axisNameLabel, new GridData(GridData.FILL,
-        GridData.FILL, true, false));
     rectangle.add(axisNameLabel);
-
+    
     return rectangle;
   }
 
@@ -103,9 +102,8 @@ public class SharedAxisEditPart extends AbstractGraphicalEditPart
     if (boldFont == null)
     {
       FontData fontData = axisNameLabel.getFont().getFontData()[0];
-      boldFont =
-          new Font(Display.getCurrent(), new FontData(fontData.getName(),
-              fontData.getHeight(), SWT.BOLD));
+      boldFont = new Font(Display.getCurrent(), new FontData(fontData.getName(),
+          fontData.getHeight(), SWT.BOLD));
     }
     axisNameLabel.setFont(boldFont);
 
@@ -116,14 +114,34 @@ public class SharedAxisEditPart extends AbstractGraphicalEditPart
     EditPart parent = getParent();
     ((GraphicalEditPart) parent).setLayoutConstraint(this, figure, gridData);
 
-    boolean horizontal =
-        ((ChartSet) parent.getModel()).getOrientation() == Orientation.HORIZONTAL;
-    arrowFigure.setHorizontal(!horizontal);
+    boolean horizontal = ((ChartSet) parent.getModel())
+        .getOrientation() == Orientation.HORIZONTAL;
 
-    LayoutManager layoutManager = getFigure().getLayoutManager();
-    layoutManager.setConstraint(arrowFigure, new GridData(GridData.FILL,
-        GridData.FILL, !horizontal, horizontal));
+    GridLayout layoutManager = (GridLayout) getFigure().getLayoutManager();
+    if (horizontal)
+    {
+      arrowFigure.setHorizontal(false);
+      axisNameLabel.setVertical(true);
 
+      layoutManager.setConstraint(arrowFigure, new GridData(GridData.CENTER,
+          GridData.FILL, false, true));
+      layoutManager.setConstraint(axisNameLabel, new GridData(GridData.CENTER,
+          GridData.FILL, false, true));
+      layoutManager.numColumns = getFigure().getChildren().size();
+    }
+    else
+    {
+      arrowFigure.setHorizontal(true);
+      axisNameLabel.setVertical(false);
+
+      layoutManager.setConstraint(arrowFigure, new GridData(GridData.FILL,
+          GridData.CENTER, true, false));
+      layoutManager.setConstraint(axisNameLabel, new GridData(GridData.FILL,
+          GridData.CENTER, true, false));
+      layoutManager.numColumns = 1;
+    }
+
+    getFigure().invalidate();
   }
 
   @Override

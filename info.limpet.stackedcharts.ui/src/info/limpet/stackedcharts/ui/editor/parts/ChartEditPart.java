@@ -39,7 +39,7 @@ public class ChartEditPart extends AbstractGraphicalEditPart implements
 
   public enum ChartPanePosition
   {
-    LEFT, RIGHT
+    MIN, MAX
   }
 
   private ChartAdapter adapter = new ChartAdapter();

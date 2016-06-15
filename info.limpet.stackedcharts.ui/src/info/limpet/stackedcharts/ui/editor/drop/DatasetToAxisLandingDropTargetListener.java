@@ -48,7 +48,7 @@ public class DatasetToAxisLandingDropTargetListener extends
         (ChartPaneEditPart.AxisLandingPad) axis.getModel();
     // find out which list (min/max) this axis is currently on
     final EList<DependentAxis> destination =
-        pad.getPos() == ChartPanePosition.LEFT ? pad.getChart().getMinAxes()
+        pad.getPos() == ChartPanePosition.MIN ? pad.getChart().getMinAxes()
             : pad.getChart().getMaxAxes();
 
     compoundCommand.add(new AddAxisToChartCommand(destination, newAxis));

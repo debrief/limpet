@@ -105,20 +105,32 @@ public class AxisEditPart extends AbstractGraphicalEditPart implements
   @Override
   protected void refreshVisuals()
   {
-    axisNameLabel.setName( getAxis().getName());
+    axisNameLabel.setName(getAxis().getName());
 
     GraphicalEditPart parent = (GraphicalEditPart) getParent();
 
-    parent.setLayoutConstraint(this, figure, new GridData(GridData.CENTER,
-        GridData.FILL, false, true));
+
+    boolean horizontal = ((ChartSet) parent.getParent().getParent().getParent()
+        .getModel()).getOrientation() == Orientation.HORIZONTAL;
+
+    if (horizontal) {
+      parent.setLayoutConstraint(this, figure, new GridData(GridData.FILL,
+          GridData.CENTER, true, false));
+    } else {
+      parent.setLayoutConstraint(this, figure, new GridData(GridData.CENTER,
+          GridData.FILL, false, true));
+      parent.refresh();
+
+    }
     parent.refresh();
 
     GridLayout layoutManager = (GridLayout) datasetsPane.getLayoutManager();
-    layoutManager.numColumns =
-        ((ChartSet) parent.getParent().getParent().getParent().getModel()).getOrientation() == Orientation.VERTICAL
-            ? getModelChildren().size() : 1;
+    layoutManager.numColumns = horizontal ? 1 : getModelChildren().size();
     layoutManager.invalidate();
 
+    layoutManager = (GridLayout) getFigure().getLayoutManager();
+    layoutManager.numColumns = horizontal ? 1 : getModelChildren().size();
+    layoutManager.invalidate();
   }
 
   @Override
@@ -141,8 +153,8 @@ public class AxisEditPart extends AbstractGraphicalEditPart implements
       {
         DependentAxis dataset = (DependentAxis) getHost().getModel();
         Chart parent = (Chart) dataset.eContainer();
-        DeleteAxisFromChartCommand cmd =
-            new DeleteAxisFromChartCommand(parent, dataset);
+        DeleteAxisFromChartCommand cmd = new DeleteAxisFromChartCommand(parent,
+            dataset);
         return cmd;
       }
     });
