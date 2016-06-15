@@ -77,7 +77,7 @@ public class AxisEditPart extends AbstractGraphicalEditPart implements
     figure.setBorder(figureBorder);
 
     figure.setOutline(false);
-    GridLayout layoutManager = new GridLayout(3, false);
+    GridLayout layoutManager = new GridLayout();
     // zero margin, in order to connect the dependent axes to the shared one
     layoutManager.marginHeight = 0;
     layoutManager.marginWidth = 0;
@@ -92,8 +92,6 @@ public class AxisEditPart extends AbstractGraphicalEditPart implements
     figure.add(datasetsPane);
 
     ArrowFigure arrowFigure = new ArrowFigure(false);
-    layoutManager.setConstraint(arrowFigure, new GridData(GridData.FILL,
-        GridData.FILL, false, true));
     figure.add(arrowFigure);
 
     axisNameLabel = new AxisNameFigure(this);
@@ -109,19 +107,25 @@ public class AxisEditPart extends AbstractGraphicalEditPart implements
 
     GraphicalEditPart parent = (GraphicalEditPart) getParent();
 
-
     boolean horizontal = ((ChartSet) parent.getParent().getParent().getParent()
         .getModel()).getOrientation() == Orientation.HORIZONTAL;
 
-    if (horizontal) {
+    GridLayout layout = (GridLayout) getFigure().getLayoutManager();
+    if (horizontal)
+    {
+      layout.numColumns = 1;
       parent.setLayoutConstraint(this, figure, new GridData(GridData.FILL,
           GridData.CENTER, true, false));
-    } else {
+      axisNameLabel.setVertical(false);
+    }
+    else
+    {
+      layout.numColumns = getModelChildren().size();
       parent.setLayoutConstraint(this, figure, new GridData(GridData.CENTER,
           GridData.FILL, false, true));
-      parent.refresh();
-
+      axisNameLabel.setVertical(true);
     }
+    layout.invalidate();
     parent.refresh();
 
     GridLayout layoutManager = (GridLayout) datasetsPane.getLayoutManager();
