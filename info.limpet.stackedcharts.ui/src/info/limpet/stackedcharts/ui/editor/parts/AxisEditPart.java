@@ -14,6 +14,7 @@ import java.util.List;
 
 import org.eclipse.draw2d.ActionListener;
 import org.eclipse.draw2d.Border;
+import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.GridData;
 import org.eclipse.draw2d.GridLayout;
 import org.eclipse.draw2d.IFigure;
@@ -47,6 +48,8 @@ public class AxisEditPart extends AbstractGraphicalEditPart implements
   private AxisNameFigure axisNameLabel;
 
   private AxisAdapter adapter = new AxisAdapter();
+
+  private ArrowFigure arrowFigure;
 
   @Override
   public void activate()
@@ -91,7 +94,7 @@ public class AxisEditPart extends AbstractGraphicalEditPart implements
     datasetsPane.setLayoutManager(datasetsPaneLayout);
     figure.add(datasetsPane);
 
-    ArrowFigure arrowFigure = new ArrowFigure(false);
+    arrowFigure = new ArrowFigure(false);
     figure.add(arrowFigure);
 
     axisNameLabel = new AxisNameFigure(this);
@@ -116,13 +119,27 @@ public class AxisEditPart extends AbstractGraphicalEditPart implements
       layout.numColumns = 1;
       parent.setLayoutConstraint(this, figure, new GridData(GridData.FILL,
           GridData.CENTER, true, false));
+
+      layout.setConstraint(datasetsPane, new GridData(GridData.FILL,
+          GridData.CENTER, true, false));
+
+      layout.setConstraint(arrowFigure, new GridData(GridData.FILL,
+          GridData.CENTER, true, false));
+
       axisNameLabel.setVertical(false);
     }
     else
     {
-      layout.numColumns = getModelChildren().size();
+      layout.numColumns = figure.getChildren().size();
       parent.setLayoutConstraint(this, figure, new GridData(GridData.CENTER,
           GridData.FILL, false, true));
+
+      layout.setConstraint(datasetsPane, new GridData(GridData.CENTER,
+          GridData.FILL, false, true));
+
+      layout.setConstraint(arrowFigure, new GridData(GridData.CENTER,
+          GridData.FILL, false, true));
+
       axisNameLabel.setVertical(true);
     }
     layout.invalidate();
@@ -132,9 +149,6 @@ public class AxisEditPart extends AbstractGraphicalEditPart implements
     layoutManager.numColumns = horizontal ? 1 : getModelChildren().size();
     layoutManager.invalidate();
 
-    layoutManager = (GridLayout) getFigure().getLayoutManager();
-    layoutManager.numColumns = horizontal ? 1 : getModelChildren().size();
-    layoutManager.invalidate();
   }
 
   @Override

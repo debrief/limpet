@@ -101,6 +101,6 @@ public class ChartPaneEditPart extends AbstractGraphicalEditPart
     }
 
     ((GridLayout) getFigure().getLayoutManager()).numColumns =
-        getModelChildren().size();
+        vertical ? getModelChildren().size() : 1;
   }
 }

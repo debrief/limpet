@@ -23,12 +23,16 @@ public class DirectionalLabel extends Label
   {
     if (vertical)
     {
-      Image image = ImageUtilities.createRotatedImageOfString(
-          getSubStringText(), getFont(), getForegroundColor(),
-          getBackgroundColor());
-      graphics.drawImage(image, new Point(getTextLocation()).translate(
-          getLocation()));
-      image.dispose();
+
+      String subStringText = getSubStringText();
+      if (!subStringText.isEmpty())
+      {
+        Image image = ImageUtilities.createRotatedImageOfString(subStringText,
+            getFont(), getForegroundColor(), getBackgroundColor());
+        graphics.drawImage(image, new Point(getTextLocation()).translate(
+            getLocation()));
+        image.dispose();
+      }
     }
     else
     {

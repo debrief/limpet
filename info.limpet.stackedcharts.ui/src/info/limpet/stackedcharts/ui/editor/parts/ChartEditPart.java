@@ -2,6 +2,7 @@ package info.limpet.stackedcharts.ui.editor.parts;
 
 import info.limpet.stackedcharts.model.Chart;
 import info.limpet.stackedcharts.model.ChartSet;
+import info.limpet.stackedcharts.model.Orientation;
 import info.limpet.stackedcharts.model.StackedchartsPackage;
 import info.limpet.stackedcharts.ui.editor.commands.DeleteChartCommand;
 import info.limpet.stackedcharts.ui.editor.figures.ChartFigure;
@@ -101,7 +102,9 @@ public class ChartEditPart extends AbstractGraphicalEditPart implements
   protected void refreshVisuals()
   {
     String name = getModel().getName();
-    ((ChartFigure) getFigure()).setName(name);
+    ChartFigure chartFigure = (ChartFigure) getFigure();
+    chartFigure.setName(name);
+    chartFigure.setVertical(getModel().getParent().getOrientation() == Orientation.VERTICAL);
 
     GridData gridData = new GridData();
     gridData.grabExcessHorizontalSpace = true;

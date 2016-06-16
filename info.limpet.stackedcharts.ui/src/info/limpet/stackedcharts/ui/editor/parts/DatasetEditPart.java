@@ -6,6 +6,7 @@ import java.util.List;
 import org.eclipse.draw2d.ActionEvent;
 import org.eclipse.draw2d.ActionListener;
 import org.eclipse.draw2d.Button;
+import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.GridData;
 import org.eclipse.draw2d.GridLayout;
 import org.eclipse.draw2d.IFigure;
@@ -49,7 +50,8 @@ public class DatasetEditPart extends AbstractGraphicalEditPart implements
     GridLayout layout = new GridLayout();
     figure.setLayoutManager(layout);
 
-    Button button = new Button(StackedchartsImages.getImage(StackedchartsImages.DESC_DELETE));
+    Button button = new Button(StackedchartsImages.getImage(
+        StackedchartsImages.DESC_DELETE));
     button.setToolTip(new Label("Remove the dataset from this axis"));
     button.addActionListener(this);
     figure.add(button);
@@ -60,38 +62,6 @@ public class DatasetEditPart extends AbstractGraphicalEditPart implements
     return figure;
   }
 
-  @Override
-  public void refresh()
-  {
-    ChartSet parent = ((Chart)getParent().getParent().getParent().getModel()).getParent();
-    
-    GridLayout layoutManager = (GridLayout) getFigure().getLayoutManager();
-    boolean horizontal = parent.getOrientation() == Orientation.HORIZONTAL;
-    if (horizontal) {
-      layoutManager.numColumns = figure.getChildren().size();
-      contentPane.setVertical(true);
-      
-      layoutManager.setConstraint(contentPane, new GridData(GridData.FILL,
-          GridData.FILL, true, false));
-      
-      setLayoutConstraint(this, getFigure(), new GridData(GridData.FILL,
-          GridData.FILL, true, false));
-      
-    } else {
-      layoutManager.numColumns = 1;
-      contentPane.setVertical(false);
-      
-      layoutManager.setConstraint(contentPane, new GridData(GridData.CENTER,
-          GridData.FILL, false, true));
-      
-      setLayoutConstraint(this, getFigure(), new GridData(GridData.CENTER,
-          GridData.FILL, false, true));
-
-    }
-    
-    layoutManager.invalidate();
-  }
-  
   @Override
   public IFigure getContentPane()
   {
@@ -134,6 +104,38 @@ public class DatasetEditPart extends AbstractGraphicalEditPart implements
   protected void refreshVisuals()
   {
     contentPane.setName(getDataset().getName());
+
+    ChartSet parent = ((Chart) getParent().getParent().getParent().getModel())
+        .getParent();
+
+    GridLayout layoutManager = (GridLayout) getFigure().getLayoutManager();
+    boolean horizontal = parent.getOrientation() == Orientation.HORIZONTAL;
+    if (horizontal)
+    {
+      layoutManager.numColumns = figure.getChildren().size();
+      contentPane.setVertical(false);
+
+      layoutManager.setConstraint(contentPane, new GridData(GridData.FILL,
+          GridData.FILL, true, false));
+
+      setLayoutConstraint(this, getFigure(), new GridData(GridData.FILL,
+          GridData.FILL, true, false));
+
+    }
+    else
+    {
+      layoutManager.numColumns = 1;
+      contentPane.setVertical(true);
+
+      layoutManager.setConstraint(contentPane, new GridData(GridData.CENTER,
+          GridData.FILL, false, true));
+
+      setLayoutConstraint(this, getFigure(), new GridData(GridData.CENTER,
+          GridData.FILL, false, true));
+
+    }
+
+    layoutManager.invalidate();
   }
 
   protected Dataset getDataset()

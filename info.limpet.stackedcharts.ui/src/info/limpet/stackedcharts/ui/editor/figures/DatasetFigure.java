@@ -22,7 +22,6 @@ public class DatasetFigure extends RectangleFigure
     setLayoutManager(layout);
 
     nameLabel = new DirectionalLabel();
-    nameLabel.setTextAlignment(PositionConstants.TOP);
     add(nameLabel);
 
     // Indicate via Mouse Cursor that the Dataset can be moved (to another Axis).
@@ -77,11 +76,13 @@ public class DatasetFigure extends RectangleFigure
     {
       layout.setConstraint(nameLabel, new GridData(GridData.CENTER,
           GridData.FILL, false, true));
+      nameLabel.setTextAlignment(PositionConstants.TOP);
     }
     else
     {
       layout.setConstraint(nameLabel, new GridData(GridData.FILL,
           GridData.CENTER, true, false));
+      nameLabel.setTextAlignment(PositionConstants.CENTER);
     }
     layout.numColumns = vertical ? 1 : getChildren().size();
     layout.invalidate();
