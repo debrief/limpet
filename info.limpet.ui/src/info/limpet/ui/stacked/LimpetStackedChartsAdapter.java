@@ -21,9 +21,6 @@ import javax.measure.Measurable;
 import javax.measure.quantity.Quantity;
 import javax.measure.unit.Unit;
 
-import org.eclipse.emf.common.notify.Notification;
-import org.eclipse.emf.common.notify.impl.NotificationImpl;
-
 public class LimpetStackedChartsAdapter implements IStackedAdapter
 {
 
@@ -49,10 +46,6 @@ public class LimpetStackedChartsAdapter implements IStackedAdapter
       
       // ok, repopulate the dataset
       populateDataset(factory, _collection, _dataset);
-      
-      // and fire the notification
-//      NotificationImpl not = new NotificationImpl(Notification.SET, null, subject);
- //     _dataset.eNotify(not);
     }
 
     @Override

@@ -58,6 +58,7 @@ public class ChartSetEditPart extends AbstractGraphicalEditPart
   protected void refreshVisuals()
   {
     GridLayout layoutManager = (GridLayout) getFigure().getLayoutManager();
+
     layoutManager.numColumns =
         getChartSet().getOrientation() == Orientation.HORIZONTAL
             ? getModelChildren().size() : 1;
@@ -159,7 +160,10 @@ public class ChartSetEditPart extends AbstractGraphicalEditPart
     ChartSet chartSet = getModel();
     modelChildren.add(new ChartSetWrapper(chartSet));
     modelChildren.add(new ChartsWrapper(chartSet.getCharts()));
-    modelChildren.add(chartSet.getSharedAxis());
+
+    boolean horizontal = chartSet.getOrientation() == Orientation.HORIZONTAL;
+    modelChildren.add(horizontal ? 1 : modelChildren.size(), chartSet
+        .getSharedAxis());
     return modelChildren;
   }
 }

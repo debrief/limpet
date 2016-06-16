@@ -1,10 +1,20 @@
 package info.limpet.stackedcharts.ui.editor.parts;
 
+import info.limpet.stackedcharts.model.Chart;
+import info.limpet.stackedcharts.model.ChartSet;
+import info.limpet.stackedcharts.model.DependentAxis;
+import info.limpet.stackedcharts.model.Orientation;
+import info.limpet.stackedcharts.model.StackedchartsPackage;
+import info.limpet.stackedcharts.ui.editor.commands.DeleteAxisFromChartCommand;
+import info.limpet.stackedcharts.ui.editor.figures.ArrowFigure;
+import info.limpet.stackedcharts.ui.editor.figures.AxisNameFigure;
+import info.limpet.stackedcharts.ui.editor.policies.AxisContainerEditPolicy;
+
 import java.util.List;
 
 import org.eclipse.draw2d.ActionListener;
 import org.eclipse.draw2d.Border;
-import org.eclipse.draw2d.FlowLayout;
+import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.GridData;
 import org.eclipse.draw2d.GridLayout;
 import org.eclipse.draw2d.IFigure;
@@ -26,15 +36,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
 
-import info.limpet.stackedcharts.model.Chart;
-import info.limpet.stackedcharts.model.DependentAxis;
-import info.limpet.stackedcharts.model.StackedchartsPackage;
-import info.limpet.stackedcharts.ui.editor.commands.DeleteAxisFromChartCommand;
-import info.limpet.stackedcharts.ui.editor.figures.ArrowFigure;
-import info.limpet.stackedcharts.ui.editor.figures.AxisNameFigure;
-import info.limpet.stackedcharts.ui.editor.policies.AxisContainerEditPolicy;
-
-public class AxisEditPart extends AbstractGraphicalEditPart implements ActionListener
+public class AxisEditPart extends AbstractGraphicalEditPart implements
+    ActionListener
 {
 
   public static final Color BACKGROUND_COLOR = Display.getDefault()
@@ -45,6 +48,8 @@ public class AxisEditPart extends AbstractGraphicalEditPart implements ActionLis
   private AxisNameFigure axisNameLabel;
 
   private AxisAdapter adapter = new AxisAdapter();
+
+  private ArrowFigure arrowFigure;
 
   @Override
   public void activate()
@@ -75,7 +80,7 @@ public class AxisEditPart extends AbstractGraphicalEditPart implements ActionLis
     figure.setBorder(figureBorder);
 
     figure.setOutline(false);
-    GridLayout layoutManager = new GridLayout(3, false);
+    GridLayout layoutManager = new GridLayout();
     // zero margin, in order to connect the dependent axes to the shared one
     layoutManager.marginHeight = 0;
     layoutManager.marginWidth = 0;
@@ -85,31 +90,67 @@ public class AxisEditPart extends AbstractGraphicalEditPart implements ActionLis
     datasetsPane.setOutline(false);
     final SimpleLoweredBorder datasetBorder = new SimpleLoweredBorder(3);
     datasetsPane.setBorder(datasetBorder);
-    FlowLayout datasetsPaneLayout = new FlowLayout();
-    datasetsPaneLayout.setHorizontal(true);
-    datasetsPaneLayout.setStretchMinorAxis(true);
+    GridLayout datasetsPaneLayout = new GridLayout();
     datasetsPane.setLayoutManager(datasetsPaneLayout);
     figure.add(datasetsPane);
 
-    ArrowFigure arrowFigure = new ArrowFigure(false);
-    layoutManager.setConstraint(arrowFigure, new GridData(GridData.FILL,
-        GridData.FILL, false, true));
+    arrowFigure = new ArrowFigure(false);
     figure.add(arrowFigure);
-    
+
     axisNameLabel = new AxisNameFigure(this);
     figure.add(axisNameLabel);
-    
+
     return figure;
   }
 
   @Override
   protected void refreshVisuals()
   {
-    axisNameLabel.setName("Axis: " + getAxis().getName());
-    
-    ((GraphicalEditPart) getParent()).setLayoutConstraint(this, figure,
-        new GridData(GridData.CENTER, GridData.FILL, false, true));
-    ((GraphicalEditPart) getParent()).refresh();
+    axisNameLabel.setName(getAxis().getName());
+
+    GraphicalEditPart parent = (GraphicalEditPart) getParent();
+
+    boolean horizontal = ((ChartSet) parent.getParent().getParent().getParent()
+        .getModel()).getOrientation() == Orientation.HORIZONTAL;
+
+    GridLayout layout = (GridLayout) getFigure().getLayoutManager();
+    if (horizontal)
+    {
+      layout.numColumns = 1;
+      parent.setLayoutConstraint(this, figure, new GridData(GridData.FILL,
+          GridData.CENTER, true, false));
+
+      layout.setConstraint(datasetsPane, new GridData(GridData.FILL,
+          GridData.CENTER, true, false));
+
+      layout.setConstraint(arrowFigure, new GridData(GridData.FILL,
+          GridData.CENTER, true, false));
+
+      axisNameLabel.setVertical(false);
+      arrowFigure.setHorizontal(true);
+    }
+    else
+    {
+      layout.numColumns = figure.getChildren().size();
+      parent.setLayoutConstraint(this, figure, new GridData(GridData.CENTER,
+          GridData.FILL, false, true));
+
+      layout.setConstraint(datasetsPane, new GridData(GridData.CENTER,
+          GridData.FILL, false, true));
+
+      layout.setConstraint(arrowFigure, new GridData(GridData.CENTER,
+          GridData.FILL, false, true));
+
+      axisNameLabel.setVertical(true);
+      arrowFigure.setHorizontal(false);
+    }
+    layout.invalidate();
+    parent.refresh();
+
+    GridLayout layoutManager = (GridLayout) datasetsPane.getLayoutManager();
+    layoutManager.numColumns = horizontal ? 1 : getModelChildren().size();
+    layoutManager.invalidate();
+
   }
 
   @Override
@@ -125,15 +166,15 @@ public class AxisEditPart extends AbstractGraphicalEditPart implements ActionLis
         new NonResizableEditPolicy());
 
     installEditPolicy(EditPolicy.CONTAINER_ROLE, new AxisContainerEditPolicy());
-    
+
     installEditPolicy(EditPolicy.COMPONENT_ROLE, new ComponentEditPolicy()
     {
       protected Command createDeleteCommand(GroupRequest deleteRequest)
       {
         DependentAxis dataset = (DependentAxis) getHost().getModel();
         Chart parent = (Chart) dataset.eContainer();
-        DeleteAxisFromChartCommand cmd =
-            new DeleteAxisFromChartCommand(parent, dataset);
+        DeleteAxisFromChartCommand cmd = new DeleteAxisFromChartCommand(parent,
+            dataset);
         return cmd;
       }
     });

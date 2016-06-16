@@ -6,7 +6,8 @@ import java.util.List;
 import org.eclipse.draw2d.ActionEvent;
 import org.eclipse.draw2d.ActionListener;
 import org.eclipse.draw2d.Button;
-import org.eclipse.draw2d.FlowLayout;
+import org.eclipse.draw2d.GridData;
+import org.eclipse.draw2d.GridLayout;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.RectangleFigure;
@@ -21,10 +22,14 @@ import org.eclipse.gef.editpolicies.ComponentEditPolicy;
 import org.eclipse.gef.editpolicies.NonResizableEditPolicy;
 import org.eclipse.gef.requests.GroupRequest;
 
+import info.limpet.stackedcharts.model.Chart;
+import info.limpet.stackedcharts.model.ChartSet;
 import info.limpet.stackedcharts.model.Dataset;
 import info.limpet.stackedcharts.model.DependentAxis;
+import info.limpet.stackedcharts.model.Orientation;
 import info.limpet.stackedcharts.model.StackedchartsPackage;
 import info.limpet.stackedcharts.model.Styling;
+import info.limpet.stackedcharts.ui.editor.StackedchartsImages;
 import info.limpet.stackedcharts.ui.editor.commands.DeleteDatasetsFromAxisCommand;
 import info.limpet.stackedcharts.ui.editor.figures.DatasetFigure;
 
@@ -41,12 +46,12 @@ public class DatasetEditPart extends AbstractGraphicalEditPart implements
   {
     RectangleFigure figure = new RectangleFigure();
     figure.setOutline(false);
-    FlowLayout layout = new FlowLayout(false);
-    layout.setMinorAlignment(FlowLayout.ALIGN_CENTER);
+    GridLayout layout = new GridLayout();
     figure.setLayoutManager(layout);
 
-    Button button = new Button("X");
-    button.setToolTip(new Label("Remote the dataset from this axis"));
+    Button button = new Button(StackedchartsImages.getImage(
+        StackedchartsImages.DESC_DELETE));
+    button.setToolTip(new Label("Remove the dataset from this axis"));
     button.addActionListener(this);
     figure.add(button);
 
@@ -97,7 +102,43 @@ public class DatasetEditPart extends AbstractGraphicalEditPart implements
   @Override
   protected void refreshVisuals()
   {
-    contentPane.setName("Dataset: " + getDataset().getName());
+    contentPane.setName(getDataset().getName());
+
+    ChartSet parent = ((Chart) getParent().getParent().getParent().getModel())
+        .getParent();
+
+    GridLayout layoutManager = (GridLayout) getFigure().getLayoutManager();
+    GridLayout contentPaneLayout = (GridLayout) contentPane.getLayoutManager();
+    boolean horizontal = parent.getOrientation() == Orientation.HORIZONTAL;
+    if (horizontal)
+    {
+      layoutManager.numColumns = figure.getChildren().size();
+      contentPane.setVertical(false);
+      contentPaneLayout.numColumns = getModelChildren().size() + contentPane
+          .getChildren().size();
+
+      layoutManager.setConstraint(contentPane, new GridData(GridData.FILL,
+          GridData.FILL, true, false));
+
+      setLayoutConstraint(this, getFigure(), new GridData(GridData.FILL,
+          GridData.FILL, true, false));
+
+    }
+    else
+    {
+      layoutManager.numColumns = 1;
+      contentPane.setVertical(true);
+      contentPaneLayout.numColumns = 1;
+
+      layoutManager.setConstraint(contentPane, new GridData(GridData.CENTER,
+          GridData.FILL, false, true));
+
+      setLayoutConstraint(this, getFigure(), new GridData(GridData.CENTER,
+          GridData.FILL, false, true));
+
+    }
+    contentPaneLayout.invalidate();
+    layoutManager.invalidate();
   }
 
   protected Dataset getDataset()
