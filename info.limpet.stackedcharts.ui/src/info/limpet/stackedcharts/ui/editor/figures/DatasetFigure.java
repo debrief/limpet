@@ -84,8 +84,6 @@ public class DatasetFigure extends RectangleFigure
           GridData.CENTER, true, false));
       nameLabel.setTextAlignment(PositionConstants.CENTER);
     }
-    layout.numColumns = vertical ? 1 : getChildren().size();
-    layout.invalidate();
 
     nameLabel.setVertical(vertical);
     repaint();

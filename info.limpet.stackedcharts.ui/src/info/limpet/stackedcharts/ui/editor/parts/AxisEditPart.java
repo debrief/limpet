@@ -127,6 +127,7 @@ public class AxisEditPart extends AbstractGraphicalEditPart implements
           GridData.CENTER, true, false));
 
       axisNameLabel.setVertical(false);
+      arrowFigure.setHorizontal(true);
     }
     else
     {
@@ -141,6 +142,7 @@ public class AxisEditPart extends AbstractGraphicalEditPart implements
           GridData.FILL, false, true));
 
       axisNameLabel.setVertical(true);
+      arrowFigure.setHorizontal(false);
     }
     layout.invalidate();
     parent.refresh();

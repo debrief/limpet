@@ -1,15 +1,11 @@
 package info.limpet.stackedcharts.ui.editor.parts;
 
-import info.limpet.stackedcharts.ui.editor.figures.DirectionalLabel;
-import info.limpet.stackedcharts.ui.editor.parts.ChartEditPart.ChartPanePosition;
-import info.limpet.stackedcharts.ui.editor.policies.AxisLandingPadEditPolicy;
-
 import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.draw2d.Border;
-import org.eclipse.draw2d.BorderLayout;
 import org.eclipse.draw2d.GridData;
+import org.eclipse.draw2d.GridLayout;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.LineBorder;
 import org.eclipse.draw2d.RectangleFigure;
@@ -20,13 +16,22 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
 
+import info.limpet.stackedcharts.model.Orientation;
+import info.limpet.stackedcharts.ui.editor.figures.DirectionalLabel;
+import info.limpet.stackedcharts.ui.editor.parts.ChartEditPart.ChartPanePosition;
+import info.limpet.stackedcharts.ui.editor.parts.ChartPaneEditPart.AxisLandingPad;
+import info.limpet.stackedcharts.ui.editor.policies.AxisLandingPadEditPolicy;
+
 public class AxisLandingPadEditPart extends AbstractGraphicalEditPart
 {
+
+  private DirectionalLabel nameLabel;
 
   @Override
   protected void createEditPolicies()
   {
-    installEditPolicy(EditPolicy.CONTAINER_ROLE, new AxisLandingPadEditPolicy());
+    installEditPolicy(EditPolicy.CONTAINER_ROLE,
+        new AxisLandingPadEditPolicy());
   }
 
   @Override
@@ -38,17 +43,18 @@ public class AxisLandingPadEditPart extends AbstractGraphicalEditPart
     final Border figureBorder = new LineBorder(borderCol, 2);
     figure.setBorder(figureBorder);
 
-    figure.setLayoutManager(new BorderLayout());
-    final DirectionalLabel verticalLabel = new DirectionalLabel();
+    figure.setLayoutManager(new GridLayout());
+    nameLabel = new DirectionalLabel();
 
     final ChartPaneEditPart.AxisLandingPad pad =
         (ChartPaneEditPart.AxisLandingPad) getModel();
 
-    verticalLabel.setText(pad.pos == ChartPanePosition.MIN ? "Min Axis"
+    nameLabel.setText(pad.pos == ChartPanePosition.MIN ? "Min Axis"
         : "Max Axis");
-    figure.setPreferredSize(30, 80);
 
-    figure.add(verticalLabel, BorderLayout.CENTER);
+    figure.add(nameLabel);
+    figure.getLayoutManager().setConstraint(nameLabel, new GridData(
+        GridData.FILL, GridData.FILL, true, true));
 
     return figure;
   }
@@ -63,7 +69,20 @@ public class AxisLandingPadEditPart extends AbstractGraphicalEditPart
   @Override
   protected void refreshVisuals()
   {
-    ((GraphicalEditPart) getParent()).setLayoutConstraint(this, figure,
-        new GridData(GridData.CENTER, GridData.FILL, false, true));
+    boolean horizontal = ((AxisLandingPad) getModel()).chart.getParent()
+        .getOrientation() == Orientation.HORIZONTAL;
+    nameLabel.setVertical(!horizontal);
+
+    if (horizontal)
+    {
+      ((GraphicalEditPart) getParent()).setLayoutConstraint(this, figure,
+          new GridData(GridData.FILL, GridData.CENTER, true, false));
+    }
+    else
+    {
+      ((GraphicalEditPart) getParent()).setLayoutConstraint(this, figure,
+          new GridData(GridData.CENTER, GridData.FILL, false, true));
+    }
+    figure.invalidate();
   }
 }

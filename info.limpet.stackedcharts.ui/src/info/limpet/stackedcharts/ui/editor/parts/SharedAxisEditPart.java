@@ -141,6 +141,7 @@ public class SharedAxisEditPart extends AbstractGraphicalEditPart
       layoutManager.numColumns = 1;
     }
 
+    layoutManager.invalidate();
     getFigure().invalidate();
   }
 

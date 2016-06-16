@@ -6,7 +6,6 @@ import java.util.List;
 import org.eclipse.draw2d.ActionEvent;
 import org.eclipse.draw2d.ActionListener;
 import org.eclipse.draw2d.Button;
-import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.GridData;
 import org.eclipse.draw2d.GridLayout;
 import org.eclipse.draw2d.IFigure;
@@ -109,11 +108,14 @@ public class DatasetEditPart extends AbstractGraphicalEditPart implements
         .getParent();
 
     GridLayout layoutManager = (GridLayout) getFigure().getLayoutManager();
+    GridLayout contentPaneLayout = (GridLayout) contentPane.getLayoutManager();
     boolean horizontal = parent.getOrientation() == Orientation.HORIZONTAL;
     if (horizontal)
     {
       layoutManager.numColumns = figure.getChildren().size();
       contentPane.setVertical(false);
+      contentPaneLayout.numColumns = getModelChildren().size() + contentPane
+          .getChildren().size();
 
       layoutManager.setConstraint(contentPane, new GridData(GridData.FILL,
           GridData.FILL, true, false));
@@ -126,6 +128,7 @@ public class DatasetEditPart extends AbstractGraphicalEditPart implements
     {
       layoutManager.numColumns = 1;
       contentPane.setVertical(true);
+      contentPaneLayout.numColumns = 1;
 
       layoutManager.setConstraint(contentPane, new GridData(GridData.CENTER,
           GridData.FILL, false, true));
@@ -134,7 +137,7 @@ public class DatasetEditPart extends AbstractGraphicalEditPart implements
           GridData.FILL, false, true));
 
     }
-
+    contentPaneLayout.invalidate();
     layoutManager.invalidate();
   }
 
