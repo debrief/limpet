@@ -40,8 +40,6 @@ public class LimpetStackedChartsAdapter implements IStackedAdapter
     @Override
     public void dataChanged(IStoreItem subject)
     {
-      System.out.println("Change heard!");
-      
       StackedchartsFactoryImpl factory = new StackedchartsFactoryImpl();
       
       // ok, repopulate the dataset
