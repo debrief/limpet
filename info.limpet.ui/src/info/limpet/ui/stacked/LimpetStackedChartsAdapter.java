@@ -40,8 +40,6 @@ public class LimpetStackedChartsAdapter implements IStackedAdapter
     @Override
     public void dataChanged(IStoreItem subject)
     {
-      System.out.println("change heard!");
-      
       StackedchartsFactoryImpl factory = new StackedchartsFactoryImpl();
       
       // ok, repopulate the dataset
@@ -66,6 +64,9 @@ public class LimpetStackedChartsAdapter implements IStackedAdapter
   {
     // get ready to store the data
     dataset.setName(tqc.getName() + "(" + tqc.getUnits() + ")");
+    
+    // and the units
+    dataset.setUnits(tqc.getUnits().toString());
     
     // clear the dataset
     dataset.getMeasurements().clear();
@@ -93,7 +94,7 @@ public class LimpetStackedChartsAdapter implements IStackedAdapter
   public List<Dataset> convert(Object data)
   {
     List<Dataset> res  = null;
-    
+     
     // we should have already checked, but just
     // double-check we can handle it
     if(canConvert(data))
@@ -174,6 +175,22 @@ public class LimpetStackedChartsAdapter implements IStackedAdapter
           res.add(dataset);
         }
       }
+      else if(data instanceof List)
+      {
+        List<?> list = (List<?>) data;
+        for(Object item: list)
+        {
+          List<Dataset> items = convert(item);
+          if(items != null)
+          {
+            if(res == null)
+            {
+              res = new ArrayList<Dataset>();              
+            }
+            res.addAll(items);
+          }
+        }
+      }
     }
     
     return res;
@@ -201,6 +218,20 @@ public class LimpetStackedChartsAdapter implements IStackedAdapter
     else if(data instanceof ITemporalQuantityCollection<?>)
     {
       res = true;
+    }
+    else if(data instanceof List)
+    {
+      List<?> list =  (List<?>) data;
+      for(Object item: list)
+      {
+        boolean thisRes = canConvert(item);
+        if(!thisRes)
+        {
+          break;
+        }
+      }
+      res = true;
+      
     }
     
     return res;
