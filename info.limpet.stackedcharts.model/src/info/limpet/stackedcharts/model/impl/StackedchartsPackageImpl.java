@@ -473,6 +473,16 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
    * <!-- end-user-doc -->
    * @generated
    */
+  public EAttribute getDataset_Units()
+  {
+    return (EAttribute)datasetEClass.getEStructuralFeatures().get(3);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public EClass getDataItem()
   {
     return dataItemEClass;
@@ -953,6 +963,16 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
    * <!-- end-user-doc -->
    * @generated
    */
+  public EAttribute getNumberAxis_Units()
+  {
+    return (EAttribute)numberAxisEClass.getEStructuralFeatures().get(2);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public EClass getAngleAxis()
   {
     return angleAxisEClass;
@@ -1068,6 +1088,7 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
     createEAttribute(datasetEClass, DATASET__NAME);
     createEReference(datasetEClass, DATASET__MEASUREMENTS);
     createEReference(datasetEClass, DATASET__STYLING);
+    createEAttribute(datasetEClass, DATASET__UNITS);
 
     dataItemEClass = createEClass(DATA_ITEM);
     createEAttribute(dataItemEClass, DATA_ITEM__INDEPENDENT_VAL);
@@ -1131,6 +1152,7 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
     numberAxisEClass = createEClass(NUMBER_AXIS);
     createEAttribute(numberAxisEClass, NUMBER_AXIS__NUMBER_FORMAT);
     createEAttribute(numberAxisEClass, NUMBER_AXIS__AUTO_INCLUDES_ZERO);
+    createEAttribute(numberAxisEClass, NUMBER_AXIS__UNITS);
 
     angleAxisEClass = createEClass(ANGLE_AXIS);
 
@@ -1209,6 +1231,7 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
     initEAttribute(getDataset_Name(), ecorePackage.getEString(), "name", null, 0, 1, Dataset.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getDataset_Measurements(), this.getDataItem(), null, "measurements", null, 0, -1, Dataset.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getDataset_Styling(), this.getStyling(), null, "styling", null, 1, 1, Dataset.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getDataset_Units(), ecorePackage.getEString(), "units", null, 0, 1, Dataset.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(dataItemEClass, DataItem.class, "DataItem", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getDataItem_IndependentVal(), ecorePackage.getEDouble(), "independentVal", null, 0, 1, DataItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1272,6 +1295,7 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
     initEClass(numberAxisEClass, NumberAxis.class, "NumberAxis", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getNumberAxis_NumberFormat(), theXMLTypePackage.getString(), "numberFormat", null, 0, 1, NumberAxis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getNumberAxis_AutoIncludesZero(), theXMLTypePackage.getBoolean(), "autoIncludesZero", null, 0, 1, NumberAxis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getNumberAxis_Units(), ecorePackage.getEString(), "units", null, 0, 1, NumberAxis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(angleAxisEClass, AngleAxis.class, "AngleAxis", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 

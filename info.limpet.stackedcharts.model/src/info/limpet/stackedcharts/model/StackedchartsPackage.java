@@ -425,13 +425,22 @@ public interface StackedchartsPackage extends EPackage
   int DATASET__STYLING = 2;
 
   /**
+   * The feature id for the '<em><b>Units</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int DATASET__UNITS = 3;
+
+  /**
    * The number of structural features of the '<em>Dataset</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int DATASET_FEATURE_COUNT = 3;
+  int DATASET_FEATURE_COUNT = 4;
 
   /**
    * The number of operations of the '<em>Dataset</em>' class.
@@ -1258,13 +1267,22 @@ public interface StackedchartsPackage extends EPackage
   int NUMBER_AXIS__AUTO_INCLUDES_ZERO = AXIS_TYPE_FEATURE_COUNT + 1;
 
   /**
+   * The feature id for the '<em><b>Units</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int NUMBER_AXIS__UNITS = AXIS_TYPE_FEATURE_COUNT + 2;
+
+  /**
    * The number of structural features of the '<em>Number Axis</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int NUMBER_AXIS_FEATURE_COUNT = AXIS_TYPE_FEATURE_COUNT + 2;
+  int NUMBER_AXIS_FEATURE_COUNT = AXIS_TYPE_FEATURE_COUNT + 3;
 
   /**
    * The number of operations of the '<em>Number Axis</em>' class.
@@ -1302,6 +1320,15 @@ public interface StackedchartsPackage extends EPackage
    * @ordered
    */
   int ANGLE_AXIS__AUTO_INCLUDES_ZERO = NUMBER_AXIS__AUTO_INCLUDES_ZERO;
+
+  /**
+   * The feature id for the '<em><b>Units</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ANGLE_AXIS__UNITS = NUMBER_AXIS__UNITS;
 
   /**
    * The number of structural features of the '<em>Angle Axis</em>' class.
@@ -1565,6 +1592,17 @@ public interface StackedchartsPackage extends EPackage
    * @generated
    */
   EReference getDataset_Styling();
+
+  /**
+   * Returns the meta object for the attribute '{@link info.limpet.stackedcharts.model.Dataset#getUnits <em>Units</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Units</em>'.
+   * @see info.limpet.stackedcharts.model.Dataset#getUnits()
+   * @see #getDataset()
+   * @generated
+   */
+  EAttribute getDataset_Units();
 
   /**
    * Returns the meta object for class '{@link info.limpet.stackedcharts.model.DataItem <em>Data Item</em>}'.
@@ -2080,6 +2118,17 @@ public interface StackedchartsPackage extends EPackage
   EAttribute getNumberAxis_AutoIncludesZero();
 
   /**
+   * Returns the meta object for the attribute '{@link info.limpet.stackedcharts.model.NumberAxis#getUnits <em>Units</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Units</em>'.
+   * @see info.limpet.stackedcharts.model.NumberAxis#getUnits()
+   * @see #getNumberAxis()
+   * @generated
+   */
+  EAttribute getNumberAxis_Units();
+
+  /**
    * Returns the meta object for class '{@link info.limpet.stackedcharts.model.AngleAxis <em>Angle Axis</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -2317,6 +2366,14 @@ public interface StackedchartsPackage extends EPackage
      * @generated
      */
     EReference DATASET__STYLING = eINSTANCE.getDataset_Styling();
+
+    /**
+     * The meta object literal for the '<em><b>Units</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute DATASET__UNITS = eINSTANCE.getDataset_Units();
 
     /**
      * The meta object literal for the '{@link info.limpet.stackedcharts.model.impl.DataItemImpl <em>Data Item</em>}' class.
@@ -2731,6 +2788,14 @@ public interface StackedchartsPackage extends EPackage
      * @generated
      */
     EAttribute NUMBER_AXIS__AUTO_INCLUDES_ZERO = eINSTANCE.getNumberAxis_AutoIncludesZero();
+
+    /**
+     * The meta object literal for the '<em><b>Units</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute NUMBER_AXIS__UNITS = eINSTANCE.getNumberAxis_Units();
 
     /**
      * The meta object literal for the '{@link info.limpet.stackedcharts.model.impl.AngleAxisImpl <em>Angle Axis</em>}' class.

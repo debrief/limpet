@@ -18,6 +18,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link info.limpet.stackedcharts.model.Dataset#getName <em>Name</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.Dataset#getMeasurements <em>Measurements</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.Dataset#getStyling <em>Styling</em>}</li>
+ *   <li>{@link info.limpet.stackedcharts.model.Dataset#getUnits <em>Units</em>}</li>
  * </ul>
  *
  * @see info.limpet.stackedcharts.model.StackedchartsPackage#getDataset()
@@ -93,5 +94,30 @@ public interface Dataset extends EObject
    * @generated
    */
   void setStyling(Styling value);
+
+  /**
+   * Returns the value of the '<em><b>Units</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * <!-- begin-model-doc -->
+   * the units used for measurements in this dataset
+   * <!-- end-model-doc -->
+   * @return the value of the '<em>Units</em>' attribute.
+   * @see #setUnits(String)
+   * @see info.limpet.stackedcharts.model.StackedchartsPackage#getDataset_Units()
+   * @model
+   * @generated
+   */
+  String getUnits();
+
+  /**
+   * Sets the value of the '{@link info.limpet.stackedcharts.model.Dataset#getUnits <em>Units</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Units</em>' attribute.
+   * @see #getUnits()
+   * @generated
+   */
+  void setUnits(String value);
 
 } // Dataset
