@@ -54,6 +54,7 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//Dataset/name"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference model.ecore#//Dataset/measurements"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference model.ecore#//Dataset/styling"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//Dataset/units"/>
     </genClasses>
     <genClasses ecoreClass="model.ecore#//DataItem">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//DataItem/independentVal"/>
@@ -116,6 +117,7 @@
     <genClasses ecoreClass="model.ecore#//NumberAxis">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//NumberAxis/numberFormat"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//NumberAxis/autoIncludesZero"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//NumberAxis/units"/>
     </genClasses>
     <genClasses ecoreClass="model.ecore#//AngleAxis"/>
   </genPackages>

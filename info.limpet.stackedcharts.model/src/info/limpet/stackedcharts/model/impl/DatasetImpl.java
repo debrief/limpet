@@ -34,6 +34,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link info.limpet.stackedcharts.model.impl.DatasetImpl#getName <em>Name</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.impl.DatasetImpl#getMeasurements <em>Measurements</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.impl.DatasetImpl#getStyling <em>Styling</em>}</li>
+ *   <li>{@link info.limpet.stackedcharts.model.impl.DatasetImpl#getUnits <em>Units</em>}</li>
  * </ul>
  *
  * @generated
@@ -79,6 +80,26 @@ public class DatasetImpl extends MinimalEObjectImpl.Container implements Dataset
    * @ordered
    */
   protected Styling styling;
+
+  /**
+   * The default value of the '{@link #getUnits() <em>Units</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getUnits()
+   * @generated
+   * @ordered
+   */
+  protected static final String UNITS_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getUnits() <em>Units</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getUnits()
+   * @generated
+   * @ordered
+   */
+  protected String units = UNITS_EDEFAULT;
 
   /**
    * <!-- begin-user-doc -->
@@ -191,6 +212,29 @@ public class DatasetImpl extends MinimalEObjectImpl.Container implements Dataset
    * <!-- end-user-doc -->
    * @generated
    */
+  public String getUnits()
+  {
+    return units;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setUnits(String newUnits)
+  {
+    String oldUnits = units;
+    units = newUnits;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, StackedchartsPackage.DATASET__UNITS, oldUnits, units));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   @Override
   public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
   {
@@ -220,6 +264,8 @@ public class DatasetImpl extends MinimalEObjectImpl.Container implements Dataset
         return getMeasurements();
       case StackedchartsPackage.DATASET__STYLING:
         return getStyling();
+      case StackedchartsPackage.DATASET__UNITS:
+        return getUnits();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -245,6 +291,9 @@ public class DatasetImpl extends MinimalEObjectImpl.Container implements Dataset
       case StackedchartsPackage.DATASET__STYLING:
         setStyling((Styling)newValue);
         return;
+      case StackedchartsPackage.DATASET__UNITS:
+        setUnits((String)newValue);
+        return;
     }
     super.eSet(featureID, newValue);
   }
@@ -268,6 +317,9 @@ public class DatasetImpl extends MinimalEObjectImpl.Container implements Dataset
       case StackedchartsPackage.DATASET__STYLING:
         setStyling((Styling)null);
         return;
+      case StackedchartsPackage.DATASET__UNITS:
+        setUnits(UNITS_EDEFAULT);
+        return;
     }
     super.eUnset(featureID);
   }
@@ -288,6 +340,8 @@ public class DatasetImpl extends MinimalEObjectImpl.Container implements Dataset
         return measurements != null && !measurements.isEmpty();
       case StackedchartsPackage.DATASET__STYLING:
         return styling != null;
+      case StackedchartsPackage.DATASET__UNITS:
+        return UNITS_EDEFAULT == null ? units != null : !UNITS_EDEFAULT.equals(units);
     }
     return super.eIsSet(featureID);
   }
@@ -305,6 +359,8 @@ public class DatasetImpl extends MinimalEObjectImpl.Container implements Dataset
     StringBuffer result = new StringBuffer(super.toString());
     result.append(" (name: ");
     result.append(name);
+    result.append(", units: ");
+    result.append(units);
     result.append(')');
     return result.toString();
   }
