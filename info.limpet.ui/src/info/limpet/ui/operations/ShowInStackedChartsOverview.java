@@ -272,6 +272,8 @@ public class ShowInStackedChartsOverview implements IOperation<IStoreItem>
             dependent = factory.createDependentAxis();
             NumberAxis numAxis = factory.createNumberAxis();
             numAxis.setUnits(dataset.getUnits());
+            dependent.setAxisType(numAxis);
+            dependent.setName(theseUnits);
             thisChart.getMinAxes().add(dependent);
           }
           
@@ -295,7 +297,7 @@ public class ShowInStackedChartsOverview implements IOperation<IStoreItem>
         if(thisType instanceof NumberAxis)
         {
           NumberAxis na = (NumberAxis) thisType;
-          if(na.getUnits() == units)
+          if(na.getUnits() != null && na.getUnits().equals(units))
           {
             return da;
           }
@@ -307,7 +309,7 @@ public class ShowInStackedChartsOverview implements IOperation<IStoreItem>
         if(thisType instanceof NumberAxis)
         {
           NumberAxis na = (NumberAxis) thisType;
-          if(na.getUnits() == units)
+          if(na.getUnits() != null && na.getUnits().equals(units))
           {
             return da;
           }

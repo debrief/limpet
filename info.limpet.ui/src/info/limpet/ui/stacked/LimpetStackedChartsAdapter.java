@@ -116,7 +116,6 @@ public class LimpetStackedChartsAdapter implements IStackedAdapter
           // ok, register a listener for collection changes    
           @SuppressWarnings("unused")
           CollectionChangeListener newListener = new CollectionChangeListener(qq, dataset);
-
           
           // have we got a results object yet?
           if(res == null)
@@ -166,8 +165,15 @@ public class LimpetStackedChartsAdapter implements IStackedAdapter
         ICollection coll = (ICollection) data;
         if(coll.isQuantity() && coll.isTemporal())
         {
-          Dataset dataset = factory.createDataset();
+          Dataset dataset = factory.createDataset();          
           populateDataset(factory, (TemporalQuantityCollection<Quantity>) coll, dataset);
+          
+          // setup the listener          
+          TemporalQuantityCollection<Quantity> tempColl = (TemporalQuantityCollection<Quantity>) coll;
+          @SuppressWarnings("unused")
+          CollectionChangeListener listener = new CollectionChangeListener(tempColl , dataset);
+
+          // collate the results          
           if(res == null)
           {
             res= new ArrayList<Dataset>();
