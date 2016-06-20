@@ -14,36 +14,37 @@
  *****************************************************************************/
 package info.limpet.ui.operations;
 
+import info.limpet.ICollection;
 import info.limpet.ICommand;
 import info.limpet.IContext;
 import info.limpet.IOperation;
+import info.limpet.IQuantityCollection;
 import info.limpet.IStore;
+import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
+import info.limpet.ITemporalQuantityCollection;
 import info.limpet.data.commands.AbstractCommand;
+import info.limpet.data.impl.QuantityCollection;
 import info.limpet.data.impl.TemporalQuantityCollection;
 import info.limpet.data.operations.CollectionComplianceTests;
+import info.limpet.data.store.IGroupWrapper;
+import info.limpet.stackedcharts.model.AxisType;
 import info.limpet.stackedcharts.model.Chart;
 import info.limpet.stackedcharts.model.ChartSet;
-import info.limpet.stackedcharts.model.DataItem;
 import info.limpet.stackedcharts.model.Dataset;
 import info.limpet.stackedcharts.model.DependentAxis;
 import info.limpet.stackedcharts.model.IndependentAxis;
+import info.limpet.stackedcharts.model.NumberAxis;
 import info.limpet.stackedcharts.model.Orientation;
 import info.limpet.stackedcharts.model.StackedchartsFactory;
 import info.limpet.stackedcharts.ui.view.StackedChartsView;
+import info.limpet.ui.data_provider.data.CollectionWrapper;
+import info.limpet.ui.stacked.LimpetStackedChartsAdapter;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
-import javax.measure.Measurable;
-import javax.measure.quantity.Quantity;
-import javax.measure.unit.Unit;
-
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
@@ -175,87 +176,229 @@ public class ShowInStackedChartsOverview implements IOperation<IStoreItem>
 
   }
 
-  public static ChartSet createModelFor(List<IStoreItem> selection)
+  protected static TemporalQuantityCollection<?>
+      getFirstCollectionFor(List<IStoreItem> selection)
   {
-    StackedchartsFactory factory = StackedchartsFactory.eINSTANCE;
-    ChartSet res = factory.createChartSet();
-    res.setOrientation(Orientation.VERTICAL);
-    IndependentAxis timeAxis = factory.createIndependentAxis();
-    timeAxis.setAxisType(factory.createDateAxis());
-    res.setSharedAxis(timeAxis);
+    TemporalQuantityCollection<?> res = null;
 
-    Chart currentChart = factory.createChart();
-    res.getCharts().add(currentChart);
-
-    Map<String, DependentAxis> axes = new HashMap<String, DependentAxis>();
-    Iterator<IStoreItem> sIter = selection.iterator();
-    while (sIter.hasNext())
+    if (selection != null)
     {
-      IStoreItem iStoreItem = (IStoreItem) sIter.next();
-      TemporalQuantityCollection<?> tq =
-          (TemporalQuantityCollection<?>) iStoreItem;
-
-      // do we have a suitable axis?
-      String units = tq.getUnits().toString();
-      DependentAxis match = axes.get(units);
-      if (match == null)
+      IStoreItem first = selection.iterator().next();
+      if (first instanceof IGroupWrapper)
       {
-        match = factory.createDependentAxis();
-        match.setName(units);
-        match.setAxisType(factory.createNumberAxis());
-        axes.put(units, match);
-
-        // are we due to create a new chart?
-        if (currentChart.getMinAxes().size() + currentChart.getMaxAxes().size() >= 4)
+        IGroupWrapper group = (IGroupWrapper) first;
+        IStoreItem nextItem = group.getGroup().iterator().next();
+        while (nextItem instanceof IStoreGroup)
         {
-          currentChart = factory.createChart();
-          res.getCharts().add(currentChart);
+          IStoreGroup storeGroup = (IStoreGroup) nextItem;
+          nextItem = storeGroup.iterator().next();
         }
-
-        final EList<DependentAxis> target;
-        if (currentChart.getMinAxes().size() <= currentChart.getMaxAxes()
-            .size())
+        if (nextItem != null)
         {
-          target = currentChart.getMinAxes();
+          ICollection coll = (ICollection) nextItem;
+          if (coll.isQuantity() && coll.isTemporal())
+          {
+            res = (TemporalQuantityCollection<?>) coll;
+          }
         }
-        else
-        {
-          target = currentChart.getMaxAxes();
-        }
-        target.add(match);
-
       }
-
-      // ok, create the dataset
-      Dataset dataset = factory.createDataset();
-      dataset.setName(tq.getName() + "(" + tq.getUnits() + ")");
-      dataset.setStyling(factory.createPlainStyling());
-      match.getDatasets().add(dataset);
-
-      // and now work through the data
-      List<?> values = tq.getValues();
-      List<Long> times = tq.getTimes();
-      Iterator<?> vIter = values.iterator();
-      Iterator<Long> tIter = times.iterator();
-
-      while (tIter.hasNext())
+      else if (first instanceof CollectionWrapper)
       {
-        Long long1 = (Long) tIter.next();
-
-        @SuppressWarnings("unchecked")
-        Measurable<Quantity> quantity = (Measurable<Quantity>) vIter.next();
-        @SuppressWarnings("unchecked")
-        double value = quantity.doubleValue((Unit<Quantity>) tq.getUnits());
-
-        DataItem di = factory.createDataItem();
-        di.setDependentVal(value);
-        di.setIndependentVal(long1);
-        dataset.getMeasurements().add(di);
+        CollectionWrapper cw = (CollectionWrapper) first;
+        ICollection collection = cw.getCollection();
+        if (collection.isQuantity() && collection.isTemporal())
+          res = (TemporalQuantityCollection<?>) collection;
       }
-
+      else if(first instanceof TemporalQuantityCollection<?>)
+      {
+        res = (TemporalQuantityCollection<?>) first;
+      }
     }
 
     return res;
   }
 
+  public static ChartSet createModelFor(List<IStoreItem> selection)
+  {
+    // ok, use the limpet adapter to get the data
+    ChartSet res = null;
+    
+    // our data generator
+    LimpetStackedChartsAdapter adapter = new LimpetStackedChartsAdapter();
+        
+    if(adapter.canConvert(selection))
+    {
+      List<Dataset> datasets = adapter.convert(selection);
+      if(datasets != null)
+      {
+        StackedchartsFactory factory = StackedchartsFactory.eINSTANCE;        
+        
+        Chart thisChart = null;
+        
+        for(Dataset dataset: datasets)
+        {
+          // set the independent axis
+          final String theseUnits = dataset.getUnits();
+          
+          if(res == null)
+          {
+            // ok, we need a chart-set
+            res = factory.createChartSet();
+            res.setOrientation(Orientation.VERTICAL);
+            
+            // get the first item, so we can determine the independent axis
+            TemporalQuantityCollection<?> firstItem = getFirstCollectionFor(selection);
+
+            if(firstItem instanceof ITemporalQuantityCollection)
+            {
+              IndependentAxis ia = factory.createIndependentAxis();
+              ia.setAxisType(factory.createDateAxis());
+              res.setSharedAxis(ia);
+            }
+            else
+            {
+              System.err.println("FAILED TO CREATE CHARTSET - WE DON'T HAVE TIME AS INDEPENDENT AXIS");
+            }           
+          }
+          
+          // ok, plot this dataset
+          if(thisChart == null)
+          {
+            thisChart = factory.createChart();
+            res.getCharts().add(thisChart);
+          }
+          
+          DependentAxis dependent = findAxisFor(res, theseUnits);
+          if(dependent == null)
+          {
+            dependent = factory.createDependentAxis();
+            NumberAxis numAxis = factory.createNumberAxis();
+            numAxis.setUnits(dataset.getUnits());
+            thisChart.getMinAxes().add(dependent);
+          }
+          
+          dependent.getDatasets().add(dataset);
+        }
+      }
+    }
+    
+    return res;
+//    
+//        
+//    
+//    ChartSet res = factory.createChartSet();
+//    res.setOrientation(Orientation.VERTICAL);
+//    IndependentAxis timeAxis = factory.createIndependentAxis();
+//    timeAxis.setAxisType(factory.createDateAxis());
+//    res.setSharedAxis(timeAxis);
+//
+//    Chart currentChart = factory.createChart();
+//    res.getCharts().add(currentChart);
+//
+//    Map<String, DependentAxis> axes = new HashMap<String, DependentAxis>();
+//    Iterator<IStoreItem> sIter = selection.iterator();
+//    while (sIter.hasNext())
+//    {
+//      IStoreItem iStoreItem = (IStoreItem) sIter.next();
+//      TemporalQuantityCollection<?> tq =
+//          (TemporalQuantityCollection<?>) iStoreItem;
+//
+//      // do we have a suitable axis?
+//      String units = tq.getUnits().toString();
+//      DependentAxis match = axes.get(units);
+//      if (match == null)
+//      {
+//        match = factory.createDependentAxis();
+//        match.setName(units);
+//        match.setAxisType(factory.createNumberAxis());
+//        axes.put(units, match);
+//
+//        // are we due to create a new chart?
+//        if (currentChart.getMinAxes().size() + currentChart.getMaxAxes().size() >= 4)
+//        {
+//          currentChart = factory.createChart();
+//          res.getCharts().add(currentChart);
+//        }
+//
+//        final EList<DependentAxis> target;
+//        if (currentChart.getMinAxes().size() <= currentChart.getMaxAxes()
+//            .size())
+//        {
+//          target = currentChart.getMinAxes();
+//        }
+//        else
+//        {
+//          target = currentChart.getMaxAxes();
+//        }
+//        target.add(match);
+//
+//      }
+//
+//      // ok, create the dataset
+//      Dataset dataset = factory.createDataset();
+//      dataset.setName(tq.getName() + "(" + tq.getUnits() + ")");
+//      dataset.setStyling(factory.createPlainStyling());
+//      match.getDatasets().add(dataset);
+//
+//      // and now work through the data
+//      List<?> values = tq.getValues();
+//      List<Long> times = tq.getTimes();
+//      Iterator<?> vIter = values.iterator();
+//      Iterator<Long> tIter = times.iterator();
+//
+//      while (tIter.hasNext())
+//      {
+//        Long long1 = (Long) tIter.next();
+//
+//        @SuppressWarnings("unchecked")
+//        Measurable<Quantity> quantity = (Measurable<Quantity>) vIter.next();
+//        @SuppressWarnings("unchecked")
+//        double value = quantity.doubleValue((Unit<Quantity>) tq.getUnits());
+//
+//        DataItem di = factory.createDataItem();
+//        di.setDependentVal(value);
+//        di.setIndependentVal(long1);
+//        dataset.getMeasurements().add(di);
+//      }
+
+//    }
+//
+//    return res;
+  }
+
+  private static DependentAxis findAxisFor(ChartSet charts, String units)
+  {
+    DependentAxis res = null;
+    
+    for(Chart chart: charts.getCharts())
+    {
+      for(DependentAxis da: chart.getMinAxes())
+      {
+        AxisType thisType = da.getAxisType();
+        if(thisType instanceof NumberAxis)
+        {
+          NumberAxis na = (NumberAxis) thisType;
+          if(na.getUnits() == units)
+          {
+            return da;
+          }
+        }
+      }
+      for(DependentAxis da: chart.getMaxAxes())
+      {
+        AxisType thisType = da.getAxisType();
+        if(thisType instanceof NumberAxis)
+        {
+          NumberAxis na = (NumberAxis) thisType;
+          if(na.getUnits() == units)
+          {
+            return da;
+          }
+        }
+      }
+    }
+    
+    
+    return res;
+  }
 }
