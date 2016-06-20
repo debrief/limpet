@@ -444,11 +444,6 @@ public class ChartBuilder
     subplot.setRangeAxis(indexAxis, chartAxis);
     subplot.setRenderer(indexAxis, renderer);
     subplot.mapDatasetToRangeAxis(indexAxis, indexAxis);
-    
-    if(dependentAxis.getDirection()==AxisDirection.DESCENDING)
-    {
-      
-    }
   }
 
   /**
