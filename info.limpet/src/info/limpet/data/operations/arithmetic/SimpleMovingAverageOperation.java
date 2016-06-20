@@ -21,9 +21,11 @@ import info.limpet.IOperation;
 import info.limpet.IQuantityCollection;
 import info.limpet.IStore;
 import info.limpet.IStoreItem;
+import info.limpet.ITemporalQuantityCollection;
 import info.limpet.UIProperty;
 import info.limpet.data.commands.AbstractCommand;
 import info.limpet.data.impl.QuantityCollection;
+import info.limpet.data.impl.TemporalQuantityCollection;
 import info.limpet.data.math.SimpleMovingAverage;
 import info.limpet.data.operations.CollectionComplianceTests;
 
@@ -34,6 +36,7 @@ import java.util.List;
 
 import javax.measure.Measurable;
 import javax.measure.quantity.Quantity;
+import javax.measure.unit.Unit;
 
 public class SimpleMovingAverageOperation implements IOperation<ICollection>
 {
@@ -108,6 +111,24 @@ public class SimpleMovingAverageOperation implements IOperation<ICollection>
       // ok, we now need to update!
       super.dataChanged(this.getOutputs().iterator().next());
     }
+    
+    protected IQuantityCollection<?> getOutputFor(IQuantityCollection<?> input, String outName)
+    {
+      final IQuantityCollection<?> res;
+      
+      if(input.isTemporal())
+      {
+        @SuppressWarnings("unchecked")
+        Unit<Quantity> units = (Unit<Quantity>) input.getUnits();
+        res = new TemporalQuantityCollection<Quantity>(outName, this, units);
+      }
+      else
+      {
+        res = new QuantityCollection<>(outName, this, input.getUnits());
+      }
+      
+      return res;
+    }
 
     @Override
     public void execute()
@@ -118,8 +139,7 @@ public class SimpleMovingAverageOperation implements IOperation<ICollection>
       List<ICollection> outputs = new ArrayList<ICollection>();
 
       // ok, generate the new series
-      IQuantityCollection<?> target =
-          new QuantityCollection<>(getOutputName(), this, input.getUnits());
+      IQuantityCollection<?> target = getOutputFor(input, getOutputName());
 
       outputs.add(target);
 
@@ -172,14 +192,36 @@ public class SimpleMovingAverageOperation implements IOperation<ICollection>
 
       SimpleMovingAverage sma = new SimpleMovingAverage(winSize);
       @SuppressWarnings("unchecked")
+      
       IQuantityCollection<Quantity> input =
           (IQuantityCollection<Quantity>) getInputs().get(0);
-
-      for (Measurable<Quantity> quantity : input.getValues())
+      
+      if(input.isTemporal())
       {
-        sma.newNum(quantity.doubleValue(input.getUnits()));
-        target.add(sma.getAvg());
+        // use temporal data
+        ITemporalQuantityCollection<?> outT = (ITemporalQuantityCollection<?>) target;
+        ITemporalQuantityCollection<?> inT = (ITemporalQuantityCollection<?>) input;
+        
+        // we need our time data
+        List<Long> times = inT.getTimes();        
+        Iterator<Long> tIter = times.iterator();
+        for(Measurable<Quantity> quantity : input.getValues())
+        {
+          sma.newNum(quantity.doubleValue(input.getUnits()));
+          outT.add(tIter.next(), sma.getAvg());
+        }
       }
+      else
+      {
+        // ok, plain values
+        for (Measurable<Quantity> quantity : input.getValues())
+        {
+          sma.newNum(quantity.doubleValue(input.getUnits()));
+          target.add(sma.getAvg());
+        }
+      }
+      
+
       
       // and fire the update
       target.fireDataChanged();
