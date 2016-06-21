@@ -36,6 +36,8 @@ import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.DropTargetListener;
 import org.eclipse.swt.dnd.FileTransfer;
 import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.FillLayout;
@@ -50,7 +52,7 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.experimental.chart.swt.ChartComposite;
 
 public class StackedChartsView extends ViewPart implements
-    ITabbedPropertySheetPageContributor, ISelectionProvider
+    ITabbedPropertySheetPageContributor, ISelectionProvider, DisposeListener
 {
 
   public static final int CHART_VIEW = 1;
@@ -73,6 +75,7 @@ public class StackedChartsView extends ViewPart implements
       new ArrayList<ISelectionChangedListener>();
   private Date _currentTime;
   private ChartComposite _chartComposite;
+  private ArrayList<Runnable> _closeCallbacks;
 
   @Override
   public void addSelectionChangedListener(
@@ -232,7 +235,6 @@ public class StackedChartsView extends ViewPart implements
   @Override
   public void createPartControl(final Composite parent)
   {
-
     getViewSite().setSelectionProvider(this);// setup proxy selection provider
     stackedPane = new StackedPane(parent);
 
@@ -292,6 +294,19 @@ public class StackedChartsView extends ViewPart implements
       transitionManager.setTransition(new CubicRotationTransition(
           transitionManager));
     }
+    
+    // listen out for closing
+    parent.addDisposeListener(this);
+    
+    // and remember to detach ourselves
+    final DisposeListener meL = this;    
+    final Runnable dropMe = new Runnable(){
+      @Override
+      public void run()
+      {
+        parent.removeDisposeListener(meL);
+      }};
+    addRunOnCloseCallback(dropMe);
   }
 
   protected void fillLocalPullDown(final IMenuManager manager)
@@ -529,4 +544,34 @@ public class StackedChartsView extends ViewPart implements
       Display.getDefault().syncExec(runnable);
     }
   }
+
+  /** let classes pass callbacks to be run when we are closing
+   * 
+   * @param runnable
+   */
+  public void addRunOnCloseCallback(Runnable runnable)
+  {
+    if(_closeCallbacks == null)
+    {
+      _closeCallbacks = new ArrayList<Runnable>();
+    }
+    _closeCallbacks.add(runnable);
+  }
+
+  @Override
+  public void widgetDisposed(DisposeEvent e)
+  {
+    if(_closeCallbacks != null)
+    {
+      for(Runnable callback: _closeCallbacks)
+      {
+        callback.run();
+      }
+    }
+    
+    // and remove ourselves from our parent
+   
+  }
+  
+  
 }

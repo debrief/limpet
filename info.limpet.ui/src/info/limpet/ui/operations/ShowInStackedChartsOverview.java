@@ -152,7 +152,7 @@ public class ShowInStackedChartsOverview implements IOperation<IStoreItem>
             chartView.setModel(model);
             
             // also, see if we can listen to changes in it
-            IStoreGroup group = RangeSliderView.findTopParent(this.getInputs().get(0));
+            final IStoreGroup group = RangeSliderView.findTopParent(this.getInputs().get(0));
             if(group != null)
             {
               final PropertyChangeListener listener = new PropertyChangeListener()
@@ -167,8 +167,14 @@ public class ShowInStackedChartsOverview implements IOperation<IStoreItem>
                 }
               };
               group.addTimeChangeListener(listener);
-              
-              // TODO: we also have to support removing this listener
+
+              Runnable closer = new Runnable(){
+                @Override
+                public void run()
+                {
+                  group.removeTimeChangeListener(listener);
+                }};
+              chartView.addRunOnCloseCallback(closer);
             }
 
             // // take a copy of the model
