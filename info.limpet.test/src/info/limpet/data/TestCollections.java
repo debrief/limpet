@@ -44,8 +44,7 @@ import info.limpet.data.operations.arithmetic.AddQuantityOperation;
 import info.limpet.data.operations.arithmetic.MultiplyQuantityOperation;
 import info.limpet.data.operations.arithmetic.SubtractQuantityOperation;
 import info.limpet.data.operations.arithmetic.UnitaryMathOperation;
-import info.limpet.data.store.InMemoryStore;
-import info.limpet.data.store.InMemoryStore.StoreGroup;
+import info.limpet.data.store.StoreGroup;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -166,7 +165,7 @@ public class TestCollections extends TestCase
     selection.add((IQuantityCollection<Quantity>) tq1);
     selection.add((IQuantityCollection<Quantity>) tq2);
 
-    InMemoryStore store = new InMemoryStore();
+    StoreGroup store = new StoreGroup();
     Collection<ICommand<IQuantityCollection<Quantity>>> commands =
         new AddQuantityOperation<>().actionsFor(selection, store, context);
     ICommand<IQuantityCollection<Quantity>> firstC = commands.iterator().next();
@@ -216,7 +215,7 @@ public class TestCollections extends TestCase
     selection.add((IQuantityCollection<Quantity>) tq1);
     selection.add((IQuantityCollection<Quantity>) tq2);
 
-    store = new InMemoryStore();
+    store = new StoreGroup();
     commands =
         new AddQuantityOperation<>().actionsFor(selection, store, context);
     firstC = commands.iterator().next();
@@ -267,7 +266,7 @@ public class TestCollections extends TestCase
     selection.add((IQuantityCollection<Quantity>) tq1);
     selection.add((IQuantityCollection<Quantity>) tq2);
 
-    store = new InMemoryStore();
+    store = new StoreGroup();
     commands = new AddQuantityOperation().actionsFor(selection, store, context);
     firstC = commands.iterator().next();
 
@@ -341,7 +340,7 @@ public class TestCollections extends TestCase
     selection.add((IQuantityCollection<Quantity>) tq1);
     selection.add((IQuantityCollection<Quantity>) tq2);
 
-    InMemoryStore store = new InMemoryStore();
+    StoreGroup store = new StoreGroup();
 
     StoreGroup group1 = new StoreGroup("Some group");
 
@@ -403,7 +402,7 @@ public class TestCollections extends TestCase
     selection.add(tq1);
     selection.add((IQuantityCollection<Quantity>) tq2);
 
-    InMemoryStore store = new InMemoryStore();
+    StoreGroup store = new StoreGroup();
     UnitaryMathOperation absOp = new UnitaryMathOperation("Abs")
     {
       @Override
@@ -535,7 +534,7 @@ public class TestCollections extends TestCase
     selection.add((IQuantityCollection<Velocity>) tq1);
     selection.add((IQuantityCollection<Velocity>) tq2);
 
-    InMemoryStore store = new InMemoryStore();
+    StoreGroup store = new StoreGroup();
     Collection<ICommand<IStoreItem>> commands =
         new MultiplyQuantityOperation().actionsFor(selection, store, context);
     ICommand<IStoreItem> firstC = commands.iterator().next();
@@ -583,7 +582,7 @@ public class TestCollections extends TestCase
     selection.add((IQuantityCollection<Quantity>) tq1);
     selection.add((IQuantityCollection<Quantity>) tq2);
 
-    InMemoryStore store = new InMemoryStore();
+    StoreGroup store = new StoreGroup();
     Collection<ICommand<IStoreItem>> commands =
         new MultiplyQuantityOperation().actionsFor(selection, store, context);
     ICommand<IStoreItem> firstC = commands.iterator().next();
@@ -633,7 +632,7 @@ public class TestCollections extends TestCase
     selection.add((IQuantityCollection<Quantity>) tq1);
     selection.add((IQuantityCollection<Quantity>) tq2);
 
-    store = new InMemoryStore();
+    store = new StoreGroup();
     commands =
         new MultiplyQuantityOperation().actionsFor(selection, store, context);
     firstC = commands.iterator().next();
@@ -685,7 +684,7 @@ public class TestCollections extends TestCase
     selection.add((IQuantityCollection<Quantity>) tq1);
     selection.add((IQuantityCollection<Quantity>) tq2);
 
-    store = new InMemoryStore();
+    store = new StoreGroup();
     commands =
         new MultiplyQuantityOperation().actionsFor(selection, store, context);
     firstC = commands.iterator().next();
@@ -1046,7 +1045,7 @@ public class TestCollections extends TestCase
     selection.add((IQuantityCollection<Quantity>) tq1);
     selection.add((IQuantityCollection<Quantity>) tq2);
 
-    InMemoryStore store = new InMemoryStore();
+    StoreGroup store = new StoreGroup();
     Collection<ICommand<IQuantityCollection<Quantity>>> commands =
         new SubtractQuantityOperation<>().actionsFor(selection, store, context);
     ICommand<IQuantityCollection<Quantity>> firstC = commands.iterator().next();
@@ -1096,7 +1095,7 @@ public class TestCollections extends TestCase
     selection.add((IQuantityCollection<Quantity>) tq1);
     selection.add((IQuantityCollection<Quantity>) tq2);
 
-    store = new InMemoryStore();
+    store = new StoreGroup();
     commands =
         new SubtractQuantityOperation<>().actionsFor(selection, store, context);
     firstC = commands.iterator().next();

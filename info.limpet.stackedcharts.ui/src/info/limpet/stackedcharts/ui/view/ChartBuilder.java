@@ -19,8 +19,10 @@ import info.limpet.stackedcharts.model.Styling;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.Stroke;
 import java.awt.geom.Ellipse2D;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Date;
@@ -31,6 +33,7 @@ import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.common.util.EList;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.Axis;
 import org.jfree.chart.axis.AxisLocation;
 import org.jfree.chart.axis.DateAxis;
 import org.jfree.chart.axis.NumberAxis;
@@ -39,6 +42,8 @@ import org.jfree.chart.plot.CombinedDomainXYPlot;
 import org.jfree.chart.plot.IntervalMarker;
 import org.jfree.chart.plot.Marker;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.PlotRenderingInfo;
+import org.jfree.chart.plot.PlotState;
 import org.jfree.chart.plot.ValueMarker;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
@@ -58,6 +63,136 @@ import org.jfree.util.ShapeUtilities;
 public class ChartBuilder
 {
 
+  /** provide new version of domain plot, that is able to 
+   * render a time bar on the independent axis
+   * 
+   * @author ian
+   *
+   */
+  public static class TimeBarPlot extends CombinedDomainXYPlot
+  {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+    
+    Date _currentTime = null;
+    boolean _showLine = true;
+    
+    public TimeBarPlot(ValueAxis sharedAxis)
+    {
+      super(sharedAxis);
+    }
+    
+    public void setTime(Date time)
+    {
+      _currentTime = time;
+    }
+
+    /**
+     * Draws the XY plot on a Java 2D graphics device (such as the screen or a
+     * printer), together with a current time marker
+     * <P>
+     * XYPlot relies on an XYItemRenderer to draw each item in the plot. This
+     * allows the visual representation of the data to be changed easily.
+     * <P>
+     * The optional info argument collects information about the rendering of the
+     * plot (dimensions, tooltip information etc). Just pass in null if you do not
+     * need this information.
+     * 
+     * @param g2
+     *          The graphics device.
+     * @param plotArea
+     *          The area within which the plot (including axis labels) should be
+     *          drawn.
+     * @param info
+     *          Collects chart drawing information (null permitted).
+     */
+    public final void draw(final Graphics2D g2, final Rectangle2D plotArea,
+        final Point2D anchor, final PlotState state, final PlotRenderingInfo info)
+    {
+      super.draw(g2, plotArea, anchor, state, info);
+
+      // do we want to view the line?
+      if (!_showLine)
+        return;
+
+      // do we have a time?
+      if (_currentTime != null)
+      {
+        // find the screen area for the dataset
+        final Rectangle2D dataArea = info.getDataArea();
+
+        // determine the time we are plotting the line at
+        long theTime = _currentTime.getTime();
+
+        // hmm, see if we are wroking with a date or number axis
+        double linePosition = 0;
+        final Axis axis = this.getDomainAxis();
+        if (axis instanceof DateAxis)
+        {
+          // ok, now scale the time to graph units
+          final DateAxis dateAxis = (DateAxis) axis;
+
+          // find the new x value
+          linePosition = dateAxis.dateToJava2D(new Date(theTime),
+              dataArea, this.getDomainAxisEdge());         
+        }
+        else
+        {
+          if (axis instanceof NumberAxis)
+          {
+            final NumberAxis numberAxis = (NumberAxis) axis;
+            linePosition = numberAxis.valueToJava2D(theTime, dataArea, this
+                .getDomainAxisEdge());
+          }
+        }
+
+        // ok, finally draw the line - if we're not showing the growing plot
+        plotStepperLine(g2, linePosition, dataArea);
+
+      }
+    }
+
+    /**
+     * draw the new stepper line into the plot
+     * 
+     * @param g2
+     * @param linePosition
+     * @param dataArea
+     */
+    protected void plotStepperLine(final Graphics2D g2, final double linePosition,
+        final Rectangle2D dataArea)
+    {
+      // prepare to draw
+      final Stroke oldStroke = g2.getStroke();
+      g2.setXORMode(Color.darkGray);
+
+      // thicken up the line
+      g2.setStroke(new BasicStroke(3));
+
+      if (this.getOrientation() == PlotOrientation.VERTICAL)
+      {
+        // draw the line
+        g2.drawLine((int) linePosition - 1, (int) dataArea.getY() + 1,
+            (int) linePosition - 1, (int) dataArea.getY()
+                + (int) dataArea.getHeight() - 1);
+      }
+      else
+      {
+        // draw the line
+        g2.drawLine((int) dataArea.getY() + 1,(int) linePosition - 1, 
+             (int) dataArea.getY()
+                + (int) dataArea.getHeight() - 1, (int) linePosition - 1);
+        
+      }
+
+      // and restore everything
+      g2.setStroke(oldStroke);
+      g2.setPaintMode();
+    }
+  }
+  
   private ChartBuilder()
   {
   }
@@ -261,7 +396,7 @@ public class ChartBuilder
       }
     }
 
-    final CombinedDomainXYPlot plot = new CombinedDomainXYPlot(sharedAxis);
+    final CombinedDomainXYPlot plot = new TimeBarPlot(sharedAxis);
 
     // now loop through the charts
     EList<Chart> charts = chartsSet.getCharts();
@@ -327,7 +462,7 @@ public class ChartBuilder
       }
     }
     sharedAxis.setVisible(false);
-    final CombinedDomainXYPlot plot = new CombinedDomainXYPlot(sharedAxis);
+    final CombinedDomainXYPlot plot = new TimeBarPlot(sharedAxis);
 
     // create this chart
     final XYPlot subplot = createChart(sharedAxisModel, chart);

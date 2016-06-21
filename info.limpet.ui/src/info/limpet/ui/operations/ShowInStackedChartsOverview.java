@@ -37,10 +37,14 @@ import info.limpet.stackedcharts.model.Orientation;
 import info.limpet.stackedcharts.model.StackedchartsFactory;
 import info.limpet.stackedcharts.ui.view.StackedChartsView;
 import info.limpet.ui.data_provider.data.CollectionWrapper;
+import info.limpet.ui.range_slider.RangeSliderView;
 import info.limpet.ui.stacked.LimpetStackedChartsAdapter;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import org.eclipse.ui.IViewPart;
@@ -126,26 +130,46 @@ public class ShowInStackedChartsOverview implements IOperation<IStoreItem>
       {
         e.printStackTrace();
       }
-
+      
       // try to recover the view
       IViewReference viewRef = page.findViewReference(viewId, secId);
       if (viewRef != null)
       {
-        IViewPart theView = viewRef.getView(true);
+        final IViewPart theView = viewRef.getView(true);
 
         // double check it's what we're after
         if (theView instanceof StackedChartsView)
         {
-          StackedChartsView cv = (StackedChartsView) theView;
+          final StackedChartsView chartView = (StackedChartsView) theView;
 
           // create the charts set model
           ChartSet model = createModelFor(this.getInputs());
-
+          
           if (model != null)
           {
             // set follow selection to off
             // cv.follow(getInputs());
-            cv.setModel(model);
+            chartView.setModel(model);
+            
+            // also, see if we can listen to changes in it
+            IStoreGroup group = RangeSliderView.findTopParent(this.getInputs().get(0));
+            if(group != null)
+            {
+              final PropertyChangeListener listener = new PropertyChangeListener()
+              {
+                
+                @Override
+                public void propertyChange(PropertyChangeEvent evt)
+                {
+                  // ok, update the time now
+                  Date newTime = (Date) evt.getNewValue();
+                  chartView.updateTime(newTime);
+                }
+              };
+              group.addTimeChangeListener(listener);
+              
+              // TODO: we also have to support removing this listener
+            }
 
             // // take a copy of the model
             // URI resourceURI = URI.createFileURI("/home/ian/tacticalOverview.stackedcharts");

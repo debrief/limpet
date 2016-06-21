@@ -21,7 +21,7 @@ import info.limpet.IStore;
 import info.limpet.IStoreItem;
 import info.limpet.data.commands.AbstractCommand;
 import info.limpet.data.impl.samples.SampleData;
-import info.limpet.data.store.InMemoryStore;
+import info.limpet.data.store.StoreGroup;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -78,7 +78,7 @@ public class GenerateDummyDataOperation implements IOperation<IStoreItem>
 		@Override
 		public void execute()
 		{
-			InMemoryStore newData = new SampleData().getData(_count);
+			StoreGroup newData = new SampleData().getData(_count);
 			Iterator<IStoreItem> iter = newData.iterator();
 			while (iter.hasNext())
 			{

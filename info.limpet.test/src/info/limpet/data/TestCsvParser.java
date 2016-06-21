@@ -14,13 +14,14 @@
  *****************************************************************************/
 package info.limpet.data;
 
-import java.io.File;
-import java.util.List;
-
 import info.limpet.ICollection;
 import info.limpet.IStoreItem;
 import info.limpet.data.csv.CsvParser;
-import info.limpet.data.store.InMemoryStore.StoreGroup;
+import info.limpet.data.store.StoreGroup;
+
+import java.io.File;
+import java.util.List;
+
 import junit.framework.TestCase;
 
 public class TestCsvParser extends TestCase

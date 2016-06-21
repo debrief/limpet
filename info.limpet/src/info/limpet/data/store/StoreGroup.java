@@ -19,15 +19,16 @@ import info.limpet.ICollection;
 import info.limpet.IStore;
 import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
-import info.limpet.UIProperty;
-import info.limpet.data.impl.ListenerHelper;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
-public class InMemoryStore extends ArrayList<IStoreItem> implements IStore,
+public class StoreGroup extends ArrayList<IStoreItem> implements IStore,
     IChangeListener, IStoreGroup
 {
 
@@ -36,241 +37,24 @@ public class InMemoryStore extends ArrayList<IStoreItem> implements IStore,
    */
   private static final long serialVersionUID = 1L;
 
-  private transient List<StoreChangeListener> _listeners = new ArrayList<StoreChangeListener>();
-
+  private transient List<StoreChangeListener> _listeners =
+      new ArrayList<StoreChangeListener>();
+  private transient List<PropertyChangeListener> _timeListeners;
+  private Date _currentTime;
+  
   private UUID uuid;
 
-  private String _name = "Limpet Store";
-
-  public static class StoreGroup extends ArrayList<IStoreItem> implements
-      IStoreItem, IStoreGroup, IChangeListener
+  private String _name; 
+  private static final String TOP_LEVEL_NAME = "Limpet Store";
+  
+  public StoreGroup(String name)
   {
-    /**
-		 * 
-		 */
-    private static final long serialVersionUID = 1L;
-    private String _name;
-    private IStoreGroup _parent;
-    private transient UUID uuid;
-
-    // note: we make the change support listeners transient, since
-    // they refer to UI elements that we don't persist
-    private transient ListenerHelper _changeSupport;
-
-    public StoreGroup(String name)
-    {
-      _name = name;
-    }
-
-    public List<IStoreItem> children()
-    {
-      return this;
-    }
-
-    @Override
-    public UUID getUUID()
-    {
-      if (uuid == null)
-      {
-        uuid = UUID.randomUUID();
-      }
-      return uuid;
-    }
-
-    @Override
-    public boolean add(IStoreItem e)
-    {
-      e.setParent(this);
-
-      // ok, start listening to this item
-      e.addChangeListener(this);
-
-      boolean res = super.add(e);
-
-      fireDataChanged();
-
-      return res;
-    }
-
-    @Override
-    public boolean remove(Object o)
-    {
-      if (o instanceof IStoreItem)
-      {
-        IStoreItem si = (IStoreItem) o;
-        si.setParent(null);
-
-        si.removeChangeListener(this);
-
-      }
-
-      boolean res = super.remove(o);
-
-      // ok, fire an update.
-      fireDataChanged();
-
-      return res;
-    }
-
-    @UIProperty(name = "Name", category = UIProperty.CATEGORY_LABEL)
-    @Override
-    public String getName()
-    {
-      return _name;
-    }
-
-    @UIProperty(name = "Children", category = UIProperty.CATEGORY_METADATA)
-    public int getSize()
-    {
-      return super.size();
-    }
-
-    @Override
-    public int hashCode()
-    {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + getUUID().hashCode();
-      return result;
-    }
-
-    @Override
-    public boolean equals(Object obj)
-    {
-      if (this == obj)
-      {
-        return true;
-      }
-      if (obj == null)
-      {
-        return false;
-      }
-      if (getClass() != obj.getClass())
-      {
-        return false;
-      }
-      StoreGroup other = (StoreGroup) obj;
-      if (!getUUID().equals(other.getUUID()))
-      {
-        return false;
-      }
-      return true;
-    }
-
-    @Override
-    public boolean hasChildren()
-    {
-      return size() > 0;
-    }
-
-    public void setName(String value)
-    {
-      _name = value;
-
-      // and tell any listeners
-      fireDataChanged();
-    }
-
-    protected void initListeners()
-    {
-      if (_changeSupport == null)
-      {
-        _changeSupport = new ListenerHelper();
-      }
-    }
-
-    @Override
-    public void addChangeListener(IChangeListener listener)
-    {
-      initListeners();
-
-      _changeSupport.add(listener);
-    }
-
-    @Override
-    public void removeChangeListener(IChangeListener listener)
-    {
-      initListeners();
-
-      _changeSupport.remove(listener);
-    }
-
-    @Override
-    public void fireDataChanged()
-    {
-      if (_changeSupport != null)
-      {
-        // tell any standard listeners
-        _changeSupport.fireDataChange(this);
-      }
-    }
-
-    @Override
-    public IStoreGroup getParent()
-    {
-      return _parent;
-    }
-
-    @Override
-    public void setParent(IStoreGroup parent)
-    {
-      _parent = parent;
-    }
-
-    @Override
-    public void dataChanged(IStoreItem subject)
-    {
-      fireDataChanged();
-    }
-
-    @Override
-    public void metadataChanged(IStoreItem subject)
-    {
-      fireDataChanged();
-    }
-
-    @Override
-    public void collectionDeleted(IStoreItem subject)
-    {
-      fireDataChanged();
-    }
-
-    @Override
-    public IStoreItem get(String name)
-    {
-      IStoreItem res = null;
-      Iterator<IStoreItem> iter = iterator();
-      while (iter.hasNext())
-      {
-        IStoreItem item = iter.next();
-        if (item instanceof IStoreGroup)
-        {
-          IStoreGroup group = (IStoreGroup) item;
-          Iterator<IStoreItem> iter2 = group.iterator();
-          while (iter2.hasNext())
-          {
-            IStoreItem thisI = (IStoreItem) iter2.next();
-            if (name.equals(thisI.getName()))
-            {
-              res = thisI;
-              break;
-            }
-          }
-        }
-        if (name.equals(item.getName()))
-        {
-          res = item;
-          break;
-        }
-      }
-      return res;
-    }
+    _name = name;
   }
 
-  private Object readResolve()
+  public StoreGroup()
   {
-    _listeners = new ArrayList<StoreChangeListener>();
-    return this;
+    this(TOP_LEVEL_NAME);
   }
 
   public interface StoreChangeListener
@@ -293,8 +77,8 @@ public class InMemoryStore extends ArrayList<IStoreItem> implements IStore,
     Iterator<StoreChangeListener> iter = _listeners.iterator();
     while (iter.hasNext())
     {
-      InMemoryStore.StoreChangeListener listener = (InMemoryStore.StoreChangeListener) iter
-          .next();
+      StoreChangeListener listener =
+          iter.next();
       listener.changed();
     }
   }
@@ -317,18 +101,10 @@ public class InMemoryStore extends ArrayList<IStoreItem> implements IStore,
   public boolean add(IStoreItem results)
   {
     boolean res = super.add(results);
-
-    // register as a listener with the results object
-    if (results instanceof ICollection)
-    {
-      ICollection coll = (ICollection) results;
-      coll.addChangeListener(this);
-    }
-    else if (results instanceof IStoreGroup)
-    {
-      IStoreGroup group = (IStoreGroup) results;
-      group.addChangeListener(this);
-    }
+    
+    results.setParent(this);
+    
+    results.addChangeListener(this);
 
     fireModified();
 
@@ -477,7 +253,7 @@ public class InMemoryStore extends ArrayList<IStoreItem> implements IStore,
     {
       return false;
     }
-    InMemoryStore other = (InMemoryStore) obj;
+    StoreGroup other = (StoreGroup) obj;
     if (!getUUID().equals(other.getUUID()))
     {
       return false;
@@ -515,22 +291,16 @@ public class InMemoryStore extends ArrayList<IStoreItem> implements IStore,
   @Override
   public void addChangeListener(IChangeListener listener)
   {
-    // TODO Auto-generated method stub
-
   }
 
   @Override
   public void removeChangeListener(IChangeListener listener)
   {
-    // TODO Auto-generated method stub
-
   }
 
   @Override
   public void fireDataChanged()
   {
-    // TODO Auto-generated method stub
-
   }
 
   @Override
@@ -547,6 +317,46 @@ public class InMemoryStore extends ArrayList<IStoreItem> implements IStore,
   public void setName(String value)
   {
     _name = value;
+  }
+
+  @Override
+  public Date getTime()
+  {
+    return _currentTime;
+  }
+
+  @Override
+  public void setTime(final Date time)
+  {
+    final Date oldTime = _currentTime;
+    _currentTime = time;
+    if(_timeListeners != null)
+    {
+      PropertyChangeEvent evt = new PropertyChangeEvent(this, "TIME", oldTime, time);
+      for(PropertyChangeListener thisL: _timeListeners)
+      {
+        thisL.propertyChange(evt);
+      }
+    }
+  }
+
+  @Override
+  public void addTimeChangeListener(PropertyChangeListener listener)
+  {
+    if(_timeListeners == null)
+    {
+      _timeListeners = new ArrayList<PropertyChangeListener>();
+    }
+    _timeListeners.add(listener);
+  }
+
+  @Override
+  public void removeTimeChangeListener(PropertyChangeListener listener)
+  {
+    if(_timeListeners != null)
+    {
+      _timeListeners.remove(listener);
+    }
   }
 
 }

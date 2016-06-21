@@ -25,8 +25,8 @@ import info.limpet.data.operations.AddLayerOperation;
 import info.limpet.data.operations.GenerateDummyDataOperation;
 import info.limpet.data.operations.admin.OperationsLibrary;
 import info.limpet.data.persistence.xml.XStreamHandler;
-import info.limpet.data.store.InMemoryStore;
-import info.limpet.data.store.InMemoryStore.StoreChangeListener;
+import info.limpet.data.store.StoreGroup;
+import info.limpet.data.store.StoreGroup.StoreChangeListener;
 import info.limpet.ui.RCPContext;
 import info.limpet.ui.data_provider.data.DataModel;
 import info.limpet.ui.editors.dnd.DataManagerDropAdapter;
@@ -288,7 +288,7 @@ public class DataManagerEditor extends EditorPart
               new XStreamHandler().load(((IFileEditorInput) input).getFile());
 
           // we need to loop down through the data, setting all of the listeners
-          InMemoryStore ms = (InMemoryStore) _store;
+          StoreGroup ms = (StoreGroup) _store;
 
           // and get hooked up
           Iterator<IStoreItem> iter = ms.iterator();
@@ -300,7 +300,7 @@ public class DataManagerEditor extends EditorPart
         else
         {
           // ok, it was empty. generate an empty store
-          _store = new InMemoryStore();
+          _store = new StoreGroup();
         }
       }
       catch (IOException | CoreException e)

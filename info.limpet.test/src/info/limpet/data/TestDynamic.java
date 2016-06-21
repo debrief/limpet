@@ -23,7 +23,7 @@ import info.limpet.data.impl.CoreChangeListener;
 import info.limpet.data.impl.MockContext;
 import info.limpet.data.impl.samples.SampleData;
 import info.limpet.data.operations.arithmetic.AddQuantityOperation;
-import info.limpet.data.store.InMemoryStore;
+import info.limpet.data.store.StoreGroup;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -42,7 +42,7 @@ public class TestDynamic extends TestCase
 	public void testSingleQuantityStats()
 	{
 		// get some data
-		InMemoryStore store = new SampleData().getData(10);
+		StoreGroup store = new SampleData().getData(10);
 
 		// ok, let's try one that works
 		List<ICollection> selection = new ArrayList<ICollection>();

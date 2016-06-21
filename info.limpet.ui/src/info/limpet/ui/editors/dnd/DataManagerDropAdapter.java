@@ -19,7 +19,7 @@ import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
 import info.limpet.data.csv.CsvParser;
 import info.limpet.data.persistence.xml.XStreamHandler;
-import info.limpet.data.store.InMemoryStore;
+import info.limpet.data.store.StoreGroup;
 import info.limpet.ui.Activator;
 import info.limpet.ui.data_provider.data.GroupWrapper;
 import info.limpet.ui.editors.LimpetDragListener;
@@ -115,9 +115,9 @@ public class DataManagerDropAdapter extends ViewerDropAdapter
           }
           else
           {
-            if (_store instanceof InMemoryStore)
+            if (_store instanceof StoreGroup)
             {
-              InMemoryStore mem = (InMemoryStore) _store;
+              StoreGroup mem = (StoreGroup) _store;
               mem.remove(item);
             }
           }
@@ -258,9 +258,9 @@ public class DataManagerDropAdapter extends ViewerDropAdapter
     Object target = getCurrentTarget();
     IStore store = new XStreamHandler().load(fileName);
     final List<IStoreItem> list = new ArrayList<IStoreItem>();
-    if (store instanceof InMemoryStore && target instanceof GroupWrapper)
+    if (store instanceof StoreGroup && target instanceof GroupWrapper)
     {
-      final Iterator<IStoreItem> iter = ((InMemoryStore) store).iterator();
+      final Iterator<IStoreItem> iter = ((StoreGroup) store).iterator();
       GroupWrapper groupWrapper = (GroupWrapper) target;
       while (iter.hasNext())
       {

@@ -381,9 +381,7 @@ public abstract class CoreQuantityOperation<Q extends Quantity>
       }
 
       // ok, done
-      List<IStoreItem> res = new ArrayList<IStoreItem>();
-      res.add(target);
-      getStore().addAll(res);
+      getStore().add(target);
     }
 
     protected Unit<Q> determineOutputUnit(IQuantityCollection<Q> first)
