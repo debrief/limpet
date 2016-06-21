@@ -1,21 +1,21 @@
 package info.limpet.data.export.csv;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import info.limpet.ICollection;
 import info.limpet.IStoreItem;
 import info.limpet.data.csv.CsvGenerator;
 import info.limpet.data.impl.samples.SampleData;
-import info.limpet.data.store.InMemoryStore;
-import info.limpet.data.store.InMemoryStore.StoreGroup;
+import info.limpet.data.store.StoreGroup;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import junit.framework.TestCase;
 
 public class TestExport extends TestCase
 {
 
-	private static InMemoryStore data = new SampleData().getData(20);
+	private static StoreGroup data = new SampleData().getData(20);
 
 	public void testCsvGenerate()
 	{

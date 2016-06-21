@@ -14,13 +14,37 @@
  *****************************************************************************/
 package info.limpet;
 
+import java.beans.PropertyChangeListener;
 import java.util.Collection;
+import java.util.Date;
 
 
 public interface IStoreGroup extends IStoreItem, Collection<IStoreItem>,
     IChangeListener
 {
 
+  /** retrieve the current "focus time"
+   * 
+   */
+  Date getTime();
+  
+  /** set the current "focus time"
+   * 
+   */
+  void setTime(Date time);
+  
+  /** listen for time changes
+   * 
+   * @param listener
+   */
+  void addTimeChangeListener(PropertyChangeListener listener);
+
+  /** stop listening to time changes
+   * 
+   * @param listener
+   */
+  void removeTimeChangeListener(PropertyChangeListener listener);
+  
   /**
    * retrieve the named collection
    * 

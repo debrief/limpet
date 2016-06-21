@@ -23,7 +23,7 @@ import info.limpet.IStoreItem;
 import info.limpet.data.commands.AbstractCommand;
 import info.limpet.data.impl.QuantityCollection;
 import info.limpet.data.operations.CollectionComplianceTests;
-import info.limpet.data.store.InMemoryStore.StoreGroup;
+import info.limpet.data.store.StoreGroup;
 
 import java.util.ArrayList;
 import java.util.Collection;

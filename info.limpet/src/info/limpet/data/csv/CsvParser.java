@@ -24,7 +24,7 @@ import info.limpet.data.impl.samples.StockTypes.Temporal;
 import info.limpet.data.impl.samples.StockTypes.Temporal.Strings;
 import info.limpet.data.impl.samples.TemporalLocation;
 import info.limpet.data.operations.spatial.GeoSupport;
-import info.limpet.data.store.InMemoryStore.StoreGroup;
+import info.limpet.data.store.StoreGroup;
 
 import java.awt.geom.Point2D;
 import java.io.File;

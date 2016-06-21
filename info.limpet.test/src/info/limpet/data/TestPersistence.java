@@ -20,7 +20,7 @@ import java.io.IOException;
 import info.limpet.IStore;
 import info.limpet.data.impl.samples.SampleData;
 import info.limpet.data.persistence.xml.XStreamHandler;
-import info.limpet.data.store.InMemoryStore;
+import info.limpet.data.store.StoreGroup;
 import junit.framework.TestCase;
 
 public class TestPersistence extends TestCase
@@ -28,7 +28,7 @@ public class TestPersistence extends TestCase
 
   public void testSaveThenLoadSampleData()
   {
-    InMemoryStore data = new SampleData().getData(20);
+    StoreGroup data = new SampleData().getData(20);
     final long storeSize = data.size();
     final String fileName = "testtemp.lap";
 
@@ -55,9 +55,9 @@ public class TestPersistence extends TestCase
 
     IStore data2 = new XStreamHandler().load(fileName);
     assertNotNull("found store", data2);
-    if (data2 instanceof InMemoryStore)
+    if (data2 instanceof StoreGroup)
     {
-      InMemoryStore ims = (InMemoryStore) data2;
+      StoreGroup ims = (StoreGroup) data2;
       assertEquals("correct num of objects", storeSize, ims.size());
     }
 
