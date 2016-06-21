@@ -33,8 +33,7 @@ import info.limpet.data.impl.samples.StockTypes.Temporal.FrequencyHz;
 import info.limpet.data.impl.samples.TemporalLocation;
 import info.limpet.data.operations.CollectionComplianceTests;
 import info.limpet.data.operations.CollectionComplianceTests.TimePeriod;
-import info.limpet.data.store.InMemoryStore;
-import info.limpet.data.store.InMemoryStore.StoreGroup;
+import info.limpet.data.store.StoreGroup;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
@@ -377,9 +376,9 @@ public class DopplerShiftBetweenTracksOperation implements
       // ok, remove the calculated dataset
       IStoreItem results = getOutputs().iterator().next();
       IStore store = getStore();
-      if (store instanceof InMemoryStore)
+      if (store instanceof StoreGroup)
       {
-        InMemoryStore im = (InMemoryStore) store;
+        StoreGroup im = (StoreGroup) store;
         im.remove(results);
       }
     }
@@ -389,9 +388,9 @@ public class DopplerShiftBetweenTracksOperation implements
     {
       IStoreItem results = getOutputs().iterator().next();
       IStore store = getStore();
-      if (store instanceof InMemoryStore)
+      if (store instanceof StoreGroup)
       {
-        InMemoryStore im = (InMemoryStore) store;
+        StoreGroup im = (StoreGroup) store;
         im.add(results);
       }
     }
@@ -630,7 +629,7 @@ public class DopplerShiftBetweenTracksOperation implements
       Iterator<StoreGroup> iter = trackList.iterator();
       while (iter.hasNext())
       {
-        InMemoryStore.StoreGroup thisG = (InMemoryStore.StoreGroup) iter.next();
+        StoreGroup thisG = (StoreGroup) iter.next();
         final boolean hasFrequency =
             aTests.collectionWith(thisG, Frequency.UNIT.getDimension(), true) != null;
         if (hasFrequency)

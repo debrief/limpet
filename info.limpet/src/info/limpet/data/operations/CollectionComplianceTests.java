@@ -24,12 +24,12 @@ import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
 import info.limpet.ITemporalQuantityCollection.InterpMethod;
 import info.limpet.data.impl.TemporalQuantityCollection;
+import info.limpet.data.impl.samples.StockTypes;
 import info.limpet.data.impl.samples.StockTypes.ILocations;
 import info.limpet.data.impl.samples.StockTypes.NonTemporal;
 import info.limpet.data.impl.samples.StockTypes.NonTemporal.Location;
-import info.limpet.data.impl.samples.StockTypes;
 import info.limpet.data.impl.samples.TemporalLocation;
-import info.limpet.data.store.InMemoryStore.StoreGroup;
+import info.limpet.data.store.StoreGroup;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
@@ -683,7 +683,7 @@ public class CollectionComplianceTests
 
         // special case: we can miss out course & speed if there's just a single
         // stationery location, and there's a single location
-        if (!valid && hasSingletonLocation(group.children()))
+        if (!valid && hasSingletonLocation(group))
         {
           valid = true;
         }
@@ -803,7 +803,7 @@ public class CollectionComplianceTests
       {
         // ok, check the contents
         StoreGroup group = (StoreGroup) storeItem;
-        List<IStoreItem> kids = group.children();
+        List<IStoreItem> kids = group;
 
         Iterator<IStoreItem> kIter = kids.iterator();
         while (kIter.hasNext())
@@ -930,7 +930,7 @@ public class CollectionComplianceTests
       if (item instanceof StoreGroup && walkTree)
       {
         StoreGroup group = (StoreGroup) item;
-        res = collectionWith(group.children(), dimension, walkTree);
+        res = collectionWith(group, dimension, walkTree);
         if (res != null)
         {
           break;
@@ -971,7 +971,7 @@ public class CollectionComplianceTests
       if (item instanceof StoreGroup)
       {
         StoreGroup group = (StoreGroup) item;
-        res = someHaveLocation(group.children());
+        res = someHaveLocation(group);
         if (res != null)
         {
           break;

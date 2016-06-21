@@ -24,7 +24,7 @@ import info.limpet.data.impl.QuantityCollection;
 import info.limpet.data.impl.samples.StockTypes.NonTemporal;
 import info.limpet.data.operations.CollectionComplianceTests;
 import info.limpet.data.operations.spatial.GeoSupport;
-import info.limpet.data.store.InMemoryStore.StoreGroup;
+import info.limpet.data.store.StoreGroup;
 
 import java.awt.geom.Point2D;
 

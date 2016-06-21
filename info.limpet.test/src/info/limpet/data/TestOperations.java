@@ -61,8 +61,7 @@ import info.limpet.data.operations.arithmetic.SimpleMovingAverageOperation;
 import info.limpet.data.operations.arithmetic.SubtractQuantityOperation;
 import info.limpet.data.operations.arithmetic.UnitaryMathOperation;
 import info.limpet.data.operations.spatial.BearingBetweenTracksOperation;
-import info.limpet.data.store.InMemoryStore;
-import info.limpet.data.store.InMemoryStore.StoreGroup;
+import info.limpet.data.store.StoreGroup;
 
 import java.io.File;
 import java.io.IOException;
@@ -102,7 +101,7 @@ public class TestOperations
   public void testInterpolateTests()
   {
     // place to store results data
-    InMemoryStore store = new SampleData().getData(10);
+    StoreGroup store = new SampleData().getData(10);
 
     // ok, let's try one that works
     List<IStoreItem> selection = new ArrayList<IStoreItem>();
@@ -156,7 +155,7 @@ public class TestOperations
     temporalAngleData.add(4000, 13d);
 
     List<ICollection> selection = new ArrayList<ICollection>();
-    InMemoryStore store = new InMemoryStore();
+    StoreGroup store = new StoreGroup();
 
     HashMap<String, List<IOperation<?>>> ops =
         OperationsLibrary.getOperations();
@@ -399,7 +398,7 @@ public class TestOperations
     selection.add(speedGood1);
     selection.add(speedGood2);
 
-    InMemoryStore store = new InMemoryStore();
+    StoreGroup store = new StoreGroup();
     assertEquals("store empty", 0, store.size());
 
     @SuppressWarnings(
@@ -454,7 +453,7 @@ public class TestOperations
   public void testDimensionlessMultiply()
   {
     // place to store results data
-    InMemoryStore store = new SampleData().getData(10);
+    StoreGroup store = new SampleData().getData(10);
 
     // ok, let's try one that works
     List<IStoreItem> selection = new ArrayList<IStoreItem>();
@@ -724,7 +723,7 @@ public class TestOperations
   {"unchecked"})
   public void testAddition()
   {
-    InMemoryStore store = new SampleData().getData(10);
+    StoreGroup store = new SampleData().getData(10);
 
     // test invalid dimensions
     ITemporalQuantityCollection<Velocity> speedGood1 =
@@ -767,7 +766,7 @@ public class TestOperations
   {"rawtypes", "unchecked"})
   public void testSubtractionSingleton()
   {
-    InMemoryStore store = new SampleData().getData(10);
+    StoreGroup store = new SampleData().getData(10);
     List<ICollection> selection = new ArrayList<ICollection>(3);
 
     // test invalid dimensions
@@ -801,7 +800,7 @@ public class TestOperations
   {"rawtypes", "unchecked"})
   public void testAddSingleton()
   {
-    InMemoryStore store = new SampleData().getData(10);
+    StoreGroup store = new SampleData().getData(10);
     List<ICollection> selection = new ArrayList<ICollection>(3);
 
     // test invalid dimensions
@@ -840,7 +839,7 @@ public class TestOperations
   {"rawtypes", "unchecked"})
   public void testSubtraction()
   {
-    InMemoryStore store = new SampleData().getData(10);
+    StoreGroup store = new SampleData().getData(10);
     int storeSize = store.size();
     List<ICollection> selection = new ArrayList<ICollection>(3);
 
@@ -911,7 +910,7 @@ public class TestOperations
   {
 	  IContext context=EasyMock.createMock(MockContext.class);
 	  // place to store results data
-	  InMemoryStore store = new SampleData().getData(10);
+	  StoreGroup store = new SampleData().getData(10);
 
 	  List<IStoreItem> selection = new ArrayList<IStoreItem>();
 
@@ -999,7 +998,7 @@ public class TestOperations
 
   @Test
   public void testCreateSingletonGenerator(){
-	  InMemoryStore store = new SampleData().getData(10);
+	  StoreGroup store = new SampleData().getData(10);
 	  CreateSingletonGenerator generator= new CreateSingletonGenerator("dimensionless") {
 		@Override
 		protected QuantityCollection<?> generate(String name, ICommand<?> precedent) {
@@ -1028,7 +1027,7 @@ public class TestOperations
   
   @Test
   public void testCreateLocationAction(){
-	  InMemoryStore store = new SampleData().getData(10);
+	  StoreGroup store = new SampleData().getData(10);
 	  CreateLocationAction  createLocationAction= new CreateLocationAction();
 	  assertNotNull("Create Location action is not NULL", createLocationAction);
 
@@ -1053,7 +1052,7 @@ public class TestOperations
   
   @Test
   public void testExportCsvToFileAction(){
-	  InMemoryStore store = new SampleData().getData(10);
+	  StoreGroup store = new SampleData().getData(10);
 	  ExportCsvToFileAction exportCSVFileAction=new ExportCsvToFileAction();
 	  assertNotNull(exportCSVFileAction);
 	  
@@ -1080,7 +1079,7 @@ public class TestOperations
   @Test
   public void testCopyCsvToClipboardAction(){
 
-	  InMemoryStore store = new SampleData().getData(10);
+	  StoreGroup store = new SampleData().getData(10);
 	  CopyCsvToClipboardAction copyCSVToClipAction=new CopyCsvToClipboardAction();
 	  assertNotNull(copyCSVToClipAction);
 	  
@@ -1136,7 +1135,7 @@ public class TestOperations
   public void testDivision()
   {
     // place to store results data
-    InMemoryStore store = new SampleData().getData(10);
+    StoreGroup store = new SampleData().getData(10);
 
     List<IStoreItem> selection = new ArrayList<IStoreItem>();
 
@@ -1264,7 +1263,7 @@ public class TestOperations
   @SuppressWarnings("unchecked")
   public void testGenerateDummyDataOperation()
     {
-  	  InMemoryStore store = new SampleData().getData(10);
+  	  StoreGroup store = new SampleData().getData(10);
 
   	  List<IStoreItem> selection = new ArrayList<IStoreItem>();
 
@@ -1285,7 +1284,7 @@ public class TestOperations
   
   @Test
   public void testDeleteCollectionOperation(){
-	  InMemoryStore store = new SampleData().getData(10);
+	  StoreGroup store = new SampleData().getData(10);
 	  List<IStoreItem> selection = new ArrayList<IStoreItem>();
 
 	  ICollection speedGood1 = (ICollection) store.get(SampleData.SPEED_ONE);
@@ -1303,7 +1302,7 @@ public class TestOperations
 
   @Test
   public void testBearingBetweenTracksOperation() throws IOException{
-	  InMemoryStore store = new SampleData().getData(10);
+	  StoreGroup store = new SampleData().getData(10);
 	  List<IStoreItem> selection = new ArrayList<IStoreItem>();
 
 	  File file = TestCsvParser.getDataFile("americas_cup/usa.csv");

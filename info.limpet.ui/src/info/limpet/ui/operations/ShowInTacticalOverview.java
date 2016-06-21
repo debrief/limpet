@@ -23,7 +23,7 @@ import info.limpet.ITemporalObjectCollection;
 import info.limpet.ITemporalQuantityCollection;
 import info.limpet.data.commands.AbstractCommand;
 import info.limpet.data.operations.CollectionComplianceTests;
-import info.limpet.data.store.InMemoryStore.StoreGroup;
+import info.limpet.data.store.StoreGroup;
 import info.limpet.stackedcharts.model.Chart;
 import info.limpet.stackedcharts.model.ChartSet;
 import info.limpet.stackedcharts.model.DataItem;
@@ -99,7 +99,7 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
       // ok, start looking deeper
       StoreGroup sg = (StoreGroup) selection.get(0);
 
-      List<IStoreItem> children = sg.children();
+      List<IStoreItem> children = sg;
       Iterator<IStoreItem> iter = children.iterator();
       while (iter.hasNext())
       {
@@ -295,7 +295,7 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
     rangePlot.getMinAxes().add(rangeAxis);
     res.getCharts().add(rangePlot);
     
-    List<IStoreItem> children = sg.children();
+    List<IStoreItem> children = sg;
     Iterator<IStoreItem> iter = children.iterator();
     while (iter.hasNext())
     {
@@ -335,7 +335,7 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
             relativeChart.getMinAxes().add(brgRateAxis);
 
             // now sort out the data series
-            Iterator<IStoreItem> dIter = relative.children().iterator();
+            Iterator<IStoreItem> dIter = relative.iterator();
             while (dIter.hasNext())
             {
               IStoreItem iStoreItem = (IStoreItem) dIter.next();
@@ -403,7 +403,7 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
     if (group.size() == 3)
     {
       // now sort out the data series
-      Iterator<IStoreItem> dIter = group.children().iterator();
+      Iterator<IStoreItem> dIter = group.iterator();
       while (dIter.hasNext())
       {
         IStoreItem iStoreItem = (IStoreItem) dIter.next();

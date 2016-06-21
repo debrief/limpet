@@ -2,10 +2,12 @@ package info.limpet.stackedcharts.ui.view;
 
 import info.limpet.stackedcharts.model.ChartSet;
 import info.limpet.stackedcharts.ui.editor.StackedchartsEditControl;
+import info.limpet.stackedcharts.ui.view.ChartBuilder.TimeBarPlot;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -69,6 +71,8 @@ public class StackedChartsView extends ViewPart implements
 
   private final List<ISelectionChangedListener> selectionListeners =
       new ArrayList<ISelectionChangedListener>();
+  private Date _currentTime;
+  private ChartComposite _chartComposite;
 
   @Override
   public void addSelectionChangedListener(
@@ -198,7 +202,7 @@ public class StackedChartsView extends ViewPart implements
   protected Control createChartView()
   {
     // defer creation of the actual chart until we receive
-    // some model data. So, just have an empty panel 
+    // some model data. So, just have an empty panel
     // to start with
     chartHolder = new Composite(stackedPane, SWT.NONE);
     chartHolder.setLayout(new FillLayout());
@@ -314,9 +318,9 @@ public class StackedChartsView extends ViewPart implements
           // to the view mode. let's create listeners, so the
           // chart has discrete updates in response to
           // model changes
-          
+
           // double check we have a charts model
-          if(charts != null)
+          if (charts != null)
           {
             setModel(charts);
           }
@@ -329,10 +333,14 @@ public class StackedChartsView extends ViewPart implements
     });
 
     // add the (mock) export buttons
-    final Action toPNG = new Action("PNG"){};
+    final Action toPNG = new Action("PNG")
+    {
+    };
     toPNG.setToolTipText("Export the chart set to clipboard as bitmap image");
     manager.add(toPNG);
-    final Action toWMF = new Action("WMF"){};
+    final Action toWMF = new Action("WMF")
+    {
+    };
     toWMF.setToolTipText("Export the chart set to clipboard as vector image");
     manager.add(toWMF);
   }
@@ -441,8 +449,7 @@ public class StackedChartsView extends ViewPart implements
 
     // and now repopulate
     final JFreeChart chart = ChartBuilder.build(charts);
-    @SuppressWarnings("unused")
-    final ChartComposite _chartComposite =
+    _chartComposite =
         new ChartComposite(chartHolder, SWT.NONE, chart, 400, 600, 300, 200,
             1800, 1800, true, false, true, true, true, true)
         {
@@ -469,6 +476,57 @@ public class StackedChartsView extends ViewPart implements
     if (!initEditor.get())
     {
       chartEditor.getViewer().setSelection(selection);
+    }
+  }
+
+  /**
+   * update (or clear) the displayed time marker
+   * 
+   * @param newTime
+   */
+  public void updateTime(Date newTime)
+  {
+    Date oldTime = _currentTime;
+    _currentTime = newTime;
+
+    if (newTime != null && !newTime.equals(oldTime) || newTime != oldTime)
+    {
+      // try to get the time aware plot
+      JFreeChart combined = _chartComposite.getChart();
+      TimeBarPlot plot = (TimeBarPlot) combined.getPlot();
+      plot.setTime(newTime);
+      
+      // ok, trigger ui update
+      refreshPlot();
+    }
+
+  }
+
+  private void refreshPlot()
+  {
+    Runnable runnable = new Runnable()
+    {
+
+      @Override
+      public void run()
+      {
+        if (_chartComposite != null && !_chartComposite.isDisposed())
+        {
+          JFreeChart c = _chartComposite.getChart();
+          if (c != null)
+          {
+            c.setNotify(true);
+          }
+        }
+      }
+    };
+    if (Display.getCurrent() != null)
+    {
+      runnable.run();
+    }
+    else
+    {
+      Display.getDefault().syncExec(runnable);
     }
   }
 }

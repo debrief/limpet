@@ -45,8 +45,7 @@ import info.limpet.data.operations.spatial.GenerateCourseAndSpeedOperation;
 import info.limpet.data.operations.spatial.GeoSupport;
 import info.limpet.data.operations.spatial.IGeoCalculator;
 import info.limpet.data.operations.spatial.ProplossBetweenTwoTracksOperation;
-import info.limpet.data.store.InMemoryStore;
-import info.limpet.data.store.InMemoryStore.StoreGroup;
+import info.limpet.data.store.StoreGroup;
 
 import java.awt.geom.Point2D;
 import java.io.File;
@@ -94,7 +93,7 @@ public class TestGeotoolsGeometry extends TestCase
     List<IStoreItem> sel = new ArrayList<IStoreItem>();
     sel.add(track);
 
-    InMemoryStore store = new InMemoryStore();
+    StoreGroup store = new StoreGroup();
 
     Collection<ICommand<IStoreItem>> ops =
         genny.actionsFor(sel, store, context);
@@ -140,7 +139,7 @@ public class TestGeotoolsGeometry extends TestCase
     sel.add(track1);
     sel.add(track2);
 
-    InMemoryStore store = new InMemoryStore();
+    StoreGroup store = new StoreGroup();
 
     List<ICommand<IStoreItem>> ops =
         (List<ICommand<IStoreItem>>) genny.actionsFor(sel, store, context);
@@ -243,7 +242,7 @@ public class TestGeotoolsGeometry extends TestCase
     List<IStoreItem> selection = new ArrayList<IStoreItem>();
     selection.add(loc1);
 
-    IStore store = new InMemoryStore();
+    IStore store = new StoreGroup();
     Collection<ICommand<IStoreItem>> ops =
         new DistanceBetweenTracksOperation().actionsFor(selection, store,
             context);
@@ -291,7 +290,7 @@ public class TestGeotoolsGeometry extends TestCase
     List<IStoreItem> selection = new ArrayList<IStoreItem>();
     selection.add(loc1);
 
-    IStore store = new InMemoryStore();
+    IStore store = new StoreGroup();
 
     Collection<ICommand<IStoreItem>> ops =
         new DistanceBetweenTracksOperation().actionsFor(selection, store,
@@ -358,7 +357,7 @@ public class TestGeotoolsGeometry extends TestCase
     List<IStoreItem> selection = new ArrayList<IStoreItem>();
     selection.add(loc1);
 
-    IStore store = new InMemoryStore();
+    IStore store = new StoreGroup();
 
     Collection<ICommand<IStoreItem>> ops =
         new ProplossBetweenTwoTracksOperation().actionsFor(selection, store,
@@ -439,7 +438,7 @@ public class TestGeotoolsGeometry extends TestCase
     List<IStoreItem> selection = new ArrayList<IStoreItem>();
     selection.add(loc1);
 
-    IStore store = new InMemoryStore();
+    IStore store = new StoreGroup();
 
     Collection<ICommand<IStoreItem>> ops =
         new DistanceBetweenTracksOperation().actionsFor(selection, store,
@@ -476,7 +475,7 @@ public class TestGeotoolsGeometry extends TestCase
     final List<IStoreItem> items = new ArrayList<IStoreItem>();
     final DopplerShiftBetweenTracksOperation doppler =
         new DopplerShiftBetweenTracksOperation();
-    final InMemoryStore store = new InMemoryStore();
+    final StoreGroup store = new StoreGroup();
     final CollectionComplianceTests tests = new CollectionComplianceTests();
 
     IContext mockContext = new MockContext();
@@ -629,7 +628,7 @@ public class TestGeotoolsGeometry extends TestCase
     final ArrayList<IStoreItem> items = new ArrayList<IStoreItem>();
     final DopplerShiftBetweenTracksOperation doppler =
         new DopplerShiftBetweenTracksOperation();
-    final InMemoryStore store = new InMemoryStore();
+    final StoreGroup store = new StoreGroup();
     final CollectionComplianceTests tests = new CollectionComplianceTests();
 
     // create datasets

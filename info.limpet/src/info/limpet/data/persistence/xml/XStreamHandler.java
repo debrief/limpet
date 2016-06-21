@@ -22,8 +22,7 @@ import info.limpet.data.impl.TemporalObjectCollection;
 import info.limpet.data.impl.TemporalQuantityCollection;
 import info.limpet.data.operations.arithmetic.AddQuantityOperation.AddQuantityValues;
 import info.limpet.data.operations.arithmetic.MultiplyQuantityOperation.MultiplyQuantityValues;
-import info.limpet.data.store.InMemoryStore;
-import info.limpet.data.store.InMemoryStore.StoreGroup;
+import info.limpet.data.store.StoreGroup;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -53,7 +52,7 @@ public class XStreamHandler
   static
   {
     XSTREAM = new XStream();
-    XSTREAM.alias("store", InMemoryStore.class);
+    XSTREAM.alias("store", StoreGroup.class);
     XSTREAM.alias("TransformedUnit", TransformedUnit.class);
     XSTREAM.alias("ProductUnit", ProductUnit.class);
     XSTREAM.alias("AlternateUnit", AlternateUnit.class);

@@ -21,7 +21,7 @@ import info.limpet.IStore;
 import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
 import info.limpet.data.commands.AbstractCommand;
-import info.limpet.data.store.InMemoryStore;
+import info.limpet.data.store.StoreGroup;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -87,9 +87,9 @@ public class DeleteCollectionOperation implements IOperation<IStoreItem>
 				{
 					// hmm, must be at the top level
 					IStore store = getStore();
-					if (store instanceof InMemoryStore)
+					if (store instanceof StoreGroup)
 					{
-						InMemoryStore mem = (InMemoryStore) store;
+						StoreGroup mem = (StoreGroup) store;
 						mem.remove(iCollection);
 					}
 				}				

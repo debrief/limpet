@@ -30,8 +30,7 @@ import info.limpet.data.operations.arithmetic.AddQuantityOperation;
 import info.limpet.data.operations.arithmetic.MultiplyQuantityOperation;
 import info.limpet.data.operations.spatial.GeoSupport;
 import info.limpet.data.operations.spatial.IGeoCalculator;
-import info.limpet.data.store.InMemoryStore;
-import info.limpet.data.store.InMemoryStore.StoreGroup;
+import info.limpet.data.store.StoreGroup;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
@@ -70,9 +69,9 @@ public class SampleData
   public static final String SINGLETON_LOC_1 = "Single Track One";
   public static final String SINGLETON_LOC_2 = "Single Track Two";
 
-  public InMemoryStore getData(long count)
+  public StoreGroup getData(long count)
   {
-    InMemoryStore res = new InMemoryStore();
+    StoreGroup res = new StoreGroup();
 
     // // collate our data series
     StockTypes.NonTemporal.FrequencyHz freq1 =
@@ -183,7 +182,7 @@ public class SampleData
 
     singletonLength.add(12d);
 
-    List<IStoreItem> list = new ArrayList<IStoreItem>();
+    IStoreGroup list = new StoreGroup();
     StoreGroup group1 = new StoreGroup("Speed data");
     group1.add(speedSeries1);
     group1.add(speedIrregular);
@@ -225,7 +224,7 @@ public class SampleData
 
     list.add(factors);
     
-    IStoreGroup compositeTrack = new InMemoryStore.StoreGroup(COMPOSITE_ONE);
+    IStoreGroup compositeTrack = new StoreGroup(COMPOSITE_ONE);
     compositeTrack.add(angle1);
     compositeTrack.add(track2);
     compositeTrack.add(freq1);

@@ -25,7 +25,7 @@ import info.limpet.ICollection;
 import info.limpet.ICommand;
 import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
-import info.limpet.data.store.InMemoryStore;
+import info.limpet.data.store.StoreGroup;
 
 /**
  * make the Limpet data store suitable for displaying in a tree control
@@ -229,7 +229,7 @@ public class DataModel implements ITreeContentProvider
 
     if (parent != null)
     {
-      InMemoryStore store = (InMemoryStore) parent;
+      StoreGroup store = (StoreGroup) parent;
 
       final Iterator<IStoreItem> iter = store.iterator();
       while (iter.hasNext())
