@@ -242,9 +242,7 @@ public class StackedChartsView extends ViewPart implements
     // Drop Support for *.stackedcharts
     connectFileDropSupport(stackedPane);
 
-    // see https://github.com/debrief/limpet/issues/265
-    if (!System.getProperty("os.name").toLowerCase().contains("mac"))
-    {
+    
       transitionManager = new TransitionManager(new Transitionable()
       {
         @Override
@@ -268,8 +266,8 @@ public class StackedChartsView extends ViewPart implements
         @Override
         public double getDirection(final int toIndex, final int fromIndex)
         {
-          return toIndex == CHART_VIEW ? Transition.DIR_RIGHT
-              : Transition.DIR_LEFT;
+          return toIndex == CHART_VIEW ? Transition.DIR_DOWN
+              : Transition.DIR_UP;
         }
 
         @Override
@@ -285,9 +283,13 @@ public class StackedChartsView extends ViewPart implements
         }
       });
       // new SlideTransition(_tm)
-      transitionManager.setTransition(new CubicRotationTransition(
-          transitionManager));
-    }
+      CubicRotationTransition cubicRotationTransition = new CubicRotationTransition(
+          transitionManager);
+     
+      cubicRotationTransition.setTotalTransitionTime(1000);
+      cubicRotationTransition.setFPS(60);
+      transitionManager.setTransition(cubicRotationTransition);
+    
   }
 
   protected void fillLocalPullDown(final IMenuManager manager)
