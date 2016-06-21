@@ -1,6 +1,7 @@
 package info.limpet.stackedcharts.ui.view;
 
 import info.limpet.stackedcharts.model.AbstractAnnotation;
+import info.limpet.stackedcharts.model.AxisDirection;
 import info.limpet.stackedcharts.model.AxisType;
 import info.limpet.stackedcharts.model.Chart;
 import info.limpet.stackedcharts.model.ChartSet;
@@ -389,6 +390,10 @@ public class ChartBuilder
         helper = new NumberHelper();
       }
       sharedAxis = helper.createAxis(sharedAxisModel.getName());
+      if(sharedAxisModel.getDirection()==AxisDirection.DESCENDING)
+      {
+        sharedAxis.setInverted(true);
+      }
     }
 
     final CombinedDomainXYPlot plot = new TimeBarPlot(sharedAxis);
@@ -451,6 +456,10 @@ public class ChartBuilder
         helper = new NumberHelper();
       }
       sharedAxis = helper.createAxis(sharedAxisModel.getName());
+      if(sharedAxisModel.getDirection()==AxisDirection.DESCENDING)
+      {
+        sharedAxis.setInverted(true);
+      }
     }
     sharedAxis.setVisible(false);
     final CombinedDomainXYPlot plot = new TimeBarPlot(sharedAxis);
@@ -556,6 +565,11 @@ public class ChartBuilder
     final XYDataset collection = axeshelper.createCollection();
 
     final ValueAxis chartAxis = new NumberAxis(dependentAxis.getName());
+    
+    if(dependentAxis.getDirection()==AxisDirection.DESCENDING)
+    {
+      chartAxis.setInverted(true);
+    }
     addDatasetToAxis(axeshelper, dependentAxis.getDatasets(), collection,
         renderer, indexSeries);
 
