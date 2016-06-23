@@ -37,14 +37,16 @@ public class StoreGroup extends ArrayList<IStoreItem> implements IStore,
    */
   private static final long serialVersionUID = 1L;
 
-  private transient List<StoreChangeListener> _listeners =
-      new ArrayList<StoreChangeListener>();
+  private transient List<StoreChangeListener> _storeListeners;
+  private transient List<IChangeListener> _listeners;
   private transient List<PropertyChangeListener> _timeListeners;
   private Date _currentTime;
   
   private UUID uuid;
 
-  private String _name; 
+  private String _name;
+
+  private IStoreGroup _parent; 
   private static final String TOP_LEVEL_NAME = "Limpet Store";
   
   public StoreGroup(String name)
@@ -52,6 +54,20 @@ public class StoreGroup extends ArrayList<IStoreItem> implements IStore,
     _name = name;
   }
 
+  private void checkListeners()
+  {
+    if(_storeListeners == null)
+    {
+      _storeListeners =
+          new ArrayList<StoreChangeListener>();
+    }
+    if(_listeners == null)
+    {
+      _listeners =
+          new ArrayList<IChangeListener>();
+    }
+  }
+  
   public StoreGroup()
   {
     this(TOP_LEVEL_NAME);
@@ -64,17 +80,23 @@ public class StoreGroup extends ArrayList<IStoreItem> implements IStore,
 
   public void addChangeListener(StoreChangeListener listener)
   {
-    _listeners.add(listener);
+    checkListeners();
+    
+    _storeListeners.add(listener);
   }
 
   public void removeChangeListener(StoreChangeListener listener)
   {
-    _listeners.remove(listener);
+    checkListeners();
+    
+    _storeListeners.remove(listener);
   }
 
   protected void fireModified()
   {
-    Iterator<StoreChangeListener> iter = _listeners.iterator();
+    checkListeners();
+
+    Iterator<StoreChangeListener> iter = _storeListeners.iterator();
     while (iter.hasNext())
     {
       StoreChangeListener listener =
@@ -264,22 +286,19 @@ public class StoreGroup extends ArrayList<IStoreItem> implements IStore,
   @Override
   public boolean hasChildren()
   {
-    // TODO Auto-generated method stub
-    return false;
+    return size() > 0;
   }
 
   @Override
   public IStoreGroup getParent()
   {
-    // TODO Auto-generated method stub
-    return null;
+    return _parent;
   }
 
   @Override
   public void setParent(IStoreGroup parent)
   {
-    // TODO Auto-generated method stub
-
+    _parent = parent;
   }
 
   @Override
@@ -291,16 +310,29 @@ public class StoreGroup extends ArrayList<IStoreItem> implements IStore,
   @Override
   public void addChangeListener(IChangeListener listener)
   {
+    checkListeners();
+    
+    _listeners.add(listener);
   }
 
   @Override
   public void removeChangeListener(IChangeListener listener)
   {
+    checkListeners();
+    
+    _listeners.add(listener);
   }
 
   @Override
   public void fireDataChanged()
   {
+    if(_listeners != null)
+    {
+      for(IChangeListener listener: _listeners)
+      {
+        listener.dataChanged(this);
+      }
+    }
   }
 
   @Override
