@@ -7,13 +7,12 @@ import org.eclipse.draw2d.ActionEvent;
 import org.eclipse.draw2d.ActionListener;
 import org.eclipse.draw2d.Button;
 import org.eclipse.draw2d.GridData;
-import org.eclipse.draw2d.GridLayout;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Label;
-import org.eclipse.draw2d.RectangleFigure;
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.Notifier;
+import org.eclipse.gef.EditPart;
 import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.commands.CommandStack;
@@ -32,6 +31,7 @@ import info.limpet.stackedcharts.model.Styling;
 import info.limpet.stackedcharts.ui.editor.StackedchartsImages;
 import info.limpet.stackedcharts.ui.editor.commands.DeleteDatasetsFromAxisCommand;
 import info.limpet.stackedcharts.ui.editor.figures.DatasetFigure;
+import info.limpet.stackedcharts.ui.editor.figures.DirectionalShape;
 
 public class DatasetEditPart extends AbstractGraphicalEditPart implements
     ActionListener
@@ -44,21 +44,23 @@ public class DatasetEditPart extends AbstractGraphicalEditPart implements
   @Override
   protected IFigure createFigure()
   {
-    RectangleFigure figure = new RectangleFigure();
-    figure.setOutline(false);
-    GridLayout layout = new GridLayout();
-    figure.setLayoutManager(layout);
+    DirectionalShape figure = new DirectionalShape();
+
+    contentPane = new DatasetFigure();
+    figure.add(contentPane);
 
     Button button = new Button(StackedchartsImages.getImage(
         StackedchartsImages.DESC_DELETE));
     button.setToolTip(new Label("Remove the dataset from this axis"));
     button.addActionListener(this);
     figure.add(button);
-
-    contentPane = new DatasetFigure();
-    figure.add(contentPane);
-
     return figure;
+  }
+
+  @Override
+  protected void addChildVisual(EditPart childEditPart, int index)
+  {
+    super.addChildVisual(childEditPart, getContentPane().getChildren().size());
   }
 
   @Override
@@ -107,38 +109,23 @@ public class DatasetEditPart extends AbstractGraphicalEditPart implements
     ChartSet parent = ((Chart) getParent().getParent().getParent().getModel())
         .getParent();
 
-    GridLayout layoutManager = (GridLayout) getFigure().getLayoutManager();
-    GridLayout contentPaneLayout = (GridLayout) contentPane.getLayoutManager();
     boolean horizontal = parent.getOrientation() == Orientation.HORIZONTAL;
+    ((DirectionalShape) getFigure()).setVertical(!horizontal);
+
     if (horizontal)
     {
-      layoutManager.numColumns = figure.getChildren().size();
       contentPane.setVertical(false);
-      contentPaneLayout.numColumns = getModelChildren().size() + contentPane
-          .getChildren().size();
-
-      layoutManager.setConstraint(contentPane, new GridData(GridData.FILL,
-          GridData.FILL, true, false));
-
       setLayoutConstraint(this, getFigure(), new GridData(GridData.FILL,
           GridData.FILL, true, false));
 
     }
     else
     {
-      layoutManager.numColumns = 1;
       contentPane.setVertical(true);
-      contentPaneLayout.numColumns = 1;
-
-      layoutManager.setConstraint(contentPane, new GridData(GridData.CENTER,
-          GridData.FILL, false, true));
-
       setLayoutConstraint(this, getFigure(), new GridData(GridData.CENTER,
           GridData.FILL, false, true));
 
     }
-    contentPaneLayout.invalidate();
-    layoutManager.invalidate();
   }
 
   protected Dataset getDataset()
