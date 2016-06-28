@@ -22,7 +22,7 @@ class StackedPane extends Composite
   private final Map<Integer, Control> _panes = new HashMap<Integer, Control>();
   private final List<Control> _pages = new ArrayList<Control>();
   private List<SelectionListener> listeners = new ArrayList<>(1);
-private int _sekectionKey = -1;
+  private int _activePane = -1;
 
   public StackedPane(Composite parent)
   {
@@ -83,12 +83,11 @@ private int _sekectionKey = -1;
     {
       return;
     }
-    _sekectionKey  = pane;
+    _activePane  = pane;
     Control control = _panes.get(pane);
     if(fireEvent)
       fireSelection(control);
-    else
-      completeSelection();
+   
    
     
     
@@ -97,7 +96,7 @@ private int _sekectionKey = -1;
   
   void completeSelection()
   {
-    Control control = _panes.get(_sekectionKey);
+    Control control = _panes.get(_activePane);
 
     if (control != null)
     {
@@ -139,7 +138,7 @@ private int _sekectionKey = -1;
   public int getActiveControlKey()
   {
     
-    return _sekectionKey;
+    return _activePane;
   }
 
   public void addSelectionListener(SelectionListener listener)
