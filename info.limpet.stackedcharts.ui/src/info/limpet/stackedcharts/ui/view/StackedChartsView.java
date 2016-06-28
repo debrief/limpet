@@ -272,8 +272,8 @@ public class StackedChartsView extends ViewPart implements
       @Override
       public double getDirection(final int toIndex, final int fromIndex)
       {
-        return toIndex == CHART_VIEW ? Transition.DIR_DOWN
-            : Transition.DIR_UP;
+        return toIndex == CHART_VIEW ? Transition.DIR_LEFT
+            : Transition.DIR_RIGHT;
       }
 
       @Override
