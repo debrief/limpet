@@ -3,6 +3,10 @@ package info.limpet.stackedcharts.ui.editor.figures;
 import org.eclipse.draw2d.Label;
 import org.eclipse.swt.graphics.Image;
 
+/**
+ * A {@link DirectionalShape} that has a {@link Label} and an icon on the left.
+ *
+ */
 public class DirectionalIconLabel extends DirectionalShape
 {
   private final DirectionalLabel label;
