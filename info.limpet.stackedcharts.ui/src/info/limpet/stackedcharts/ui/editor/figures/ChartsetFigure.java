@@ -1,38 +1,27 @@
 package info.limpet.stackedcharts.ui.editor.figures;
 
-import info.limpet.stackedcharts.model.Orientation;
-import info.limpet.stackedcharts.ui.editor.StackedchartsImages;
-
 import org.eclipse.draw2d.ActionListener;
 import org.eclipse.draw2d.Button;
-import org.eclipse.draw2d.FlowLayout;
-import org.eclipse.draw2d.GridLayout;
 import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.PositionConstants;
-import org.eclipse.draw2d.RectangleFigure;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Display;
 
-public class ChartsetFigure extends RectangleFigure
+import info.limpet.stackedcharts.ui.editor.StackedchartsImages;
+
+public class ChartsetFigure extends DirectionalShape
 {
   private static volatile Font boldFont;
   private DirectionalLabel chartsetHeader;
 
   public ChartsetFigure(ActionListener addChartHandler)
   {
-    setOutline(false);
-    GridLayout layout = new GridLayout();
-    setLayoutManager(layout);
-
-    Label icon = new Label(StackedchartsImages.getImage(
-        StackedchartsImages.DESC_CHARTSET));
-    add(icon);
-
+    add(new Label(StackedchartsImages.getImage(
+        StackedchartsImages.DESC_CHARTSET)));
     chartsetHeader = new DirectionalLabel();
     chartsetHeader.setText("Chart Set");
-
     chartsetHeader.setTextAlignment(PositionConstants.TOP);
     if (boldFont == null)
     {
@@ -41,7 +30,6 @@ public class ChartsetFigure extends RectangleFigure
       boldFont = new Font(Display.getCurrent(), new FontData(fontData.getName(),
           fontData.getHeight(), SWT.BOLD));
     }
-
     chartsetHeader.setFont(boldFont);
     add(chartsetHeader);
 
@@ -55,11 +43,8 @@ public class ChartsetFigure extends RectangleFigure
 
   public void setVertical(boolean vertical)
   {
-    ((GridLayout) getLayoutManager()).numColumns = vertical ? 1 : getChildren()
-        .size();
+    super.setVertical(vertical);
     chartsetHeader.setVertical(vertical);
-
-    invalidate();
   }
 
 }

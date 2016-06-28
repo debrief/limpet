@@ -5,7 +5,6 @@ import org.eclipse.draw2d.GridLayout;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.PositionConstants;
 import org.eclipse.draw2d.RectangleFigure;
-import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.Notifier;
@@ -25,7 +24,7 @@ import info.limpet.stackedcharts.model.Orientation;
 import info.limpet.stackedcharts.model.StackedchartsPackage;
 import info.limpet.stackedcharts.ui.editor.StackedchartsImages;
 import info.limpet.stackedcharts.ui.editor.figures.ArrowFigure;
-import info.limpet.stackedcharts.ui.editor.figures.DirectionalLabel;
+import info.limpet.stackedcharts.ui.editor.figures.DirectionalIconLabel;
 
 /**
  * Represents the shared (independent) axis of a {@link ChartSet} object
@@ -39,7 +38,7 @@ public class SharedAxisEditPart extends AbstractGraphicalEditPart
 
   private ChartSetAdapter chartSetAdapter = new ChartSetAdapter();
 
-  private DirectionalLabel axisNameLabel;
+  private DirectionalIconLabel axisNameLabel;
 
   private ArrowFigure arrowFigure;
 
@@ -78,12 +77,9 @@ public class SharedAxisEditPart extends AbstractGraphicalEditPart
     rectangle.add(arrowFigure);
     
     // and the text label
-    axisNameLabel = new DirectionalLabel();
-
-    axisNameLabel.setIcon(StackedchartsImages.getImage(
+    axisNameLabel = new DirectionalIconLabel(StackedchartsImages.getImage(
         StackedchartsImages.DESC_AXIS));
-    axisNameLabel.setTextAlignment(PositionConstants.CENTER);
-    axisNameLabel.setIconAlignment(PositionConstants.CENTER);
+    axisNameLabel.getLabel().setTextAlignment(PositionConstants.CENTER);
     rectangle.add(axisNameLabel);
     
     return rectangle;
@@ -97,7 +93,7 @@ public class SharedAxisEditPart extends AbstractGraphicalEditPart
     {
       name = "<unnamed>";
     }
-    axisNameLabel.setText("Shared axis: " + name);
+    axisNameLabel.getLabel().setText("Shared axis: " + name);
 
     if (boldFont == null)
     {
@@ -105,7 +101,7 @@ public class SharedAxisEditPart extends AbstractGraphicalEditPart
       boldFont = new Font(Display.getCurrent(), new FontData(fontData.getName(),
           fontData.getHeight(), SWT.BOLD));
     }
-    axisNameLabel.setFont(boldFont);
+    axisNameLabel.getLabel().setFont(boldFont);
 
     GridData gridData = new GridData();
     gridData.horizontalAlignment = SWT.FILL;

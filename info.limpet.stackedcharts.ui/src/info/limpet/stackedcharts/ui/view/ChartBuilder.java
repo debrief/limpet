@@ -78,6 +78,7 @@ public class ChartBuilder
     
     Date _currentTime = null;
     boolean _showLine = true;
+    final java.awt.Color _orange = new java.awt.Color(247,153,37);
     
     public TimeBarPlot(ValueAxis sharedAxis)
     {
@@ -166,7 +167,8 @@ public class ChartBuilder
     {
       // prepare to draw
       final Stroke oldStroke = g2.getStroke();
-      g2.setXORMode(Color.darkGray);
+      
+      g2.setColor(_orange);
 
       // thicken up the line
       g2.setStroke(new BasicStroke(3));

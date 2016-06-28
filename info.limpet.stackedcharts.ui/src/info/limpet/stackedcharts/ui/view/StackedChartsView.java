@@ -1,6 +1,7 @@
 package info.limpet.stackedcharts.ui.view;
 
 import info.limpet.stackedcharts.model.ChartSet;
+import info.limpet.stackedcharts.ui.editor.Activator;
 import info.limpet.stackedcharts.ui.editor.StackedchartsEditControl;
 import info.limpet.stackedcharts.ui.view.ChartBuilder.TimeBarPlot;
 
@@ -248,7 +249,6 @@ public class StackedChartsView extends ViewPart implements
     // Drop Support for *.stackedcharts
     connectFileDropSupport(stackedPane);
 
-   
     transitionManager = new TransitionManager(new Transitionable()
     {
       @Override
@@ -272,8 +272,8 @@ public class StackedChartsView extends ViewPart implements
       @Override
       public double getDirection(final int toIndex, final int fromIndex)
       {
-        return toIndex == CHART_VIEW ? Transition.DIR_LEFT
-            : Transition.DIR_RIGHT;
+        return toIndex == CHART_VIEW ? Transition.DIR_RIGHT
+            : Transition.DIR_LEFT;
       }
 
       @Override
@@ -291,19 +291,20 @@ public class StackedChartsView extends ViewPart implements
     // new SlideTransition(_tm)
     transitionManager.setTransition(new CubicRotationTransition(
         transitionManager));
-    
-    
+
     // listen out for closing
     parent.addDisposeListener(this);
-    
+
     // and remember to detach ourselves
-    final DisposeListener meL = this;    
-    final Runnable dropMe = new Runnable(){
+    final DisposeListener meL = this;
+    final Runnable dropMe = new Runnable()
+    {
       @Override
       public void run()
       {
         parent.removeDisposeListener(meL);
-      }};
+      }
+    };
     addRunOnCloseCallback(dropMe);
   }
 
@@ -344,18 +345,24 @@ public class StackedChartsView extends ViewPart implements
         }
       }
     });
+    final Action showTime = new Action("Show time marker", SWT.TOGGLE)
+    {
+      @Override
+      public void run()
+      {
+        // ok, trigger graph redraw
+        JFreeChart combined = _chartComposite.getChart();
+        TimeBarPlot plot = (TimeBarPlot) combined.getPlot();
+        plot._showLine = isChecked();
 
-    // add the (mock) export buttons
-    final Action toPNG = new Action("PNG")
-    {
+        // ok, trigger ui update
+        refreshPlot();
+      }
     };
-    toPNG.setToolTipText("Export the chart set to clipboard as bitmap image");
-    manager.add(toPNG);
-    final Action toWMF = new Action("WMF")
-    {
-    };
-    toWMF.setToolTipText("Export the chart set to clipboard as vector image");
-    manager.add(toWMF);
+    showTime.setChecked(true);
+    showTime.setImageDescriptor(Activator.imageDescriptorFromPlugin(
+        Activator.PLUGIN_ID, "icons/clock.png"));
+    manager.add(showTime);
   }
 
   /**
@@ -477,6 +484,7 @@ public class StackedChartsView extends ViewPart implements
             }
           }
         };
+    chart.setAntiAlias(false);
 
     chartHolder.pack(true);
     chartHolder.getParent().layout();
@@ -508,7 +516,7 @@ public class StackedChartsView extends ViewPart implements
       JFreeChart combined = _chartComposite.getChart();
       TimeBarPlot plot = (TimeBarPlot) combined.getPlot();
       plot.setTime(newTime);
-      
+
       // ok, trigger ui update
       refreshPlot();
     }
@@ -543,13 +551,14 @@ public class StackedChartsView extends ViewPart implements
     }
   }
 
-  /** let classes pass callbacks to be run when we are closing
+  /**
+   * let classes pass callbacks to be run when we are closing
    * 
    * @param runnable
    */
   public void addRunOnCloseCallback(Runnable runnable)
   {
-    if(_closeCallbacks == null)
+    if (_closeCallbacks == null)
     {
       _closeCallbacks = new ArrayList<Runnable>();
     }
@@ -559,17 +568,26 @@ public class StackedChartsView extends ViewPart implements
   @Override
   public void widgetDisposed(DisposeEvent e)
   {
-    if(_closeCallbacks != null)
+    if (_closeCallbacks != null)
     {
-      for(Runnable callback: _closeCallbacks)
+      for (Runnable callback : _closeCallbacks)
       {
         callback.run();
       }
     }
-    
+
     // and remove ourselves from our parent
-   
+
   }
-  
-  
+
+  /**
+   * accessor, to be used in exporting the image
+   * 
+   * @return
+   */
+  public ChartComposite getChartComposite()
+  {
+    return _chartComposite;
+  }
+
 }

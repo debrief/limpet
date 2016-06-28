@@ -7,8 +7,6 @@ import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.swt.graphics.Image;
 
-import info.limpet.stackedcharts.model.Orientation;
-
 /**
  * The label is a standard horizontal label by default and it can change orientation to vertical
  *
@@ -18,6 +16,10 @@ public class DirectionalLabel extends Label
 
   private boolean vertical;
 
+//  private DirectionalLabel()
+//  {
+//  }
+  
   @Override
   protected void paintFigure(Graphics graphics)
   {

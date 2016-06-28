@@ -3,9 +3,8 @@ package info.limpet.stackedcharts.ui.editor.figures;
 import org.eclipse.draw2d.ActionListener;
 import org.eclipse.draw2d.BorderLayout;
 import org.eclipse.draw2d.Button;
+import org.eclipse.draw2d.FlowLayout;
 import org.eclipse.draw2d.Graphics;
-import org.eclipse.draw2d.GridData;
-import org.eclipse.draw2d.GridLayout;
 import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.RectangleFigure;
 import org.eclipse.draw2d.geometry.Rectangle;
@@ -19,10 +18,10 @@ import info.limpet.stackedcharts.ui.editor.StackedchartsImages;
 
 public class ChartFigure extends RectangleFigure
 {
-  private final DirectionalLabel chartNameLabel;
+  private final DirectionalIconLabel chartNameLabel;
   private final JFreeChartFigure chartFigure;
   private static volatile Font boldFont;
-  private final RectangleFigure titleFigure;
+  private final DirectionalShape titleFigure;
 
   public ChartFigure(final Chart chart, final ActionListener deleteListener)
   {
@@ -31,17 +30,10 @@ public class ChartFigure extends RectangleFigure
     setOutline(false);
     BorderLayout topLayout = new BorderLayout();
     setLayoutManager(topLayout);
-    titleFigure = new RectangleFigure();
+    titleFigure = new DirectionalShape();
 
-    titleFigure.setOutline(false);
-    final GridLayout titleLayout = new GridLayout();
-    titleFigure.setLayoutManager(titleLayout);
-
-    Label icon = new Label();
-    icon.setIcon(StackedchartsImages.getImage(StackedchartsImages.DESC_CHART));
-    titleFigure.add(icon);
-
-    chartNameLabel = new DirectionalLabel();
+    chartNameLabel = new DirectionalIconLabel(StackedchartsImages.getImage(
+        StackedchartsImages.DESC_CHART));
     titleFigure.add(chartNameLabel);
     final Button button = new Button(StackedchartsImages.getImage(
         StackedchartsImages.DESC_DELETE));
@@ -70,7 +62,7 @@ public class ChartFigure extends RectangleFigure
 
   public void setName(final String name)
   {
-    chartNameLabel.setText(name);
+    chartNameLabel.getLabel().setText(name);
     // cache font for AxisNameFigure
     if (boldFont == null)
     {
@@ -88,23 +80,20 @@ public class ChartFigure extends RectangleFigure
 
   public void setVertical(boolean vertical)
   {
+    titleFigure.setVertical(!vertical);
     BorderLayout topLayout = (BorderLayout) getLayoutManager();
-    GridLayout titleLayout = (GridLayout) titleFigure.getLayoutManager();
     if (vertical)
     {
       topLayout.setConstraint(titleFigure, BorderLayout.TOP);
-      titleLayout.numColumns = titleFigure.getChildren().size();
       chartNameLabel.setVertical(false);
     }
     else
     {
       topLayout.setConstraint(titleFigure, BorderLayout.LEFT);
-      titleLayout.numColumns = 1;
       chartNameLabel.setVertical(true);
     }
 
     topLayout.invalidate();
-    titleLayout.invalidate();
 
     repaint();
 

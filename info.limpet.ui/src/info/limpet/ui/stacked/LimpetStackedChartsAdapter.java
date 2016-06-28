@@ -122,10 +122,10 @@ public class LimpetStackedChartsAdapter implements IStackedAdapter
           {
             res = new ArrayList<Dataset>();
           }
-          
+
           // give it some style
-          dataset.setStyling(factory.createPlainStyling());
-              
+          dataset.setStyling(factory.createPlainStyling());              
+
           res.add(dataset);
         }
         
@@ -173,6 +173,9 @@ public class LimpetStackedChartsAdapter implements IStackedAdapter
           @SuppressWarnings("unused")
           CollectionChangeListener listener = new CollectionChangeListener(tempColl , dataset);
 
+          // give it some style
+          dataset.setStyling(factory.createPlainStyling());              
+          
           // collate the results          
           if(res == null)
           {
