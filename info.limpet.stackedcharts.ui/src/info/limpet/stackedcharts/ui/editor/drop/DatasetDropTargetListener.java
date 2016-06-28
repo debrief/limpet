@@ -120,31 +120,40 @@ abstract public class DatasetDropTargetListener implements
   protected static boolean canDropSelection(final Chart chart, ISelection selection)
   {
     boolean canDrop = true;
-    AdapterRegistry adapter = new AdapterRegistry();
-    if (selection instanceof StructuredSelection)
-    {
-
-      // check the selection
-      for (Object obj : ((StructuredSelection) selection).toArray())
-      {
-        if (adapter.canConvert(obj))
-        {
-          List<Dataset> convert = adapter.convert(obj);
-          if (convert.size() == 0)
-          {
-            continue;
-          }
-          for (Dataset dataset : convert)
-          {
-            if (!canDropDataset(chart, dataset))
-            {
-              canDrop = false;
-              break;
-            }
-          }
-        }
-      }
-    }
+    
+    // NOTE: this section has been deliberately commented out.
+    // The Debrief convert() method sometimes opens a dialog to
+    // ask the user which data to display (for a tree-view item
+    // that is actually several collections.  So, we can't call
+    // convert() for drag-over operations, we can only call 
+    // it after a drop
+    //
+    // We'll have to reconsider the logic here.
+    
+//    AdapterRegistry adapter = new AdapterRegistry();
+//    if (selection instanceof StructuredSelection)
+//    {
+//      // check the selection
+//      for (Object obj : ((StructuredSelection) selection).toArray())
+//      {
+//        if (adapter.canConvert(obj))
+//        {
+//          List<Dataset> convert = adapter.convert(obj);
+//          if (convert.size() == 0)
+//          {
+//            continue;
+//          }
+//          for (Dataset dataset : convert)
+//          {
+//            if (!canDropDataset(chart, dataset))
+//            {
+//              canDrop = false;
+//              break;
+//            }
+//          }
+//        }
+//      }
+//    }
 
     return canDrop;
   }
