@@ -27,6 +27,7 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.nebula.effects.stw.Transition;
+import org.eclipse.nebula.effects.stw.TransitionListener;
 import org.eclipse.nebula.effects.stw.TransitionManager;
 import org.eclipse.nebula.effects.stw.Transitionable;
 import org.eclipse.nebula.effects.stw.transitions.CubicRotationTransition;
@@ -288,6 +289,14 @@ public class StackedChartsView extends ViewPart implements
         stackedPane.showPane(index, false);
       }
     });
+    transitionManager.addTransitionListener(new TransitionListener() {
+		
+		@Override
+		public void transitionFinished(TransitionManager arg0) {
+			stackedPane.completeSelection();
+			
+		}
+	});
     // new SlideTransition(_tm)
     transitionManager.setTransition(new CubicRotationTransition(
         transitionManager));
