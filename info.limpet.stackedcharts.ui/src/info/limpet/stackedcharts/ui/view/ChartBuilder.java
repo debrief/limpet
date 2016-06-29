@@ -543,6 +543,7 @@ public class ChartBuilder
       DependentAxis dependentAxis)
   {
     final XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
+    renderer.setDrawSeriesLineAsPath(true);
     int indexSeries = 0;
     final ChartHelper axeshelper;
 
