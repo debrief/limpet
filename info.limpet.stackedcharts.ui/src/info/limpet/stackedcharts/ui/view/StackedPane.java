@@ -85,9 +85,15 @@ class StackedPane extends Composite
     }
     _activePane  = pane;
     Control control = _panes.get(pane);
+    control.setSize(getSize());
+  
     if(fireEvent)
       fireSelection(control);
-   
+    // fix for work around on mac
+    if (System.getProperty("os.name").toLowerCase().indexOf("mac") >= 0)
+    {
+      completeSelection();
+    }
    
     
     
