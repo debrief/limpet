@@ -38,10 +38,22 @@ public class DatasetToAxisLandingDropTargetListener extends
       List<Dataset> datasets)
   {
     CompoundCommand compoundCommand = new CompoundCommand();
+    
+    // get the dimensions of the first dataset
+    final String units;
+    if (datasets != null && datasets.size() > 0 && datasets.get(0).getUnits() != null)
+    {
+      final Dataset dataset = datasets.get(0);
+      units = dataset.getUnits();
+    }
+    else
+    {
+      units = "[dimensionless]";
+    }
 
     StackedchartsFactoryImpl factory = new StackedchartsFactoryImpl();
     DependentAxis newAxis = factory.createDependentAxis();
-    newAxis.setName("[dimensionless]");
+    newAxis.setName(units);
     newAxis.setAxisType(factory.createNumberAxis());
 
     final ChartPaneEditPart.AxisLandingPad pad =
