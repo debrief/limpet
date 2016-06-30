@@ -90,7 +90,8 @@ class StackedPane extends Composite
     if(fireEvent)
       fireSelection(control);
     // fix for work around on mac
-    if (System.getProperty("os.name").toLowerCase().indexOf("mac") >= 0)
+    if (System.getProperty("os.name").toLowerCase().indexOf("mac") >= 0 || System.getProperty("os.name")
+        .toLowerCase().indexOf("nux") >= 0)
     {
       completeSelection();
     }
