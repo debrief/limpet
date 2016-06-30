@@ -9,9 +9,9 @@ import org.eclipse.swt.dnd.Transfer;
 public class ProxyDropTargetListener implements TransferDropTargetListener
 {
 
-  private final DatasetDropTargetListener[] listeners;
+  private final CoreDropTargetListener[] listeners;
 
-  public ProxyDropTargetListener(DatasetDropTargetListener... listeners)
+  public ProxyDropTargetListener(CoreDropTargetListener... listeners)
   {
     this.listeners = listeners;
   }
@@ -19,7 +19,7 @@ public class ProxyDropTargetListener implements TransferDropTargetListener
   @Override
   public void dragEnter(DropTargetEvent event)
   {
-    for (DatasetDropTargetListener listener : listeners)
+    for (CoreDropTargetListener listener : listeners)
     {
       if(listener.appliesTo(event))
         listener.dragEnter(event);
@@ -32,7 +32,7 @@ public class ProxyDropTargetListener implements TransferDropTargetListener
   @Override
   public void dragLeave(DropTargetEvent event)
   {
-    for (DatasetDropTargetListener listener : listeners)
+    for (CoreDropTargetListener listener : listeners)
     {
       if(listener.appliesTo(event))
         listener.dragLeave(event);
@@ -45,7 +45,7 @@ public class ProxyDropTargetListener implements TransferDropTargetListener
   @Override
   public void dragOperationChanged(DropTargetEvent event)
   {
-    for (DatasetDropTargetListener listener : listeners)
+    for (CoreDropTargetListener listener : listeners)
     {
       if(listener.appliesTo(event))
         listener.dragOperationChanged(event);
@@ -59,7 +59,7 @@ public class ProxyDropTargetListener implements TransferDropTargetListener
   public void dragOver(DropTargetEvent event)
   {
     boolean match = false;
-    for (DatasetDropTargetListener listener : listeners)
+    for (CoreDropTargetListener listener : listeners)
     {
       if(listener.appliesTo(event))
       {
@@ -81,7 +81,7 @@ public class ProxyDropTargetListener implements TransferDropTargetListener
   @Override
   public void drop(DropTargetEvent event)
   {
-    for (DatasetDropTargetListener listener : listeners)
+    for (CoreDropTargetListener listener : listeners)
     {
       if(listener.appliesTo(event))
           listener.drop(event);
@@ -94,7 +94,7 @@ public class ProxyDropTargetListener implements TransferDropTargetListener
   @Override
   public void dropAccept(DropTargetEvent event)
   {
-    for (DatasetDropTargetListener listener : listeners)
+    for (CoreDropTargetListener listener : listeners)
     {
       if(listener.appliesTo(event))
         listener.dropAccept(event);
