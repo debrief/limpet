@@ -1,6 +1,5 @@
 package info.limpet.stackedcharts.ui.view.adapter;
 
-import info.limpet.stackedcharts.model.Dataset;
 import info.limpet.stackedcharts.ui.editor.Activator;
 
 import java.util.List;
@@ -15,9 +14,9 @@ public class AdapterRegistry implements IStackedAdapter
   private static final String ADAPTER_ID = "info.limpet.stackedcharts.ui.stacked_adapter";
 
   @Override
-  public List<Dataset> convert(Object data)
+  public List<Object> convert(Object data)
   {
-    List<Dataset> res = null;
+    List<Object> res = null;
     try
     {
       IConfigurationElement[] config =
