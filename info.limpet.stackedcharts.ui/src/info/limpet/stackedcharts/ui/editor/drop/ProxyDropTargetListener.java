@@ -83,10 +83,14 @@ public class ProxyDropTargetListener implements TransferDropTargetListener
   {
     for (CoreDropTargetListener listener : listeners)
     {
-      if(listener.appliesTo(event))
-          listener.drop(event);
-        else
-          listener.reset();
+      if (listener.appliesTo(event))
+      {
+        listener.drop(event);
+      }
+      else
+      {
+        listener.reset();
+      }
     }
 
   }

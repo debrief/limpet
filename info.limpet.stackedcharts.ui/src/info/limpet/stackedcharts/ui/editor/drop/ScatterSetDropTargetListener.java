@@ -4,6 +4,8 @@ import info.limpet.stackedcharts.model.Chart;
 import info.limpet.stackedcharts.model.Dataset;
 import info.limpet.stackedcharts.model.DependentAxis;
 import info.limpet.stackedcharts.model.ScatterSet;
+import info.limpet.stackedcharts.ui.editor.parts.AxisEditPart;
+import info.limpet.stackedcharts.ui.editor.parts.ChartEditPart;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -12,6 +14,7 @@ import java.util.List;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.GraphicalViewer;
 import org.eclipse.gef.commands.Command;
+import org.eclipse.gef.commands.CompoundCommand;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -24,7 +27,8 @@ import org.eclipse.swt.dnd.DropTargetEvent;
  * @author ian
  * 
  */
-abstract public class ScatterSetDropTargetListener extends CoreDropTargetListener
+abstract public class ScatterSetDropTargetListener extends
+    CoreDropTargetListener
 {
 
   protected AbstractGraphicalEditPart feedback;
@@ -34,15 +38,18 @@ abstract public class ScatterSetDropTargetListener extends CoreDropTargetListene
     super(viewer);
   }
 
-
-  /** wrap up the data change for the drop event
+  /**
+   * wrap up the data change for the drop event
    * 
-   * @param axis
-   * @param datasets
+   * @param chart
+   * @param scatterSets
    * @return
    */
-  abstract protected Command createCommand(AbstractGraphicalEditPart axis,
+  abstract protected Command createScatterCommand(Chart chart,
       List<ScatterSet> scatterSets);
+
+  abstract protected Command createDatasetCommand(Chart chart,
+      DependentAxis axis, List<Dataset> datasets);
 
   protected static boolean datasetAlreadyExistsOnTheseAxes(
       final Iterator<DependentAxis> axes, final String name)
@@ -69,23 +76,6 @@ abstract public class ScatterSetDropTargetListener extends CoreDropTargetListene
     return exists;
   }
 
-  protected static boolean canDropDataset(final Chart chart, final Dataset dataset)
-  {
-    boolean possible = true;
-
-    // check the axis
-    final Iterator<DependentAxis> minIter = chart.getMinAxes().iterator();
-    final Iterator<DependentAxis> maxIter = chart.getMaxAxes().iterator();
-
-    if (datasetAlreadyExistsOnTheseAxes(minIter, dataset.getName())
-        || datasetAlreadyExistsOnTheseAxes(maxIter, dataset.getName()))
-    {
-      possible = false;
-    }
-
-    return possible;
-  }
-
   @Override
   public void drop(DropTargetEvent event)
   {
@@ -101,15 +91,21 @@ abstract public class ScatterSetDropTargetListener extends CoreDropTargetListene
         return;
       }
       List<Object> objects = convertSelection(sel);
-      EditPart target = findPart(event);
+      EditPart part = findPart(event);
 
-      AbstractGraphicalEditPart axis = (AbstractGraphicalEditPart) target;
-      List<ScatterSet> scatterSets = new ArrayList<ScatterSet>(objects.size());
+      AbstractGraphicalEditPart target = (AbstractGraphicalEditPart) part;
+      List<ScatterSet> scatterSets = new ArrayList<ScatterSet>();
+      List<Dataset> datasets = new ArrayList<Dataset>();
+
       for (Object o : objects)
       {
         if (o instanceof ScatterSet)
         {
           scatterSets.add((ScatterSet) o);
+        }
+        else if (o instanceof Dataset)
+        {
+          datasets.add((Dataset) o);
         }
         else if (o instanceof List<?>)
         {
@@ -121,12 +117,89 @@ abstract public class ScatterSetDropTargetListener extends CoreDropTargetListene
             {
               scatterSets.add((ScatterSet) item);
             }
+            else if (item instanceof Dataset)
+            {
+              datasets.add((Dataset) item);
+            }
           }
         }
       }
 
-      Command command = createCommand(axis, scatterSets);
-      getCommandStack().execute(command);
+      // ok, now build up the commands necessary to 
+      // make the changes
+      
+      final Command datasetCommand;
+      if (datasets.size() > 0)
+      {
+        DependentAxis axis = null;
+        Chart chart = null;
+
+        // get the target - we need the chart
+        if (target instanceof AxisEditPart)
+        {
+          axis = (DependentAxis) target.getModel();
+          chart = (Chart) target.getParent().getModel();
+        }
+        else if (target instanceof ChartEditPart)
+        {
+          chart = (Chart) target.getModel();
+        }
+
+        datasetCommand = createDatasetCommand(chart, axis, datasets);
+      }
+      else
+      {
+        datasetCommand = null;
+      }
+
+      Command scatterCommand;
+      if (scatterSets.size() > 0)
+      {
+        Chart chart = null;
+
+        // get the target - we need the chart
+        if (target instanceof AxisEditPart)
+        {
+          AxisEditPart axis = (AxisEditPart) target;
+          chart = (Chart) axis.getParent().getModel();
+        }
+        else if (target instanceof ChartEditPart)
+        {
+          chart = (Chart) target.getModel();
+        }
+
+        scatterCommand = createScatterCommand(chart, scatterSets);
+      }
+      else
+      {
+        scatterCommand = null;
+      }
+
+      final Command command;
+      if (scatterCommand != null && datasetCommand != null)
+      {
+        CompoundCommand compoundCommand = new CompoundCommand();
+        compoundCommand.add(scatterCommand);
+        compoundCommand.add(datasetCommand);
+        command = compoundCommand;
+      }
+      else if (scatterCommand != null)
+      {
+        command = scatterCommand;
+      }
+      else if (datasetCommand != null)
+      {
+        command = datasetCommand;
+      }
+      else
+      {
+        command = null;
+      }
+
+      if (command != null)
+      {
+        getCommandStack().execute(command);
+      }
     }
 
     feedback = null;

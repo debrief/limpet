@@ -124,8 +124,11 @@ abstract public class DatasetDropTargetListener extends CoreDropTargetListener
         }
       }
 
-      Command command = createCommand(axis, datasets);
-      getCommandStack().execute(command);
+      if(datasets.size() > 0)
+      {
+        Command command = createCommand(axis, datasets);
+        getCommandStack().execute(command);
+      }
     }
 
     feedback = null;

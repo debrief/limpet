@@ -95,7 +95,12 @@ abstract public class CoreDropTargetListener implements
     {
       if (adapter.canConvert(object))
       {
-        element.add(adapter.convert(object));
+        
+        final List<Object> converted = adapter.convert(object);
+        if(converted != null)
+        {
+          element.add(converted);
+        }
       }
     }
 
