@@ -91,9 +91,9 @@ public class LimpetStackedChartsAdapter implements IStackedAdapter
   
   @SuppressWarnings({"unchecked"})
   @Override
-  public List<Dataset> convert(Object data)
+  public List<Object> convert(Object data)
   {
-    List<Dataset> res  = null;
+    List<Object> res  = null;
      
     // we should have already checked, but just
     // double-check we can handle it
@@ -120,7 +120,7 @@ public class LimpetStackedChartsAdapter implements IStackedAdapter
           // have we got a results object yet?
           if(res == null)
           {
-            res = new ArrayList<Dataset>();
+            res = new ArrayList<Object>();
           }
 
           // give it some style
@@ -145,13 +145,13 @@ public class LimpetStackedChartsAdapter implements IStackedAdapter
             ICollection thisC = (ICollection) thisI;
             if(thisC.isQuantity() && thisC.isTemporal())              
             {
-               List<Dataset> newItems = convert(thisC);
+               List<Object> newItems = convert(thisC);
                
                if(newItems != null && newItems.size() > 0)
                {
                  if(res == null)
                  {
-                   res = new ArrayList<Dataset>();
+                   res = new ArrayList<Object>();
                  }
                  res.addAll(newItems);
                }
@@ -179,7 +179,7 @@ public class LimpetStackedChartsAdapter implements IStackedAdapter
           // collate the results          
           if(res == null)
           {
-            res= new ArrayList<Dataset>();
+            res= new ArrayList<Object>();
           }
           res.add(dataset);
         }
@@ -189,12 +189,12 @@ public class LimpetStackedChartsAdapter implements IStackedAdapter
         List<?> list = (List<?>) data;
         for(Object item: list)
         {
-          List<Dataset> items = convert(item);
+          List<Object> items = convert(item);
           if(items != null)
           {
             if(res == null)
             {
-              res = new ArrayList<Dataset>();              
+              res = new ArrayList<Object>();              
             }
             res.addAll(items);
           }
