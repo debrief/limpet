@@ -1,9 +1,11 @@
 package info.limpet.stackedcharts.ui.editor.figures;
 
+import info.limpet.stackedcharts.model.Chart;
+import info.limpet.stackedcharts.ui.editor.StackedchartsImages;
+
 import org.eclipse.draw2d.ActionListener;
 import org.eclipse.draw2d.BorderLayout;
 import org.eclipse.draw2d.Button;
-import org.eclipse.draw2d.FlowLayout;
 import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.RectangleFigure;
@@ -12,9 +14,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Display;
-
-import info.limpet.stackedcharts.model.Chart;
-import info.limpet.stackedcharts.ui.editor.StackedchartsImages;
 
 public class ChartFigure extends RectangleFigure
 {
