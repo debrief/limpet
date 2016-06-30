@@ -3,6 +3,7 @@ package info.limpet.stackedcharts.ui.editor.drop;
 import info.limpet.stackedcharts.model.Chart;
 import info.limpet.stackedcharts.model.Dataset;
 import info.limpet.stackedcharts.model.DependentAxis;
+import info.limpet.stackedcharts.model.ScatterSet;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -23,12 +24,12 @@ import org.eclipse.swt.dnd.DropTargetEvent;
  * @author ian
  * 
  */
-abstract public class DatasetDropTargetListener extends CoreDropTargetListener
+abstract public class ScatterSetDropTargetListener extends CoreDropTargetListener
 {
 
   protected AbstractGraphicalEditPart feedback;
 
-  protected DatasetDropTargetListener(GraphicalViewer viewer)
+  protected ScatterSetDropTargetListener(GraphicalViewer viewer)
   {
     super(viewer);
   }
@@ -41,7 +42,7 @@ abstract public class DatasetDropTargetListener extends CoreDropTargetListener
    * @return
    */
   abstract protected Command createCommand(AbstractGraphicalEditPart axis,
-      List<Dataset> datasets);
+      List<ScatterSet> scatterSets);
 
   protected static boolean datasetAlreadyExistsOnTheseAxes(
       final Iterator<DependentAxis> axes, final String name)
@@ -103,12 +104,12 @@ abstract public class DatasetDropTargetListener extends CoreDropTargetListener
       EditPart target = findPart(event);
 
       AbstractGraphicalEditPart axis = (AbstractGraphicalEditPart) target;
-      List<Dataset> datasets = new ArrayList<Dataset>(objects.size());
+      List<ScatterSet> scatterSets = new ArrayList<ScatterSet>(objects.size());
       for (Object o : objects)
       {
-        if (o instanceof Dataset)
+        if (o instanceof ScatterSet)
         {
-          datasets.add((Dataset) o);
+          scatterSets.add((ScatterSet) o);
         }
         else if (o instanceof List<?>)
         {
@@ -116,15 +117,15 @@ abstract public class DatasetDropTargetListener extends CoreDropTargetListener
           for (Iterator<?> iter = list.iterator(); iter.hasNext();)
           {
             Object item = (Object) iter.next();
-            if (item instanceof Dataset)
+            if (item instanceof ScatterSet)
             {
-              datasets.add((Dataset) item);
+              scatterSets.add((ScatterSet) item);
             }
           }
         }
       }
 
-      Command command = createCommand(axis, datasets);
+      Command command = createCommand(axis, scatterSets);
       getCommandStack().execute(command);
     }
 
