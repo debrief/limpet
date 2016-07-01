@@ -177,7 +177,9 @@ public class StackedchartsEditControl extends Composite
 
     final UndoAction undoAction = new UndoAction(view);
     toolBarManager.add(undoAction);
+    undoAction.setImageDescriptor(Activator.imageDescriptorFromPlugin(Activator.PLUGIN_ID, "icons/undo.png"));
     final RedoAction redoAction = new RedoAction(view);
+    redoAction.setImageDescriptor(Activator.imageDescriptorFromPlugin(Activator.PLUGIN_ID, "icons/redo.png"));
     toolBarManager.add(redoAction);
 
     viewer.getEditDomain().getCommandStack().addCommandStackListener(
