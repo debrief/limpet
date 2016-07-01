@@ -374,7 +374,19 @@ public class StockTypes
       {
         this(null, null);
       }
+    }
+    
+    public static class ElapsedTimeSec extends QuantityCollection<Duration>
+    {
+      public ElapsedTimeSec(String name, ICommand<?> precedent)
+      {
+        super(name, precedent, SECOND.asType(Duration.class));
+      }
 
+      public ElapsedTimeSec()
+      {
+        this(null, null);
+      }
     }
 
     public static class DimensionlessDouble extends
