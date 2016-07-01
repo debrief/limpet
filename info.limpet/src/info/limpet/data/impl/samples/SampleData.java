@@ -50,7 +50,8 @@ public class SampleData
   public static final String SPEED_THREE_LONGER = "Speed Three (longer)";
   public static final String SPEED_IRREGULAR2 = "Speed two irregular time";
   public static final String TIME_INTERVALS = "Time intervals";
-  public static final String TIME_STAMPS = "Time stamps";
+  public static final String TIME_STAMPS_1 = "Time stamps (early)";
+  public static final String TIME_STAMPS_2 = "Time stamps (late)";
   public static final String STRING_TWO = "String two";
   public static final String STRING_ONE = "String one";
   public static final String LENGTH_SINGLETON = "Length Singleton";
@@ -108,8 +109,10 @@ public class SampleData
         new StockTypes.NonTemporal.LengthM(LENGTH_SINGLETON, null);
     ElapsedTimeSec timeIntervals =
         new StockTypes.Temporal.ElapsedTimeSec(TIME_INTERVALS, null);
-    StockTypes.NonTemporal.ElapsedTimeSec timeStamps =
-        new StockTypes.NonTemporal.ElapsedTimeSec(TIME_STAMPS, null);
+    StockTypes.NonTemporal.ElapsedTimeSec timeStamps_1 =
+        new StockTypes.NonTemporal.ElapsedTimeSec(TIME_STAMPS_1, null);
+    StockTypes.NonTemporal.ElapsedTimeSec timeStamps_2 =
+        new StockTypes.NonTemporal.ElapsedTimeSec(TIME_STAMPS_2, null);
     TemporalLocation track1 = new TemporalLocation(TRACK_ONE);
     TemporalLocation track2 = new TemporalLocation(TRACK_TWO);
     Location singleLoc1 = new Location(SINGLETON_LOC_1);
@@ -158,9 +161,21 @@ public class SampleData
       timeIntervals.add(thisTime, (4 + Math.sin(Math.toRadians(i) + 3.4
           * Math.random())));
 
-      if(Math.random() > 0.3)
+      if (i < ((double)count) * 0.4)
       {
-        timeStamps.add(thisTime - interval + (interval * 2d * Math.random()));
+        if (Math.random() > 0.3)
+        {
+          timeStamps_1.add(thisTime - interval
+              + (interval * 2d * Math.random()));
+        }
+      }
+      if (i > ((double)count) * 0.7)
+      {
+        if (Math.random() > 0.3)
+        {
+          timeStamps_2.add(thisTime - interval
+              + (interval * 2d * Math.random()));
+        }
       }
       
       // sort out the tracks
@@ -250,7 +265,8 @@ public class SampleData
     list.add(singletonRange1);
     list.add(singletonLength);
     list.add(timeIntervals);
-    list.add(timeStamps);
+    list.add(timeStamps_1);
+    list.add(timeStamps_2);
     list.add(track1);
     list.add(track2);
     list.add(singleLoc1);
