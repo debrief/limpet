@@ -26,6 +26,7 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.emf.common.notify.Adapter;
@@ -46,11 +47,13 @@ import org.jfree.chart.plot.PlotRenderingInfo;
 import org.jfree.chart.plot.PlotState;
 import org.jfree.chart.plot.ValueMarker;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.general.Series;
 import org.jfree.data.time.Millisecond;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
+import org.jfree.data.xy.XYDataItem;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
@@ -63,11 +66,11 @@ import org.jfree.util.ShapeUtilities;
 public class ChartBuilder
 {
 
-  /** provide new version of domain plot, that is able to 
-   * render a time bar on the independent axis
+  /**
+   * provide new version of domain plot, that is able to render a time bar on the independent axis
    * 
    * @author ian
-   *
+   * 
    */
   public static class TimeBarPlot extends CombinedDomainXYPlot
   {
@@ -75,42 +78,42 @@ public class ChartBuilder
      * 
      */
     private static final long serialVersionUID = 1L;
-    
+
     Date _currentTime = null;
     boolean _showLine = true;
-    final java.awt.Color _orange = new java.awt.Color(247,153,37);
-    
+    boolean _showLabels = true;
+    final java.awt.Color _orange = new java.awt.Color(247, 153, 37);
+
     public TimeBarPlot(ValueAxis sharedAxis)
     {
       super(sharedAxis);
     }
-    
+
     public void setTime(Date time)
     {
       _currentTime = time;
     }
 
     /**
-     * Draws the XY plot on a Java 2D graphics device (such as the screen or a
-     * printer), together with a current time marker
+     * Draws the XY plot on a Java 2D graphics device (such as the screen or a printer), together
+     * with a current time marker
      * <P>
-     * XYPlot relies on an XYItemRenderer to draw each item in the plot. This
-     * allows the visual representation of the data to be changed easily.
+     * XYPlot relies on an XYItemRenderer to draw each item in the plot. This allows the visual
+     * representation of the data to be changed easily.
      * <P>
-     * The optional info argument collects information about the rendering of the
-     * plot (dimensions, tooltip information etc). Just pass in null if you do not
-     * need this information.
+     * The optional info argument collects information about the rendering of the plot (dimensions,
+     * tooltip information etc). Just pass in null if you do not need this information.
      * 
      * @param g2
      *          The graphics device.
      * @param plotArea
-     *          The area within which the plot (including axis labels) should be
-     *          drawn.
+     *          The area within which the plot (including axis labels) should be drawn.
      * @param info
      *          Collects chart drawing information (null permitted).
      */
     public final void draw(final Graphics2D g2, final Rectangle2D plotArea,
-        final Point2D anchor, final PlotState state, final PlotRenderingInfo info)
+        final Point2D anchor, final PlotState state,
+        final PlotRenderingInfo info)
     {
       super.draw(g2, plotArea, anchor, state, info);
 
@@ -136,21 +139,132 @@ public class ChartBuilder
           final DateAxis dateAxis = (DateAxis) axis;
 
           // find the new x value
-          linePosition = dateAxis.dateToJava2D(new Date(theTime),
-              dataArea, this.getDomainAxisEdge());         
+          linePosition =
+              dateAxis.dateToJava2D(new Date(theTime), dataArea, this
+                  .getDomainAxisEdge());
         }
         else
         {
           if (axis instanceof NumberAxis)
           {
             final NumberAxis numberAxis = (NumberAxis) axis;
-            linePosition = numberAxis.valueToJava2D(theTime, dataArea, this
-                .getDomainAxisEdge());
+            linePosition =
+                numberAxis.valueToJava2D(theTime, dataArea, this
+                    .getDomainAxisEdge());
           }
         }
 
         // ok, finally draw the line - if we're not showing the growing plot
         plotStepperLine(g2, linePosition, dataArea);
+
+        // ok, have a got at the time values
+        if (_showLabels)
+        {
+          // ok, loop through the charts
+          CombinedDomainXYPlot comb = this;
+          @SuppressWarnings("unchecked")
+          List<XYPlot> plots = comb.getSubplots();
+
+          // what's the current time?
+          double tNow = _currentTime.getTime();
+
+          for (XYPlot plot : plots)
+          {
+            final int numC = plot.getDatasetCount();
+
+            for (int i = 0; i < numC; i++)
+            {
+              XYDataset thisD = plot.getDataset(i);
+
+              final NumberAxis rangeA =
+                  (NumberAxis) plot.getRangeAxisForDataset(i);
+
+              if (thisD instanceof XYSeriesCollection)
+              {
+                XYSeriesCollection coll = (XYSeriesCollection) thisD;
+                final int num = coll.getSeriesCount();
+                for (int j = 0; j < num; j++)
+                {
+                  XYSeries thisS = coll.getSeries(j);
+
+                  // find the value at this time
+                  // System.out.println("this series:" + thisS.getKey());
+
+                  // ok, find the time value nearest to now
+                  @SuppressWarnings("unchecked")
+                  List<XYDataItem> items = thisS.getItems();
+
+                  Double previousValue = null;
+                  Double nextValue = null;
+                  Double previousTime = null;
+                  Double nextTime = null;
+
+                  for (Iterator<XYDataItem> iterator = items.iterator(); iterator
+                      .hasNext();)
+                  {
+                    XYDataItem thisItem = (XYDataItem) iterator.next();
+
+                    if (thisItem.getXValue() < tNow)
+                    {
+                      // ok, it's before use the previous
+                      previousValue = thisItem.getYValue();
+                      previousTime = thisItem.getXValue();
+                    }
+                    else
+                    {
+                      nextValue = thisItem.getYValue();
+                      nextTime = thisItem.getXValue();
+                      break;
+                    }
+
+                  }
+
+                  if (previousValue != null && nextValue != null)
+                  {
+                    if (axis instanceof DateAxis)
+                    {
+                      
+                      // ok, interpolate the time & date
+                      double proportion = (theTime - previousTime) / (nextTime - previousTime);
+                      
+                      double nearest = previousValue + proportion * nextValue;
+                      
+                      DateAxis dateAxis = (DateAxis) axis;
+
+                      final String valStr = "" + nextValue.intValue();
+
+                      // find the new x value
+                      Double markerX =
+                          dateAxis.dateToJava2D(new Date(theTime), dataArea,
+                              this.getDomainAxisEdge());
+
+                      // find the new x value
+                      // Double markerY = rangeA..dateToJava2D(new Date(theTime),
+                      // dataArea, this.getDomainAxisEdge());
+
+                      Double markerY =
+                          rangeA.valueToJava2D(nearest, dataArea, this
+                              .getRangeAxisEdge());
+                      
+                      markerY = nearest;
+
+                      System.out.println("val str:" + valStr + " " + markerY
+                          + " nearest:" + nearest);
+                      
+                      final XYItemRenderer renderer = plot.getRendererForDataset(thisD);
+                      Color paint = (Color) renderer.getSeriesPaint(0);
+                      g2.setColor(paint);
+
+                      g2.drawString(valStr, markerX.floatValue(), markerY.floatValue());
+                    }
+
+                  }
+
+                }
+              }
+            }
+          }
+        }
 
       }
     }
@@ -162,12 +276,12 @@ public class ChartBuilder
      * @param linePosition
      * @param dataArea
      */
-    protected void plotStepperLine(final Graphics2D g2, final double linePosition,
-        final Rectangle2D dataArea)
+    protected void plotStepperLine(final Graphics2D g2,
+        final double linePosition, final Rectangle2D dataArea)
     {
       // prepare to draw
       final Stroke oldStroke = g2.getStroke();
-      
+
       g2.setColor(_orange);
 
       // thicken up the line
@@ -183,10 +297,10 @@ public class ChartBuilder
       else
       {
         // draw the line
-        g2.drawLine((int) dataArea.getY() + 1,(int) linePosition - 1, 
-             (int) dataArea.getY()
-                + (int) dataArea.getHeight() - 1, (int) linePosition - 1);
-        
+        g2.drawLine((int) dataArea.getY() + 1, (int) linePosition - 1,
+            (int) dataArea.getY() + (int) dataArea.getHeight() - 1,
+            (int) linePosition - 1);
+
       }
 
       // and restore everything
@@ -194,7 +308,7 @@ public class ChartBuilder
       g2.setPaintMode();
     }
   }
-  
+
   private ChartBuilder()
   {
   }
@@ -245,8 +359,9 @@ public class ChartBuilder
      * @param series
      */
     void storeSeries(XYDataset collection, Series series);
-    
-    /** clear the contents of the series
+
+    /**
+     * clear the contents of the series
      * 
      */
     void clear(Series series);
@@ -297,7 +412,7 @@ public class ChartBuilder
     public void clear(Series series)
     {
       XYSeries ns = (XYSeries) series;
-      ns.clear();      
+      ns.clear();
     }
 
   }
@@ -392,7 +507,7 @@ public class ChartBuilder
         helper = new NumberHelper();
       }
       sharedAxis = helper.createAxis(sharedAxisModel.getName());
-      if(sharedAxisModel.getDirection()==AxisDirection.DESCENDING)
+      if (sharedAxisModel.getDirection() == AxisDirection.DESCENDING)
       {
         sharedAxis.setInverted(true);
       }
@@ -458,7 +573,7 @@ public class ChartBuilder
         helper = new NumberHelper();
       }
       sharedAxis = helper.createAxis(sharedAxisModel.getName());
-      if(sharedAxisModel.getDirection()==AxisDirection.DESCENDING)
+      if (sharedAxisModel.getDirection() == AxisDirection.DESCENDING)
       {
         sharedAxis.setInverted(true);
       }
@@ -522,11 +637,11 @@ public class ChartBuilder
       }
       addAnnotationToPlot(subplot, annotations, false);
     }
-    
+
     // TODO: sort out how to position this title
-//    XYTitleAnnotation title  = new XYTitleAnnotation(0, 0,  new TextTitle(chart.getName()));
-//    subplot.addAnnotation(title);
-    
+    // XYTitleAnnotation title = new XYTitleAnnotation(0, 0, new TextTitle(chart.getName()));
+    // subplot.addAnnotation(title);
+
     return subplot;
   }
 
@@ -568,8 +683,8 @@ public class ChartBuilder
     final XYDataset collection = axeshelper.createCollection();
 
     final ValueAxis chartAxis = new NumberAxis(dependentAxis.getName());
-    
-    if(dependentAxis.getDirection()==AxisDirection.DESCENDING)
+
+    if (dependentAxis.getDirection() == AxisDirection.DESCENDING)
     {
       chartAxis.setInverted(true);
     }
@@ -726,20 +841,20 @@ public class ChartBuilder
         {
           System.err.println("Linear colors not implemented");
         }
-        
+
         // legend visibility
         final boolean isInLegend = styling.isIncludeInLegend();
         renderer.setSeriesVisibleInLegend(seriesIndex, isInLegend);
-        
+
         // line thickness
         // line style
         LineType lineType = styling.getLineStyle();
-        if(lineType != null)
+        if (lineType != null)
         {
           final float thickness = (float) styling.getLineThickness();
           Stroke stroke;
           float[] pattern;
-          switch(lineType)
+          switch (lineType)
           {
           case NONE:
             renderer.setSeriesLinesVisible(seriesIndex, false);
@@ -751,7 +866,8 @@ public class ChartBuilder
             break;
           case DOTTED:
             renderer.setSeriesLinesVisible(seriesIndex, true);
-            pattern = new float[] {3f, 3f };
+            pattern = new float[]
+            {3f, 3f};
             stroke =
                 new BasicStroke(thickness, BasicStroke.CAP_BUTT,
                     BasicStroke.JOIN_BEVEL, 0, pattern, 0);
@@ -759,7 +875,8 @@ public class ChartBuilder
             break;
           case DASHED:
             renderer.setSeriesLinesVisible(seriesIndex, true);
-            pattern = new float[] { 8.0f, 4.0f };
+            pattern = new float[]
+            {8.0f, 4.0f};
             stroke =
                 new BasicStroke(thickness, BasicStroke.CAP_BUTT,
                     BasicStroke.JOIN_BEVEL, 0, pattern, 0);
@@ -767,7 +884,7 @@ public class ChartBuilder
             break;
           }
         }
-        
+
         // marker size
         double size = styling.getMarkerSize();
         if (size == 0)
@@ -776,7 +893,8 @@ public class ChartBuilder
         }
 
         // marker style
-        final MarkerStyle marker = styling.getMarkerStyle();
+        MarkerStyle marker = styling.getMarkerStyle();
+        marker = MarkerStyle.SQUARE;
         if (marker != null)
         {
           switch (marker)
@@ -811,16 +929,18 @@ public class ChartBuilder
         seriesIndex++;
       }
       helper.storeSeries(collection, series);
-      
+
       // store the data in the collection
       populateCollection(helper, dataset, series);
-      
+
       // also register as a listener
-      Adapter adapter = new AdapterImpl() {
-        public void notifyChanged(Notification notification) {
+      Adapter adapter = new AdapterImpl()
+      {
+        public void notifyChanged(Notification notification)
+        {
           populateCollection(helper, dataset, series);
         }
-      };      
+      };
       dataset.eAdapters().add(adapter);
     }
   }
