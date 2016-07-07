@@ -19,15 +19,21 @@ import info.limpet.stackedcharts.model.Styling;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Stroke;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notification;
@@ -83,10 +89,12 @@ public class ChartBuilder
     boolean _showLine = true;
     boolean _showLabels = true;
     final java.awt.Color _orange = new java.awt.Color(247, 153, 37);
+    final java.awt.Font _markerFont;
 
     public TimeBarPlot(ValueAxis sharedAxis)
     {
       super(sharedAxis);
+      _markerFont = new Font("Arial", Font.PLAIN, 8);
     }
 
     public void setTime(Date time)
@@ -108,164 +116,215 @@ public class ChartBuilder
      *          The graphics device.
      * @param plotArea
      *          The area within which the plot (including axis labels) should be drawn.
-     * @param info
+     * @param renderInfo
      *          Collects chart drawing information (null permitted).
      */
     public final void draw(final Graphics2D g2, final Rectangle2D plotArea,
         final Point2D anchor, final PlotState state,
-        final PlotRenderingInfo info)
+        final PlotRenderingInfo renderInfo)
     {
-      super.draw(g2, plotArea, anchor, state, info);
-
-      // do we want to view the line?
-      if (!_showLine)
-        return;
+      super.draw(g2, plotArea, anchor, state, renderInfo);
 
       // do we have a time?
       if (_currentTime != null)
       {
+        // hmm, are we stacked vertically or horizontally?
+        final boolean vertical =
+            this.getOrientation() == PlotOrientation.VERTICAL;
+
         // find the screen area for the dataset
-        final Rectangle2D dataArea = info.getDataArea();
+        final Rectangle2D dataArea = renderInfo.getDataArea();
 
         // determine the time we are plotting the line at
-        long theTime = _currentTime.getTime();
+        final long theTime = _currentTime.getTime();
 
-        // hmm, see if we are wroking with a date or number axis
-        double linePosition = 0;
         final Axis axis = this.getDomainAxis();
-        if (axis instanceof DateAxis)
-        {
-          // ok, now scale the time to graph units
-          final DateAxis dateAxis = (DateAxis) axis;
 
-          // find the new x value
-          linePosition =
-              dateAxis.dateToJava2D(new Date(theTime), dataArea, this
-                  .getDomainAxisEdge());
-        }
-        else
+        if (_showLine)
         {
-          if (axis instanceof NumberAxis)
-          {
-            final NumberAxis numberAxis = (NumberAxis) axis;
-            linePosition =
-                numberAxis.valueToJava2D(theTime, dataArea, this
-                    .getDomainAxisEdge());
-          }
+          plotStepperLine(g2, dataArea, vertical, axis, theTime);
         }
-
-        // ok, finally draw the line - if we're not showing the growing plot
-        plotStepperLine(g2, linePosition, dataArea);
 
         // ok, have a got at the time values
         if (_showLabels)
         {
-          // ok, loop through the charts
-          CombinedDomainXYPlot comb = this;
-          @SuppressWarnings("unchecked")
-          List<XYPlot> plots = comb.getSubplots();
+          plotStepperMarkers(g2, dataArea, vertical, axis, theTime, renderInfo);
+        }
+      }
+    }
 
-          // what's the current time?
-          double tNow = _currentTime.getTime();
+    protected void plotStepperMarkers(final Graphics2D g2,
+        final Rectangle2D dataArea, final boolean vertical,
+        final Axis axis, final long theTime, final PlotRenderingInfo info)
+    {
+      // ok, loop through the charts
+      final CombinedDomainXYPlot comb = this;
+      @SuppressWarnings("unchecked")
+      List<XYPlot> plots = comb.getSubplots();
 
-          for (XYPlot plot : plots)
+      NumberFormat oneDP = new DecimalFormat("0.0");
+      NumberFormat noDP = new DecimalFormat("0");
+
+      // keep track of how many series we've used for each renderer
+      Map<XYItemRenderer, Integer> seriesCounter =
+          new HashMap<XYItemRenderer, Integer>();
+
+      // what's the current time?
+      double tNow = _currentTime.getTime();
+
+      int ctr = 0;
+
+      for (XYPlot plot : plots)
+      {
+        final int numC = plot.getDatasetCount();
+
+        // ok, get the area for this subplot
+        final Rectangle2D thisPlotArea =
+            info.getSubplotInfo(ctr++).getPlotArea();
+
+        for (int i = 0; i < numC; i++)
+        {
+          XYDataset thisD = plot.getDataset(i);
+
+          final NumberAxis rangeA = (NumberAxis) plot.getRangeAxisForDataset(i);
+
+          if (thisD instanceof XYSeriesCollection)
           {
-            final int numC = plot.getDatasetCount();
-
-            for (int i = 0; i < numC; i++)
+            XYSeriesCollection coll = (XYSeriesCollection) thisD;
+            final int num = coll.getSeriesCount();
+            for (int j = 0; j < num; j++)
             {
-              XYDataset thisD = plot.getDataset(i);
+              XYSeries thisS = coll.getSeries(j);
 
-              final NumberAxis rangeA =
-                  (NumberAxis) plot.getRangeAxisForDataset(i);
+              // find the value at this time
+              // System.out.println("this series:" + thisS.getKey());
 
-              if (thisD instanceof XYSeriesCollection)
+              // ok, find the time value nearest to now
+              @SuppressWarnings("unchecked")
+              List<XYDataItem> items = thisS.getItems();
+
+              Double previousValue = null;
+              Double nextValue = null;
+              Double previousTime = null;
+              Double nextTime = null;
+
+              for (Iterator<XYDataItem> iterator = items.iterator(); iterator
+                  .hasNext();)
               {
-                XYSeriesCollection coll = (XYSeriesCollection) thisD;
-                final int num = coll.getSeriesCount();
-                for (int j = 0; j < num; j++)
+                XYDataItem thisItem = (XYDataItem) iterator.next();
+
+                if (thisItem.getXValue() < tNow)
                 {
-                  XYSeries thisS = coll.getSeries(j);
-
-                  // find the value at this time
-                  // System.out.println("this series:" + thisS.getKey());
-
-                  // ok, find the time value nearest to now
-                  @SuppressWarnings("unchecked")
-                  List<XYDataItem> items = thisS.getItems();
-
-                  Double previousValue = null;
-                  Double nextValue = null;
-                  Double previousTime = null;
-                  Double nextTime = null;
-
-                  for (Iterator<XYDataItem> iterator = items.iterator(); iterator
-                      .hasNext();)
-                  {
-                    XYDataItem thisItem = (XYDataItem) iterator.next();
-
-                    if (thisItem.getXValue() < tNow)
-                    {
-                      // ok, it's before use the previous
-                      previousValue = thisItem.getYValue();
-                      previousTime = thisItem.getXValue();
-                    }
-                    else
-                    {
-                      nextValue = thisItem.getYValue();
-                      nextTime = thisItem.getXValue();
-                      break;
-                    }
-
-                  }
-
-                  if (previousValue != null && nextValue != null)
-                  {
-                    if (axis instanceof DateAxis)
-                    {
-                      
-                      // ok, interpolate the time & date
-                      double proportion = (theTime - previousTime) / (nextTime - previousTime);
-                      
-                      double nearest = previousValue + proportion * nextValue;
-                      
-                      DateAxis dateAxis = (DateAxis) axis;
-
-                      final String valStr = "" + nextValue.intValue();
-
-                      // find the new x value
-                      Double markerX =
-                          dateAxis.dateToJava2D(new Date(theTime), dataArea,
-                              this.getDomainAxisEdge());
-
-                      // find the new x value
-                      // Double markerY = rangeA..dateToJava2D(new Date(theTime),
-                      // dataArea, this.getDomainAxisEdge());
-
-                      Double markerY =
-                          rangeA.valueToJava2D(nearest, dataArea, this
-                              .getRangeAxisEdge());
-                      
-                      markerY = nearest;
-
-                      System.out.println("val str:" + valStr + " " + markerY
-                          + " nearest:" + nearest);
-                      
-                      final XYItemRenderer renderer = plot.getRendererForDataset(thisD);
-                      Color paint = (Color) renderer.getSeriesPaint(0);
-                      g2.setColor(paint);
-
-                      g2.drawString(valStr, markerX.floatValue(), markerY.floatValue());
-                    }
-
-                  }
-
+                  // ok, it's before use the previous
+                  previousValue = thisItem.getYValue();
+                  previousTime = thisItem.getXValue();
                 }
+                else
+                {
+                  nextValue = thisItem.getYValue();
+                  nextTime = thisItem.getXValue();
+                  break;
+                }
+
               }
+
+              if (previousValue != null && nextValue != null)
+              {
+                if (axis instanceof DateAxis)
+                {
+
+                  // ok, interpolate the time & date
+                  double proportion =
+                      (theTime - previousTime) / (nextTime - previousTime);
+
+                  double nearest =
+                      previousValue + proportion * (nextValue - previousValue);
+
+                  DateAxis dateAxis = (DateAxis) axis;
+
+                  // find the new x value
+                  double markerX =
+                      dateAxis.dateToJava2D(new Date(theTime), dataArea, this
+                          .getDomainAxisEdge());
+
+                  // find the new x value
+                  // Double markerY = rangeA..dateToJava2D(new Date(theTime),
+                  // dataArea, this.getDomainAxisEdge());
+
+                  double markerY =
+                      rangeA.valueToJava2D(nearest, thisPlotArea, this
+                          .getRangeAxisEdge());
+
+                  // prepare the label
+                  final String label;
+                  if (nearest > 100)
+                  {
+                    label = noDP.format(nearest);
+                  }
+                  else
+                  {
+                    label = oneDP.format(nearest);
+                  }
+
+                  // store old font
+                  final Font oldFont = g2.getFont();
+
+                  // set the new one
+                  g2.setFont(_markerFont);
+
+                  // reflect the plot orientation
+                  final float xPos;
+                  final float yPos;
+                  if (vertical)
+                  {
+                    yPos = 2f + (float) markerX;
+                    xPos = (float) markerY;
+                  }
+                  else
+                  {
+                    xPos = 4f + (float) markerX;
+                    yPos = 2f + (float) markerY;
+                  }
+
+                  // find the size of the label, so we can draw a background
+                  FontMetrics fc = g2.getFontMetrics();
+                  Rectangle2D bounds = fc.getStringBounds(label, g2);
+                  g2.setColor(Color.white);
+                  g2.fill3DRect((int) yPos, (int) (xPos - bounds.getHeight()),
+                      3 + (int) bounds.getWidth(),
+                      3 + (int) bounds.getHeight(), true);
+
+                  // and the label itself
+                  final XYItemRenderer renderer =
+                      plot.getRendererForDataset(thisD);
+
+                  // find the series number
+                  Integer counter = seriesCounter.get(renderer);
+                  if (counter == null)
+                  {
+                    // first series, initialise
+                    counter = 0;
+                    seriesCounter.put(renderer, counter);
+                  }
+                  else
+                  {
+                    // already exists, increment
+                    seriesCounter.put(renderer, ++counter);
+                  }
+
+                  final Color paint = (Color) renderer.getSeriesPaint(counter);
+                  g2.setColor(paint.darker());
+                  g2.drawString(label, yPos, xPos);
+
+                  // and restore the font
+                  g2.setFont(oldFont);
+                }
+
+              }
+
             }
           }
         }
-
       }
     }
 
@@ -275,10 +334,36 @@ public class ChartBuilder
      * @param g2
      * @param linePosition
      * @param dataArea
+     * @param axis 
+     * @param theTime 
      */
-    protected void plotStepperLine(final Graphics2D g2,
-        final double linePosition, final Rectangle2D dataArea)
+    protected void
+        plotStepperLine(final Graphics2D g2,
+            final Rectangle2D dataArea, boolean vertical, Axis axis, long theTime)
     {
+      // hmm, see if we are wroking with a date or number axis
+      double linePosition = 0;
+      if (axis instanceof DateAxis)
+      {
+        // ok, now scale the time to graph units
+        final DateAxis dateAxis = (DateAxis) axis;
+
+        // find the new x value
+        linePosition =
+            dateAxis.dateToJava2D(new Date(theTime), dataArea, this
+                .getDomainAxisEdge());
+      }
+      else
+      {
+        if (axis instanceof NumberAxis)
+        {
+          final NumberAxis numberAxis = (NumberAxis) axis;
+          linePosition =
+              numberAxis.valueToJava2D(theTime, dataArea, this
+                  .getDomainAxisEdge());
+        }
+      }
+
       // prepare to draw
       final Stroke oldStroke = g2.getStroke();
 
@@ -287,7 +372,7 @@ public class ChartBuilder
       // thicken up the line
       g2.setStroke(new BasicStroke(3));
 
-      if (this.getOrientation() == PlotOrientation.VERTICAL)
+      if (vertical)
       {
         // draw the line
         g2.drawLine((int) linePosition - 1, (int) dataArea.getY() + 1,
@@ -297,8 +382,8 @@ public class ChartBuilder
       else
       {
         // draw the line
-        g2.drawLine((int) dataArea.getY() + 1, (int) linePosition - 1,
-            (int) dataArea.getY() + (int) dataArea.getHeight() - 1,
+        g2.drawLine((int) dataArea.getX() + 1, (int) linePosition - 1,
+            (int) dataArea.getX() + (int) dataArea.getWidth() - 1,
             (int) linePosition - 1);
 
       }
@@ -893,8 +978,7 @@ public class ChartBuilder
         }
 
         // marker style
-        MarkerStyle marker = styling.getMarkerStyle();
-        marker = MarkerStyle.SQUARE;
+        final MarkerStyle marker = styling.getMarkerStyle();
         if (marker != null)
         {
           switch (marker)
