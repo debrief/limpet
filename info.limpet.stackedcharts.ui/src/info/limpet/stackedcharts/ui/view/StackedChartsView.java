@@ -349,6 +349,8 @@ public class StackedChartsView extends ViewPart implements
         }
       }
     });
+
+    
     final Action showTime = new Action("Show time marker", SWT.TOGGLE)
     {
       @Override
@@ -366,6 +368,25 @@ public class StackedChartsView extends ViewPart implements
     showTime.setChecked(true);
     showTime.setImageDescriptor(Activator.imageDescriptorFromPlugin(Activator.PLUGIN_ID, "icons/clock.png"));
     manager.add(showTime);
+    
+    final Action showMarker = new Action("Show marker value", SWT.TOGGLE)
+    {
+      @Override
+      public void run()
+      {
+        // ok, trigger graph redraw
+        JFreeChart combined = _chartComposite.getChart();
+        TimeBarPlot plot = (TimeBarPlot) combined.getPlot();
+        plot._showLabels = isChecked();
+
+        // ok, trigger ui update
+        refreshPlot();
+      }
+    };
+    showMarker.setChecked(true);
+    showMarker.setImageDescriptor(Activator.imageDescriptorFromPlugin(Activator.PLUGIN_ID, "icons/labels.png"));
+    manager.add(showMarker);
+
   }
 
   /**
