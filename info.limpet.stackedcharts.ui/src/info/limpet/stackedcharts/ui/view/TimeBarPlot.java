@@ -523,9 +523,6 @@ public class TimeBarPlot extends CombinedDomainXYPlot
       final Point2D anchor, final PlotState state,
       final PlotRenderingInfo renderInfo)
   {
-
-    final long t0 = System.currentTimeMillis();
-
     super.draw(g2, plotArea, anchor, state, renderInfo);
 
     // do we have a time?
@@ -619,10 +616,6 @@ public class TimeBarPlot extends CombinedDomainXYPlot
             renderInfo, (int) trimmedLinePosition, _helper);
       }
     }
-
-    final long t1 = System.currentTimeMillis();
-    System.out.println("Elapsed:" + (t1 - t0));
-
   }
 
   /**
