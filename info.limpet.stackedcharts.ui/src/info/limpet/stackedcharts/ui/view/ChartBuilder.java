@@ -523,7 +523,7 @@ public class ChartBuilder
     final CombinedDomainXYPlot plot = new TimeBarPlot(sharedAxis);
 
     // create this chart
-    final XYPlot subplot = createChart(sharedAxisModel, chart);
+    final XYPlot subplot = createChart(sharedAxisModel, chart, helper);
 
     // add chart to stack
     plot.add(subplot);
@@ -585,7 +585,7 @@ public class ChartBuilder
     for (final Chart chart : charts)
     {
       // create this chart
-      final XYPlot subplot = createChart(sharedAxisModel, chart);
+      final XYPlot subplot = createChart(sharedAxisModel, chart, helper);
 
       // add chart to stack
       plot.add(subplot);
@@ -599,7 +599,7 @@ public class ChartBuilder
   }
 
   protected static XYPlot createChart(final IndependentAxis sharedAxisModel,
-      final Chart chart)
+      final Chart chart, ChartHelper helper)
   {
     final XYPlot subplot = new XYPlot(null, null, null, null);
 
@@ -610,7 +610,7 @@ public class ChartBuilder
     final EList<DependentAxis> minAxes = chart.getMinAxes();
     for (final DependentAxis axis : minAxes)
     {
-      createDependentAxis(subplot, indexAxis, axis);
+      createDependentAxis(subplot, indexAxis, axis, helper);
       subplot.setRangeAxisLocation(indexAxis, AxisLocation.BOTTOM_OR_LEFT);
       indexAxis++;
     }
@@ -619,7 +619,7 @@ public class ChartBuilder
     final EList<DependentAxis> maxAxes = chart.getMaxAxes();
     for (final DependentAxis axis : maxAxes)
     {
-      createDependentAxis(subplot, indexAxis, axis);
+      createDependentAxis(subplot, indexAxis, axis, helper);
       subplot.setRangeAxisLocation(indexAxis, AxisLocation.TOP_OR_RIGHT);
       indexAxis++;
     }
@@ -661,31 +661,12 @@ public class ChartBuilder
    *          model object of DependentAxis
    */
   private static void createDependentAxis(final XYPlot subplot,
-      final int indexAxis, final DependentAxis dependentAxis)
+      final int indexAxis, final DependentAxis dependentAxis, ChartHelper axeshelper)
   {
     final XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
     renderer.setDrawSeriesLineAsPath(true);
     final int indexSeries = 0;
-    final ChartHelper axeshelper;
 
-    final AxisType axisType = dependentAxis.getAxisType();
-    if (axisType instanceof info.limpet.stackedcharts.model.NumberAxis)
-    {
-      axeshelper = new NumberHelper();
-    }
-    else if (axisType instanceof info.limpet.stackedcharts.model.AngleAxis)
-    {
-      axeshelper = new NumberHelper();
-    }
-    else if (axisType instanceof info.limpet.stackedcharts.model.DateAxis)
-    {
-      axeshelper = new DateHelper();
-    }
-    else
-    {
-      System.err.println("UNEXPECTED AXIS TYPE RECEIVED");
-      axeshelper = new NumberHelper();
-    }
     final XYDataset collection = axeshelper.createCollection();
 
     final ValueAxis chartAxis = new NumberAxis(dependentAxis.getName());

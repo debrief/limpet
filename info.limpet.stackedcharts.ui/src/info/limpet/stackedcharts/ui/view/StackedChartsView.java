@@ -528,7 +528,7 @@ public class StackedChartsView extends ViewPart implements
    * 
    * @param newTime
    */
-  public void updateTime(Date newTime)
+  public void updateTime(final Date newTime)
   {
     Date oldTime = _currentTime;
     _currentTime = newTime;
@@ -539,18 +539,16 @@ public class StackedChartsView extends ViewPart implements
       JFreeChart combined = _chartComposite.getChart();
       TimeBarPlot plot = (TimeBarPlot) combined.getPlot();
       plot.setTime(newTime);
-
+      
       // ok, trigger ui update
-      refreshPlot();
+      refreshPlot();      
     }
-
   }
 
   private void refreshPlot()
   {
     Runnable runnable = new Runnable()
     {
-
       @Override
       public void run()
       {
