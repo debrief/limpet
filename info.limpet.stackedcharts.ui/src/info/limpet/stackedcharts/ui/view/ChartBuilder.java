@@ -239,16 +239,62 @@ public class ChartBuilder
 
         final Axis domainAxis = this.getDomainAxis();
 
+        // hmm, see if we are wroking with a date or number axis
+        Double linePosition;
+        if (domainAxis instanceof DateAxis)
+        {
+          // ok, now scale the time to graph units
+          final DateAxis dateAxis = (DateAxis) domainAxis;
+
+          // find the new x value
+          linePosition =
+              dateAxis.dateToJava2D(new Date(theTime), dataArea, this
+                  .getDomainAxisEdge());
+          
+        }
+        else if (domainAxis instanceof NumberAxis)
+        {
+          final NumberAxis numberAxis = (NumberAxis) domainAxis;
+          linePosition =
+              numberAxis.valueToJava2D(theTime, dataArea, this
+                  .getDomainAxisEdge());
+        }
+        else
+        {
+          linePosition = null;
+        }
+
+        if (linePosition == null)
+          return;
+
+        // trim the linePositiion to the visible area
+        double trimmedLinePosition;
+        if(vertical)
+        {
+          trimmedLinePosition = Math.max(linePosition, dataArea.getMinX());
+          trimmedLinePosition = Math.min(trimmedLinePosition, dataArea.getMaxX());
+        }
+        else
+        {
+          trimmedLinePosition = Math.max(linePosition, dataArea.getMinY());
+          trimmedLinePosition = Math.min(trimmedLinePosition, dataArea.getMaxY());
+          
+        }
+        
+        // did we do any clipping?
+        final boolean clipped = !linePosition.equals(trimmedLinePosition);
+
         if (_showLine)
         {
-          plotStepperLine(g2, dataArea, vertical, domainAxis, theTime);
+          plotStepperLine(g2, dataArea, vertical, domainAxis, theTime,
+              (int)trimmedLinePosition, clipped);
         }
 
         // ok, have a got at the time values
-        if (_showLabels)
+        if (_showLabels && !clipped)
         {
           plotStepperMarkers(g2, dataArea, vertical, domainAxis, theTime,
-              renderInfo);
+              renderInfo, (int)trimmedLinePosition);
         }
       }
     }
@@ -261,33 +307,13 @@ public class ChartBuilder
      * @param dataArea
      * @param axis
      * @param theTime
+     * @param linePosition
+     * @param clipped 
      */
     protected void plotStepperLine(final Graphics2D g2,
         final Rectangle2D dataArea, final boolean vertical, final Axis axis,
-        final long theTime)
+        final long theTime, int linePosition, boolean clipped)
     {
-      // hmm, see if we are wroking with a date or number axis
-      double linePosition = 0;
-      if (axis instanceof DateAxis)
-      {
-        // ok, now scale the time to graph units
-        final DateAxis dateAxis = (DateAxis) axis;
-
-        // find the new x value
-        linePosition =
-            dateAxis.dateToJava2D(new Date(theTime), dataArea, this
-                .getDomainAxisEdge());
-      }
-      else
-      {
-        if (axis instanceof NumberAxis)
-        {
-          final NumberAxis numberAxis = (NumberAxis) axis;
-          linePosition =
-              numberAxis.valueToJava2D(theTime, dataArea, this
-                  .getDomainAxisEdge());
-        }
-      }
 
       // prepare to draw
       final Stroke oldStroke = g2.getStroke();
@@ -295,14 +321,24 @@ public class ChartBuilder
       g2.setColor(_orange);
 
       // thicken up the line
-      g2.setStroke(new BasicStroke(3));
+      final int wid;
+      if(clipped)
+      {
+        g2.setStroke(new BasicStroke(1));
+        wid = 1;
+      }
+      else
+      {
+        g2.setStroke(new BasicStroke(3));
+        wid = 1;
+      }
 
       if (vertical)
       {
         // draw the line
-        g2.drawLine((int) linePosition - 1, (int) dataArea.getY() + 1,
-            (int) linePosition - 1, (int) dataArea.getY()
-                + (int) dataArea.getHeight() - 1);
+        g2.drawLine((int) linePosition - wid + 2, (int) dataArea.getY(),
+            (int) linePosition - wid + 2, (int) dataArea.getY()
+                + (int) dataArea.getHeight());
       }
       else
       {
@@ -318,10 +354,10 @@ public class ChartBuilder
       g2.setPaintMode();
     }
 
-    protected void
-        plotStepperMarkers(final Graphics2D g2, final Rectangle2D dataArea,
-            final boolean vertical, final Axis domainAxis, final long theTime,
-            final PlotRenderingInfo info)
+    protected void plotStepperMarkers(final Graphics2D g2,
+        final Rectangle2D dataArea, final boolean vertical,
+        final Axis domainAxis, final long theTime,
+        final PlotRenderingInfo info, final int linePosition)
     {
       // ok, loop through the charts
       final CombinedDomainXYPlot comb = this;
@@ -395,88 +431,56 @@ public class ChartBuilder
               // have we found values?
               if (previousY != null && nextY != null)
               {
-                // ok, now for the coordinate on the x axis
-                final Double markerX;
-                if (domainAxis instanceof DateAxis)
-                {
-                  final DateAxis dateAxis = (DateAxis) domainAxis;
+                // ok, interpolate the time (X)
+                final double proportion =
+                    (theTime - previousX) / (nextX - previousX);
 
-                  // find the new x value
-                  markerX =
-                      dateAxis.dateToJava2D(new Date(theTime), dataArea, this
-                          .getDomainAxisEdge());
-                }
-                else if (domainAxis instanceof NumberAxis)
-                {
-                  final NumberAxis numberAxis = (NumberAxis) domainAxis;
+                // ok, now generate interpolate the value to use
+                final double interpolated =
+                    previousY + proportion * (nextY - previousY);
 
-                  // find the new x value
-                  markerX =
-                      numberAxis.valueToJava2D(theTime, dataArea, this
-                          .getDomainAxisEdge());
+                // and find the y coordinate of this data value
+                final NumberAxis rangeA =
+                    (NumberAxis) plot.getRangeAxisForDataset(i);
+                final float markerY =
+                    (float) rangeA.valueToJava2D(interpolated, thisPlotArea,
+                        this.getRangeAxisEdge());
+
+                // prepare the label
+                final String label;
+                if (interpolated > 100)
+                {
+                  label = noDP.format(interpolated);
                 }
                 else
                 {
-                  // can't help - drop out
-                  markerX = null;
+                  label = oneDP.format(interpolated);
                 }
 
-                // have we found our x value?
-                if (markerX != null)
+                // and the color
+                final XYItemRenderer renderer =
+                    plot.getRendererForDataset(dataset);
+
+                // find the series number
+                Integer counter = seriesCounter.get(renderer);
+                if (counter == null)
                 {
-                  // ok, interpolate the time (X)
-                  final double proportion =
-                      (theTime - previousX) / (nextX - previousX);
-
-                  // ok, now generate interpolate the value to use
-                  final double interpolated =
-                      previousY + proportion * (nextY - previousY);
-
-                  // and find the y coordinate of this data value
-                  final NumberAxis rangeA =
-                      (NumberAxis) plot.getRangeAxisForDataset(i);
-                  final float markerY =
-                      (float) rangeA.valueToJava2D(interpolated, thisPlotArea,
-                          this.getRangeAxisEdge());
-
-                  // prepare the label
-                  final String label;
-                  if (interpolated > 100)
-                  {
-                    label = noDP.format(interpolated);
-                  }
-                  else
-                  {
-                    label = oneDP.format(interpolated);
-                  }
-
-                  // and the color
-                  final XYItemRenderer renderer =
-                      plot.getRendererForDataset(dataset);
-
-                  // find the series number
-                  Integer counter = seriesCounter.get(renderer);
-                  if (counter == null)
-                  {
-                    // first series, initialise
-                    counter = 0;
-                    seriesCounter.put(renderer, counter);
-                  }
-                  else
-                  {
-                    // already exists, increment
-                    seriesCounter.put(renderer, ++counter);
-                  }
-
-                  final Color paint = (Color) renderer.getSeriesPaint(counter);
-
-                  // done, render it
-                  paintThisMarker(g2, label, paint, markerX.floatValue(),
-                      markerY, vertical, _markerFont);
+                  // first series, initialise
+                  counter = 0;
+                  seriesCounter.put(renderer, counter);
+                }
+                else
+                {
+                  // already exists, increment
+                  seriesCounter.put(renderer, ++counter);
                 }
 
-              }
+                final Color paint = (Color) renderer.getSeriesPaint(counter);
 
+                // done, render it
+                paintThisMarker(g2, label, paint, linePosition, markerY,
+                    vertical, _markerFont);
+              }
             }
           }
         }
@@ -498,7 +502,7 @@ public class ChartBuilder
       final float yPos;
       if (vertical)
       {
-        yPos = 2f + markerX;
+        yPos = 3f + markerX;
         xPos = (float) markerY;
       }
       else
