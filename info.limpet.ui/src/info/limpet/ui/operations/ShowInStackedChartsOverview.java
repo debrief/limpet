@@ -36,6 +36,7 @@ import info.limpet.stackedcharts.model.NumberAxis;
 import info.limpet.stackedcharts.model.Orientation;
 import info.limpet.stackedcharts.model.StackedchartsFactory;
 import info.limpet.stackedcharts.ui.view.StackedChartsView;
+import info.limpet.stackedcharts.ui.view.StackedChartsView.ControllableDate;
 import info.limpet.ui.data_provider.data.CollectionWrapper;
 import info.limpet.ui.range_slider.RangeSliderView;
 import info.limpet.ui.stacked.LimpetStackedChartsAdapter;
@@ -150,7 +151,7 @@ public class ShowInStackedChartsOverview implements IOperation<IStoreItem>
             // set follow selection to off
             // cv.follow(getInputs());
             chartView.setModel(model);
-
+            
             // also, see if we can listen to changes in it
             final IStoreGroup group =
                 RangeSliderView.findTopParent(this.getInputs().get(0));
@@ -179,6 +180,24 @@ public class ShowInStackedChartsOverview implements IOperation<IStoreItem>
                 }
               };
               chartView.addRunOnCloseCallback(closer);
+              
+              ControllableDate timeC = new ControllableDate(){
+
+                @Override
+                public void setDate(long time)
+                {
+                  group.setTime(new Date(time));
+                }
+
+                @Override
+                public long getDate()
+                {
+                  return group.getTime().getTime();
+                }};
+             chartView.setDateSupport(timeC);
+
+
+              
             }
 
             // // take a copy of the model

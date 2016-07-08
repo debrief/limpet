@@ -16,6 +16,7 @@ import info.limpet.stackedcharts.model.Orientation;
 import info.limpet.stackedcharts.model.PlainStyling;
 import info.limpet.stackedcharts.model.SelectiveAnnotation;
 import info.limpet.stackedcharts.model.Styling;
+import info.limpet.stackedcharts.ui.view.StackedChartsView.ControllableDate;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -537,10 +538,11 @@ public class ChartBuilder
    * create a chart from our dataset
    * 
    * @param chartsSet
+   * @param controllableDate 
    * 
    * @return
    */
-  public static JFreeChart build(final ChartSet chartsSet)
+  public static JFreeChart build(final ChartSet chartsSet, ControllableDate controllableDate)
   {
     final IndependentAxis sharedAxisModel = chartsSet.getSharedAxis();
     final ChartHelper helper;
@@ -578,7 +580,7 @@ public class ChartBuilder
       }
     }
 
-    final CombinedDomainXYPlot plot = new TimeBarPlot(sharedAxis);
+    final TimeBarPlot plot = new TimeBarPlot(sharedAxis);
 
     // now loop through the charts
     final EList<Chart> charts = chartsSet.getCharts();
@@ -590,7 +592,14 @@ public class ChartBuilder
       // add chart to stack
       plot.add(subplot);
     }
-
+    
+    // do we know a date?
+    if(controllableDate != null)
+    {
+      // ok, initialise it
+      plot.setTime(new Date(controllableDate.getDate()));
+    }
+    
     plot.setGap(5.0);
     plot.setOrientation(chartsSet.getOrientation() == Orientation.VERTICAL
         ? PlotOrientation.VERTICAL : PlotOrientation.HORIZONTAL);
