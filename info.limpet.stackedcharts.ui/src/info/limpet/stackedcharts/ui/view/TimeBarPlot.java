@@ -25,9 +25,11 @@ import org.jfree.chart.plot.PlotRenderingInfo;
 import org.jfree.chart.plot.PlotState;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
-import org.jfree.data.xy.XYDataItem;
+import org.jfree.data.time.Millisecond;
+import org.jfree.data.time.TimeSeries;
+import org.jfree.data.time.TimeSeriesCollection;
+import org.jfree.data.time.TimeSeriesDataItem;
 import org.jfree.data.xy.XYDataset;
-import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
 /**
@@ -249,6 +251,91 @@ public class TimeBarPlot extends CombinedDomainXYPlot
     g2.setPaintMode();
   }
 
+  protected static interface AxisHelper
+  {
+
+    Double getValueAt(int index, double tNow2);
+
+  }
+
+  protected static class DateHelper implements AxisHelper
+  {
+
+    private final TimeSeriesCollection _dataset;
+
+    public DateHelper(TimeSeriesCollection dataset)
+    {
+      _dataset = dataset;
+    }
+
+    @Override
+    public Double getValueAt(int index, double tNow)
+    {
+      TimeSeries series = _dataset.getSeries(index);
+
+      @SuppressWarnings("unchecked")
+      final List<TimeSeriesDataItem> items = series.getItems();
+
+      // ok, get ready to interpolate the value
+      Double previousY = null;
+      Double nextY = null;
+      Long previousX = null;
+      Long nextX = null;
+
+      // loop through the data
+      for (final TimeSeriesDataItem thisItem : items)
+      {
+        // does this class as a previous value?
+        if (thisItem.getPeriod().getFirstMillisecond() < tNow)
+        {
+          // ok, it's before use the previous
+          previousY = (Double) thisItem.getValue();
+          previousX = thisItem.getPeriod().getFirstMillisecond();
+        }
+        else
+        {
+          // ok, we've passed it. stop
+          nextY = (Double) thisItem.getValue();
+          nextX = thisItem.getPeriod().getFirstMillisecond();
+          break;
+        }
+      }
+
+      // have we found values?
+      final Double interpolated;
+      if (previousY != null && nextY != null)
+      {
+        // ok, interpolate the time (X)
+        final double proportion = (tNow - previousX) / (nextX - previousX);
+
+        // ok, now generate interpolate the value to use
+        interpolated = previousY + proportion * (nextY - previousY);
+      }
+      else
+      {
+        interpolated = null;
+      }
+
+      return interpolated;
+    }
+  }
+
+  protected static class NumberHelper implements AxisHelper
+  {
+
+    public NumberHelper(XYSeriesCollection dataset)
+    {
+      // TODO Auto-generated constructor stub
+    }
+
+    @Override
+    public Double getValueAt(int index, double tNow)
+    {
+      // TODO Auto-generated method stub
+      return null;
+    }
+  }
+
   protected void plotStepperMarkers(final Graphics2D g2,
       final Rectangle2D dataArea, final boolean vertical,
       final Axis domainAxis, final long theTime, final PlotRenderingInfo info,
@@ -287,52 +374,32 @@ public class TimeBarPlot extends CombinedDomainXYPlot
       {
         final XYDataset dataset = plot.getDataset(i);
 
-        if (dataset instanceof XYSeriesCollection)
+        final AxisHelper axisHelper;
+
+        if (dataset instanceof TimeSeriesCollection)
         {
-          final XYSeriesCollection coll = (XYSeriesCollection) dataset;
-          final int num = coll.getSeriesCount();
+          axisHelper = new DateHelper((TimeSeriesCollection) dataset);
+        }
+        else if (dataset instanceof XYSeriesCollection)
+        {
+          axisHelper = new NumberHelper((XYSeriesCollection) dataset);
+        }
+        else
+        {
+          axisHelper = null;
+        }
+
+        if (axisHelper != null)
+        {
+
+          final int num = dataset.getSeriesCount();
           for (int j = 0; j < num; j++)
           {
-            final XYSeries series = coll.getSeries(j);
 
-            @SuppressWarnings("unchecked")
-            final List<XYDataItem> items = series.getItems();
+            final Double interpolated = axisHelper.getValueAt(j, tNow);
 
-            // ok, get ready to interpolate the value
-            Double previousY = null;
-            Double nextY = null;
-            Double previousX = null;
-            Double nextX = null;
-
-            // loop through the data
-            for (final XYDataItem thisItem : items)
+            if (interpolated != null)
             {
-              // does this class as a previous value?
-              if (thisItem.getXValue() < tNow)
-              {
-                // ok, it's before use the previous
-                previousY = thisItem.getYValue();
-                previousX = thisItem.getXValue();
-              }
-              else
-              {
-                // ok, we've passed it. stop
-                nextY = thisItem.getYValue();
-                nextX = thisItem.getXValue();
-                break;
-              }
-            }
-
-            // have we found values?
-            if (previousY != null && nextY != null)
-            {
-              // ok, interpolate the time (X)
-              final double proportion =
-                  (theTime - previousX) / (nextX - previousX);
-
-              // ok, now generate interpolate the value to use
-              final double interpolated =
-                  previousY + proportion * (nextY - previousY);
 
               // and find the y coordinate of this data value
               final NumberAxis rangeA =
@@ -380,6 +447,139 @@ public class TimeBarPlot extends CombinedDomainXYPlot
         }
       }
     }
+  }
+
+  private static abstract class TestRunner
+  {
+    private String _title;
+
+    TestRunner(String title)
+    {
+      _title = title;
+    }
+
+    abstract DateHelper getHelper(TimeSeriesCollection dataset);
+
+    void test(long start, long len)
+    {
+
+      System.out.println(_title);
+
+      DateHelper helper = collateTestData(len, start);
+
+      Double res = 0d;
+
+      long t0 = System.currentTimeMillis();
+
+      for (int i = 1; i < 10; i++)
+      {
+        Double interp = helper.getValueAt(0, start + (len / i));
+        if (interp != null)
+          res += interp;
+      }
+
+      long t1 = System.currentTimeMillis();
+
+      System.out.println("Random access:" + (t1 - t0) + ", " + res);
+
+      helper = collateTestData(len, start);
+
+      res = 1d;
+
+      t0 = System.currentTimeMillis();
+
+      long time = start + (long) (len * 0.1);
+
+      for (int i = 1; i < 10; i++)
+      {
+        Double interp = helper.getValueAt(0, time + i);
+        if (interp != null)
+          res += interp;
+      }
+
+      t1 = System.currentTimeMillis();
+
+      System.out.println("Sequential access (early):" + (t1 - t0) + ", " + res);
+
+      helper = collateTestData(len, start);
+
+      res = 1d;
+
+      t0 = System.currentTimeMillis();
+
+      time = start + (long) (len * 0.9);
+
+      for (int i = 1; i < 10; i++)
+      {
+        Double interp = helper.getValueAt(0, time + i);
+        if (interp != null)
+          res += interp;
+      }
+
+      t1 = System.currentTimeMillis();
+
+      System.out.println("Sequential access (late):" + (t1 - t0) + ", " + res);
+
+      helper = collateTestData(len, start);
+
+      res = 1d;
+
+      t0 = System.currentTimeMillis();
+
+      time = start + (long) (len * 0.9);
+
+      for (int i = 10; i > 0; i--)
+      {
+        Double interp = helper.getValueAt(0, time + i);
+        if (interp != null)
+          res += interp;
+      }
+
+      t1 = System.currentTimeMillis();
+
+      System.out.println("Sequential access (late desc):" + (t1 - t0) + ", "
+          + res);
+    }
+
+    private DateHelper collateTestData(long len, long start)
+    {
+      TimeSeries series1 = new TimeSeries("Speed 1");
+      TimeSeries series2 = new TimeSeries("Speed 2");
+
+      for (long i = 0; i < len; i++)
+      {
+        series1.add(new Millisecond(new Date(start + i)), Math.sin(Math
+            .toRadians(i)));
+        series2.add(new Millisecond(new Date(start + i)), Math.cos(Math
+            .toRadians(i)));
+      }
+
+      TimeSeriesCollection coll = new TimeSeriesCollection();
+      coll.addSeries(series1);
+      coll.addSeries(series2);
+
+      return getHelper(coll);
+    }
+
+  }
+
+  public static void main(String[] args)
+  {
+    long len = 100000;
+    long start = new Date().getTime();
+
+    TestRunner runner = new TestRunner("Brute force")
+    {
+
+      @Override
+      DateHelper getHelper(TimeSeriesCollection dataset)
+      {
+        return new DateHelper(dataset);
+      }
+    };
+
+    runner.test(start, len);
+
   }
 
   public void setTime(final Date time)
