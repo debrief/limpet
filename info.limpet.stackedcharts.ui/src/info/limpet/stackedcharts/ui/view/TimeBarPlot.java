@@ -43,10 +43,49 @@ public class TimeBarPlot extends CombinedDomainXYPlot
    */
   private static final long serialVersionUID = 1L;
 
+  protected static void paintThisMarker(final Graphics2D g2,
+      final String label, final Color color, final float markerX,
+      final float markerY, final boolean vertical, final Font markerFont)
+  {
+    // store old font
+    final Font oldFont = g2.getFont();
+
+    // set the new one
+    g2.setFont(markerFont);
+
+    // reflect the plot orientation
+    final float xPos;
+    final float yPos;
+    if (vertical)
+    {
+      yPos = 3f + markerX;
+      xPos = markerY;
+    }
+    else
+    {
+      xPos = 4f + markerX;
+      yPos = 2f + markerY;
+    }
+
+    // find the size of the label, so we can draw a background
+    final FontMetrics fc = g2.getFontMetrics();
+    final Rectangle2D bounds = fc.getStringBounds(label, g2);
+    g2.setColor(Color.white);
+    g2.fill3DRect((int) yPos, (int) (xPos - bounds.getHeight()),
+        3 + (int) bounds.getWidth(), 3 + (int) bounds.getHeight(), true);
+
+    g2.setColor(color.darker());
+    g2.drawString(label, yPos, xPos);
+
+    // and restore the font
+    g2.setFont(oldFont);
+  }
+
   Date _currentTime = null;
   boolean _showLine = true;
   boolean _showLabels = true;
   final java.awt.Color _orange = new java.awt.Color(247, 153, 37);
+
   final java.awt.Font _markerFont;
 
   public TimeBarPlot(final ValueAxis sharedAxis)
@@ -56,8 +95,8 @@ public class TimeBarPlot extends CombinedDomainXYPlot
   }
 
   /**
-   * Draws the XY plot on a Java 2D graphics device (such as the screen or a printer), together
-   * with a current time marker
+   * Draws the XY plot on a Java 2D graphics device (such as the screen or a printer), together with
+   * a current time marker
    * <P>
    * XYPlot relies on an XYItemRenderer to draw each item in the plot. This allows the visual
    * representation of the data to be changed easily.
@@ -105,7 +144,7 @@ public class TimeBarPlot extends CombinedDomainXYPlot
         linePosition =
             dateAxis.dateToJava2D(new Date(theTime), dataArea, this
                 .getDomainAxisEdge());
-        
+
       }
       else if (domainAxis instanceof NumberAxis)
       {
@@ -120,11 +159,13 @@ public class TimeBarPlot extends CombinedDomainXYPlot
       }
 
       if (linePosition == null)
+      {
         return;
+      }
 
       // trim the linePositiion to the visible area
       double trimmedLinePosition;
-      if(vertical)
+      if (vertical)
       {
         trimmedLinePosition = Math.max(linePosition, dataArea.getMinX());
         trimmedLinePosition = Math.min(trimmedLinePosition, dataArea.getMaxX());
@@ -133,23 +174,23 @@ public class TimeBarPlot extends CombinedDomainXYPlot
       {
         trimmedLinePosition = Math.max(linePosition, dataArea.getMinY());
         trimmedLinePosition = Math.min(trimmedLinePosition, dataArea.getMaxY());
-        
+
       }
-      
+
       // did we do any clipping?
       final boolean clipped = !linePosition.equals(trimmedLinePosition);
 
       if (_showLine)
       {
         plotStepperLine(g2, dataArea, vertical, domainAxis, theTime,
-            (int)trimmedLinePosition, clipped);
+            (int) trimmedLinePosition, clipped);
       }
 
       // ok, have a got at the time values
       if (_showLabels && !clipped)
       {
         plotStepperMarkers(g2, dataArea, vertical, domainAxis, theTime,
-            renderInfo, (int)trimmedLinePosition);
+            renderInfo, (int) trimmedLinePosition);
       }
     }
   }
@@ -163,11 +204,11 @@ public class TimeBarPlot extends CombinedDomainXYPlot
    * @param axis
    * @param theTime
    * @param linePosition
-   * @param clipped 
+   * @param clipped
    */
   protected void plotStepperLine(final Graphics2D g2,
       final Rectangle2D dataArea, final boolean vertical, final Axis axis,
-      final long theTime, int linePosition, boolean clipped)
+      final long theTime, final int linePosition, final boolean clipped)
   {
 
     // prepare to draw
@@ -177,7 +218,7 @@ public class TimeBarPlot extends CombinedDomainXYPlot
 
     // thicken up the line
     final int wid;
-    if(clipped)
+    if (clipped)
     {
       g2.setStroke(new BasicStroke(1));
       wid = 1;
@@ -191,16 +232,15 @@ public class TimeBarPlot extends CombinedDomainXYPlot
     if (vertical)
     {
       // draw the line
-      g2.drawLine((int) linePosition - wid + 2, (int) dataArea.getY(),
-          (int) linePosition - wid + 2, (int) dataArea.getY()
-              + (int) dataArea.getHeight());
+      g2.drawLine(linePosition - wid + 2, (int) dataArea.getY(), linePosition
+          - wid + 2, (int) dataArea.getY() + (int) dataArea.getHeight());
     }
     else
     {
       // draw the line
-      g2.drawLine((int) dataArea.getX() + 1, (int) linePosition - 1,
-          (int) dataArea.getX() + (int) dataArea.getWidth() - 1,
-          (int) linePosition - 1);
+      g2.drawLine((int) dataArea.getX() + 1, linePosition - 1, (int) dataArea
+          .getX()
+          + (int) dataArea.getWidth() - 1, linePosition - 1);
 
     }
 
@@ -211,8 +251,8 @@ public class TimeBarPlot extends CombinedDomainXYPlot
 
   protected void plotStepperMarkers(final Graphics2D g2,
       final Rectangle2D dataArea, final boolean vertical,
-      final Axis domainAxis, final long theTime,
-      final PlotRenderingInfo info, final int linePosition)
+      final Axis domainAxis, final long theTime, final PlotRenderingInfo info,
+      final int linePosition)
   {
     // ok, loop through the charts
     final CombinedDomainXYPlot comb = this;
@@ -298,8 +338,8 @@ public class TimeBarPlot extends CombinedDomainXYPlot
               final NumberAxis rangeA =
                   (NumberAxis) plot.getRangeAxisForDataset(i);
               final float markerY =
-                  (float) rangeA.valueToJava2D(interpolated, thisPlotArea,
-                      this.getRangeAxisEdge());
+                  (float) rangeA.valueToJava2D(interpolated, thisPlotArea, this
+                      .getRangeAxisEdge());
 
               // prepare the label
               final String label;
@@ -340,44 +380,6 @@ public class TimeBarPlot extends CombinedDomainXYPlot
         }
       }
     }
-  }
-
-  protected static void paintThisMarker(final Graphics2D g2,
-      final String label, final Color color, final float markerX,
-      final float markerY, final boolean vertical, Font markerFont)
-  {
-    // store old font
-    final Font oldFont = g2.getFont();
-
-    // set the new one
-    g2.setFont(markerFont);
-
-    // reflect the plot orientation
-    final float xPos;
-    final float yPos;
-    if (vertical)
-    {
-      yPos = 3f + markerX;
-      xPos = (float) markerY;
-    }
-    else
-    {
-      xPos = 4f + (float) markerX;
-      yPos = 2f + (float) markerY;
-    }
-
-    // find the size of the label, so we can draw a background
-    final FontMetrics fc = g2.getFontMetrics();
-    final Rectangle2D bounds = fc.getStringBounds(label, g2);
-    g2.setColor(Color.white);
-    g2.fill3DRect((int) yPos, (int) (xPos - bounds.getHeight()),
-        3 + (int) bounds.getWidth(), 3 + (int) bounds.getHeight(), true);
-
-    g2.setColor(color.darker());
-    g2.drawString(label, yPos, xPos);
-
-    // and restore the font
-    g2.setFont(oldFont);
   }
 
   public void setTime(final Date time)
