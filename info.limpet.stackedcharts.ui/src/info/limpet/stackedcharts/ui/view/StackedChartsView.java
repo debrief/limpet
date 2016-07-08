@@ -3,7 +3,6 @@ package info.limpet.stackedcharts.ui.view;
 import info.limpet.stackedcharts.model.ChartSet;
 import info.limpet.stackedcharts.ui.editor.Activator;
 import info.limpet.stackedcharts.ui.editor.StackedchartsEditControl;
-import info.limpet.stackedcharts.ui.view.ChartBuilder.TimeBarPlot;
 
 import java.io.File;
 import java.io.IOException;
