@@ -607,7 +607,7 @@ public class TimeBarPlot extends CombinedDomainXYPlot
           final ValueAxis sharedAxis = comb.getDomainAxis();
           if (sharedAxis instanceof DateAxis)
           {
-            _helper = new CacheingDateHelper();
+            _helper = new DateHelper();
           }
           else if (sharedAxis instanceof NumberAxis)
           {
