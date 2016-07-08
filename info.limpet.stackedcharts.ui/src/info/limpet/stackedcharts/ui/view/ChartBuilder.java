@@ -113,56 +113,6 @@ public class ChartBuilder
   }
 
   /**
-   * support generation of a stacked chart with a shared number axis
-   * 
-   * @author ian
-   * 
-   */
-  private static class NumberHelper implements ChartHelper
-  {
-
-    @Override
-    public void addItem(final Series series, final DataItem item)
-    {
-      final XYSeries ns = (XYSeries) series;
-      ns.add(item.getIndependentVal(), item.getDependentVal());
-    }
-
-    @Override
-    public void clear(final Series series)
-    {
-      final XYSeries ns = (XYSeries) series;
-      ns.clear();
-    }
-
-    @Override
-    public ValueAxis createAxis(final String name)
-    {
-      return new NumberAxis(name);
-    }
-
-    @Override
-    public XYDataset createCollection()
-    {
-      return new XYSeriesCollection();
-    }
-
-    @Override
-    public Series createSeries(final String name)
-    {
-      return new XYSeries(name);
-    }
-
-    @Override
-    public void storeSeries(final XYDataset collection, final Series series)
-    {
-      final XYSeriesCollection cc = (XYSeriesCollection) collection;
-      cc.addSeries((XYSeries) series);
-    }
-
-  }
-
-  /**
    * support generation of a stacked chart with a shared time axis
    * 
    * @author ian
@@ -211,6 +161,56 @@ public class ChartBuilder
       final TimeSeriesCollection cc = (TimeSeriesCollection) collection;
       cc.addSeries((TimeSeries) series);
     }
+  }
+
+  /**
+   * support generation of a stacked chart with a shared number axis
+   * 
+   * @author ian
+   * 
+   */
+  private static class NumberHelper implements ChartHelper
+  {
+
+    @Override
+    public void addItem(final Series series, final DataItem item)
+    {
+      final XYSeries ns = (XYSeries) series;
+      ns.add(item.getIndependentVal(), item.getDependentVal());
+    }
+
+    @Override
+    public void clear(final Series series)
+    {
+      final XYSeries ns = (XYSeries) series;
+      ns.clear();
+    }
+
+    @Override
+    public ValueAxis createAxis(final String name)
+    {
+      return new NumberAxis(name);
+    }
+
+    @Override
+    public XYDataset createCollection()
+    {
+      return new XYSeriesCollection();
+    }
+
+    @Override
+    public Series createSeries(final String name)
+    {
+      return new XYSeries(name);
+    }
+
+    @Override
+    public void storeSeries(final XYDataset collection, final Series series)
+    {
+      final XYSeriesCollection cc = (XYSeriesCollection) collection;
+      cc.addSeries((XYSeries) series);
+    }
+
   }
 
   /**
