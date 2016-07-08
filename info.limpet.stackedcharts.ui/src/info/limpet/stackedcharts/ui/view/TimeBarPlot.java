@@ -43,11 +43,14 @@ import org.jfree.data.xy.XYSeriesCollection;
  */
 public class TimeBarPlot extends CombinedDomainXYPlot
 {
+  /** strategy for classes that can provide an interpolated value for 
+   * JFreeChart datasets
+   * @author ian
+   *
+   */
   protected static interface AxisHelper
   {
-
-    Double getValueAt(Dataset dataset, int index, double tNow2);
-
+    Double getValueAt(Dataset dataset, int index, double time);
   }
 
   protected static class CacheingDateHelper implements AxisHelper
