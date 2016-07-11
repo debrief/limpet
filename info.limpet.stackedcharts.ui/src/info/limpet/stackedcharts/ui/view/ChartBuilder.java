@@ -597,7 +597,11 @@ public class ChartBuilder
     if(controllableDate != null)
     {
       // ok, initialise it
-      plot.setTime(new Date(controllableDate.getDate()));
+      Date theTime = controllableDate.getDate();
+      if (theTime != null)
+      {
+        plot.setTime(theTime);
+      }
     }
     
     plot.setGap(5.0);

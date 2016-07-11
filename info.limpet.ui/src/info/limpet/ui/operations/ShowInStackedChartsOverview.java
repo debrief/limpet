@@ -184,15 +184,15 @@ public class ShowInStackedChartsOverview implements IOperation<IStoreItem>
               ControllableDate timeC = new ControllableDate(){
 
                 @Override
-                public void setDate(long time)
+                public void setDate(Date date)
                 {
-                  group.setTime(new Date(time));
+                  group.setTime(date);
                 }
 
                 @Override
-                public long getDate()
+                public Date getDate()
                 {
-                  return group.getTime().getTime();
+                  return group.getTime();
                 }};
              chartView.setDateSupport(timeC);
 

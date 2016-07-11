@@ -69,13 +69,13 @@ public class StackedChartsView extends ViewPart implements
      * 
      * @param time
      */
-    void setDate(long time);
+    void setDate(Date date);
     
     /** retrieve the date
      * 
      * @return current date
      */
-    long getDate();
+    Date getDate();
   }
   
   public static final int CHART_VIEW = 1;
@@ -582,7 +582,7 @@ public class StackedChartsView extends ViewPart implements
     if(_controllableDate != null)
     {
       // ok, update it
-      _controllableDate.setDate((long)chartX);
+      _controllableDate.setDate(new Date((long)chartX));
     }
   }
 
