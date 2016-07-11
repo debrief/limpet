@@ -151,7 +151,7 @@ public class ShowInStackedChartsOverview implements IOperation<IStoreItem>
             // set follow selection to off
             // cv.follow(getInputs());
             chartView.setModel(model);
-            
+
             // also, see if we can listen to changes in it
             final IStoreGroup group =
                 RangeSliderView.findTopParent(this.getInputs().get(0));
@@ -180,8 +180,9 @@ public class ShowInStackedChartsOverview implements IOperation<IStoreItem>
                 }
               };
               chartView.addRunOnCloseCallback(closer);
-              
-              ControllableDate timeC = new ControllableDate(){
+
+              ControllableDate timeC = new ControllableDate()
+              {
 
                 @Override
                 public void setDate(Date date)
@@ -193,11 +194,10 @@ public class ShowInStackedChartsOverview implements IOperation<IStoreItem>
                 public Date getDate()
                 {
                   return group.getTime();
-                }};
-             chartView.setDateSupport(timeC);
+                }
+              };
+              chartView.setDateSupport(timeC);
 
-
-              
             }
 
             // // take a copy of the model
@@ -328,7 +328,22 @@ public class ShowInStackedChartsOverview implements IOperation<IStoreItem>
             if (dependent == null)
             {
               dependent = factory.createDependentAxis();
-              NumberAxis numAxis = factory.createNumberAxis();
+
+              // double-check if this is angular data
+              final NumberAxis numAxis;
+              if ("\u00b0".equals(dataset.getUnits()))
+              {
+                numAxis = factory.createAngleAxis();
+              }
+              else if ("Degs".equals(dataset.getUnits()))
+              {
+                numAxis = factory.createAngleAxis();
+              }
+              else
+              {
+                numAxis = factory.createNumberAxis();
+              }
+
               numAxis.setUnits(dataset.getUnits());
               dependent.setAxisType(numAxis);
               dependent.setName(theseUnits);
