@@ -18,21 +18,24 @@ import org.jfree.ui.RectangleEdge;
 public class WrappingRenderer extends XYLineAndShapeRenderer
 {
   /**
-   * /**
-   * An interface for creating custom logic for drawing lines between
-   * points for XYLineAndShapeRenderer.
+   * /** An interface for creating custom logic for drawing lines between points for
+   * XYLineAndShapeRenderer.
    */
-  public static interface OverflowCondition {
+  public static interface OverflowCondition
+  {
 
     /**
      * Custom logic for detecting overflow between points.
-     *
-     * @param y0 previous y
-     * @param x0 previous x
-     * @param y1 current y
-     * @param x1 current x
-     * @return true, if you there is an overflow detected.
-     * Otherwise, return false
+     * 
+     * @param y0
+     *          previous y
+     * @param x0
+     *          previous x
+     * @param y1
+     *          current y
+     * @param x1
+     *          current x
+     * @return true, if you there is an overflow detected. Otherwise, return false
      */
     public boolean isOverflow(double y0, double x0, double y1, double x1);
   }
@@ -45,39 +48,45 @@ public class WrappingRenderer extends XYLineAndShapeRenderer
   final double max;
   LinearInterpolator interpolator = new LinearInterpolator();
   final OverflowCondition overflowCondition;
-  
+
   public WrappingRenderer(final double min, final double max)
   {
     this.min = min;
     this.max = max;
-    
-    overflowCondition = new OverflowCondition() {
+
+    overflowCondition = new OverflowCondition()
+    {
       @Override
-      public boolean isOverflow(double y0, double x0, double y1, double x1) {
-        return Math.abs(y1 - y0) > ((max-min)/2);
+      public boolean isOverflow(double y0, double x0, double y1, double x1)
+      {
+        return Math.abs(y1 - y0) > 180d;
       }
     };
   }
 
-
   @Override
-  protected void drawPrimaryLineAsPath(XYItemRendererState state,
-    Graphics2D g2, XYPlot plot, XYDataset dataset, int pass,
-    int series, int item, ValueAxis domainAxis, ValueAxis rangeAxis,
-    Rectangle2D dataArea) {
+  protected void
+      drawPrimaryLineAsPath(XYItemRendererState state, Graphics2D g2,
+          XYPlot plot, XYDataset dataset, int pass, int series, int item,
+          ValueAxis domainAxis, ValueAxis rangeAxis, Rectangle2D dataArea)
+  {
 
     // get the data point...
     State s = (State) state;
-    try {
+    try
+    {
       double x1 = dataset.getXValue(series, item);
       double y1 = dataset.getYValue(series, item);
-      if (Double.isNaN(x1) && Double.isNaN(y1)) {
+      if (Double.isNaN(x1) && Double.isNaN(y1))
+      {
         s.setLastPointGood(false);
         return;
       }
 
-      if (!s.isLastPointGood()) {
-        ImmutablePair<Float, Float> xy = translate(plot, domainAxis, rangeAxis, dataArea, x1, y1);
+      if (!s.isLastPointGood())
+      {
+        ImmutablePair<Float, Float> xy =
+            translate(plot, domainAxis, rangeAxis, dataArea, x1, y1);
         s.seriesPath.moveTo(xy.getLeft(), xy.getRight());
         s.setLastPointGood(true);
         return;
@@ -85,36 +94,52 @@ public class WrappingRenderer extends XYLineAndShapeRenderer
 
       double x0 = dataset.getXValue(series, item - 1);
       double y0 = dataset.getYValue(series, item - 1);
-      if (overflowCondition.isOverflow(y0, x0, y1, x1)) {
+      if (overflowCondition.isOverflow(y0, x0, y1, x1))
+      {
         boolean overflowAtMax = y1 < y0;
-        if (overflowAtMax) {
-          PolynomialSplineFunction psf = interpolator.interpolate(new double[]{y0, y1 + max}, new double[]{x0, x1});
+        if (overflowAtMax)
+        {
+          PolynomialSplineFunction psf = interpolator.interpolate(new double[]
+          {y0, y1 + (max-min)}, new double[]
+          {x0, x1});
           double xmid = psf.value(max);
-          ImmutablePair<Float, Float> xy = translate(plot, domainAxis, rangeAxis, dataArea, xmid, max);
+          ImmutablePair<Float, Float> xy =
+              translate(plot, domainAxis, rangeAxis, dataArea, xmid, max);
           s.seriesPath.lineTo(xy.getLeft(), xy.getRight());
           xy = translate(plot, domainAxis, rangeAxis, dataArea, xmid, min);
           s.seriesPath.moveTo(xy.getLeft(), xy.getRight());
           xy = translate(plot, domainAxis, rangeAxis, dataArea, x1, y1);
           s.seriesPath.lineTo(xy.getLeft(), xy.getRight());
-        } else {
-          PolynomialSplineFunction psf = interpolator.interpolate(new double[]{y1 - max, y0}, new double[]{x1, x0});
+        }
+        else
+        {
+          PolynomialSplineFunction psf = interpolator.interpolate(new double[]
+          {y1 - (max - min), y0}, new double[]
+          {x1, x0});
           double xmid = psf.value(min);
-          ImmutablePair<Float, Float> xy = translate(plot, domainAxis, rangeAxis, dataArea, xmid, min);
+          ImmutablePair<Float, Float> xy =
+              translate(plot, domainAxis, rangeAxis, dataArea, xmid, min);
           s.seriesPath.lineTo(xy.getLeft(), xy.getRight());
           xy = translate(plot, domainAxis, rangeAxis, dataArea, xmid, max);
           s.seriesPath.moveTo(xy.getLeft(), xy.getRight());
           xy = translate(plot, domainAxis, rangeAxis, dataArea, x1, y1);
           s.seriesPath.lineTo(xy.getLeft(), xy.getRight());
         }
-      } else {
-        ImmutablePair<Float, Float> xy = translate(plot, domainAxis, rangeAxis, dataArea, x1, y1);
+      }
+      else
+      {
+        ImmutablePair<Float, Float> xy =
+            translate(plot, domainAxis, rangeAxis, dataArea, x1, y1);
         s.seriesPath.lineTo(xy.getLeft(), xy.getRight());
       }
 
       s.setLastPointGood(true);
-    } finally {
+    }
+    finally
+    {
       // if this is the last item, draw the path ...
-      if (item == s.getLastItemIndex()) {
+      if (item == s.getLastItemIndex())
+      {
         // draw path
         drawFirstPassShape(g2, pass, series, item, s.seriesPath);
       }
@@ -122,8 +147,10 @@ public class WrappingRenderer extends XYLineAndShapeRenderer
     }
   }
 
-
-  private ImmutablePair<Float, Float> translate(XYPlot plot, ValueAxis domainAxis, ValueAxis rangeAxis, Rectangle2D dataArea, double x, double y) {
+  private ImmutablePair<Float, Float> translate(XYPlot plot,
+      ValueAxis domainAxis, ValueAxis rangeAxis, Rectangle2D dataArea,
+      double x, double y)
+  {
     RectangleEdge xAxisLocation = plot.getDomainAxisEdge();
     RectangleEdge yAxisLocation = plot.getRangeAxisEdge();
     double transX1 = domainAxis.valueToJava2D(x, dataArea, xAxisLocation);
@@ -132,12 +159,14 @@ public class WrappingRenderer extends XYLineAndShapeRenderer
     float xtrans = (float) transX1;
     float ytrans = (float) transY1;
     PlotOrientation orientation = plot.getOrientation();
-    if (orientation == PlotOrientation.HORIZONTAL) {
+    if (orientation == PlotOrientation.HORIZONTAL)
+    {
       xtrans = (float) transY1;
       ytrans = (float) transX1;
     }
     return new ImmutablePair<>(xtrans, ytrans);
   }
+
   @Override
   protected void drawPrimaryLine(XYItemRendererState state, Graphics2D g2,
       XYPlot plot, XYDataset dataset, int pass, int series, int item,
@@ -169,7 +198,7 @@ public class WrappingRenderer extends XYLineAndShapeRenderer
       if (overflowAtMax)
       {
         PolynomialSplineFunction psf = interpolator.interpolate(new double[]
-        {y0, y1 + max}, new double[]
+        {y0, y1 + (max-min)}, new double[]
         {x0, x1});
         double xmid = psf.value(max);
         drawPrimaryLine(state, g2, plot, x0, y0, xmid, max, pass, series, item,
@@ -180,7 +209,7 @@ public class WrappingRenderer extends XYLineAndShapeRenderer
       else
       {
         PolynomialSplineFunction psf = interpolator.interpolate(new double[]
-        {y1 - max, y0}, new double[]
+        {y1 - (max-min), y0}, new double[]
         {x1, x0});
         double xmid = psf.value(min);
         drawPrimaryLine(state, g2, plot, x0, y0, xmid, min, pass, series, item,
