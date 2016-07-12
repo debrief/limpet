@@ -686,23 +686,7 @@ public class ChartBuilder
     if (axisType instanceof AngleAxis)
     {
       AngleAxis angle = (AngleAxis) axisType;
-      String units = angle.getUnits();
-      if ("Degs".equals(units))
-      {
-        renderer = new WrappingRenderer(0, 360);
-      }
-      else if ("\u00b0".equals(units))
-      {
-        renderer = new WrappingRenderer(0, 360);
-      }
-      else if ("rads".equals(units))
-      {
-        renderer = new WrappingRenderer(0, 2 * Math.PI);
-      }
-      else
-      {
-        renderer = new XYLineAndShapeRenderer();
-      }
+      renderer = new WrappingRenderer(angle.getMinVal(), angle.getMaxVal());
     }
     else
     {
@@ -715,7 +699,6 @@ public class ChartBuilder
     final XYDataset collection = axeshelper.createCollection();
 
     final String axisName;
-
     if (axisType instanceof info.limpet.stackedcharts.model.NumberAxis)
     {
       info.limpet.stackedcharts.model.NumberAxis number =
