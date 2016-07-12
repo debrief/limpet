@@ -119,6 +119,9 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//NumberAxis/autoIncludesZero"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//NumberAxis/units"/>
     </genClasses>
-    <genClasses ecoreClass="model.ecore#//AngleAxis"/>
+    <genClasses ecoreClass="model.ecore#//AngleAxis">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//AngleAxis/minVal"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//AngleAxis/maxVal"/>
+    </genClasses>
   </genPackages>
 </genmodel:GenModel>

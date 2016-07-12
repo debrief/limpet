@@ -1,6 +1,7 @@
 package info.limpet.stackedcharts.ui.view;
 
 import info.limpet.stackedcharts.model.AbstractAnnotation;
+import info.limpet.stackedcharts.model.AngleAxis;
 import info.limpet.stackedcharts.model.AxisDirection;
 import info.limpet.stackedcharts.model.AxisType;
 import info.limpet.stackedcharts.model.Chart;
@@ -538,11 +539,12 @@ public class ChartBuilder
    * create a chart from our dataset
    * 
    * @param chartsSet
-   * @param controllableDate 
+   * @param controllableDate
    * 
    * @return
    */
-  public static JFreeChart build(final ChartSet chartsSet, ControllableDate controllableDate)
+  public static JFreeChart build(final ChartSet chartsSet,
+      ControllableDate controllableDate)
   {
     final IndependentAxis sharedAxisModel = chartsSet.getSharedAxis();
     final ChartHelper helper;
@@ -592,9 +594,9 @@ public class ChartBuilder
       // add chart to stack
       plot.add(subplot);
     }
-    
+
     // do we know a date?
-    if(controllableDate != null)
+    if (controllableDate != null)
     {
       // ok, initialise it
       Date theTime = controllableDate.getDate();
@@ -603,7 +605,7 @@ public class ChartBuilder
         plot.setTime(theTime);
       }
     }
-    
+
     plot.setGap(5.0);
     plot.setOrientation(chartsSet.getOrientation() == Orientation.VERTICAL
         ? PlotOrientation.VERTICAL : PlotOrientation.HORIZONTAL);
@@ -674,15 +676,48 @@ public class ChartBuilder
    *          model object of DependentAxis
    */
   private static void createDependentAxis(final XYPlot subplot,
-      final int indexAxis, final DependentAxis dependentAxis, ChartHelper axeshelper)
+      final int indexAxis, final DependentAxis dependentAxis,
+      ChartHelper axeshelper)
   {
-    final XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
+    final XYLineAndShapeRenderer renderer;
+
+    // is this a special axis type
+    AxisType axisType = dependentAxis.getAxisType();
+    if (axisType instanceof AngleAxis)
+    {
+      AngleAxis angle = (AngleAxis) axisType;
+      renderer = new WrappingRenderer(angle.getMinVal(), angle.getMaxVal());
+    }
+    else
+    {
+      renderer = new XYLineAndShapeRenderer();
+    }
+
     renderer.setDrawSeriesLineAsPath(true);
     final int indexSeries = 0;
 
     final XYDataset collection = axeshelper.createCollection();
 
-    final ValueAxis chartAxis = new NumberAxis(dependentAxis.getName());
+    final String axisName;
+    if (axisType instanceof info.limpet.stackedcharts.model.NumberAxis)
+    {
+      info.limpet.stackedcharts.model.NumberAxis number =
+          (info.limpet.stackedcharts.model.NumberAxis) axisType;
+      if (number.getUnits() != null)
+      {
+        axisName = dependentAxis.getName() + " (" + number.getUnits() + ")";
+      }
+      else
+      {
+        axisName = dependentAxis.getName();
+      }
+    }
+    else
+    {
+      axisName = dependentAxis.getName();
+    }
+
+    final ValueAxis chartAxis = new NumberAxis(axisName);
 
     if (dependentAxis.getDirection() == AxisDirection.DESCENDING)
     {
