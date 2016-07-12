@@ -983,6 +983,26 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
    * <!-- end-user-doc -->
    * @generated
    */
+  public EAttribute getAngleAxis_MinVal()
+  {
+    return (EAttribute)angleAxisEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getAngleAxis_MaxVal()
+  {
+    return (EAttribute)angleAxisEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public EEnum getAxisScale()
   {
     return axisScaleEEnum;
@@ -1155,6 +1175,8 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
     createEAttribute(numberAxisEClass, NUMBER_AXIS__UNITS);
 
     angleAxisEClass = createEClass(ANGLE_AXIS);
+    createEAttribute(angleAxisEClass, ANGLE_AXIS__MIN_VAL);
+    createEAttribute(angleAxisEClass, ANGLE_AXIS__MAX_VAL);
 
     // Create enums
     axisScaleEEnum = createEEnum(AXIS_SCALE);
@@ -1298,6 +1320,8 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
     initEAttribute(getNumberAxis_Units(), ecorePackage.getEString(), "units", null, 0, 1, NumberAxis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(angleAxisEClass, AngleAxis.class, "AngleAxis", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getAngleAxis_MinVal(), theXMLTypePackage.getDouble(), "minVal", null, 0, 1, AngleAxis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getAngleAxis_MaxVal(), theXMLTypePackage.getDouble(), "maxVal", "0.0", 0, 1, AngleAxis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     // Initialize enums and add enum literals
     initEEnum(axisScaleEEnum, AxisScale.class, "AxisScale");

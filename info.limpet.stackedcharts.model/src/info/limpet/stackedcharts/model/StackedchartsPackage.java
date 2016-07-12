@@ -1331,13 +1331,31 @@ public interface StackedchartsPackage extends EPackage
   int ANGLE_AXIS__UNITS = NUMBER_AXIS__UNITS;
 
   /**
+   * The feature id for the '<em><b>Min Val</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ANGLE_AXIS__MIN_VAL = NUMBER_AXIS_FEATURE_COUNT + 0;
+
+  /**
+   * The feature id for the '<em><b>Max Val</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ANGLE_AXIS__MAX_VAL = NUMBER_AXIS_FEATURE_COUNT + 1;
+
+  /**
    * The number of structural features of the '<em>Angle Axis</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int ANGLE_AXIS_FEATURE_COUNT = NUMBER_AXIS_FEATURE_COUNT + 0;
+  int ANGLE_AXIS_FEATURE_COUNT = NUMBER_AXIS_FEATURE_COUNT + 2;
 
   /**
    * The number of operations of the '<em>Angle Axis</em>' class.
@@ -2139,6 +2157,28 @@ public interface StackedchartsPackage extends EPackage
   EClass getAngleAxis();
 
   /**
+   * Returns the meta object for the attribute '{@link info.limpet.stackedcharts.model.AngleAxis#getMinVal <em>Min Val</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Min Val</em>'.
+   * @see info.limpet.stackedcharts.model.AngleAxis#getMinVal()
+   * @see #getAngleAxis()
+   * @generated
+   */
+  EAttribute getAngleAxis_MinVal();
+
+  /**
+   * Returns the meta object for the attribute '{@link info.limpet.stackedcharts.model.AngleAxis#getMaxVal <em>Max Val</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Max Val</em>'.
+   * @see info.limpet.stackedcharts.model.AngleAxis#getMaxVal()
+   * @see #getAngleAxis()
+   * @generated
+   */
+  EAttribute getAngleAxis_MaxVal();
+
+  /**
    * Returns the meta object for enum '{@link info.limpet.stackedcharts.model.AxisScale <em>Axis Scale</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -2806,6 +2846,22 @@ public interface StackedchartsPackage extends EPackage
      * @generated
      */
     EClass ANGLE_AXIS = eINSTANCE.getAngleAxis();
+
+    /**
+     * The meta object literal for the '<em><b>Min Val</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute ANGLE_AXIS__MIN_VAL = eINSTANCE.getAngleAxis_MinVal();
+
+    /**
+     * The meta object literal for the '<em><b>Max Val</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute ANGLE_AXIS__MAX_VAL = eINSTANCE.getAngleAxis_MaxVal();
 
     /**
      * The meta object literal for the '{@link info.limpet.stackedcharts.model.AxisScale <em>Axis Scale</em>}' enum.
