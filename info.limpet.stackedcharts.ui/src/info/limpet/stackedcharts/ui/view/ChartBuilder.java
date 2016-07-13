@@ -36,6 +36,7 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.AxisLocation;
 import org.jfree.chart.axis.DateAxis;
 import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.axis.NumberTickUnit;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.CombinedDomainXYPlot;
 import org.jfree.chart.plot.IntervalMarker;
@@ -682,22 +683,9 @@ public class ChartBuilder
     final XYLineAndShapeRenderer renderer;
 
     // is this a special axis type
-    AxisType axisType = dependentAxis.getAxisType();
-    if (axisType instanceof AngleAxis)
-    {
-      AngleAxis angle = (AngleAxis) axisType;
-      renderer = new WrappingRenderer(angle.getMinVal(), angle.getMaxVal());
-    }
-    else
-    {
-      renderer = new XYLineAndShapeRenderer();
-    }
+    final AxisType axisType = dependentAxis.getAxisType();
 
-    renderer.setDrawSeriesLineAsPath(true);
-    final int indexSeries = 0;
-
-    final XYDataset collection = axeshelper.createCollection();
-
+    // sort out the name
     final String axisName;
     if (axisType instanceof info.limpet.stackedcharts.model.NumberAxis)
     {
@@ -717,7 +705,32 @@ public class ChartBuilder
       axisName = dependentAxis.getName();
     }
 
-    final ValueAxis chartAxis = new NumberAxis(axisName);
+    
+    
+    final ValueAxis chartAxis;
+    if (axisType instanceof AngleAxis)
+    {
+      AngleAxis angle = (AngleAxis) axisType;
+      
+      // use the renderer that "jumps" across zero/360 barrier
+      renderer = new WrappingRenderer(angle.getMinVal(), angle.getMaxVal());
+      
+      // use the angular axis
+      chartAxis = new AnglularUnitAxis(axisName);
+    }
+    else
+    {
+      renderer = new XYLineAndShapeRenderer();
+      
+      chartAxis = new NumberAxis(axisName);
+    }
+
+    renderer.setDrawSeriesLineAsPath(true);
+    final int indexSeries = 0;
+
+    final XYDataset collection = axeshelper.createCollection();
+
+
 
     if (dependentAxis.getDirection() == AxisDirection.DESCENDING)
     {
@@ -743,6 +756,50 @@ public class ChartBuilder
     for (final DataItem dataItem : measurements)
     {
       helper.addItem(series, dataItem);
+    }
+  }
+  
+  /** modified version of angle axis that prefers to use 
+   * angular metric units.
+   * @author ian
+   *
+   */
+  private static class AnglularUnitAxis extends NumberAxis
+  {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
+    public AnglularUnitAxis(final String axisName)
+    {
+      super(axisName);
+    }
+
+    @Override
+    public NumberTickUnit getTickUnit()
+    {
+      final NumberTickUnit tickUnit = super.getTickUnit();
+      if (tickUnit.getSize() < 15)
+      {
+        return tickUnit;
+      }
+      else if (tickUnit.getSize() < 45)
+      {
+        return new NumberTickUnit(45);
+      }
+      else if (tickUnit.getSize() < 90)
+      {
+        return new NumberTickUnit(90);
+      }
+      else if (tickUnit.getSize() < 180)
+      {
+        return new NumberTickUnit(180);
+      }
+      else
+      {
+        return new NumberTickUnit(360);
+      }
     }
   }
 
