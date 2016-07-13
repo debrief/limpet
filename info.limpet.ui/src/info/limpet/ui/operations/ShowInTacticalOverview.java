@@ -25,6 +25,7 @@ import info.limpet.ITemporalQuantityCollection;
 import info.limpet.data.commands.AbstractCommand;
 import info.limpet.data.operations.CollectionComplianceTests;
 import info.limpet.data.store.StoreGroup;
+import info.limpet.stackedcharts.model.AngleAxis;
 import info.limpet.stackedcharts.model.Chart;
 import info.limpet.stackedcharts.model.ChartSet;
 import info.limpet.stackedcharts.model.DataItem;
@@ -306,7 +307,10 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
     Chart crsePlot = factory.createChart();
     crsePlot.setName("Course");
     DependentAxis crseAxis = factory.createDependentAxis();
-    crseAxis.setAxisType(factory.createNumberAxis());
+    AngleAxis crseAxisType = factory.createAngleAxis();
+    crseAxisType.setMinVal(0);
+    crseAxisType.setMaxVal(360);
+    crseAxis.setAxisType(crseAxisType);
     crseAxis.setName("Course (Degs)");
     crsePlot.getMinAxes().add(crseAxis);
     res.getCharts().add(crsePlot);
@@ -453,12 +457,12 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
         else if (thisName.contains("Speed"))
         {
           createDataset(factory, iStoreItem, thisName, speedAxis, set,
-          		color, MarkerStyle.CROSS, true);
+          		color.brighter().brighter(), MarkerStyle.CROSS, true);
         }
         else if (thisName.contains("Depth"))
         {
           createDataset(factory, iStoreItem, thisName, depthAxis, set,
-          		color, MarkerStyle.DIAMOND, true);
+          		color.darker().darker(), MarkerStyle.DIAMOND, true);
         }
       }
     }

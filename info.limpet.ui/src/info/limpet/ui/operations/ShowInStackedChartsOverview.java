@@ -26,6 +26,7 @@ import info.limpet.data.commands.AbstractCommand;
 import info.limpet.data.impl.TemporalQuantityCollection;
 import info.limpet.data.operations.CollectionComplianceTests;
 import info.limpet.data.store.IGroupWrapper;
+import info.limpet.stackedcharts.model.AngleAxis;
 import info.limpet.stackedcharts.model.AxisType;
 import info.limpet.stackedcharts.model.Chart;
 import info.limpet.stackedcharts.model.ChartSet;
@@ -331,13 +332,13 @@ public class ShowInStackedChartsOverview implements IOperation<IStoreItem>
 
               // double-check if this is angular data
               final NumberAxis numAxis;
-              if ("\u00b0".equals(dataset.getUnits()))
+              if ("\u00b0".equals(dataset.getUnits())
+                  || "Degs".equals(dataset.getUnits()))
               {
-                numAxis = factory.createAngleAxis();
-              }
-              else if ("Degs".equals(dataset.getUnits()))
-              {
-                numAxis = factory.createAngleAxis();
+                final AngleAxis angleAxis = factory.createAngleAxis();
+                angleAxis.setMinVal(0);
+                angleAxis.setMaxVal(360);
+                numAxis = angleAxis;
               }
               else
               {
