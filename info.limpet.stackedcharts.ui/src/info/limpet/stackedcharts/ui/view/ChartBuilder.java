@@ -693,7 +693,14 @@ public class ChartBuilder
           (info.limpet.stackedcharts.model.NumberAxis) axisType;
       if (number.getUnits() != null)
       {
-        axisName = dependentAxis.getName() + " (" + number.getUnits() + ")";
+        if(dependentAxis.getName() == number.getUnits())
+        {
+          axisName = dependentAxis.getName();
+        }
+        else
+        {
+          axisName = dependentAxis.getName() + " (" + number.getUnits() + ")";
+        }
       }
       else
       {
