@@ -46,6 +46,7 @@ public class WrappingRenderer extends XYLineAndShapeRenderer
   private static final long serialVersionUID = 1L;
   final double min;
   final double max;
+  final double range;
   LinearInterpolator interpolator = new LinearInterpolator();
   final OverflowCondition overflowCondition;
 
@@ -53,6 +54,7 @@ public class WrappingRenderer extends XYLineAndShapeRenderer
   {
     this.min = min;
     this.max = max;
+    this.range = max - min;
 
     overflowCondition = new OverflowCondition()
     {
@@ -99,8 +101,12 @@ public class WrappingRenderer extends XYLineAndShapeRenderer
         boolean overflowAtMax = y1 < y0;
         if (overflowAtMax)
         {
+          // double check values valid (not greater than max)
+          y0 = y0 > max ? y0 - range : y0;
+          y1 = y1 > max ? y1 - range : y1;
+
           PolynomialSplineFunction psf = interpolator.interpolate(new double[]
-          {y0, y1 + (max-min)}, new double[]
+          {y0, y1 + range}, new double[]
           {x0, x1});
           double xmid = psf.value(max);
           ImmutablePair<Float, Float> xy =
@@ -113,8 +119,12 @@ public class WrappingRenderer extends XYLineAndShapeRenderer
         }
         else
         {
+          // double check values valid (not less than min)
+          y0 = y0 < min ? y0 + range : y0;
+          y1 = y1 < min ? y1 + range : y1;
+          
           PolynomialSplineFunction psf = interpolator.interpolate(new double[]
-          {y1 - (max - min), y0}, new double[]
+          {y1 - range, y0}, new double[]
           {x1, x0});
           double xmid = psf.value(min);
           ImmutablePair<Float, Float> xy =
