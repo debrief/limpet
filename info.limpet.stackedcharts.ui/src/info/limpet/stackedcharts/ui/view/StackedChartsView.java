@@ -27,7 +27,6 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.nebula.effects.stw.Transition;
-import org.eclipse.nebula.effects.stw.TransitionListener;
 import org.eclipse.nebula.effects.stw.TransitionManager;
 import org.eclipse.nebula.effects.stw.Transitionable;
 import org.eclipse.nebula.effects.stw.transitions.CubicRotationTransition;
@@ -273,56 +272,52 @@ public class StackedChartsView extends ViewPart implements
     // Drop Support for *.stackedcharts
     connectFileDropSupport(stackedPane);
 
-    transitionManager = new TransitionManager(new Transitionable()
+    // see https://github.com/debrief/limpet/issues/265
+    if (!System.getProperty("os.name").toLowerCase().contains("mac"))
     {
-      @Override
-      public void addSelectionListener(final SelectionListener listener)
+      transitionManager = new TransitionManager(new Transitionable()
       {
-        stackedPane.addSelectionListener(listener);
-      }
+        @Override
+        public void addSelectionListener(final SelectionListener listener)
+        {
+          stackedPane.addSelectionListener(listener);
+        }
 
-      @Override
-      public Composite getComposite()
-      {
-        return stackedPane;
-      }
+        @Override
+        public Composite getComposite()
+        {
+          return stackedPane;
+        }
 
-      @Override
-      public Control getControl(final int index)
-      {
-        return stackedPane.getControl(index);
-      }
+        @Override
+        public Control getControl(final int index)
+        {
+          return stackedPane.getControl(index);
+        }
 
-      @Override
-      public double getDirection(final int toIndex, final int fromIndex)
-      {
-        return toIndex == CHART_VIEW ? Transition.DIR_RIGHT
-            : Transition.DIR_LEFT;
-      }
+        @Override
+        public double getDirection(final int toIndex, final int fromIndex)
+        {
+          return toIndex == CHART_VIEW ? Transition.DIR_RIGHT
+              : Transition.DIR_LEFT;
+        }
 
-      @Override
-      public int getSelection()
-      {
-        return stackedPane.getActiveControlKey();
-      }
+        @Override
+        public int getSelection()
+        {
+          return stackedPane.getActiveControlKey();
+        }
 
-      @Override
-      public void setSelection(final int index)
-      {
-        stackedPane.showPane(index, false);
-      }
-    });
-    transitionManager.addTransitionListener(new TransitionListener() {
-		
-		@Override
-		public void transitionFinished(TransitionManager arg0) {
-			stackedPane.completeSelection();
-			
-		}
-	});
-    // new SlideTransition(_tm)
-    transitionManager.setTransition(new CubicRotationTransition(
-        transitionManager));
+        @Override
+        public void setSelection(final int index)
+        {
+          stackedPane.showPane(index, false);
+        }
+      });
+      // new SlideTransition(_tm)
+      transitionManager.setTransition(new CubicRotationTransition(
+          transitionManager));
+    }
 
     // listen out for closing
     parent.addDisposeListener(this);
@@ -394,8 +389,7 @@ public class StackedChartsView extends ViewPart implements
       }
     };
     showTime.setChecked(true);
-    showTime.setImageDescriptor(Activator.imageDescriptorFromPlugin(
-        Activator.PLUGIN_ID, "icons/clock.png"));
+    showTime.setImageDescriptor(Activator.imageDescriptorFromPlugin(Activator.PLUGIN_ID, "icons/clock.png"));
     manager.add(showTime);
     
     final Action showMarker = new Action("Show marker value", SWT.TOGGLE)
