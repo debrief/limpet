@@ -461,19 +461,25 @@ public class ChartBuilder
       }
       helper.storeSeries(collection, series);
 
-      // store the data in the collection
-      populateCollection(helper, dataset, series);
-
       // also register as a listener
       final Adapter adapter = new AdapterImpl()
       {
         @Override
         public void notifyChanged(final Notification notification)
         {
+          // switch off chart refreshes, we don't
+          // want to do it for every new data point
+          series.setNotify(false);
           populateCollection(helper, dataset, series);
+          series.setNotify(true);
+          series.fireSeriesChanged();
         }
       };
       dataset.eAdapters().add(adapter);
+
+      // perform the initial population
+      adapter.notifyChanged(null);
+
     }
   }
 
@@ -693,7 +699,7 @@ public class ChartBuilder
           (info.limpet.stackedcharts.model.NumberAxis) axisType;
       if (number.getUnits() != null)
       {
-        if(dependentAxis.getName() == number.getUnits())
+        if (dependentAxis.getName() == number.getUnits())
         {
           axisName = dependentAxis.getName();
         }
@@ -712,23 +718,21 @@ public class ChartBuilder
       axisName = dependentAxis.getName();
     }
 
-    
-    
     final ValueAxis chartAxis;
     if (axisType instanceof AngleAxis)
     {
       AngleAxis angle = (AngleAxis) axisType;
-      
+
       // use the renderer that "jumps" across zero/360 barrier
       renderer = new WrappingRenderer(angle.getMinVal(), angle.getMaxVal());
-      
+
       // use the angular axis
       chartAxis = new AnglularUnitAxis(axisName);
     }
     else
     {
       renderer = new XYLineAndShapeRenderer();
-      
+
       chartAxis = new NumberAxis(axisName);
     }
 
@@ -736,8 +740,6 @@ public class ChartBuilder
     final int indexSeries = 0;
 
     final XYDataset collection = axeshelper.createCollection();
-
-
 
     if (dependentAxis.getDirection() == AxisDirection.DESCENDING)
     {
@@ -765,11 +767,12 @@ public class ChartBuilder
       helper.addItem(series, dataItem);
     }
   }
-  
-  /** modified version of angle axis that prefers to use 
-   * angular metric units.
+
+  /**
+   * modified version of angle axis that prefers to use angular metric units.
+   * 
    * @author ian
-   *
+   * 
    */
   private static class AnglularUnitAxis extends NumberAxis
   {
