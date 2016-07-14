@@ -3,8 +3,8 @@ package info.limpet.stackedcharts.ui.view;
 import info.limpet.stackedcharts.model.ChartSet;
 import info.limpet.stackedcharts.ui.editor.Activator;
 import info.limpet.stackedcharts.ui.editor.StackedchartsEditControl;
-import info.limpet.stackedcharts.ui.view.ChartBuilder.TimeBarPlot;
 
+import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -41,7 +41,9 @@ import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -57,6 +59,26 @@ public class StackedChartsView extends ViewPart implements
     ITabbedPropertySheetPageContributor, ISelectionProvider, DisposeListener
 {
 
+  /** interface for external objects that are 
+   * able to supply a date and resond to a new date
+   * @author ian
+   *
+   */
+  public static interface ControllableDate
+  {
+    /** control the date
+     * 
+     * @param time
+     */
+    void setDate(Date date);
+    
+    /** retrieve the date
+     * 
+     * @return current date
+     */
+    Date getDate();
+  }
+  
   public static final int CHART_VIEW = 1;
   public static final int EDIT_VIEW = 2;
 
@@ -78,6 +100,7 @@ public class StackedChartsView extends ViewPart implements
   private Date _currentTime;
   private ChartComposite _chartComposite;
   private ArrayList<Runnable> _closeCallbacks;
+  private ControllableDate _controllableDate = null;
 
   @Override
   public void addSelectionChangedListener(
@@ -354,6 +377,8 @@ public class StackedChartsView extends ViewPart implements
         }
       }
     });
+
+    
     final Action showTime = new Action("Show time marker", SWT.TOGGLE)
     {
       @Override
@@ -372,6 +397,25 @@ public class StackedChartsView extends ViewPart implements
     showTime.setImageDescriptor(Activator.imageDescriptorFromPlugin(
         Activator.PLUGIN_ID, "icons/clock.png"));
     manager.add(showTime);
+    
+    final Action showMarker = new Action("Show marker value", SWT.TOGGLE)
+    {
+      @Override
+      public void run()
+      {
+        // ok, trigger graph redraw
+        JFreeChart combined = _chartComposite.getChart();
+        TimeBarPlot plot = (TimeBarPlot) combined.getPlot();
+        plot._showLabels = isChecked();
+
+        // ok, trigger ui update
+        refreshPlot();
+      }
+    };
+    showMarker.setChecked(true);
+    showMarker.setImageDescriptor(Activator.imageDescriptorFromPlugin(Activator.PLUGIN_ID, "icons/labels.png"));
+    manager.add(showMarker);
+
   }
 
   /**
@@ -460,6 +504,11 @@ public class StackedChartsView extends ViewPart implements
       stackedPane.forceFocus();
     }
   }
+  
+  public void setDateSupport(ControllableDate controllableDate)
+  {
+    _controllableDate  = controllableDate;
+  }
 
   public void setModel(final ChartSet charts)
   {
@@ -477,11 +526,12 @@ public class StackedChartsView extends ViewPart implements
     }
 
     // and now repopulate
-    final JFreeChart chart = ChartBuilder.build(charts);
+    final JFreeChart chart = ChartBuilder.build(charts, _controllableDate);
     _chartComposite =
         new ChartComposite(chartHolder, SWT.NONE, chart, 400, 600, 300, 200,
             1800, 1800, true, false, true, true, true, true)
         {
+      
           @Override
           public void mouseUp(final MouseEvent event)
           {
@@ -491,13 +541,55 @@ public class StackedChartsView extends ViewPart implements
             {
               c.setNotify(true); // force redraw
             }
+            
+            if(event.count == 2)
+            {
+              handleDoubleClick(event.x, event.y);
+            }
           }
         };
     chart.setAntiAlias(false);
+    
+    // try the double-click handler
+    _chartComposite.addMouseListener(new MouseListener(){
+
+      @Override
+      public void mouseDoubleClick(MouseEvent e)
+      {
+        System.out.println("double-click at:" + e);
+      }
+
+      @Override
+      public void mouseDown(MouseEvent e)
+      {
+        System.out.println("down at:" + e);
+      }
+
+      @Override
+      public void mouseUp(MouseEvent e)
+      {
+        System.out.println("up at:" + e);
+      }});
 
     chartHolder.pack(true);
     chartHolder.getParent().layout();
     selectView(CHART_VIEW);
+  }
+
+  protected void handleDoubleClick(int x, int y)
+  {
+    // retrieve the data location
+    Rectangle dataArea = _chartComposite.getScreenDataArea();
+    Rectangle2D d2 = new Rectangle2D.Double(dataArea.x, dataArea.y, dataArea.width, dataArea.height);
+    TimeBarPlot plot = (TimeBarPlot) _chartComposite.getChart().getPlot();
+    double chartX = plot.getDomainAxis().java2DToValue((double)x , d2,  plot.getDomainAxisEdge());
+    
+    // do we have a date to control?
+    if(_controllableDate != null)
+    {
+      // ok, update it
+      _controllableDate.setDate(new Date((long)chartX));
+    }
   }
 
   @Override
@@ -514,7 +606,7 @@ public class StackedChartsView extends ViewPart implements
    * 
    * @param newTime
    */
-  public void updateTime(Date newTime)
+  public void updateTime(final Date newTime)
   {
     Date oldTime = _currentTime;
     _currentTime = newTime;
@@ -525,18 +617,16 @@ public class StackedChartsView extends ViewPart implements
       JFreeChart combined = _chartComposite.getChart();
       TimeBarPlot plot = (TimeBarPlot) combined.getPlot();
       plot.setTime(newTime);
-
+      
       // ok, trigger ui update
-      refreshPlot();
+      refreshPlot();      
     }
-
   }
 
   private void refreshPlot()
   {
     Runnable runnable = new Runnable()
     {
-
       @Override
       public void run()
       {

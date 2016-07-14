@@ -41,12 +41,13 @@ public class DirectionFlowLayout extends FlowLayout
     data.area = transposer.t(relativeArea);
 
     // iterate the children in reverse order in case of vertical layout
-    List childrenCopy = new ArrayList(parent.getChildren());
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    List<?> childrenCopy = new ArrayList(parent.getChildren());
     if (!isHorizontal())
     {
       Collections.reverse(childrenCopy);
     }
-    Iterator iterator = childrenCopy.iterator();
+    Iterator<?> iterator = childrenCopy.iterator();
     int dx;
 
     // Calculate the hints to be passed to children

@@ -18,12 +18,14 @@ import info.limpet.ICommand;
 import info.limpet.IContext;
 import info.limpet.IOperation;
 import info.limpet.IStore;
+import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
 import info.limpet.ITemporalObjectCollection;
 import info.limpet.ITemporalQuantityCollection;
 import info.limpet.data.commands.AbstractCommand;
 import info.limpet.data.operations.CollectionComplianceTests;
 import info.limpet.data.store.StoreGroup;
+import info.limpet.stackedcharts.model.AngleAxis;
 import info.limpet.stackedcharts.model.Chart;
 import info.limpet.stackedcharts.model.ChartSet;
 import info.limpet.stackedcharts.model.DataItem;
@@ -38,10 +40,14 @@ import info.limpet.stackedcharts.model.ScatterSet;
 import info.limpet.stackedcharts.model.SelectiveAnnotation;
 import info.limpet.stackedcharts.model.StackedchartsFactory;
 import info.limpet.stackedcharts.ui.view.StackedChartsView;
+import info.limpet.ui.range_slider.RangeSliderView;
 
 import java.awt.Color;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -211,7 +217,7 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
         // double check it's what we're after
         if (theView instanceof StackedChartsView)
         {
-          StackedChartsView cv = (StackedChartsView) theView;
+          final StackedChartsView cv = (StackedChartsView) theView;
 
           // create the charts set model
           ChartSet model = createModelFor(this.getInputs());
@@ -221,6 +227,38 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
             // set follow selection to off
             // cv.follow(getInputs());
             cv.setModel(model);
+            
+            // ok, also try to find the top level store
+            if(getInputs().size() > 0)
+            {
+              IStoreItem first = this.getInputs().get(0);
+              final IStoreGroup top = RangeSliderView.findTopParent(first);
+              if (top != null)
+              {
+                final PropertyChangeListener timeListener  = new PropertyChangeListener()
+                {
+                  
+                  @Override
+                  public void propertyChange(PropertyChangeEvent evt)
+                  {
+                    Date newTime = (Date) evt.getNewValue();
+                    cv.updateTime(newTime);
+                  }
+                };
+                // ok, register as listener
+                top.addTimeChangeListener(timeListener);
+                
+                // we also need to drop it when the view is closing
+                cv.addRunOnCloseCallback(new Runnable(){
+
+                  @Override
+                  public void run()
+                  {
+                    // ok, forget about it
+                    top.removeTimeChangeListener(timeListener);
+                  }});
+              }
+            }
             
 //            // take a copy of the model
 //            URI resourceURI = URI.createFileURI("/home/ian/tacticalOverview.stackedcharts");
@@ -269,7 +307,10 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
     Chart crsePlot = factory.createChart();
     crsePlot.setName("Course");
     DependentAxis crseAxis = factory.createDependentAxis();
-    crseAxis.setAxisType(factory.createNumberAxis());
+    AngleAxis crseAxisType = factory.createAngleAxis();
+    crseAxisType.setMinVal(0);
+    crseAxisType.setMaxVal(360);
+    crseAxis.setAxisType(crseAxisType);
     crseAxis.setName("Course (Degs)");
     crsePlot.getMinAxes().add(crseAxis);
     res.getCharts().add(crsePlot);
@@ -416,12 +457,12 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
         else if (thisName.contains("Speed"))
         {
           createDataset(factory, iStoreItem, thisName, speedAxis, set,
-          		color, MarkerStyle.CROSS, true);
+          		color.brighter().brighter(), MarkerStyle.CROSS, true);
         }
         else if (thisName.contains("Depth"))
         {
           createDataset(factory, iStoreItem, thisName, depthAxis, set,
-          		color, MarkerStyle.DIAMOND, true);
+          		color.darker().darker(), MarkerStyle.DIAMOND, true);
         }
       }
     }

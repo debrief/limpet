@@ -1,15 +1,10 @@
 package info.limpet.stackedcharts.ui.editor.figures;
 
-import java.util.ArrayList;
-import java.util.List;
+import info.limpet.stackedcharts.ui.editor.StackedchartsImages;
 
 import org.eclipse.draw2d.Cursors;
-import org.eclipse.draw2d.Graphics;
-import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.MouseEvent;
 import org.eclipse.draw2d.MouseMotionListener;
-
-import info.limpet.stackedcharts.ui.editor.StackedchartsImages;
 
 public class DatasetFigure extends DirectionalIconLabel
 {

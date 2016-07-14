@@ -1,13 +1,17 @@
 package info.limpet.ui.stacked;
 
+import info.limpet.IBaseQuantityCollection;
 import info.limpet.IChangeListener;
 import info.limpet.ICollection;
 import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
 import info.limpet.ITemporalQuantityCollection;
+import info.limpet.data.impl.QuantityCollection;
 import info.limpet.data.impl.TemporalQuantityCollection;
 import info.limpet.stackedcharts.model.DataItem;
 import info.limpet.stackedcharts.model.Dataset;
+import info.limpet.stackedcharts.model.Datum;
+import info.limpet.stackedcharts.model.ScatterSet;
 import info.limpet.stackedcharts.model.impl.StackedchartsFactoryImpl;
 import info.limpet.stackedcharts.ui.view.adapter.IStackedAdapter;
 import info.limpet.ui.data_provider.data.CollectionWrapper;
@@ -18,6 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.measure.Measurable;
+import javax.measure.quantity.Duration;
 import javax.measure.quantity.Quantity;
 import javax.measure.unit.Unit;
 
@@ -91,9 +96,9 @@ public class LimpetStackedChartsAdapter implements IStackedAdapter
   
   @SuppressWarnings({"unchecked"})
   @Override
-  public List<Dataset> convert(Object data)
+  public List<Object> convert(Object data)
   {
-    List<Dataset> res  = null;
+    List<Object> res  = null;
      
     // we should have already checked, but just
     // double-check we can handle it
@@ -120,7 +125,7 @@ public class LimpetStackedChartsAdapter implements IStackedAdapter
           // have we got a results object yet?
           if(res == null)
           {
-            res = new ArrayList<Dataset>();
+            res = new ArrayList<Object>();
           }
 
           // give it some style
@@ -128,6 +133,38 @@ public class LimpetStackedChartsAdapter implements IStackedAdapter
 
           res.add(dataset);
         }
+        else if(collection.isQuantity() && !collection.isTemporal())
+        {
+          // check if its' a series of timestampes
+          QuantityCollection<?> qc = (QuantityCollection<?>) collection;
+          Unit<?> units = qc.getUnits();
+          if(units.equals(Duration.UNIT))
+          {
+            // ok, create scatter set
+            if(qc.getValuesCount() > 0)
+            {
+              ScatterSet scatter = factory.createScatterSet();
+              final List<?> values = qc.getValues();
+              for(Object value: values)
+              {
+                Measurable<Duration> val = (Measurable<Duration>) value;
+                double time = val.doubleValue((Unit<Duration>) qc.getUnits());
+                Datum datum = factory.createDatum();
+                datum.setVal(time);
+                scatter.getDatums().add(datum);
+              }
+              // do we have a results store?
+              if(res == null)
+              {
+                res = new ArrayList<Object>();
+              }
+              
+              // ok, store it
+              res.add(scatter);
+            }
+          }
+        }
+
         
         // now store the data
         // hook up listener
@@ -145,13 +182,13 @@ public class LimpetStackedChartsAdapter implements IStackedAdapter
             ICollection thisC = (ICollection) thisI;
             if(thisC.isQuantity() && thisC.isTemporal())              
             {
-               List<Dataset> newItems = convert(thisC);
+               List<Object> newItems = convert(thisC);
                
                if(newItems != null && newItems.size() > 0)
                {
                  if(res == null)
                  {
-                   res = new ArrayList<Dataset>();
+                   res = new ArrayList<Object>();
                  }
                  res.addAll(newItems);
                }
@@ -179,7 +216,7 @@ public class LimpetStackedChartsAdapter implements IStackedAdapter
           // collate the results          
           if(res == null)
           {
-            res= new ArrayList<Dataset>();
+            res= new ArrayList<Object>();
           }
           res.add(dataset);
         }
@@ -189,12 +226,12 @@ public class LimpetStackedChartsAdapter implements IStackedAdapter
         List<?> list = (List<?>) data;
         for(Object item: list)
         {
-          List<Dataset> items = convert(item);
+          List<Object> items = convert(item);
           if(items != null)
           {
             if(res == null)
             {
-              res = new ArrayList<Dataset>();              
+              res = new ArrayList<Object>();              
             }
             res.addAll(items);
           }
@@ -209,7 +246,7 @@ public class LimpetStackedChartsAdapter implements IStackedAdapter
   public boolean canConvert(Object data)
   {
     boolean res = false;
-    
+
     // have a look at the type
     if(data instanceof CollectionWrapper)
     {
@@ -218,6 +255,16 @@ public class LimpetStackedChartsAdapter implements IStackedAdapter
       if(collection.isQuantity() && collection.isTemporal())
       {
         res = true;
+      }
+      else if(collection.isQuantity() && !collection.isTemporal())
+      {
+        // check if its' a series of timestampes
+        IBaseQuantityCollection<?> qc = (IBaseQuantityCollection<?>) collection;
+        Unit<?> units = qc.getUnits();
+        if(units.equals(Duration.UNIT))
+        {
+          res = true;
+        }
       }
     }
     else if(data instanceof GroupWrapper)

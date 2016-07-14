@@ -154,22 +154,16 @@ public class RangeSliderView extends CoreAnalysisView implements
     @Override
     public void dataChanged(IStoreItem subject)
     {
-      // TODO Auto-generated method stub
-
     }
 
     @Override
     public void metadataChanged(IStoreItem subject)
     {
-      // TODO Auto-generated method stub
-
     }
 
     @Override
     public void collectionDeleted(IStoreItem subject)
     {
-      // TODO Auto-generated method stub
-
     }
 
     @Override
@@ -184,12 +178,16 @@ public class RangeSliderView extends CoreAnalysisView implements
   {
     private final Long _start;
     private final Long _end;
-    private Long _current;
-    final SimpleDateFormat sdf;
+    private long _current;
+    private final SimpleDateFormat sdf;
     private final int _sliderThumb;
     private final String _name;
     private final IStoreGroup _group;
     private final TemporalQuantityCollection<?> _collection;
+    
+    // introduce scale factor, to let us handle more than the number
+    // of millis in Integer.MAX_VALUE
+    private final float scaleFactor;
 
     public DateHelper(Long start, Long end, int sliderThumb, String name,
         IStoreGroup group, TemporalQuantityCollection<?> temp)
@@ -210,15 +208,40 @@ public class RangeSliderView extends CoreAnalysisView implements
       _sliderThumb = sliderThumb;
       _name = name;
       _group = group;
-      sdf = new SimpleDateFormat("HH:mm:ss");
+
+      final long range = end - start;
+
+      // do we span a day?
+      final long MILLIS_IN_ONE_DAY = 24 * 60 * 60 * 1000;
+      final String DATE_FORMAT;
+      if(range > MILLIS_IN_ONE_DAY)
+      {
+        DATE_FORMAT = "yy/MM/dd HH:mm";
+      }
+      else
+      {
+        DATE_FORMAT = "HH:mm:ss";
+      }
+      
+      sdf = new SimpleDateFormat(DATE_FORMAT);
       sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
       _collection = temp;
+
+      // do we need to scale the value?
+      if(range < Integer.MAX_VALUE)
+      {
+        scaleFactor = 1;
+      }
+      else
+      {
+        scaleFactor = (float)range / (Integer.MAX_VALUE / 2f);
+      }      
     }
 
     @Override
     public void updatedTo(int val)
     {
-      _current = _start + val;
+      _current = _start + (long)(val * scaleFactor);
 
       // and store the value in the group
       _group.setTime(new Date(_current));
@@ -245,7 +268,10 @@ public class RangeSliderView extends CoreAnalysisView implements
     @Override
     public int getMaxVal()
     {
-      return (int) (_end - _start) + _sliderThumb;
+      long range = _end - _start;
+      float scaledRange = range / scaleFactor;
+      int maxVal = (int)scaledRange + _sliderThumb;
+      return maxVal;
     }
 
     @Override
@@ -263,7 +289,13 @@ public class RangeSliderView extends CoreAnalysisView implements
     @Override
     public int getValue()
     {
-      return (int) (_current - _start);
+      // how far along are we?
+      long diff = _current - _start;
+      
+      // and scale it
+      int scaled = (int)(diff / scaleFactor);
+      
+      return scaled;
     }
 
     @Override
@@ -372,21 +404,16 @@ public class RangeSliderView extends CoreAnalysisView implements
     @Override
     public void dataChanged(IStoreItem subject)
     {
-      // TODO: we should probably update the slider & label on a change
     }
 
     @Override
     public void metadataChanged(IStoreItem subject)
     {
-      // TODO Auto-generated method stub
-
     }
 
     @Override
     public void collectionDeleted(IStoreItem subject)
     {
-      // TODO Auto-generated method stub
-
     }
 
     @Override
@@ -604,18 +631,18 @@ public class RangeSliderView extends CoreAnalysisView implements
         // just double-check we can fit in the period
         if (parent != null)
         {
-          if (end - start < Integer.MAX_VALUE)
-          {
+//          if (end - start < Integer.MAX_VALUE)
+//          {
             _myHelper =
                 new DateHelper(start, end, slider.getThumb(), temp.getName(),
                     parent, temp);
-          }
-          else
-          {
-            Activator.getDefault().getLog().log(
-                new Status(Status.WARNING, Activator.PLUGIN_ID,
-                    "Temporal data too large for range control"));
-          }
+//          }
+//          else
+//          {
+//            Activator.getDefault().getLog().log(
+//                new Status(Status.WARNING, Activator.PLUGIN_ID,
+//                    "Temporal data too large for range control"));
+//          }
         }
         else
         {
@@ -710,7 +737,6 @@ public class RangeSliderView extends CoreAnalysisView implements
   @Override
   public void metadataChanged(IStoreItem subject)
   {
-    // TODO: provide a more informed way of doing update
     dataChanged(subject);
   }
 

@@ -26,6 +26,7 @@ import info.limpet.data.commands.AbstractCommand;
 import info.limpet.data.impl.TemporalQuantityCollection;
 import info.limpet.data.operations.CollectionComplianceTests;
 import info.limpet.data.store.IGroupWrapper;
+import info.limpet.stackedcharts.model.AngleAxis;
 import info.limpet.stackedcharts.model.AxisType;
 import info.limpet.stackedcharts.model.Chart;
 import info.limpet.stackedcharts.model.ChartSet;
@@ -36,6 +37,7 @@ import info.limpet.stackedcharts.model.NumberAxis;
 import info.limpet.stackedcharts.model.Orientation;
 import info.limpet.stackedcharts.model.StackedchartsFactory;
 import info.limpet.stackedcharts.ui.view.StackedChartsView;
+import info.limpet.stackedcharts.ui.view.StackedChartsView.ControllableDate;
 import info.limpet.ui.data_provider.data.CollectionWrapper;
 import info.limpet.ui.range_slider.RangeSliderView;
 import info.limpet.ui.stacked.LimpetStackedChartsAdapter;
@@ -130,7 +132,7 @@ public class ShowInStackedChartsOverview implements IOperation<IStoreItem>
       {
         e.printStackTrace();
       }
-      
+
       // try to recover the view
       IViewReference viewRef = page.findViewReference(viewId, secId);
       if (viewRef != null)
@@ -144,37 +146,59 @@ public class ShowInStackedChartsOverview implements IOperation<IStoreItem>
 
           // create the charts set model
           ChartSet model = createModelFor(this.getInputs());
-          
+
           if (model != null)
           {
             // set follow selection to off
             // cv.follow(getInputs());
             chartView.setModel(model);
-            
+
             // also, see if we can listen to changes in it
-            final IStoreGroup group = RangeSliderView.findTopParent(this.getInputs().get(0));
-            if(group != null)
+            final IStoreGroup group =
+                RangeSliderView.findTopParent(this.getInputs().get(0));
+            if (group != null)
             {
-              final PropertyChangeListener listener = new PropertyChangeListener()
-              {
-                
-                @Override
-                public void propertyChange(PropertyChangeEvent evt)
-                {
-                  // ok, update the time now
-                  Date newTime = (Date) evt.getNewValue();
-                  chartView.updateTime(newTime);
-                }
-              };
+              final PropertyChangeListener listener =
+                  new PropertyChangeListener()
+                  {
+
+                    @Override
+                    public void propertyChange(PropertyChangeEvent evt)
+                    {
+                      // ok, update the time now
+                      Date newTime = (Date) evt.getNewValue();
+                      chartView.updateTime(newTime);
+                    }
+                  };
               group.addTimeChangeListener(listener);
 
-              Runnable closer = new Runnable(){
+              Runnable closer = new Runnable()
+              {
                 @Override
                 public void run()
                 {
                   group.removeTimeChangeListener(listener);
-                }};
+                }
+              };
               chartView.addRunOnCloseCallback(closer);
+
+              ControllableDate timeC = new ControllableDate()
+              {
+
+                @Override
+                public void setDate(Date date)
+                {
+                  group.setTime(date);
+                }
+
+                @Override
+                public Date getDate()
+                {
+                  return group.getTime();
+                }
+              };
+              chartView.setDateSupport(timeC);
+
             }
 
             // // take a copy of the model
@@ -204,8 +228,8 @@ public class ShowInStackedChartsOverview implements IOperation<IStoreItem>
 
   }
 
-  protected static TemporalQuantityCollection<?>
-      getFirstCollectionFor(List<IStoreItem> selection)
+  protected static TemporalQuantityCollection<?> getFirstCollectionFor(
+      List<IStoreItem> selection)
   {
     TemporalQuantityCollection<?> res = null;
 
@@ -237,7 +261,7 @@ public class ShowInStackedChartsOverview implements IOperation<IStoreItem>
         if (collection.isQuantity() && collection.isTemporal())
           res = (TemporalQuantityCollection<?>) collection;
       }
-      else if(first instanceof TemporalQuantityCollection<?>)
+      else if (first instanceof TemporalQuantityCollection<?>)
       {
         res = (TemporalQuantityCollection<?>) first;
       }
@@ -250,104 +274,124 @@ public class ShowInStackedChartsOverview implements IOperation<IStoreItem>
   {
     // ok, use the limpet adapter to get the data
     ChartSet res = null;
-    
+
     // our data generator
     LimpetStackedChartsAdapter adapter = new LimpetStackedChartsAdapter();
-        
-    if(adapter.canConvert(selection))
-    {
-      List<Dataset> datasets = adapter.convert(selection);
-      if(datasets != null)
-      {
-        StackedchartsFactory factory = StackedchartsFactory.eINSTANCE;        
-        
-        Chart thisChart = null;
-        
-        for(Dataset dataset: datasets)
-        {
-          // set the independent axis
-          final String theseUnits = dataset.getUnits();
-          
-          if(res == null)
-          {
-            // ok, we need a chart-set
-            res = factory.createChartSet();
-            res.setOrientation(Orientation.VERTICAL);
-            
-            // get the first item, so we can determine the independent axis
-            TemporalQuantityCollection<?> firstItem = getFirstCollectionFor(selection);
 
-            if(firstItem instanceof ITemporalQuantityCollection)
+    if (adapter.canConvert(selection))
+    {
+      List<Object> datasets = adapter.convert(selection);
+      if (datasets != null)
+      {
+        StackedchartsFactory factory = StackedchartsFactory.eINSTANCE;
+
+        Chart thisChart = null;
+
+        for (Object thisO : datasets)
+        {
+          if (thisO instanceof Dataset)
+          {
+            Dataset dataset = (Dataset) thisO;
+            // set the independent axis
+            final String theseUnits = dataset.getUnits();
+
+            if (res == null)
             {
-              IndependentAxis ia = factory.createIndependentAxis();
-              ia.setAxisType(factory.createDateAxis());
-              res.setSharedAxis(ia);
+              // ok, we need a chart-set
+              res = factory.createChartSet();
+              res.setOrientation(Orientation.VERTICAL);
+
+              // get the first item, so we can determine the independent axis
+              TemporalQuantityCollection<?> firstItem =
+                  getFirstCollectionFor(selection);
+
+              if (firstItem instanceof ITemporalQuantityCollection)
+              {
+                IndependentAxis ia = factory.createIndependentAxis();
+                ia.setAxisType(factory.createDateAxis());
+                res.setSharedAxis(ia);
+              }
+              else
+              {
+                System.err
+                    .println("FAILED TO CREATE CHARTSET - WE DON'T HAVE TIME AS INDEPENDENT AXIS");
+              }
             }
-            else
+
+            // ok, plot this dataset
+            if (thisChart == null)
             {
-              System.err.println("FAILED TO CREATE CHARTSET - WE DON'T HAVE TIME AS INDEPENDENT AXIS");
-            }           
+              thisChart = factory.createChart();
+              res.getCharts().add(thisChart);
+            }
+
+            DependentAxis dependent = findAxisFor(res, theseUnits);
+            if (dependent == null)
+            {
+              dependent = factory.createDependentAxis();
+
+              // double-check if this is angular data
+              final NumberAxis numAxis;
+              if ("\u00b0".equals(dataset.getUnits())
+                  || "Degs".equals(dataset.getUnits()))
+              {
+                final AngleAxis angleAxis = factory.createAngleAxis();
+                angleAxis.setMinVal(0);
+                angleAxis.setMaxVal(360);
+                numAxis = angleAxis;
+              }
+              else
+              {
+                numAxis = factory.createNumberAxis();
+              }
+
+              numAxis.setUnits(dataset.getUnits());
+              dependent.setAxisType(numAxis);
+              dependent.setName(theseUnits);
+              thisChart.getMinAxes().add(dependent);
+            }
+
+            dependent.getDatasets().add(dataset);
           }
-          
-          // ok, plot this dataset
-          if(thisChart == null)
-          {
-            thisChart = factory.createChart();
-            res.getCharts().add(thisChart);
-          }
-          
-          DependentAxis dependent = findAxisFor(res, theseUnits);
-          if(dependent == null)
-          {
-            dependent = factory.createDependentAxis();
-            NumberAxis numAxis = factory.createNumberAxis();
-            numAxis.setUnits(dataset.getUnits());
-            dependent.setAxisType(numAxis);
-            dependent.setName(theseUnits);
-            thisChart.getMinAxes().add(dependent);
-          }
-          
-          dependent.getDatasets().add(dataset);
         }
       }
     }
-    
+
     return res;
   }
 
   private static DependentAxis findAxisFor(ChartSet charts, String units)
   {
     DependentAxis res = null;
-    
-    for(Chart chart: charts.getCharts())
+
+    for (Chart chart : charts.getCharts())
     {
-      for(DependentAxis da: chart.getMinAxes())
+      for (DependentAxis da : chart.getMinAxes())
       {
         AxisType thisType = da.getAxisType();
-        if(thisType instanceof NumberAxis)
+        if (thisType instanceof NumberAxis)
         {
           NumberAxis na = (NumberAxis) thisType;
-          if(na.getUnits() != null && na.getUnits().equals(units))
+          if (na.getUnits() != null && na.getUnits().equals(units))
           {
             return da;
           }
         }
       }
-      for(DependentAxis da: chart.getMaxAxes())
+      for (DependentAxis da : chart.getMaxAxes())
       {
         AxisType thisType = da.getAxisType();
-        if(thisType instanceof NumberAxis)
+        if (thisType instanceof NumberAxis)
         {
           NumberAxis na = (NumberAxis) thisType;
-          if(na.getUnits() != null && na.getUnits().equals(units))
+          if (na.getUnits() != null && na.getUnits().equals(units))
           {
             return da;
           }
         }
       }
     }
-    
-    
+
     return res;
   }
 }

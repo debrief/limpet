@@ -4,6 +4,7 @@ import info.limpet.stackedcharts.model.ChartSet;
 import info.limpet.stackedcharts.ui.editor.drop.DatasetToAxisDropTargetListener;
 import info.limpet.stackedcharts.ui.editor.drop.DatasetToAxisLandingDropTargetListener;
 import info.limpet.stackedcharts.ui.editor.drop.ProxyDropTargetListener;
+import info.limpet.stackedcharts.ui.editor.drop.ScatterSetToChartDropTargetListener;
 import info.limpet.stackedcharts.ui.editor.parts.StackedChartsEditPartFactory;
 
 import java.util.ArrayList;
@@ -63,7 +64,8 @@ public class StackedchartsEditControl extends Composite
 
     viewer.addDropTargetListener(new ProxyDropTargetListener(
         new DatasetToAxisDropTargetListener(viewer),
-        new DatasetToAxisLandingDropTargetListener(viewer)));
+        new DatasetToAxisLandingDropTargetListener(viewer),
+        new ScatterSetToChartDropTargetListener(viewer)));
 
     viewer.createControl(this);
     editDomain.addViewer(viewer);
@@ -175,7 +177,9 @@ public class StackedchartsEditControl extends Composite
 
     final UndoAction undoAction = new UndoAction(view);
     toolBarManager.add(undoAction);
+    undoAction.setImageDescriptor(Activator.imageDescriptorFromPlugin(Activator.PLUGIN_ID, "icons/undo.png"));
     final RedoAction redoAction = new RedoAction(view);
+    redoAction.setImageDescriptor(Activator.imageDescriptorFromPlugin(Activator.PLUGIN_ID, "icons/redo.png"));
     toolBarManager.add(redoAction);
 
     viewer.getEditDomain().getCommandStack().addCommandStackListener(

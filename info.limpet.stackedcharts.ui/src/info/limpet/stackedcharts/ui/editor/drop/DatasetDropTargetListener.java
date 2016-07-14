@@ -1,31 +1,21 @@
 package info.limpet.stackedcharts.ui.editor.drop;
 
+import info.limpet.stackedcharts.model.Chart;
+import info.limpet.stackedcharts.model.Dataset;
+import info.limpet.stackedcharts.model.DependentAxis;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import info.limpet.stackedcharts.model.Chart;
-import info.limpet.stackedcharts.model.Dataset;
-import info.limpet.stackedcharts.model.DependentAxis;
-import info.limpet.stackedcharts.ui.editor.parts.AxisEditPart;
-import info.limpet.stackedcharts.ui.editor.parts.ChartEditPart;
-import info.limpet.stackedcharts.ui.editor.parts.ChartPaneEditPart;
-import info.limpet.stackedcharts.ui.view.adapter.AdapterRegistry;
-
-import org.eclipse.draw2d.ColorConstants;
-import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.GraphicalViewer;
 import org.eclipse.gef.commands.Command;
-import org.eclipse.gef.commands.CommandStack;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 import org.eclipse.jface.util.LocalSelectionTransfer;
-import org.eclipse.jface.util.TransferDropTargetListener;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTargetEvent;
-import org.eclipse.swt.dnd.Transfer;
 
 /**
  * base for classes supporting the drop process, including establishing if the target is valid
@@ -33,26 +23,16 @@ import org.eclipse.swt.dnd.Transfer;
  * @author ian
  * 
  */
-abstract public class DatasetDropTargetListener implements
-    TransferDropTargetListener
+abstract public class DatasetDropTargetListener extends CoreDropTargetListener
 {
 
-  private final GraphicalViewer viewer;
   protected AbstractGraphicalEditPart feedback;
 
   protected DatasetDropTargetListener(GraphicalViewer viewer)
   {
-    this.viewer = viewer;
+    super(viewer);
   }
 
-  /**
-   * whether this listener applies to this event
-   * 
-   * @param event
-   * @return
-   */
-  abstract boolean appliesTo(DropTargetEvent event);
-  
 
   /** wrap up the data change for the drop event
    * 
@@ -62,101 +42,6 @@ abstract public class DatasetDropTargetListener implements
    */
   abstract protected Command createCommand(AbstractGraphicalEditPart axis,
       List<Dataset> datasets);
-
-
-  /**
-   * find the object being passed over
-   * 
-   * @param event
-   *          the event
-   * @param viewer
-   *          our figure
-   * @return the nearest edit part
-   */
-  final protected EditPart findPart(DropTargetEvent event)
-  {
-    org.eclipse.swt.graphics.Point cP =
-        viewer.getControl().toControl(event.x, event.y);
-    EditPart findObjectAt = viewer.findObjectAt(new Point(cP.x, cP.y));
-    return findObjectAt;
-  }
-
-  protected void addFeedback(AbstractGraphicalEditPart figure)
-  {
-    if (figure != null)
-    {
-      figure.getFigure().setBackgroundColor(ColorConstants.lightGray);
-    }
-  }
-
-  protected void removeFeedback(AbstractGraphicalEditPart figure)
-  {
-    if (figure != null)
-    {
-      figure.getFigure().setBackgroundColor(AxisEditPart.BACKGROUND_COLOR);
-    }
-  }
-
-  protected CommandStack getCommandStack()
-  {
-    return viewer.getEditDomain().getCommandStack();
-  }
-
-  protected List<Object> convertSelection(StructuredSelection selection)
-  {
-    AdapterRegistry adapter = new AdapterRegistry();
-    List<Object> element = new ArrayList<Object>();
-    for (Object object : selection.toArray())
-    {
-      if (adapter.canConvert(object))
-      {
-        element.add(adapter.convert(object));
-      }
-    }
-
-    return element;
-  }
-
-  protected static boolean canDropSelection(final Chart chart, ISelection selection)
-  {
-    boolean canDrop = true;
-    
-    // NOTE: this section has been deliberately commented out.
-    // The Debrief convert() method sometimes opens a dialog to
-    // ask the user which data to display (for a tree-view item
-    // that is actually several collections.  So, we can't call
-    // convert() for drag-over operations, we can only call 
-    // it after a drop
-    //
-    // We'll have to reconsider the logic here.
-    
-//    AdapterRegistry adapter = new AdapterRegistry();
-//    if (selection instanceof StructuredSelection)
-//    {
-//      // check the selection
-//      for (Object obj : ((StructuredSelection) selection).toArray())
-//      {
-//        if (adapter.canConvert(obj))
-//        {
-//          List<Dataset> convert = adapter.convert(obj);
-//          if (convert.size() == 0)
-//          {
-//            continue;
-//          }
-//          for (Dataset dataset : convert)
-//          {
-//            if (!canDropDataset(chart, dataset))
-//            {
-//              canDrop = false;
-//              break;
-//            }
-//          }
-//        }
-//      }
-//    }
-
-    return canDrop;
-  }
 
   protected static boolean datasetAlreadyExistsOnTheseAxes(
       final Iterator<DependentAxis> axes, final String name)
@@ -200,93 +85,6 @@ abstract public class DatasetDropTargetListener implements
     return possible;
   }
 
-
-  @Override
-  public final void dragOver(DropTargetEvent event)
-  {
-    EditPart target = findPart(event);
-
-    if (feedback == target)
-    {
-      // drop out, we're still passing over the same object
-      return;
-    }
-
-    if (LocalSelectionTransfer.getTransfer().isSupportedType(
-        event.currentDataType))
-    {
-      // get the chart model
-      AbstractGraphicalEditPart axis = (AbstractGraphicalEditPart) target;
-      final ChartPaneEditPart parent = (ChartPaneEditPart) axis.getParent();
-      final ChartEditPart chartEdit = (ChartEditPart) parent.getParent();
-      final Chart chart = chartEdit.getModel();
-
-      if (canDropSelection(chart, LocalSelectionTransfer.getTransfer()
-          .getSelection()))
-      {
-        removeFeedback(feedback);
-        feedback = (AbstractGraphicalEditPart) target;
-        addFeedback(feedback);
-        event.detail = DND.DROP_COPY;
-      }
-      else
-      {
-        removeFeedback(feedback);
-        feedback = null;
-        event.detail = DND.DROP_NONE;
-      }
-    }
-    else
-    {
-      removeFeedback(feedback);
-      feedback = null;
-      event.detail = DND.DROP_NONE;
-    }
-
-  }
-
-  @Override
-  final public void dragOperationChanged(DropTargetEvent event)
-  {
-  }
-
-  @Override
-  final public void dragLeave(DropTargetEvent event)
-  {
-    removeFeedback(feedback);
-    feedback = null;
-  }
-
-  @Override
-  final public void dragEnter(DropTargetEvent event)
-  {
-  }
-
-  @Override
-  final public boolean isEnabled(DropTargetEvent event)
-  {
-    return LocalSelectionTransfer.getTransfer().isSupportedType(
-        event.currentDataType);
-  }
-
-  @Override
-  final public Transfer getTransfer()
-  {
-    return LocalSelectionTransfer.getTransfer();
-  }
-  
-  final public void reset()
-  {
-    removeFeedback(feedback);
-    feedback = null;
-  }
-
-  @Override
-  final public void dropAccept(DropTargetEvent event)
-  {
-  }
-
-
   @Override
   public void drop(DropTargetEvent event)
   {
@@ -326,8 +124,11 @@ abstract public class DatasetDropTargetListener implements
         }
       }
 
-      Command command = createCommand(axis, datasets);
-      getCommandStack().execute(command);
+      if(datasets.size() > 0)
+      {
+        Command command = createCommand(axis, datasets);
+        getCommandStack().execute(command);
+      }
     }
 
     feedback = null;
