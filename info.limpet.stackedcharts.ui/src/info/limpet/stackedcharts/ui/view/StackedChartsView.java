@@ -4,8 +4,11 @@ import info.limpet.stackedcharts.model.ChartSet;
 import info.limpet.stackedcharts.ui.editor.Activator;
 import info.limpet.stackedcharts.ui.editor.StackedchartsEditControl;
 
+import java.awt.Dimension;
 import java.awt.geom.Rectangle2D;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -48,10 +51,12 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor;
+import org.freehep.graphicsio.emf.EMFGraphics2D;
 import org.jfree.chart.JFreeChart;
 import org.jfree.experimental.chart.swt.ChartComposite;
 
@@ -414,7 +419,67 @@ public class StackedChartsView extends ViewPart implements
     };
     showMarker.setChecked(true);
     showMarker.setImageDescriptor(Activator.imageDescriptorFromPlugin(Activator.PLUGIN_ID, "icons/labels.png"));
+    
     manager.add(showMarker);
+    
+    
+    final Action export = new Action("Export to WMF", SWT.PUSH)
+    {
+      @Override
+      public void run()
+      {
+       
+        FileDialog dialog = new FileDialog(getSite().getShell(), SWT.SAVE);
+        dialog.setFilterNames(new String[]
+        {"WMF Files"});
+        dialog.setFilterExtensions(new String[]
+        {"*.wmf"});
+        String path = dialog.open();
+        if (path != null && !path.isEmpty())
+        {
+          FileOutputStream out = null;
+
+          try
+          {
+            out = new FileOutputStream(path);
+            JFreeChart combined = _chartComposite.getChart();
+            Rectangle bounds = _chartComposite.getBounds();
+            EMFGraphics2D g2d =
+                new EMFGraphics2D(new BufferedOutputStream(out), new Dimension(bounds.width,
+                    bounds.height));
+            g2d.startExport();
+            combined.draw(g2d, new Rectangle2D.Double(0, 0, bounds.width,
+                bounds.height));
+
+            // Cleanup
+            g2d.endExport();
+          }
+          catch (Exception e)
+          {
+            e.printStackTrace();
+          }
+          finally{
+            if(out!=null)
+            {
+              try
+              {
+                out.close();
+              }
+              catch (IOException e)
+              {
+                e.printStackTrace();
+              }
+            }
+          }
+        }
+        
+       
+        
+        
+      }
+    };
+    export.setImageDescriptor(Activator.imageDescriptorFromPlugin(Activator.PLUGIN_ID, "icons/export_wmf.png"));
+    manager.add(export);
 
   }
 
