@@ -48,7 +48,6 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.internal.cocoa.OS;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -738,7 +737,7 @@ public class StackedChartsView extends ViewPart implements
   public static class WMFTransfer extends ByteArrayTransfer
   {
     static WMFTransfer _instance = new WMFTransfer();
-    static final String WMF = OS.NSTIFFPboardType.getString();
+    static final String WMF = "image/emf";
     static final int WMFID = registerType(WMF);
 
     protected int[] getTypeIds()
