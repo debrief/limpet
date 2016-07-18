@@ -5,7 +5,14 @@ import info.limpet.stackedcharts.ui.editor.Activator;
 import info.limpet.stackedcharts.ui.editor.StackedchartsEditControl;
 
 import java.awt.Dimension;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.SystemFlavorMap;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.geom.Rectangle2D;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -34,8 +41,6 @@ import org.eclipse.nebula.effects.stw.TransitionManager;
 import org.eclipse.nebula.effects.stw.Transitionable;
 import org.eclipse.nebula.effects.stw.transitions.CubicRotationTransition;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.dnd.ByteArrayTransfer;
-import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTarget;
 import org.eclipse.swt.dnd.DropTargetEvent;
@@ -442,11 +447,8 @@ public class StackedChartsView extends ViewPart implements
           // Cleanup
           g2d.endExport();
           
-          Clipboard clipboard = new Clipboard(Display.getCurrent());
-       
-          clipboard.setContents(new Object[] { out.toByteArray() },
-                  new Transfer[] { WMFTransfer.getInstance() });
-          clipboard.dispose();
+          Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
+          clpbrd.setContents(new WMFTransfer(out), null);
             MessageDialog.openInformation(Display.getCurrent().getActiveShell(), "WMF Export", "Exported to Clipboard.[WMF]");
             
           }
@@ -734,29 +736,59 @@ public class StackedChartsView extends ViewPart implements
     return _chartComposite;
   }
   
-  public static class WMFTransfer extends ByteArrayTransfer
-  {
-    static WMFTransfer _instance = new WMFTransfer();
-    static final String WMF = "image/emf";
-    static final int WMFID = registerType(WMF);
-
-    protected int[] getTypeIds()
-    {
-      return new int[]
-      {WMFID};
+  public static class WMFTransfer implements Transferable{
+    
+    public static final DataFlavor EMF_FLAVOR= new DataFlavor("image/emf", "Enhanced Meta File");
+    
+    static {
+         // EMF graphics clipboard format
+         try {
+              SystemFlavorMap sfm = (SystemFlavorMap)SystemFlavorMap.getDefaultFlavorMap();
+              sfm.addUnencodedNativeForFlavor(EMF_FLAVOR, "ENHMETAFILE");//seems to be a key command!!
+         } catch(Exception e) {
+              System.err.println("[EMFChartSelection,static initializer] Error "+e.getClass().getName()+", "+e.getMessage());
+         }
+    }
+    private static DataFlavor[] supportedFlavors = {
+         EMF_FLAVOR
+    };
+    
+    ByteArrayOutputStream stream;
+   
+    public WMFTransfer(ByteArrayOutputStream stream) {
+         this.stream = stream;
     }
 
-    protected String[] getTypeNames()
-    {
-      return new String[]
-      {WMF};
+    //@Override
+    public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
+        if (flavor.equals(EMF_FLAVOR)) {
+               System.out.println("Mime type application/emf recognized");
+              return new ByteArrayInputStream(stream.toByteArray());
+         } else 
+              throw new UnsupportedFlavorException(flavor);
     }
 
-    public static WMFTransfer getInstance()
-    {
-      return _instance;
+    public Object getTransferDataOld(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
+          if (!(flavor.equals(EMF_FLAVOR))) {
+               throw new UnsupportedFlavorException(flavor);
+              
+         } else return new ByteArrayInputStream(stream.toByteArray());
+              
     }
 
-  }
+   
+
+    public DataFlavor[] getTransferDataFlavors() {
+         return supportedFlavors;
+    }
+
+    public boolean isDataFlavorSupported(DataFlavor flavor) {
+         for(DataFlavor f : supportedFlavors) {
+              if (f.equals(flavor))
+                   return true;
+         }
+         return false;
+    }
+}
 
 }
