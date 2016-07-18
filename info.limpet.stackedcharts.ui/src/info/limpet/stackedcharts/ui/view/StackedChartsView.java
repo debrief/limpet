@@ -6,9 +6,8 @@ import info.limpet.stackedcharts.ui.editor.StackedchartsEditControl;
 
 import java.awt.Dimension;
 import java.awt.geom.Rectangle2D;
-import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -35,6 +34,8 @@ import org.eclipse.nebula.effects.stw.TransitionManager;
 import org.eclipse.nebula.effects.stw.Transitionable;
 import org.eclipse.nebula.effects.stw.transitions.CubicRotationTransition;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.ByteArrayTransfer;
+import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTarget;
 import org.eclipse.swt.dnd.DropTargetEvent;
@@ -47,11 +48,11 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.internal.cocoa.OS;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
@@ -428,53 +429,33 @@ public class StackedChartsView extends ViewPart implements
       @Override
       public void run()
       {
-       
-        FileDialog dialog = new FileDialog(getSite().getShell(), SWT.SAVE);
-        dialog.setFilterNames(new String[]
-        {"WMF Files"});
-        dialog.setFilterExtensions(new String[]
-        {"*.wmf"});
-        String path = dialog.open();
-        if (path != null && !path.isEmpty())
-        {
-          FileOutputStream out = null;
-
           try
           {
-            out = new FileOutputStream(path);
-            JFreeChart combined = _chartComposite.getChart();
-            Rectangle bounds = _chartComposite.getBounds();
-            EMFGraphics2D g2d =
-                new EMFGraphics2D(new BufferedOutputStream(out), new Dimension(bounds.width,
-                    bounds.height));
-            g2d.startExport();
-            combined.draw(g2d, new Rectangle2D.Double(0, 0, bounds.width,
-                bounds.height));
+          ByteArrayOutputStream out = new ByteArrayOutputStream();
+          JFreeChart combined = _chartComposite.getChart();
+          Rectangle bounds = _chartComposite.getBounds();
+          EMFGraphics2D g2d =
+              new EMFGraphics2D(out, new Dimension(bounds.width, bounds.height));
+          g2d.startExport();
+          combined.draw(g2d, new Rectangle2D.Double(0, 0, bounds.width,
+              bounds.height));
 
-            // Cleanup
-            g2d.endExport();
+          // Cleanup
+          g2d.endExport();
+          
+          Clipboard clipboard = new Clipboard(Display.getCurrent());
+       
+          clipboard.setContents(new Object[] { out.toByteArray() },
+                  new Transfer[] { WMFTransfer.getInstance() });
+          clipboard.dispose();
+            MessageDialog.openInformation(Display.getCurrent().getActiveShell(), "WMF Export", "Exported to Clipboard.[WMF]");
+            
           }
           catch (Exception e)
           {
             e.printStackTrace();
           }
-          finally{
-            if(out!=null)
-            {
-              try
-              {
-                out.close();
-              }
-              catch (IOException e)
-              {
-                e.printStackTrace();
-              }
-            }
-          }
-        }
-        
-       
-        
+
         
       }
     };
@@ -752,6 +733,31 @@ public class StackedChartsView extends ViewPart implements
   public ChartComposite getChartComposite()
   {
     return _chartComposite;
+  }
+  
+  public static class WMFTransfer extends ByteArrayTransfer
+  {
+    static WMFTransfer _instance = new WMFTransfer();
+    static final String WMF = OS.NSTIFFPboardType.getString();
+    static final int WMFID = registerType(WMF);
+
+    protected int[] getTypeIds()
+    {
+      return new int[]
+      {WMFID};
+    }
+
+    protected String[] getTypeNames()
+    {
+      return new String[]
+      {WMF};
+    }
+
+    public static WMFTransfer getInstance()
+    {
+      return _instance;
+    }
+
   }
 
 }
