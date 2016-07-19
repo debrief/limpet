@@ -26,6 +26,7 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.nebula.effects.stw.ImageTransitionable;
 import org.eclipse.nebula.effects.stw.Transition;
 import org.eclipse.nebula.effects.stw.TransitionListener;
 import org.eclipse.nebula.effects.stw.TransitionManager;
@@ -43,6 +44,7 @@ import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -272,9 +274,31 @@ public class StackedChartsView extends ViewPart implements
 
     // Drop Support for *.stackedcharts
     connectFileDropSupport(stackedPane);
-
-    transitionManager = new TransitionManager(new Transitionable()
+    final boolean IS_LINUX_OS = System.getProperty("os.name")
+        .toLowerCase().indexOf("nux") >= 0;
+    final Image[] compImage = new Image[2]; //stackedPane comp count
+    transitionManager = new TransitionManager(new ImageTransitionable()
     {
+      
+        public Image getControlImage(int index) {
+          // Linux has problems to get the control image using
+          // <code>org.eclipse.swt.widgets.Control.print(GC)</code>,
+          // so we return the image directly from this
+          // image transitionable object.
+          if (IS_LINUX_OS) {
+              return compImage[index];
+          } else {
+              return null;
+          }
+      }
+      
+      public void updateControlImage(Image image, int index) {
+          if (IS_LINUX_OS) {
+              compImage[index] = image;
+          }
+      }
+      
+      
       @Override
       public void addSelectionListener(final SelectionListener listener)
       {
