@@ -30,7 +30,6 @@ import org.eclipse.nebula.effects.stw.ImageTransitionable;
 import org.eclipse.nebula.effects.stw.Transition;
 import org.eclipse.nebula.effects.stw.TransitionListener;
 import org.eclipse.nebula.effects.stw.TransitionManager;
-import org.eclipse.nebula.effects.stw.Transitionable;
 import org.eclipse.nebula.effects.stw.transitions.CubicRotationTransition;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
@@ -286,7 +285,7 @@ public class StackedChartsView extends ViewPart implements
           // so we return the image directly from this
           // image transitionable object.
           if (IS_LINUX_OS) {
-              return compImage[index];
+              return compImage[index-1];
           } else {
               return null;
           }
@@ -294,7 +293,7 @@ public class StackedChartsView extends ViewPart implements
       
       public void updateControlImage(Image image, int index) {
           if (IS_LINUX_OS) {
-              compImage[index] = image;
+              compImage[index-1] = image;
           }
       }
       
