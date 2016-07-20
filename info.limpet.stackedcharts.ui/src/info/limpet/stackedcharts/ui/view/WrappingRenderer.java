@@ -3,7 +3,6 @@ package info.limpet.stackedcharts.ui.view;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 
-import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.math3.analysis.interpolation.LinearInterpolator;
 import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
 import org.jfree.chart.axis.ValueAxis;
@@ -17,6 +16,34 @@ import org.jfree.ui.RectangleEdge;
 
 public class WrappingRenderer extends XYLineAndShapeRenderer
 {
+  
+  /**
+   * This an immutable class for containing two values together.
+   * @author aris
+   */
+  public class ImmutablePair<T0, T1> {
+    protected final T0 left;
+    protected final T1 right;
+
+    public ImmutablePair(T0 left, T1 right) {
+      this.left = left;
+      this.right = right;
+    }
+
+    /**
+     * @return the left value of the pair
+     */
+    public  T0 getLeft() {
+      return left;
+    }
+
+    /**
+     * @return the right value of the pair
+     */
+    public T1 getRight() {
+      return right;
+    }
+  }
   /**
    * /** An interface for creating custom logic for drawing lines between points for
    * XYLineAndShapeRenderer.
