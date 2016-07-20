@@ -479,7 +479,19 @@ public class TimeBarPlot extends CombinedDomainXYPlot
     g2.fill3DRect((int) yPos, (int) (xPos - bounds.getHeight()),
         3 + (int) bounds.getWidth(), 3 + (int) bounds.getHeight(), true);
 
-    g2.setColor(color.darker());
+    // double check we have a color
+    final Color colorToUse;
+    if(color == null)
+    {
+      System.err.println("using fallback color");
+      colorToUse = Color.magenta;
+    }
+    else
+    {
+      colorToUse = color;
+    }
+    
+    g2.setColor(colorToUse.darker());
     g2.drawString(label, yPos, xPos);
 
     // and restore the font
