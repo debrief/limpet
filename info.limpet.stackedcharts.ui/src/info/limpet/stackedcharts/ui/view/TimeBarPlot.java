@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.jfree.chart.axis.Axis;
 import org.jfree.chart.axis.DateAxis;
 import org.jfree.chart.axis.NumberAxis;
@@ -43,6 +44,8 @@ import org.jfree.data.xy.XYSeriesCollection;
  */
 public class TimeBarPlot extends CombinedDomainXYPlot
 {
+  public static final String MARKER_SIZE_NODE = "MARKER_SIZE";
+
   /** strategy for classes that can provide an interpolated value for 
    * JFreeChart datasets
    * @author ian
@@ -506,7 +509,7 @@ public class TimeBarPlot extends CombinedDomainXYPlot
 
   final java.awt.Color _orange = new java.awt.Color(247, 153, 37);
 
-  final java.awt.Font _markerFont;
+  java.awt.Font _markerFont;
 
   AxisHelper _helper;
 
@@ -625,6 +628,19 @@ public class TimeBarPlot extends CombinedDomainXYPlot
           {
             _helper = new NumberHelper();
           }
+        }
+        
+        // sort out the font
+        
+        // get the current size
+        int curSize =
+            ConfigurationScope.INSTANCE.getNode(StackedChartsView.STACKED_CHARTS_CONFIG).getInt(MARKER_SIZE_NODE, 12);
+        
+        if(_markerFont.getSize() != curSize)
+        {
+          _markerFont=  null;
+          // and re-create the font
+          _markerFont = new Font("Arial", Font.PLAIN, curSize);
         }
 
         plotStepperMarkers(g2, dataArea, vertical, domainAxis, theTime,
@@ -787,5 +803,10 @@ public class TimeBarPlot extends CombinedDomainXYPlot
   public void setTime(final Date time)
   {
     _currentTime = time;
+  }
+  
+  public Date getTime()
+  {
+    return _currentTime;
   }
 }

@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
@@ -60,26 +61,31 @@ public class StackedChartsView extends ViewPart implements
     ITabbedPropertySheetPageContributor, ISelectionProvider, DisposeListener
 {
 
-  /** interface for external objects that are 
-   * able to supply a date and resond to a new date
+  public static final String STACKED_CHARTS_CONFIG = "StackedCharts";
+
+  /**
+   * interface for external objects that are able to supply a date and resond to a new date
+   * 
    * @author ian
-   *
+   * 
    */
   public static interface ControllableDate
   {
-    /** control the date
+    /**
+     * control the date
      * 
      * @param time
      */
     void setDate(Date date);
-    
-    /** retrieve the date
+
+    /**
+     * retrieve the date
      * 
      * @return current date
      */
     Date getDate();
   }
-  
+
   public static final int CHART_VIEW = 1;
   public static final int EDIT_VIEW = 2;
 
@@ -273,31 +279,36 @@ public class StackedChartsView extends ViewPart implements
 
     // Drop Support for *.stackedcharts
     connectFileDropSupport(stackedPane);
-    final boolean IS_LINUX_OS = System.getProperty("os.name")
-        .toLowerCase().indexOf("nux") >= 0;
-    final Image[] compImage = new Image[2]; //stackedPane comp count
+    final boolean IS_LINUX_OS =
+        System.getProperty("os.name").toLowerCase().indexOf("nux") >= 0;
+    final Image[] compImage = new Image[2]; // stackedPane comp count
     transitionManager = new TransitionManager(new ImageTransitionable()
     {
-      
-        public Image getControlImage(int index) {
-          // Linux has problems to get the control image using
-          // <code>org.eclipse.swt.widgets.Control.print(GC)</code>,
-          // so we return the image directly from this
-          // image transitionable object.
-          if (IS_LINUX_OS) {
-              return compImage[index-1];
-          } else {
-              return null;
-          }
+
+      public Image getControlImage(int index)
+      {
+        // Linux has problems to get the control image using
+        // <code>org.eclipse.swt.widgets.Control.print(GC)</code>,
+        // so we return the image directly from this
+        // image transitionable object.
+        if (IS_LINUX_OS)
+        {
+          return compImage[index - 1];
+        }
+        else
+        {
+          return null;
+        }
       }
-      
-      public void updateControlImage(Image image, int index) {
-          if (IS_LINUX_OS) {
-              compImage[index-1] = image;
-          }
+
+      public void updateControlImage(Image image, int index)
+      {
+        if (IS_LINUX_OS)
+        {
+          compImage[index - 1] = image;
+        }
       }
-      
-      
+
       @Override
       public void addSelectionListener(final SelectionListener listener)
       {
@@ -335,14 +346,16 @@ public class StackedChartsView extends ViewPart implements
         stackedPane.showPane(index, false);
       }
     });
-    transitionManager.addTransitionListener(new TransitionListener() {
-		
-		@Override
-		public void transitionFinished(TransitionManager arg0) {
-			stackedPane.completeSelection();
-			
-		}
-	});
+    transitionManager.addTransitionListener(new TransitionListener()
+    {
+
+      @Override
+      public void transitionFinished(TransitionManager arg0)
+      {
+        stackedPane.completeSelection();
+
+      }
+    });
     // new SlideTransition(_tm)
     transitionManager.setTransition(new CubicRotationTransition(
         transitionManager));
@@ -401,7 +414,6 @@ public class StackedChartsView extends ViewPart implements
       }
     });
 
-    
     final Action showTime = new Action("Show time marker", SWT.TOGGLE)
     {
       @Override
@@ -420,7 +432,7 @@ public class StackedChartsView extends ViewPart implements
     showTime.setImageDescriptor(Activator.imageDescriptorFromPlugin(
         Activator.PLUGIN_ID, "icons/clock.png"));
     manager.add(showTime);
-    
+
     final Action showMarker = new Action("Show marker value", SWT.TOGGLE)
     {
       @Override
@@ -436,8 +448,78 @@ public class StackedChartsView extends ViewPart implements
       }
     };
     showMarker.setChecked(true);
-    showMarker.setImageDescriptor(Activator.imageDescriptorFromPlugin(Activator.PLUGIN_ID, "icons/labels.png"));
+    showMarker.setImageDescriptor(Activator.imageDescriptorFromPlugin(
+        Activator.PLUGIN_ID, "icons/labels.png"));
     manager.add(showMarker);
+
+    final Action sizeUp = new Action("+", SWT.PUSH)
+    {
+      @Override
+      public void run()
+      {
+        if (this.isChecked())
+        {
+          changeFontSize(true);
+        }
+      }
+    };
+    sizeUp.setDescription("Increase size of font for value marker labels");
+    manager.add(sizeUp);
+    final Action sizeDown = new Action("-", SWT.PUSH)
+    {
+      @Override
+      public void run()
+      {
+        if (this.isChecked())
+        {
+          changeFontSize(false);
+        }
+      }
+    };
+    sizeUp.setDescription("Decrease size of font for value marker labels");
+    manager.add(sizeDown);
+
+  }
+
+  /**
+   * convenience method to make the value marker labels larger or smaller
+   * 
+   * @param up
+   */
+  private void changeFontSize(final boolean up)
+  {
+    final int change;
+    if (up)
+    {
+      change = 2;
+    }
+    else
+    {
+      change = -2;
+    }
+
+    int curSize =
+        ConfigurationScope.INSTANCE.getNode(STACKED_CHARTS_CONFIG).getInt(
+            TimeBarPlot.MARKER_SIZE_NODE, 12);
+
+    // trim to reasonable size
+    curSize = Math.max(10, curSize);
+
+    final int newVal = curSize + change;
+    ConfigurationScope.INSTANCE.getNode(STACKED_CHARTS_CONFIG).putInt(
+        TimeBarPlot.MARKER_SIZE_NODE, newVal);
+
+    // do we know the time?
+    if (_currentTime != null)
+    {
+      // try to get the time aware plot
+      JFreeChart combined = _chartComposite.getChart();
+      TimeBarPlot plot = (TimeBarPlot) combined.getPlot();
+      plot.setTime(_currentTime);
+
+      // ok, trigger ui update
+      refreshPlot();
+    }
 
   }
 
@@ -527,10 +609,10 @@ public class StackedChartsView extends ViewPart implements
       stackedPane.forceFocus();
     }
   }
-  
+
   public void setDateSupport(ControllableDate controllableDate)
   {
-    _controllableDate  = controllableDate;
+    _controllableDate = controllableDate;
   }
 
   public void setModel(final ChartSet charts)
@@ -554,7 +636,7 @@ public class StackedChartsView extends ViewPart implements
         new ChartComposite(chartHolder, SWT.NONE, chart, 400, 600, 300, 200,
             1800, 1800, true, false, true, true, true, true)
         {
-      
+
           @Override
           public void mouseUp(final MouseEvent event)
           {
@@ -564,17 +646,18 @@ public class StackedChartsView extends ViewPart implements
             {
               c.setNotify(true); // force redraw
             }
-            
-            if(event.count == 2)
+
+            if (event.count == 2)
             {
               handleDoubleClick(event.x, event.y);
             }
           }
         };
     chart.setAntiAlias(false);
-    
+
     // try the double-click handler
-    _chartComposite.addMouseListener(new MouseListener(){
+    _chartComposite.addMouseListener(new MouseListener()
+    {
 
       @Override
       public void mouseDoubleClick(MouseEvent e)
@@ -592,7 +675,8 @@ public class StackedChartsView extends ViewPart implements
       public void mouseUp(MouseEvent e)
       {
         System.out.println("up at:" + e);
-      }});
+      }
+    });
 
     chartHolder.pack(true);
     chartHolder.getParent().layout();
@@ -603,15 +687,19 @@ public class StackedChartsView extends ViewPart implements
   {
     // retrieve the data location
     Rectangle dataArea = _chartComposite.getScreenDataArea();
-    Rectangle2D d2 = new Rectangle2D.Double(dataArea.x, dataArea.y, dataArea.width, dataArea.height);
+    Rectangle2D d2 =
+        new Rectangle2D.Double(dataArea.x, dataArea.y, dataArea.width,
+            dataArea.height);
     TimeBarPlot plot = (TimeBarPlot) _chartComposite.getChart().getPlot();
-    double chartX = plot.getDomainAxis().java2DToValue((double)x , d2,  plot.getDomainAxisEdge());
-    
+    double chartX =
+        plot.getDomainAxis().java2DToValue((double) x, d2,
+            plot.getDomainAxisEdge());
+
     // do we have a date to control?
-    if(_controllableDate != null)
+    if (_controllableDate != null)
     {
       // ok, update it
-      _controllableDate.setDate(new Date((long)chartX));
+      _controllableDate.setDate(new Date((long) chartX));
     }
   }
 
@@ -640,9 +728,9 @@ public class StackedChartsView extends ViewPart implements
       JFreeChart combined = _chartComposite.getChart();
       TimeBarPlot plot = (TimeBarPlot) combined.getPlot();
       plot.setTime(newTime);
-      
+
       // ok, trigger ui update
-      refreshPlot();      
+      refreshPlot();
     }
   }
 
