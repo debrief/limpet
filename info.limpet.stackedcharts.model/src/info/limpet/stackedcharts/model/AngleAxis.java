@@ -19,6 +19,7 @@ package info.limpet.stackedcharts.model;
  * <ul>
  *   <li>{@link info.limpet.stackedcharts.model.AngleAxis#getMinVal <em>Min Val</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.AngleAxis#getMaxVal <em>Max Val</em>}</li>
+ *   <li>{@link info.limpet.stackedcharts.model.AngleAxis#isMidOrigin <em>Mid Origin</em>}</li>
  * </ul>
  *
  * @see info.limpet.stackedcharts.model.StackedchartsPackage#getAngleAxis()
@@ -80,4 +81,29 @@ public interface AngleAxis extends NumberAxis
    * @generated
    */
   void setMaxVal(double value);
+
+  /**
+   * Returns the value of the '<em><b>Mid Origin</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * <!-- begin-model-doc -->
+   * Whether to position the origin at the mid-point of the range
+   * <!-- end-model-doc -->
+   * @return the value of the '<em>Mid Origin</em>' attribute.
+   * @see #setMidOrigin(boolean)
+   * @see info.limpet.stackedcharts.model.StackedchartsPackage#getAngleAxis_MidOrigin()
+   * @model dataType="org.eclipse.emf.ecore.xml.type.Boolean"
+   * @generated
+   */
+  boolean isMidOrigin();
+
+  /**
+   * Sets the value of the '{@link info.limpet.stackedcharts.model.AngleAxis#isMidOrigin <em>Mid Origin</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Mid Origin</em>' attribute.
+   * @see #isMidOrigin()
+   * @generated
+   */
+  void setMidOrigin(boolean value);
 } // AngleAxis

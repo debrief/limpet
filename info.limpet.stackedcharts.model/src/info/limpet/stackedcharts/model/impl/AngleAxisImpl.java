@@ -19,6 +19,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  * <ul>
  *   <li>{@link info.limpet.stackedcharts.model.impl.AngleAxisImpl#getMinVal <em>Min Val</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.impl.AngleAxisImpl#getMaxVal <em>Max Val</em>}</li>
+ *   <li>{@link info.limpet.stackedcharts.model.impl.AngleAxisImpl#isMidOrigin <em>Mid Origin</em>}</li>
  * </ul>
  *
  * @generated
@@ -61,6 +62,25 @@ public class AngleAxisImpl extends NumberAxisImpl implements AngleAxis
    * @ordered
    */
   protected double maxVal = MAX_VAL_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #isMidOrigin() <em>Mid Origin</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isMidOrigin()
+   * @generated
+   * @ordered
+   */
+  protected static final boolean MID_ORIGIN_EDEFAULT = false;
+  /**
+   * The cached value of the '{@link #isMidOrigin() <em>Mid Origin</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isMidOrigin()
+   * @generated
+   * @ordered
+   */
+  protected boolean midOrigin = MID_ORIGIN_EDEFAULT;
 
   /**
    * <!-- begin-user-doc -->
@@ -134,6 +154,29 @@ public class AngleAxisImpl extends NumberAxisImpl implements AngleAxis
    * <!-- end-user-doc -->
    * @generated
    */
+  public boolean isMidOrigin()
+  {
+    return midOrigin;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setMidOrigin(boolean newMidOrigin)
+  {
+    boolean oldMidOrigin = midOrigin;
+    midOrigin = newMidOrigin;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, StackedchartsPackage.ANGLE_AXIS__MID_ORIGIN, oldMidOrigin, midOrigin));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   @Override
   public Object eGet(int featureID, boolean resolve, boolean coreType)
   {
@@ -143,6 +186,8 @@ public class AngleAxisImpl extends NumberAxisImpl implements AngleAxis
         return getMinVal();
       case StackedchartsPackage.ANGLE_AXIS__MAX_VAL:
         return getMaxVal();
+      case StackedchartsPackage.ANGLE_AXIS__MID_ORIGIN:
+        return isMidOrigin();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -162,6 +207,9 @@ public class AngleAxisImpl extends NumberAxisImpl implements AngleAxis
         return;
       case StackedchartsPackage.ANGLE_AXIS__MAX_VAL:
         setMaxVal((Double)newValue);
+        return;
+      case StackedchartsPackage.ANGLE_AXIS__MID_ORIGIN:
+        setMidOrigin((Boolean)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -183,6 +231,9 @@ public class AngleAxisImpl extends NumberAxisImpl implements AngleAxis
       case StackedchartsPackage.ANGLE_AXIS__MAX_VAL:
         setMaxVal(MAX_VAL_EDEFAULT);
         return;
+      case StackedchartsPackage.ANGLE_AXIS__MID_ORIGIN:
+        setMidOrigin(MID_ORIGIN_EDEFAULT);
+        return;
     }
     super.eUnset(featureID);
   }
@@ -201,6 +252,8 @@ public class AngleAxisImpl extends NumberAxisImpl implements AngleAxis
         return minVal != MIN_VAL_EDEFAULT;
       case StackedchartsPackage.ANGLE_AXIS__MAX_VAL:
         return maxVal != MAX_VAL_EDEFAULT;
+      case StackedchartsPackage.ANGLE_AXIS__MID_ORIGIN:
+        return midOrigin != MID_ORIGIN_EDEFAULT;
     }
     return super.eIsSet(featureID);
   }
@@ -220,6 +273,8 @@ public class AngleAxisImpl extends NumberAxisImpl implements AngleAxis
     result.append(minVal);
     result.append(", maxVal: ");
     result.append(maxVal);
+    result.append(", midOrigin: ");
+    result.append(midOrigin);
     result.append(')');
     return result.toString();
   }
