@@ -4,6 +4,7 @@ import info.limpet.stackedcharts.model.ChartSet;
 import info.limpet.stackedcharts.ui.editor.Activator;
 import info.limpet.stackedcharts.ui.editor.StackedchartsEditControl;
 
+import java.awt.Color;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.io.IOException;
@@ -13,7 +14,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
@@ -55,12 +55,14 @@ import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.StandardChartTheme;
 import org.jfree.experimental.chart.swt.ChartComposite;
 
 public class StackedChartsView extends ViewPart implements
     ITabbedPropertySheetPageContributor, ISelectionProvider, DisposeListener
 {
 
+  private static final int MARKER_STEP_SIZE = 1;
   public static final String STACKED_CHARTS_CONFIG = "StackedCharts";
 
   /**
@@ -108,6 +110,7 @@ public class StackedChartsView extends ViewPart implements
   private ChartComposite _chartComposite;
   private ArrayList<Runnable> _closeCallbacks;
   private ControllableDate _controllableDate = null;
+  private JFreeChart jFreeChart;
 
   @Override
   public void addSelectionChangedListener(
@@ -452,32 +455,31 @@ public class StackedChartsView extends ViewPart implements
         Activator.PLUGIN_ID, "icons/labels.png"));
     manager.add(showMarker);
 
-    final Action sizeUp = new Action("+", SWT.PUSH)
+    final Action sizeDown = new Action("-", Action.AS_PUSH_BUTTON)
     {
       @Override
       public void run()
       {
-        if (this.isChecked())
-        {
-          changeFontSize(true);
-        }
+        changeFontSize(false);
       }
     };
-    sizeUp.setDescription("Increase size of font for value marker labels");
-    manager.add(sizeUp);
-    final Action sizeDown = new Action("-", SWT.PUSH)
-    {
-      @Override
-      public void run()
-      {
-        if (this.isChecked())
-        {
-          changeFontSize(false);
-        }
-      }
-    };
-    sizeUp.setDescription("Decrease size of font for value marker labels");
+    sizeDown.setImageDescriptor(Activator.imageDescriptorFromPlugin(
+        Activator.PLUGIN_ID, "icons/decrease.png"));
+    sizeDown.setDescription("Decrease font size");
     manager.add(sizeDown);
+    
+    final Action sizeUp = new Action("+", Action.AS_PUSH_BUTTON)
+    {
+      @Override
+      public void run()
+      {
+        changeFontSize(true);
+      }
+    };
+    sizeUp.setDescription("Increase font size");
+    sizeUp.setImageDescriptor(Activator.imageDescriptorFromPlugin(
+        Activator.PLUGIN_ID, "icons/increase.png"));
+    manager.add(sizeUp);
 
   }
 
@@ -486,41 +488,55 @@ public class StackedChartsView extends ViewPart implements
    * 
    * @param up
    */
-  private void changeFontSize(final boolean up)
+  private void changeFontSize(final Boolean up)
   {
-    final int change;
-    if (up)
+    // are we making a change?
+    final float change;
+    if(up != null)
     {
-      change = 2;
+      // sort out which direction we're changing
+      if (up)
+      {
+        change = MARKER_STEP_SIZE;
+      }
+      else
+      {
+        change = -MARKER_STEP_SIZE;
+      }
+
     }
     else
     {
-      change = -2;
+      change = 0;
     }
 
-    int curSize =
-        ConfigurationScope.INSTANCE.getNode(STACKED_CHARTS_CONFIG).getInt(
-            TimeBarPlot.MARKER_SIZE_NODE, 12);
+    // do we have a default?
+    final float curSize = Activator.getDefault().getPreferenceStore().getFloat(TimeBarPlot.CHART_FONT_SIZE_NODE);
 
     // trim to reasonable size
-    curSize = Math.max(10, curSize);
+    float sizeToUse = Math.max(9, curSize);
 
-    final int newVal = curSize + change;
-    ConfigurationScope.INSTANCE.getNode(STACKED_CHARTS_CONFIG).putInt(
-        TimeBarPlot.MARKER_SIZE_NODE, newVal);
+    // produce new size
+    final float newVal = sizeToUse + change;
+    
+    // store the new size
+    Activator.getDefault().getPreferenceStore().setValue(TimeBarPlot.CHART_FONT_SIZE_NODE, newVal);
+    
+    float base = newVal;
 
-    // do we know the time?
-    if (_currentTime != null)
-    {
-      // try to get the time aware plot
-      JFreeChart combined = _chartComposite.getChart();
-      TimeBarPlot plot = (TimeBarPlot) combined.getPlot();
-      plot.setTime(_currentTime);
-
-      // ok, trigger ui update
-      refreshPlot();
-    }
-
+    StandardChartTheme theme = (StandardChartTheme) StandardChartTheme.createJFreeTheme();
+   
+    theme.setRegularFont(theme.getRegularFont().deriveFont(base * 1.0f));
+    theme.setExtraLargeFont(theme.getExtraLargeFont().deriveFont(base * 2f));
+    theme.setLargeFont(theme.getLargeFont().deriveFont(base * 1.2f));
+    theme.setSmallFont(theme.getSmallFont().deriveFont(base * 0.8f));
+    theme.setChartBackgroundPaint(Color.white);
+    theme.setPlotBackgroundPaint(Color.white);
+    theme.setGridBandPaint(Color.lightGray);
+    theme.setDomainGridlinePaint(Color.lightGray);
+    theme.setRangeGridlinePaint(Color.lightGray);
+    
+    theme.apply(jFreeChart);
   }
 
   /**
@@ -613,6 +629,15 @@ public class StackedChartsView extends ViewPart implements
   public void setDateSupport(ControllableDate controllableDate)
   {
     _controllableDate = controllableDate;
+    
+    if(_controllableDate != null)
+    {
+      Date theDate = _controllableDate.getDate();
+      if(theDate != null)
+      {
+        updateTime(theDate);
+      }
+    }
   }
 
   public void setModel(final ChartSet charts)
@@ -631,9 +656,13 @@ public class StackedChartsView extends ViewPart implements
     }
 
     // and now repopulate
-    final JFreeChart chart = ChartBuilder.build(charts, _controllableDate);
+    jFreeChart = ChartBuilder.build(charts, _controllableDate);
+    
+    // initialise the theme
+    changeFontSize(null);
+    
     _chartComposite =
-        new ChartComposite(chartHolder, SWT.NONE, chart, 400, 600, 300, 200,
+        new ChartComposite(chartHolder, SWT.NONE, jFreeChart, 400, 600, 300, 200,
             1800, 1800, true, false, true, true, true, true)
         {
 
@@ -653,7 +682,7 @@ public class StackedChartsView extends ViewPart implements
             }
           }
         };
-    chart.setAntiAlias(false);
+    jFreeChart.setAntiAlias(false);
 
     // try the double-click handler
     _chartComposite.addMouseListener(new MouseListener()
