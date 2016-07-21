@@ -15,7 +15,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.jfree.chart.axis.Axis;
 import org.jfree.chart.axis.DateAxis;
 import org.jfree.chart.axis.NumberAxis;
@@ -27,7 +26,6 @@ import org.jfree.chart.plot.PlotState;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.data.general.Dataset;
-import org.jfree.data.time.Millisecond;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 import org.jfree.data.time.TimeSeriesDataItem;
@@ -44,12 +42,13 @@ import org.jfree.data.xy.XYSeriesCollection;
  */
 public class TimeBarPlot extends CombinedDomainXYPlot
 {
-  public static final String MARKER_SIZE_NODE = "MARKER_SIZE";
+  public static final String CHART_FONT_SIZE_NODE = "FONT_SIZE";
 
-  /** strategy for classes that can provide an interpolated value for 
-   * JFreeChart datasets
+  /**
+   * strategy for classes that can provide an interpolated value for JFreeChart datasets
+   * 
    * @author ian
-   *
+   * 
    */
   protected static interface AxisHelper
   {
@@ -295,172 +294,166 @@ public class TimeBarPlot extends CombinedDomainXYPlot
     }
   }
 
-  private static abstract class TestRunner
-  {
-    private final String _title;
-
-    TestRunner(final String title)
-    {
-      _title = title;
-    }
-
-    private TimeSeriesCollection collateTestData(final long len,
-        final long start)
-    {
-      final TimeSeries series1 = new TimeSeries("Speed 1");
-      final TimeSeries series2 = new TimeSeries("Speed 2");
-
-      for (long i = 0; i < len; i += 10)
-      {
-        series1.add(new Millisecond(new Date(start + i)), Math.sin(Math
-            .toRadians(i)));
-        series2.add(new Millisecond(new Date(start + i)), Math.cos(Math
-            .toRadians(i)));
-      }
-
-      final TimeSeriesCollection coll = new TimeSeriesCollection();
-      coll.addSeries(series1);
-      coll.addSeries(series2);
-
-      return coll;
-    }
-
-    abstract AxisHelper getHelper();
-
-    void test(final long start, final long len)
-    {
-
-      System.out.println(_title);
-
-      AxisHelper helper = getHelper();
-      final TimeSeriesCollection dataset = collateTestData(len, start);
-
-      Double res = 0d;
-
-      long t0 = System.currentTimeMillis();
-
-      for (int i = 1; i < 10; i++)
-      {
-        final Double interp = helper.getValueAt(dataset, 0, start + (len / i));
-        if (interp != null)
-          res += interp;
-      }
-
-      // re-initiate the helper
-      helper = getHelper();
-
-      long t1 = System.currentTimeMillis();
-
-      System.out.println("Random access:" + (t1 - t0) + ", " + res);
-
-      res = 1d;
-
-      t0 = System.currentTimeMillis();
-
-      long time = start + (long) (len * 0.1);
-
-      for (int i = 1; i < 10; i++)
-      {
-        final Double interp = helper.getValueAt(dataset, 0, time + i);
-        if (interp != null)
-          res += interp;
-      }
-
-      // re-initiate the helper
-      helper = getHelper();
-
-      t1 = System.currentTimeMillis();
-
-      System.out.println("Sequential access (early):" + (t1 - t0) + ", " + res);
-
-      res = 1d;
-
-      t0 = System.currentTimeMillis();
-
-      time = start + (long) (len * 0.9);
-
-      for (int i = 1; i < 10; i++)
-      {
-        final Double interp = helper.getValueAt(dataset, 0, time + i);
-        if (interp != null)
-          res += interp;
-      }
-
-      // re-initiate the helper
-      helper = getHelper();
-
-      t1 = System.currentTimeMillis();
-
-      System.out.println("Sequential access (late):" + (t1 - t0) + ", " + res);
-
-      res = 1d;
-
-      // re-initiate the helper
-      helper = getHelper();
-
-      t0 = System.currentTimeMillis();
-
-      time = start + (long) (len * 0.9);
-
-      for (int i = 10; i > 0; i--)
-      {
-        final Double interp = helper.getValueAt(dataset, 0, time + i);
-        if (interp != null)
-          res += interp;
-      }
-
-      t1 = System.currentTimeMillis();
-
-      System.out.println("Sequential access (late desc):" + (t1 - t0) + ", "
-          + res);
-    }
-
-  }
+//  private static abstract class TestRunner
+//  {
+//    private final String _title;
+//
+//    TestRunner(final String title)
+//    {
+//      _title = title;
+//    }
+//
+//    private TimeSeriesCollection collateTestData(final long len,
+//        final long start)
+//    {
+//      final TimeSeries series1 = new TimeSeries("Speed 1");
+//      final TimeSeries series2 = new TimeSeries("Speed 2");
+//
+//      for (long i = 0; i < len; i += 10)
+//      {
+//        series1.add(new Millisecond(new Date(start + i)), Math.sin(Math
+//            .toRadians(i)));
+//        series2.add(new Millisecond(new Date(start + i)), Math.cos(Math
+//            .toRadians(i)));
+//      }
+//
+//      final TimeSeriesCollection coll = new TimeSeriesCollection();
+//      coll.addSeries(series1);
+//      coll.addSeries(series2);
+//
+//      return coll;
+//    }
+//
+//    abstract AxisHelper getHelper();
+//
+//    void test(final long start, final long len)
+//    {
+//
+//      System.out.println(_title);
+//
+//      AxisHelper helper = getHelper();
+//      final TimeSeriesCollection dataset = collateTestData(len, start);
+//
+//      Double res = 0d;
+//
+//      long t0 = System.currentTimeMillis();
+//
+//      for (int i = 1; i < 10; i++)
+//      {
+//        final Double interp = helper.getValueAt(dataset, 0, start + (len / i));
+//        if (interp != null)
+//          res += interp;
+//      }
+//
+//      // re-initiate the helper
+//      helper = getHelper();
+//
+//      long t1 = System.currentTimeMillis();
+//
+//      System.out.println("Random access:" + (t1 - t0) + ", " + res);
+//
+//      res = 1d;
+//
+//      t0 = System.currentTimeMillis();
+//
+//      long time = start + (long) (len * 0.1);
+//
+//      for (int i = 1; i < 10; i++)
+//      {
+//        final Double interp = helper.getValueAt(dataset, 0, time + i);
+//        if (interp != null)
+//          res += interp;
+//      }
+//
+//      // re-initiate the helper
+//      helper = getHelper();
+//
+//      t1 = System.currentTimeMillis();
+//
+//      System.out.println("Sequential access (early):" + (t1 - t0) + ", " + res);
+//
+//      res = 1d;
+//
+//      t0 = System.currentTimeMillis();
+//
+//      time = start + (long) (len * 0.9);
+//
+//      for (int i = 1; i < 10; i++)
+//      {
+//        final Double interp = helper.getValueAt(dataset, 0, time + i);
+//        if (interp != null)
+//          res += interp;
+//      }
+//
+//      // re-initiate the helper
+//      helper = getHelper();
+//
+//      t1 = System.currentTimeMillis();
+//
+//      System.out.println("Sequential access (late):" + (t1 - t0) + ", " + res);
+//
+//      res = 1d;
+//
+//      // re-initiate the helper
+//      helper = getHelper();
+//
+//      t0 = System.currentTimeMillis();
+//
+//      time = start + (long) (len * 0.9);
+//
+//      for (int i = 10; i > 0; i--)
+//      {
+//        final Double interp = helper.getValueAt(dataset, 0, time + i);
+//        if (interp != null)
+//          res += interp;
+//      }
+//
+//      t1 = System.currentTimeMillis();
+//
+//      System.out.println("Sequential access (late desc):" + (t1 - t0) + ", "
+//          + res);
+//    }
+//
+//  }
 
   /**
    * 
    */
   private static final long serialVersionUID = 1L;
 
-  public static void main(final String[] args)
-  {
-    final long len = 1000000;
-    final long start = new Date().getTime();
-
-    TestRunner runner = new TestRunner("Brute force")
-    {
-      @Override
-      DateHelper getHelper()
-      {
-        return new DateHelper();
-      }
-    };
-
-    runner.test(start, len);
-
-    runner = new TestRunner("Cache")
-    {
-      @Override
-      AxisHelper getHelper()
-      {
-        return new CacheingDateHelper();
-      }
-    };
-
-    runner.test(start, len);
-
-  }
+//  public static void main(final String[] args)
+//  {
+//    final long len = 1000000;
+//    final long start = new Date().getTime();
+//
+//    TestRunner runner = new TestRunner("Brute force")
+//    {
+//      @Override
+//      DateHelper getHelper()
+//      {
+//        return new DateHelper();
+//      }
+//    };
+//
+//    runner.test(start, len);
+//
+//    runner = new TestRunner("Cache")
+//    {
+//      @Override
+//      AxisHelper getHelper()
+//      {
+//        return new CacheingDateHelper();
+//      }
+//    };
+//
+//    runner.test(start, len);
+//
+//  }
 
   protected static void paintThisMarker(final Graphics2D g2,
       final String label, final Color color, final float markerX,
-      final float markerY, final boolean vertical, final Font markerFont)
+      final float markerY, final boolean vertical)
   {
-    // store old font
-    final Font oldFont = g2.getFont();
-
-    // set the new one
-    g2.setFont(markerFont);
-
     // reflect the plot orientation
     final float xPos;
     final float yPos;
@@ -484,7 +477,7 @@ public class TimeBarPlot extends CombinedDomainXYPlot
 
     // double check we have a color
     final Color colorToUse;
-    if(color == null)
+    if (color == null)
     {
       System.err.println("using fallback color");
       colorToUse = Color.magenta;
@@ -493,12 +486,9 @@ public class TimeBarPlot extends CombinedDomainXYPlot
     {
       colorToUse = color;
     }
-    
+
     g2.setColor(colorToUse.darker());
     g2.drawString(label, yPos, xPos);
-
-    // and restore the font
-    g2.setFont(oldFont);
   }
 
   Date _currentTime = null;
@@ -509,14 +499,11 @@ public class TimeBarPlot extends CombinedDomainXYPlot
 
   final java.awt.Color _orange = new java.awt.Color(247, 153, 37);
 
-  java.awt.Font _markerFont;
-
   AxisHelper _helper;
 
   public TimeBarPlot(final ValueAxis sharedAxis)
   {
     super(sharedAxis);
-    _markerFont = new Font("Arial", Font.PLAIN, 8);
   }
 
   /**
@@ -629,22 +616,19 @@ public class TimeBarPlot extends CombinedDomainXYPlot
             _helper = new NumberHelper();
           }
         }
-        
-        // sort out the font
-        
-        // get the current size
-        int curSize =
-            ConfigurationScope.INSTANCE.getNode(StackedChartsView.STACKED_CHARTS_CONFIG).getInt(MARKER_SIZE_NODE, 12);
-        
-        if(_markerFont.getSize() != curSize)
-        {
-          _markerFont=  null;
-          // and re-create the font
-          _markerFont = new Font("Arial", Font.PLAIN, curSize);
-        }
 
+        final Font oldFont = g2.getFont();
+
+        final Font domainFont = this.getDomainAxis().getTickLabelFont();
+        final Font tempFont = domainFont.deriveFont(domainFont.getSize() * 1.2f).deriveFont(Font.BOLD);
+        
+        g2.setFont(tempFont);
+       
         plotStepperMarkers(g2, dataArea, vertical, domainAxis, theTime,
             renderInfo, (int) trimmedLinePosition, _helper);
+        
+        
+        g2.setFont(oldFont);
       }
     }
   }
@@ -792,7 +776,7 @@ public class TimeBarPlot extends CombinedDomainXYPlot
 
               // done, render it
               paintThisMarker(g2, label, paint, linePosition, markerY,
-                  vertical, _markerFont);
+                  vertical);
             }
           }
         }
@@ -804,7 +788,7 @@ public class TimeBarPlot extends CombinedDomainXYPlot
   {
     _currentTime = time;
   }
-  
+
   public Date getTime()
   {
     return _currentTime;
