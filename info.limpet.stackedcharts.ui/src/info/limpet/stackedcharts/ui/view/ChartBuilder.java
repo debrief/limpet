@@ -738,6 +738,10 @@ public class ChartBuilder
 
     renderer.setDrawSeriesLineAsPath(true);
     final int indexSeries = 0;
+    
+    // set the line width
+    renderer.setAutoPopulateSeriesPaint(false);
+    renderer.setAutoPopulateSeriesStroke(false);
 
     final XYDataset collection = axeshelper.createCollection();
 
