@@ -4,6 +4,7 @@ import info.limpet.stackedcharts.model.ChartSet;
 import info.limpet.stackedcharts.ui.editor.Activator;
 import info.limpet.stackedcharts.ui.editor.StackedchartsEditControl;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
@@ -35,10 +36,10 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.nebula.effects.stw.ImageTransitionable;
 import org.eclipse.nebula.effects.stw.Transition;
 import org.eclipse.nebula.effects.stw.TransitionListener;
 import org.eclipse.nebula.effects.stw.TransitionManager;
-import org.eclipse.nebula.effects.stw.Transitionable;
 import org.eclipse.nebula.effects.stw.transitions.CubicRotationTransition;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
@@ -52,6 +53,7 @@ import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -63,32 +65,39 @@ import org.eclipse.ui.views.properties.IPropertySheetPage;
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor;
 import org.freehep.graphicsio.emf.EMFGraphics2D;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.StandardChartTheme;
 import org.jfree.experimental.chart.swt.ChartComposite;
 
 public class StackedChartsView extends ViewPart implements
     ITabbedPropertySheetPageContributor, ISelectionProvider, DisposeListener
 {
 
-  /** interface for external objects that are 
-   * able to supply a date and resond to a new date
+  private static final int MARKER_STEP_SIZE = 1;
+  public static final String STACKED_CHARTS_CONFIG = "StackedCharts";
+
+  /**
+   * interface for external objects that are able to supply a date and resond to a new date
+   * 
    * @author ian
-   *
+   * 
    */
   public static interface ControllableDate
   {
-    /** control the date
+    /**
+     * control the date
      * 
      * @param time
      */
     void setDate(Date date);
-    
-    /** retrieve the date
+
+    /**
+     * retrieve the date
      * 
      * @return current date
      */
     Date getDate();
   }
-  
+
   public static final int CHART_VIEW = 1;
   public static final int EDIT_VIEW = 2;
 
@@ -111,6 +120,7 @@ public class StackedChartsView extends ViewPart implements
   private ChartComposite _chartComposite;
   private ArrayList<Runnable> _closeCallbacks;
   private ControllableDate _controllableDate = null;
+  private JFreeChart jFreeChart;
 
   @Override
   public void addSelectionChangedListener(
@@ -282,9 +292,36 @@ public class StackedChartsView extends ViewPart implements
 
     // Drop Support for *.stackedcharts
     connectFileDropSupport(stackedPane);
-
-    transitionManager = new TransitionManager(new Transitionable()
+    final boolean IS_LINUX_OS =
+        System.getProperty("os.name").toLowerCase().indexOf("nux") >= 0;
+    final Image[] compImage = new Image[2]; // stackedPane comp count
+    transitionManager = new TransitionManager(new ImageTransitionable()
     {
+
+      public Image getControlImage(int index)
+      {
+        // Linux has problems to get the control image using
+        // <code>org.eclipse.swt.widgets.Control.print(GC)</code>,
+        // so we return the image directly from this
+        // image transitionable object.
+        if (IS_LINUX_OS)
+        {
+          return compImage[index - 1];
+        }
+        else
+        {
+          return null;
+        }
+      }
+
+      public void updateControlImage(Image image, int index)
+      {
+        if (IS_LINUX_OS)
+        {
+          compImage[index - 1] = image;
+        }
+      }
+
       @Override
       public void addSelectionListener(final SelectionListener listener)
       {
@@ -322,14 +359,16 @@ public class StackedChartsView extends ViewPart implements
         stackedPane.showPane(index, false);
       }
     });
-    transitionManager.addTransitionListener(new TransitionListener() {
-		
-		@Override
-		public void transitionFinished(TransitionManager arg0) {
-			stackedPane.completeSelection();
-			
-		}
-	});
+    transitionManager.addTransitionListener(new TransitionListener()
+    {
+
+      @Override
+      public void transitionFinished(TransitionManager arg0)
+      {
+        stackedPane.completeSelection();
+
+      }
+    });
     // new SlideTransition(_tm)
     transitionManager.setTransition(new CubicRotationTransition(
         transitionManager));
@@ -388,7 +427,6 @@ public class StackedChartsView extends ViewPart implements
       }
     });
 
-    
     final Action showTime = new Action("Show time marker", SWT.TOGGLE)
     {
       @Override
@@ -407,7 +445,7 @@ public class StackedChartsView extends ViewPart implements
     showTime.setImageDescriptor(Activator.imageDescriptorFromPlugin(
         Activator.PLUGIN_ID, "icons/clock.png"));
     manager.add(showTime);
-    
+
     final Action showMarker = new Action("Show marker value", SWT.TOGGLE)
     {
       @Override
@@ -423,8 +461,8 @@ public class StackedChartsView extends ViewPart implements
       }
     };
     showMarker.setChecked(true);
-    showMarker.setImageDescriptor(Activator.imageDescriptorFromPlugin(Activator.PLUGIN_ID, "icons/labels.png"));
-    
+    showMarker.setImageDescriptor(Activator.imageDescriptorFromPlugin(
+        Activator.PLUGIN_ID, "icons/labels.png"));
     manager.add(showMarker);
     
     
@@ -463,6 +501,88 @@ public class StackedChartsView extends ViewPart implements
     export.setImageDescriptor(Activator.imageDescriptorFromPlugin(Activator.PLUGIN_ID, "icons/export_wmf.png"));
     manager.add(export);
 
+    final Action sizeDown = new Action("-", Action.AS_PUSH_BUTTON)
+    {
+      @Override
+      public void run()
+      {
+        changeFontSize(false);
+      }
+    };
+    sizeDown.setImageDescriptor(Activator.imageDescriptorFromPlugin(
+        Activator.PLUGIN_ID, "icons/decrease.png"));
+    sizeDown.setDescription("Decrease font size");
+    manager.add(sizeDown);
+    
+    final Action sizeUp = new Action("+", Action.AS_PUSH_BUTTON)
+    {
+      @Override
+      public void run()
+      {
+        changeFontSize(true);
+      }
+    };
+    sizeUp.setDescription("Increase font size");
+    sizeUp.setImageDescriptor(Activator.imageDescriptorFromPlugin(
+        Activator.PLUGIN_ID, "icons/increase.png"));
+    manager.add(sizeUp);
+
+  }
+
+  /**
+   * convenience method to make the value marker labels larger or smaller
+   * 
+   * @param up
+   */
+  private void changeFontSize(final Boolean up)
+  {
+    // are we making a change?
+    final float change;
+    if(up != null)
+    {
+      // sort out which direction we're changing
+      if (up)
+      {
+        change = MARKER_STEP_SIZE;
+      }
+      else
+      {
+        change = -MARKER_STEP_SIZE;
+      }
+
+    }
+    else
+    {
+      change = 0;
+    }
+
+    // do we have a default?
+    final float curSize = Activator.getDefault().getPreferenceStore().getFloat(TimeBarPlot.CHART_FONT_SIZE_NODE);
+
+    // trim to reasonable size
+    float sizeToUse = Math.max(9, curSize);
+
+    // produce new size
+    final float newVal = sizeToUse + change;
+    
+    // store the new size
+    Activator.getDefault().getPreferenceStore().setValue(TimeBarPlot.CHART_FONT_SIZE_NODE, newVal);
+    
+    float base = newVal;
+
+    StandardChartTheme theme = (StandardChartTheme) StandardChartTheme.createJFreeTheme();
+   
+    theme.setRegularFont(theme.getRegularFont().deriveFont(base * 1.0f));
+    theme.setExtraLargeFont(theme.getExtraLargeFont().deriveFont(base * 2f));
+    theme.setLargeFont(theme.getLargeFont().deriveFont(base * 1.2f));
+    theme.setSmallFont(theme.getSmallFont().deriveFont(base * 0.8f));
+    theme.setChartBackgroundPaint(Color.white);
+    theme.setPlotBackgroundPaint(Color.white);
+    theme.setGridBandPaint(Color.lightGray);
+    theme.setDomainGridlinePaint(Color.lightGray);
+    theme.setRangeGridlinePaint(Color.lightGray);
+    
+    theme.apply(jFreeChart);
   }
 
   /**
@@ -551,10 +671,19 @@ public class StackedChartsView extends ViewPart implements
       stackedPane.forceFocus();
     }
   }
-  
+
   public void setDateSupport(ControllableDate controllableDate)
   {
-    _controllableDate  = controllableDate;
+    _controllableDate = controllableDate;
+    
+    if(_controllableDate != null)
+    {
+      Date theDate = _controllableDate.getDate();
+      if(theDate != null)
+      {
+        updateTime(theDate);
+      }
+    }
   }
 
   public void setModel(final ChartSet charts)
@@ -573,12 +702,16 @@ public class StackedChartsView extends ViewPart implements
     }
 
     // and now repopulate
-    final JFreeChart chart = ChartBuilder.build(charts, _controllableDate);
+    jFreeChart = ChartBuilder.build(charts, _controllableDate);
+    
+    // initialise the theme
+    changeFontSize(null);
+    
     _chartComposite =
-        new ChartComposite(chartHolder, SWT.NONE, chart, 400, 600, 300, 200,
+        new ChartComposite(chartHolder, SWT.NONE, jFreeChart, 400, 600, 300, 200,
             1800, 1800, true, false, true, true, true, true)
         {
-      
+
           @Override
           public void mouseUp(final MouseEvent event)
           {
@@ -588,17 +721,18 @@ public class StackedChartsView extends ViewPart implements
             {
               c.setNotify(true); // force redraw
             }
-            
-            if(event.count == 2)
+
+            if (event.count == 2)
             {
               handleDoubleClick(event.x, event.y);
             }
           }
         };
-    chart.setAntiAlias(false);
-    
+    jFreeChart.setAntiAlias(false);
+
     // try the double-click handler
-    _chartComposite.addMouseListener(new MouseListener(){
+    _chartComposite.addMouseListener(new MouseListener()
+    {
 
       @Override
       public void mouseDoubleClick(MouseEvent e)
@@ -616,7 +750,8 @@ public class StackedChartsView extends ViewPart implements
       public void mouseUp(MouseEvent e)
       {
         System.out.println("up at:" + e);
-      }});
+      }
+    });
 
     chartHolder.pack(true);
     chartHolder.getParent().layout();
@@ -627,15 +762,19 @@ public class StackedChartsView extends ViewPart implements
   {
     // retrieve the data location
     Rectangle dataArea = _chartComposite.getScreenDataArea();
-    Rectangle2D d2 = new Rectangle2D.Double(dataArea.x, dataArea.y, dataArea.width, dataArea.height);
+    Rectangle2D d2 =
+        new Rectangle2D.Double(dataArea.x, dataArea.y, dataArea.width,
+            dataArea.height);
     TimeBarPlot plot = (TimeBarPlot) _chartComposite.getChart().getPlot();
-    double chartX = plot.getDomainAxis().java2DToValue((double)x , d2,  plot.getDomainAxisEdge());
-    
+    double chartX =
+        plot.getDomainAxis().java2DToValue((double) x, d2,
+            plot.getDomainAxisEdge());
+
     // do we have a date to control?
-    if(_controllableDate != null)
+    if (_controllableDate != null)
     {
       // ok, update it
-      _controllableDate.setDate(new Date((long)chartX));
+      _controllableDate.setDate(new Date((long) chartX));
     }
   }
 
@@ -664,9 +803,9 @@ public class StackedChartsView extends ViewPart implements
       JFreeChart combined = _chartComposite.getChart();
       TimeBarPlot plot = (TimeBarPlot) combined.getPlot();
       plot.setTime(newTime);
-      
+
       // ok, trigger ui update
-      refreshPlot();      
+      refreshPlot();
     }
   }
 
