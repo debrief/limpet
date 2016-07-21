@@ -573,7 +573,7 @@ public class StackedChartsView extends ViewPart implements
     StandardChartTheme theme = (StandardChartTheme) StandardChartTheme.createJFreeTheme();
    
     theme.setRegularFont(theme.getRegularFont().deriveFont(base * 1.0f));
-    theme.setExtraLargeFont(theme.getExtraLargeFont().deriveFont(base * 2f));
+    theme.setExtraLargeFont(theme.getExtraLargeFont().deriveFont(base * 1.4f));
     theme.setLargeFont(theme.getLargeFont().deriveFont(base * 1.2f));
     theme.setSmallFont(theme.getSmallFont().deriveFont(base * 0.8f));
     theme.setChartBackgroundPaint(Color.white);
