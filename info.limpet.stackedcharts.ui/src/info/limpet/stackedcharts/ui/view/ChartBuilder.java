@@ -625,6 +625,14 @@ public class ChartBuilder
   {
     final XYPlot subplot = new XYPlot(null, null, null, null);
 
+    // do some basic plot formatting
+    BasicStroke stroke =
+        new BasicStroke(1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0,
+            new float[]
+            {8.0f, 2.0f}, 0);
+    subplot.setDomainGridlineStroke(stroke);
+    subplot.setRangeGridlineStroke(stroke);
+
     // keep track of how many axes we create
     int indexAxis = 0;
 
@@ -665,10 +673,6 @@ public class ChartBuilder
       }
       addAnnotationToPlot(subplot, annotations, false);
     }
-
-    // TODO: sort out how to position this title
-    // XYTitleAnnotation title = new XYTitleAnnotation(0, 0, new TextTitle(chart.getName()));
-    // subplot.addAnnotation(title);
 
     return subplot;
   }
@@ -738,7 +742,7 @@ public class ChartBuilder
 
     renderer.setDrawSeriesLineAsPath(true);
     final int indexSeries = 0;
-    
+
     // set the line width
     renderer.setAutoPopulateSeriesPaint(false);
     renderer.setAutoPopulateSeriesStroke(false);
