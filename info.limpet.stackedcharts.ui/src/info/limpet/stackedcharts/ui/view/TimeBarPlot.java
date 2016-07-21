@@ -530,13 +530,21 @@ public class TimeBarPlot extends CombinedDomainXYPlot
   {
     super.draw(g2, plotArea, anchor, state, renderInfo);
 
-    // do we have a time?
+    // NOTE: our WMF plotting isn't passing the renderInfo
+    // object. We need this to plot the
+    // time marker & label.  Try to find it from somewhere.
+    if(renderInfo == null)
+    {
+      return;
+    }
+    
+    // do we have a time
     if (_currentTime != null)
     {
       // hmm, are we stacked vertically or horizontally?
       final boolean vertical =
           this.getOrientation() == PlotOrientation.VERTICAL;
-
+      
       // find the screen area for the dataset
       final Rectangle2D dataArea = renderInfo.getDataArea();
 
