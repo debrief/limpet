@@ -8,7 +8,9 @@ import info.limpet.stackedcharts.model.ChartSet;
 import info.limpet.stackedcharts.model.Dataset;
 import info.limpet.stackedcharts.model.DependentAxis;
 import info.limpet.stackedcharts.model.IndependentAxis;
+import info.limpet.stackedcharts.model.ScatterSet;
 import info.limpet.stackedcharts.model.Styling;
+import info.limpet.stackedcharts.ui.editor.parts.ChartEditPart.ScatterSetContainer;
 
 public class StackedChartsEditPartFactory implements EditPartFactory
 {
@@ -57,6 +59,13 @@ public class StackedChartsEditPartFactory implements EditPartFactory
     else if (model instanceof Styling)
     {
       editPart = new StylingEditPart();
+    }
+    else if (model instanceof ScatterSetContainer)
+    {
+      editPart = new ScatterSetContainerEditPart();
+    }
+    else if (model instanceof ScatterSet) {
+      editPart = new ScatterSetEditPart();
     }
 
     if (editPart != null)

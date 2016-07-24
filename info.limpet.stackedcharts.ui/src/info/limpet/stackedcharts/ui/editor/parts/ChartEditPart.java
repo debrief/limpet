@@ -1,13 +1,5 @@
 package info.limpet.stackedcharts.ui.editor.parts;
 
-import info.limpet.stackedcharts.model.Chart;
-import info.limpet.stackedcharts.model.ChartSet;
-import info.limpet.stackedcharts.model.Orientation;
-import info.limpet.stackedcharts.model.StackedchartsPackage;
-import info.limpet.stackedcharts.ui.editor.commands.DeleteChartCommand;
-import info.limpet.stackedcharts.ui.editor.figures.ChartFigure;
-import info.limpet.stackedcharts.ui.editor.policies.ChartContainerEditPolicy;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -32,11 +24,29 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
 
+import info.limpet.stackedcharts.model.Chart;
+import info.limpet.stackedcharts.model.ChartSet;
+import info.limpet.stackedcharts.model.Orientation;
+import info.limpet.stackedcharts.model.ScatterSet;
+import info.limpet.stackedcharts.model.SelectiveAnnotation;
+import info.limpet.stackedcharts.model.StackedchartsPackage;
+import info.limpet.stackedcharts.ui.editor.commands.DeleteChartCommand;
+import info.limpet.stackedcharts.ui.editor.figures.ChartFigure;
+import info.limpet.stackedcharts.ui.editor.policies.ChartContainerEditPolicy;
+
 public class ChartEditPart extends AbstractGraphicalEditPart implements
     ActionListener
 {
   public static final Color BACKGROUND_COLOR = Display.getDefault()
       .getSystemColor(SWT.COLOR_WHITE);
+
+  /**
+   * Helper class to handle the container of {@link ScatterSet}s
+   */
+  public static class ScatterSetContainer extends ArrayList<ScatterSet>
+  {
+
+  }
 
   public enum ChartPanePosition
   {
@@ -85,17 +95,30 @@ public class ChartEditPart extends AbstractGraphicalEditPart implements
       {
         Chart chart = getModel();
         ChartSet parent = chart.getParent();
-        DeleteChartCommand deleteChartCommand =
-            new DeleteChartCommand(parent, chart);
+        DeleteChartCommand deleteChartCommand = new DeleteChartCommand(parent,
+            chart);
         return deleteChartCommand;
       }
     });
   }
 
   @Override
-  protected List<ChartPanePosition> getModelChildren()
+  protected List getModelChildren()
   {
-    return Arrays.asList(ChartPanePosition.values());
+    List modelChildren = new ArrayList();
+    modelChildren.addAll(Arrays.asList(ChartPanePosition.values()));
+    ScatterSetContainer scatterSets = new ScatterSetContainer();
+    for (SelectiveAnnotation annotation : getModel().getParent().getSharedAxis()
+        .getAnnotations())
+    {
+      if (annotation.getAnnotation() instanceof ScatterSet && annotation
+          .getAppearsIn().contains(getModel()))
+      {
+        scatterSets.add((ScatterSet) annotation.getAnnotation());
+      }
+    }
+    modelChildren.add(scatterSets);
+    return modelChildren;
   }
 
   @Override
@@ -104,7 +127,8 @@ public class ChartEditPart extends AbstractGraphicalEditPart implements
     String name = getModel().getName();
     ChartFigure chartFigure = (ChartFigure) getFigure();
     chartFigure.setName(name);
-    chartFigure.setVertical(getModel().getParent().getOrientation() == Orientation.VERTICAL);
+    chartFigure.setVertical(getModel().getParent()
+        .getOrientation() == Orientation.VERTICAL);
 
     GridData gridData = new GridData();
     gridData.grabExcessHorizontalSpace = true;
@@ -127,10 +151,9 @@ public class ChartEditPart extends AbstractGraphicalEditPart implements
       removeChild(object);
     }
     // add back all model elements
-    List<ChartPanePosition> modelObjects = getModelChildren();
+    List modelObjects = getModelChildren();
     for (int i = 0; i < modelObjects.size(); i++)
     {
-
       addChild(createChild(modelObjects.get(i)), i);
 
     }
