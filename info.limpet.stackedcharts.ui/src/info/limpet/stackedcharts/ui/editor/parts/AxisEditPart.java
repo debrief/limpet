@@ -47,7 +47,7 @@ import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
 
 public class AxisEditPart extends AbstractGraphicalEditPart implements
-    ActionListener,IPropertySourceProvider
+    ActionListener, IPropertySourceProvider
 {
 
   public static final Color BACKGROUND_COLOR = Display.getDefault()
@@ -120,8 +120,9 @@ public class AxisEditPart extends AbstractGraphicalEditPart implements
 
     GraphicalEditPart parent = (GraphicalEditPart) getParent();
 
-    boolean horizontal = ((ChartSet) parent.getParent().getParent().getParent()
-        .getModel()).getOrientation() == Orientation.HORIZONTAL;
+    boolean horizontal =
+        ((ChartSet) parent.getParent().getParent().getParent().getModel())
+            .getOrientation() == Orientation.HORIZONTAL;
 
     GridLayout layout = (GridLayout) getFigure().getLayoutManager();
     if (horizontal)
@@ -183,8 +184,8 @@ public class AxisEditPart extends AbstractGraphicalEditPart implements
       {
         DependentAxis dataset = (DependentAxis) getHost().getModel();
         Chart parent = (Chart) dataset.eContainer();
-        DeleteAxisFromChartCommand cmd = new DeleteAxisFromChartCommand(parent,
-            dataset);
+        DeleteAxisFromChartCommand cmd =
+            new DeleteAxisFromChartCommand(parent, dataset);
         return cmd;
       }
     });
@@ -254,12 +255,14 @@ public class AxisEditPart extends AbstractGraphicalEditPart implements
     adapterFactory
         .addAdapterFactory(new ReflectiveItemProviderAdapterFactory());
 
-    final IItemPropertySource axisItemPropertySource = (IItemPropertySource) adapterFactory
-        .adapt(axisType, IItemPropertySource.class);
+    final IItemPropertySource axisItemPropertySource =
+        (IItemPropertySource) adapterFactory.adapt(axisType,
+            IItemPropertySource.class);
     final IPropertySource axisTypePropertySource =
         new PropertySource(axisType, axisItemPropertySource);
-    final  IItemPropertySource axisTypeItemPropertySource = (IItemPropertySource) adapterFactory.adapt(
-        axis, IItemPropertySource.class);
+    final IItemPropertySource axisTypeItemPropertySource =
+        (IItemPropertySource) adapterFactory.adapt(axis,
+            IItemPropertySource.class);
     final IPropertySource axisPropertySource =
         new PropertySource(axis, axisTypeItemPropertySource);
 
@@ -305,9 +308,8 @@ public class AxisEditPart extends AbstractGraphicalEditPart implements
       {
         return getSourceById(id).getPropertyValue(id);
       }
-      
-      
-      public IPropertyDescriptor [] getPropertyDescriptors()
+
+      public IPropertyDescriptor[] getPropertyDescriptors()
       {
         Collection<IPropertyDescriptor> result =
             new ArrayList<IPropertyDescriptor>();
@@ -338,12 +340,9 @@ public class AxisEditPart extends AbstractGraphicalEditPart implements
 
           });
         }
-        
 
-        return result.toArray(new IPropertyDescriptor [result.size()]);
+        return result.toArray(new IPropertyDescriptor[result.size()]);
       }
-
-
 
       @Override
       public Object getEditableValue()
