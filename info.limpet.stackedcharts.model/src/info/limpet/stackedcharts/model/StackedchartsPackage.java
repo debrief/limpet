@@ -526,13 +526,22 @@ public interface StackedchartsPackage extends EPackage
   int ABSTRACT_ANNOTATION__COLOR = 1;
 
   /**
+   * The feature id for the '<em><b>Include In Legend</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ABSTRACT_ANNOTATION__INCLUDE_IN_LEGEND = 2;
+
+  /**
    * The number of structural features of the '<em>Abstract Annotation</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int ABSTRACT_ANNOTATION_FEATURE_COUNT = 2;
+  int ABSTRACT_ANNOTATION_FEATURE_COUNT = 3;
 
   /**
    * The number of operations of the '<em>Abstract Annotation</em>' class.
@@ -570,6 +579,15 @@ public interface StackedchartsPackage extends EPackage
    * @ordered
    */
   int ZONE__COLOR = ABSTRACT_ANNOTATION__COLOR;
+
+  /**
+   * The feature id for the '<em><b>Include In Legend</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ZONE__INCLUDE_IN_LEGEND = ABSTRACT_ANNOTATION__INCLUDE_IN_LEGEND;
 
   /**
    * The feature id for the '<em><b>Start</b></em>' attribute.
@@ -634,6 +652,15 @@ public interface StackedchartsPackage extends EPackage
    * @ordered
    */
   int MARKER__COLOR = ABSTRACT_ANNOTATION__COLOR;
+
+  /**
+   * The feature id for the '<em><b>Include In Legend</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int MARKER__INCLUDE_IN_LEGEND = ABSTRACT_ANNOTATION__INCLUDE_IN_LEGEND;
 
   /**
    * The feature id for the '<em><b>Value</b></em>' attribute.
@@ -1053,6 +1080,15 @@ public interface StackedchartsPackage extends EPackage
    * @ordered
    */
   int SCATTER_SET__COLOR = ABSTRACT_ANNOTATION__COLOR;
+
+  /**
+   * The feature id for the '<em><b>Include In Legend</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int SCATTER_SET__INCLUDE_IN_LEGEND = ABSTRACT_ANNOTATION__INCLUDE_IN_LEGEND;
 
   /**
    * The feature id for the '<em><b>Datums</b></em>' containment reference list.
@@ -1685,6 +1721,17 @@ public interface StackedchartsPackage extends EPackage
    * @generated
    */
   EAttribute getAbstractAnnotation_Color();
+
+  /**
+   * Returns the meta object for the attribute '{@link info.limpet.stackedcharts.model.AbstractAnnotation#isIncludeInLegend <em>Include In Legend</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Include In Legend</em>'.
+   * @see info.limpet.stackedcharts.model.AbstractAnnotation#isIncludeInLegend()
+   * @see #getAbstractAnnotation()
+   * @generated
+   */
+  EAttribute getAbstractAnnotation_IncludeInLegend();
 
   /**
    * Returns the meta object for class '{@link info.limpet.stackedcharts.model.Zone <em>Zone</em>}'.
@@ -2466,6 +2513,14 @@ public interface StackedchartsPackage extends EPackage
      * @generated
      */
     EAttribute ABSTRACT_ANNOTATION__COLOR = eINSTANCE.getAbstractAnnotation_Color();
+
+    /**
+     * The meta object literal for the '<em><b>Include In Legend</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute ABSTRACT_ANNOTATION__INCLUDE_IN_LEGEND = eINSTANCE.getAbstractAnnotation_IncludeInLegend();
 
     /**
      * The meta object literal for the '{@link info.limpet.stackedcharts.model.impl.ZoneImpl <em>Zone</em>}' class.

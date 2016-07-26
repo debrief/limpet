@@ -543,6 +543,16 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
    * <!-- end-user-doc -->
    * @generated
    */
+  public EAttribute getAbstractAnnotation_IncludeInLegend()
+  {
+    return (EAttribute)abstractAnnotationEClass.getEStructuralFeatures().get(2);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public EClass getZone()
   {
     return zoneEClass;
@@ -1117,6 +1127,7 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
     abstractAnnotationEClass = createEClass(ABSTRACT_ANNOTATION);
     createEAttribute(abstractAnnotationEClass, ABSTRACT_ANNOTATION__NAME);
     createEAttribute(abstractAnnotationEClass, ABSTRACT_ANNOTATION__COLOR);
+    createEAttribute(abstractAnnotationEClass, ABSTRACT_ANNOTATION__INCLUDE_IN_LEGEND);
 
     zoneEClass = createEClass(ZONE);
     createEAttribute(zoneEClass, ZONE__START);
@@ -1262,6 +1273,7 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
     initEClass(abstractAnnotationEClass, AbstractAnnotation.class, "AbstractAnnotation", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getAbstractAnnotation_Name(), ecorePackage.getEString(), "name", null, 0, 1, AbstractAnnotation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getAbstractAnnotation_Color(), this.getColor(), "color", null, 0, 1, AbstractAnnotation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getAbstractAnnotation_IncludeInLegend(), theXMLTypePackage.getBoolean(), "includeInLegend", "true", 0, 1, AbstractAnnotation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(zoneEClass, Zone.class, "Zone", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getZone_Start(), ecorePackage.getEDouble(), "start", null, 0, 1, Zone.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

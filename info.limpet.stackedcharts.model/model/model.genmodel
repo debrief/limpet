@@ -63,6 +63,7 @@
     <genClasses ecoreClass="model.ecore#//AbstractAnnotation">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//AbstractAnnotation/name"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//AbstractAnnotation/color"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//AbstractAnnotation/includeInLegend"/>
     </genClasses>
     <genClasses ecoreClass="model.ecore#//Zone">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//Zone/start"/>

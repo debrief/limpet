@@ -20,6 +20,7 @@ import org.eclipse.emf.ecore.EObject;
  * <ul>
  *   <li>{@link info.limpet.stackedcharts.model.AbstractAnnotation#getName <em>Name</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.AbstractAnnotation#getColor <em>Color</em>}</li>
+ *   <li>{@link info.limpet.stackedcharts.model.AbstractAnnotation#isIncludeInLegend <em>Include In Legend</em>}</li>
  * </ul>
  *
  * @see info.limpet.stackedcharts.model.StackedchartsPackage#getAbstractAnnotation()
@@ -79,5 +80,31 @@ public interface AbstractAnnotation extends EObject
    * @generated
    */
   void setColor(Color value);
+
+  /**
+   * Returns the value of the '<em><b>Include In Legend</b></em>' attribute.
+   * The default value is <code>"true"</code>.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * <!-- begin-model-doc -->
+   * Whether to show this dataset in the Legend
+   * <!-- end-model-doc -->
+   * @return the value of the '<em>Include In Legend</em>' attribute.
+   * @see #setIncludeInLegend(boolean)
+   * @see info.limpet.stackedcharts.model.StackedchartsPackage#getAbstractAnnotation_IncludeInLegend()
+   * @model default="true" dataType="org.eclipse.emf.ecore.xml.type.Boolean"
+   * @generated
+   */
+  boolean isIncludeInLegend();
+
+  /**
+   * Sets the value of the '{@link info.limpet.stackedcharts.model.AbstractAnnotation#isIncludeInLegend <em>Include In Legend</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Include In Legend</em>' attribute.
+   * @see #isIncludeInLegend()
+   * @generated
+   */
+  void setIncludeInLegend(boolean value);
 
 } // AbstractAnnotation
