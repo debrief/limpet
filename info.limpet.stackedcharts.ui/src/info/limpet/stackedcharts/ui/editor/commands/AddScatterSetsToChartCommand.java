@@ -43,8 +43,7 @@ public class AddScatterSetsToChartCommand extends Command
 
       if (host == null)
       {
-        StackedchartsFactory factory = new StackedchartsFactoryImpl();
-        host = factory.createSelectiveAnnotation();
+        host = StackedchartsFactory.eINSTANCE.createSelectiveAnnotation();
         host.setAnnotation(ds);
         annots.add(host);
       }
