@@ -1,5 +1,6 @@
 package info.limpet.stackedcharts.ui.editor.parts;
 
+import info.limpet.stackedcharts.model.AxisType;
 import info.limpet.stackedcharts.model.Chart;
 import info.limpet.stackedcharts.model.ChartSet;
 import info.limpet.stackedcharts.model.DependentAxis;
@@ -10,6 +11,8 @@ import info.limpet.stackedcharts.ui.editor.figures.ArrowFigure;
 import info.limpet.stackedcharts.ui.editor.figures.AxisNameFigure;
 import info.limpet.stackedcharts.ui.editor.policies.AxisContainerEditPolicy;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.draw2d.ActionListener;
@@ -23,6 +26,10 @@ import org.eclipse.draw2d.SimpleLoweredBorder;
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.Notifier;
+import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
+import org.eclipse.emf.edit.provider.IItemPropertySource;
+import org.eclipse.emf.edit.provider.ReflectiveItemProviderAdapterFactory;
+import org.eclipse.emf.edit.ui.provider.PropertySource;
 import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gef.commands.Command;
@@ -34,9 +41,11 @@ import org.eclipse.gef.requests.GroupRequest;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.views.properties.IPropertyDescriptor;
+import org.eclipse.ui.views.properties.IPropertySource;
 
 public class AxisEditPart extends AbstractGraphicalEditPart implements
-    ActionListener
+    ActionListener,IPropertySourceProvider
 {
 
   public static final Color BACKGROUND_COLOR = Display.getDefault()
@@ -229,6 +238,87 @@ public class AxisEditPart extends AbstractGraphicalEditPart implements
       CommandStack commandStack = getViewer().getEditDomain().getCommandStack();
       commandStack.execute(deleteCommand);
     }
+  }
+
+  @Override
+  public IPropertySource getPropertySource()
+  {
+    final DependentAxis axis = getAxis();
+    final AxisType axisType = getAxis().getAxisType();
+
+    ComposedAdapterFactory adapterFactory =
+        new ComposedAdapterFactory(
+            ComposedAdapterFactory.Descriptor.Registry.INSTANCE);
+    adapterFactory
+        .addAdapterFactory(new ReflectiveItemProviderAdapterFactory());
+
+    final IPropertySource axisTypePropertySource =
+        new PropertySource(axisType, (IItemPropertySource) adapterFactory
+            .adapt(axisType, IItemPropertySource.class));
+    final IPropertySource axisPropertySource =
+        new PropertySource(axis, (IItemPropertySource) adapterFactory.adapt(
+            axis, IItemPropertySource.class));
+
+    // Proxy two objects in to one
+    return new IPropertySource()
+    {
+      IPropertySource getSourceById(Object id)
+      {
+        IPropertyDescriptor[] propertyDescriptors =
+            axisTypePropertySource.getPropertyDescriptors();
+        for (IPropertyDescriptor iPropertyDescriptor : propertyDescriptors)
+        {
+          if (iPropertyDescriptor.getId().equals(id))
+          {
+            return axisTypePropertySource;
+          }
+        }
+        return axisPropertySource;
+      }
+
+      @Override
+      public void setPropertyValue(Object id, Object value)
+      {
+        getSourceById(id).setPropertyValue(id, value);
+
+      }
+
+      @Override
+      public void resetPropertyValue(Object id)
+      {
+        getSourceById(id).resetPropertyValue(id);
+
+      }
+
+      @Override
+      public boolean isPropertySet(Object id)
+      {
+        return getSourceById(id).isPropertySet(id);
+      }
+
+      @Override
+      public Object getPropertyValue(Object id)
+      {
+        return getSourceById(id).getPropertyValue(id);
+      }
+
+      @Override
+      public IPropertyDescriptor[] getPropertyDescriptors()
+      {
+        ArrayList<IPropertyDescriptor> merge =
+            new ArrayList<IPropertyDescriptor>(Arrays.asList(axisPropertySource
+                .getPropertyDescriptors()));
+        merge.addAll(Arrays.asList(axisTypePropertySource
+            .getPropertyDescriptors()));
+        return merge.toArray(new IPropertyDescriptor[0]);
+      }
+
+      @Override
+      public Object getEditableValue()
+      {
+        return axis;
+      }
+    };
   }
 
 }
