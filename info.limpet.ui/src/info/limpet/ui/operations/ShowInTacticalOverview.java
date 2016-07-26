@@ -141,15 +141,16 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
               break;
             }
           }
-          else if (thisG.getName().equals("Sensor"))
-          {
-            StoreGroup sensor = (StoreGroup) thisG;
-            if (sensor.size() != 1)
-            {
-              res = false;
-              break;
-            }
-          }
+          // Note: skip this test, we now allow multiple sensor datasets
+          // else if (thisG.getName().equals("Sensor"))
+          // {
+          // StoreGroup sensor = (StoreGroup) thisG;
+          // if (sensor.size() != 1)
+          // {
+          // res = false;
+          // break;
+          // }
+          // }
           else
           {
             res = false;
@@ -227,52 +228,55 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
             // set follow selection to off
             // cv.follow(getInputs());
             cv.setModel(model);
-            
+
             // ok, also try to find the top level store
-            if(getInputs().size() > 0)
+            if (getInputs().size() > 0)
             {
               IStoreItem first = this.getInputs().get(0);
               final IStoreGroup top = RangeSliderView.findTopParent(first);
               if (top != null)
               {
-                final PropertyChangeListener timeListener  = new PropertyChangeListener()
-                {
-                  
-                  @Override
-                  public void propertyChange(PropertyChangeEvent evt)
-                  {
-                    Date newTime = (Date) evt.getNewValue();
-                    cv.updateTime(newTime);
-                  }
-                };
+                final PropertyChangeListener timeListener =
+                    new PropertyChangeListener()
+                    {
+
+                      @Override
+                      public void propertyChange(PropertyChangeEvent evt)
+                      {
+                        Date newTime = (Date) evt.getNewValue();
+                        cv.updateTime(newTime);
+                      }
+                    };
                 // ok, register as listener
                 top.addTimeChangeListener(timeListener);
-                
+
                 // we also need to drop it when the view is closing
-                cv.addRunOnCloseCallback(new Runnable(){
+                cv.addRunOnCloseCallback(new Runnable()
+                {
 
                   @Override
                   public void run()
                   {
                     // ok, forget about it
                     top.removeTimeChangeListener(timeListener);
-                  }});
+                  }
+                });
               }
             }
-            
-//            // take a copy of the model
-//            URI resourceURI = URI.createFileURI("/home/ian/tacticalOverview.stackedcharts");
-//            Resource resource = new ResourceSetImpl().createResource(resourceURI);
-//            System.out.println("saving to:" + resourceURI.toFileString());
-//            resource.getContents().add(model);
-//            try
-//            {
-//              resource.save(null);
-//            }
-//            catch (IOException e)
-//            {
-//              e.printStackTrace();
-//            }
+
+            // // take a copy of the model
+            // URI resourceURI = URI.createFileURI("/home/ian/tacticalOverview.stackedcharts");
+            // Resource resource = new ResourceSetImpl().createResource(resourceURI);
+            // System.out.println("saving to:" + resourceURI.toFileString());
+            // resource.getContents().add(model);
+            // try
+            // {
+            // resource.save(null);
+            // }
+            // catch (IOException e)
+            // {
+            // e.printStackTrace();
+            // }
           }
 
         }
@@ -293,9 +297,9 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
 
     ChartSet res = factory.createChartSet();
     res.setOrientation(Orientation.VERTICAL);
-    
+
     IndependentAxis timeAxis = factory.createIndependentAxis();
-    
+
     // ok, make it a time axis
     timeAxis.setAxisType(factory.createDateAxis());
     res.setSharedAxis(timeAxis);
@@ -314,7 +318,7 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
     crseAxis.setName("Course (Degs)");
     crsePlot.getMinAxes().add(crseAxis);
     res.getCharts().add(crsePlot);
-    
+
     Chart speedDepthPlot = factory.createChart();
     speedDepthPlot.setName("Speed/Depth");
     res.getCharts().add(speedDepthPlot);
@@ -326,7 +330,7 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
     depthAxis.setName("Depth (m)");
     depthAxis.setAxisType(factory.createNumberAxis());
     speedDepthPlot.getMaxAxes().add(depthAxis);
-    
+
     // create our range plot
     Chart rangePlot = factory.createChart();
     rangePlot.setName("Range");
@@ -335,7 +339,7 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
     rangeAxis.setName("Range (m)");
     rangePlot.getMinAxes().add(rangeAxis);
     res.getCharts().add(rangePlot);
-    
+
     List<IStoreItem> children = sg;
     Iterator<IStoreItem> iter = children.iterator();
     while (iter.hasNext())
@@ -348,12 +352,14 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
         if (thisG.getName().equals("Primary"))
         {
           StoreGroup primary = (StoreGroup) thisG;
-          createStateChart(factory, crseAxis, speedAxis, depthAxis, primary, "Primary State", res, Color.blue);
+          createStateChart(factory, crseAxis, speedAxis, depthAxis, primary,
+              "Primary State", res, Color.blue);
         }
         else if (thisG.getName().equals("Secondary"))
         {
           StoreGroup primary = (StoreGroup) thisG;
-          createStateChart(factory, crseAxis, speedAxis, depthAxis, primary, "Secondary State", res, Color.red);
+          createStateChart(factory, crseAxis, speedAxis, depthAxis, primary,
+              "Secondary State", res, Color.red);
         }
         else if (thisG.getName().equals("Relative"))
         {
@@ -383,27 +389,27 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
               if (iStoreItem.getName().equals("Range"))
               {
                 createDataset(factory, iStoreItem, "Range", rangeAxis, res,
-                		null, MarkerStyle.NONE, false);
+                    null, MarkerStyle.NONE, false);
               }
               else if (iStoreItem.getName().equals("Bearing"))
               {
                 createDataset(factory, iStoreItem, "Bearing", brgAxis, res,
-                		null, MarkerStyle.NONE, true);
+                    null, MarkerStyle.NONE, true);
               }
               else if (iStoreItem.getName().equals("Rel Brg"))
               {
                 createDataset(factory, iStoreItem, "Rel Brg", brgAxis, res,
-                		null, MarkerStyle.NONE, true);
+                    null, MarkerStyle.NONE, true);
               }
               else if (iStoreItem.getName().equals("ATB"))
               {
-                createDataset(factory, iStoreItem, "ATB", brgAxis, res,
-                		null, MarkerStyle.NONE, true);
+                createDataset(factory, iStoreItem, "ATB", brgAxis, res, null,
+                    MarkerStyle.NONE, true);
               }
               else if (iStoreItem.getName().equals("Brg Rate"))
               {
-                createDataset(factory, iStoreItem, "Brg Rate", brgRateAxis, res,
-                		null, MarkerStyle.NONE, true);
+                createDataset(factory, iStoreItem, "Brg Rate", brgRateAxis,
+                    res, null, MarkerStyle.NONE, true);
               }
             }
           }
@@ -411,11 +417,15 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
         else if (thisG.getName().equals("Sensor"))
         {
           StoreGroup sensor = (StoreGroup) thisG;
-          if (sensor.size() == 1)
+          for (IStoreItem coll : sensor)
           {
             ScatterSet scatter = factory.createScatterSet();
             @SuppressWarnings("unchecked")
-            ITemporalObjectCollection<Object> cuts = (ITemporalObjectCollection<Object>) sensor.get(0);
+            ITemporalObjectCollection<Object> cuts =
+                (ITemporalObjectCollection<Object>) coll;
+
+            // name the scatter set
+            scatter.setName(cuts.getName());
 
             Iterator<Long> times = cuts.getTimes().iterator();
             while (times.hasNext())
@@ -425,10 +435,11 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
               item.setVal(long1);
               scatter.getDatums().add(item);
             }
-            
+
             SelectiveAnnotation sel = factory.createSelectiveAnnotation();
             sel.setAnnotation(scatter);
-            sel.getAppearsIn().add(res.getCharts().get(res.getCharts().size()-1));
+            sel.getAppearsIn().add(
+                res.getCharts().get(res.getCharts().size() - 1));
             timeAxis.getAnnotations().add(sel);
           }
         }
@@ -439,7 +450,8 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
   }
 
   protected static void createStateChart(StackedchartsFactory factory,
-      DependentAxis crseAxis, DependentAxis speedAxis, DependentAxis depthAxis, StoreGroup group, String chartName, ChartSet set, java.awt.Color color)
+      DependentAxis crseAxis, DependentAxis speedAxis, DependentAxis depthAxis,
+      StoreGroup group, String chartName, ChartSet set, java.awt.Color color)
   {
     if (group.size() == 3)
     {
@@ -451,25 +463,25 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
         final String thisName = iStoreItem.getName();
         if (thisName.contains("Course"))
         {
-          createDataset(factory, iStoreItem, thisName, crseAxis, set, 
-          		color, MarkerStyle.NONE, false);
+          createDataset(factory, iStoreItem, thisName, crseAxis, set, color,
+              MarkerStyle.NONE, false);
         }
         else if (thisName.contains("Speed"))
         {
-          createDataset(factory, iStoreItem, thisName, speedAxis, set,
-          		color.brighter().brighter(), MarkerStyle.CROSS, true);
+          createDataset(factory, iStoreItem, thisName, speedAxis, set, color
+              .brighter().brighter(), MarkerStyle.CROSS, true);
         }
         else if (thisName.contains("Depth"))
         {
-          createDataset(factory, iStoreItem, thisName, depthAxis, set,
-          		color.darker().darker(), MarkerStyle.DIAMOND, true);
+          createDataset(factory, iStoreItem, thisName, depthAxis, set, color
+              .darker().darker(), MarkerStyle.DIAMOND, true);
         }
       }
     }
   }
 
   protected static void createDataset(StackedchartsFactory factory,
-      IStoreItem iStoreItem, String name, DependentAxis axis, 
+      IStoreItem iStoreItem, String name, DependentAxis axis,
       ChartSet chartSet, java.awt.Color color, MarkerStyle marker,
       boolean showInLegend)
   {
@@ -480,18 +492,18 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
 
     Dataset newD = factory.createDataset();
     newD.setName(name);
-    
+
     PlainStyling styling = factory.createPlainStyling();
     styling.setColor(color);
     styling.setMarkerStyle(marker);
     styling.setIncludeInLegend(showInLegend);
     styling.setLineThickness(2d);
-		newD.setStyling(styling);
-    
+    newD.setStyling(styling);
+
     for (int i = 0; i < times.size(); i++)
     {
       double time = times.get(i);
-      
+
       @SuppressWarnings("unchecked")
       Measurable<Quantity> quantity = (Measurable<Quantity>) values.get(i);
       @SuppressWarnings("unchecked")
