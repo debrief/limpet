@@ -12,7 +12,7 @@ import info.limpet.stackedcharts.ui.editor.figures.AxisNameFigure;
 import info.limpet.stackedcharts.ui.editor.policies.AxisContainerEditPolicy;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.draw2d.ActionListener;
@@ -27,8 +27,10 @@ import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
+import org.eclipse.emf.edit.provider.IItemPropertyDescriptor;
 import org.eclipse.emf.edit.provider.IItemPropertySource;
 import org.eclipse.emf.edit.provider.ReflectiveItemProviderAdapterFactory;
+import org.eclipse.emf.edit.ui.provider.PropertyDescriptor;
 import org.eclipse.emf.edit.ui.provider.PropertySource;
 import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.GraphicalEditPart;
@@ -252,12 +254,14 @@ public class AxisEditPart extends AbstractGraphicalEditPart implements
     adapterFactory
         .addAdapterFactory(new ReflectiveItemProviderAdapterFactory());
 
+    final IItemPropertySource axisItemPropertySource = (IItemPropertySource) adapterFactory
+        .adapt(axisType, IItemPropertySource.class);
     final IPropertySource axisTypePropertySource =
-        new PropertySource(axisType, (IItemPropertySource) adapterFactory
-            .adapt(axisType, IItemPropertySource.class));
+        new PropertySource(axisType, axisItemPropertySource);
+    final  IItemPropertySource axisTypeItemPropertySource = (IItemPropertySource) adapterFactory.adapt(
+        axis, IItemPropertySource.class);
     final IPropertySource axisPropertySource =
-        new PropertySource(axis, (IItemPropertySource) adapterFactory.adapt(
-            axis, IItemPropertySource.class));
+        new PropertySource(axis, axisTypeItemPropertySource);
 
     // Proxy two objects in to one
     return new IPropertySource()
@@ -301,17 +305,45 @@ public class AxisEditPart extends AbstractGraphicalEditPart implements
       {
         return getSourceById(id).getPropertyValue(id);
       }
-
-      @Override
-      public IPropertyDescriptor[] getPropertyDescriptors()
+      
+      
+      public IPropertyDescriptor [] getPropertyDescriptors()
       {
-        ArrayList<IPropertyDescriptor> merge =
-            new ArrayList<IPropertyDescriptor>(Arrays.asList(axisPropertySource
-                .getPropertyDescriptors()));
-        merge.addAll(Arrays.asList(axisTypePropertySource
-            .getPropertyDescriptors()));
-        return merge.toArray(new IPropertyDescriptor[0]);
+        Collection<IPropertyDescriptor> result =
+            new ArrayList<IPropertyDescriptor>();
+
+        for (IItemPropertyDescriptor itemPropertyDescriptor : axisItemPropertySource
+            .getPropertyDescriptors(axis))
+        {
+
+          result.add(new PropertyDescriptor(axis, itemPropertyDescriptor)
+          {
+            public String getCategory()
+            {
+              return "Core";
+            };
+
+          });
+        }
+        for (IItemPropertyDescriptor itemPropertyDescriptor : axisTypeItemPropertySource
+            .getPropertyDescriptors(axisType))
+        {
+
+          result.add(new PropertyDescriptor(axisType, itemPropertyDescriptor)
+          {
+            public String getCategory()
+            {
+              return "Styling";
+            };
+
+          });
+        }
+        
+
+        return result.toArray(new IPropertyDescriptor [result.size()]);
       }
+
+
 
       @Override
       public Object getEditableValue()
