@@ -800,13 +800,23 @@ public class ChartBuilder
     }
   }
 
+  /** marker interface for an axis that uses fancy label formatting
+   * 
+   * @author ian
+   *
+   */
+  public static interface FancyFormattedAxis
+  {
+    
+  }
+  
   /**
    * modified version of angle axis that prefers to use angular metric units.
    * 
    * @author ian
    * 
    */
-  public static class AngularUnitAxis extends NumberAxis
+  private static class AngularUnitAxis extends NumberAxis implements FancyFormattedAxis
   {
     /**
      * 

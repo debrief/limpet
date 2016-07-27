@@ -1,5 +1,7 @@
 package info.limpet.stackedcharts.ui.view;
 
+import info.limpet.stackedcharts.ui.view.ChartBuilder.FancyFormattedAxis;
+
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
@@ -219,18 +221,29 @@ public class TimeBarPlot extends CombinedDomainXYPlot
       Double interpolated;
       if (previousY != null && nextY != null)
       {
-        // is this a fancy range axis?
-        Range rangeObj = rangeA.getDefaultAutoRange();
-        
+
+        final Range rangeObj;
+
+        // is this our fancy cyclic range axis?
+        if (rangeA instanceof FancyFormattedAxis)
+        {
+          // is this a fancy range axis?
+          rangeObj = rangeA.getDefaultAutoRange();
+        }
+        else
+        {
+          rangeObj = null;
+        }
+
         // yes - do some cyclic processing
         if (rangeObj != null)
         {
           double range = rangeObj.getUpperBound() - rangeObj.getLowerBound();
-          
+
           // just check that we shouldn't be wrapping the data
-          if(Math.abs(nextY - previousY) > range / 2d)
+          if (Math.abs(nextY - previousY) > range / 2d)
           {
-            if(previousY > nextY)
+            if (previousY > nextY)
             {
               nextY += range;
             }
@@ -248,19 +261,19 @@ public class TimeBarPlot extends CombinedDomainXYPlot
         interpolated = previousY + proportion * (nextY - previousY);
 
         // is this a fancy range axis?
-        if(rangeObj != null)
+        if (rangeObj != null)
         {
           double range = rangeObj.getUpperBound() - rangeObj.getLowerBound();
-          if(interpolated < rangeObj.getLowerBound())
+          if (interpolated < rangeObj.getLowerBound())
           {
             interpolated += range;
           }
-          else if(interpolated > rangeObj.getUpperBound())
+          else if (interpolated > rangeObj.getUpperBound())
           {
             interpolated -= range;
           }
         }
-        
+
       }
       else
       {
@@ -337,7 +350,6 @@ public class TimeBarPlot extends CombinedDomainXYPlot
    */
   private static final long serialVersionUID = 1L;
 
-
   protected static void paintThisMarker(final Graphics2D g2,
       final String label, final Color color, final float markerX,
       final float markerY, final boolean vertical, Rectangle2D thisPlotArea)
@@ -352,9 +364,9 @@ public class TimeBarPlot extends CombinedDomainXYPlot
     if (vertical)
     {
       yPos = 3f + markerX;
-     
+
       // if the marker height is too near the top it's not legible
-      if(markerY < thisPlotArea.getY() + bounds.getHeight())      
+      if (markerY < thisPlotArea.getY() + bounds.getHeight())
       {
         // too high, move it down a little
         xPos = (float) (markerY + bounds.getHeight());
@@ -371,9 +383,9 @@ public class TimeBarPlot extends CombinedDomainXYPlot
     }
 
     g2.setColor(Color.white);
-    
+
     // just double check that we appear in the plot
-    
+
     g2.fill3DRect((int) yPos, (int) (xPos - bounds.getHeight()),
         3 + (int) bounds.getWidth(), 3 + (int) bounds.getHeight(), true);
 
@@ -652,7 +664,7 @@ public class TimeBarPlot extends CombinedDomainXYPlot
             if (interpolated != null)
             {
 
-              // we may need to trime the interpolated value to be in the correct range
+              // we may need to trim the interpolated value to be in the correct range
               double range = rangeA.getUpperBound() - rangeA.getLowerBound();
               final double chartLocation;
               if (interpolated > rangeA.getUpperBound())
@@ -672,13 +684,15 @@ public class TimeBarPlot extends CombinedDomainXYPlot
               final float markerY =
                   (float) rangeA.valueToJava2D(chartLocation, thisPlotArea,
                       this.getRangeAxisEdge());
+              
+              final double rounded =  Math.round(interpolated);
 
               // quick check that we're not on a fancy axis
               final String label;
               NumberFormat fancyFormat = rangeA.getNumberFormatOverride();
-              if(fancyFormat != null)
+              if (fancyFormat != null)
               {
-                label = fancyFormat.format(interpolated);
+                label = fancyFormat.format(rounded);
               }
               else
               {
@@ -692,9 +706,9 @@ public class TimeBarPlot extends CombinedDomainXYPlot
                 {
                   formatter = oneDP;
                 }
-                label = formatter.format(interpolated);
+                label = formatter.format(rounded);
               }
-              
+
               // and the color
               final XYItemRenderer renderer =
                   plot.getRendererForDataset(dataset);
@@ -716,7 +730,8 @@ public class TimeBarPlot extends CombinedDomainXYPlot
               final Color paint = (Color) renderer.getSeriesPaint(counter);
 
               // done, render it
-              paintThisMarker(g2, label, paint, linePosition, markerY, vertical, thisPlotArea);
+              paintThisMarker(g2, label, paint, linePosition, markerY,
+                  vertical, thisPlotArea);
             }
           }
         }
