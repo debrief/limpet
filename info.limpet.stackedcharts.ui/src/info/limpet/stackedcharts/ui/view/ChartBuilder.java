@@ -24,6 +24,10 @@ import java.awt.Color;
 import java.awt.Stroke;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
+import java.text.DecimalFormat;
+import java.text.FieldPosition;
+import java.text.NumberFormat;
+import java.text.ParsePosition;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -41,10 +45,13 @@ import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.CombinedDomainXYPlot;
 import org.jfree.chart.plot.IntervalMarker;
 import org.jfree.chart.plot.Marker;
+import org.jfree.chart.plot.Plot;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.ValueAxisPlot;
 import org.jfree.chart.plot.ValueMarker;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.data.Range;
 import org.jfree.data.general.Series;
 import org.jfree.data.time.Millisecond;
 import org.jfree.data.time.TimeSeries;
@@ -726,13 +733,13 @@ public class ChartBuilder
     if (axisType instanceof AngleAxis)
     {
       AngleAxis angle = (AngleAxis) axisType;
-      
+
       // hmm, should it have a zero centre
-      final boolean midOrigin = true;// angle.isMidOrigin();
+      final boolean midOrigin = angle.isMidOrigin();
 
       final double min;
       final double max;
-      if(midOrigin)
+      if (midOrigin)
       {
         final double range = angle.getMaxVal() - angle.getMinVal();
         final double demiRange = range / 2d;
@@ -748,10 +755,7 @@ public class ChartBuilder
       renderer = new WrappingRenderer(min, max);
 
       // use the angular axis
-      chartAxis = new AnglularUnitAxis(axisName);
-      
-      chartAxis.setLowerBound(min);
-      chartAxis.setUpperBound(max);
+      chartAxis = new AnglularUnitAxis(axisName, min, max);
     }
     else
     {
@@ -809,9 +813,74 @@ public class ChartBuilder
      */
     private static final long serialVersionUID = 1L;
 
-    public AnglularUnitAxis(final String axisName)
+    private static class AnglularWrappingFormatter extends NumberFormat
+    {
+
+      /**
+       * 
+       */
+      private static final long serialVersionUID = 1L;
+      private DecimalFormat df;
+      private double range;
+
+      public AnglularWrappingFormatter(final double range)
+      {
+        this.range = range;
+        df = new DecimalFormat();
+      }
+
+      @Override
+      public StringBuffer format(double number, StringBuffer toAppendTo,
+          FieldPosition pos)
+      {
+        // check if we're doing a mid-origin arrangement
+        if (number < 0)
+        {
+          number += range;
+        }
+
+        return toAppendTo.append(df.format(number));
+      }
+
+      @Override
+      public StringBuffer format(long number, StringBuffer toAppendTo,
+          FieldPosition pos)
+      {
+        throw new UnsupportedOperationException("Formatter not implemented in WrappingFormatter");
+      }
+
+      @Override
+      public Number parse(String source, ParsePosition parsePosition)
+      {
+        throw new UnsupportedOperationException("Formatter not implemented in WrappingFormatter");
+      }
+
+    }
+
+    public AnglularUnitAxis(final String axisName, double min, double max)
     {
       super(axisName);
+
+      this.setNumberFormatOverride(new AnglularWrappingFormatter(max - min));
+      this.setDefaultAutoRange(new Range(min, max));
+      this.setRange(min, max);
+    }
+
+    /** when the plot is resized, we want to return to the default
+     * auto range, not the freshly calculated one.
+     */
+    protected void autoAdjustRange()
+    {
+      Plot plot = getPlot();
+      if (plot != null && plot instanceof ValueAxisPlot)
+      {
+        Range r = getDefaultAutoRange();
+        setRange(r, false, false);
+      }
+      else
+      {
+        super.autoAdjustRange();
+      }
     }
 
     @Override
