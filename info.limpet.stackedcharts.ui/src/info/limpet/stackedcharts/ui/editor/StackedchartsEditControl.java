@@ -5,6 +5,7 @@ import info.limpet.stackedcharts.ui.editor.drop.DatasetToAxisDropTargetListener;
 import info.limpet.stackedcharts.ui.editor.drop.DatasetToAxisLandingDropTargetListener;
 import info.limpet.stackedcharts.ui.editor.drop.ProxyDropTargetListener;
 import info.limpet.stackedcharts.ui.editor.drop.ScatterSetToChartDropTargetListener;
+import info.limpet.stackedcharts.ui.editor.parts.IPropertySourceProvider;
 import info.limpet.stackedcharts.ui.editor.parts.StackedChartsEditPartFactory;
 
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ import java.util.List;
 
 import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.emf.common.command.BasicCommandStack;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.provider.EcoreItemProviderAdapterFactory;
 import org.eclipse.emf.edit.domain.AdapterFactoryEditingDomain;
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
@@ -38,6 +40,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
+import org.eclipse.ui.views.properties.IPropertySource;
 
 public class StackedchartsEditControl extends Composite
 {
@@ -128,7 +131,22 @@ public class StackedchartsEditControl extends Composite
       {
         if (object instanceof AbstractEditPart)
         {
-          emfObj.add(((AbstractEditPart) object).getModel());
+          AbstractEditPart abstractEditPart = (AbstractEditPart) object;
+          if(abstractEditPart instanceof IPropertySourceProvider)
+          {
+            IPropertySourceProvider mergeModelProvider = (IPropertySourceProvider) abstractEditPart; 
+            IPropertySource merged = mergeModelProvider.getPropertySource();
+            if(merged==null)
+            {
+              emfObj.add(abstractEditPart.getModel());
+            }
+            else
+            {
+              emfObj.add(merged);
+            }
+          }
+          else
+            emfObj.add(abstractEditPart.getModel());
         }
       }
       return new StructuredSelection(emfObj);

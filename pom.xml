@@ -21,6 +21,7 @@
     <module>info.limpet</module>
     <module>info.limpet.libs</module>
     <module>org.geotools</module>
+    <module>org.freehep</module>
     <module>org.geotools.feature</module>
     <module>info.limpet.rcp</module>
     <module>info.limpet.ui</module>

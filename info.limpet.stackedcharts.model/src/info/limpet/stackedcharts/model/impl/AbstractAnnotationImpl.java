@@ -23,6 +23,7 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
  * <ul>
  *   <li>{@link info.limpet.stackedcharts.model.impl.AbstractAnnotationImpl#getName <em>Name</em>}</li>
  *   <li>{@link info.limpet.stackedcharts.model.impl.AbstractAnnotationImpl#getColor <em>Color</em>}</li>
+ *   <li>{@link info.limpet.stackedcharts.model.impl.AbstractAnnotationImpl#isIncludeInLegend <em>Include In Legend</em>}</li>
  * </ul>
  *
  * @generated
@@ -68,6 +69,26 @@ public abstract class AbstractAnnotationImpl extends MinimalEObjectImpl.Containe
    * @ordered
    */
   protected Color color = COLOR_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #isIncludeInLegend() <em>Include In Legend</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isIncludeInLegend()
+   * @generated
+   * @ordered
+   */
+  protected static final boolean INCLUDE_IN_LEGEND_EDEFAULT = true;
+
+  /**
+   * The cached value of the '{@link #isIncludeInLegend() <em>Include In Legend</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isIncludeInLegend()
+   * @generated
+   * @ordered
+   */
+  protected boolean includeInLegend = INCLUDE_IN_LEGEND_EDEFAULT;
 
   /**
    * <!-- begin-user-doc -->
@@ -141,6 +162,29 @@ public abstract class AbstractAnnotationImpl extends MinimalEObjectImpl.Containe
    * <!-- end-user-doc -->
    * @generated
    */
+  public boolean isIncludeInLegend()
+  {
+    return includeInLegend;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setIncludeInLegend(boolean newIncludeInLegend)
+  {
+    boolean oldIncludeInLegend = includeInLegend;
+    includeInLegend = newIncludeInLegend;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, StackedchartsPackage.ABSTRACT_ANNOTATION__INCLUDE_IN_LEGEND, oldIncludeInLegend, includeInLegend));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   @Override
   public Object eGet(int featureID, boolean resolve, boolean coreType)
   {
@@ -150,6 +194,8 @@ public abstract class AbstractAnnotationImpl extends MinimalEObjectImpl.Containe
         return getName();
       case StackedchartsPackage.ABSTRACT_ANNOTATION__COLOR:
         return getColor();
+      case StackedchartsPackage.ABSTRACT_ANNOTATION__INCLUDE_IN_LEGEND:
+        return isIncludeInLegend();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -169,6 +215,9 @@ public abstract class AbstractAnnotationImpl extends MinimalEObjectImpl.Containe
         return;
       case StackedchartsPackage.ABSTRACT_ANNOTATION__COLOR:
         setColor((Color)newValue);
+        return;
+      case StackedchartsPackage.ABSTRACT_ANNOTATION__INCLUDE_IN_LEGEND:
+        setIncludeInLegend((Boolean)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -190,6 +239,9 @@ public abstract class AbstractAnnotationImpl extends MinimalEObjectImpl.Containe
       case StackedchartsPackage.ABSTRACT_ANNOTATION__COLOR:
         setColor(COLOR_EDEFAULT);
         return;
+      case StackedchartsPackage.ABSTRACT_ANNOTATION__INCLUDE_IN_LEGEND:
+        setIncludeInLegend(INCLUDE_IN_LEGEND_EDEFAULT);
+        return;
     }
     super.eUnset(featureID);
   }
@@ -208,6 +260,8 @@ public abstract class AbstractAnnotationImpl extends MinimalEObjectImpl.Containe
         return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
       case StackedchartsPackage.ABSTRACT_ANNOTATION__COLOR:
         return COLOR_EDEFAULT == null ? color != null : !COLOR_EDEFAULT.equals(color);
+      case StackedchartsPackage.ABSTRACT_ANNOTATION__INCLUDE_IN_LEGEND:
+        return includeInLegend != INCLUDE_IN_LEGEND_EDEFAULT;
     }
     return super.eIsSet(featureID);
   }
@@ -227,6 +281,8 @@ public abstract class AbstractAnnotationImpl extends MinimalEObjectImpl.Containe
     result.append(name);
     result.append(", color: ");
     result.append(color);
+    result.append(", includeInLegend: ");
+    result.append(includeInLegend);
     result.append(')');
     return result.toString();
   }
