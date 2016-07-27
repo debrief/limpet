@@ -747,9 +747,28 @@ public class TimeBarPlot extends CombinedDomainXYPlot
               // and find the y coordinate of this data value
               final NumberAxis rangeA =
                   (NumberAxis) plot.getRangeAxisForDataset(i);
+              
+              // we may need to trime the interpolated value to be in the correct range
+              double range = rangeA.getUpperBound() - rangeA.getLowerBound();
+              final double chartLocation;
+              if(interpolated > rangeA.getUpperBound())
+              {
+                chartLocation = interpolated - range;
+              }
+              else if(interpolated < rangeA.getLowerBound())
+              {
+                chartLocation = interpolated + range;
+              }
+              else
+              {
+                chartLocation = interpolated;
+              }
+
+              // convert to screen coords
               final float markerY =
-                  (float) rangeA.valueToJava2D(interpolated, thisPlotArea, this
+                  (float) rangeA.valueToJava2D(chartLocation, thisPlotArea, this
                       .getRangeAxisEdge());
+              
 
               // prepare the label
               final String label;

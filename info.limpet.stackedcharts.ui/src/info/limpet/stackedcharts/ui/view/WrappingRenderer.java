@@ -16,16 +16,19 @@ import org.jfree.ui.RectangleEdge;
 
 public class WrappingRenderer extends XYLineAndShapeRenderer
 {
-  
+
   /**
    * This an immutable class for containing two values together.
+   * 
    * @author aris
    */
-  public class ImmutablePair<T0, T1> {
+  public class ImmutablePair<T0, T1>
+  {
     protected final T0 left;
     protected final T1 right;
 
-    public ImmutablePair(T0 left, T1 right) {
+    public ImmutablePair(T0 left, T1 right)
+    {
       this.left = left;
       this.right = right;
     }
@@ -33,22 +36,25 @@ public class WrappingRenderer extends XYLineAndShapeRenderer
     /**
      * @return the left value of the pair
      */
-    public  T0 getLeft() {
+    public T0 getLeft()
+    {
       return left;
     }
 
     /**
      * @return the right value of the pair
      */
-    public T1 getRight() {
+    public T1 getRight()
+    {
       return right;
     }
   }
+
   /**
-   * /** An interface for creating custom logic for drawing lines between points for
+   * An interface for creating custom logic for drawing lines between points for
    * XYLineAndShapeRenderer.
    */
-  public static interface OverflowCondition
+  private static interface OverflowCondition
   {
 
     /**
@@ -71,12 +77,21 @@ public class WrappingRenderer extends XYLineAndShapeRenderer
   *
   */
   private static final long serialVersionUID = 1L;
-  final double min;
-  final double max;
-  final double range;
-  LinearInterpolator interpolator = new LinearInterpolator();
-  final OverflowCondition overflowCondition;
+  private final double min;
+  private final double max;
+  private final double range;
+  private final LinearInterpolator interpolator = new LinearInterpolator();
+  private final OverflowCondition overflowCondition;
 
+  /**
+   * 
+   * @param min
+   *          the minimum wrapping value
+   * @param max
+   *          the maximum wrapping value
+   * @param midOrigin
+   *          whether the axis range should have zero at origin
+   */
   public WrappingRenderer(final double min, final double max)
   {
     this.min = min;
@@ -88,7 +103,7 @@ public class WrappingRenderer extends XYLineAndShapeRenderer
       @Override
       public boolean isOverflow(double y0, double x0, double y1, double x1)
       {
-        return Math.abs(y1 - y0) > 180d;
+        return Math.abs(y1 - y0) > 90d;
       }
     };
   }
@@ -106,6 +121,7 @@ public class WrappingRenderer extends XYLineAndShapeRenderer
     {
       double x1 = dataset.getXValue(series, item);
       double y1 = dataset.getYValue(series, item);
+
       if (Double.isNaN(x1) && Double.isNaN(y1))
       {
         s.setLastPointGood(false);
@@ -123,18 +139,24 @@ public class WrappingRenderer extends XYLineAndShapeRenderer
 
       double x0 = dataset.getXValue(series, item - 1);
       double y0 = dataset.getYValue(series, item - 1);
+
+      // double check values valid (not greater than max)
+      y0 = y0 > max ? y0 - range : y0;
+      y1 = y1 > max ? y1 - range : y1;
+
+      // double check values valid (not less than min)
+      y0 = y0 < min ? y0 + range : y0;
+      y1 = y1 < min ? y1 + range : y1;
+
       if (overflowCondition.isOverflow(y0, x0, y1, x1))
       {
         boolean overflowAtMax = y1 < y0;
         if (overflowAtMax)
         {
-          // double check values valid (not greater than max)
-          y0 = y0 > max ? y0 - range : y0;
-          y1 = y1 > max ? y1 - range : y1;
-
           PolynomialSplineFunction psf = interpolator.interpolate(new double[]
           {y0, y1 + range}, new double[]
           {x0, x1});
+
           double xmid = psf.value(max);
           ImmutablePair<Float, Float> xy =
               translate(plot, domainAxis, rangeAxis, dataArea, xmid, max);
@@ -146,10 +168,7 @@ public class WrappingRenderer extends XYLineAndShapeRenderer
         }
         else
         {
-          // double check values valid (not less than min)
-          y0 = y0 < min ? y0 + range : y0;
-          y1 = y1 < min ? y1 + range : y1;
-          
+
           PolynomialSplineFunction psf = interpolator.interpolate(new double[]
           {y1 - range, y0}, new double[]
           {x1, x0});
@@ -229,13 +248,21 @@ public class WrappingRenderer extends XYLineAndShapeRenderer
       return;
     }
 
+    // double check values valid (not greater than max)
+    y0 = y0 > max ? y0 - range : y0;
+    y1 = y1 > max ? y1 - range : y1;
+
+    // double check values valid (not less than min)
+    y0 = y0 < min ? y0 + range : y0;
+    y1 = y1 < min ? y1 + range : y1;
+
     if (overflowCondition.isOverflow(y0, x0, y1, x1))
     {
       boolean overflowAtMax = y1 < y0;
       if (overflowAtMax)
       {
         PolynomialSplineFunction psf = interpolator.interpolate(new double[]
-        {y0, y1 + (max-min)}, new double[]
+        {y0, y1 + (max - min)}, new double[]
         {x0, x1});
         double xmid = psf.value(max);
         drawPrimaryLine(state, g2, plot, x0, y0, xmid, max, pass, series, item,
@@ -246,7 +273,7 @@ public class WrappingRenderer extends XYLineAndShapeRenderer
       else
       {
         PolynomialSplineFunction psf = interpolator.interpolate(new double[]
-        {y1 - (max-min), y0}, new double[]
+        {y1 - (max - min), y0}, new double[]
         {x1, x0});
         double xmid = psf.value(min);
         drawPrimaryLine(state, g2, plot, x0, y0, xmid, min, pass, series, item,

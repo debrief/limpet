@@ -726,12 +726,32 @@ public class ChartBuilder
     if (axisType instanceof AngleAxis)
     {
       AngleAxis angle = (AngleAxis) axisType;
+      
+      // hmm, should it have a zero centre
+      final boolean midOrigin = true;// angle.isMidOrigin();
 
+      final double min;
+      final double max;
+      if(midOrigin)
+      {
+        final double range = angle.getMaxVal() - angle.getMinVal();
+        final double demiRange = range / 2d;
+        min = angle.getMinVal() - demiRange;
+        max = angle.getMaxVal() - demiRange;
+      }
+      else
+      {
+        min = angle.getMinVal();
+        max = angle.getMaxVal();
+      }
       // use the renderer that "jumps" across zero/360 barrier
-      renderer = new WrappingRenderer(angle.getMinVal(), angle.getMaxVal());
+      renderer = new WrappingRenderer(min, max);
 
       // use the angular axis
       chartAxis = new AnglularUnitAxis(axisName);
+      
+      chartAxis.setLowerBound(min);
+      chartAxis.setUpperBound(max);
     }
     else
     {
