@@ -200,5 +200,10 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="minVal" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Double"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="maxVal" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Double"
         defaultValueLiteral="0.0"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="midOrigin" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Boolean">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Whether to position the origin at the mid-point of the range"/>
+      </eAnnotations>
+    </eStructuralFeatures>
   </eClassifiers>
 </ecore:EPackage>

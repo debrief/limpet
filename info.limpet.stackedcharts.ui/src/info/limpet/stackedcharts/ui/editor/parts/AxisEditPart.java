@@ -1,5 +1,6 @@
 package info.limpet.stackedcharts.ui.editor.parts;
 
+import info.limpet.stackedcharts.model.AxisType;
 import info.limpet.stackedcharts.model.Chart;
 import info.limpet.stackedcharts.model.ChartSet;
 import info.limpet.stackedcharts.model.DependentAxis;
@@ -10,6 +11,8 @@ import info.limpet.stackedcharts.ui.editor.figures.ArrowFigure;
 import info.limpet.stackedcharts.ui.editor.figures.AxisNameFigure;
 import info.limpet.stackedcharts.ui.editor.policies.AxisContainerEditPolicy;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.draw2d.ActionListener;
@@ -23,6 +26,12 @@ import org.eclipse.draw2d.SimpleLoweredBorder;
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.Notifier;
+import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
+import org.eclipse.emf.edit.provider.IItemPropertyDescriptor;
+import org.eclipse.emf.edit.provider.IItemPropertySource;
+import org.eclipse.emf.edit.provider.ReflectiveItemProviderAdapterFactory;
+import org.eclipse.emf.edit.ui.provider.PropertyDescriptor;
+import org.eclipse.emf.edit.ui.provider.PropertySource;
 import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gef.commands.Command;
@@ -34,9 +43,11 @@ import org.eclipse.gef.requests.GroupRequest;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.views.properties.IPropertyDescriptor;
+import org.eclipse.ui.views.properties.IPropertySource;
 
 public class AxisEditPart extends AbstractGraphicalEditPart implements
-    ActionListener
+    ActionListener, IPropertySourceProvider
 {
 
   public static final Color BACKGROUND_COLOR = Display.getDefault()
@@ -109,8 +120,9 @@ public class AxisEditPart extends AbstractGraphicalEditPart implements
 
     GraphicalEditPart parent = (GraphicalEditPart) getParent();
 
-    boolean horizontal = ((ChartSet) parent.getParent().getParent().getParent()
-        .getModel()).getOrientation() == Orientation.HORIZONTAL;
+    boolean horizontal =
+        ((ChartSet) parent.getParent().getParent().getParent().getModel())
+            .getOrientation() == Orientation.HORIZONTAL;
 
     GridLayout layout = (GridLayout) getFigure().getLayoutManager();
     if (horizontal)
@@ -172,8 +184,8 @@ public class AxisEditPart extends AbstractGraphicalEditPart implements
       {
         DependentAxis dataset = (DependentAxis) getHost().getModel();
         Chart parent = (Chart) dataset.eContainer();
-        DeleteAxisFromChartCommand cmd = new DeleteAxisFromChartCommand(parent,
-            dataset);
+        DeleteAxisFromChartCommand cmd =
+            new DeleteAxisFromChartCommand(parent, dataset);
         return cmd;
       }
     });
@@ -229,6 +241,115 @@ public class AxisEditPart extends AbstractGraphicalEditPart implements
       CommandStack commandStack = getViewer().getEditDomain().getCommandStack();
       commandStack.execute(deleteCommand);
     }
+  }
+
+  @Override
+  public IPropertySource getPropertySource()
+  {
+    final DependentAxis axis = getAxis();
+    final AxisType axisType = getAxis().getAxisType();
+
+    ComposedAdapterFactory adapterFactory =
+        new ComposedAdapterFactory(
+            ComposedAdapterFactory.Descriptor.Registry.INSTANCE);
+    adapterFactory
+        .addAdapterFactory(new ReflectiveItemProviderAdapterFactory());
+
+    final IItemPropertySource axisItemPropertySource =
+        (IItemPropertySource) adapterFactory.adapt(axisType,
+            IItemPropertySource.class);
+    final IPropertySource axisTypePropertySource =
+        new PropertySource(axisType, axisItemPropertySource);
+    final IItemPropertySource axisTypeItemPropertySource =
+        (IItemPropertySource) adapterFactory.adapt(axis,
+            IItemPropertySource.class);
+    final IPropertySource axisPropertySource =
+        new PropertySource(axis, axisTypeItemPropertySource);
+
+    // Proxy two objects in to one
+    return new IPropertySource()
+    {
+      IPropertySource getSourceById(Object id)
+      {
+        IPropertyDescriptor[] propertyDescriptors =
+            axisTypePropertySource.getPropertyDescriptors();
+        for (IPropertyDescriptor iPropertyDescriptor : propertyDescriptors)
+        {
+          if (iPropertyDescriptor.getId().equals(id))
+          {
+            return axisTypePropertySource;
+          }
+        }
+        return axisPropertySource;
+      }
+
+      @Override
+      public void setPropertyValue(Object id, Object value)
+      {
+        getSourceById(id).setPropertyValue(id, value);
+
+      }
+
+      @Override
+      public void resetPropertyValue(Object id)
+      {
+        getSourceById(id).resetPropertyValue(id);
+
+      }
+
+      @Override
+      public boolean isPropertySet(Object id)
+      {
+        return getSourceById(id).isPropertySet(id);
+      }
+
+      @Override
+      public Object getPropertyValue(Object id)
+      {
+        return getSourceById(id).getPropertyValue(id);
+      }
+
+      public IPropertyDescriptor[] getPropertyDescriptors()
+      {
+        Collection<IPropertyDescriptor> result =
+            new ArrayList<IPropertyDescriptor>();
+
+        for (IItemPropertyDescriptor itemPropertyDescriptor : axisItemPropertySource
+            .getPropertyDescriptors(axis))
+        {
+
+          result.add(new PropertyDescriptor(axis, itemPropertyDescriptor)
+          {
+            public String getCategory()
+            {
+              return "Core";
+            };
+
+          });
+        }
+        for (IItemPropertyDescriptor itemPropertyDescriptor : axisTypeItemPropertySource
+            .getPropertyDescriptors(axisType))
+        {
+
+          result.add(new PropertyDescriptor(axisType, itemPropertyDescriptor)
+          {
+            public String getCategory()
+            {
+              return "Styling";
+            };
+
+          });
+        }
+
+        return result.toArray(new IPropertyDescriptor[result.size()]);
+      }
+
+      @Override
+      public Object getEditableValue()
+      {
+        return axis;
+      }
+    };
   }
 
 }

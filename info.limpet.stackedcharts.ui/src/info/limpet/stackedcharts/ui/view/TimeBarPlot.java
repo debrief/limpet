@@ -1,5 +1,7 @@
 package info.limpet.stackedcharts.ui.view;
 
+import info.limpet.stackedcharts.ui.view.ChartBuilder.FancyFormattedAxis;
+
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
@@ -25,6 +27,7 @@ import org.jfree.chart.plot.PlotRenderingInfo;
 import org.jfree.chart.plot.PlotState;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
+import org.jfree.data.Range;
 import org.jfree.data.general.Dataset;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
@@ -52,7 +55,8 @@ public class TimeBarPlot extends CombinedDomainXYPlot
    */
   protected static interface AxisHelper
   {
-    Double getValueAt(Dataset dataset, int index, double time);
+    Double
+        getValueAt(Dataset dataset, int index, double time, NumberAxis rangeA);
   }
 
   protected static class CacheingDateHelper implements AxisHelper
@@ -76,7 +80,7 @@ public class TimeBarPlot extends CombinedDomainXYPlot
 
     @Override
     public Double getValueAt(final Dataset dataset, final int seriesIndex,
-        final double tNow)
+        final double tNow, NumberAxis rangeA)
     {
       final TimeSeriesCollection tsc = (TimeSeriesCollection) dataset;
       final TimeSeries series = tsc.getSeries(seriesIndex);
@@ -181,7 +185,7 @@ public class TimeBarPlot extends CombinedDomainXYPlot
 
     @Override
     public Double getValueAt(final Dataset dataset, final int index,
-        final double tNow)
+        final double tNow, NumberAxis rangeA)
     {
       final TimeSeriesCollection tsc = (TimeSeriesCollection) dataset;
       final TimeSeries series = tsc.getSeries(index);
@@ -213,16 +217,63 @@ public class TimeBarPlot extends CombinedDomainXYPlot
           break;
         }
       }
-
       // have we found values?
-      final Double interpolated;
+      Double interpolated;
       if (previousY != null && nextY != null)
       {
+
+        final Range rangeObj;
+
+        // is this our fancy cyclic range axis?
+        if (rangeA instanceof FancyFormattedAxis)
+        {
+          // is this a fancy range axis?
+          rangeObj = rangeA.getDefaultAutoRange();
+        }
+        else
+        {
+          rangeObj = null;
+        }
+
+        // yes - do some cyclic processing
+        if (rangeObj != null)
+        {
+          double range = rangeObj.getUpperBound() - rangeObj.getLowerBound();
+
+          // just check that we shouldn't be wrapping the data
+          if (Math.abs(nextY - previousY) > range / 2d)
+          {
+            if (previousY > nextY)
+            {
+              nextY += range;
+            }
+            else
+            {
+              nextY -= range;
+            }
+          }
+        }
+
         // ok, interpolate the time (X)
         final double proportion = (tNow - previousX) / (nextX - previousX);
 
         // ok, now generate interpolate the value to use
         interpolated = previousY + proportion * (nextY - previousY);
+
+        // is this a fancy range axis?
+        if (rangeObj != null)
+        {
+          double range = rangeObj.getUpperBound() - rangeObj.getLowerBound();
+          if (interpolated < rangeObj.getLowerBound())
+          {
+            interpolated += range;
+          }
+          else if (interpolated > rangeObj.getUpperBound())
+          {
+            interpolated -= range;
+          }
+        }
+
       }
       else
       {
@@ -242,7 +293,7 @@ public class TimeBarPlot extends CombinedDomainXYPlot
 
     @Override
     public Double getValueAt(final Dataset dataset, final int index,
-        final double tNow)
+        final double tNow, NumberAxis rangeA)
     {
       final XYSeriesCollection tsc = (XYSeriesCollection) dataset;
       final XYSeries series = tsc.getSeries(index);
@@ -294,173 +345,36 @@ public class TimeBarPlot extends CombinedDomainXYPlot
     }
   }
 
-//  private static abstract class TestRunner
-//  {
-//    private final String _title;
-//
-//    TestRunner(final String title)
-//    {
-//      _title = title;
-//    }
-//
-//    private TimeSeriesCollection collateTestData(final long len,
-//        final long start)
-//    {
-//      final TimeSeries series1 = new TimeSeries("Speed 1");
-//      final TimeSeries series2 = new TimeSeries("Speed 2");
-//
-//      for (long i = 0; i < len; i += 10)
-//      {
-//        series1.add(new Millisecond(new Date(start + i)), Math.sin(Math
-//            .toRadians(i)));
-//        series2.add(new Millisecond(new Date(start + i)), Math.cos(Math
-//            .toRadians(i)));
-//      }
-//
-//      final TimeSeriesCollection coll = new TimeSeriesCollection();
-//      coll.addSeries(series1);
-//      coll.addSeries(series2);
-//
-//      return coll;
-//    }
-//
-//    abstract AxisHelper getHelper();
-//
-//    void test(final long start, final long len)
-//    {
-//
-//      System.out.println(_title);
-//
-//      AxisHelper helper = getHelper();
-//      final TimeSeriesCollection dataset = collateTestData(len, start);
-//
-//      Double res = 0d;
-//
-//      long t0 = System.currentTimeMillis();
-//
-//      for (int i = 1; i < 10; i++)
-//      {
-//        final Double interp = helper.getValueAt(dataset, 0, start + (len / i));
-//        if (interp != null)
-//          res += interp;
-//      }
-//
-//      // re-initiate the helper
-//      helper = getHelper();
-//
-//      long t1 = System.currentTimeMillis();
-//
-//      System.out.println("Random access:" + (t1 - t0) + ", " + res);
-//
-//      res = 1d;
-//
-//      t0 = System.currentTimeMillis();
-//
-//      long time = start + (long) (len * 0.1);
-//
-//      for (int i = 1; i < 10; i++)
-//      {
-//        final Double interp = helper.getValueAt(dataset, 0, time + i);
-//        if (interp != null)
-//          res += interp;
-//      }
-//
-//      // re-initiate the helper
-//      helper = getHelper();
-//
-//      t1 = System.currentTimeMillis();
-//
-//      System.out.println("Sequential access (early):" + (t1 - t0) + ", " + res);
-//
-//      res = 1d;
-//
-//      t0 = System.currentTimeMillis();
-//
-//      time = start + (long) (len * 0.9);
-//
-//      for (int i = 1; i < 10; i++)
-//      {
-//        final Double interp = helper.getValueAt(dataset, 0, time + i);
-//        if (interp != null)
-//          res += interp;
-//      }
-//
-//      // re-initiate the helper
-//      helper = getHelper();
-//
-//      t1 = System.currentTimeMillis();
-//
-//      System.out.println("Sequential access (late):" + (t1 - t0) + ", " + res);
-//
-//      res = 1d;
-//
-//      // re-initiate the helper
-//      helper = getHelper();
-//
-//      t0 = System.currentTimeMillis();
-//
-//      time = start + (long) (len * 0.9);
-//
-//      for (int i = 10; i > 0; i--)
-//      {
-//        final Double interp = helper.getValueAt(dataset, 0, time + i);
-//        if (interp != null)
-//          res += interp;
-//      }
-//
-//      t1 = System.currentTimeMillis();
-//
-//      System.out.println("Sequential access (late desc):" + (t1 - t0) + ", "
-//          + res);
-//    }
-//
-//  }
-
   /**
    * 
    */
   private static final long serialVersionUID = 1L;
 
-//  public static void main(final String[] args)
-//  {
-//    final long len = 1000000;
-//    final long start = new Date().getTime();
-//
-//    TestRunner runner = new TestRunner("Brute force")
-//    {
-//      @Override
-//      DateHelper getHelper()
-//      {
-//        return new DateHelper();
-//      }
-//    };
-//
-//    runner.test(start, len);
-//
-//    runner = new TestRunner("Cache")
-//    {
-//      @Override
-//      AxisHelper getHelper()
-//      {
-//        return new CacheingDateHelper();
-//      }
-//    };
-//
-//    runner.test(start, len);
-//
-//  }
-
   protected static void paintThisMarker(final Graphics2D g2,
       final String label, final Color color, final float markerX,
-      final float markerY, final boolean vertical)
+      final float markerY, final boolean vertical, Rectangle2D thisPlotArea)
   {
+    // find the size of the label, so we can draw a background
+    final FontMetrics fc = g2.getFontMetrics();
+    final Rectangle2D bounds = fc.getStringBounds(label, g2);
+
     // reflect the plot orientation
     final float xPos;
     final float yPos;
     if (vertical)
     {
       yPos = 3f + markerX;
-      xPos = markerY;
+
+      // if the marker height is too near the top it's not legible
+      if (markerY < thisPlotArea.getY() + bounds.getHeight())
+      {
+        // too high, move it down a little
+        xPos = (float) (markerY + bounds.getHeight());
+      }
+      else
+      {
+        xPos = markerY;
+      }
     }
     else
     {
@@ -468,10 +382,10 @@ public class TimeBarPlot extends CombinedDomainXYPlot
       yPos = 2f + markerY;
     }
 
-    // find the size of the label, so we can draw a background
-    final FontMetrics fc = g2.getFontMetrics();
-    final Rectangle2D bounds = fc.getStringBounds(label, g2);
     g2.setColor(Color.white);
+
+    // just double check that we appear in the plot
+
     g2.fill3DRect((int) yPos, (int) (xPos - bounds.getHeight()),
         3 + (int) bounds.getWidth(), 3 + (int) bounds.getHeight(), true);
 
@@ -532,19 +446,19 @@ public class TimeBarPlot extends CombinedDomainXYPlot
 
     // NOTE: our WMF plotting isn't passing the renderInfo
     // object. We need this to plot the
-    // time marker & label.  Try to find it from somewhere.
-    if(renderInfo == null)
+    // time marker & label. Try to find it from somewhere.
+    if (renderInfo == null)
     {
       return;
     }
-    
+
     // do we have a time
     if (_currentTime != null)
     {
       // hmm, are we stacked vertically or horizontally?
       final boolean vertical =
           this.getOrientation() == PlotOrientation.VERTICAL;
-      
+
       // find the screen area for the dataset
       final Rectangle2D dataArea = renderInfo.getDataArea();
 
@@ -628,14 +542,15 @@ public class TimeBarPlot extends CombinedDomainXYPlot
         final Font oldFont = g2.getFont();
 
         final Font domainFont = this.getDomainAxis().getTickLabelFont();
-        final Font tempFont = domainFont.deriveFont(domainFont.getSize() * 1.2f).deriveFont(Font.BOLD);
-        
+        final Font tempFont =
+            domainFont.deriveFont(domainFont.getSize() * 1.2f).deriveFont(
+                Font.BOLD);
+
         g2.setFont(tempFont);
-       
+
         plotStepperMarkers(g2, dataArea, vertical, domainAxis, theTime,
             renderInfo, (int) trimmedLinePosition, _helper);
-        
-        
+
         g2.setFont(oldFont);
       }
     }
@@ -739,27 +654,59 @@ public class TimeBarPlot extends CombinedDomainXYPlot
           final int num = dataset.getSeriesCount();
           for (int j = 0; j < num; j++)
           {
-            final Double interpolated = axisHelper.getValueAt(dataset, j, tNow);
+            // and find the y coordinate of this data value
+            final NumberAxis rangeA =
+                (NumberAxis) plot.getRangeAxisForDataset(i);
+
+            final Double interpolated =
+                axisHelper.getValueAt(dataset, j, tNow, rangeA);
 
             if (interpolated != null)
             {
 
-              // and find the y coordinate of this data value
-              final NumberAxis rangeA =
-                  (NumberAxis) plot.getRangeAxisForDataset(i);
-              final float markerY =
-                  (float) rangeA.valueToJava2D(interpolated, thisPlotArea, this
-                      .getRangeAxisEdge());
-
-              // prepare the label
-              final String label;
-              if (interpolated > 100)
+              // we may need to trim the interpolated value to be in the correct range
+              double range = rangeA.getUpperBound() - rangeA.getLowerBound();
+              final double chartLocation;
+              if (interpolated > rangeA.getUpperBound())
               {
-                label = noDP.format(interpolated);
+                chartLocation = interpolated - range;
+              }
+              else if (interpolated < rangeA.getLowerBound())
+              {
+                chartLocation = interpolated + range;
               }
               else
               {
-                label = oneDP.format(interpolated);
+                chartLocation = interpolated;
+              }
+
+              // convert to screen coords
+              final float markerY =
+                  (float) rangeA.valueToJava2D(chartLocation, thisPlotArea,
+                      this.getRangeAxisEdge());
+              
+              final double rounded =  Math.round(interpolated);
+
+              // quick check that we're not on a fancy axis
+              final String label;
+              NumberFormat fancyFormat = rangeA.getNumberFormatOverride();
+              if (fancyFormat != null)
+              {
+                label = fancyFormat.format(rounded);
+              }
+              else
+              {
+                // prepare the label
+                final NumberFormat formatter;
+                if (interpolated > 100)
+                {
+                  formatter = noDP;
+                }
+                else
+                {
+                  formatter = oneDP;
+                }
+                label = formatter.format(rounded);
               }
 
               // and the color
@@ -784,7 +731,7 @@ public class TimeBarPlot extends CombinedDomainXYPlot
 
               // done, render it
               paintThisMarker(g2, label, paint, linePosition, markerY,
-                  vertical);
+                  vertical, thisPlotArea);
             }
           }
         }

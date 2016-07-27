@@ -123,6 +123,7 @@
     <genClasses ecoreClass="model.ecore#//AngleAxis">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//AngleAxis/minVal"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//AngleAxis/maxVal"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//AngleAxis/midOrigin"/>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>

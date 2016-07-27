@@ -1385,13 +1385,22 @@ public interface StackedchartsPackage extends EPackage
   int ANGLE_AXIS__MAX_VAL = NUMBER_AXIS_FEATURE_COUNT + 1;
 
   /**
+   * The feature id for the '<em><b>Mid Origin</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ANGLE_AXIS__MID_ORIGIN = NUMBER_AXIS_FEATURE_COUNT + 2;
+
+  /**
    * The number of structural features of the '<em>Angle Axis</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int ANGLE_AXIS_FEATURE_COUNT = NUMBER_AXIS_FEATURE_COUNT + 2;
+  int ANGLE_AXIS_FEATURE_COUNT = NUMBER_AXIS_FEATURE_COUNT + 3;
 
   /**
    * The number of operations of the '<em>Angle Axis</em>' class.
@@ -2226,6 +2235,17 @@ public interface StackedchartsPackage extends EPackage
   EAttribute getAngleAxis_MaxVal();
 
   /**
+   * Returns the meta object for the attribute '{@link info.limpet.stackedcharts.model.AngleAxis#isMidOrigin <em>Mid Origin</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Mid Origin</em>'.
+   * @see info.limpet.stackedcharts.model.AngleAxis#isMidOrigin()
+   * @see #getAngleAxis()
+   * @generated
+   */
+  EAttribute getAngleAxis_MidOrigin();
+
+  /**
    * Returns the meta object for enum '{@link info.limpet.stackedcharts.model.AxisScale <em>Axis Scale</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -2917,6 +2937,14 @@ public interface StackedchartsPackage extends EPackage
      * @generated
      */
     EAttribute ANGLE_AXIS__MAX_VAL = eINSTANCE.getAngleAxis_MaxVal();
+
+    /**
+     * The meta object literal for the '<em><b>Mid Origin</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute ANGLE_AXIS__MID_ORIGIN = eINSTANCE.getAngleAxis_MidOrigin();
 
     /**
      * The meta object literal for the '{@link info.limpet.stackedcharts.model.AxisScale <em>Axis Scale</em>}' enum.
