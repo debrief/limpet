@@ -755,7 +755,7 @@ public class ChartBuilder
       renderer = new WrappingRenderer(min, max);
 
       // use the angular axis
-      chartAxis = new AnglularUnitAxis(axisName, min, max);
+      chartAxis = new AngularUnitAxis(axisName, min, max);
     }
     else
     {
@@ -806,7 +806,7 @@ public class ChartBuilder
    * @author ian
    * 
    */
-  private static class AnglularUnitAxis extends NumberAxis
+  public static class AngularUnitAxis extends NumberAxis
   {
     /**
      * 
@@ -857,7 +857,7 @@ public class ChartBuilder
 
     }
 
-    public AnglularUnitAxis(final String axisName, double min, double max)
+    public AngularUnitAxis(final String axisName, double min, double max)
     {
       super(axisName);
 
