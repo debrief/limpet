@@ -128,6 +128,10 @@ public class WrappingRenderer extends XYLineAndShapeRenderer
         return;
       }
 
+      // double check values valid
+      y1 = y1 < min ? y1 + range : y1;
+      y1 = y1 > max ? y1 - range : y1;
+
       if (!s.isLastPointGood())
       {
         ImmutablePair<Float, Float> xy =
@@ -137,16 +141,13 @@ public class WrappingRenderer extends XYLineAndShapeRenderer
         return;
       }
 
+      // and the previous value
       double x0 = dataset.getXValue(series, item - 1);
       double y0 = dataset.getYValue(series, item - 1);
 
-      // double check values valid (not greater than max)
+      // double check values valid
       y0 = y0 > max ? y0 - range : y0;
-      y1 = y1 > max ? y1 - range : y1;
-
-      // double check values valid (not less than min)
       y0 = y0 < min ? y0 + range : y0;
-      y1 = y1 < min ? y1 + range : y1;
 
       if (overflowCondition.isOverflow(y0, x0, y1, x1))
       {
