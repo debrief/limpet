@@ -248,6 +248,7 @@ public class LimpetStackedChartsAdapter implements IStackedDatasetAdapter,
 						// ok, create scatter set
 						if (qc.getValuesCount() > 0) {
 							ScatterSet scatter = factory.createScatterSet();
+							scatter.setName(qc.getName());
 							final List<?> values = qc.getValues();
 							for (Object value : values) {
 								Measurable<Duration> val = (Measurable<Duration>) value;
