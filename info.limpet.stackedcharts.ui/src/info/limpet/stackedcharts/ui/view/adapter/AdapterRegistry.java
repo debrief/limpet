@@ -16,10 +16,10 @@ public class AdapterRegistry implements IStackedDatasetAdapter,
 {
 
   private static final String DATASET_ADAPTER_ID =
-      "info.limpet.stackedcharts.ui.stacked_dataset_adapter";
+      "info.limpet.stackedcharts.ui.dataset_adapter";
 
   private static final String SCATTERSET_ADAPTER_ID =
-      "info.limpet.stackedcharts.ui.stacked_scatterset_adapter";
+      "info.limpet.stackedcharts.ui.scatterset_adapter";
 
   @SuppressWarnings("unchecked")
   @Override
@@ -93,6 +93,7 @@ public class AdapterRegistry implements IStackedDatasetAdapter,
       for (IConfigurationElement e : config)
       {
         Object o = e.createExecutableExtension("class");
+        
         if (o instanceof IStackedDatasetAdapter)
         {
           IStackedDatasetAdapter sa = (IStackedDatasetAdapter) o;
