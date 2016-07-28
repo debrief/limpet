@@ -3,8 +3,9 @@ package info.limpet.stackedcharts.ui.editor;
 import info.limpet.stackedcharts.model.ChartSet;
 import info.limpet.stackedcharts.ui.editor.drop.DatasetToAxisDropTargetListener;
 import info.limpet.stackedcharts.ui.editor.drop.DatasetToAxisLandingDropTargetListener;
+import info.limpet.stackedcharts.ui.editor.drop.DatasetToChartDropTargetListener;
 import info.limpet.stackedcharts.ui.editor.drop.ProxyDropTargetListener;
-import info.limpet.stackedcharts.ui.editor.drop.ScatterSetToChartDropTargetListener;
+import info.limpet.stackedcharts.ui.editor.drop.ScatterSetToScatterSetContainerTargetListener;
 import info.limpet.stackedcharts.ui.editor.parts.IPropertySourceProvider;
 import info.limpet.stackedcharts.ui.editor.parts.StackedChartsEditPartFactory;
 
@@ -15,7 +16,6 @@ import java.util.List;
 
 import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.emf.common.command.BasicCommandStack;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.provider.EcoreItemProviderAdapterFactory;
 import org.eclipse.emf.edit.domain.AdapterFactoryEditingDomain;
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
@@ -68,7 +68,9 @@ public class StackedchartsEditControl extends Composite
     viewer.addDropTargetListener(new ProxyDropTargetListener(
         new DatasetToAxisDropTargetListener(viewer),
         new DatasetToAxisLandingDropTargetListener(viewer),
-        new ScatterSetToChartDropTargetListener(viewer)));
+        new ScatterSetToScatterSetContainerTargetListener(viewer),
+        new DatasetToChartDropTargetListener(viewer)
+        ));
 
     viewer.createControl(this);
     editDomain.addViewer(viewer);

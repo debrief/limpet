@@ -102,7 +102,7 @@ abstract public class DatasetDropTargetListener extends CoreDropTargetListener
       List<Object> objects = convertSelectionToDataset(sel);
       EditPart target = findPart(event);
 
-      AbstractGraphicalEditPart axis = (AbstractGraphicalEditPart) target;
+      AbstractGraphicalEditPart editPart = (AbstractGraphicalEditPart) target;
       List<Dataset> datasets = new ArrayList<Dataset>(objects.size());
       for (Object o : objects)
       {
@@ -126,7 +126,7 @@ abstract public class DatasetDropTargetListener extends CoreDropTargetListener
 
       if(datasets.size() > 0)
       {
-        Command command = createCommand(axis, datasets);
+        Command command = createCommand(editPart, datasets);
         getCommandStack().execute(command);
       }
     }

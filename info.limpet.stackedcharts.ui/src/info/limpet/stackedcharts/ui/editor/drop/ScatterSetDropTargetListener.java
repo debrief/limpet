@@ -6,6 +6,7 @@ import info.limpet.stackedcharts.model.DependentAxis;
 import info.limpet.stackedcharts.model.ScatterSet;
 import info.limpet.stackedcharts.ui.editor.parts.AxisEditPart;
 import info.limpet.stackedcharts.ui.editor.parts.ChartEditPart;
+import info.limpet.stackedcharts.ui.editor.parts.ScatterSetContainerEditPart;
 
 import java.util.Iterator;
 import java.util.List;
@@ -107,6 +108,11 @@ abstract public class ScatterSetDropTargetListener extends
         else if (target instanceof ChartEditPart)
         {
           chart = (Chart) target.getModel();
+        }
+        else if(target instanceof ScatterSetContainerEditPart)
+        {
+          ScatterSetContainerEditPart scatter = (ScatterSetContainerEditPart) target;
+          chart = (Chart) scatter.getParent().getModel();
         }
 
         scatterCommand = createScatterCommand(chart, scatterSets);
