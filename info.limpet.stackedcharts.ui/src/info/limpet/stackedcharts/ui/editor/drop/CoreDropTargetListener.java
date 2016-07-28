@@ -1,6 +1,7 @@
 package info.limpet.stackedcharts.ui.editor.drop;
 
 import info.limpet.stackedcharts.model.Chart;
+import info.limpet.stackedcharts.model.Dataset;
 import info.limpet.stackedcharts.ui.editor.parts.AxisEditPart;
 import info.limpet.stackedcharts.ui.editor.parts.ChartEditPart;
 import info.limpet.stackedcharts.ui.editor.parts.ChartPaneEditPart;
@@ -93,13 +94,12 @@ abstract public class CoreDropTargetListener implements
     List<Object> element = new ArrayList<Object>();
     for (Object object : selection.toArray())
     {
-      if (adapter.canConvert(object))
+      if (adapter.canConvertToDataset(object))
       {
-        
-        final List<Object> converted = adapter.convert(object);
+        final List<Dataset> converted = adapter.convertToDataset(object);
         if(converted != null)
         {
-          element.add(converted);
+          element.addAll(converted);
         }
       }
     }
