@@ -2,6 +2,7 @@ package info.limpet.stackedcharts.ui.editor.drop;
 
 import info.limpet.stackedcharts.model.Chart;
 import info.limpet.stackedcharts.model.Dataset;
+import info.limpet.stackedcharts.model.ScatterSet;
 import info.limpet.stackedcharts.ui.editor.parts.AxisEditPart;
 import info.limpet.stackedcharts.ui.editor.parts.ChartEditPart;
 import info.limpet.stackedcharts.ui.editor.parts.ChartPaneEditPart;
@@ -88,7 +89,7 @@ abstract public class CoreDropTargetListener implements
     return viewer.getEditDomain().getCommandStack();
   }
 
-  protected List<Object> convertSelection(StructuredSelection selection)
+  protected List<Object> convertSelectionToDataset(StructuredSelection selection)
   {
     AdapterRegistry adapter = new AdapterRegistry();
     List<Object> element = new ArrayList<Object>();
@@ -106,6 +107,26 @@ abstract public class CoreDropTargetListener implements
 
     return element;
   }
+
+  protected List<ScatterSet> convertSelectionToScatterSet(StructuredSelection selection)
+  {
+    AdapterRegistry adapter = new AdapterRegistry();
+    List<ScatterSet> element = new ArrayList<ScatterSet>();
+    for (Object object : selection.toArray())
+    {
+      if (adapter.canConvertToDataset(object))
+      {
+        final List<ScatterSet> converted = adapter.convertToScatterSet(object);
+        if(converted != null)
+        {
+          element.addAll(converted);
+        }
+      }
+    }
+
+    return element;
+  }
+
 
   protected static boolean canDropSelection(final Chart chart, ISelection selection)
   {

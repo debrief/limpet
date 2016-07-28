@@ -99,7 +99,7 @@ abstract public class DatasetDropTargetListener extends CoreDropTargetListener
         event.detail = DND.DROP_NONE;
         return;
       }
-      List<Object> objects = convertSelection(sel);
+      List<Object> objects = convertSelectionToDataset(sel);
       EditPart target = findPart(event);
 
       AbstractGraphicalEditPart axis = (AbstractGraphicalEditPart) target;
