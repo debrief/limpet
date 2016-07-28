@@ -16,8 +16,7 @@ public interface IStackedScatterSetAdapter
   boolean canConvertToScatterSet(Object data);
   
   
-  /** convert the supplied data object into a Limpet object
-   * - probably a Dataset or a ScatterSet,
+  /** convert the supplied data object into a Limpet scatterset
    * if possible
    * @param data the object to convert
    * @return the dataset (or null if this class can't convert it)
