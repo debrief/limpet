@@ -1,14 +1,5 @@
 package info.limpet.stackedcharts.ui.editor.parts;
 
-import java.util.List;
-
-import org.eclipse.draw2d.BorderLayout;
-import org.eclipse.draw2d.IFigure;
-import org.eclipse.gef.GraphicalEditPart;
-import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
-import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.PlatformUI;
-
 import info.limpet.stackedcharts.model.Chart;
 import info.limpet.stackedcharts.model.ChartSet;
 import info.limpet.stackedcharts.model.Orientation;
@@ -16,6 +7,17 @@ import info.limpet.stackedcharts.ui.editor.figures.DirectionalLabel;
 import info.limpet.stackedcharts.ui.editor.figures.DirectionalShape;
 import info.limpet.stackedcharts.ui.editor.figures.ScatterSetContainerFigure;
 import info.limpet.stackedcharts.ui.editor.parts.ChartEditPart.ScatterSetContainer;
+import info.limpet.stackedcharts.ui.editor.policies.ScatterSetContainerEditPolicy;
+
+import java.util.List;
+
+import org.eclipse.draw2d.BorderLayout;
+import org.eclipse.draw2d.IFigure;
+import org.eclipse.gef.EditPolicy;
+import org.eclipse.gef.GraphicalEditPart;
+import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
 
 public class ScatterSetContainerEditPart extends AbstractGraphicalEditPart
 {
@@ -47,8 +49,11 @@ public class ScatterSetContainerEditPart extends AbstractGraphicalEditPart
   @Override
   protected void createEditPolicies()
   {
+    installEditPolicy(EditPolicy.CONTAINER_ROLE,
+        new ScatterSetContainerEditPolicy());
   }
 
+  @SuppressWarnings("rawtypes")
   @Override
   protected List getModelChildren()
   {

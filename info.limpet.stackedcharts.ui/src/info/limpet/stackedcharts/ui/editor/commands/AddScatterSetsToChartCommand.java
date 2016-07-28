@@ -5,7 +5,6 @@ import info.limpet.stackedcharts.model.ChartSet;
 import info.limpet.stackedcharts.model.ScatterSet;
 import info.limpet.stackedcharts.model.SelectiveAnnotation;
 import info.limpet.stackedcharts.model.StackedchartsFactory;
-import info.limpet.stackedcharts.model.impl.StackedchartsFactoryImpl;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.gef.commands.Command;

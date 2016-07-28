@@ -471,8 +471,13 @@ public class StackedChartsView extends ViewPart implements
       @Override
       public void run()
       {
-          try
-          {
+        // check we have something to plot
+        if (_chartComposite == null || _chartComposite.isDisposed())
+        {
+          return;
+        }
+        try
+        {
           ByteArrayOutputStream out = new ByteArrayOutputStream();
           JFreeChart combined = _chartComposite.getChart();
           Rectangle bounds = _chartComposite.getBounds();
@@ -484,18 +489,18 @@ public class StackedChartsView extends ViewPart implements
 
           // Cleanup
           g2d.endExport();
-          
+
           Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
           clpbrd.setContents(new WMFTransfer(out), null);
-            MessageDialog.openInformation(Display.getCurrent().getActiveShell(), "WMF Export", "Exported to Clipboard.[WMF]");
-            
-          }
-          catch (Exception e)
-          {
-            e.printStackTrace();
-          }
+          MessageDialog.openInformation(Display.getCurrent().getActiveShell(),
+              "WMF Export", "Exported to Clipboard.[WMF]");
 
-        
+        }
+        catch (Exception e)
+        {
+          e.printStackTrace();
+        }
+
       }
     };
     export.setImageDescriptor(Activator.imageDescriptorFromPlugin(Activator.PLUGIN_ID, "icons/export_wmf.png"));

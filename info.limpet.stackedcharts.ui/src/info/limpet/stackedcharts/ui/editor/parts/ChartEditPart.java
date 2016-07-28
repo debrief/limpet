@@ -1,5 +1,15 @@
 package info.limpet.stackedcharts.ui.editor.parts;
 
+import info.limpet.stackedcharts.model.Chart;
+import info.limpet.stackedcharts.model.ChartSet;
+import info.limpet.stackedcharts.model.Orientation;
+import info.limpet.stackedcharts.model.ScatterSet;
+import info.limpet.stackedcharts.model.SelectiveAnnotation;
+import info.limpet.stackedcharts.model.StackedchartsPackage;
+import info.limpet.stackedcharts.ui.editor.commands.DeleteChartCommand;
+import info.limpet.stackedcharts.ui.editor.figures.ChartFigure;
+import info.limpet.stackedcharts.ui.editor.policies.ChartContainerEditPolicy;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -24,16 +34,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
 
-import info.limpet.stackedcharts.model.Chart;
-import info.limpet.stackedcharts.model.ChartSet;
-import info.limpet.stackedcharts.model.Orientation;
-import info.limpet.stackedcharts.model.ScatterSet;
-import info.limpet.stackedcharts.model.SelectiveAnnotation;
-import info.limpet.stackedcharts.model.StackedchartsPackage;
-import info.limpet.stackedcharts.ui.editor.commands.DeleteChartCommand;
-import info.limpet.stackedcharts.ui.editor.figures.ChartFigure;
-import info.limpet.stackedcharts.ui.editor.policies.ChartContainerEditPolicy;
-
 public class ChartEditPart extends AbstractGraphicalEditPart implements
     ActionListener
 {
@@ -43,6 +43,7 @@ public class ChartEditPart extends AbstractGraphicalEditPart implements
   /**
    * Helper class to handle the container of {@link ScatterSet}s
    */
+  @SuppressWarnings("serial")
   public static class ScatterSetContainer extends ArrayList<ScatterSet>
   {
 
@@ -102,6 +103,7 @@ public class ChartEditPart extends AbstractGraphicalEditPart implements
     });
   }
 
+  @SuppressWarnings({"rawtypes", "unchecked"})
   @Override
   protected List getModelChildren()
   {
@@ -151,6 +153,7 @@ public class ChartEditPart extends AbstractGraphicalEditPart implements
       removeChild(object);
     }
     // add back all model elements
+    @SuppressWarnings("rawtypes")
     List modelObjects = getModelChildren();
     for (int i = 0; i < modelObjects.size(); i++)
     {
