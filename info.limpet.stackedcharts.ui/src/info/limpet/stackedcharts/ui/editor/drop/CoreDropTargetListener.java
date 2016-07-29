@@ -6,6 +6,7 @@ import info.limpet.stackedcharts.model.ScatterSet;
 import info.limpet.stackedcharts.ui.editor.parts.AxisEditPart;
 import info.limpet.stackedcharts.ui.editor.parts.ChartEditPart;
 import info.limpet.stackedcharts.ui.editor.parts.ChartPaneEditPart;
+import info.limpet.stackedcharts.ui.editor.parts.ScatterSetContainerEditPart;
 import info.limpet.stackedcharts.ui.view.adapter.AdapterRegistry;
 import info.limpet.stackedcharts.ui.view.adapter.IStackedDatasetAdapter;
 import info.limpet.stackedcharts.ui.view.adapter.IStackedScatterSetAdapter;
@@ -185,6 +186,9 @@ abstract public class CoreDropTargetListener implements
 				ChartEditPart chartPane = (ChartEditPart) chartEditPane
 						.getParent();
 				chart = (Chart) chartPane.getModel();
+			} else if (editPart instanceof ScatterSetContainerEditPart) {
+				ScatterSetContainerEditPart scatter= (ScatterSetContainerEditPart) editPart;
+				chart = (Chart) scatter.getParent().getModel();
 			}
 
 			if (canDropSelection(chart, LocalSelectionTransfer.getTransfer()
