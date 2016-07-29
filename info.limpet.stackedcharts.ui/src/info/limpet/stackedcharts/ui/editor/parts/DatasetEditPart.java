@@ -14,6 +14,7 @@ import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.EditPolicy;
+import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.commands.CommandStack;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
@@ -33,6 +34,9 @@ import info.limpet.stackedcharts.ui.editor.commands.DeleteDatasetsFromAxisComman
 import info.limpet.stackedcharts.ui.editor.figures.DatasetFigure;
 import info.limpet.stackedcharts.ui.editor.figures.DirectionalShape;
 
+/**
+ * An {@link GraphicalEditPart} to represent datasets
+ */
 public class DatasetEditPart extends AbstractGraphicalEditPart implements
     ActionListener
 {
@@ -49,8 +53,9 @@ public class DatasetEditPart extends AbstractGraphicalEditPart implements
     contentPane = new DatasetFigure();
     figure.add(contentPane);
 
-    Button button = new Button(StackedchartsImages.getImage(
-        StackedchartsImages.DESC_DELETE));
+    Button button =
+        new Button(StackedchartsImages
+            .getImage(StackedchartsImages.DESC_DELETE));
     button.setToolTip(new Label("Remove the dataset from this axis"));
     button.addActionListener(this);
     figure.add(button);
@@ -80,8 +85,8 @@ public class DatasetEditPart extends AbstractGraphicalEditPart implements
       {
         Dataset dataset = (Dataset) getHost().getModel();
         DependentAxis parent = (DependentAxis) getHost().getParent().getModel();
-        DeleteDatasetsFromAxisCommand cmd = new DeleteDatasetsFromAxisCommand(
-            parent, dataset);
+        DeleteDatasetsFromAxisCommand cmd =
+            new DeleteDatasetsFromAxisCommand(parent, dataset);
         return cmd;
       }
     });
@@ -106,8 +111,8 @@ public class DatasetEditPart extends AbstractGraphicalEditPart implements
   {
     contentPane.setName(getDataset().getName());
 
-    ChartSet parent = ((Chart) getParent().getParent().getParent().getModel())
-        .getParent();
+    ChartSet parent =
+        ((Chart) getParent().getParent().getParent().getModel()).getParent();
 
     boolean horizontal = parent.getOrientation() == Orientation.HORIZONTAL;
     ((DirectionalShape) getFigure()).setVertical(!horizontal);
