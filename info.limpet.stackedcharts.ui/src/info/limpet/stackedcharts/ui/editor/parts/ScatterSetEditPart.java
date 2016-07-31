@@ -1,5 +1,8 @@
 package info.limpet.stackedcharts.ui.editor.parts;
 
+/**
+ * An edit part for Scatter Set object
+ */
 import info.limpet.stackedcharts.model.Chart;
 import info.limpet.stackedcharts.model.ChartSet;
 import info.limpet.stackedcharts.model.Orientation;
