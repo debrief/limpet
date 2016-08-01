@@ -12,15 +12,14 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
 /**
- * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Zone</b></em>'.
- * <!-- end-user-doc -->
+ * <!-- begin-user-doc --> An implementation of the model object '<em><b>Zone</b></em>'. <!--
+ * end-user-doc -->
  * <p>
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link info.limpet.stackedcharts.model.impl.ZoneImpl#getStart <em>Start</em>}</li>
- *   <li>{@link info.limpet.stackedcharts.model.impl.ZoneImpl#getEnd <em>End</em>}</li>
+ * <li>{@link info.limpet.stackedcharts.model.impl.ZoneImpl#getStart <em>Start</em>}</li>
+ * <li>{@link info.limpet.stackedcharts.model.impl.ZoneImpl#getEnd <em>End</em>}</li>
  * </ul>
  *
  * @generated
@@ -28,9 +27,9 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 public class ZoneImpl extends AbstractAnnotationImpl implements Zone
 {
   /**
-   * The default value of the '{@link #getStart() <em>Start</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The default value of the '{@link #getStart() <em>Start</em>}' attribute. <!-- begin-user-doc
+   * --> <!-- end-user-doc -->
+   * 
    * @see #getStart()
    * @generated
    * @ordered
@@ -38,9 +37,9 @@ public class ZoneImpl extends AbstractAnnotationImpl implements Zone
   protected static final double START_EDEFAULT = 0.0;
 
   /**
-   * The cached value of the '{@link #getStart() <em>Start</em>}' attribute.
-   * <!-- begin-user-doc -->
+   * The cached value of the '{@link #getStart() <em>Start</em>}' attribute. <!-- begin-user-doc -->
    * <!-- end-user-doc -->
+   * 
    * @see #getStart()
    * @generated
    * @ordered
@@ -48,9 +47,9 @@ public class ZoneImpl extends AbstractAnnotationImpl implements Zone
   protected double start = START_EDEFAULT;
 
   /**
-   * The default value of the '{@link #getEnd() <em>End</em>}' attribute.
-   * <!-- begin-user-doc -->
+   * The default value of the '{@link #getEnd() <em>End</em>}' attribute. <!-- begin-user-doc -->
    * <!-- end-user-doc -->
+   * 
    * @see #getEnd()
    * @generated
    * @ordered
@@ -58,9 +57,9 @@ public class ZoneImpl extends AbstractAnnotationImpl implements Zone
   protected static final double END_EDEFAULT = 0.0;
 
   /**
-   * The cached value of the '{@link #getEnd() <em>End</em>}' attribute.
-   * <!-- begin-user-doc -->
+   * The cached value of the '{@link #getEnd() <em>End</em>}' attribute. <!-- begin-user-doc -->
    * <!-- end-user-doc -->
+   * 
    * @see #getEnd()
    * @generated
    * @ordered
@@ -68,8 +67,8 @@ public class ZoneImpl extends AbstractAnnotationImpl implements Zone
   protected double end = END_EDEFAULT;
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   protected ZoneImpl()
@@ -78,8 +77,8 @@ public class ZoneImpl extends AbstractAnnotationImpl implements Zone
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @Override
@@ -89,8 +88,8 @@ public class ZoneImpl extends AbstractAnnotationImpl implements Zone
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public double getStart()
@@ -99,8 +98,8 @@ public class ZoneImpl extends AbstractAnnotationImpl implements Zone
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public void setStart(double newStart)
@@ -108,12 +107,13 @@ public class ZoneImpl extends AbstractAnnotationImpl implements Zone
     double oldStart = start;
     start = newStart;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, StackedchartsPackage.ZONE__START, oldStart, start));
+      eNotify(new ENotificationImpl(this, Notification.SET,
+          StackedchartsPackage.ZONE__START, oldStart, start));
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public double getEnd()
@@ -122,8 +122,8 @@ public class ZoneImpl extends AbstractAnnotationImpl implements Zone
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public void setEnd(double newEnd)
@@ -131,12 +131,13 @@ public class ZoneImpl extends AbstractAnnotationImpl implements Zone
     double oldEnd = end;
     end = newEnd;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, StackedchartsPackage.ZONE__END, oldEnd, end));
+      eNotify(new ENotificationImpl(this, Notification.SET,
+          StackedchartsPackage.ZONE__END, oldEnd, end));
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @Override
@@ -144,17 +145,17 @@ public class ZoneImpl extends AbstractAnnotationImpl implements Zone
   {
     switch (featureID)
     {
-      case StackedchartsPackage.ZONE__START:
-        return getStart();
-      case StackedchartsPackage.ZONE__END:
-        return getEnd();
+    case StackedchartsPackage.ZONE__START:
+      return getStart();
+    case StackedchartsPackage.ZONE__END:
+      return getEnd();
     }
     return super.eGet(featureID, resolve, coreType);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @Override
@@ -162,19 +163,19 @@ public class ZoneImpl extends AbstractAnnotationImpl implements Zone
   {
     switch (featureID)
     {
-      case StackedchartsPackage.ZONE__START:
-        setStart((Double)newValue);
-        return;
-      case StackedchartsPackage.ZONE__END:
-        setEnd((Double)newValue);
-        return;
+    case StackedchartsPackage.ZONE__START:
+      setStart((Double) newValue);
+      return;
+    case StackedchartsPackage.ZONE__END:
+      setEnd((Double) newValue);
+      return;
     }
     super.eSet(featureID, newValue);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @Override
@@ -182,19 +183,19 @@ public class ZoneImpl extends AbstractAnnotationImpl implements Zone
   {
     switch (featureID)
     {
-      case StackedchartsPackage.ZONE__START:
-        setStart(START_EDEFAULT);
-        return;
-      case StackedchartsPackage.ZONE__END:
-        setEnd(END_EDEFAULT);
-        return;
+    case StackedchartsPackage.ZONE__START:
+      setStart(START_EDEFAULT);
+      return;
+    case StackedchartsPackage.ZONE__END:
+      setEnd(END_EDEFAULT);
+      return;
     }
     super.eUnset(featureID);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @Override
@@ -202,23 +203,24 @@ public class ZoneImpl extends AbstractAnnotationImpl implements Zone
   {
     switch (featureID)
     {
-      case StackedchartsPackage.ZONE__START:
-        return start != START_EDEFAULT;
-      case StackedchartsPackage.ZONE__END:
-        return end != END_EDEFAULT;
+    case StackedchartsPackage.ZONE__START:
+      return start != START_EDEFAULT;
+    case StackedchartsPackage.ZONE__END:
+      return end != END_EDEFAULT;
     }
     return super.eIsSet(featureID);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @Override
   public String toString()
   {
-    if (eIsProxy()) return super.toString();
+    if (eIsProxy())
+      return super.toString();
 
     StringBuffer result = new StringBuffer(super.toString());
     result.append(" (start: ");
@@ -229,4 +231,4 @@ public class ZoneImpl extends AbstractAnnotationImpl implements Zone
     return result.toString();
   }
 
-} //ZoneImpl
+} // ZoneImpl

@@ -15,24 +15,25 @@ import org.eclipse.emf.ecore.impl.EFactoryImpl;
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
 
 /**
- * <!-- begin-user-doc -->
- * An implementation of the model <b>Factory</b>.
- * <!-- end-user-doc -->
+ * <!-- begin-user-doc --> An implementation of the model <b>Factory</b>. <!-- end-user-doc -->
+ * 
  * @generated
  */
-public class StackedchartsFactoryImpl extends EFactoryImpl implements StackedchartsFactory
+public class StackedchartsFactoryImpl extends EFactoryImpl implements
+    StackedchartsFactory
 {
   /**
-   * Creates the default factory implementation.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * Creates the default factory implementation. <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public static StackedchartsFactory init()
   {
     try
     {
-      StackedchartsFactory theStackedchartsFactory = (StackedchartsFactory)EPackage.Registry.INSTANCE.getEFactory(StackedchartsPackage.eNS_URI);
+      StackedchartsFactory theStackedchartsFactory =
+          (StackedchartsFactory) EPackage.Registry.INSTANCE.getEFactory(
+              StackedchartsPackage.eNS_URI);
       if (theStackedchartsFactory != null)
       {
         return theStackedchartsFactory;
@@ -46,9 +47,8 @@ public class StackedchartsFactoryImpl extends EFactoryImpl implements Stackedcha
   }
 
   /**
-   * Creates an instance of the factory.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * Creates an instance of the factory. <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public StackedchartsFactoryImpl()
@@ -57,8 +57,8 @@ public class StackedchartsFactoryImpl extends EFactoryImpl implements Stackedcha
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @Override
@@ -66,31 +66,49 @@ public class StackedchartsFactoryImpl extends EFactoryImpl implements Stackedcha
   {
     switch (eClass.getClassifierID())
     {
-      case StackedchartsPackage.CHART_SET: return createChartSet();
-      case StackedchartsPackage.CHART: return createChart();
-      case StackedchartsPackage.DEPENDENT_AXIS: return createDependentAxis();
-      case StackedchartsPackage.DATASET: return createDataset();
-      case StackedchartsPackage.DATA_ITEM: return createDataItem();
-      case StackedchartsPackage.ZONE: return createZone();
-      case StackedchartsPackage.MARKER: return createMarker();
-      case StackedchartsPackage.STYLING: return createStyling();
-      case StackedchartsPackage.PLAIN_STYLING: return createPlainStyling();
-      case StackedchartsPackage.LINEAR_STYLING: return createLinearStyling();
-      case StackedchartsPackage.INDEPENDENT_AXIS: return createIndependentAxis();
-      case StackedchartsPackage.SCATTER_SET: return createScatterSet();
-      case StackedchartsPackage.DATUM: return createDatum();
-      case StackedchartsPackage.SELECTIVE_ANNOTATION: return createSelectiveAnnotation();
-      case StackedchartsPackage.DATE_AXIS: return createDateAxis();
-      case StackedchartsPackage.NUMBER_AXIS: return createNumberAxis();
-      case StackedchartsPackage.ANGLE_AXIS: return createAngleAxis();
-      default:
-        throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
+    case StackedchartsPackage.CHART_SET:
+      return createChartSet();
+    case StackedchartsPackage.CHART:
+      return createChart();
+    case StackedchartsPackage.DEPENDENT_AXIS:
+      return createDependentAxis();
+    case StackedchartsPackage.DATASET:
+      return createDataset();
+    case StackedchartsPackage.DATA_ITEM:
+      return createDataItem();
+    case StackedchartsPackage.ZONE:
+      return createZone();
+    case StackedchartsPackage.MARKER:
+      return createMarker();
+    case StackedchartsPackage.STYLING:
+      return createStyling();
+    case StackedchartsPackage.PLAIN_STYLING:
+      return createPlainStyling();
+    case StackedchartsPackage.LINEAR_STYLING:
+      return createLinearStyling();
+    case StackedchartsPackage.INDEPENDENT_AXIS:
+      return createIndependentAxis();
+    case StackedchartsPackage.SCATTER_SET:
+      return createScatterSet();
+    case StackedchartsPackage.DATUM:
+      return createDatum();
+    case StackedchartsPackage.SELECTIVE_ANNOTATION:
+      return createSelectiveAnnotation();
+    case StackedchartsPackage.DATE_AXIS:
+      return createDateAxis();
+    case StackedchartsPackage.NUMBER_AXIS:
+      return createNumberAxis();
+    case StackedchartsPackage.ANGLE_AXIS:
+      return createAngleAxis();
+    default:
+      throw new IllegalArgumentException("The class '" + eClass.getName()
+          + "' is not a valid classifier");
     }
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @Override
@@ -98,26 +116,27 @@ public class StackedchartsFactoryImpl extends EFactoryImpl implements Stackedcha
   {
     switch (eDataType.getClassifierID())
     {
-      case StackedchartsPackage.AXIS_SCALE:
-        return createAxisScaleFromString(eDataType, initialValue);
-      case StackedchartsPackage.ORIENTATION:
-        return createOrientationFromString(eDataType, initialValue);
-      case StackedchartsPackage.AXIS_DIRECTION:
-        return createAxisDirectionFromString(eDataType, initialValue);
-      case StackedchartsPackage.MARKER_STYLE:
-        return createMarkerStyleFromString(eDataType, initialValue);
-      case StackedchartsPackage.LINE_TYPE:
-        return createLineTypeFromString(eDataType, initialValue);
-      case StackedchartsPackage.COLOR:
-        return createColorFromString(eDataType, initialValue);
-      default:
-        throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
+    case StackedchartsPackage.AXIS_SCALE:
+      return createAxisScaleFromString(eDataType, initialValue);
+    case StackedchartsPackage.ORIENTATION:
+      return createOrientationFromString(eDataType, initialValue);
+    case StackedchartsPackage.AXIS_DIRECTION:
+      return createAxisDirectionFromString(eDataType, initialValue);
+    case StackedchartsPackage.MARKER_STYLE:
+      return createMarkerStyleFromString(eDataType, initialValue);
+    case StackedchartsPackage.LINE_TYPE:
+      return createLineTypeFromString(eDataType, initialValue);
+    case StackedchartsPackage.COLOR:
+      return createColorFromString(eDataType, initialValue);
+    default:
+      throw new IllegalArgumentException("The datatype '" + eDataType.getName()
+          + "' is not a valid classifier");
     }
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @Override
@@ -125,26 +144,27 @@ public class StackedchartsFactoryImpl extends EFactoryImpl implements Stackedcha
   {
     switch (eDataType.getClassifierID())
     {
-      case StackedchartsPackage.AXIS_SCALE:
-        return convertAxisScaleToString(eDataType, instanceValue);
-      case StackedchartsPackage.ORIENTATION:
-        return convertOrientationToString(eDataType, instanceValue);
-      case StackedchartsPackage.AXIS_DIRECTION:
-        return convertAxisDirectionToString(eDataType, instanceValue);
-      case StackedchartsPackage.MARKER_STYLE:
-        return convertMarkerStyleToString(eDataType, instanceValue);
-      case StackedchartsPackage.LINE_TYPE:
-        return convertLineTypeToString(eDataType, instanceValue);
-      case StackedchartsPackage.COLOR:
-        return convertColorToString(eDataType, instanceValue);
-      default:
-        throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
+    case StackedchartsPackage.AXIS_SCALE:
+      return convertAxisScaleToString(eDataType, instanceValue);
+    case StackedchartsPackage.ORIENTATION:
+      return convertOrientationToString(eDataType, instanceValue);
+    case StackedchartsPackage.AXIS_DIRECTION:
+      return convertAxisDirectionToString(eDataType, instanceValue);
+    case StackedchartsPackage.MARKER_STYLE:
+      return convertMarkerStyleToString(eDataType, instanceValue);
+    case StackedchartsPackage.LINE_TYPE:
+      return convertLineTypeToString(eDataType, instanceValue);
+    case StackedchartsPackage.COLOR:
+      return convertColorToString(eDataType, instanceValue);
+    default:
+      throw new IllegalArgumentException("The datatype '" + eDataType.getName()
+          + "' is not a valid classifier");
     }
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public ChartSet createChartSet()
@@ -154,8 +174,8 @@ public class StackedchartsFactoryImpl extends EFactoryImpl implements Stackedcha
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public Chart createChart()
@@ -165,8 +185,8 @@ public class StackedchartsFactoryImpl extends EFactoryImpl implements Stackedcha
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public DependentAxis createDependentAxis()
@@ -176,8 +196,8 @@ public class StackedchartsFactoryImpl extends EFactoryImpl implements Stackedcha
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public Dataset createDataset()
@@ -187,8 +207,8 @@ public class StackedchartsFactoryImpl extends EFactoryImpl implements Stackedcha
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public DataItem createDataItem()
@@ -198,8 +218,8 @@ public class StackedchartsFactoryImpl extends EFactoryImpl implements Stackedcha
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public Zone createZone()
@@ -209,8 +229,8 @@ public class StackedchartsFactoryImpl extends EFactoryImpl implements Stackedcha
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public Marker createMarker()
@@ -220,8 +240,8 @@ public class StackedchartsFactoryImpl extends EFactoryImpl implements Stackedcha
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public Styling createStyling()
@@ -231,8 +251,8 @@ public class StackedchartsFactoryImpl extends EFactoryImpl implements Stackedcha
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public PlainStyling createPlainStyling()
@@ -242,8 +262,8 @@ public class StackedchartsFactoryImpl extends EFactoryImpl implements Stackedcha
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public LinearStyling createLinearStyling()
@@ -253,8 +273,8 @@ public class StackedchartsFactoryImpl extends EFactoryImpl implements Stackedcha
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public IndependentAxis createIndependentAxis()
@@ -264,8 +284,8 @@ public class StackedchartsFactoryImpl extends EFactoryImpl implements Stackedcha
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public ScatterSet createScatterSet()
@@ -275,8 +295,8 @@ public class StackedchartsFactoryImpl extends EFactoryImpl implements Stackedcha
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public Datum createDatum()
@@ -286,8 +306,8 @@ public class StackedchartsFactoryImpl extends EFactoryImpl implements Stackedcha
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public SelectiveAnnotation createSelectiveAnnotation()
@@ -297,8 +317,8 @@ public class StackedchartsFactoryImpl extends EFactoryImpl implements Stackedcha
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public DateAxis createDateAxis()
@@ -308,8 +328,8 @@ public class StackedchartsFactoryImpl extends EFactoryImpl implements Stackedcha
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public NumberAxis createNumberAxis()
@@ -319,8 +339,8 @@ public class StackedchartsFactoryImpl extends EFactoryImpl implements Stackedcha
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public AngleAxis createAngleAxis()
@@ -330,111 +350,131 @@ public class StackedchartsFactoryImpl extends EFactoryImpl implements Stackedcha
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
-  public AxisScale createAxisScaleFromString(EDataType eDataType, String initialValue)
+  public AxisScale createAxisScaleFromString(EDataType eDataType,
+      String initialValue)
   {
     AxisScale result = AxisScale.get(initialValue);
-    if (result == null) throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
+    if (result == null)
+      throw new IllegalArgumentException("The value '" + initialValue
+          + "' is not a valid enumerator of '" + eDataType.getName() + "'");
     return result;
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
-  public String convertAxisScaleToString(EDataType eDataType, Object instanceValue)
+  public String convertAxisScaleToString(EDataType eDataType,
+      Object instanceValue)
   {
     return instanceValue == null ? null : instanceValue.toString();
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
-  public Orientation createOrientationFromString(EDataType eDataType, String initialValue)
+  public Orientation createOrientationFromString(EDataType eDataType,
+      String initialValue)
   {
     Orientation result = Orientation.get(initialValue);
-    if (result == null) throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
+    if (result == null)
+      throw new IllegalArgumentException("The value '" + initialValue
+          + "' is not a valid enumerator of '" + eDataType.getName() + "'");
     return result;
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
-  public String convertOrientationToString(EDataType eDataType, Object instanceValue)
+  public String convertOrientationToString(EDataType eDataType,
+      Object instanceValue)
   {
     return instanceValue == null ? null : instanceValue.toString();
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
-  public AxisDirection createAxisDirectionFromString(EDataType eDataType, String initialValue)
+  public AxisDirection createAxisDirectionFromString(EDataType eDataType,
+      String initialValue)
   {
     AxisDirection result = AxisDirection.get(initialValue);
-    if (result == null) throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
+    if (result == null)
+      throw new IllegalArgumentException("The value '" + initialValue
+          + "' is not a valid enumerator of '" + eDataType.getName() + "'");
     return result;
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
-  public String convertAxisDirectionToString(EDataType eDataType, Object instanceValue)
+  public String convertAxisDirectionToString(EDataType eDataType,
+      Object instanceValue)
   {
     return instanceValue == null ? null : instanceValue.toString();
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
-  public MarkerStyle createMarkerStyleFromString(EDataType eDataType, String initialValue)
+  public MarkerStyle createMarkerStyleFromString(EDataType eDataType,
+      String initialValue)
   {
     MarkerStyle result = MarkerStyle.get(initialValue);
-    if (result == null) throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
+    if (result == null)
+      throw new IllegalArgumentException("The value '" + initialValue
+          + "' is not a valid enumerator of '" + eDataType.getName() + "'");
     return result;
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
-  public String convertMarkerStyleToString(EDataType eDataType, Object instanceValue)
+  public String convertMarkerStyleToString(EDataType eDataType,
+      Object instanceValue)
   {
     return instanceValue == null ? null : instanceValue.toString();
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
-  public LineType createLineTypeFromString(EDataType eDataType, String initialValue)
+  public LineType createLineTypeFromString(EDataType eDataType,
+      String initialValue)
   {
     LineType result = LineType.get(initialValue);
-    if (result == null) throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
+    if (result == null)
+      throw new IllegalArgumentException("The value '" + initialValue
+          + "' is not a valid enumerator of '" + eDataType.getName() + "'");
     return result;
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
-  public String convertLineTypeToString(EDataType eDataType, Object instanceValue)
+  public String convertLineTypeToString(EDataType eDataType,
+      Object instanceValue)
   {
     return instanceValue == null ? null : instanceValue.toString();
   }
@@ -447,9 +487,8 @@ public class StackedchartsFactoryImpl extends EFactoryImpl implements Stackedcha
     final Color res;
     if (initialValue != null && initialValue.length() > 0)
     {
-      res =
-          new Color(Integer.valueOf(initialValue.substring(1, 3), 16), Integer
-              .valueOf(initialValue.substring(3, 5), 16), Integer.valueOf(
+      res = new Color(Integer.valueOf(initialValue.substring(1, 3), 16), Integer
+          .valueOf(initialValue.substring(3, 5), 16), Integer.valueOf(
               initialValue.substring(5, 7), 16));
     }
     else
@@ -460,16 +499,16 @@ public class StackedchartsFactoryImpl extends EFactoryImpl implements Stackedcha
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
    */
   public String convertColorToString(EDataType eDataType, Object instanceValue)
   {
     final String res;
-    if(instanceValue != null)
+    if (instanceValue != null)
     {
-      Color theColor = (Color) instanceValue;    
-      res = "#"+Integer.toHexString(theColor.getRGB()).substring(2).toUpperCase();
+      Color theColor = (Color) instanceValue;
+      res = "#" + Integer.toHexString(theColor.getRGB()).substring(2)
+          .toUpperCase();
     }
     else
     {
@@ -479,18 +518,18 @@ public class StackedchartsFactoryImpl extends EFactoryImpl implements Stackedcha
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public StackedchartsPackage getStackedchartsPackage()
   {
-    return (StackedchartsPackage)getEPackage();
+    return (StackedchartsPackage) getEPackage();
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @deprecated
    * @generated
    */
@@ -500,4 +539,4 @@ public class StackedchartsFactoryImpl extends EFactoryImpl implements Stackedcha
     return StackedchartsPackage.eINSTANCE;
   }
 
-} //StackedchartsFactoryImpl
+} // StackedchartsFactoryImpl

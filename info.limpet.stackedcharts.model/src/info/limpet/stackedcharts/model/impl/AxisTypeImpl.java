@@ -10,17 +10,17 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
 /**
- * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Axis Type</b></em>'.
- * <!-- end-user-doc -->
+ * <!-- begin-user-doc --> An implementation of the model object '<em><b>Axis Type</b></em>'. <!--
+ * end-user-doc -->
  *
  * @generated
  */
-public abstract class AxisTypeImpl extends MinimalEObjectImpl.Container implements AxisType
+public abstract class AxisTypeImpl extends MinimalEObjectImpl.Container
+    implements AxisType
 {
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   protected AxisTypeImpl()
@@ -29,8 +29,8 @@ public abstract class AxisTypeImpl extends MinimalEObjectImpl.Container implemen
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @Override
@@ -39,4 +39,4 @@ public abstract class AxisTypeImpl extends MinimalEObjectImpl.Container implemen
     return StackedchartsPackage.Literals.AXIS_TYPE;
   }
 
-} //AxisTypeImpl
+} // AxisTypeImpl

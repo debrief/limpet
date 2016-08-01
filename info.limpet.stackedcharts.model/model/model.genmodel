@@ -124,6 +124,7 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//AngleAxis/minVal"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//AngleAxis/maxVal"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//AngleAxis/midOrigin"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//AngleAxis/redGreen"/>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>

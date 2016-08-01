@@ -23,25 +23,27 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 import org.eclipse.emf.ecore.util.EObjectResolvingEList;
 
 /**
- * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Selective Annotation</b></em>'.
- * <!-- end-user-doc -->
+ * <!-- begin-user-doc --> An implementation of the model object '<em><b>Selective
+ * Annotation</b></em>'. <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link info.limpet.stackedcharts.model.impl.SelectiveAnnotationImpl#getAnnotation <em>Annotation</em>}</li>
- *   <li>{@link info.limpet.stackedcharts.model.impl.SelectiveAnnotationImpl#getAppearsIn <em>Appears In</em>}</li>
+ * <li>{@link info.limpet.stackedcharts.model.impl.SelectiveAnnotationImpl#getAnnotation
+ * <em>Annotation</em>}</li>
+ * <li>{@link info.limpet.stackedcharts.model.impl.SelectiveAnnotationImpl#getAppearsIn <em>Appears
+ * In</em>}</li>
  * </ul>
  *
  * @generated
  */
-public class SelectiveAnnotationImpl extends MinimalEObjectImpl.Container implements SelectiveAnnotation
+public class SelectiveAnnotationImpl extends MinimalEObjectImpl.Container
+    implements SelectiveAnnotation
 {
   /**
    * The cached value of the '{@link #getAnnotation() <em>Annotation</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @see #getAnnotation()
    * @generated
    * @ordered
@@ -49,9 +51,9 @@ public class SelectiveAnnotationImpl extends MinimalEObjectImpl.Container implem
   protected AbstractAnnotation annotation;
 
   /**
-   * The cached value of the '{@link #getAppearsIn() <em>Appears In</em>}' reference list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The cached value of the '{@link #getAppearsIn() <em>Appears In</em>}' reference list. <!--
+   * begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @see #getAppearsIn()
    * @generated
    * @ordered
@@ -59,8 +61,8 @@ public class SelectiveAnnotationImpl extends MinimalEObjectImpl.Container implem
   protected EList<Chart> appearsIn;
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   protected SelectiveAnnotationImpl()
@@ -69,8 +71,8 @@ public class SelectiveAnnotationImpl extends MinimalEObjectImpl.Container implem
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @Override
@@ -80,8 +82,8 @@ public class SelectiveAnnotationImpl extends MinimalEObjectImpl.Container implem
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public AbstractAnnotation getAnnotation()
@@ -90,25 +92,32 @@ public class SelectiveAnnotationImpl extends MinimalEObjectImpl.Container implem
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
-  public NotificationChain basicSetAnnotation(AbstractAnnotation newAnnotation, NotificationChain msgs)
+  public NotificationChain basicSetAnnotation(AbstractAnnotation newAnnotation,
+      NotificationChain msgs)
   {
     AbstractAnnotation oldAnnotation = annotation;
     annotation = newAnnotation;
     if (eNotificationRequired())
     {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, StackedchartsPackage.SELECTIVE_ANNOTATION__ANNOTATION, oldAnnotation, newAnnotation);
-      if (msgs == null) msgs = notification; else msgs.add(notification);
+      ENotificationImpl notification = new ENotificationImpl(this,
+          Notification.SET,
+          StackedchartsPackage.SELECTIVE_ANNOTATION__ANNOTATION, oldAnnotation,
+          newAnnotation);
+      if (msgs == null)
+        msgs = notification;
+      else
+        msgs.add(notification);
     }
     return msgs;
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public void setAnnotation(AbstractAnnotation newAnnotation)
@@ -117,49 +126,60 @@ public class SelectiveAnnotationImpl extends MinimalEObjectImpl.Container implem
     {
       NotificationChain msgs = null;
       if (annotation != null)
-        msgs = ((InternalEObject)annotation).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - StackedchartsPackage.SELECTIVE_ANNOTATION__ANNOTATION, null, msgs);
+        msgs = ((InternalEObject) annotation).eInverseRemove(this,
+            EOPPOSITE_FEATURE_BASE
+                - StackedchartsPackage.SELECTIVE_ANNOTATION__ANNOTATION, null,
+            msgs);
       if (newAnnotation != null)
-        msgs = ((InternalEObject)newAnnotation).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - StackedchartsPackage.SELECTIVE_ANNOTATION__ANNOTATION, null, msgs);
+        msgs = ((InternalEObject) newAnnotation).eInverseAdd(this,
+            EOPPOSITE_FEATURE_BASE
+                - StackedchartsPackage.SELECTIVE_ANNOTATION__ANNOTATION, null,
+            msgs);
       msgs = basicSetAnnotation(newAnnotation, msgs);
-      if (msgs != null) msgs.dispatch();
+      if (msgs != null)
+        msgs.dispatch();
     }
     else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, StackedchartsPackage.SELECTIVE_ANNOTATION__ANNOTATION, newAnnotation, newAnnotation));
+      eNotify(new ENotificationImpl(this, Notification.SET,
+          StackedchartsPackage.SELECTIVE_ANNOTATION__ANNOTATION, newAnnotation,
+          newAnnotation));
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EList<Chart> getAppearsIn()
   {
     if (appearsIn == null)
     {
-      appearsIn = new EObjectResolvingEList<Chart>(Chart.class, this, StackedchartsPackage.SELECTIVE_ANNOTATION__APPEARS_IN);
+      appearsIn = new EObjectResolvingEList<Chart>(Chart.class, this,
+          StackedchartsPackage.SELECTIVE_ANNOTATION__APPEARS_IN);
     }
     return appearsIn;
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @Override
-  public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
+  public NotificationChain eInverseRemove(InternalEObject otherEnd,
+      int featureID, NotificationChain msgs)
   {
     switch (featureID)
     {
-      case StackedchartsPackage.SELECTIVE_ANNOTATION__ANNOTATION:
-        return basicSetAnnotation(null, msgs);
+    case StackedchartsPackage.SELECTIVE_ANNOTATION__ANNOTATION:
+      return basicSetAnnotation(null, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @Override
@@ -167,17 +187,17 @@ public class SelectiveAnnotationImpl extends MinimalEObjectImpl.Container implem
   {
     switch (featureID)
     {
-      case StackedchartsPackage.SELECTIVE_ANNOTATION__ANNOTATION:
-        return getAnnotation();
-      case StackedchartsPackage.SELECTIVE_ANNOTATION__APPEARS_IN:
-        return getAppearsIn();
+    case StackedchartsPackage.SELECTIVE_ANNOTATION__ANNOTATION:
+      return getAnnotation();
+    case StackedchartsPackage.SELECTIVE_ANNOTATION__APPEARS_IN:
+      return getAppearsIn();
     }
     return super.eGet(featureID, resolve, coreType);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @SuppressWarnings("unchecked")
@@ -186,20 +206,20 @@ public class SelectiveAnnotationImpl extends MinimalEObjectImpl.Container implem
   {
     switch (featureID)
     {
-      case StackedchartsPackage.SELECTIVE_ANNOTATION__ANNOTATION:
-        setAnnotation((AbstractAnnotation)newValue);
-        return;
-      case StackedchartsPackage.SELECTIVE_ANNOTATION__APPEARS_IN:
-        getAppearsIn().clear();
-        getAppearsIn().addAll((Collection<? extends Chart>)newValue);
-        return;
+    case StackedchartsPackage.SELECTIVE_ANNOTATION__ANNOTATION:
+      setAnnotation((AbstractAnnotation) newValue);
+      return;
+    case StackedchartsPackage.SELECTIVE_ANNOTATION__APPEARS_IN:
+      getAppearsIn().clear();
+      getAppearsIn().addAll((Collection<? extends Chart>) newValue);
+      return;
     }
     super.eSet(featureID, newValue);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @Override
@@ -207,19 +227,19 @@ public class SelectiveAnnotationImpl extends MinimalEObjectImpl.Container implem
   {
     switch (featureID)
     {
-      case StackedchartsPackage.SELECTIVE_ANNOTATION__ANNOTATION:
-        setAnnotation((AbstractAnnotation)null);
-        return;
-      case StackedchartsPackage.SELECTIVE_ANNOTATION__APPEARS_IN:
-        getAppearsIn().clear();
-        return;
+    case StackedchartsPackage.SELECTIVE_ANNOTATION__ANNOTATION:
+      setAnnotation((AbstractAnnotation) null);
+      return;
+    case StackedchartsPackage.SELECTIVE_ANNOTATION__APPEARS_IN:
+      getAppearsIn().clear();
+      return;
     }
     super.eUnset(featureID);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @Override
@@ -227,12 +247,12 @@ public class SelectiveAnnotationImpl extends MinimalEObjectImpl.Container implem
   {
     switch (featureID)
     {
-      case StackedchartsPackage.SELECTIVE_ANNOTATION__ANNOTATION:
-        return annotation != null;
-      case StackedchartsPackage.SELECTIVE_ANNOTATION__APPEARS_IN:
-        return appearsIn != null && !appearsIn.isEmpty();
+    case StackedchartsPackage.SELECTIVE_ANNOTATION__ANNOTATION:
+      return annotation != null;
+    case StackedchartsPackage.SELECTIVE_ANNOTATION__APPEARS_IN:
+      return appearsIn != null && !appearsIn.isEmpty();
     }
     return super.eIsSet(featureID);
   }
 
-} //SelectiveAnnotationImpl
+} // SelectiveAnnotationImpl

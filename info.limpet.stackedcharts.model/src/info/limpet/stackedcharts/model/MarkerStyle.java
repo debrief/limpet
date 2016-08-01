@@ -9,10 +9,9 @@ import java.util.List;
 import org.eclipse.emf.common.util.Enumerator;
 
 /**
- * <!-- begin-user-doc -->
- * A representation of the literals of the enumeration '<em><b>Marker Style</b></em>',
- * and utility methods for working with them.
- * <!-- end-user-doc -->
+ * <!-- begin-user-doc --> A representation of the literals of the enumeration '<em><b>Marker
+ * Style</b></em>', and utility methods for working with them. <!-- end-user-doc -->
+ * 
  * @see info.limpet.stackedcharts.model.StackedchartsPackage#getMarkerStyle()
  * @model
  * @generated
@@ -20,9 +19,8 @@ import org.eclipse.emf.common.util.Enumerator;
 public enum MarkerStyle implements Enumerator
 {
   /**
-   * The '<em><b>None</b></em>' literal object.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The '<em><b>None</b></em>' literal object. <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @see #NONE_VALUE
    * @generated
    * @ordered
@@ -30,9 +28,8 @@ public enum MarkerStyle implements Enumerator
   NONE(0, "None", "None"),
 
   /**
-   * The '<em><b>Square</b></em>' literal object.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The '<em><b>Square</b></em>' literal object. <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @see #SQUARE_VALUE
    * @generated
    * @ordered
@@ -40,9 +37,8 @@ public enum MarkerStyle implements Enumerator
   SQUARE(1, "Square", "Square"),
 
   /**
-   * The '<em><b>Circle</b></em>' literal object.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The '<em><b>Circle</b></em>' literal object. <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @see #CIRCLE_VALUE
    * @generated
    * @ordered
@@ -50,9 +46,8 @@ public enum MarkerStyle implements Enumerator
   CIRCLE(2, "Circle", "Circle"),
 
   /**
-   * The '<em><b>Triangle</b></em>' literal object.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The '<em><b>Triangle</b></em>' literal object. <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @see #TRIANGLE_VALUE
    * @generated
    * @ordered
@@ -60,9 +55,8 @@ public enum MarkerStyle implements Enumerator
   TRIANGLE(3, "Triangle", "Triangle"),
 
   /**
-   * The '<em><b>Cross</b></em>' literal object.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The '<em><b>Cross</b></em>' literal object. <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @see #CROSS_VALUE
    * @generated
    * @ordered
@@ -70,9 +64,8 @@ public enum MarkerStyle implements Enumerator
   CROSS(4, "Cross", "Cross"),
 
   /**
-   * The '<em><b>Diamond</b></em>' literal object.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The '<em><b>Diamond</b></em>' literal object. <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @see #DIAMOND_VALUE
    * @generated
    * @ordered
@@ -80,13 +73,13 @@ public enum MarkerStyle implements Enumerator
   DIAMOND(5, "Diamond", "Diamond");
 
   /**
-   * The '<em><b>None</b></em>' literal value.
-   * <!-- begin-user-doc -->
+   * The '<em><b>None</b></em>' literal value. <!-- begin-user-doc -->
    * <p>
-   * If the meaning of '<em><b>None</b></em>' literal object isn't clear,
-   * there really should be more of a description here...
+   * If the meaning of '<em><b>None</b></em>' literal object isn't clear, there really should be
+   * more of a description here...
    * </p>
    * <!-- end-user-doc -->
+   * 
    * @see #NONE
    * @model name="None"
    * @generated
@@ -95,13 +88,13 @@ public enum MarkerStyle implements Enumerator
   public static final int NONE_VALUE = 0;
 
   /**
-   * The '<em><b>Square</b></em>' literal value.
-   * <!-- begin-user-doc -->
+   * The '<em><b>Square</b></em>' literal value. <!-- begin-user-doc -->
    * <p>
-   * If the meaning of '<em><b>Square</b></em>' literal object isn't clear,
-   * there really should be more of a description here...
+   * If the meaning of '<em><b>Square</b></em>' literal object isn't clear, there really should be
+   * more of a description here...
    * </p>
    * <!-- end-user-doc -->
+   * 
    * @see #SQUARE
    * @model name="Square"
    * @generated
@@ -110,13 +103,13 @@ public enum MarkerStyle implements Enumerator
   public static final int SQUARE_VALUE = 1;
 
   /**
-   * The '<em><b>Circle</b></em>' literal value.
-   * <!-- begin-user-doc -->
+   * The '<em><b>Circle</b></em>' literal value. <!-- begin-user-doc -->
    * <p>
-   * If the meaning of '<em><b>Circle</b></em>' literal object isn't clear,
-   * there really should be more of a description here...
+   * If the meaning of '<em><b>Circle</b></em>' literal object isn't clear, there really should be
+   * more of a description here...
    * </p>
    * <!-- end-user-doc -->
+   * 
    * @see #CIRCLE
    * @model name="Circle"
    * @generated
@@ -125,13 +118,13 @@ public enum MarkerStyle implements Enumerator
   public static final int CIRCLE_VALUE = 2;
 
   /**
-   * The '<em><b>Triangle</b></em>' literal value.
-   * <!-- begin-user-doc -->
+   * The '<em><b>Triangle</b></em>' literal value. <!-- begin-user-doc -->
    * <p>
-   * If the meaning of '<em><b>Triangle</b></em>' literal object isn't clear,
-   * there really should be more of a description here...
+   * If the meaning of '<em><b>Triangle</b></em>' literal object isn't clear, there really should be
+   * more of a description here...
    * </p>
    * <!-- end-user-doc -->
+   * 
    * @see #TRIANGLE
    * @model name="Triangle"
    * @generated
@@ -140,13 +133,13 @@ public enum MarkerStyle implements Enumerator
   public static final int TRIANGLE_VALUE = 3;
 
   /**
-   * The '<em><b>Cross</b></em>' literal value.
-   * <!-- begin-user-doc -->
+   * The '<em><b>Cross</b></em>' literal value. <!-- begin-user-doc -->
    * <p>
-   * If the meaning of '<em><b>Cross</b></em>' literal object isn't clear,
-   * there really should be more of a description here...
+   * If the meaning of '<em><b>Cross</b></em>' literal object isn't clear, there really should be
+   * more of a description here...
    * </p>
    * <!-- end-user-doc -->
+   * 
    * @see #CROSS
    * @model name="Cross"
    * @generated
@@ -155,13 +148,13 @@ public enum MarkerStyle implements Enumerator
   public static final int CROSS_VALUE = 4;
 
   /**
-   * The '<em><b>Diamond</b></em>' literal value.
-   * <!-- begin-user-doc -->
+   * The '<em><b>Diamond</b></em>' literal value. <!-- begin-user-doc -->
    * <p>
-   * If the meaning of '<em><b>Diamond</b></em>' literal object isn't clear,
-   * there really should be more of a description here...
+   * If the meaning of '<em><b>Diamond</b></em>' literal object isn't clear, there really should be
+   * more of a description here...
    * </p>
    * <!-- end-user-doc -->
+   * 
    * @see #DIAMOND
    * @model name="Diamond"
    * @generated
@@ -170,35 +163,29 @@ public enum MarkerStyle implements Enumerator
   public static final int DIAMOND_VALUE = 5;
 
   /**
-   * An array of all the '<em><b>Marker Style</b></em>' enumerators.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * An array of all the '<em><b>Marker Style</b></em>' enumerators. <!-- begin-user-doc --> <!--
+   * end-user-doc -->
+   * 
    * @generated
    */
-  private static final MarkerStyle[] VALUES_ARRAY =
-    new MarkerStyle[]
-    {
-      NONE,
-      SQUARE,
-      CIRCLE,
-      TRIANGLE,
-      CROSS,
-      DIAMOND,
-    };
+  private static final MarkerStyle[] VALUES_ARRAY = new MarkerStyle[]
+  {NONE, SQUARE, CIRCLE, TRIANGLE, CROSS, DIAMOND,};
 
   /**
-   * A public read-only list of all the '<em><b>Marker Style</b></em>' enumerators.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * A public read-only list of all the '<em><b>Marker Style</b></em>' enumerators. <!--
+   * begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
-  public static final List<MarkerStyle> VALUES = Collections.unmodifiableList(Arrays.asList(VALUES_ARRAY));
+  public static final List<MarkerStyle> VALUES = Collections.unmodifiableList(
+      Arrays.asList(VALUES_ARRAY));
 
   /**
-   * Returns the '<em><b>Marker Style</b></em>' literal with the specified literal value.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param literal the literal.
+   * Returns the '<em><b>Marker Style</b></em>' literal with the specified literal value. <!--
+   * begin-user-doc --> <!-- end-user-doc -->
+   * 
+   * @param literal
+   *          the literal.
    * @return the matching enumerator or <code>null</code>.
    * @generated
    */
@@ -216,10 +203,11 @@ public enum MarkerStyle implements Enumerator
   }
 
   /**
-   * Returns the '<em><b>Marker Style</b></em>' literal with the specified name.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param name the name.
+   * Returns the '<em><b>Marker Style</b></em>' literal with the specified name. <!-- begin-user-doc
+   * --> <!-- end-user-doc -->
+   * 
+   * @param name
+   *          the name.
    * @return the matching enumerator or <code>null</code>.
    * @generated
    */
@@ -237,10 +225,11 @@ public enum MarkerStyle implements Enumerator
   }
 
   /**
-   * Returns the '<em><b>Marker Style</b></em>' literal with the specified integer value.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the integer value.
+   * Returns the '<em><b>Marker Style</b></em>' literal with the specified integer value. <!--
+   * begin-user-doc --> <!-- end-user-doc -->
+   * 
+   * @param value
+   *          the integer value.
    * @return the matching enumerator or <code>null</code>.
    * @generated
    */
@@ -248,41 +237,46 @@ public enum MarkerStyle implements Enumerator
   {
     switch (value)
     {
-      case NONE_VALUE: return NONE;
-      case SQUARE_VALUE: return SQUARE;
-      case CIRCLE_VALUE: return CIRCLE;
-      case TRIANGLE_VALUE: return TRIANGLE;
-      case CROSS_VALUE: return CROSS;
-      case DIAMOND_VALUE: return DIAMOND;
+    case NONE_VALUE:
+      return NONE;
+    case SQUARE_VALUE:
+      return SQUARE;
+    case CIRCLE_VALUE:
+      return CIRCLE;
+    case TRIANGLE_VALUE:
+      return TRIANGLE;
+    case CROSS_VALUE:
+      return CROSS;
+    case DIAMOND_VALUE:
+      return DIAMOND;
     }
     return null;
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   private final int value;
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   private final String name;
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   private final String literal;
 
   /**
-   * Only this class can construct instances.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * Only this class can construct instances. <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   private MarkerStyle(int value, String name, String literal)
@@ -293,8 +287,8 @@ public enum MarkerStyle implements Enumerator
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public int getValue()
@@ -303,8 +297,8 @@ public enum MarkerStyle implements Enumerator
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public String getName()
@@ -313,8 +307,8 @@ public enum MarkerStyle implements Enumerator
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public String getLiteral()
@@ -323,9 +317,9 @@ public enum MarkerStyle implements Enumerator
   }
 
   /**
-   * Returns the literal value of the enumerator, which is its string representation.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * Returns the literal value of the enumerator, which is its string representation. <!--
+   * begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @Override
@@ -333,5 +327,5 @@ public enum MarkerStyle implements Enumerator
   {
     return literal;
   }
-  
-} //MarkerStyle
+
+} // MarkerStyle
