@@ -13,6 +13,7 @@ import java.awt.datatransfer.SystemFlavorMap;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -64,6 +65,7 @@ import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor;
 import org.freehep.graphicsio.emf.EMFGraphics2D;
+import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.StandardChartTheme;
 import org.jfree.experimental.chart.swt.ChartComposite;
@@ -466,36 +468,70 @@ public class StackedChartsView extends ViewPart implements
     manager.add(showMarker);
     
     
-    final Action export = new Action("Export to WMF", SWT.PUSH)
+    final boolean exportPNG = (System.getProperty("os.name").toLowerCase().indexOf("mac") >= 0 || System.getProperty("os.name")
+        .toLowerCase().indexOf("nux") >= 0);
+    
+    
+    final Action export = new Action(exportPNG?"Export to PNG":"Export to WMF", SWT.PUSH)
     {
       @Override
       public void run()
       {
-          try
-          {
+        if(exportPNG)
+          toPNG();
+        else
+          toWMF();
+
+        
+      }
+
+      private void toWMF()
+      {
+        try
+        {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        JFreeChart combined = _chartComposite.getChart();
+        Rectangle bounds = _chartComposite.getBounds();
+        EMFGraphics2D g2d =
+            new EMFGraphics2D(out, new Dimension(bounds.width, bounds.height));
+        g2d.startExport();
+        combined.draw(g2d, new Rectangle2D.Double(0, 0, bounds.width,
+            bounds.height));
+
+        // Cleanup
+        g2d.endExport();
+        
+        Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
+        clpbrd.setContents(new WMFTransfer(out), null);
+          MessageDialog.openInformation(Display.getCurrent().getActiveShell(), "WMF Export", "Exported to Clipboard.[WMF]");
+          
+        }
+        catch (Exception e)
+        {
+          e.printStackTrace();
+        }
+      }
+      
+      private void toPNG()
+      {
+        try
+        {
           ByteArrayOutputStream out = new ByteArrayOutputStream();
           JFreeChart combined = _chartComposite.getChart();
           Rectangle bounds = _chartComposite.getBounds();
-          EMFGraphics2D g2d =
-              new EMFGraphics2D(out, new Dimension(bounds.width, bounds.height));
-          g2d.startExport();
-          combined.draw(g2d, new Rectangle2D.Double(0, 0, bounds.width,
-              bounds.height));
-
-          // Cleanup
-          g2d.endExport();
           
+          ChartUtilities.writeChartAsPNG(out, combined, bounds.width, bounds.height);
+      
           Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
-          clpbrd.setContents(new WMFTransfer(out), null);
-            MessageDialog.openInformation(Display.getCurrent().getActiveShell(), "WMF Export", "Exported to Clipboard.[WMF]");
-            
-          }
-          catch (Exception e)
-          {
-            e.printStackTrace();
-          }
-
-        
+          BufferedImage bufferedImage = combined.createBufferedImage(bounds.width, bounds.height);
+          clpbrd.setContents(new ImageTransfer(bufferedImage),null);
+          MessageDialog.openInformation(Display.getCurrent().getActiveShell(), "PNG Export", "Exported to Clipboard. [PNG]");
+         
+        }
+        catch (Exception e)
+        {
+          e.printStackTrace();
+        }
       }
     };
     export.setImageDescriptor(Activator.imageDescriptorFromPlugin(Activator.PLUGIN_ID, "icons/export_wmf.png"));
@@ -929,5 +965,43 @@ public class StackedChartsView extends ViewPart implements
          return false;
     }
 }
+  public static class ImageTransfer implements Transferable{
+    
+   
+   
+    private static DataFlavor[] supportedFlavors = {
+      DataFlavor.imageFlavor
+    };
+    
+    java.awt.Image image;
+    
+    public ImageTransfer(java.awt.Image image) {
+      this.image = image;
+    }
+    
+    //@Override
+    public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
+      if (flavor.equals( DataFlavor.imageFlavor) ) {
+        return image;
+      } else 
+        throw new UnsupportedFlavorException(flavor);
+    }
+    
+   
+    
+    
+    
+    public DataFlavor[] getTransferDataFlavors() {
+      return supportedFlavors;
+    }
+    
+    public boolean isDataFlavorSupported(DataFlavor flavor) {
+      for(DataFlavor f : supportedFlavors) {
+        if (f.equals(flavor))
+          return true;
+      }
+      return false;
+    }
+  }
 
 }
