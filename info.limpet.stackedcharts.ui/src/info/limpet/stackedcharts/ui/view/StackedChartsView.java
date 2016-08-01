@@ -468,73 +468,84 @@ public class StackedChartsView extends ViewPart implements
     manager.add(showMarker);
     
     
-    final boolean exportPNG = (System.getProperty("os.name").toLowerCase().indexOf("mac") >= 0 || System.getProperty("os.name")
-        .toLowerCase().indexOf("nux") >= 0);
-    
-    
-    final Action export = new Action(exportPNG?"Export to PNG":"Export to WMF", SWT.PUSH)
-    {
-      @Override
-      public void run()
-      {
-        if(exportPNG)
-          toPNG();
-        else
-          toWMF();
+    final boolean exportPNG =
+        (System.getProperty("os.name").toLowerCase().indexOf("mac") >= 0 || System
+            .getProperty("os.name").toLowerCase().indexOf("nux") >= 0);
 
-        
-      }
+    final Action export =
+        new Action(exportPNG ? "Export to PNG" : "Export to WMF", SWT.PUSH)
+        {
+          @Override
+          public void run()
+          {
 
-      private void toWMF()
-      {
-        try
-        {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        JFreeChart combined = _chartComposite.getChart();
-        Rectangle bounds = _chartComposite.getBounds();
-        EMFGraphics2D g2d =
-            new EMFGraphics2D(out, new Dimension(bounds.width, bounds.height));
-        g2d.startExport();
-        combined.draw(g2d, new Rectangle2D.Double(0, 0, bounds.width,
-            bounds.height));
+            if (exportPNG)
+              toPNG();
+            else
+              toWMF();
 
-        // Cleanup
-        g2d.endExport();
-        
-        Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
-        clpbrd.setContents(new WMFTransfer(out), null);
-          MessageDialog.openInformation(Display.getCurrent().getActiveShell(), "WMF Export", "Exported to Clipboard.[WMF]");
-          
-        }
-        catch (Exception e)
-        {
-          e.printStackTrace();
-        }
-      }
-      
-      private void toPNG()
-      {
-        try
-        {
-          ByteArrayOutputStream out = new ByteArrayOutputStream();
-          JFreeChart combined = _chartComposite.getChart();
-          Rectangle bounds = _chartComposite.getBounds();
-          
-          ChartUtilities.writeChartAsPNG(out, combined, bounds.width, bounds.height);
-      
-          Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
-          BufferedImage bufferedImage = combined.createBufferedImage(bounds.width, bounds.height);
-          clpbrd.setContents(new ImageTransfer(bufferedImage),null);
-          MessageDialog.openInformation(Display.getCurrent().getActiveShell(), "PNG Export", "Exported to Clipboard. [PNG]");
-         
-        }
-        catch (Exception e)
-        {
-          e.printStackTrace();
-        }
-      }
-    };
-    export.setImageDescriptor(Activator.imageDescriptorFromPlugin(Activator.PLUGIN_ID, "icons/export_wmf.png"));
+          }
+
+          private void toWMF()
+          {
+            try
+            {
+              ByteArrayOutputStream out = new ByteArrayOutputStream();
+              JFreeChart combined = _chartComposite.getChart();
+              Rectangle bounds = _chartComposite.getBounds();
+              EMFGraphics2D g2d =
+                  new EMFGraphics2D(out, new Dimension(bounds.width,
+                      bounds.height));
+              g2d.startExport();
+              combined.draw(g2d, new Rectangle2D.Double(0, 0, bounds.width,
+                  bounds.height));
+
+              // Cleanup
+              g2d.endExport();
+
+              Clipboard clpbrd =
+                  Toolkit.getDefaultToolkit().getSystemClipboard();
+              clpbrd.setContents(new WMFTransfer(out), null);
+              MessageDialog.openInformation(Display.getCurrent()
+                  .getActiveShell(), "WMF Export",
+                  "Exported to Clipboard.[WMF]");
+
+            }
+            catch (Exception e)
+            {
+              e.printStackTrace();
+            }
+          }
+
+          private void toPNG()
+          {
+            try
+            {
+              ByteArrayOutputStream out = new ByteArrayOutputStream();
+              JFreeChart combined = _chartComposite.getChart();
+              Rectangle bounds = _chartComposite.getBounds();
+
+              ChartUtilities.writeChartAsPNG(out, combined, bounds.width,
+                  bounds.height);
+
+              Clipboard clpbrd =
+                  Toolkit.getDefaultToolkit().getSystemClipboard();
+              BufferedImage bufferedImage =
+                  combined.createBufferedImage(bounds.width, bounds.height);
+              clpbrd.setContents(new ImageTransfer(bufferedImage), null);
+              MessageDialog.openInformation(Display.getCurrent()
+                  .getActiveShell(), "PNG Export",
+                  "Exported to Clipboard. [PNG]");
+
+            }
+            catch (Exception e)
+            {
+              e.printStackTrace();
+            }
+          }
+        };
+    export.setImageDescriptor(Activator.imageDescriptorFromPlugin(
+        Activator.PLUGIN_ID, "icons/export_wmf.png"));
     manager.add(export);
 
     final Action sizeDown = new Action("-", Action.AS_PUSH_BUTTON)

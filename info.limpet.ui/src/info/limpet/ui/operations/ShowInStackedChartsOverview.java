@@ -278,9 +278,9 @@ public class ShowInStackedChartsOverview implements IOperation<IStoreItem>
     // our data generator
     LimpetStackedChartsAdapter adapter = new LimpetStackedChartsAdapter();
 
-    if (adapter.canConvert(selection))
+    if (adapter.canConvertToDataset(selection))
     {
-      List<Object> datasets = adapter.convert(selection);
+      List<Dataset> datasets = adapter.convertToDataset(selection);
       if (datasets != null)
       {
         StackedchartsFactory factory = StackedchartsFactory.eINSTANCE;

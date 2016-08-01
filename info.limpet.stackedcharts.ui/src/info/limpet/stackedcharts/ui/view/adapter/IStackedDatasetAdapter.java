@@ -1,8 +1,10 @@
 package info.limpet.stackedcharts.ui.view.adapter;
 
+import info.limpet.stackedcharts.model.Dataset;
+
 import java.util.List;
 
-public interface IStackedAdapter
+public interface IStackedDatasetAdapter
 {
   /** whether this adapter can convert objects of the
    * supplied type.  This is expected to return
@@ -11,14 +13,13 @@ public interface IStackedAdapter
    * @param data the object to convert
    * @return yes/no
    */
-  boolean canConvert(Object data);
+  boolean canConvertToDataset(Object data);
   
   
-  /** convert the supplied data object into a Limpet object
-   * - probably a Dataset or a ScatterSet,
+  /** convert the supplied data object into a Limpet dataset
    * if possible
    * @param data the object to convert
    * @return the dataset (or null if this class can't convert it)
    */
-  List<Object> convert(Object data);
+  List<Dataset> convertToDataset(Object data);
 }

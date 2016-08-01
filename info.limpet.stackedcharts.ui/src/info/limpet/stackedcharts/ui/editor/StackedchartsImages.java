@@ -48,6 +48,8 @@ public class StackedchartsImages
       create(GEF_PATH, "chart.png"); //$NON-NLS-1$
   public static final ImageDescriptor DESC_CHARTSET = create(GEF_PATH,
       "chartset.png"); //$NON-NLS-1$
+  public static final ImageDescriptor DESC_SCATTERSET = create(GEF_PATH,
+	      "scatterset.png"); //$NON-NLS-1$
   public static final ImageDescriptor DESC_DELETE = create(GEF_PATH,
       "delete.png"); //$NON-NLS-1$
   public static final ImageDescriptor DESC_PAINT =

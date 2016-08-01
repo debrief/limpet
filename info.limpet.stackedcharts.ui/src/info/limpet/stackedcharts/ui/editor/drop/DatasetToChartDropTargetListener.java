@@ -5,10 +5,8 @@ import info.limpet.stackedcharts.model.Chart;
 import info.limpet.stackedcharts.model.Dataset;
 import info.limpet.stackedcharts.model.DependentAxis;
 import info.limpet.stackedcharts.model.NumberAxis;
-import info.limpet.stackedcharts.model.ScatterSet;
 import info.limpet.stackedcharts.model.impl.StackedchartsFactoryImpl;
 import info.limpet.stackedcharts.ui.editor.commands.AddDatasetsToAxisCommand;
-import info.limpet.stackedcharts.ui.editor.commands.AddScatterSetsToChartCommand;
 import info.limpet.stackedcharts.ui.editor.parts.ChartEditPart;
 
 import java.util.List;
@@ -18,12 +16,12 @@ import org.eclipse.gef.EditPart;
 import org.eclipse.gef.GraphicalViewer;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.commands.CompoundCommand;
+import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 import org.eclipse.swt.dnd.DropTargetEvent;
 
-public class ScatterSetToChartDropTargetListener extends
-    ScatterSetDropTargetListener
+public class DatasetToChartDropTargetListener extends DatasetDropTargetListener
 {
-  public ScatterSetToChartDropTargetListener(GraphicalViewer viewer)
+  public DatasetToChartDropTargetListener(GraphicalViewer viewer)
   {
     super(viewer);
   }
@@ -35,21 +33,18 @@ public class ScatterSetToChartDropTargetListener extends
     return findObjectAt instanceof ChartEditPart;
   }
 
-  @Override
-  protected Command createScatterCommand(Chart chart,
-      List<ScatterSet> scatterSets)
-  {
-    AddScatterSetsToChartCommand addDatasetsToAxisCommand =
-        new AddScatterSetsToChartCommand(chart, scatterSets
-            .toArray(new ScatterSet[scatterSets.size()]));
-    return addDatasetsToAxisCommand;
-  }
-
-  @Override
-  protected Command createDatasetCommand(Chart chart, DependentAxis axis,
+  protected Command createCommand(AbstractGraphicalEditPart editPart,
       List<Dataset> datasets)
   {
+    
+    // just check what we've received
+    if(!(editPart instanceof ChartEditPart))
+    {
+      System.err.println(this.toString() + " received wrong type of edit part");
+    }
+    
     CompoundCommand res = null;
+    Chart chart = ((ChartEditPart) editPart).getModel();
 
     for (Dataset dataset : datasets)
     {
@@ -57,11 +52,6 @@ public class ScatterSetToChartDropTargetListener extends
       String units = dataset.getUnits();
 
       DependentAxis targetAxis = null;
-
-      if (axis != null)
-      {
-        targetAxis = checkThisAxis(axis, units);
-      }
 
       if (targetAxis == null)
       {
@@ -99,6 +89,7 @@ public class ScatterSetToChartDropTargetListener extends
     return res;
   }
 
+
   private DependentAxis checkThisAxis(DependentAxis axis, String units)
   {
     DependentAxis res = null;
@@ -128,5 +119,4 @@ public class ScatterSetToChartDropTargetListener extends
     }
     return res;
   }
-
 }

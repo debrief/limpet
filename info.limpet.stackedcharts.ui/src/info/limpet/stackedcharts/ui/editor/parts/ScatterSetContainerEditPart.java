@@ -1,21 +1,22 @@
 package info.limpet.stackedcharts.ui.editor.parts;
 
-import java.util.List;
-
-import org.eclipse.draw2d.BorderLayout;
-import org.eclipse.draw2d.IFigure;
-import org.eclipse.gef.GraphicalEditPart;
-import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
-import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.PlatformUI;
-
 import info.limpet.stackedcharts.model.Chart;
 import info.limpet.stackedcharts.model.ChartSet;
 import info.limpet.stackedcharts.model.Orientation;
+import info.limpet.stackedcharts.ui.editor.StackedchartsImages;
 import info.limpet.stackedcharts.ui.editor.figures.DirectionalLabel;
 import info.limpet.stackedcharts.ui.editor.figures.DirectionalShape;
 import info.limpet.stackedcharts.ui.editor.figures.ScatterSetContainerFigure;
 import info.limpet.stackedcharts.ui.editor.parts.ChartEditPart.ScatterSetContainer;
+import info.limpet.stackedcharts.ui.editor.policies.ScatterSetContainerEditPolicy;
+
+import java.util.List;
+
+import org.eclipse.draw2d.BorderLayout;
+import org.eclipse.draw2d.IFigure;
+import org.eclipse.gef.EditPolicy;
+import org.eclipse.gef.GraphicalEditPart;
+import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 
 public class ScatterSetContainerEditPart extends AbstractGraphicalEditPart
 {
@@ -29,9 +30,9 @@ public class ScatterSetContainerEditPart extends AbstractGraphicalEditPart
     DirectionalShape figure = new DirectionalShape();
     titleLabel = new DirectionalLabel();
     figure.add(titleLabel);
-    titleLabel.setIcon(PlatformUI.getWorkbench().getSharedImages().getImage(
-        ISharedImages.IMG_OBJ_ELEMENT));
-    titleLabel.setText("Scattered sets");
+    titleLabel.setIcon(StackedchartsImages.getImage(
+            StackedchartsImages.DESC_SCATTERSET));
+    titleLabel.setText("Scatterset");
     
     scatterSetContainerFigure = new ScatterSetContainerFigure();
     figure.add(scatterSetContainerFigure);
@@ -47,8 +48,11 @@ public class ScatterSetContainerEditPart extends AbstractGraphicalEditPart
   @Override
   protected void createEditPolicies()
   {
+    installEditPolicy(EditPolicy.CONTAINER_ROLE,
+        new ScatterSetContainerEditPolicy());
   }
 
+  @SuppressWarnings("rawtypes")
   @Override
   protected List getModelChildren()
   {

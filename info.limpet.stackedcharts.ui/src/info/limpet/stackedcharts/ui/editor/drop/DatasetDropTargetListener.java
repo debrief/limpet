@@ -99,10 +99,10 @@ abstract public class DatasetDropTargetListener extends CoreDropTargetListener
         event.detail = DND.DROP_NONE;
         return;
       }
-      List<Object> objects = convertSelection(sel);
+      List<Dataset> objects = convertSelectionToDataset(sel);
       EditPart target = findPart(event);
 
-      AbstractGraphicalEditPart axis = (AbstractGraphicalEditPart) target;
+      AbstractGraphicalEditPart editPart = (AbstractGraphicalEditPart) target;
       List<Dataset> datasets = new ArrayList<Dataset>(objects.size());
       for (Object o : objects)
       {
@@ -126,7 +126,7 @@ abstract public class DatasetDropTargetListener extends CoreDropTargetListener
 
       if(datasets.size() > 0)
       {
-        Command command = createCommand(axis, datasets);
+        Command command = createCommand(editPart, datasets);
         getCommandStack().execute(command);
       }
     }
