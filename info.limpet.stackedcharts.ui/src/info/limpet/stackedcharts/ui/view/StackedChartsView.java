@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.eclipse.emf.common.util.URI;
@@ -64,6 +65,8 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor;
+import org.freehep.graphicsbase.util.UserProperties;
+import org.freehep.graphicsio.PageConstants;
 import org.freehep.graphicsio.emf.EMFGraphics2D;
 import org.freehep.graphicsio.pdf.PDFGraphics2D;
 import org.jfree.chart.ChartUtilities;
@@ -963,6 +966,11 @@ public class StackedChartsView extends ViewPart implements
         PDFGraphics2D g2d =
             new PDFGraphics2D(out, new Dimension(bounds.width,
                 bounds.height));
+        UserProperties properties = new UserProperties();
+        properties.setProperty(PDFGraphics2D.PAGE_SIZE, PDFGraphics2D.CUSTOM_PAGE_SIZE);
+        properties.setProperty(PDFGraphics2D.CUSTOM_PAGE_SIZE, new java.awt.Dimension(bounds.width,
+                bounds.height));
+        g2d.setProperties(properties);
         g2d.startExport();
         combined.draw(g2d, new Rectangle2D.Double(0, 0, bounds.width,
             bounds.height));
