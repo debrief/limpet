@@ -21,8 +21,12 @@ import info.limpet.stackedcharts.ui.view.StackedChartsView.ControllableDate;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Paint;
+import java.awt.RenderingHints;
 import java.awt.Stroke;
 import java.awt.geom.Ellipse2D;
+import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.text.DecimalFormat;
 import java.text.FieldPosition;
@@ -30,6 +34,7 @@ import java.text.NumberFormat;
 import java.text.ParsePosition;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.emf.common.notify.Adapter;
@@ -38,10 +43,14 @@ import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.common.util.EList;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.AxisLocation;
+import org.jfree.chart.axis.AxisState;
 import org.jfree.chart.axis.DateAxis;
+import org.jfree.chart.axis.LogTick;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.NumberTickUnit;
+import org.jfree.chart.axis.TickType;
 import org.jfree.chart.axis.ValueAxis;
+import org.jfree.chart.axis.ValueTick;
 import org.jfree.chart.plot.CombinedDomainXYPlot;
 import org.jfree.chart.plot.IntervalMarker;
 import org.jfree.chart.plot.Marker;
@@ -51,6 +60,7 @@ import org.jfree.chart.plot.ValueAxisPlot;
 import org.jfree.chart.plot.ValueMarker;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.chart.util.AttrStringUtils;
 import org.jfree.data.Range;
 import org.jfree.data.general.Series;
 import org.jfree.data.time.Millisecond;
@@ -59,8 +69,10 @@ import org.jfree.data.time.TimeSeriesCollection;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
+import org.jfree.text.TextUtilities;
 import org.jfree.ui.Layer;
 import org.jfree.ui.RectangleAnchor;
+import org.jfree.ui.RectangleEdge;
 import org.jfree.ui.RectangleInsets;
 import org.jfree.ui.TextAnchor;
 import org.jfree.util.ShapeUtilities;
@@ -734,28 +746,58 @@ public class ChartBuilder
     {
       AngleAxis angle = (AngleAxis) axisType;
 
-      // hmm, should it have a zero centre
-      final boolean midOrigin = angle.isMidOrigin();
-
-      final double min;
-      final double max;
-      if (midOrigin)
+      // ok, quick check for red-green
+      if (angle.isRedGreen())
       {
-        final double range = angle.getMaxVal() - angle.getMinVal();
-        final double demiRange = range / 2d;
-        min = angle.getMinVal() - demiRange;
-        max = angle.getMaxVal() - demiRange;
+        // hmm, should it have a zero centre
+        final boolean midOrigin = angle.isMidOrigin();
+
+        final double min;
+        final double max;
+        if (midOrigin)
+        {
+          final double range = angle.getMaxVal() - angle.getMinVal();
+          final double demiRange = range / 2d;
+          min = angle.getMinVal() - demiRange;
+          max = angle.getMaxVal() - demiRange;
+        }
+        else
+        {
+          min = angle.getMinVal();
+          max = angle.getMaxVal();
+        }
+        // use the renderer that "jumps" across zero/360 barrier
+        renderer = new WrappingRenderer(min, max);
+
+        // use the angular axis
+        chartAxis = new RedGreenAngularUnitAxis(axisName, min, max);
       }
       else
       {
-        min = angle.getMinVal();
-        max = angle.getMaxVal();
-      }
-      // use the renderer that "jumps" across zero/360 barrier
-      renderer = new WrappingRenderer(min, max);
+        // hmm, should it have a zero centre
+        final boolean midOrigin = angle.isMidOrigin();
 
-      // use the angular axis
-      chartAxis = new AngularUnitAxis(axisName, min, max);
+        final double min;
+        final double max;
+        if (midOrigin)
+        {
+          final double range = angle.getMaxVal() - angle.getMinVal();
+          final double demiRange = range / 2d;
+          min = angle.getMinVal() - demiRange;
+          max = angle.getMaxVal() - demiRange;
+        }
+        else
+        {
+          min = angle.getMinVal();
+          max = angle.getMaxVal();
+        }
+        // use the renderer that "jumps" across zero/360 barrier
+        renderer = new WrappingRenderer(min, max);
+
+        // use the angular axis
+        chartAxis = new AngularUnitAxis(axisName, min, max);
+      }
+
     }
     else
     {
@@ -800,23 +842,96 @@ public class ChartBuilder
     }
   }
 
-  /** marker interface for an axis that uses fancy label formatting
+  /**
+   * marker interface for an axis that uses fancy label formatting
    * 
    * @author ian
-   *
+   * 
    */
   public static interface FancyFormattedAxis
   {
-    
+
   }
-  
+
+  /**
+   * interface for axis that provides color for specific values
+   * 
+   * @author ian
+   * 
+   */
+  public static interface ColorProvider
+  {
+    public Color getColorFor(double val);
+  }
+
+  private static class CoreAngularAxis extends NumberAxis
+  {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
+    public CoreAngularAxis(String axisName, final double min, final double max)
+    {
+      super(axisName);
+
+      this.setDefaultAutoRange(new Range(min, max));
+      this.setRange(min, max);
+    }
+
+    /**
+     * when the plot is resized, we want to return to the default auto range, not the freshly
+     * calculated one.
+     */
+    protected final void autoAdjustRange()
+    {
+      Plot plot = getPlot();
+      if (plot != null && plot instanceof ValueAxisPlot)
+      {
+        Range r = getDefaultAutoRange();
+        setRange(r, false, false);
+      }
+      else
+      {
+        super.autoAdjustRange();
+      }
+    }
+
+    @Override
+    public final NumberTickUnit getTickUnit()
+    {
+      final NumberTickUnit tickUnit = super.getTickUnit();
+      if (tickUnit.getSize() < 15)
+      {
+        return tickUnit;
+      }
+      else if (tickUnit.getSize() < 45)
+      {
+        return new NumberTickUnit(30);
+      }
+      else if (tickUnit.getSize() < 90)
+      {
+        return new NumberTickUnit(45);
+      }
+      else if (tickUnit.getSize() < 180)
+      {
+        return new NumberTickUnit(90);
+      }
+      else
+      {
+        return new NumberTickUnit(180);
+      }
+    }
+  }
+
   /**
    * modified version of angle axis that prefers to use angular metric units.
    * 
    * @author ian
    * 
    */
-  private static class AngularUnitAxis extends NumberAxis implements FancyFormattedAxis
+  private static class AngularUnitAxis extends CoreAngularAxis implements
+      FancyFormattedAxis
   {
     /**
      * 
@@ -856,68 +971,282 @@ public class ChartBuilder
       public StringBuffer format(long number, StringBuffer toAppendTo,
           FieldPosition pos)
       {
-        throw new UnsupportedOperationException("Formatter not implemented in WrappingFormatter");
+        throw new UnsupportedOperationException(
+            "Formatter not implemented in WrappingFormatter");
       }
 
       @Override
       public Number parse(String source, ParsePosition parsePosition)
       {
-        throw new UnsupportedOperationException("Formatter not implemented in WrappingFormatter");
+        throw new UnsupportedOperationException(
+            "Formatter not implemented in WrappingFormatter");
       }
 
     }
 
     public AngularUnitAxis(final String axisName, double min, double max)
     {
-      super(axisName);
+      super(axisName, min, max);
 
       this.setNumberFormatOverride(new AnglularWrappingFormatter(max - min));
-      this.setDefaultAutoRange(new Range(min, max));
-      this.setRange(min, max);
     }
 
-    /** when the plot is resized, we want to return to the default
-     * auto range, not the freshly calculated one.
+  }
+
+  /**
+   * modified version of angle axis that prefers to use angular metric units.
+   * 
+   * @author ian
+   * 
+   */
+  private static class RedGreenAngularUnitAxis extends CoreAngularAxis
+      implements FancyFormattedAxis
+  {
+    /**
+     * 
      */
-    protected void autoAdjustRange()
+    private static final long serialVersionUID = 1L;
+
+    private class RedGreenAnglularWrappingFormatter extends NumberFormat
+        implements ColorProvider
     {
-      Plot plot = getPlot();
-      if (plot != null && plot instanceof ValueAxisPlot)
+
+      /**
+       * 
+       */
+      private static final long serialVersionUID = 1L;
+      private DecimalFormat df;
+
+      public RedGreenAnglularWrappingFormatter()
       {
-        Range r = getDefaultAutoRange();
-        setRange(r, false, false);
+        df = new DecimalFormat();
       }
-      else
+
+      @Override
+      public StringBuffer format(double number, StringBuffer toAppendTo,
+          FieldPosition pos)
       {
-        super.autoAdjustRange();
+        // check if we're doing a mid-origin arrangement
+        final String prefix;
+        if (number < 0)
+        {
+          prefix = "R";
+        }
+        else if (number > 0)
+        {
+          prefix = "G";
+        }
+        else
+        {
+          prefix = "";
+        }
+
+        return toAppendTo.append(prefix + df.format(Math.abs(number)));
       }
+
+      @Override
+      public StringBuffer format(long number, StringBuffer toAppendTo,
+          FieldPosition pos)
+      {
+        throw new UnsupportedOperationException(
+            "Formatter not implemented in WrappingFormatter");
+      }
+
+      @Override
+      public Number parse(String source, ParsePosition parsePosition)
+      {
+        throw new UnsupportedOperationException(
+            "Formatter not implemented in WrappingFormatter");
+      }
+
+      @Override
+      public Color getColorFor(double val)
+      {
+        final Color res;
+        if (val < 0)
+        {
+          res = Color.red;
+        }
+        else if (val > 0)
+        {
+          res = Color.green.darker();
+        }
+        else
+        {
+          res = Color.black;
+        }
+        return res;
+      }
+
     }
 
-    @Override
-    public NumberTickUnit getTickUnit()
+    private final RedGreenAnglularWrappingFormatter _formatter;
+
+    public RedGreenAngularUnitAxis(final String axisName, double min, double max)
     {
-      final NumberTickUnit tickUnit = super.getTickUnit();
-      if (tickUnit.getSize() < 15)
-      {
-        return tickUnit;
-      }
-      else if (tickUnit.getSize() < 45)
-      {
-        return new NumberTickUnit(45);
-      }
-      else if (tickUnit.getSize() < 90)
-      {
-        return new NumberTickUnit(90);
-      }
-      else if (tickUnit.getSize() < 180)
-      {
-        return new NumberTickUnit(180);
-      }
-      else
-      {
-        return new NumberTickUnit(360);
-      }
+      super(axisName, min, max);
+
+      _formatter = new RedGreenAnglularWrappingFormatter();
+      this.setNumberFormatOverride(_formatter);
     }
+
+    /**
+     * Draws the axis line, tick marks and tick mark labels.
+     * 
+     * @param g2
+     *          the graphics device (<code>null</code> not permitted).
+     * @param cursor
+     *          the cursor.
+     * @param plotArea
+     *          the plot area (<code>null</code> not permitted).
+     * @param dataArea
+     *          the data area (<code>null</code> not permitted).
+     * @param edge
+     *          the edge that the axis is aligned with (<code>null</code> not permitted).
+     * 
+     * @return The width or height used to draw the axis.
+     */
+    protected AxisState drawTickMarksAndLabels(Graphics2D g2, double cursor,
+        Rectangle2D plotArea, Rectangle2D dataArea, RectangleEdge edge)
+    {
+
+      AxisState state = new AxisState(cursor);
+      if (isAxisLineVisible())
+      {
+        drawAxisLine(g2, cursor, dataArea, edge);
+      }
+      @SuppressWarnings("rawtypes")
+      List ticks = refreshTicks(g2, state, dataArea, edge);
+      state.setTicks(ticks);
+      g2.setFont(getTickLabelFont());
+      Object saved = g2.getRenderingHint(RenderingHints.KEY_STROKE_CONTROL);
+      g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL,
+          RenderingHints.VALUE_STROKE_NORMALIZE);
+      @SuppressWarnings("rawtypes")
+      Iterator iterator = ticks.iterator();
+      while (iterator.hasNext())
+      {
+        ValueTick tick = (ValueTick) iterator.next();
+        if (isTickLabelsVisible())
+        {
+          g2.setPaint(getTickLabelPaintFor(tick.getText()));
+          float[] anchorPoint =
+              calculateAnchorPoint(tick, cursor, dataArea, edge);
+          if (tick instanceof LogTick)
+          {
+            LogTick lt = (LogTick) tick;
+            if (lt.getAttributedLabel() == null)
+            {
+              continue;
+            }
+            AttrStringUtils.drawRotatedString(lt.getAttributedLabel(), g2,
+                anchorPoint[0], anchorPoint[1], tick.getTextAnchor(), tick
+                    .getAngle(), tick.getRotationAnchor());
+          }
+          else
+          {
+            if (tick.getText() == null)
+            {
+              continue;
+            }
+            TextUtilities.drawRotatedString(tick.getText(), g2, anchorPoint[0],
+                anchorPoint[1], tick.getTextAnchor(), tick.getAngle(), tick
+                    .getRotationAnchor());
+          }
+        }
+
+        if ((isTickMarksVisible() && tick.getTickType().equals(TickType.MAJOR))
+            || (isMinorTickMarksVisible() && tick.getTickType().equals(
+                TickType.MINOR)))
+        {
+
+          double ol =
+              (tick.getTickType().equals(TickType.MINOR))
+                  ? getMinorTickMarkOutsideLength()
+                  : getTickMarkOutsideLength();
+
+          double il =
+              (tick.getTickType().equals(TickType.MINOR))
+                  ? getMinorTickMarkInsideLength() : getTickMarkInsideLength();
+
+          float xx = (float) valueToJava2D(tick.getValue(), dataArea, edge);
+          Line2D mark = null;
+          g2.setStroke(getTickMarkStroke());
+          g2.setPaint(getTickMarkPaint());
+          if (edge == RectangleEdge.LEFT)
+          {
+            mark = new Line2D.Double(cursor - ol, xx, cursor + il, xx);
+          }
+          else if (edge == RectangleEdge.RIGHT)
+          {
+            mark = new Line2D.Double(cursor + ol, xx, cursor - il, xx);
+          }
+          else if (edge == RectangleEdge.TOP)
+          {
+            mark = new Line2D.Double(xx, cursor - ol, xx, cursor + il);
+          }
+          else if (edge == RectangleEdge.BOTTOM)
+          {
+            mark = new Line2D.Double(xx, cursor + ol, xx, cursor - il);
+          }
+          g2.draw(mark);
+        }
+      }
+      g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, saved);
+
+      // need to work out the space used by the tick labels...
+      // so we can update the cursor...
+      double used = 0.0;
+      if (isTickLabelsVisible())
+      {
+        if (edge == RectangleEdge.LEFT)
+        {
+          used +=
+              findMaximumTickLabelWidth(ticks, g2, plotArea,
+                  isVerticalTickLabels());
+          state.cursorLeft(used);
+        }
+        else if (edge == RectangleEdge.RIGHT)
+        {
+          used =
+              findMaximumTickLabelWidth(ticks, g2, plotArea,
+                  isVerticalTickLabels());
+          state.cursorRight(used);
+        }
+        else if (edge == RectangleEdge.TOP)
+        {
+          used =
+              findMaximumTickLabelHeight(ticks, g2, plotArea,
+                  isVerticalTickLabels());
+          state.cursorUp(used);
+        }
+        else if (edge == RectangleEdge.BOTTOM)
+        {
+          used =
+              findMaximumTickLabelHeight(ticks, g2, plotArea,
+                  isVerticalTickLabels());
+          state.cursorDown(used);
+        }
+      }
+
+      return state;
+    }
+
+    private Paint getTickLabelPaintFor(String string)
+    {
+      // ok, see if we have a leading character
+      double factor = 1;
+      if (string.startsWith("R") || string.startsWith("G"))
+      {
+        if (string.startsWith("R"))
+        {
+          factor = -1;
+        }
+        string = string.substring(1);
+      }
+      return _formatter.getColorFor(Double.parseDouble(string) * factor);
+    }
+
   }
 
   private ChartBuilder()
