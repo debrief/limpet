@@ -683,7 +683,8 @@ public class ChartBuilder
       for (final SelectiveAnnotation selectiveAnnotation : selectiveAnnotations)
       {
         final EList<Chart> appearsIn = selectiveAnnotation.getAppearsIn();
-        // check selective option to see is this applicable to current chart
+        // check selective option to see is this applicable to current
+        // chart
         if (appearsIn == null || appearsIn.isEmpty()
             || appearsIn.contains(chart))
         {
@@ -749,23 +750,9 @@ public class ChartBuilder
       // ok, quick check for red-green
       if (angle.isRedGreen())
       {
-        // hmm, should it have a zero centre
-        final boolean midOrigin = angle.isMidOrigin();
+        final double min = angle.getMinVal();
+        final double max = angle.getMaxVal();
 
-        final double min;
-        final double max;
-        if (midOrigin)
-        {
-          final double range = angle.getMaxVal() - angle.getMinVal();
-          final double demiRange = range / 2d;
-          min = angle.getMinVal() - demiRange;
-          max = angle.getMaxVal() - demiRange;
-        }
-        else
-        {
-          min = angle.getMinVal();
-          max = angle.getMaxVal();
-        }
         // use the renderer that "jumps" across zero/360 barrier
         renderer = new WrappingRenderer(min, max);
 
