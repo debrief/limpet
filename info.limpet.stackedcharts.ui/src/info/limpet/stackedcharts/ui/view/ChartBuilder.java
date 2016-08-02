@@ -771,6 +771,20 @@ public class ChartBuilder
 
         // use the angular axis
         chartAxis = new RedGreenAngularUnitAxis(axisName, min, max);
+
+        // put in the reg/green background shading
+        IntervalMarker greenM = new IntervalMarker(0, max);
+        greenM.setPaint(Color.green);
+        greenM.setStroke(new BasicStroke(3));
+        greenM.setAlpha(0.03f);
+        subplot.addRangeMarker(1, greenM, Layer.BACKGROUND);
+
+        IntervalMarker im = new IntervalMarker(min, 0);
+        im.setPaint(Color.red);
+        im.setStroke(new BasicStroke(3));
+        im.setAlpha(0.03f);
+        subplot.addRangeMarker(1, im, Layer.BACKGROUND);
+
       }
       else
       {
