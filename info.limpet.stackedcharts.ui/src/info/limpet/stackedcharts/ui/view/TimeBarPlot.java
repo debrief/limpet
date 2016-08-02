@@ -670,11 +670,11 @@ public class TimeBarPlot extends CombinedDomainXYPlot
               final double chartLocation;
               if (interpolated > rangeA.getUpperBound())
               {
-                chartLocation = interpolated - range;
+                chartLocation = rangeA.getUpperBound();
               }
               else if (interpolated < rangeA.getLowerBound())
               {
-                chartLocation = interpolated + range;
+                chartLocation = rangeA.getLowerBound();
               }
               else
               {
