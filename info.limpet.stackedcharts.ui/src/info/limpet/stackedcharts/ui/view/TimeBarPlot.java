@@ -1,5 +1,6 @@
 package info.limpet.stackedcharts.ui.view;
 
+import info.limpet.stackedcharts.ui.view.ChartBuilder.ColorProvider;
 import info.limpet.stackedcharts.ui.view.ChartBuilder.FancyFormattedAxis;
 
 import java.awt.BasicStroke;
@@ -684,8 +685,8 @@ public class TimeBarPlot extends CombinedDomainXYPlot
               final float markerY =
                   (float) rangeA.valueToJava2D(chartLocation, thisPlotArea,
                       this.getRangeAxisEdge());
-              
-              final double rounded =  Math.round(interpolated);
+
+              final double rounded = Math.round(interpolated);
 
               // quick check that we're not on a fancy axis
               final String label;
@@ -727,7 +728,18 @@ public class TimeBarPlot extends CombinedDomainXYPlot
                 seriesCounter.put(renderer, ++counter);
               }
 
-              final Color paint = (Color) renderer.getSeriesPaint(counter);
+              final Color paint;
+
+              // just double-check we're not providing a color override
+              if (fancyFormat != null && fancyFormat instanceof ColorProvider)
+              {
+                ColorProvider cp = (ColorProvider) fancyFormat;
+                paint = cp.getColorFor(rounded);
+              }
+              else
+              {
+                paint = (Color) renderer.getSeriesPaint(counter);
+              }
 
               // done, render it
               paintThisMarker(g2, label, paint, linePosition, markerY,
