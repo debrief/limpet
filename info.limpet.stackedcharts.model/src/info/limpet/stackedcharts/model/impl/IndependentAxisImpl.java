@@ -19,24 +19,25 @@ import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
 /**
- * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Independent Axis</b></em>'.
+ * <!-- begin-user-doc --> An implementation of the model object '<em><b>Independent Axis</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link info.limpet.stackedcharts.model.impl.IndependentAxisImpl#getAnnotations <em>Annotations</em>}</li>
+ * <li>{@link info.limpet.stackedcharts.model.impl.IndependentAxisImpl#getAnnotations
+ * <em>Annotations</em>}</li>
  * </ul>
  *
  * @generated
  */
-public class IndependentAxisImpl extends AbstractAxisImpl implements IndependentAxis
+public class IndependentAxisImpl extends AbstractAxisImpl implements
+    IndependentAxis
 {
   /**
-   * The cached value of the '{@link #getAnnotations() <em>Annotations</em>}' containment reference list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The cached value of the '{@link #getAnnotations() <em>Annotations</em>}' containment reference
+   * list. <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @see #getAnnotations()
    * @generated
    * @ordered
@@ -44,8 +45,8 @@ public class IndependentAxisImpl extends AbstractAxisImpl implements Independent
   protected EList<SelectiveAnnotation> annotations;
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   protected IndependentAxisImpl()
@@ -54,8 +55,8 @@ public class IndependentAxisImpl extends AbstractAxisImpl implements Independent
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @Override
@@ -65,38 +66,41 @@ public class IndependentAxisImpl extends AbstractAxisImpl implements Independent
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EList<SelectiveAnnotation> getAnnotations()
   {
     if (annotations == null)
     {
-      annotations = new EObjectContainmentEList<SelectiveAnnotation>(SelectiveAnnotation.class, this, StackedchartsPackage.INDEPENDENT_AXIS__ANNOTATIONS);
+      annotations = new EObjectContainmentEList<SelectiveAnnotation>(
+          SelectiveAnnotation.class, this,
+          StackedchartsPackage.INDEPENDENT_AXIS__ANNOTATIONS);
     }
     return annotations;
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @Override
-  public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
+  public NotificationChain eInverseRemove(InternalEObject otherEnd,
+      int featureID, NotificationChain msgs)
   {
     switch (featureID)
     {
-      case StackedchartsPackage.INDEPENDENT_AXIS__ANNOTATIONS:
-        return ((InternalEList<?>)getAnnotations()).basicRemove(otherEnd, msgs);
+    case StackedchartsPackage.INDEPENDENT_AXIS__ANNOTATIONS:
+      return ((InternalEList<?>) getAnnotations()).basicRemove(otherEnd, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @Override
@@ -104,15 +108,15 @@ public class IndependentAxisImpl extends AbstractAxisImpl implements Independent
   {
     switch (featureID)
     {
-      case StackedchartsPackage.INDEPENDENT_AXIS__ANNOTATIONS:
-        return getAnnotations();
+    case StackedchartsPackage.INDEPENDENT_AXIS__ANNOTATIONS:
+      return getAnnotations();
     }
     return super.eGet(featureID, resolve, coreType);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @SuppressWarnings("unchecked")
@@ -121,17 +125,18 @@ public class IndependentAxisImpl extends AbstractAxisImpl implements Independent
   {
     switch (featureID)
     {
-      case StackedchartsPackage.INDEPENDENT_AXIS__ANNOTATIONS:
-        getAnnotations().clear();
-        getAnnotations().addAll((Collection<? extends SelectiveAnnotation>)newValue);
-        return;
+    case StackedchartsPackage.INDEPENDENT_AXIS__ANNOTATIONS:
+      getAnnotations().clear();
+      getAnnotations().addAll(
+          (Collection<? extends SelectiveAnnotation>) newValue);
+      return;
     }
     super.eSet(featureID, newValue);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @Override
@@ -139,16 +144,16 @@ public class IndependentAxisImpl extends AbstractAxisImpl implements Independent
   {
     switch (featureID)
     {
-      case StackedchartsPackage.INDEPENDENT_AXIS__ANNOTATIONS:
-        getAnnotations().clear();
-        return;
+    case StackedchartsPackage.INDEPENDENT_AXIS__ANNOTATIONS:
+      getAnnotations().clear();
+      return;
     }
     super.eUnset(featureID);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @Override
@@ -156,10 +161,10 @@ public class IndependentAxisImpl extends AbstractAxisImpl implements Independent
   {
     switch (featureID)
     {
-      case StackedchartsPackage.INDEPENDENT_AXIS__ANNOTATIONS:
-        return annotations != null && !annotations.isEmpty();
+    case StackedchartsPackage.INDEPENDENT_AXIS__ANNOTATIONS:
+      return annotations != null && !annotations.isEmpty();
     }
     return super.eIsSet(featureID);
   }
 
-} //IndependentAxisImpl
+} // IndependentAxisImpl

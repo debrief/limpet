@@ -5,16 +5,16 @@ package info.limpet.stackedcharts.model;
 import org.eclipse.emf.ecore.EObject;
 
 /**
- * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>Data Item</b></em>'.
- * <!-- end-user-doc -->
+ * <!-- begin-user-doc --> A representation of the model object '<em><b>Data Item</b></em>'. <!--
+ * end-user-doc -->
  *
  * <p>
  * The following features are supported:
  * </p>
  * <ul>
- *   <li>{@link info.limpet.stackedcharts.model.DataItem#getIndependentVal <em>Independent Val</em>}</li>
- *   <li>{@link info.limpet.stackedcharts.model.DataItem#getDependentVal <em>Dependent Val</em>}</li>
+ * <li>{@link info.limpet.stackedcharts.model.DataItem#getIndependentVal <em>Independent
+ * Val</em>}</li>
+ * <li>{@link info.limpet.stackedcharts.model.DataItem#getDependentVal <em>Dependent Val</em>}</li>
  * </ul>
  *
  * @see info.limpet.stackedcharts.model.StackedchartsPackage#getDataItem()
@@ -24,13 +24,13 @@ import org.eclipse.emf.ecore.EObject;
 public interface DataItem extends EObject
 {
   /**
-   * Returns the value of the '<em><b>Independent Val</b></em>' attribute.
-   * <!-- begin-user-doc -->
+   * Returns the value of the '<em><b>Independent Val</b></em>' attribute. <!-- begin-user-doc -->
    * <p>
-   * If the meaning of the '<em>Independent Val</em>' attribute isn't clear,
-   * there really should be more of a description here...
+   * If the meaning of the '<em>Independent Val</em>' attribute isn't clear, there really should be
+   * more of a description here...
    * </p>
    * <!-- end-user-doc -->
+   * 
    * @return the value of the '<em>Independent Val</em>' attribute.
    * @see #setIndependentVal(double)
    * @see info.limpet.stackedcharts.model.StackedchartsPackage#getDataItem_IndependentVal()
@@ -40,23 +40,24 @@ public interface DataItem extends EObject
   double getIndependentVal();
 
   /**
-   * Sets the value of the '{@link info.limpet.stackedcharts.model.DataItem#getIndependentVal <em>Independent Val</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Independent Val</em>' attribute.
+   * Sets the value of the '{@link info.limpet.stackedcharts.model.DataItem#getIndependentVal
+   * <em>Independent Val</em>}' attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
+   * @param value
+   *          the new value of the '<em>Independent Val</em>' attribute.
    * @see #getIndependentVal()
    * @generated
    */
   void setIndependentVal(double value);
 
   /**
-   * Returns the value of the '<em><b>Dependent Val</b></em>' attribute.
-   * <!-- begin-user-doc -->
+   * Returns the value of the '<em><b>Dependent Val</b></em>' attribute. <!-- begin-user-doc -->
    * <p>
-   * If the meaning of the '<em>Dependent Val</em>' attribute isn't clear,
-   * there really should be more of a description here...
+   * If the meaning of the '<em>Dependent Val</em>' attribute isn't clear, there really should be
+   * more of a description here...
    * </p>
    * <!-- end-user-doc -->
+   * 
    * @return the value of the '<em>Dependent Val</em>' attribute.
    * @see #setDependentVal(double)
    * @see info.limpet.stackedcharts.model.StackedchartsPackage#getDataItem_DependentVal()
@@ -66,10 +67,11 @@ public interface DataItem extends EObject
   double getDependentVal();
 
   /**
-   * Sets the value of the '{@link info.limpet.stackedcharts.model.DataItem#getDependentVal <em>Dependent Val</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Dependent Val</em>' attribute.
+   * Sets the value of the '{@link info.limpet.stackedcharts.model.DataItem#getDependentVal
+   * <em>Dependent Val</em>}' attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
+   * @param value
+   *          the new value of the '<em>Dependent Val</em>' attribute.
    * @see #getDependentVal()
    * @generated
    */

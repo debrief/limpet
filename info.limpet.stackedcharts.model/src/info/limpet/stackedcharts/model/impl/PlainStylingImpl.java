@@ -13,14 +13,13 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
 /**
- * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Plain Styling</b></em>'.
+ * <!-- begin-user-doc --> An implementation of the model object '<em><b>Plain Styling</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link info.limpet.stackedcharts.model.impl.PlainStylingImpl#getColor <em>Color</em>}</li>
+ * <li>{@link info.limpet.stackedcharts.model.impl.PlainStylingImpl#getColor <em>Color</em>}</li>
  * </ul>
  *
  * @generated
@@ -28,9 +27,9 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 public class PlainStylingImpl extends StylingImpl implements PlainStyling
 {
   /**
-   * The default value of the '{@link #getColor() <em>Color</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The default value of the '{@link #getColor() <em>Color</em>}' attribute. <!-- begin-user-doc
+   * --> <!-- end-user-doc -->
+   * 
    * @see #getColor()
    * @generated
    * @ordered
@@ -38,9 +37,9 @@ public class PlainStylingImpl extends StylingImpl implements PlainStyling
   protected static final Color COLOR_EDEFAULT = null;
 
   /**
-   * The cached value of the '{@link #getColor() <em>Color</em>}' attribute.
-   * <!-- begin-user-doc -->
+   * The cached value of the '{@link #getColor() <em>Color</em>}' attribute. <!-- begin-user-doc -->
    * <!-- end-user-doc -->
+   * 
    * @see #getColor()
    * @generated
    * @ordered
@@ -48,8 +47,8 @@ public class PlainStylingImpl extends StylingImpl implements PlainStyling
   protected Color color = COLOR_EDEFAULT;
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   protected PlainStylingImpl()
@@ -58,8 +57,8 @@ public class PlainStylingImpl extends StylingImpl implements PlainStyling
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @Override
@@ -69,8 +68,8 @@ public class PlainStylingImpl extends StylingImpl implements PlainStyling
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public Color getColor()
@@ -79,8 +78,8 @@ public class PlainStylingImpl extends StylingImpl implements PlainStyling
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public void setColor(Color newColor)
@@ -88,12 +87,13 @@ public class PlainStylingImpl extends StylingImpl implements PlainStyling
     Color oldColor = color;
     color = newColor;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, StackedchartsPackage.PLAIN_STYLING__COLOR, oldColor, color));
+      eNotify(new ENotificationImpl(this, Notification.SET,
+          StackedchartsPackage.PLAIN_STYLING__COLOR, oldColor, color));
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @Override
@@ -101,15 +101,15 @@ public class PlainStylingImpl extends StylingImpl implements PlainStyling
   {
     switch (featureID)
     {
-      case StackedchartsPackage.PLAIN_STYLING__COLOR:
-        return getColor();
+    case StackedchartsPackage.PLAIN_STYLING__COLOR:
+      return getColor();
     }
     return super.eGet(featureID, resolve, coreType);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @Override
@@ -117,16 +117,16 @@ public class PlainStylingImpl extends StylingImpl implements PlainStyling
   {
     switch (featureID)
     {
-      case StackedchartsPackage.PLAIN_STYLING__COLOR:
-        setColor((Color)newValue);
-        return;
+    case StackedchartsPackage.PLAIN_STYLING__COLOR:
+      setColor((Color) newValue);
+      return;
     }
     super.eSet(featureID, newValue);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @Override
@@ -134,16 +134,16 @@ public class PlainStylingImpl extends StylingImpl implements PlainStyling
   {
     switch (featureID)
     {
-      case StackedchartsPackage.PLAIN_STYLING__COLOR:
-        setColor(COLOR_EDEFAULT);
-        return;
+    case StackedchartsPackage.PLAIN_STYLING__COLOR:
+      setColor(COLOR_EDEFAULT);
+      return;
     }
     super.eUnset(featureID);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @Override
@@ -151,21 +151,23 @@ public class PlainStylingImpl extends StylingImpl implements PlainStyling
   {
     switch (featureID)
     {
-      case StackedchartsPackage.PLAIN_STYLING__COLOR:
-        return COLOR_EDEFAULT == null ? color != null : !COLOR_EDEFAULT.equals(color);
+    case StackedchartsPackage.PLAIN_STYLING__COLOR:
+      return COLOR_EDEFAULT == null ? color != null : !COLOR_EDEFAULT.equals(
+          color);
     }
     return super.eIsSet(featureID);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @Override
   public String toString()
   {
-    if (eIsProxy()) return super.toString();
+    if (eIsProxy())
+      return super.toString();
 
     StringBuffer result = new StringBuffer(super.toString());
     result.append(" (color: ");
@@ -174,4 +176,4 @@ public class PlainStylingImpl extends StylingImpl implements PlainStyling
     return result.toString();
   }
 
-} //PlainStylingImpl
+} // PlainStylingImpl

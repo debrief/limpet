@@ -13,17 +13,20 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
 /**
- * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Linear Styling</b></em>'.
+ * <!-- begin-user-doc --> An implementation of the model object '<em><b>Linear Styling</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link info.limpet.stackedcharts.model.impl.LinearStylingImpl#getStartColor <em>Start Color</em>}</li>
- *   <li>{@link info.limpet.stackedcharts.model.impl.LinearStylingImpl#getEndColor <em>End Color</em>}</li>
- *   <li>{@link info.limpet.stackedcharts.model.impl.LinearStylingImpl#getStartVal <em>Start Val</em>}</li>
- *   <li>{@link info.limpet.stackedcharts.model.impl.LinearStylingImpl#getEndVal <em>End Val</em>}</li>
+ * <li>{@link info.limpet.stackedcharts.model.impl.LinearStylingImpl#getStartColor <em>Start
+ * Color</em>}</li>
+ * <li>{@link info.limpet.stackedcharts.model.impl.LinearStylingImpl#getEndColor <em>End
+ * Color</em>}</li>
+ * <li>{@link info.limpet.stackedcharts.model.impl.LinearStylingImpl#getStartVal <em>Start
+ * Val</em>}</li>
+ * <li>{@link info.limpet.stackedcharts.model.impl.LinearStylingImpl#getEndVal <em>End
+ * Val</em>}</li>
  * </ul>
  *
  * @generated
@@ -31,9 +34,9 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 public class LinearStylingImpl extends StylingImpl implements LinearStyling
 {
   /**
-   * The default value of the '{@link #getStartColor() <em>Start Color</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The default value of the '{@link #getStartColor() <em>Start Color</em>}' attribute. <!--
+   * begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @see #getStartColor()
    * @generated
    * @ordered
@@ -41,9 +44,9 @@ public class LinearStylingImpl extends StylingImpl implements LinearStyling
   protected static final Color START_COLOR_EDEFAULT = null;
 
   /**
-   * The cached value of the '{@link #getStartColor() <em>Start Color</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The cached value of the '{@link #getStartColor() <em>Start Color</em>}' attribute. <!--
+   * begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @see #getStartColor()
    * @generated
    * @ordered
@@ -51,9 +54,9 @@ public class LinearStylingImpl extends StylingImpl implements LinearStyling
   protected Color startColor = START_COLOR_EDEFAULT;
 
   /**
-   * The default value of the '{@link #getEndColor() <em>End Color</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The default value of the '{@link #getEndColor() <em>End Color</em>}' attribute. <!--
+   * begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @see #getEndColor()
    * @generated
    * @ordered
@@ -61,9 +64,9 @@ public class LinearStylingImpl extends StylingImpl implements LinearStyling
   protected static final Color END_COLOR_EDEFAULT = null;
 
   /**
-   * The cached value of the '{@link #getEndColor() <em>End Color</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The cached value of the '{@link #getEndColor() <em>End Color</em>}' attribute. <!--
+   * begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @see #getEndColor()
    * @generated
    * @ordered
@@ -71,9 +74,9 @@ public class LinearStylingImpl extends StylingImpl implements LinearStyling
   protected Color endColor = END_COLOR_EDEFAULT;
 
   /**
-   * The default value of the '{@link #getStartVal() <em>Start Val</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The default value of the '{@link #getStartVal() <em>Start Val</em>}' attribute. <!--
+   * begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @see #getStartVal()
    * @generated
    * @ordered
@@ -81,9 +84,9 @@ public class LinearStylingImpl extends StylingImpl implements LinearStyling
   protected static final double START_VAL_EDEFAULT = 0.0;
 
   /**
-   * The cached value of the '{@link #getStartVal() <em>Start Val</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The cached value of the '{@link #getStartVal() <em>Start Val</em>}' attribute. <!--
+   * begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @see #getStartVal()
    * @generated
    * @ordered
@@ -91,9 +94,9 @@ public class LinearStylingImpl extends StylingImpl implements LinearStyling
   protected double startVal = START_VAL_EDEFAULT;
 
   /**
-   * The default value of the '{@link #getEndVal() <em>End Val</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The default value of the '{@link #getEndVal() <em>End Val</em>}' attribute. <!-- begin-user-doc
+   * --> <!-- end-user-doc -->
+   * 
    * @see #getEndVal()
    * @generated
    * @ordered
@@ -101,9 +104,9 @@ public class LinearStylingImpl extends StylingImpl implements LinearStyling
   protected static final double END_VAL_EDEFAULT = 0.0;
 
   /**
-   * The cached value of the '{@link #getEndVal() <em>End Val</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The cached value of the '{@link #getEndVal() <em>End Val</em>}' attribute. <!-- begin-user-doc
+   * --> <!-- end-user-doc -->
+   * 
    * @see #getEndVal()
    * @generated
    * @ordered
@@ -111,8 +114,8 @@ public class LinearStylingImpl extends StylingImpl implements LinearStyling
   protected double endVal = END_VAL_EDEFAULT;
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   protected LinearStylingImpl()
@@ -121,8 +124,8 @@ public class LinearStylingImpl extends StylingImpl implements LinearStyling
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @Override
@@ -132,8 +135,8 @@ public class LinearStylingImpl extends StylingImpl implements LinearStyling
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public Color getStartColor()
@@ -142,8 +145,8 @@ public class LinearStylingImpl extends StylingImpl implements LinearStyling
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public void setStartColor(Color newStartColor)
@@ -151,12 +154,14 @@ public class LinearStylingImpl extends StylingImpl implements LinearStyling
     Color oldStartColor = startColor;
     startColor = newStartColor;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, StackedchartsPackage.LINEAR_STYLING__START_COLOR, oldStartColor, startColor));
+      eNotify(new ENotificationImpl(this, Notification.SET,
+          StackedchartsPackage.LINEAR_STYLING__START_COLOR, oldStartColor,
+          startColor));
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public Color getEndColor()
@@ -165,8 +170,8 @@ public class LinearStylingImpl extends StylingImpl implements LinearStyling
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public void setEndColor(Color newEndColor)
@@ -174,12 +179,14 @@ public class LinearStylingImpl extends StylingImpl implements LinearStyling
     Color oldEndColor = endColor;
     endColor = newEndColor;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, StackedchartsPackage.LINEAR_STYLING__END_COLOR, oldEndColor, endColor));
+      eNotify(new ENotificationImpl(this, Notification.SET,
+          StackedchartsPackage.LINEAR_STYLING__END_COLOR, oldEndColor,
+          endColor));
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public double getStartVal()
@@ -188,8 +195,8 @@ public class LinearStylingImpl extends StylingImpl implements LinearStyling
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public void setStartVal(double newStartVal)
@@ -197,12 +204,14 @@ public class LinearStylingImpl extends StylingImpl implements LinearStyling
     double oldStartVal = startVal;
     startVal = newStartVal;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, StackedchartsPackage.LINEAR_STYLING__START_VAL, oldStartVal, startVal));
+      eNotify(new ENotificationImpl(this, Notification.SET,
+          StackedchartsPackage.LINEAR_STYLING__START_VAL, oldStartVal,
+          startVal));
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public double getEndVal()
@@ -211,8 +220,8 @@ public class LinearStylingImpl extends StylingImpl implements LinearStyling
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public void setEndVal(double newEndVal)
@@ -220,12 +229,13 @@ public class LinearStylingImpl extends StylingImpl implements LinearStyling
     double oldEndVal = endVal;
     endVal = newEndVal;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, StackedchartsPackage.LINEAR_STYLING__END_VAL, oldEndVal, endVal));
+      eNotify(new ENotificationImpl(this, Notification.SET,
+          StackedchartsPackage.LINEAR_STYLING__END_VAL, oldEndVal, endVal));
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @Override
@@ -233,21 +243,21 @@ public class LinearStylingImpl extends StylingImpl implements LinearStyling
   {
     switch (featureID)
     {
-      case StackedchartsPackage.LINEAR_STYLING__START_COLOR:
-        return getStartColor();
-      case StackedchartsPackage.LINEAR_STYLING__END_COLOR:
-        return getEndColor();
-      case StackedchartsPackage.LINEAR_STYLING__START_VAL:
-        return getStartVal();
-      case StackedchartsPackage.LINEAR_STYLING__END_VAL:
-        return getEndVal();
+    case StackedchartsPackage.LINEAR_STYLING__START_COLOR:
+      return getStartColor();
+    case StackedchartsPackage.LINEAR_STYLING__END_COLOR:
+      return getEndColor();
+    case StackedchartsPackage.LINEAR_STYLING__START_VAL:
+      return getStartVal();
+    case StackedchartsPackage.LINEAR_STYLING__END_VAL:
+      return getEndVal();
     }
     return super.eGet(featureID, resolve, coreType);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @Override
@@ -255,25 +265,25 @@ public class LinearStylingImpl extends StylingImpl implements LinearStyling
   {
     switch (featureID)
     {
-      case StackedchartsPackage.LINEAR_STYLING__START_COLOR:
-        setStartColor((Color)newValue);
-        return;
-      case StackedchartsPackage.LINEAR_STYLING__END_COLOR:
-        setEndColor((Color)newValue);
-        return;
-      case StackedchartsPackage.LINEAR_STYLING__START_VAL:
-        setStartVal((Double)newValue);
-        return;
-      case StackedchartsPackage.LINEAR_STYLING__END_VAL:
-        setEndVal((Double)newValue);
-        return;
+    case StackedchartsPackage.LINEAR_STYLING__START_COLOR:
+      setStartColor((Color) newValue);
+      return;
+    case StackedchartsPackage.LINEAR_STYLING__END_COLOR:
+      setEndColor((Color) newValue);
+      return;
+    case StackedchartsPackage.LINEAR_STYLING__START_VAL:
+      setStartVal((Double) newValue);
+      return;
+    case StackedchartsPackage.LINEAR_STYLING__END_VAL:
+      setEndVal((Double) newValue);
+      return;
     }
     super.eSet(featureID, newValue);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @Override
@@ -281,25 +291,25 @@ public class LinearStylingImpl extends StylingImpl implements LinearStyling
   {
     switch (featureID)
     {
-      case StackedchartsPackage.LINEAR_STYLING__START_COLOR:
-        setStartColor(START_COLOR_EDEFAULT);
-        return;
-      case StackedchartsPackage.LINEAR_STYLING__END_COLOR:
-        setEndColor(END_COLOR_EDEFAULT);
-        return;
-      case StackedchartsPackage.LINEAR_STYLING__START_VAL:
-        setStartVal(START_VAL_EDEFAULT);
-        return;
-      case StackedchartsPackage.LINEAR_STYLING__END_VAL:
-        setEndVal(END_VAL_EDEFAULT);
-        return;
+    case StackedchartsPackage.LINEAR_STYLING__START_COLOR:
+      setStartColor(START_COLOR_EDEFAULT);
+      return;
+    case StackedchartsPackage.LINEAR_STYLING__END_COLOR:
+      setEndColor(END_COLOR_EDEFAULT);
+      return;
+    case StackedchartsPackage.LINEAR_STYLING__START_VAL:
+      setStartVal(START_VAL_EDEFAULT);
+      return;
+    case StackedchartsPackage.LINEAR_STYLING__END_VAL:
+      setEndVal(END_VAL_EDEFAULT);
+      return;
     }
     super.eUnset(featureID);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @Override
@@ -307,27 +317,30 @@ public class LinearStylingImpl extends StylingImpl implements LinearStyling
   {
     switch (featureID)
     {
-      case StackedchartsPackage.LINEAR_STYLING__START_COLOR:
-        return START_COLOR_EDEFAULT == null ? startColor != null : !START_COLOR_EDEFAULT.equals(startColor);
-      case StackedchartsPackage.LINEAR_STYLING__END_COLOR:
-        return END_COLOR_EDEFAULT == null ? endColor != null : !END_COLOR_EDEFAULT.equals(endColor);
-      case StackedchartsPackage.LINEAR_STYLING__START_VAL:
-        return startVal != START_VAL_EDEFAULT;
-      case StackedchartsPackage.LINEAR_STYLING__END_VAL:
-        return endVal != END_VAL_EDEFAULT;
+    case StackedchartsPackage.LINEAR_STYLING__START_COLOR:
+      return START_COLOR_EDEFAULT == null ? startColor != null
+          : !START_COLOR_EDEFAULT.equals(startColor);
+    case StackedchartsPackage.LINEAR_STYLING__END_COLOR:
+      return END_COLOR_EDEFAULT == null ? endColor != null : !END_COLOR_EDEFAULT
+          .equals(endColor);
+    case StackedchartsPackage.LINEAR_STYLING__START_VAL:
+      return startVal != START_VAL_EDEFAULT;
+    case StackedchartsPackage.LINEAR_STYLING__END_VAL:
+      return endVal != END_VAL_EDEFAULT;
     }
     return super.eIsSet(featureID);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @Override
   public String toString()
   {
-    if (eIsProxy()) return super.toString();
+    if (eIsProxy())
+      return super.toString();
 
     StringBuffer result = new StringBuffer(super.toString());
     result.append(" (startColor: ");
@@ -342,4 +355,4 @@ public class LinearStylingImpl extends StylingImpl implements LinearStyling
     return result.toString();
   }
 
-} //LinearStylingImpl
+} // LinearStylingImpl

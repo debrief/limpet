@@ -43,205 +43,204 @@ import org.eclipse.emf.ecore.impl.EPackageImpl;
 import org.eclipse.emf.ecore.xml.type.XMLTypePackage;
 
 /**
- * <!-- begin-user-doc -->
- * An implementation of the model <b>Package</b>.
- * <!-- end-user-doc -->
+ * <!-- begin-user-doc --> An implementation of the model <b>Package</b>. <!-- end-user-doc -->
+ * 
  * @generated
  */
-public class StackedchartsPackageImpl extends EPackageImpl implements StackedchartsPackage
+public class StackedchartsPackageImpl extends EPackageImpl implements
+    StackedchartsPackage
 {
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   private EClass chartSetEClass = null;
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   private EClass chartEClass = null;
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   private EClass dependentAxisEClass = null;
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   private EClass datasetEClass = null;
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   private EClass dataItemEClass = null;
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   private EClass abstractAnnotationEClass = null;
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   private EClass zoneEClass = null;
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   private EClass markerEClass = null;
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   private EClass stylingEClass = null;
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   private EClass plainStylingEClass = null;
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   private EClass linearStylingEClass = null;
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   private EClass abstractAxisEClass = null;
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   private EClass independentAxisEClass = null;
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   private EClass scatterSetEClass = null;
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   private EClass datumEClass = null;
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   private EClass selectiveAnnotationEClass = null;
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   private EClass axisTypeEClass = null;
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   private EClass dateAxisEClass = null;
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   private EClass numberAxisEClass = null;
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   private EClass angleAxisEClass = null;
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   private EEnum axisScaleEEnum = null;
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   private EEnum orientationEEnum = null;
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   private EEnum axisDirectionEEnum = null;
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   private EEnum markerStyleEEnum = null;
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   private EEnum lineTypeEEnum = null;
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   private EDataType colorEDataType = null;
 
   /**
    * Creates an instance of the model <b>Package</b>, registered with
-   * {@link org.eclipse.emf.ecore.EPackage.Registry EPackage.Registry} by the package
-   * package URI value.
-   * <p>Note: the correct way to create the package is via the static
-   * factory method {@link #init init()}, which also performs
-   * initialization of the package, or returns the registered package,
-   * if one already exists.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * {@link org.eclipse.emf.ecore.EPackage.Registry EPackage.Registry} by the package package URI
+   * value.
+   * <p>
+   * Note: the correct way to create the package is via the static factory method {@link #init
+   * init()}, which also performs initialization of the package, or returns the registered package,
+   * if one already exists. <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @see org.eclipse.emf.ecore.EPackage.Registry
    * @see info.limpet.stackedcharts.model.StackedchartsPackage#eNS_URI
    * @see #init()
@@ -253,19 +252,21 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   private static boolean isInited = false;
 
   /**
-   * Creates, registers, and initializes the <b>Package</b> for this model, and for any others upon which it depends.
+   * Creates, registers, and initializes the <b>Package</b> for this model, and for any others upon
+   * which it depends.
    * 
-   * <p>This method is used to initialize {@link StackedchartsPackage#eINSTANCE} when that field is accessed.
-   * Clients should not invoke it directly. Instead, they should simply access that field to obtain the package.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <p>
+   * This method is used to initialize {@link StackedchartsPackage#eINSTANCE} when that field is
+   * accessed. Clients should not invoke it directly. Instead, they should simply access that field
+   * to obtain the package. <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @see #eNS_URI
    * @see #createPackageContents()
    * @see #initializePackageContents()
@@ -273,10 +274,16 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
    */
   public static StackedchartsPackage init()
   {
-    if (isInited) return (StackedchartsPackage)EPackage.Registry.INSTANCE.getEPackage(StackedchartsPackage.eNS_URI);
+    if (isInited)
+      return (StackedchartsPackage) EPackage.Registry.INSTANCE.getEPackage(
+          StackedchartsPackage.eNS_URI);
 
     // Obtain or create and register package
-    StackedchartsPackageImpl theStackedchartsPackage = (StackedchartsPackageImpl)(EPackage.Registry.INSTANCE.get(eNS_URI) instanceof StackedchartsPackageImpl ? EPackage.Registry.INSTANCE.get(eNS_URI) : new StackedchartsPackageImpl());
+    StackedchartsPackageImpl theStackedchartsPackage =
+        (StackedchartsPackageImpl) (EPackage.Registry.INSTANCE.get(
+            eNS_URI) instanceof StackedchartsPackageImpl
+                ? EPackage.Registry.INSTANCE.get(eNS_URI)
+                : new StackedchartsPackageImpl());
 
     isInited = true;
 
@@ -292,15 +299,15 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
     // Mark meta-data to indicate it can't be changed
     theStackedchartsPackage.freeze();
 
-  
     // Update the registry and return the package
-    EPackage.Registry.INSTANCE.put(StackedchartsPackage.eNS_URI, theStackedchartsPackage);
+    EPackage.Registry.INSTANCE.put(StackedchartsPackage.eNS_URI,
+        theStackedchartsPackage);
     return theStackedchartsPackage;
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EClass getChartSet()
@@ -309,38 +316,38 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EReference getChartSet_Charts()
   {
-    return (EReference)chartSetEClass.getEStructuralFeatures().get(0);
+    return (EReference) chartSetEClass.getEStructuralFeatures().get(0);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EAttribute getChartSet_Orientation()
   {
-    return (EAttribute)chartSetEClass.getEStructuralFeatures().get(1);
+    return (EAttribute) chartSetEClass.getEStructuralFeatures().get(1);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EReference getChartSet_SharedAxis()
   {
-    return (EReference)chartSetEClass.getEStructuralFeatures().get(2);
+    return (EReference) chartSetEClass.getEStructuralFeatures().get(2);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EClass getChart()
@@ -349,58 +356,58 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EReference getChart_Parent()
   {
-    return (EReference)chartEClass.getEStructuralFeatures().get(0);
+    return (EReference) chartEClass.getEStructuralFeatures().get(0);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EReference getChart_MaxAxes()
   {
-    return (EReference)chartEClass.getEStructuralFeatures().get(1);
+    return (EReference) chartEClass.getEStructuralFeatures().get(1);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EAttribute getChart_Name()
   {
-    return (EAttribute)chartEClass.getEStructuralFeatures().get(2);
+    return (EAttribute) chartEClass.getEStructuralFeatures().get(2);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EAttribute getChart_Title()
   {
-    return (EAttribute)chartEClass.getEStructuralFeatures().get(3);
+    return (EAttribute) chartEClass.getEStructuralFeatures().get(3);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EReference getChart_MinAxes()
   {
-    return (EReference)chartEClass.getEStructuralFeatures().get(4);
+    return (EReference) chartEClass.getEStructuralFeatures().get(4);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EClass getDependentAxis()
@@ -409,28 +416,28 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EReference getDependentAxis_Datasets()
   {
-    return (EReference)dependentAxisEClass.getEStructuralFeatures().get(0);
+    return (EReference) dependentAxisEClass.getEStructuralFeatures().get(0);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EReference getDependentAxis_Annotations()
   {
-    return (EReference)dependentAxisEClass.getEStructuralFeatures().get(1);
+    return (EReference) dependentAxisEClass.getEStructuralFeatures().get(1);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EClass getDataset()
@@ -439,48 +446,48 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EAttribute getDataset_Name()
   {
-    return (EAttribute)datasetEClass.getEStructuralFeatures().get(0);
+    return (EAttribute) datasetEClass.getEStructuralFeatures().get(0);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EReference getDataset_Measurements()
   {
-    return (EReference)datasetEClass.getEStructuralFeatures().get(1);
+    return (EReference) datasetEClass.getEStructuralFeatures().get(1);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EReference getDataset_Styling()
   {
-    return (EReference)datasetEClass.getEStructuralFeatures().get(2);
+    return (EReference) datasetEClass.getEStructuralFeatures().get(2);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EAttribute getDataset_Units()
   {
-    return (EAttribute)datasetEClass.getEStructuralFeatures().get(3);
+    return (EAttribute) datasetEClass.getEStructuralFeatures().get(3);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EClass getDataItem()
@@ -489,28 +496,28 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EAttribute getDataItem_IndependentVal()
   {
-    return (EAttribute)dataItemEClass.getEStructuralFeatures().get(0);
+    return (EAttribute) dataItemEClass.getEStructuralFeatures().get(0);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EAttribute getDataItem_DependentVal()
   {
-    return (EAttribute)dataItemEClass.getEStructuralFeatures().get(1);
+    return (EAttribute) dataItemEClass.getEStructuralFeatures().get(1);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EClass getAbstractAnnotation()
@@ -519,38 +526,41 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EAttribute getAbstractAnnotation_Name()
   {
-    return (EAttribute)abstractAnnotationEClass.getEStructuralFeatures().get(0);
+    return (EAttribute) abstractAnnotationEClass.getEStructuralFeatures().get(
+        0);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EAttribute getAbstractAnnotation_Color()
   {
-    return (EAttribute)abstractAnnotationEClass.getEStructuralFeatures().get(1);
+    return (EAttribute) abstractAnnotationEClass.getEStructuralFeatures().get(
+        1);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EAttribute getAbstractAnnotation_IncludeInLegend()
   {
-    return (EAttribute)abstractAnnotationEClass.getEStructuralFeatures().get(2);
+    return (EAttribute) abstractAnnotationEClass.getEStructuralFeatures().get(
+        2);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EClass getZone()
@@ -559,28 +569,28 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EAttribute getZone_Start()
   {
-    return (EAttribute)zoneEClass.getEStructuralFeatures().get(0);
+    return (EAttribute) zoneEClass.getEStructuralFeatures().get(0);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EAttribute getZone_End()
   {
-    return (EAttribute)zoneEClass.getEStructuralFeatures().get(1);
+    return (EAttribute) zoneEClass.getEStructuralFeatures().get(1);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EClass getMarker()
@@ -589,18 +599,18 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EAttribute getMarker_Value()
   {
-    return (EAttribute)markerEClass.getEStructuralFeatures().get(0);
+    return (EAttribute) markerEClass.getEStructuralFeatures().get(0);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EClass getStyling()
@@ -609,58 +619,58 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EAttribute getStyling_MarkerStyle()
   {
-    return (EAttribute)stylingEClass.getEStructuralFeatures().get(0);
+    return (EAttribute) stylingEClass.getEStructuralFeatures().get(0);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EAttribute getStyling_MarkerSize()
   {
-    return (EAttribute)stylingEClass.getEStructuralFeatures().get(1);
+    return (EAttribute) stylingEClass.getEStructuralFeatures().get(1);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EAttribute getStyling_LineThickness()
   {
-    return (EAttribute)stylingEClass.getEStructuralFeatures().get(2);
+    return (EAttribute) stylingEClass.getEStructuralFeatures().get(2);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EAttribute getStyling_LineStyle()
   {
-    return (EAttribute)stylingEClass.getEStructuralFeatures().get(3);
+    return (EAttribute) stylingEClass.getEStructuralFeatures().get(3);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EAttribute getStyling_IncludeInLegend()
   {
-    return (EAttribute)stylingEClass.getEStructuralFeatures().get(4);
+    return (EAttribute) stylingEClass.getEStructuralFeatures().get(4);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EClass getPlainStyling()
@@ -669,18 +679,18 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EAttribute getPlainStyling_Color()
   {
-    return (EAttribute)plainStylingEClass.getEStructuralFeatures().get(0);
+    return (EAttribute) plainStylingEClass.getEStructuralFeatures().get(0);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EClass getLinearStyling()
@@ -689,48 +699,48 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EAttribute getLinearStyling_StartColor()
   {
-    return (EAttribute)linearStylingEClass.getEStructuralFeatures().get(0);
+    return (EAttribute) linearStylingEClass.getEStructuralFeatures().get(0);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EAttribute getLinearStyling_EndColor()
   {
-    return (EAttribute)linearStylingEClass.getEStructuralFeatures().get(1);
+    return (EAttribute) linearStylingEClass.getEStructuralFeatures().get(1);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EAttribute getLinearStyling_StartVal()
   {
-    return (EAttribute)linearStylingEClass.getEStructuralFeatures().get(2);
+    return (EAttribute) linearStylingEClass.getEStructuralFeatures().get(2);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EAttribute getLinearStyling_EndVal()
   {
-    return (EAttribute)linearStylingEClass.getEStructuralFeatures().get(3);
+    return (EAttribute) linearStylingEClass.getEStructuralFeatures().get(3);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EClass getAbstractAxis()
@@ -739,78 +749,78 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EAttribute getAbstractAxis_Scale()
   {
-    return (EAttribute)abstractAxisEClass.getEStructuralFeatures().get(0);
+    return (EAttribute) abstractAxisEClass.getEStructuralFeatures().get(0);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EAttribute getAbstractAxis_Name()
   {
-    return (EAttribute)abstractAxisEClass.getEStructuralFeatures().get(1);
+    return (EAttribute) abstractAxisEClass.getEStructuralFeatures().get(1);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EAttribute getAbstractAxis_AutoScale()
   {
-    return (EAttribute)abstractAxisEClass.getEStructuralFeatures().get(2);
+    return (EAttribute) abstractAxisEClass.getEStructuralFeatures().get(2);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EAttribute getAbstractAxis_Direction()
   {
-    return (EAttribute)abstractAxisEClass.getEStructuralFeatures().get(3);
+    return (EAttribute) abstractAxisEClass.getEStructuralFeatures().get(3);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EAttribute getAbstractAxis_Font()
   {
-    return (EAttribute)abstractAxisEClass.getEStructuralFeatures().get(4);
+    return (EAttribute) abstractAxisEClass.getEStructuralFeatures().get(4);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EAttribute getAbstractAxis_Color()
   {
-    return (EAttribute)abstractAxisEClass.getEStructuralFeatures().get(5);
+    return (EAttribute) abstractAxisEClass.getEStructuralFeatures().get(5);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EReference getAbstractAxis_AxisType()
   {
-    return (EReference)abstractAxisEClass.getEStructuralFeatures().get(6);
+    return (EReference) abstractAxisEClass.getEStructuralFeatures().get(6);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EClass getIndependentAxis()
@@ -819,18 +829,18 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EReference getIndependentAxis_Annotations()
   {
-    return (EReference)independentAxisEClass.getEStructuralFeatures().get(0);
+    return (EReference) independentAxisEClass.getEStructuralFeatures().get(0);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EClass getScatterSet()
@@ -839,18 +849,18 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EReference getScatterSet_Datums()
   {
-    return (EReference)scatterSetEClass.getEStructuralFeatures().get(0);
+    return (EReference) scatterSetEClass.getEStructuralFeatures().get(0);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EClass getDatum()
@@ -859,28 +869,28 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EAttribute getDatum_Val()
   {
-    return (EAttribute)datumEClass.getEStructuralFeatures().get(0);
+    return (EAttribute) datumEClass.getEStructuralFeatures().get(0);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EAttribute getDatum_Color()
   {
-    return (EAttribute)datumEClass.getEStructuralFeatures().get(1);
+    return (EAttribute) datumEClass.getEStructuralFeatures().get(1);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EClass getSelectiveAnnotation()
@@ -889,28 +899,30 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EReference getSelectiveAnnotation_Annotation()
   {
-    return (EReference)selectiveAnnotationEClass.getEStructuralFeatures().get(0);
+    return (EReference) selectiveAnnotationEClass.getEStructuralFeatures().get(
+        0);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EReference getSelectiveAnnotation_AppearsIn()
   {
-    return (EReference)selectiveAnnotationEClass.getEStructuralFeatures().get(1);
+    return (EReference) selectiveAnnotationEClass.getEStructuralFeatures().get(
+        1);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EClass getAxisType()
@@ -919,8 +931,8 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EClass getDateAxis()
@@ -929,18 +941,18 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EAttribute getDateAxis_DateFormat()
   {
-    return (EAttribute)dateAxisEClass.getEStructuralFeatures().get(0);
+    return (EAttribute) dateAxisEClass.getEStructuralFeatures().get(0);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EClass getNumberAxis()
@@ -949,38 +961,38 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EAttribute getNumberAxis_NumberFormat()
   {
-    return (EAttribute)numberAxisEClass.getEStructuralFeatures().get(0);
+    return (EAttribute) numberAxisEClass.getEStructuralFeatures().get(0);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EAttribute getNumberAxis_AutoIncludesZero()
   {
-    return (EAttribute)numberAxisEClass.getEStructuralFeatures().get(1);
+    return (EAttribute) numberAxisEClass.getEStructuralFeatures().get(1);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EAttribute getNumberAxis_Units()
   {
-    return (EAttribute)numberAxisEClass.getEStructuralFeatures().get(2);
+    return (EAttribute) numberAxisEClass.getEStructuralFeatures().get(2);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EClass getAngleAxis()
@@ -989,38 +1001,48 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EAttribute getAngleAxis_MinVal()
   {
-    return (EAttribute)angleAxisEClass.getEStructuralFeatures().get(0);
+    return (EAttribute) angleAxisEClass.getEStructuralFeatures().get(0);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EAttribute getAngleAxis_MaxVal()
   {
-    return (EAttribute)angleAxisEClass.getEStructuralFeatures().get(1);
+    return (EAttribute) angleAxisEClass.getEStructuralFeatures().get(1);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EAttribute getAngleAxis_MidOrigin()
   {
-    return (EAttribute)angleAxisEClass.getEStructuralFeatures().get(2);
+    return (EAttribute) angleAxisEClass.getEStructuralFeatures().get(2);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
+   * @generated
+   */
+  public EAttribute getAngleAxis_RedGreen()
+  {
+    return (EAttribute) angleAxisEClass.getEStructuralFeatures().get(3);
+  }
+
+  /**
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EEnum getAxisScale()
@@ -1029,8 +1051,8 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EEnum getOrientation()
@@ -1039,8 +1061,8 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EEnum getAxisDirection()
@@ -1049,8 +1071,8 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EEnum getMarkerStyle()
@@ -1059,8 +1081,8 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EEnum getLineType()
@@ -1069,8 +1091,8 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public EDataType getColor()
@@ -1079,32 +1101,32 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public StackedchartsFactory getStackedchartsFactory()
   {
-    return (StackedchartsFactory)getEFactoryInstance();
+    return (StackedchartsFactory) getEFactoryInstance();
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   private boolean isCreated = false;
 
   /**
-   * Creates the meta-model objects for the package.  This method is
-   * guarded to have no affect on any invocation but its first.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * Creates the meta-model objects for the package. This method is guarded to have no affect on any
+   * invocation but its first. <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public void createPackageContents()
   {
-    if (isCreated) return;
+    if (isCreated)
+      return;
     isCreated = true;
 
     // Create classes and their features
@@ -1137,7 +1159,8 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
     abstractAnnotationEClass = createEClass(ABSTRACT_ANNOTATION);
     createEAttribute(abstractAnnotationEClass, ABSTRACT_ANNOTATION__NAME);
     createEAttribute(abstractAnnotationEClass, ABSTRACT_ANNOTATION__COLOR);
-    createEAttribute(abstractAnnotationEClass, ABSTRACT_ANNOTATION__INCLUDE_IN_LEGEND);
+    createEAttribute(abstractAnnotationEClass,
+        ABSTRACT_ANNOTATION__INCLUDE_IN_LEGEND);
 
     zoneEClass = createEClass(ZONE);
     createEAttribute(zoneEClass, ZONE__START);
@@ -1182,8 +1205,10 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
     createEAttribute(datumEClass, DATUM__COLOR);
 
     selectiveAnnotationEClass = createEClass(SELECTIVE_ANNOTATION);
-    createEReference(selectiveAnnotationEClass, SELECTIVE_ANNOTATION__ANNOTATION);
-    createEReference(selectiveAnnotationEClass, SELECTIVE_ANNOTATION__APPEARS_IN);
+    createEReference(selectiveAnnotationEClass,
+        SELECTIVE_ANNOTATION__ANNOTATION);
+    createEReference(selectiveAnnotationEClass,
+        SELECTIVE_ANNOTATION__APPEARS_IN);
 
     axisTypeEClass = createEClass(AXIS_TYPE);
 
@@ -1199,6 +1224,7 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
     createEAttribute(angleAxisEClass, ANGLE_AXIS__MIN_VAL);
     createEAttribute(angleAxisEClass, ANGLE_AXIS__MAX_VAL);
     createEAttribute(angleAxisEClass, ANGLE_AXIS__MID_ORIGIN);
+    createEAttribute(angleAxisEClass, ANGLE_AXIS__RED_GREEN);
 
     // Create enums
     axisScaleEEnum = createEEnum(AXIS_SCALE);
@@ -1212,22 +1238,22 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   private boolean isInitialized = false;
 
   /**
-   * Complete the initialization of the package and its meta-model.  This
-   * method is guarded to have no affect on any invocation but its first.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * Complete the initialization of the package and its meta-model. This method is guarded to have
+   * no affect on any invocation but its first. <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public void initializePackageContents()
   {
-    if (isInitialized) return;
+    if (isInitialized)
+      return;
     isInitialized = true;
 
     // Initialize package
@@ -1236,7 +1262,9 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
     setNsURI(eNS_URI);
 
     // Obtain other dependent packages
-    XMLTypePackage theXMLTypePackage = (XMLTypePackage)EPackage.Registry.INSTANCE.getEPackage(XMLTypePackage.eNS_URI);
+    XMLTypePackage theXMLTypePackage =
+        (XMLTypePackage) EPackage.Registry.INSTANCE.getEPackage(
+            XMLTypePackage.eNS_URI);
 
     // Create type parameters
 
@@ -1255,97 +1283,270 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
     angleAxisEClass.getESuperTypes().add(this.getNumberAxis());
 
     // Initialize classes, features, and operations; add parameters
-    initEClass(chartSetEClass, ChartSet.class, "ChartSet", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEReference(getChartSet_Charts(), this.getChart(), this.getChart_Parent(), "charts", null, 0, -1, ChartSet.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getChartSet_Orientation(), this.getOrientation(), "orientation", "Vertical", 0, 1, ChartSet.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getChartSet_SharedAxis(), this.getIndependentAxis(), null, "sharedAxis", null, 0, 1, ChartSet.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEClass(chartSetEClass, ChartSet.class, "ChartSet", !IS_ABSTRACT,
+        !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getChartSet_Charts(), this.getChart(), this
+        .getChart_Parent(), "charts", null, 0, -1, ChartSet.class,
+        !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE,
+        !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED,
+        IS_ORDERED);
+    initEAttribute(getChartSet_Orientation(), this.getOrientation(),
+        "orientation", "Vertical", 0, 1, ChartSet.class, !IS_TRANSIENT,
+        !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE,
+        !IS_DERIVED, IS_ORDERED);
+    initEReference(getChartSet_SharedAxis(), this.getIndependentAxis(), null,
+        "sharedAxis", null, 0, 1, ChartSet.class, !IS_TRANSIENT, !IS_VOLATILE,
+        IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE,
+        IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-    initEClass(chartEClass, Chart.class, "Chart", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEReference(getChart_Parent(), this.getChartSet(), this.getChartSet_Charts(), "parent", null, 0, 1, Chart.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getChart_MaxAxes(), this.getDependentAxis(), null, "maxAxes", null, 0, -1, Chart.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getChart_Name(), ecorePackage.getEString(), "name", null, 0, 1, Chart.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getChart_Title(), ecorePackage.getEString(), "title", null, 0, 1, Chart.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getChart_MinAxes(), this.getDependentAxis(), null, "minAxes", null, 0, -1, Chart.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEClass(chartEClass, Chart.class, "Chart", !IS_ABSTRACT, !IS_INTERFACE,
+        IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getChart_Parent(), this.getChartSet(), this
+        .getChartSet_Charts(), "parent", null, 0, 1, Chart.class, !IS_TRANSIENT,
+        !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, !IS_RESOLVE_PROXIES,
+        !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getChart_MaxAxes(), this.getDependentAxis(), null, "maxAxes",
+        null, 0, -1, Chart.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE,
+        IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE,
+        !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getChart_Name(), ecorePackage.getEString(), "name", null, 0,
+        1, Chart.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE,
+        !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getChart_Title(), ecorePackage.getEString(), "title", null,
+        0, 1, Chart.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE,
+        !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getChart_MinAxes(), this.getDependentAxis(), null, "minAxes",
+        null, 0, -1, Chart.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE,
+        IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE,
+        !IS_DERIVED, IS_ORDERED);
 
-    initEClass(dependentAxisEClass, DependentAxis.class, "DependentAxis", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEReference(getDependentAxis_Datasets(), this.getDataset(), null, "datasets", null, 0, -1, DependentAxis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getDependentAxis_Annotations(), this.getAbstractAnnotation(), null, "annotations", null, 0, -1, DependentAxis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEClass(dependentAxisEClass, DependentAxis.class, "DependentAxis",
+        !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getDependentAxis_Datasets(), this.getDataset(), null,
+        "datasets", null, 0, -1, DependentAxis.class, !IS_TRANSIENT,
+        !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES,
+        !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getDependentAxis_Annotations(), this.getAbstractAnnotation(),
+        null, "annotations", null, 0, -1, DependentAxis.class, !IS_TRANSIENT,
+        !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES,
+        !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-    initEClass(datasetEClass, Dataset.class, "Dataset", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEAttribute(getDataset_Name(), ecorePackage.getEString(), "name", null, 0, 1, Dataset.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getDataset_Measurements(), this.getDataItem(), null, "measurements", null, 0, -1, Dataset.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getDataset_Styling(), this.getStyling(), null, "styling", null, 1, 1, Dataset.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getDataset_Units(), ecorePackage.getEString(), "units", null, 0, 1, Dataset.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEClass(datasetEClass, Dataset.class, "Dataset", !IS_ABSTRACT,
+        !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getDataset_Name(), ecorePackage.getEString(), "name", null,
+        0, 1, Dataset.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE,
+        !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getDataset_Measurements(), this.getDataItem(), null,
+        "measurements", null, 0, -1, Dataset.class, !IS_TRANSIENT, !IS_VOLATILE,
+        IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE,
+        IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getDataset_Styling(), this.getStyling(), null, "styling",
+        null, 1, 1, Dataset.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE,
+        IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE,
+        !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getDataset_Units(), ecorePackage.getEString(), "units", null,
+        0, 1, Dataset.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE,
+        !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-    initEClass(dataItemEClass, DataItem.class, "DataItem", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEAttribute(getDataItem_IndependentVal(), ecorePackage.getEDouble(), "independentVal", null, 0, 1, DataItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getDataItem_DependentVal(), ecorePackage.getEDouble(), "dependentVal", null, 0, 1, DataItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEClass(dataItemEClass, DataItem.class, "DataItem", !IS_ABSTRACT,
+        !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getDataItem_IndependentVal(), ecorePackage.getEDouble(),
+        "independentVal", null, 0, 1, DataItem.class, !IS_TRANSIENT,
+        !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE,
+        !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getDataItem_DependentVal(), ecorePackage.getEDouble(),
+        "dependentVal", null, 0, 1, DataItem.class, !IS_TRANSIENT, !IS_VOLATILE,
+        IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED,
+        IS_ORDERED);
 
-    initEClass(abstractAnnotationEClass, AbstractAnnotation.class, "AbstractAnnotation", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEAttribute(getAbstractAnnotation_Name(), ecorePackage.getEString(), "name", null, 0, 1, AbstractAnnotation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getAbstractAnnotation_Color(), this.getColor(), "color", null, 0, 1, AbstractAnnotation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getAbstractAnnotation_IncludeInLegend(), theXMLTypePackage.getBoolean(), "includeInLegend", "true", 0, 1, AbstractAnnotation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEClass(abstractAnnotationEClass, AbstractAnnotation.class,
+        "AbstractAnnotation", IS_ABSTRACT, !IS_INTERFACE,
+        IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getAbstractAnnotation_Name(), ecorePackage.getEString(),
+        "name", null, 0, 1, AbstractAnnotation.class, !IS_TRANSIENT,
+        !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE,
+        !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getAbstractAnnotation_Color(), this.getColor(), "color",
+        null, 0, 1, AbstractAnnotation.class, !IS_TRANSIENT, !IS_VOLATILE,
+        IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED,
+        IS_ORDERED);
+    initEAttribute(getAbstractAnnotation_IncludeInLegend(), theXMLTypePackage
+        .getBoolean(), "includeInLegend", "true", 0, 1,
+        AbstractAnnotation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE,
+        !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-    initEClass(zoneEClass, Zone.class, "Zone", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEAttribute(getZone_Start(), ecorePackage.getEDouble(), "start", null, 0, 1, Zone.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getZone_End(), ecorePackage.getEDouble(), "end", null, 0, 1, Zone.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEClass(zoneEClass, Zone.class, "Zone", !IS_ABSTRACT, !IS_INTERFACE,
+        IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getZone_Start(), ecorePackage.getEDouble(), "start", null, 0,
+        1, Zone.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE,
+        !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getZone_End(), ecorePackage.getEDouble(), "end", null, 0, 1,
+        Zone.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE,
+        !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-    initEClass(markerEClass, Marker.class, "Marker", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEAttribute(getMarker_Value(), ecorePackage.getEDouble(), "value", null, 0, 1, Marker.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEClass(markerEClass, Marker.class, "Marker", !IS_ABSTRACT,
+        !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getMarker_Value(), ecorePackage.getEDouble(), "value", null,
+        0, 1, Marker.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE,
+        !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-    initEClass(stylingEClass, Styling.class, "Styling", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEAttribute(getStyling_MarkerStyle(), this.getMarkerStyle(), "markerStyle", null, 0, 1, Styling.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getStyling_MarkerSize(), theXMLTypePackage.getDouble(), "markerSize", "3", 0, 1, Styling.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getStyling_LineThickness(), theXMLTypePackage.getDouble(), "lineThickness", "1", 0, 1, Styling.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getStyling_LineStyle(), this.getLineType(), "lineStyle", "Solid", 0, 1, Styling.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getStyling_IncludeInLegend(), ecorePackage.getEBoolean(), "includeInLegend", "true", 0, 1, Styling.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEClass(stylingEClass, Styling.class, "Styling", !IS_ABSTRACT,
+        !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getStyling_MarkerStyle(), this.getMarkerStyle(),
+        "markerStyle", null, 0, 1, Styling.class, !IS_TRANSIENT, !IS_VOLATILE,
+        IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED,
+        IS_ORDERED);
+    initEAttribute(getStyling_MarkerSize(), theXMLTypePackage.getDouble(),
+        "markerSize", "3", 0, 1, Styling.class, !IS_TRANSIENT, !IS_VOLATILE,
+        IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED,
+        IS_ORDERED);
+    initEAttribute(getStyling_LineThickness(), theXMLTypePackage.getDouble(),
+        "lineThickness", "1", 0, 1, Styling.class, !IS_TRANSIENT, !IS_VOLATILE,
+        IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED,
+        IS_ORDERED);
+    initEAttribute(getStyling_LineStyle(), this.getLineType(), "lineStyle",
+        "Solid", 0, 1, Styling.class, !IS_TRANSIENT, !IS_VOLATILE,
+        IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED,
+        IS_ORDERED);
+    initEAttribute(getStyling_IncludeInLegend(), ecorePackage.getEBoolean(),
+        "includeInLegend", "true", 0, 1, Styling.class, !IS_TRANSIENT,
+        !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE,
+        !IS_DERIVED, IS_ORDERED);
 
-    initEClass(plainStylingEClass, PlainStyling.class, "PlainStyling", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEAttribute(getPlainStyling_Color(), this.getColor(), "color", null, 0, 1, PlainStyling.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEClass(plainStylingEClass, PlainStyling.class, "PlainStyling",
+        !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getPlainStyling_Color(), this.getColor(), "color", null, 0,
+        1, PlainStyling.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE,
+        !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-    initEClass(linearStylingEClass, LinearStyling.class, "LinearStyling", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEAttribute(getLinearStyling_StartColor(), this.getColor(), "startColor", null, 0, 1, LinearStyling.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getLinearStyling_EndColor(), this.getColor(), "endColor", null, 0, 1, LinearStyling.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getLinearStyling_StartVal(), ecorePackage.getEDouble(), "startVal", null, 0, 1, LinearStyling.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getLinearStyling_EndVal(), ecorePackage.getEDouble(), "endVal", null, 0, 1, LinearStyling.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEClass(linearStylingEClass, LinearStyling.class, "LinearStyling",
+        !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getLinearStyling_StartColor(), this.getColor(), "startColor",
+        null, 0, 1, LinearStyling.class, !IS_TRANSIENT, !IS_VOLATILE,
+        IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED,
+        IS_ORDERED);
+    initEAttribute(getLinearStyling_EndColor(), this.getColor(), "endColor",
+        null, 0, 1, LinearStyling.class, !IS_TRANSIENT, !IS_VOLATILE,
+        IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED,
+        IS_ORDERED);
+    initEAttribute(getLinearStyling_StartVal(), ecorePackage.getEDouble(),
+        "startVal", null, 0, 1, LinearStyling.class, !IS_TRANSIENT,
+        !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE,
+        !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getLinearStyling_EndVal(), ecorePackage.getEDouble(),
+        "endVal", null, 0, 1, LinearStyling.class, !IS_TRANSIENT, !IS_VOLATILE,
+        IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED,
+        IS_ORDERED);
 
-    initEClass(abstractAxisEClass, AbstractAxis.class, "AbstractAxis", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEAttribute(getAbstractAxis_Scale(), this.getAxisScale(), "scale", null, 0, 1, AbstractAxis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getAbstractAxis_Name(), ecorePackage.getEString(), "name", null, 0, 1, AbstractAxis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getAbstractAxis_AutoScale(), theXMLTypePackage.getBoolean(), "autoScale", null, 0, 1, AbstractAxis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getAbstractAxis_Direction(), this.getAxisDirection(), "direction", null, 0, 1, AbstractAxis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getAbstractAxis_Font(), ecorePackage.getEString(), "font", null, 0, 1, AbstractAxis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getAbstractAxis_Color(), this.getColor(), "color", null, 0, 1, AbstractAxis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getAbstractAxis_AxisType(), this.getAxisType(), null, "axisType", null, 0, 1, AbstractAxis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEClass(abstractAxisEClass, AbstractAxis.class, "AbstractAxis",
+        IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getAbstractAxis_Scale(), this.getAxisScale(), "scale", null,
+        0, 1, AbstractAxis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE,
+        !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getAbstractAxis_Name(), ecorePackage.getEString(), "name",
+        null, 0, 1, AbstractAxis.class, !IS_TRANSIENT, !IS_VOLATILE,
+        IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED,
+        IS_ORDERED);
+    initEAttribute(getAbstractAxis_AutoScale(), theXMLTypePackage.getBoolean(),
+        "autoScale", null, 0, 1, AbstractAxis.class, !IS_TRANSIENT,
+        !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE,
+        !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getAbstractAxis_Direction(), this.getAxisDirection(),
+        "direction", null, 0, 1, AbstractAxis.class, !IS_TRANSIENT,
+        !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE,
+        !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getAbstractAxis_Font(), ecorePackage.getEString(), "font",
+        null, 0, 1, AbstractAxis.class, !IS_TRANSIENT, !IS_VOLATILE,
+        IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED,
+        IS_ORDERED);
+    initEAttribute(getAbstractAxis_Color(), this.getColor(), "color", null, 0,
+        1, AbstractAxis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE,
+        !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getAbstractAxis_AxisType(), this.getAxisType(), null,
+        "axisType", null, 0, 1, AbstractAxis.class, !IS_TRANSIENT, !IS_VOLATILE,
+        IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE,
+        IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-    initEClass(independentAxisEClass, IndependentAxis.class, "IndependentAxis", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEReference(getIndependentAxis_Annotations(), this.getSelectiveAnnotation(), null, "annotations", null, 0, -1, IndependentAxis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEClass(independentAxisEClass, IndependentAxis.class, "IndependentAxis",
+        !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getIndependentAxis_Annotations(), this
+        .getSelectiveAnnotation(), null, "annotations", null, 0, -1,
+        IndependentAxis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE,
+        IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE,
+        !IS_DERIVED, IS_ORDERED);
 
-    initEClass(scatterSetEClass, ScatterSet.class, "ScatterSet", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEReference(getScatterSet_Datums(), this.getDatum(), null, "datums", null, 0, -1, ScatterSet.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEClass(scatterSetEClass, ScatterSet.class, "ScatterSet", !IS_ABSTRACT,
+        !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getScatterSet_Datums(), this.getDatum(), null, "datums",
+        null, 0, -1, ScatterSet.class, !IS_TRANSIENT, !IS_VOLATILE,
+        IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE,
+        IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-    initEClass(datumEClass, Datum.class, "Datum", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEAttribute(getDatum_Val(), ecorePackage.getEDouble(), "val", null, 1, 1, Datum.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getDatum_Color(), this.getColor(), "color", null, 0, 1, Datum.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEClass(datumEClass, Datum.class, "Datum", !IS_ABSTRACT, !IS_INTERFACE,
+        IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getDatum_Val(), ecorePackage.getEDouble(), "val", null, 1, 1,
+        Datum.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE,
+        !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getDatum_Color(), this.getColor(), "color", null, 0, 1,
+        Datum.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE,
+        !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-    initEClass(selectiveAnnotationEClass, SelectiveAnnotation.class, "SelectiveAnnotation", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEReference(getSelectiveAnnotation_Annotation(), this.getAbstractAnnotation(), null, "annotation", null, 1, 1, SelectiveAnnotation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getSelectiveAnnotation_AppearsIn(), this.getChart(), null, "appearsIn", null, 0, -1, SelectiveAnnotation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEClass(selectiveAnnotationEClass, SelectiveAnnotation.class,
+        "SelectiveAnnotation", !IS_ABSTRACT, !IS_INTERFACE,
+        IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getSelectiveAnnotation_Annotation(), this
+        .getAbstractAnnotation(), null, "annotation", null, 1, 1,
+        SelectiveAnnotation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE,
+        IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE,
+        !IS_DERIVED, IS_ORDERED);
+    initEReference(getSelectiveAnnotation_AppearsIn(), this.getChart(), null,
+        "appearsIn", null, 0, -1, SelectiveAnnotation.class, !IS_TRANSIENT,
+        !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES,
+        !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-    initEClass(axisTypeEClass, AxisType.class, "AxisType", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEClass(axisTypeEClass, AxisType.class, "AxisType", IS_ABSTRACT,
+        !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
-    initEClass(dateAxisEClass, DateAxis.class, "DateAxis", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEAttribute(getDateAxis_DateFormat(), theXMLTypePackage.getString(), "dateFormat", null, 0, 1, DateAxis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEClass(dateAxisEClass, DateAxis.class, "DateAxis", !IS_ABSTRACT,
+        !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getDateAxis_DateFormat(), theXMLTypePackage.getString(),
+        "dateFormat", null, 0, 1, DateAxis.class, !IS_TRANSIENT, !IS_VOLATILE,
+        IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED,
+        IS_ORDERED);
 
-    initEClass(numberAxisEClass, NumberAxis.class, "NumberAxis", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEAttribute(getNumberAxis_NumberFormat(), theXMLTypePackage.getString(), "numberFormat", null, 0, 1, NumberAxis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getNumberAxis_AutoIncludesZero(), theXMLTypePackage.getBoolean(), "autoIncludesZero", null, 0, 1, NumberAxis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getNumberAxis_Units(), ecorePackage.getEString(), "units", null, 0, 1, NumberAxis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEClass(numberAxisEClass, NumberAxis.class, "NumberAxis", !IS_ABSTRACT,
+        !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getNumberAxis_NumberFormat(), theXMLTypePackage.getString(),
+        "numberFormat", null, 0, 1, NumberAxis.class, !IS_TRANSIENT,
+        !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE,
+        !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getNumberAxis_AutoIncludesZero(), theXMLTypePackage
+        .getBoolean(), "autoIncludesZero", null, 0, 1, NumberAxis.class,
+        !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID,
+        IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getNumberAxis_Units(), ecorePackage.getEString(), "units",
+        null, 0, 1, NumberAxis.class, !IS_TRANSIENT, !IS_VOLATILE,
+        IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED,
+        IS_ORDERED);
 
-    initEClass(angleAxisEClass, AngleAxis.class, "AngleAxis", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEAttribute(getAngleAxis_MinVal(), theXMLTypePackage.getDouble(), "minVal", null, 0, 1, AngleAxis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getAngleAxis_MaxVal(), theXMLTypePackage.getDouble(), "maxVal", "0.0", 0, 1, AngleAxis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getAngleAxis_MidOrigin(), theXMLTypePackage.getBoolean(), "midOrigin", null, 0, 1, AngleAxis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEClass(angleAxisEClass, AngleAxis.class, "AngleAxis", !IS_ABSTRACT,
+        !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getAngleAxis_MinVal(), theXMLTypePackage.getDouble(),
+        "minVal", null, 0, 1, AngleAxis.class, !IS_TRANSIENT, !IS_VOLATILE,
+        IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED,
+        IS_ORDERED);
+    initEAttribute(getAngleAxis_MaxVal(), theXMLTypePackage.getDouble(),
+        "maxVal", "0.0", 0, 1, AngleAxis.class, !IS_TRANSIENT, !IS_VOLATILE,
+        IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED,
+        IS_ORDERED);
+    initEAttribute(getAngleAxis_MidOrigin(), theXMLTypePackage.getBoolean(),
+        "midOrigin", null, 0, 1, AngleAxis.class, !IS_TRANSIENT, !IS_VOLATILE,
+        IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED,
+        IS_ORDERED);
+    initEAttribute(getAngleAxis_RedGreen(), theXMLTypePackage.getBoolean(),
+        "redGreen", null, 0, 1, AngleAxis.class, !IS_TRANSIENT, !IS_VOLATILE,
+        IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED,
+        IS_ORDERED);
 
     // Initialize enums and add enum literals
     initEEnum(axisScaleEEnum, AxisScale.class, "AxisScale");
@@ -1375,7 +1576,8 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
     addEEnumLiteral(lineTypeEEnum, LineType.DASHED);
 
     // Initialize data types
-    initEDataType(colorEDataType, Color.class, "Color", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
+    initEDataType(colorEDataType, Color.class, "Color", IS_SERIALIZABLE,
+        !IS_GENERATED_INSTANCE_CLASS);
 
     // Create resource
     createResource(eNS_URI);
@@ -1387,20 +1589,15 @@ public class StackedchartsPackageImpl extends EPackageImpl implements Stackedcha
 
   /**
    * Initializes the annotations for <b>http:///org/eclipse/emf/ecore/util/ExtendedMetaData</b>.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   protected void createExtendedMetaDataAnnotations()
   {
-    String source = "http:///org/eclipse/emf/ecore/util/ExtendedMetaData";	
-    addAnnotation
-      (getChartSet_Charts(), 
-       source, 
-       new String[] 
-       {
-       "name", "chart"
-       });
+    String source = "http:///org/eclipse/emf/ecore/util/ExtendedMetaData";
+    addAnnotation(getChartSet_Charts(), source, new String[]
+    {"name", "chart"});
   }
 
-} //StackedchartsPackageImpl
+} // StackedchartsPackageImpl

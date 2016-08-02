@@ -14,15 +14,14 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
 /**
- * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Datum</b></em>'.
- * <!-- end-user-doc -->
+ * <!-- begin-user-doc --> An implementation of the model object '<em><b>Datum</b></em>'. <!--
+ * end-user-doc -->
  * <p>
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link info.limpet.stackedcharts.model.impl.DatumImpl#getVal <em>Val</em>}</li>
- *   <li>{@link info.limpet.stackedcharts.model.impl.DatumImpl#getColor <em>Color</em>}</li>
+ * <li>{@link info.limpet.stackedcharts.model.impl.DatumImpl#getVal <em>Val</em>}</li>
+ * <li>{@link info.limpet.stackedcharts.model.impl.DatumImpl#getColor <em>Color</em>}</li>
  * </ul>
  *
  * @generated
@@ -30,9 +29,9 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 public class DatumImpl extends MinimalEObjectImpl.Container implements Datum
 {
   /**
-   * The default value of the '{@link #getVal() <em>Val</em>}' attribute.
-   * <!-- begin-user-doc -->
+   * The default value of the '{@link #getVal() <em>Val</em>}' attribute. <!-- begin-user-doc -->
    * <!-- end-user-doc -->
+   * 
    * @see #getVal()
    * @generated
    * @ordered
@@ -40,9 +39,9 @@ public class DatumImpl extends MinimalEObjectImpl.Container implements Datum
   protected static final double VAL_EDEFAULT = 0.0;
 
   /**
-   * The cached value of the '{@link #getVal() <em>Val</em>}' attribute.
-   * <!-- begin-user-doc -->
+   * The cached value of the '{@link #getVal() <em>Val</em>}' attribute. <!-- begin-user-doc -->
    * <!-- end-user-doc -->
+   * 
    * @see #getVal()
    * @generated
    * @ordered
@@ -50,9 +49,9 @@ public class DatumImpl extends MinimalEObjectImpl.Container implements Datum
   protected double val = VAL_EDEFAULT;
 
   /**
-   * The default value of the '{@link #getColor() <em>Color</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The default value of the '{@link #getColor() <em>Color</em>}' attribute. <!-- begin-user-doc
+   * --> <!-- end-user-doc -->
+   * 
    * @see #getColor()
    * @generated
    * @ordered
@@ -60,9 +59,9 @@ public class DatumImpl extends MinimalEObjectImpl.Container implements Datum
   protected static final Color COLOR_EDEFAULT = null;
 
   /**
-   * The cached value of the '{@link #getColor() <em>Color</em>}' attribute.
-   * <!-- begin-user-doc -->
+   * The cached value of the '{@link #getColor() <em>Color</em>}' attribute. <!-- begin-user-doc -->
    * <!-- end-user-doc -->
+   * 
    * @see #getColor()
    * @generated
    * @ordered
@@ -70,8 +69,8 @@ public class DatumImpl extends MinimalEObjectImpl.Container implements Datum
   protected Color color = COLOR_EDEFAULT;
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   protected DatumImpl()
@@ -80,8 +79,8 @@ public class DatumImpl extends MinimalEObjectImpl.Container implements Datum
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @Override
@@ -91,8 +90,8 @@ public class DatumImpl extends MinimalEObjectImpl.Container implements Datum
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public double getVal()
@@ -101,8 +100,8 @@ public class DatumImpl extends MinimalEObjectImpl.Container implements Datum
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public void setVal(double newVal)
@@ -110,12 +109,13 @@ public class DatumImpl extends MinimalEObjectImpl.Container implements Datum
     double oldVal = val;
     val = newVal;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, StackedchartsPackage.DATUM__VAL, oldVal, val));
+      eNotify(new ENotificationImpl(this, Notification.SET,
+          StackedchartsPackage.DATUM__VAL, oldVal, val));
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public Color getColor()
@@ -124,8 +124,8 @@ public class DatumImpl extends MinimalEObjectImpl.Container implements Datum
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public void setColor(Color newColor)
@@ -133,12 +133,13 @@ public class DatumImpl extends MinimalEObjectImpl.Container implements Datum
     Color oldColor = color;
     color = newColor;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, StackedchartsPackage.DATUM__COLOR, oldColor, color));
+      eNotify(new ENotificationImpl(this, Notification.SET,
+          StackedchartsPackage.DATUM__COLOR, oldColor, color));
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @Override
@@ -146,17 +147,17 @@ public class DatumImpl extends MinimalEObjectImpl.Container implements Datum
   {
     switch (featureID)
     {
-      case StackedchartsPackage.DATUM__VAL:
-        return getVal();
-      case StackedchartsPackage.DATUM__COLOR:
-        return getColor();
+    case StackedchartsPackage.DATUM__VAL:
+      return getVal();
+    case StackedchartsPackage.DATUM__COLOR:
+      return getColor();
     }
     return super.eGet(featureID, resolve, coreType);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @Override
@@ -164,19 +165,19 @@ public class DatumImpl extends MinimalEObjectImpl.Container implements Datum
   {
     switch (featureID)
     {
-      case StackedchartsPackage.DATUM__VAL:
-        setVal((Double)newValue);
-        return;
-      case StackedchartsPackage.DATUM__COLOR:
-        setColor((Color)newValue);
-        return;
+    case StackedchartsPackage.DATUM__VAL:
+      setVal((Double) newValue);
+      return;
+    case StackedchartsPackage.DATUM__COLOR:
+      setColor((Color) newValue);
+      return;
     }
     super.eSet(featureID, newValue);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @Override
@@ -184,19 +185,19 @@ public class DatumImpl extends MinimalEObjectImpl.Container implements Datum
   {
     switch (featureID)
     {
-      case StackedchartsPackage.DATUM__VAL:
-        setVal(VAL_EDEFAULT);
-        return;
-      case StackedchartsPackage.DATUM__COLOR:
-        setColor(COLOR_EDEFAULT);
-        return;
+    case StackedchartsPackage.DATUM__VAL:
+      setVal(VAL_EDEFAULT);
+      return;
+    case StackedchartsPackage.DATUM__COLOR:
+      setColor(COLOR_EDEFAULT);
+      return;
     }
     super.eUnset(featureID);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @Override
@@ -204,23 +205,25 @@ public class DatumImpl extends MinimalEObjectImpl.Container implements Datum
   {
     switch (featureID)
     {
-      case StackedchartsPackage.DATUM__VAL:
-        return val != VAL_EDEFAULT;
-      case StackedchartsPackage.DATUM__COLOR:
-        return COLOR_EDEFAULT == null ? color != null : !COLOR_EDEFAULT.equals(color);
+    case StackedchartsPackage.DATUM__VAL:
+      return val != VAL_EDEFAULT;
+    case StackedchartsPackage.DATUM__COLOR:
+      return COLOR_EDEFAULT == null ? color != null : !COLOR_EDEFAULT.equals(
+          color);
     }
     return super.eIsSet(featureID);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @Override
   public String toString()
   {
-    if (eIsProxy()) return super.toString();
+    if (eIsProxy())
+      return super.toString();
 
     StringBuffer result = new StringBuffer(super.toString());
     result.append(" (val: ");
@@ -231,4 +234,4 @@ public class DatumImpl extends MinimalEObjectImpl.Container implements Datum
     return result.toString();
   }
 
-} //DatumImpl
+} // DatumImpl

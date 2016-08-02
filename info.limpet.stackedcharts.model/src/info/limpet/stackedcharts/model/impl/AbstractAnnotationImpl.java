@@ -14,26 +14,29 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
 /**
- * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Abstract Annotation</b></em>'.
- * <!-- end-user-doc -->
+ * <!-- begin-user-doc --> An implementation of the model object '<em><b>Abstract
+ * Annotation</b></em>'. <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link info.limpet.stackedcharts.model.impl.AbstractAnnotationImpl#getName <em>Name</em>}</li>
- *   <li>{@link info.limpet.stackedcharts.model.impl.AbstractAnnotationImpl#getColor <em>Color</em>}</li>
- *   <li>{@link info.limpet.stackedcharts.model.impl.AbstractAnnotationImpl#isIncludeInLegend <em>Include In Legend</em>}</li>
+ * <li>{@link info.limpet.stackedcharts.model.impl.AbstractAnnotationImpl#getName
+ * <em>Name</em>}</li>
+ * <li>{@link info.limpet.stackedcharts.model.impl.AbstractAnnotationImpl#getColor
+ * <em>Color</em>}</li>
+ * <li>{@link info.limpet.stackedcharts.model.impl.AbstractAnnotationImpl#isIncludeInLegend
+ * <em>Include In Legend</em>}</li>
  * </ul>
  *
  * @generated
  */
-public abstract class AbstractAnnotationImpl extends MinimalEObjectImpl.Container implements AbstractAnnotation
+public abstract class AbstractAnnotationImpl extends
+    MinimalEObjectImpl.Container implements AbstractAnnotation
 {
   /**
-   * The default value of the '{@link #getName() <em>Name</em>}' attribute.
-   * <!-- begin-user-doc -->
+   * The default value of the '{@link #getName() <em>Name</em>}' attribute. <!-- begin-user-doc -->
    * <!-- end-user-doc -->
+   * 
    * @see #getName()
    * @generated
    * @ordered
@@ -41,9 +44,9 @@ public abstract class AbstractAnnotationImpl extends MinimalEObjectImpl.Containe
   protected static final String NAME_EDEFAULT = null;
 
   /**
-   * The cached value of the '{@link #getName() <em>Name</em>}' attribute.
-   * <!-- begin-user-doc -->
+   * The cached value of the '{@link #getName() <em>Name</em>}' attribute. <!-- begin-user-doc -->
    * <!-- end-user-doc -->
+   * 
    * @see #getName()
    * @generated
    * @ordered
@@ -51,9 +54,9 @@ public abstract class AbstractAnnotationImpl extends MinimalEObjectImpl.Containe
   protected String name = NAME_EDEFAULT;
 
   /**
-   * The default value of the '{@link #getColor() <em>Color</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The default value of the '{@link #getColor() <em>Color</em>}' attribute. <!-- begin-user-doc
+   * --> <!-- end-user-doc -->
+   * 
    * @see #getColor()
    * @generated
    * @ordered
@@ -61,9 +64,9 @@ public abstract class AbstractAnnotationImpl extends MinimalEObjectImpl.Containe
   protected static final Color COLOR_EDEFAULT = null;
 
   /**
-   * The cached value of the '{@link #getColor() <em>Color</em>}' attribute.
-   * <!-- begin-user-doc -->
+   * The cached value of the '{@link #getColor() <em>Color</em>}' attribute. <!-- begin-user-doc -->
    * <!-- end-user-doc -->
+   * 
    * @see #getColor()
    * @generated
    * @ordered
@@ -72,8 +75,8 @@ public abstract class AbstractAnnotationImpl extends MinimalEObjectImpl.Containe
 
   /**
    * The default value of the '{@link #isIncludeInLegend() <em>Include In Legend</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @see #isIncludeInLegend()
    * @generated
    * @ordered
@@ -82,8 +85,8 @@ public abstract class AbstractAnnotationImpl extends MinimalEObjectImpl.Containe
 
   /**
    * The cached value of the '{@link #isIncludeInLegend() <em>Include In Legend</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @see #isIncludeInLegend()
    * @generated
    * @ordered
@@ -91,8 +94,8 @@ public abstract class AbstractAnnotationImpl extends MinimalEObjectImpl.Containe
   protected boolean includeInLegend = INCLUDE_IN_LEGEND_EDEFAULT;
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   protected AbstractAnnotationImpl()
@@ -101,8 +104,8 @@ public abstract class AbstractAnnotationImpl extends MinimalEObjectImpl.Containe
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @Override
@@ -112,8 +115,8 @@ public abstract class AbstractAnnotationImpl extends MinimalEObjectImpl.Containe
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public String getName()
@@ -122,8 +125,8 @@ public abstract class AbstractAnnotationImpl extends MinimalEObjectImpl.Containe
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public void setName(String newName)
@@ -131,12 +134,13 @@ public abstract class AbstractAnnotationImpl extends MinimalEObjectImpl.Containe
     String oldName = name;
     name = newName;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, StackedchartsPackage.ABSTRACT_ANNOTATION__NAME, oldName, name));
+      eNotify(new ENotificationImpl(this, Notification.SET,
+          StackedchartsPackage.ABSTRACT_ANNOTATION__NAME, oldName, name));
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public Color getColor()
@@ -145,8 +149,8 @@ public abstract class AbstractAnnotationImpl extends MinimalEObjectImpl.Containe
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public void setColor(Color newColor)
@@ -154,12 +158,13 @@ public abstract class AbstractAnnotationImpl extends MinimalEObjectImpl.Containe
     Color oldColor = color;
     color = newColor;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, StackedchartsPackage.ABSTRACT_ANNOTATION__COLOR, oldColor, color));
+      eNotify(new ENotificationImpl(this, Notification.SET,
+          StackedchartsPackage.ABSTRACT_ANNOTATION__COLOR, oldColor, color));
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public boolean isIncludeInLegend()
@@ -168,8 +173,8 @@ public abstract class AbstractAnnotationImpl extends MinimalEObjectImpl.Containe
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public void setIncludeInLegend(boolean newIncludeInLegend)
@@ -177,12 +182,14 @@ public abstract class AbstractAnnotationImpl extends MinimalEObjectImpl.Containe
     boolean oldIncludeInLegend = includeInLegend;
     includeInLegend = newIncludeInLegend;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, StackedchartsPackage.ABSTRACT_ANNOTATION__INCLUDE_IN_LEGEND, oldIncludeInLegend, includeInLegend));
+      eNotify(new ENotificationImpl(this, Notification.SET,
+          StackedchartsPackage.ABSTRACT_ANNOTATION__INCLUDE_IN_LEGEND,
+          oldIncludeInLegend, includeInLegend));
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @Override
@@ -190,19 +197,19 @@ public abstract class AbstractAnnotationImpl extends MinimalEObjectImpl.Containe
   {
     switch (featureID)
     {
-      case StackedchartsPackage.ABSTRACT_ANNOTATION__NAME:
-        return getName();
-      case StackedchartsPackage.ABSTRACT_ANNOTATION__COLOR:
-        return getColor();
-      case StackedchartsPackage.ABSTRACT_ANNOTATION__INCLUDE_IN_LEGEND:
-        return isIncludeInLegend();
+    case StackedchartsPackage.ABSTRACT_ANNOTATION__NAME:
+      return getName();
+    case StackedchartsPackage.ABSTRACT_ANNOTATION__COLOR:
+      return getColor();
+    case StackedchartsPackage.ABSTRACT_ANNOTATION__INCLUDE_IN_LEGEND:
+      return isIncludeInLegend();
     }
     return super.eGet(featureID, resolve, coreType);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @Override
@@ -210,22 +217,22 @@ public abstract class AbstractAnnotationImpl extends MinimalEObjectImpl.Containe
   {
     switch (featureID)
     {
-      case StackedchartsPackage.ABSTRACT_ANNOTATION__NAME:
-        setName((String)newValue);
-        return;
-      case StackedchartsPackage.ABSTRACT_ANNOTATION__COLOR:
-        setColor((Color)newValue);
-        return;
-      case StackedchartsPackage.ABSTRACT_ANNOTATION__INCLUDE_IN_LEGEND:
-        setIncludeInLegend((Boolean)newValue);
-        return;
+    case StackedchartsPackage.ABSTRACT_ANNOTATION__NAME:
+      setName((String) newValue);
+      return;
+    case StackedchartsPackage.ABSTRACT_ANNOTATION__COLOR:
+      setColor((Color) newValue);
+      return;
+    case StackedchartsPackage.ABSTRACT_ANNOTATION__INCLUDE_IN_LEGEND:
+      setIncludeInLegend((Boolean) newValue);
+      return;
     }
     super.eSet(featureID, newValue);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @Override
@@ -233,22 +240,22 @@ public abstract class AbstractAnnotationImpl extends MinimalEObjectImpl.Containe
   {
     switch (featureID)
     {
-      case StackedchartsPackage.ABSTRACT_ANNOTATION__NAME:
-        setName(NAME_EDEFAULT);
-        return;
-      case StackedchartsPackage.ABSTRACT_ANNOTATION__COLOR:
-        setColor(COLOR_EDEFAULT);
-        return;
-      case StackedchartsPackage.ABSTRACT_ANNOTATION__INCLUDE_IN_LEGEND:
-        setIncludeInLegend(INCLUDE_IN_LEGEND_EDEFAULT);
-        return;
+    case StackedchartsPackage.ABSTRACT_ANNOTATION__NAME:
+      setName(NAME_EDEFAULT);
+      return;
+    case StackedchartsPackage.ABSTRACT_ANNOTATION__COLOR:
+      setColor(COLOR_EDEFAULT);
+      return;
+    case StackedchartsPackage.ABSTRACT_ANNOTATION__INCLUDE_IN_LEGEND:
+      setIncludeInLegend(INCLUDE_IN_LEGEND_EDEFAULT);
+      return;
     }
     super.eUnset(featureID);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @Override
@@ -256,25 +263,27 @@ public abstract class AbstractAnnotationImpl extends MinimalEObjectImpl.Containe
   {
     switch (featureID)
     {
-      case StackedchartsPackage.ABSTRACT_ANNOTATION__NAME:
-        return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
-      case StackedchartsPackage.ABSTRACT_ANNOTATION__COLOR:
-        return COLOR_EDEFAULT == null ? color != null : !COLOR_EDEFAULT.equals(color);
-      case StackedchartsPackage.ABSTRACT_ANNOTATION__INCLUDE_IN_LEGEND:
-        return includeInLegend != INCLUDE_IN_LEGEND_EDEFAULT;
+    case StackedchartsPackage.ABSTRACT_ANNOTATION__NAME:
+      return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
+    case StackedchartsPackage.ABSTRACT_ANNOTATION__COLOR:
+      return COLOR_EDEFAULT == null ? color != null : !COLOR_EDEFAULT.equals(
+          color);
+    case StackedchartsPackage.ABSTRACT_ANNOTATION__INCLUDE_IN_LEGEND:
+      return includeInLegend != INCLUDE_IN_LEGEND_EDEFAULT;
     }
     return super.eIsSet(featureID);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @Override
   public String toString()
   {
-    if (eIsProxy()) return super.toString();
+    if (eIsProxy())
+      return super.toString();
 
     StringBuffer result = new StringBuffer(super.toString());
     result.append(" (name: ");
@@ -287,4 +296,4 @@ public abstract class AbstractAnnotationImpl extends MinimalEObjectImpl.Containe
     return result.toString();
   }
 
-} //AbstractAnnotationImpl
+} // AbstractAnnotationImpl

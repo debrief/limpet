@@ -12,14 +12,14 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
 /**
- * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Date Axis</b></em>'.
- * <!-- end-user-doc -->
+ * <!-- begin-user-doc --> An implementation of the model object '<em><b>Date Axis</b></em>'. <!--
+ * end-user-doc -->
  * <p>
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link info.limpet.stackedcharts.model.impl.DateAxisImpl#getDateFormat <em>Date Format</em>}</li>
+ * <li>{@link info.limpet.stackedcharts.model.impl.DateAxisImpl#getDateFormat <em>Date
+ * Format</em>}</li>
  * </ul>
  *
  * @generated
@@ -27,9 +27,9 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 public class DateAxisImpl extends AxisTypeImpl implements DateAxis
 {
   /**
-   * The default value of the '{@link #getDateFormat() <em>Date Format</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The default value of the '{@link #getDateFormat() <em>Date Format</em>}' attribute. <!--
+   * begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @see #getDateFormat()
    * @generated
    * @ordered
@@ -37,9 +37,9 @@ public class DateAxisImpl extends AxisTypeImpl implements DateAxis
   protected static final String DATE_FORMAT_EDEFAULT = null;
 
   /**
-   * The cached value of the '{@link #getDateFormat() <em>Date Format</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The cached value of the '{@link #getDateFormat() <em>Date Format</em>}' attribute. <!--
+   * begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @see #getDateFormat()
    * @generated
    * @ordered
@@ -47,8 +47,8 @@ public class DateAxisImpl extends AxisTypeImpl implements DateAxis
   protected String dateFormat = DATE_FORMAT_EDEFAULT;
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   protected DateAxisImpl()
@@ -57,8 +57,8 @@ public class DateAxisImpl extends AxisTypeImpl implements DateAxis
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @Override
@@ -68,8 +68,8 @@ public class DateAxisImpl extends AxisTypeImpl implements DateAxis
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public String getDateFormat()
@@ -78,8 +78,8 @@ public class DateAxisImpl extends AxisTypeImpl implements DateAxis
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public void setDateFormat(String newDateFormat)
@@ -87,12 +87,14 @@ public class DateAxisImpl extends AxisTypeImpl implements DateAxis
     String oldDateFormat = dateFormat;
     dateFormat = newDateFormat;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, StackedchartsPackage.DATE_AXIS__DATE_FORMAT, oldDateFormat, dateFormat));
+      eNotify(new ENotificationImpl(this, Notification.SET,
+          StackedchartsPackage.DATE_AXIS__DATE_FORMAT, oldDateFormat,
+          dateFormat));
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @Override
@@ -100,15 +102,15 @@ public class DateAxisImpl extends AxisTypeImpl implements DateAxis
   {
     switch (featureID)
     {
-      case StackedchartsPackage.DATE_AXIS__DATE_FORMAT:
-        return getDateFormat();
+    case StackedchartsPackage.DATE_AXIS__DATE_FORMAT:
+      return getDateFormat();
     }
     return super.eGet(featureID, resolve, coreType);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @Override
@@ -116,16 +118,16 @@ public class DateAxisImpl extends AxisTypeImpl implements DateAxis
   {
     switch (featureID)
     {
-      case StackedchartsPackage.DATE_AXIS__DATE_FORMAT:
-        setDateFormat((String)newValue);
-        return;
+    case StackedchartsPackage.DATE_AXIS__DATE_FORMAT:
+      setDateFormat((String) newValue);
+      return;
     }
     super.eSet(featureID, newValue);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @Override
@@ -133,16 +135,16 @@ public class DateAxisImpl extends AxisTypeImpl implements DateAxis
   {
     switch (featureID)
     {
-      case StackedchartsPackage.DATE_AXIS__DATE_FORMAT:
-        setDateFormat(DATE_FORMAT_EDEFAULT);
-        return;
+    case StackedchartsPackage.DATE_AXIS__DATE_FORMAT:
+      setDateFormat(DATE_FORMAT_EDEFAULT);
+      return;
     }
     super.eUnset(featureID);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @Override
@@ -150,21 +152,23 @@ public class DateAxisImpl extends AxisTypeImpl implements DateAxis
   {
     switch (featureID)
     {
-      case StackedchartsPackage.DATE_AXIS__DATE_FORMAT:
-        return DATE_FORMAT_EDEFAULT == null ? dateFormat != null : !DATE_FORMAT_EDEFAULT.equals(dateFormat);
+    case StackedchartsPackage.DATE_AXIS__DATE_FORMAT:
+      return DATE_FORMAT_EDEFAULT == null ? dateFormat != null
+          : !DATE_FORMAT_EDEFAULT.equals(dateFormat);
     }
     return super.eIsSet(featureID);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @Override
   public String toString()
   {
-    if (eIsProxy()) return super.toString();
+    if (eIsProxy())
+      return super.toString();
 
     StringBuffer result = new StringBuffer(super.toString());
     result.append(" (dateFormat: ");
@@ -173,4 +177,4 @@ public class DateAxisImpl extends AxisTypeImpl implements DateAxis
     return result.toString();
   }
 
-} //DateAxisImpl
+} // DateAxisImpl

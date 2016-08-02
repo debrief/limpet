@@ -10,16 +10,17 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
 /**
- * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Angle Axis</b></em>'.
- * <!-- end-user-doc -->
+ * <!-- begin-user-doc --> An implementation of the model object '<em><b>Angle Axis</b></em>'. <!--
+ * end-user-doc -->
  * <p>
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link info.limpet.stackedcharts.model.impl.AngleAxisImpl#getMinVal <em>Min Val</em>}</li>
- *   <li>{@link info.limpet.stackedcharts.model.impl.AngleAxisImpl#getMaxVal <em>Max Val</em>}</li>
- *   <li>{@link info.limpet.stackedcharts.model.impl.AngleAxisImpl#isMidOrigin <em>Mid Origin</em>}</li>
+ * <li>{@link info.limpet.stackedcharts.model.impl.AngleAxisImpl#getMinVal <em>Min Val</em>}</li>
+ * <li>{@link info.limpet.stackedcharts.model.impl.AngleAxisImpl#getMaxVal <em>Max Val</em>}</li>
+ * <li>{@link info.limpet.stackedcharts.model.impl.AngleAxisImpl#isMidOrigin <em>Mid
+ * Origin</em>}</li>
+ * <li>{@link info.limpet.stackedcharts.model.impl.AngleAxisImpl#isRedGreen <em>Red Green</em>}</li>
  * </ul>
  *
  * @generated
@@ -27,36 +28,36 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 public class AngleAxisImpl extends NumberAxisImpl implements AngleAxis
 {
   /**
-   * The default value of the '{@link #getMinVal() <em>Min Val</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The default value of the '{@link #getMinVal() <em>Min Val</em>}' attribute. <!-- begin-user-doc
+   * --> <!-- end-user-doc -->
+   * 
    * @see #getMinVal()
    * @generated
    * @ordered
    */
   protected static final double MIN_VAL_EDEFAULT = 0.0;
   /**
-   * The cached value of the '{@link #getMinVal() <em>Min Val</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The cached value of the '{@link #getMinVal() <em>Min Val</em>}' attribute. <!-- begin-user-doc
+   * --> <!-- end-user-doc -->
+   * 
    * @see #getMinVal()
    * @generated
    * @ordered
    */
   protected double minVal = MIN_VAL_EDEFAULT;
   /**
-   * The default value of the '{@link #getMaxVal() <em>Max Val</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The default value of the '{@link #getMaxVal() <em>Max Val</em>}' attribute. <!-- begin-user-doc
+   * --> <!-- end-user-doc -->
+   * 
    * @see #getMaxVal()
    * @generated
    * @ordered
    */
   protected static final double MAX_VAL_EDEFAULT = 0.0;
   /**
-   * The cached value of the '{@link #getMaxVal() <em>Max Val</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The cached value of the '{@link #getMaxVal() <em>Max Val</em>}' attribute. <!-- begin-user-doc
+   * --> <!-- end-user-doc -->
+   * 
    * @see #getMaxVal()
    * @generated
    * @ordered
@@ -64,18 +65,18 @@ public class AngleAxisImpl extends NumberAxisImpl implements AngleAxis
   protected double maxVal = MAX_VAL_EDEFAULT;
 
   /**
-   * The default value of the '{@link #isMidOrigin() <em>Mid Origin</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The default value of the '{@link #isMidOrigin() <em>Mid Origin</em>}' attribute. <!--
+   * begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @see #isMidOrigin()
    * @generated
    * @ordered
    */
   protected static final boolean MID_ORIGIN_EDEFAULT = false;
   /**
-   * The cached value of the '{@link #isMidOrigin() <em>Mid Origin</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The cached value of the '{@link #isMidOrigin() <em>Mid Origin</em>}' attribute. <!--
+   * begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @see #isMidOrigin()
    * @generated
    * @ordered
@@ -83,8 +84,27 @@ public class AngleAxisImpl extends NumberAxisImpl implements AngleAxis
   protected boolean midOrigin = MID_ORIGIN_EDEFAULT;
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The default value of the '{@link #isRedGreen() <em>Red Green</em>}' attribute. <!--
+   * begin-user-doc --> <!-- end-user-doc -->
+   * 
+   * @see #isRedGreen()
+   * @generated
+   * @ordered
+   */
+  protected static final boolean RED_GREEN_EDEFAULT = false;
+  /**
+   * The cached value of the '{@link #isRedGreen() <em>Red Green</em>}' attribute. <!--
+   * begin-user-doc --> <!-- end-user-doc -->
+   * 
+   * @see #isRedGreen()
+   * @generated
+   * @ordered
+   */
+  protected boolean redGreen = RED_GREEN_EDEFAULT;
+
+  /**
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   protected AngleAxisImpl()
@@ -93,8 +113,8 @@ public class AngleAxisImpl extends NumberAxisImpl implements AngleAxis
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @Override
@@ -104,8 +124,8 @@ public class AngleAxisImpl extends NumberAxisImpl implements AngleAxis
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public double getMinVal()
@@ -114,8 +134,8 @@ public class AngleAxisImpl extends NumberAxisImpl implements AngleAxis
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public void setMinVal(double newMinVal)
@@ -123,12 +143,13 @@ public class AngleAxisImpl extends NumberAxisImpl implements AngleAxis
     double oldMinVal = minVal;
     minVal = newMinVal;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, StackedchartsPackage.ANGLE_AXIS__MIN_VAL, oldMinVal, minVal));
+      eNotify(new ENotificationImpl(this, Notification.SET,
+          StackedchartsPackage.ANGLE_AXIS__MIN_VAL, oldMinVal, minVal));
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public double getMaxVal()
@@ -137,8 +158,8 @@ public class AngleAxisImpl extends NumberAxisImpl implements AngleAxis
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public void setMaxVal(double newMaxVal)
@@ -146,12 +167,13 @@ public class AngleAxisImpl extends NumberAxisImpl implements AngleAxis
     double oldMaxVal = maxVal;
     maxVal = newMaxVal;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, StackedchartsPackage.ANGLE_AXIS__MAX_VAL, oldMaxVal, maxVal));
+      eNotify(new ENotificationImpl(this, Notification.SET,
+          StackedchartsPackage.ANGLE_AXIS__MAX_VAL, oldMaxVal, maxVal));
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public boolean isMidOrigin()
@@ -160,8 +182,8 @@ public class AngleAxisImpl extends NumberAxisImpl implements AngleAxis
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public void setMidOrigin(boolean newMidOrigin)
@@ -169,12 +191,38 @@ public class AngleAxisImpl extends NumberAxisImpl implements AngleAxis
     boolean oldMidOrigin = midOrigin;
     midOrigin = newMidOrigin;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, StackedchartsPackage.ANGLE_AXIS__MID_ORIGIN, oldMidOrigin, midOrigin));
+      eNotify(new ENotificationImpl(this, Notification.SET,
+          StackedchartsPackage.ANGLE_AXIS__MID_ORIGIN, oldMidOrigin,
+          midOrigin));
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
+   * @generated
+   */
+  public boolean isRedGreen()
+  {
+    return redGreen;
+  }
+
+  /**
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
+   * @generated
+   */
+  public void setRedGreen(boolean newRedGreen)
+  {
+    boolean oldRedGreen = redGreen;
+    redGreen = newRedGreen;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET,
+          StackedchartsPackage.ANGLE_AXIS__RED_GREEN, oldRedGreen, redGreen));
+  }
+
+  /**
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @Override
@@ -182,19 +230,21 @@ public class AngleAxisImpl extends NumberAxisImpl implements AngleAxis
   {
     switch (featureID)
     {
-      case StackedchartsPackage.ANGLE_AXIS__MIN_VAL:
-        return getMinVal();
-      case StackedchartsPackage.ANGLE_AXIS__MAX_VAL:
-        return getMaxVal();
-      case StackedchartsPackage.ANGLE_AXIS__MID_ORIGIN:
-        return isMidOrigin();
+    case StackedchartsPackage.ANGLE_AXIS__MIN_VAL:
+      return getMinVal();
+    case StackedchartsPackage.ANGLE_AXIS__MAX_VAL:
+      return getMaxVal();
+    case StackedchartsPackage.ANGLE_AXIS__MID_ORIGIN:
+      return isMidOrigin();
+    case StackedchartsPackage.ANGLE_AXIS__RED_GREEN:
+      return isRedGreen();
     }
     return super.eGet(featureID, resolve, coreType);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @Override
@@ -202,22 +252,25 @@ public class AngleAxisImpl extends NumberAxisImpl implements AngleAxis
   {
     switch (featureID)
     {
-      case StackedchartsPackage.ANGLE_AXIS__MIN_VAL:
-        setMinVal((Double)newValue);
-        return;
-      case StackedchartsPackage.ANGLE_AXIS__MAX_VAL:
-        setMaxVal((Double)newValue);
-        return;
-      case StackedchartsPackage.ANGLE_AXIS__MID_ORIGIN:
-        setMidOrigin((Boolean)newValue);
-        return;
+    case StackedchartsPackage.ANGLE_AXIS__MIN_VAL:
+      setMinVal((Double) newValue);
+      return;
+    case StackedchartsPackage.ANGLE_AXIS__MAX_VAL:
+      setMaxVal((Double) newValue);
+      return;
+    case StackedchartsPackage.ANGLE_AXIS__MID_ORIGIN:
+      setMidOrigin((Boolean) newValue);
+      return;
+    case StackedchartsPackage.ANGLE_AXIS__RED_GREEN:
+      setRedGreen((Boolean) newValue);
+      return;
     }
     super.eSet(featureID, newValue);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @Override
@@ -225,22 +278,25 @@ public class AngleAxisImpl extends NumberAxisImpl implements AngleAxis
   {
     switch (featureID)
     {
-      case StackedchartsPackage.ANGLE_AXIS__MIN_VAL:
-        setMinVal(MIN_VAL_EDEFAULT);
-        return;
-      case StackedchartsPackage.ANGLE_AXIS__MAX_VAL:
-        setMaxVal(MAX_VAL_EDEFAULT);
-        return;
-      case StackedchartsPackage.ANGLE_AXIS__MID_ORIGIN:
-        setMidOrigin(MID_ORIGIN_EDEFAULT);
-        return;
+    case StackedchartsPackage.ANGLE_AXIS__MIN_VAL:
+      setMinVal(MIN_VAL_EDEFAULT);
+      return;
+    case StackedchartsPackage.ANGLE_AXIS__MAX_VAL:
+      setMaxVal(MAX_VAL_EDEFAULT);
+      return;
+    case StackedchartsPackage.ANGLE_AXIS__MID_ORIGIN:
+      setMidOrigin(MID_ORIGIN_EDEFAULT);
+      return;
+    case StackedchartsPackage.ANGLE_AXIS__RED_GREEN:
+      setRedGreen(RED_GREEN_EDEFAULT);
+      return;
     }
     super.eUnset(featureID);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @Override
@@ -248,25 +304,28 @@ public class AngleAxisImpl extends NumberAxisImpl implements AngleAxis
   {
     switch (featureID)
     {
-      case StackedchartsPackage.ANGLE_AXIS__MIN_VAL:
-        return minVal != MIN_VAL_EDEFAULT;
-      case StackedchartsPackage.ANGLE_AXIS__MAX_VAL:
-        return maxVal != MAX_VAL_EDEFAULT;
-      case StackedchartsPackage.ANGLE_AXIS__MID_ORIGIN:
-        return midOrigin != MID_ORIGIN_EDEFAULT;
+    case StackedchartsPackage.ANGLE_AXIS__MIN_VAL:
+      return minVal != MIN_VAL_EDEFAULT;
+    case StackedchartsPackage.ANGLE_AXIS__MAX_VAL:
+      return maxVal != MAX_VAL_EDEFAULT;
+    case StackedchartsPackage.ANGLE_AXIS__MID_ORIGIN:
+      return midOrigin != MID_ORIGIN_EDEFAULT;
+    case StackedchartsPackage.ANGLE_AXIS__RED_GREEN:
+      return redGreen != RED_GREEN_EDEFAULT;
     }
     return super.eIsSet(featureID);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @Override
   public String toString()
   {
-    if (eIsProxy()) return super.toString();
+    if (eIsProxy())
+      return super.toString();
 
     StringBuffer result = new StringBuffer(super.toString());
     result.append(" (minVal: ");
@@ -275,8 +334,10 @@ public class AngleAxisImpl extends NumberAxisImpl implements AngleAxis
     result.append(maxVal);
     result.append(", midOrigin: ");
     result.append(midOrigin);
+    result.append(", redGreen: ");
+    result.append(redGreen);
     result.append(')');
     return result.toString();
   }
 
-} //AngleAxisImpl
+} // AngleAxisImpl

@@ -9,10 +9,9 @@ import java.util.List;
 import org.eclipse.emf.common.util.Enumerator;
 
 /**
- * <!-- begin-user-doc -->
- * A representation of the literals of the enumeration '<em><b>Line Type</b></em>',
- * and utility methods for working with them.
- * <!-- end-user-doc -->
+ * <!-- begin-user-doc --> A representation of the literals of the enumeration '<em><b>Line
+ * Type</b></em>', and utility methods for working with them. <!-- end-user-doc -->
+ * 
  * @see info.limpet.stackedcharts.model.StackedchartsPackage#getLineType()
  * @model
  * @generated
@@ -20,9 +19,8 @@ import org.eclipse.emf.common.util.Enumerator;
 public enum LineType implements Enumerator
 {
   /**
-   * The '<em><b>None</b></em>' literal object.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The '<em><b>None</b></em>' literal object. <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @see #NONE_VALUE
    * @generated
    * @ordered
@@ -30,9 +28,8 @@ public enum LineType implements Enumerator
   NONE(1, "None", "None"),
 
   /**
-   * The '<em><b>Solid</b></em>' literal object.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The '<em><b>Solid</b></em>' literal object. <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @see #SOLID_VALUE
    * @generated
    * @ordered
@@ -40,9 +37,8 @@ public enum LineType implements Enumerator
   SOLID(0, "Solid", "Solid"),
 
   /**
-   * The '<em><b>Dotted</b></em>' literal object.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The '<em><b>Dotted</b></em>' literal object. <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @see #DOTTED_VALUE
    * @generated
    * @ordered
@@ -50,9 +46,8 @@ public enum LineType implements Enumerator
   DOTTED(2, "Dotted", "Dotted"),
 
   /**
-   * The '<em><b>Dashed</b></em>' literal object.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The '<em><b>Dashed</b></em>' literal object. <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @see #DASHED_VALUE
    * @generated
    * @ordered
@@ -60,13 +55,13 @@ public enum LineType implements Enumerator
   DASHED(3, "Dashed", "Dashed");
 
   /**
-   * The '<em><b>None</b></em>' literal value.
-   * <!-- begin-user-doc -->
+   * The '<em><b>None</b></em>' literal value. <!-- begin-user-doc -->
    * <p>
-   * If the meaning of '<em><b>None</b></em>' literal object isn't clear,
-   * there really should be more of a description here...
+   * If the meaning of '<em><b>None</b></em>' literal object isn't clear, there really should be
+   * more of a description here...
    * </p>
    * <!-- end-user-doc -->
+   * 
    * @see #NONE
    * @model name="None"
    * @generated
@@ -75,13 +70,13 @@ public enum LineType implements Enumerator
   public static final int NONE_VALUE = 1;
 
   /**
-   * The '<em><b>Solid</b></em>' literal value.
-   * <!-- begin-user-doc -->
+   * The '<em><b>Solid</b></em>' literal value. <!-- begin-user-doc -->
    * <p>
-   * If the meaning of '<em><b>Solid</b></em>' literal object isn't clear,
-   * there really should be more of a description here...
+   * If the meaning of '<em><b>Solid</b></em>' literal object isn't clear, there really should be
+   * more of a description here...
    * </p>
    * <!-- end-user-doc -->
+   * 
    * @see #SOLID
    * @model name="Solid"
    * @generated
@@ -90,13 +85,13 @@ public enum LineType implements Enumerator
   public static final int SOLID_VALUE = 0;
 
   /**
-   * The '<em><b>Dotted</b></em>' literal value.
-   * <!-- begin-user-doc -->
+   * The '<em><b>Dotted</b></em>' literal value. <!-- begin-user-doc -->
    * <p>
-   * If the meaning of '<em><b>Dotted</b></em>' literal object isn't clear,
-   * there really should be more of a description here...
+   * If the meaning of '<em><b>Dotted</b></em>' literal object isn't clear, there really should be
+   * more of a description here...
    * </p>
    * <!-- end-user-doc -->
+   * 
    * @see #DOTTED
    * @model name="Dotted"
    * @generated
@@ -105,13 +100,13 @@ public enum LineType implements Enumerator
   public static final int DOTTED_VALUE = 2;
 
   /**
-   * The '<em><b>Dashed</b></em>' literal value.
-   * <!-- begin-user-doc -->
+   * The '<em><b>Dashed</b></em>' literal value. <!-- begin-user-doc -->
    * <p>
-   * If the meaning of '<em><b>Dashed</b></em>' literal object isn't clear,
-   * there really should be more of a description here...
+   * If the meaning of '<em><b>Dashed</b></em>' literal object isn't clear, there really should be
+   * more of a description here...
    * </p>
    * <!-- end-user-doc -->
+   * 
    * @see #DASHED
    * @model name="Dashed"
    * @generated
@@ -120,33 +115,29 @@ public enum LineType implements Enumerator
   public static final int DASHED_VALUE = 3;
 
   /**
-   * An array of all the '<em><b>Line Type</b></em>' enumerators.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * An array of all the '<em><b>Line Type</b></em>' enumerators. <!-- begin-user-doc --> <!--
+   * end-user-doc -->
+   * 
    * @generated
    */
-  private static final LineType[] VALUES_ARRAY =
-    new LineType[]
-    {
-      NONE,
-      SOLID,
-      DOTTED,
-      DASHED,
-    };
+  private static final LineType[] VALUES_ARRAY = new LineType[]
+  {NONE, SOLID, DOTTED, DASHED,};
 
   /**
-   * A public read-only list of all the '<em><b>Line Type</b></em>' enumerators.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * A public read-only list of all the '<em><b>Line Type</b></em>' enumerators. <!-- begin-user-doc
+   * --> <!-- end-user-doc -->
+   * 
    * @generated
    */
-  public static final List<LineType> VALUES = Collections.unmodifiableList(Arrays.asList(VALUES_ARRAY));
+  public static final List<LineType> VALUES = Collections.unmodifiableList(
+      Arrays.asList(VALUES_ARRAY));
 
   /**
-   * Returns the '<em><b>Line Type</b></em>' literal with the specified literal value.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param literal the literal.
+   * Returns the '<em><b>Line Type</b></em>' literal with the specified literal value. <!--
+   * begin-user-doc --> <!-- end-user-doc -->
+   * 
+   * @param literal
+   *          the literal.
    * @return the matching enumerator or <code>null</code>.
    * @generated
    */
@@ -164,10 +155,11 @@ public enum LineType implements Enumerator
   }
 
   /**
-   * Returns the '<em><b>Line Type</b></em>' literal with the specified name.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param name the name.
+   * Returns the '<em><b>Line Type</b></em>' literal with the specified name. <!-- begin-user-doc
+   * --> <!-- end-user-doc -->
+   * 
+   * @param name
+   *          the name.
    * @return the matching enumerator or <code>null</code>.
    * @generated
    */
@@ -185,10 +177,11 @@ public enum LineType implements Enumerator
   }
 
   /**
-   * Returns the '<em><b>Line Type</b></em>' literal with the specified integer value.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the integer value.
+   * Returns the '<em><b>Line Type</b></em>' literal with the specified integer value. <!--
+   * begin-user-doc --> <!-- end-user-doc -->
+   * 
+   * @param value
+   *          the integer value.
    * @return the matching enumerator or <code>null</code>.
    * @generated
    */
@@ -196,39 +189,42 @@ public enum LineType implements Enumerator
   {
     switch (value)
     {
-      case NONE_VALUE: return NONE;
-      case SOLID_VALUE: return SOLID;
-      case DOTTED_VALUE: return DOTTED;
-      case DASHED_VALUE: return DASHED;
+    case NONE_VALUE:
+      return NONE;
+    case SOLID_VALUE:
+      return SOLID;
+    case DOTTED_VALUE:
+      return DOTTED;
+    case DASHED_VALUE:
+      return DASHED;
     }
     return null;
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   private final int value;
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   private final String name;
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   private final String literal;
 
   /**
-   * Only this class can construct instances.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * Only this class can construct instances. <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   private LineType(int value, String name, String literal)
@@ -239,8 +235,8 @@ public enum LineType implements Enumerator
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public int getValue()
@@ -249,8 +245,8 @@ public enum LineType implements Enumerator
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public String getName()
@@ -259,8 +255,8 @@ public enum LineType implements Enumerator
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public String getLiteral()
@@ -269,9 +265,9 @@ public enum LineType implements Enumerator
   }
 
   /**
-   * Returns the literal value of the enumerator, which is its string representation.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * Returns the literal value of the enumerator, which is its string representation. <!--
+   * begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @Override
@@ -279,5 +275,5 @@ public enum LineType implements Enumerator
   {
     return literal;
   }
-  
-} //LineType
+
+} // LineType

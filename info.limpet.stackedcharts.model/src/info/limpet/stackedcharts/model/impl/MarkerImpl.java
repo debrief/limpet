@@ -12,14 +12,13 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
 /**
- * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Marker</b></em>'.
- * <!-- end-user-doc -->
+ * <!-- begin-user-doc --> An implementation of the model object '<em><b>Marker</b></em>'. <!--
+ * end-user-doc -->
  * <p>
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link info.limpet.stackedcharts.model.impl.MarkerImpl#getValue <em>Value</em>}</li>
+ * <li>{@link info.limpet.stackedcharts.model.impl.MarkerImpl#getValue <em>Value</em>}</li>
  * </ul>
  *
  * @generated
@@ -27,9 +26,9 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 public class MarkerImpl extends AbstractAnnotationImpl implements Marker
 {
   /**
-   * The default value of the '{@link #getValue() <em>Value</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The default value of the '{@link #getValue() <em>Value</em>}' attribute. <!-- begin-user-doc
+   * --> <!-- end-user-doc -->
+   * 
    * @see #getValue()
    * @generated
    * @ordered
@@ -37,9 +36,9 @@ public class MarkerImpl extends AbstractAnnotationImpl implements Marker
   protected static final double VALUE_EDEFAULT = 0.0;
 
   /**
-   * The cached value of the '{@link #getValue() <em>Value</em>}' attribute.
-   * <!-- begin-user-doc -->
+   * The cached value of the '{@link #getValue() <em>Value</em>}' attribute. <!-- begin-user-doc -->
    * <!-- end-user-doc -->
+   * 
    * @see #getValue()
    * @generated
    * @ordered
@@ -47,8 +46,8 @@ public class MarkerImpl extends AbstractAnnotationImpl implements Marker
   protected double value = VALUE_EDEFAULT;
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   protected MarkerImpl()
@@ -57,8 +56,8 @@ public class MarkerImpl extends AbstractAnnotationImpl implements Marker
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @Override
@@ -68,8 +67,8 @@ public class MarkerImpl extends AbstractAnnotationImpl implements Marker
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public double getValue()
@@ -78,8 +77,8 @@ public class MarkerImpl extends AbstractAnnotationImpl implements Marker
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public void setValue(double newValue)
@@ -87,12 +86,13 @@ public class MarkerImpl extends AbstractAnnotationImpl implements Marker
     double oldValue = value;
     value = newValue;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, StackedchartsPackage.MARKER__VALUE, oldValue, value));
+      eNotify(new ENotificationImpl(this, Notification.SET,
+          StackedchartsPackage.MARKER__VALUE, oldValue, value));
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @Override
@@ -100,15 +100,15 @@ public class MarkerImpl extends AbstractAnnotationImpl implements Marker
   {
     switch (featureID)
     {
-      case StackedchartsPackage.MARKER__VALUE:
-        return getValue();
+    case StackedchartsPackage.MARKER__VALUE:
+      return getValue();
     }
     return super.eGet(featureID, resolve, coreType);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @Override
@@ -116,16 +116,16 @@ public class MarkerImpl extends AbstractAnnotationImpl implements Marker
   {
     switch (featureID)
     {
-      case StackedchartsPackage.MARKER__VALUE:
-        setValue((Double)newValue);
-        return;
+    case StackedchartsPackage.MARKER__VALUE:
+      setValue((Double) newValue);
+      return;
     }
     super.eSet(featureID, newValue);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @Override
@@ -133,16 +133,16 @@ public class MarkerImpl extends AbstractAnnotationImpl implements Marker
   {
     switch (featureID)
     {
-      case StackedchartsPackage.MARKER__VALUE:
-        setValue(VALUE_EDEFAULT);
-        return;
+    case StackedchartsPackage.MARKER__VALUE:
+      setValue(VALUE_EDEFAULT);
+      return;
     }
     super.eUnset(featureID);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @Override
@@ -150,21 +150,22 @@ public class MarkerImpl extends AbstractAnnotationImpl implements Marker
   {
     switch (featureID)
     {
-      case StackedchartsPackage.MARKER__VALUE:
-        return value != VALUE_EDEFAULT;
+    case StackedchartsPackage.MARKER__VALUE:
+      return value != VALUE_EDEFAULT;
     }
     return super.eIsSet(featureID);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @Override
   public String toString()
   {
-    if (eIsProxy()) return super.toString();
+    if (eIsProxy())
+      return super.toString();
 
     StringBuffer result = new StringBuffer(super.toString());
     result.append(" (value: ");
@@ -173,4 +174,4 @@ public class MarkerImpl extends AbstractAnnotationImpl implements Marker
     return result.toString();
   }
 
-} //MarkerImpl
+} // MarkerImpl
