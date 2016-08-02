@@ -375,6 +375,16 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
             brgAxis.setName("Bearing");
             brgAxis.setAxisType(factory.createNumberAxis());
             relativeChart.getMinAxes().add(brgAxis);
+            
+            DependentAxis redGreenAxis = factory.createDependentAxis();
+            redGreenAxis.setName("Relative/ATB");
+            AngleAxis redGreenAngle = factory.createAngleAxis();
+            redGreenAngle.setMinVal(-180);
+            redGreenAngle.setMaxVal(180);
+            redGreenAngle.setRedGreen(true);
+            redGreenAngle.setMidOrigin(true);
+            redGreenAxis.setAxisType(redGreenAngle);
+            relativeChart.getMinAxes().add(redGreenAxis);           
 
             DependentAxis brgRateAxis = factory.createDependentAxis();
             brgRateAxis.setName("Bearing Rate");
@@ -389,27 +399,27 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
               if (iStoreItem.getName().equals("Range"))
               {
                 createDataset(factory, iStoreItem, "Range", rangeAxis, res,
-                    null, MarkerStyle.NONE, false);
+                    Color.red, MarkerStyle.NONE, false);
               }
               else if (iStoreItem.getName().equals("Bearing"))
               {
                 createDataset(factory, iStoreItem, "Bearing", brgAxis, res,
-                    null, MarkerStyle.NONE, true);
+                    Color.green, MarkerStyle.NONE, true);
               }
               else if (iStoreItem.getName().equals("Rel Brg"))
               {
-                createDataset(factory, iStoreItem, "Rel Brg", brgAxis, res,
-                    null, MarkerStyle.NONE, true);
+                createDataset(factory, iStoreItem, "Rel Brg", redGreenAxis, res,
+                    Color.orange, MarkerStyle.NONE, true);
               }
               else if (iStoreItem.getName().equals("ATB"))
               {
-                createDataset(factory, iStoreItem, "ATB", brgAxis, res, null,
+                createDataset(factory, iStoreItem, "ATB", redGreenAxis, res, Color.blue,
                     MarkerStyle.NONE, true);
               }
               else if (iStoreItem.getName().equals("Brg Rate"))
               {
                 createDataset(factory, iStoreItem, "Brg Rate", brgRateAxis,
-                    res, null, MarkerStyle.NONE, true);
+                    res, Color.cyan, MarkerStyle.NONE, true);
               }
             }
           }
