@@ -13,7 +13,6 @@ import java.awt.datatransfer.SystemFlavorMap;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -22,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.eclipse.emf.common.util.URI;
@@ -66,10 +64,8 @@ import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor;
 import org.freehep.graphicsbase.util.UserProperties;
-import org.freehep.graphicsio.PageConstants;
 import org.freehep.graphicsio.emf.EMFGraphics2D;
 import org.freehep.graphicsio.pdf.PDFGraphics2D;
-import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.StandardChartTheme;
 import org.jfree.experimental.chart.swt.ChartComposite;
@@ -929,11 +925,16 @@ public class StackedChartsView extends ViewPart implements
     private static DataFlavor[] supportedFlavors =
     {EMF_FLAVOR,PDF_FLAVOR};
 
-    private ChartComposite _chartComposite;
+
+    private JFreeChart _combined;
+
+    private Rectangle _bounds;
 
     public WMFTransfer(ChartComposite chartComposite)
     {
-      this._chartComposite = chartComposite;
+     ;
+       _combined = chartComposite.getChart();
+       _bounds = chartComposite.getBounds();
     }
 
     // @Override
@@ -944,14 +945,13 @@ public class StackedChartsView extends ViewPart implements
       {
         System.out.println("Mime type application/emf recognized");
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        JFreeChart combined = _chartComposite.getChart();
-        Rectangle bounds = _chartComposite.getBounds();
+        
         EMFGraphics2D g2d =
-            new EMFGraphics2D(out, new Dimension(bounds.width,
-                bounds.height));
+            new EMFGraphics2D(out, new Dimension(_bounds.width,
+                _bounds.height));
         g2d.startExport();
-        combined.draw(g2d, new Rectangle2D.Double(0, 0, bounds.width,
-            bounds.height));
+        _combined.draw(g2d, new Rectangle2D.Double(0, 0, _bounds.width,
+            _bounds.height));
 
         // Cleanup
         g2d.endExport();
@@ -961,19 +961,18 @@ public class StackedChartsView extends ViewPart implements
       else if (flavor.equals(PDF_FLAVOR))
       {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        JFreeChart combined = _chartComposite.getChart();
-        Rectangle bounds = _chartComposite.getBounds();
+       
         PDFGraphics2D g2d =
-            new PDFGraphics2D(out, new Dimension(bounds.width,
-                bounds.height));
+            new PDFGraphics2D(out, new Dimension(_bounds.width,
+                _bounds.height));
         UserProperties properties = new UserProperties();
         properties.setProperty(PDFGraphics2D.PAGE_SIZE, PDFGraphics2D.CUSTOM_PAGE_SIZE);
-        properties.setProperty(PDFGraphics2D.CUSTOM_PAGE_SIZE, new java.awt.Dimension(bounds.width,
-                bounds.height));
+        properties.setProperty(PDFGraphics2D.CUSTOM_PAGE_SIZE, new java.awt.Dimension(_bounds.width,
+                _bounds.height));
         g2d.setProperties(properties);
         g2d.startExport();
-        combined.draw(g2d, new Rectangle2D.Double(0, 0, bounds.width,
-            bounds.height));
+        _combined.draw(g2d, new Rectangle2D.Double(0, 0, _bounds.width,
+            _bounds.height));
 
         // Cleanup
         g2d.endExport();
