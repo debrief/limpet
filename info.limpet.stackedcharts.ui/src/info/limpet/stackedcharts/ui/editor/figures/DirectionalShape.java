@@ -1,16 +1,15 @@
 package info.limpet.stackedcharts.ui.editor.figures;
 
 import org.eclipse.draw2d.FlowLayout;
-import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.LayoutManager;
-import org.eclipse.draw2d.Shape;
+import org.eclipse.draw2d.RectangleFigure;
 
 /**
- * A Draw2D container {@link Shape} that orders its children in row or in a column based on the
- * {@link #isVertical()} property. It uses internal layout, clients should not attempt to set new
- * {@link LayoutManager}.
+ * A Draw2D container {@link RectangleFigure} that orders its children in row or in a column based
+ * on the {@link #isVertical()} property. It uses internal layout, clients should not attempt to set
+ * new {@link LayoutManager}.
  */
-public class DirectionalShape extends Shape
+public class DirectionalShape extends RectangleFigure
 {
 
   private boolean vertical;
@@ -18,16 +17,7 @@ public class DirectionalShape extends Shape
   public DirectionalShape()
   {
     super.setLayoutManager(new DirectionFlowLayout());
-  }
-
-  @Override
-  protected void fillShape(Graphics graphics)
-  {
-  }
-
-  @Override
-  protected void outlineShape(Graphics graphics)
-  {
+    setOutline(false);
   }
 
   /**
