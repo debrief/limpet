@@ -105,7 +105,7 @@ public class ScatterSetEditPart extends AbstractGraphicalEditPart implements
     scatterSetNameLabel.setVertical(!vertical);
   }
 
-  private Chart getChart()
+  public Chart getChart()
   {
     return (Chart) getParent().getParent().getModel();
   }

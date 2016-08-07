@@ -1,9 +1,12 @@
 package info.limpet.stackedcharts.ui.editor.policies;
 
+import info.limpet.stackedcharts.model.Chart;
 import info.limpet.stackedcharts.model.Dataset;
 import info.limpet.stackedcharts.model.DependentAxis;
+import info.limpet.stackedcharts.model.ScatterSet;
 import info.limpet.stackedcharts.ui.editor.commands.AddAxisToChartCommand;
 import info.limpet.stackedcharts.ui.editor.commands.AddDatasetsToAxisCommand;
+import info.limpet.stackedcharts.ui.editor.commands.MoveScatterSetCommand;
 import info.limpet.stackedcharts.ui.editor.parts.AxisEditPart;
 import info.limpet.stackedcharts.ui.editor.parts.AxisLandingPadEditPart;
 import info.limpet.stackedcharts.ui.editor.parts.ChartEditPart;
@@ -28,8 +31,8 @@ import org.eclipse.gef.editpolicies.ContainerEditPolicy;
 import org.eclipse.gef.requests.CreateRequest;
 import org.eclipse.gef.requests.GroupRequest;
 
-public class ScatterSetContainerEditPolicy extends ContainerEditPolicy implements
-    EditPolicy
+public class ScatterSetContainerEditPolicy extends ContainerEditPolicy
+    implements EditPolicy
 {
 
   @Override
@@ -58,38 +61,19 @@ public class ScatterSetContainerEditPolicy extends ContainerEditPolicy implement
     }
     else
     {
-        
+
       final Object first = toAdd.get(0);
       if (first instanceof ScatterSetEditPart)
       {
-        CompoundCommand compoundCommand = new CompoundCommand();
-        res = compoundCommand;
-        // find the landing side
-        final ScatterSetContainerEditPart container =
-            (ScatterSetContainerEditPart) getHost();
-        @SuppressWarnings("unused")
-        final ChartEditPart.ScatterSetContainer pad =
-            (ChartEditPart.ScatterSetContainer) container.getModel();
+        ScatterSetEditPart scatterSetEditPart = ((ScatterSetEditPart) first);
+        ScatterSet scatterSet = scatterSetEditPart.getModel();
+        Chart from = scatterSetEditPart.getChart();
 
-        // TODO: implement the code to move a scatterset to another chart
-        
-//        // find out which list (min/max) this axis is currently on
-//        final EList<DependentAxis> destination =
-//            pad.getPos() == ChartPanePosition.MIN ? pad.getChart()
-//                .getMinAxes() : pad.getChart().getMaxAxes();
-//
-//        // ok, did we find it?
-//        if (destination != null)
-//        {
-//          for (final Object o : toAdd)
-//          {
-//            if (o instanceof AxisEditPart)
-//            {
-//              compoundCommand.add(new MoveAxisCommand(destination,
-//                  (DependentAxis) ((AxisEditPart) o).getModel()));
-//            }
-//          }
-//        }
+        ScatterSetContainerEditPart container =
+            (ScatterSetContainerEditPart) getHost();
+        Chart to = (Chart) container.getParent().getModel();
+
+        res = new MoveScatterSetCommand(scatterSet, from, to);
       }
       else if (first instanceof DatasetEditPart)
       {
@@ -101,9 +85,9 @@ public class ScatterSetContainerEditPolicy extends ContainerEditPolicy implement
             (ChartPaneEditPart.AxisLandingPad) landingPadEditPart.getModel();
 
         // find out which list (min/max) this axis is currently on
-        final EList<DependentAxis> destination =
-            pad.getPos() == ChartPanePosition.MIN ? pad.getChart()
-                .getMinAxes() : pad.getChart().getMaxAxes();
+        final EList<DependentAxis> destination = pad
+            .getPos() == ChartPanePosition.MIN ? pad.getChart().getMinAxes()
+                : pad.getChart().getMaxAxes();
 
         if (destination != null)
         {
@@ -118,11 +102,12 @@ public class ScatterSetContainerEditPolicy extends ContainerEditPolicy implement
             AxisEditPart parent = (AxisEditPart) datasetEditPart.getParent();
             Dataset dataset = (Dataset) datasetEditPart.getModel();
             DependentAxis parentAxis = (DependentAxis) parent.getModel();
-            
+
             // take a copy of the parent axis, since we know it's suitable
             DependentAxis newAxis = EcoreUtil.copy(parentAxis);
             newAxis.getDatasets().clear();
-            compoundCommand.add(new AddAxisToChartCommand(destination, newAxis));
+            compoundCommand.add(new AddAxisToChartCommand(destination,
+                newAxis));
             compoundCommand.add(new AddDatasetsToAxisCommand(newAxis, dataset));
           }
         }
