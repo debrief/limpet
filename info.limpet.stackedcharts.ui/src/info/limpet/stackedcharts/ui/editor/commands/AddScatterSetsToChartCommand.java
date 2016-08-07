@@ -48,16 +48,7 @@ public class AddScatterSetsToChartCommand extends Command
       ChartSet charts = parent.getParent();
       EList<SelectiveAnnotation> annots = charts.getSharedAxis()
           .getAnnotations();
-      SelectiveAnnotation host = null;
-      for (SelectiveAnnotation annot : annots)
-      {
-        if (annot.getAnnotation().getName() != null && annot.getAnnotation()
-            .getName().equals(ds.getName()))
-        {
-          host = annot;
-          break;
-        }
-      }
+      SelectiveAnnotation host = findAnnotationByName(ds.getName(), charts);
 
       if (host == null)
       {
@@ -75,6 +66,22 @@ public class AddScatterSetsToChartCommand extends Command
         appearInParent.add(host);
       }
     }
+  }
+
+  public static SelectiveAnnotation findAnnotationByName(String annotationName,
+      ChartSet charts)
+  {
+    SelectiveAnnotation host = null;
+    for (SelectiveAnnotation annot : charts.getSharedAxis().getAnnotations())
+    {
+      if (annot.getAnnotation().getName() != null && annot.getAnnotation()
+          .getName().equals(annotationName))
+      {
+        host = annot;
+        break;
+      }
+    }
+    return host;
   }
 
   @Override
