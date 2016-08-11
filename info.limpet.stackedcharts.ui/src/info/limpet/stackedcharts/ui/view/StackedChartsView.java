@@ -23,11 +23,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.gef.commands.CommandStack;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -61,6 +63,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor;
 import org.freehep.graphicsbase.util.UserProperties;
@@ -74,9 +77,6 @@ public class StackedChartsView extends ViewPart implements
     ITabbedPropertySheetPageContributor, ISelectionProvider, DisposeListener
 {
 
-  private static final int MARKER_STEP_SIZE = 1;
-  public static final String STACKED_CHARTS_CONFIG = "StackedCharts";
-
   /**
    * interface for external objects that are able to supply a date and resond to a new date
    * 
@@ -86,43 +86,188 @@ public class StackedChartsView extends ViewPart implements
   public static interface ControllableDate
   {
     /**
-     * control the date
-     * 
-     * @param time
-     */
-    void setDate(Date date);
-
-    /**
      * retrieve the date
      * 
      * @return current date
      */
     Date getDate();
+
+    /**
+     * control the date
+     * 
+     * @param time
+     */
+    void setDate(Date date);
   }
 
+  public static class WMFTransfer implements Transferable
+  {
+
+    public static final DataFlavor EMF_FLAVOR = new DataFlavor("image/emf",
+        "Enhanced Meta File");
+
+    static
+    {
+      // EMF graphics clipboard format
+      try
+      {
+        final SystemFlavorMap sfm =
+            (SystemFlavorMap) SystemFlavorMap.getDefaultFlavorMap();
+        sfm.addFlavorForUnencodedNative("ENHMETAFILE", EMF_FLAVOR);// seems to be a key command!!
+        sfm.addUnencodedNativeForFlavor(EMF_FLAVOR, "ENHMETAFILE");// seems to be a key command!!
+      }
+      catch (final Exception e)
+      {
+        System.err.println("[WMFTransfer,static initializer] Error "
+            + e.getClass().getName() + ", " + e.getMessage());
+      }
+    }
+
+    public static final DataFlavor PDF_FLAVOR = new DataFlavor(
+        "application/pdf", "PDF");
+
+    static
+    {
+      // PDF graphics clipboard format
+      try
+      {
+        final SystemFlavorMap sfm =
+            (SystemFlavorMap) SystemFlavorMap.getDefaultFlavorMap();
+        sfm.addFlavorForUnencodedNative("PDF", PDF_FLAVOR);// seems to be a key command!!
+        sfm.addUnencodedNativeForFlavor(PDF_FLAVOR, "PDF");// seems to be a key command!!
+      }
+      catch (final Exception e)
+      {
+        System.err.println("[PDFTransfer,static initializer] Error "
+            + e.getClass().getName() + ", " + e.getMessage());
+      }
+    }
+
+    private static DataFlavor[] supportedFlavors =
+    {EMF_FLAVOR, PDF_FLAVOR};
+
+    private final JFreeChart _combined;
+
+    private final Rectangle _bounds;
+
+    public WMFTransfer(final ChartComposite chartComposite)
+    {
+      ;
+      _combined = chartComposite.getChart();
+      _bounds = chartComposite.getBounds();
+    }
+
+    // @Override
+    @Override
+    public Object getTransferData(final DataFlavor flavor)
+        throws UnsupportedFlavorException, IOException
+    {
+      if (flavor.equals(EMF_FLAVOR))
+      {
+        Activator.getDefault().getLog()
+        .log(
+            new Status(Status.INFO, "Mime type image/emf requested",
+                null));
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+        final EMFGraphics2D g2d =
+            new EMFGraphics2D(out, new Dimension(_bounds.width, _bounds.height));
+        g2d.startExport();
+        _combined.draw(g2d, new Rectangle2D.Double(0, 0, _bounds.width,
+            _bounds.height));
+
+        // Cleanup
+        g2d.endExport();
+
+        return new ByteArrayInputStream(out.toByteArray());
+      }
+      else if (flavor.equals(PDF_FLAVOR))
+      {
+        Activator.getDefault().getLog()
+            .log(
+                new Status(Status.INFO, "Mime type application/pdf requested",
+                    null));
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+        final PDFGraphics2D g2d =
+            new PDFGraphics2D(out, new Dimension(_bounds.width, _bounds.height));
+        final UserProperties properties = new UserProperties();
+        properties.setProperty(PDFGraphics2D.PAGE_SIZE,
+            PDFGraphics2D.CUSTOM_PAGE_SIZE);
+        properties.setProperty(PDFGraphics2D.CUSTOM_PAGE_SIZE,
+            new java.awt.Dimension(_bounds.width, _bounds.height));
+        g2d.setProperties(properties);
+        g2d.startExport();
+        _combined.draw(g2d, new Rectangle2D.Double(0, 0, _bounds.width,
+            _bounds.height));
+
+        // Cleanup
+        g2d.endExport();
+        return new ByteArrayInputStream(out.toByteArray());
+      }
+      else
+        throw new UnsupportedFlavorException(flavor);
+    }
+
+    @Override
+    public DataFlavor[] getTransferDataFlavors()
+    {
+      return supportedFlavors;
+    }
+
+    @Override
+    public boolean isDataFlavorSupported(final DataFlavor flavor)
+    {
+      for (final DataFlavor f : supportedFlavors)
+      {
+        if (f.equals(flavor))
+          return true;
+      }
+      return false;
+    }
+  }
+
+  private static final int MARKER_STEP_SIZE = 1;
+
+  public static final String STACKED_CHARTS_CONFIG = "StackedCharts";
   public static final int CHART_VIEW = 1;
+
   public static final int EDIT_VIEW = 2;
 
   public static final String ID = "info.limpet.StackedChartsView";
 
   private StackedPane stackedPane;
-
   // effects
   protected TransitionManager transitionManager = null;
   private Composite chartHolder;
   private Composite editorHolder;
   private ChartSet charts;
+
   private final AtomicBoolean initEditor = new AtomicBoolean(true);
 
   private StackedchartsEditControl chartEditor;
-
   private final List<ISelectionChangedListener> selectionListeners =
       new ArrayList<ISelectionChangedListener>();
   private Date _currentTime;
   private ChartComposite _chartComposite;
   private ArrayList<Runnable> _closeCallbacks;
   private ControllableDate _controllableDate = null;
+
   private JFreeChart jFreeChart;
+
+  /**
+   * let classes pass callbacks to be run when we are closing
+   * 
+   * @param runnable
+   */
+  public void addRunOnCloseCallback(final Runnable runnable)
+  {
+    if (_closeCallbacks == null)
+    {
+      _closeCallbacks = new ArrayList<Runnable>();
+    }
+    _closeCallbacks.add(runnable);
+  }
 
   @Override
   public void addSelectionChangedListener(
@@ -130,6 +275,66 @@ public class StackedChartsView extends ViewPart implements
   {
     selectionListeners.add(listener);
 
+  }
+
+  /**
+   * convenience method to make the value marker labels larger or smaller
+   * 
+   * @param up
+   */
+  private void changeFontSize(final Boolean up)
+  {
+    // are we making a change?
+    final float change;
+    if (up != null)
+    {
+      // sort out which direction we're changing
+      if (up)
+      {
+        change = MARKER_STEP_SIZE;
+      }
+      else
+      {
+        change = -MARKER_STEP_SIZE;
+      }
+
+    }
+    else
+    {
+      change = 0;
+    }
+
+    // do we have a default?
+    final float curSize =
+        Activator.getDefault().getPreferenceStore().getFloat(
+            TimeBarPlot.CHART_FONT_SIZE_NODE);
+
+    // trim to reasonable size
+    final float sizeToUse = Math.max(9, curSize);
+
+    // produce new size
+    final float newVal = sizeToUse + change;
+
+    // store the new size
+    Activator.getDefault().getPreferenceStore().setValue(
+        TimeBarPlot.CHART_FONT_SIZE_NODE, newVal);
+
+    final float base = newVal;
+
+    final StandardChartTheme theme =
+        (StandardChartTheme) StandardChartTheme.createJFreeTheme();
+
+    theme.setRegularFont(theme.getRegularFont().deriveFont(base * 1.0f));
+    theme.setExtraLargeFont(theme.getExtraLargeFont().deriveFont(base * 1.4f));
+    theme.setLargeFont(theme.getLargeFont().deriveFont(base * 1.2f));
+    theme.setSmallFont(theme.getSmallFont().deriveFont(base * 0.8f));
+    theme.setChartBackgroundPaint(Color.white);
+    theme.setPlotBackgroundPaint(Color.white);
+    theme.setGridBandPaint(Color.lightGray);
+    theme.setDomainGridlinePaint(Color.lightGray);
+    theme.setRangeGridlinePaint(Color.lightGray);
+
+    theme.apply(jFreeChart);
   }
 
   protected void connectFileDropSupport(final Control compoent)
@@ -300,30 +505,6 @@ public class StackedChartsView extends ViewPart implements
     transitionManager = new TransitionManager(new ImageTransitionable()
     {
 
-      public Image getControlImage(int index)
-      {
-        // Linux has problems to get the control image using
-        // <code>org.eclipse.swt.widgets.Control.print(GC)</code>,
-        // so we return the image directly from this
-        // image transitionable object.
-        if (IS_LINUX_OS)
-        {
-          return compImage[index - 1];
-        }
-        else
-        {
-          return null;
-        }
-      }
-
-      public void updateControlImage(Image image, int index)
-      {
-        if (IS_LINUX_OS)
-        {
-          compImage[index - 1] = image;
-        }
-      }
-
       @Override
       public void addSelectionListener(final SelectionListener listener)
       {
@@ -340,6 +521,23 @@ public class StackedChartsView extends ViewPart implements
       public Control getControl(final int index)
       {
         return stackedPane.getControl(index);
+      }
+
+      @Override
+      public Image getControlImage(final int index)
+      {
+        // Linux has problems to get the control image using
+        // <code>org.eclipse.swt.widgets.Control.print(GC)</code>,
+        // so we return the image directly from this
+        // image transitionable object.
+        if (IS_LINUX_OS)
+        {
+          return compImage[index - 1];
+        }
+        else
+        {
+          return null;
+        }
       }
 
       @Override
@@ -360,12 +558,21 @@ public class StackedChartsView extends ViewPart implements
       {
         stackedPane.showPane(index, false);
       }
+
+      @Override
+      public void updateControlImage(final Image image, final int index)
+      {
+        if (IS_LINUX_OS)
+        {
+          compImage[index - 1] = image;
+        }
+      }
     });
     transitionManager.addTransitionListener(new TransitionListener()
     {
 
       @Override
-      public void transitionFinished(TransitionManager arg0)
+      public void transitionFinished(final TransitionManager arg0)
       {
         stackedPane.completeSelection();
 
@@ -435,8 +642,8 @@ public class StackedChartsView extends ViewPart implements
       public void run()
       {
         // ok, trigger graph redraw
-        JFreeChart combined = _chartComposite.getChart();
-        TimeBarPlot plot = (TimeBarPlot) combined.getPlot();
+        final JFreeChart combined = _chartComposite.getChart();
+        final TimeBarPlot plot = (TimeBarPlot) combined.getPlot();
         plot._showLine = isChecked();
 
         // ok, trigger ui update
@@ -444,7 +651,7 @@ public class StackedChartsView extends ViewPart implements
       }
     };
     showTime.setChecked(true);
-    showTime.setImageDescriptor(Activator.imageDescriptorFromPlugin(
+    showTime.setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin(
         Activator.PLUGIN_ID, "icons/clock.png"));
     manager.add(showTime);
 
@@ -454,8 +661,8 @@ public class StackedChartsView extends ViewPart implements
       public void run()
       {
         // ok, trigger graph redraw
-        JFreeChart combined = _chartComposite.getChart();
-        TimeBarPlot plot = (TimeBarPlot) combined.getPlot();
+        final JFreeChart combined = _chartComposite.getChart();
+        final TimeBarPlot plot = (TimeBarPlot) combined.getPlot();
         plot._showLabels = isChecked();
 
         // ok, trigger ui update
@@ -463,43 +670,41 @@ public class StackedChartsView extends ViewPart implements
       }
     };
     showMarker.setChecked(true);
-    showMarker.setImageDescriptor(Activator.imageDescriptorFromPlugin(
+    showMarker.setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin(
         Activator.PLUGIN_ID, "icons/labels.png"));
     manager.add(showMarker);
-    
-    final Action export =
-        new Action("Export image to clipboard", SWT.PUSH)
+
+    final Action export = new Action("Export image to clipboard", SWT.PUSH)
+    {
+      @Override
+      public void run()
+      {
+        toWMF();
+      }
+
+      private void toWMF()
+      {
+        try
         {
-          @Override
-          public void run()
-          {
-              toWMF();
-          }
+          final Clipboard clpbrd =
+              Toolkit.getDefaultToolkit().getSystemClipboard();
+          clpbrd.setContents(new WMFTransfer(_chartComposite), null);
+          MessageDialog.openInformation(Display.getCurrent().getActiveShell(),
+              "Image Export", "Exported to Clipboard in WMF && PDF format");
 
-          private void toWMF()
-          {
-            try
-            {
-              Clipboard clpbrd =
-                  Toolkit.getDefaultToolkit().getSystemClipboard();
-              clpbrd.setContents(new WMFTransfer(_chartComposite), null);
-              MessageDialog.openInformation(Display.getCurrent()
-                  .getActiveShell(), "Image Export",
-                  "Exported to Clipboard in WMF && PDF format");
+        }
+        catch (final Exception e)
+        {
+          e.printStackTrace();
+        }
+      }
 
-            }
-            catch (Exception e)
-            {
-              e.printStackTrace();
-            }
-          }
-
-        };
-    export.setImageDescriptor(Activator.imageDescriptorFromPlugin(
+    };
+    export.setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin(
         Activator.PLUGIN_ID, "icons/export_wmf.png"));
     manager.add(export);
 
-    final Action sizeDown = new Action("-", Action.AS_PUSH_BUTTON)
+    final Action sizeDown = new Action("-", IAction.AS_PUSH_BUTTON)
     {
       @Override
       public void run()
@@ -507,12 +712,12 @@ public class StackedChartsView extends ViewPart implements
         changeFontSize(false);
       }
     };
-    sizeDown.setImageDescriptor(Activator.imageDescriptorFromPlugin(
+    sizeDown.setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin(
         Activator.PLUGIN_ID, "icons/decrease.png"));
     sizeDown.setDescription("Decrease font size");
     manager.add(sizeDown);
-    
-    final Action sizeUp = new Action("+", Action.AS_PUSH_BUTTON)
+
+    final Action sizeUp = new Action("+", IAction.AS_PUSH_BUTTON)
     {
       @Override
       public void run()
@@ -521,66 +726,10 @@ public class StackedChartsView extends ViewPart implements
       }
     };
     sizeUp.setDescription("Increase font size");
-    sizeUp.setImageDescriptor(Activator.imageDescriptorFromPlugin(
+    sizeUp.setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin(
         Activator.PLUGIN_ID, "icons/increase.png"));
     manager.add(sizeUp);
 
-  }
-
-  /**
-   * convenience method to make the value marker labels larger or smaller
-   * 
-   * @param up
-   */
-  private void changeFontSize(final Boolean up)
-  {
-    // are we making a change?
-    final float change;
-    if(up != null)
-    {
-      // sort out which direction we're changing
-      if (up)
-      {
-        change = MARKER_STEP_SIZE;
-      }
-      else
-      {
-        change = -MARKER_STEP_SIZE;
-      }
-
-    }
-    else
-    {
-      change = 0;
-    }
-
-    // do we have a default?
-    final float curSize = Activator.getDefault().getPreferenceStore().getFloat(TimeBarPlot.CHART_FONT_SIZE_NODE);
-
-    // trim to reasonable size
-    float sizeToUse = Math.max(9, curSize);
-
-    // produce new size
-    final float newVal = sizeToUse + change;
-    
-    // store the new size
-    Activator.getDefault().getPreferenceStore().setValue(TimeBarPlot.CHART_FONT_SIZE_NODE, newVal);
-    
-    float base = newVal;
-
-    StandardChartTheme theme = (StandardChartTheme) StandardChartTheme.createJFreeTheme();
-   
-    theme.setRegularFont(theme.getRegularFont().deriveFont(base * 1.0f));
-    theme.setExtraLargeFont(theme.getExtraLargeFont().deriveFont(base * 1.4f));
-    theme.setLargeFont(theme.getLargeFont().deriveFont(base * 1.2f));
-    theme.setSmallFont(theme.getSmallFont().deriveFont(base * 0.8f));
-    theme.setChartBackgroundPaint(Color.white);
-    theme.setPlotBackgroundPaint(Color.white);
-    theme.setGridBandPaint(Color.lightGray);
-    theme.setDomainGridlinePaint(Color.lightGray);
-    theme.setRangeGridlinePaint(Color.lightGray);
-    
-    theme.apply(jFreeChart);
   }
 
   /**
@@ -611,6 +760,16 @@ public class StackedChartsView extends ViewPart implements
     return super.getAdapter(type);
   }
 
+  /**
+   * accessor, to be used in exporting the image
+   * 
+   * @return
+   */
+  public ChartComposite getChartComposite()
+  {
+    return _chartComposite;
+  }
+
   @Override
   public String getContributorId()
   {
@@ -629,6 +788,25 @@ public class StackedChartsView extends ViewPart implements
     return new StructuredSelection();// empty selection
   }
 
+  protected void handleDoubleClick(final int x, final int y)
+  {
+    // retrieve the data location
+    final Rectangle dataArea = _chartComposite.getScreenDataArea();
+    final Rectangle2D d2 =
+        new Rectangle2D.Double(dataArea.x, dataArea.y, dataArea.width,
+            dataArea.height);
+    final TimeBarPlot plot = (TimeBarPlot) _chartComposite.getChart().getPlot();
+    final double chartX =
+        plot.getDomainAxis().java2DToValue(x, d2, plot.getDomainAxisEdge());
+
+    // do we have a date to control?
+    if (_controllableDate != null)
+    {
+      // ok, update it
+      _controllableDate.setDate(new Date((long) chartX));
+    }
+  }
+
   private void initEditorViewModel()
   {
     if (initEditor.getAndSet(false))
@@ -637,6 +815,33 @@ public class StackedChartsView extends ViewPart implements
     }
     editorHolder.pack(true);
     editorHolder.getParent().layout();
+  }
+
+  private void refreshPlot()
+  {
+    final Runnable runnable = new Runnable()
+    {
+      @Override
+      public void run()
+      {
+        if (_chartComposite != null && !_chartComposite.isDisposed())
+        {
+          final JFreeChart c = _chartComposite.getChart();
+          if (c != null)
+          {
+            c.setNotify(true);
+          }
+        }
+      }
+    };
+    if (Display.getCurrent() != null)
+    {
+      runnable.run();
+    }
+    else
+    {
+      Display.getDefault().syncExec(runnable);
+    }
   }
 
   @Override
@@ -661,26 +866,26 @@ public class StackedChartsView extends ViewPart implements
     }
   }
 
+  public void setDateSupport(final ControllableDate controllableDate)
+  {
+    _controllableDate = controllableDate;
+
+    if (_controllableDate != null)
+    {
+      final Date theDate = _controllableDate.getDate();
+      if (theDate != null)
+      {
+        updateTime(theDate);
+      }
+    }
+  }
+
   @Override
   public void setFocus()
   {
     if (stackedPane != null && !stackedPane.isDisposed())
     {
       stackedPane.forceFocus();
-    }
-  }
-
-  public void setDateSupport(ControllableDate controllableDate)
-  {
-    _controllableDate = controllableDate;
-    
-    if(_controllableDate != null)
-    {
-      Date theDate = _controllableDate.getDate();
-      if(theDate != null)
-      {
-        updateTime(theDate);
-      }
     }
   }
 
@@ -701,13 +906,13 @@ public class StackedChartsView extends ViewPart implements
 
     // and now repopulate
     jFreeChart = ChartBuilder.build(charts, _controllableDate);
-    
+
     // initialise the theme
     changeFontSize(null);
-    
+
     _chartComposite =
-        new ChartComposite(chartHolder, SWT.NONE, jFreeChart, 400, 600, 300, 200,
-            1800, 1800, true, false, true, true, true, true)
+        new ChartComposite(chartHolder, SWT.NONE, jFreeChart, 400, 600, 300,
+            200, 1800, 1800, true, false, true, true, true, true)
         {
 
           @Override
@@ -733,19 +938,19 @@ public class StackedChartsView extends ViewPart implements
     {
 
       @Override
-      public void mouseDoubleClick(MouseEvent e)
+      public void mouseDoubleClick(final MouseEvent e)
       {
         System.out.println("double-click at:" + e);
       }
 
       @Override
-      public void mouseDown(MouseEvent e)
+      public void mouseDown(final MouseEvent e)
       {
         System.out.println("down at:" + e);
       }
 
       @Override
-      public void mouseUp(MouseEvent e)
+      public void mouseUp(final MouseEvent e)
       {
         System.out.println("up at:" + e);
       }
@@ -754,26 +959,6 @@ public class StackedChartsView extends ViewPart implements
     chartHolder.pack(true);
     chartHolder.getParent().layout();
     selectView(CHART_VIEW);
-  }
-
-  protected void handleDoubleClick(int x, int y)
-  {
-    // retrieve the data location
-    Rectangle dataArea = _chartComposite.getScreenDataArea();
-    Rectangle2D d2 =
-        new Rectangle2D.Double(dataArea.x, dataArea.y, dataArea.width,
-            dataArea.height);
-    TimeBarPlot plot = (TimeBarPlot) _chartComposite.getChart().getPlot();
-    double chartX =
-        plot.getDomainAxis().java2DToValue((double) x, d2,
-            plot.getDomainAxisEdge());
-
-    // do we have a date to control?
-    if (_controllableDate != null)
-    {
-      // ok, update it
-      _controllableDate.setDate(new Date((long) chartX));
-    }
   }
 
   @Override
@@ -792,14 +977,14 @@ public class StackedChartsView extends ViewPart implements
    */
   public void updateTime(final Date newTime)
   {
-    Date oldTime = _currentTime;
+    final Date oldTime = _currentTime;
     _currentTime = newTime;
 
     if (newTime != null && !newTime.equals(oldTime) || newTime != oldTime)
     {
       // try to get the time aware plot
-      JFreeChart combined = _chartComposite.getChart();
-      TimeBarPlot plot = (TimeBarPlot) combined.getPlot();
+      final JFreeChart combined = _chartComposite.getChart();
+      final TimeBarPlot plot = (TimeBarPlot) combined.getPlot();
       plot.setTime(newTime);
 
       // ok, trigger ui update
@@ -807,53 +992,12 @@ public class StackedChartsView extends ViewPart implements
     }
   }
 
-  private void refreshPlot()
-  {
-    Runnable runnable = new Runnable()
-    {
-      @Override
-      public void run()
-      {
-        if (_chartComposite != null && !_chartComposite.isDisposed())
-        {
-          JFreeChart c = _chartComposite.getChart();
-          if (c != null)
-          {
-            c.setNotify(true);
-          }
-        }
-      }
-    };
-    if (Display.getCurrent() != null)
-    {
-      runnable.run();
-    }
-    else
-    {
-      Display.getDefault().syncExec(runnable);
-    }
-  }
-
-  /**
-   * let classes pass callbacks to be run when we are closing
-   * 
-   * @param runnable
-   */
-  public void addRunOnCloseCallback(Runnable runnable)
-  {
-    if (_closeCallbacks == null)
-    {
-      _closeCallbacks = new ArrayList<Runnable>();
-    }
-    _closeCallbacks.add(runnable);
-  }
-
   @Override
-  public void widgetDisposed(DisposeEvent e)
+  public void widgetDisposed(final DisposeEvent e)
   {
     if (_closeCallbacks != null)
     {
-      for (Runnable callback : _closeCallbacks)
+      for (final Runnable callback : _closeCallbacks)
       {
         callback.run();
       }
@@ -861,137 +1005,5 @@ public class StackedChartsView extends ViewPart implements
 
     // and remove ourselves from our parent
 
-  }
-
-  /**
-   * accessor, to be used in exporting the image
-   * 
-   * @return
-   */
-  public ChartComposite getChartComposite()
-  {
-    return _chartComposite;
-  }
-  
-  public static class WMFTransfer implements Transferable
-  {
-
-    public static final DataFlavor EMF_FLAVOR = new DataFlavor("image/emf",
-        "Enhanced Meta File");
-
-    static
-    {
-      // EMF graphics clipboard format
-      try
-      {
-        SystemFlavorMap sfm =
-            (SystemFlavorMap) SystemFlavorMap.getDefaultFlavorMap();
-        sfm.addFlavorForUnencodedNative("ENHMETAFILE", EMF_FLAVOR);// seems to be a key command!!
-        sfm.addUnencodedNativeForFlavor(EMF_FLAVOR, "ENHMETAFILE");// seems to be a key command!!
-      }
-      catch (Exception e)
-      {
-        System.err.println("[WMFTransfer,static initializer] Error "
-            + e.getClass().getName() + ", " + e.getMessage());
-      }
-    }
-    
-    public static final DataFlavor PDF_FLAVOR = new DataFlavor(
-        "application/pdf", "PDF");
-
-    static
-    {
-      // PDF graphics clipboard format
-      try
-      {
-        SystemFlavorMap sfm =
-            (SystemFlavorMap) SystemFlavorMap.getDefaultFlavorMap();
-        sfm.addFlavorForUnencodedNative("PDF", PDF_FLAVOR);// seems to be a key command!!
-        sfm.addUnencodedNativeForFlavor(PDF_FLAVOR, "PDF");// seems to be a key command!!
-      }
-      catch (Exception e)
-      {
-        System.err.println("[PDFTransfer,static initializer] Error "
-            + e.getClass().getName() + ", " + e.getMessage());
-      }
-    }
-    
-    private static DataFlavor[] supportedFlavors =
-    {EMF_FLAVOR,PDF_FLAVOR};
-
-
-    private JFreeChart _combined;
-
-    private Rectangle _bounds;
-
-    public WMFTransfer(ChartComposite chartComposite)
-    {
-     ;
-       _combined = chartComposite.getChart();
-       _bounds = chartComposite.getBounds();
-    }
-
-    // @Override
-    public Object getTransferData(DataFlavor flavor)
-        throws UnsupportedFlavorException, IOException
-    {
-      if (flavor.equals(EMF_FLAVOR))
-      {
-        System.out.println("Mime type image/emf recognized");
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        
-        EMFGraphics2D g2d =
-            new EMFGraphics2D(out, new Dimension(_bounds.width,
-                _bounds.height));
-        g2d.startExport();
-        _combined.draw(g2d, new Rectangle2D.Double(0, 0, _bounds.width,
-            _bounds.height));
-
-        // Cleanup
-        g2d.endExport();
-        
-        return new ByteArrayInputStream(out.toByteArray());
-      }
-      else if (flavor.equals(PDF_FLAVOR))
-      {
-        System.out.println("Mime type application/pdf recognized");
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-       
-        PDFGraphics2D g2d =
-            new PDFGraphics2D(out, new Dimension(_bounds.width,
-                _bounds.height));
-        UserProperties properties = new UserProperties();
-        properties.setProperty(PDFGraphics2D.PAGE_SIZE, PDFGraphics2D.CUSTOM_PAGE_SIZE);
-        properties.setProperty(PDFGraphics2D.CUSTOM_PAGE_SIZE, new java.awt.Dimension(_bounds.width,
-                _bounds.height));
-        g2d.setProperties(properties);
-        g2d.startExport();
-        _combined.draw(g2d, new Rectangle2D.Double(0, 0, _bounds.width,
-            _bounds.height));
-
-        // Cleanup
-        g2d.endExport();
-        return new ByteArrayInputStream(out.toByteArray());
-      }
-      else
-        throw new UnsupportedFlavorException(flavor);
-    }
-
-
-
-    public DataFlavor[] getTransferDataFlavors()
-    {
-      return supportedFlavors;
-    }
-
-    public boolean isDataFlavorSupported(DataFlavor flavor)
-    {
-      for (DataFlavor f : supportedFlavors)
-      {
-        if (f.equals(flavor))
-          return true;
-      }
-      return false;
-    }
   }
 }
