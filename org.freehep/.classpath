@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry exported="true" kind="lib" path="libs/freehep-graphicsio-pdf-2.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/freehep-io-2.2.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/freehep-graphics2d-2.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/freehep-graphicsbase-2.4.jar"/>
