@@ -5,16 +5,9 @@ import info.limpet.stackedcharts.ui.editor.Activator;
 import info.limpet.stackedcharts.ui.editor.StackedchartsEditControl;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.SystemFlavorMap;
-import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.geom.Rectangle2D;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -23,7 +16,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
@@ -66,9 +58,6 @@ import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor;
-import org.freehep.graphicsbase.util.UserProperties;
-import org.freehep.graphicsio.emf.EMFGraphics2D;
-import org.freehep.graphicsio.pdf.PDFGraphics2D;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.StandardChartTheme;
 import org.jfree.experimental.chart.swt.ChartComposite;
@@ -98,133 +87,6 @@ public class StackedChartsView extends ViewPart implements
      * @param time
      */
     void setDate(Date date);
-  }
-
-  public static class WMFTransfer implements Transferable
-  {
-
-    public static final DataFlavor EMF_FLAVOR = new DataFlavor("image/emf",
-        "Enhanced Meta File");
-
-    static
-    {
-      // EMF graphics clipboard format
-      try
-      {
-        final SystemFlavorMap sfm =
-            (SystemFlavorMap) SystemFlavorMap.getDefaultFlavorMap();
-        sfm.addFlavorForUnencodedNative("ENHMETAFILE", EMF_FLAVOR);// seems to be a key command!!
-        sfm.addUnencodedNativeForFlavor(EMF_FLAVOR, "ENHMETAFILE");// seems to be a key command!!
-      }
-      catch (final Exception e)
-      {
-        System.err.println("[WMFTransfer,static initializer] Error "
-            + e.getClass().getName() + ", " + e.getMessage());
-      }
-    }
-
-    public static final DataFlavor PDF_FLAVOR = new DataFlavor(
-        "application/pdf", "PDF");
-
-    static
-    {
-      // PDF graphics clipboard format
-      try
-      {
-        final SystemFlavorMap sfm =
-            (SystemFlavorMap) SystemFlavorMap.getDefaultFlavorMap();
-        sfm.addFlavorForUnencodedNative("PDF", PDF_FLAVOR);// seems to be a key command!!
-        sfm.addUnencodedNativeForFlavor(PDF_FLAVOR, "PDF");// seems to be a key command!!
-      }
-      catch (final Exception e)
-      {
-        System.err.println("[PDFTransfer,static initializer] Error "
-            + e.getClass().getName() + ", " + e.getMessage());
-      }
-    }
-
-    private static DataFlavor[] supportedFlavors =
-    {EMF_FLAVOR, PDF_FLAVOR};
-
-    private final JFreeChart _combined;
-
-    private final Rectangle _bounds;
-
-    public WMFTransfer(final ChartComposite chartComposite)
-    {
-      ;
-      _combined = chartComposite.getChart();
-      _bounds = chartComposite.getBounds();
-    }
-
-    // @Override
-    @Override
-    public Object getTransferData(final DataFlavor flavor)
-        throws UnsupportedFlavorException, IOException
-    {
-      if (flavor.equals(EMF_FLAVOR))
-      {
-        Activator.getDefault().getLog()
-        .log(
-            new Status(Status.INFO, "Mime type image/emf requested",
-                null));
-        final ByteArrayOutputStream out = new ByteArrayOutputStream();
-
-        final EMFGraphics2D g2d =
-            new EMFGraphics2D(out, new Dimension(_bounds.width, _bounds.height));
-        g2d.startExport();
-        _combined.draw(g2d, new Rectangle2D.Double(0, 0, _bounds.width,
-            _bounds.height));
-
-        // Cleanup
-        g2d.endExport();
-
-        return new ByteArrayInputStream(out.toByteArray());
-      }
-      else if (flavor.equals(PDF_FLAVOR))
-      {
-        Activator.getDefault().getLog()
-            .log(
-                new Status(Status.INFO, "Mime type application/pdf requested",
-                    null));
-        final ByteArrayOutputStream out = new ByteArrayOutputStream();
-
-        final PDFGraphics2D g2d =
-            new PDFGraphics2D(out, new Dimension(_bounds.width, _bounds.height));
-        final UserProperties properties = new UserProperties();
-        properties.setProperty(PDFGraphics2D.PAGE_SIZE,
-            PDFGraphics2D.CUSTOM_PAGE_SIZE);
-        properties.setProperty(PDFGraphics2D.CUSTOM_PAGE_SIZE,
-            new java.awt.Dimension(_bounds.width, _bounds.height));
-        g2d.setProperties(properties);
-        g2d.startExport();
-        _combined.draw(g2d, new Rectangle2D.Double(0, 0, _bounds.width,
-            _bounds.height));
-
-        // Cleanup
-        g2d.endExport();
-        return new ByteArrayInputStream(out.toByteArray());
-      }
-      else
-        throw new UnsupportedFlavorException(flavor);
-    }
-
-    @Override
-    public DataFlavor[] getTransferDataFlavors()
-    {
-      return supportedFlavors;
-    }
-
-    @Override
-    public boolean isDataFlavorSupported(final DataFlavor flavor)
-    {
-      for (final DataFlavor f : supportedFlavors)
-      {
-        if (f.equals(flavor))
-          return true;
-      }
-      return false;
-    }
   }
 
   private static final int MARKER_STEP_SIZE = 1;
@@ -688,7 +550,8 @@ public class StackedChartsView extends ViewPart implements
         {
           final Clipboard clpbrd =
               Toolkit.getDefaultToolkit().getSystemClipboard();
-          clpbrd.setContents(new WMFTransfer(_chartComposite), null);
+          clpbrd.setContents(new DrawableWMFTransfer(_chartComposite.getChart(),
+              _chartComposite.getBounds()), null);
           MessageDialog.openInformation(Display.getCurrent().getActiveShell(),
               "Image Export", "Exported to Clipboard in WMF && PDF format");
 
