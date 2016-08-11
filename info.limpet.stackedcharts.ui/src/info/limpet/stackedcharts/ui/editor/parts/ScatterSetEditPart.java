@@ -1,14 +1,5 @@
 package info.limpet.stackedcharts.ui.editor.parts;
 
-import info.limpet.stackedcharts.model.Chart;
-import info.limpet.stackedcharts.model.ChartSet;
-import info.limpet.stackedcharts.model.Orientation;
-import info.limpet.stackedcharts.model.ScatterSet;
-import info.limpet.stackedcharts.model.StackedchartsPackage;
-import info.limpet.stackedcharts.ui.editor.StackedchartsImages;
-import info.limpet.stackedcharts.ui.editor.figures.DirectionalIconLabel;
-import info.limpet.stackedcharts.ui.editor.figures.DirectionalShape;
-
 import org.eclipse.draw2d.ActionEvent;
 import org.eclipse.draw2d.ActionListener;
 import org.eclipse.draw2d.Button;
@@ -25,6 +16,19 @@ import org.eclipse.gef.editpolicies.ComponentEditPolicy;
 import org.eclipse.gef.editpolicies.NonResizableEditPolicy;
 import org.eclipse.gef.requests.GroupRequest;
 
+/**
+ * An edit part for Scatter Set object
+ */
+import info.limpet.stackedcharts.model.Chart;
+import info.limpet.stackedcharts.model.ChartSet;
+import info.limpet.stackedcharts.model.Orientation;
+import info.limpet.stackedcharts.model.ScatterSet;
+import info.limpet.stackedcharts.model.StackedchartsPackage;
+import info.limpet.stackedcharts.ui.editor.StackedchartsImages;
+import info.limpet.stackedcharts.ui.editor.commands.DeleteScatterSetCommand;
+import info.limpet.stackedcharts.ui.editor.figures.DirectionalIconLabel;
+import info.limpet.stackedcharts.ui.editor.figures.DirectionalShape;
+
 public class ScatterSetEditPart extends AbstractGraphicalEditPart implements
     ActionListener
 {
@@ -37,7 +41,8 @@ public class ScatterSetEditPart extends AbstractGraphicalEditPart implements
   protected IFigure createFigure()
   {
     DirectionalShape figure = new DirectionalShape();
-    scatterSetNameLabel = new DirectionalIconLabel(StackedchartsImages.getImage(StackedchartsImages.DESC_DATASET));
+    scatterSetNameLabel = new DirectionalIconLabel(StackedchartsImages.getImage(
+        StackedchartsImages.DESC_DATASET));
     figure.add(scatterSetNameLabel);
     final Button button = new Button(StackedchartsImages.getImage(
         StackedchartsImages.DESC_DELETE));
@@ -81,7 +86,7 @@ public class ScatterSetEditPart extends AbstractGraphicalEditPart implements
         // TODO: implement
         // 1. do not use this scatter set in the current chart
         // 2. if scatter set used only here, then delete scatter set from shared axis
-        return null;
+        return new DeleteScatterSetCommand(getModel(), getChart());
       }
     });
   }
@@ -94,11 +99,15 @@ public class ScatterSetEditPart extends AbstractGraphicalEditPart implements
     String name = scatterSet.getName();
     scatterSetNameLabel.getLabel().setText(name != null ? name : "<unnamed>");
 
-    ChartSet chartSet = ((Chart) getParent().getParent().getModel())
-        .getParent();
+    ChartSet chartSet = getChart().getParent();
     boolean vertical = chartSet.getOrientation() == Orientation.VERTICAL;
     ((DirectionalShape) getFigure()).setVertical(!vertical);
     scatterSetNameLabel.setVertical(!vertical);
+  }
+
+  public Chart getChart()
+  {
+    return (Chart) getParent().getParent().getModel();
   }
 
   @Override

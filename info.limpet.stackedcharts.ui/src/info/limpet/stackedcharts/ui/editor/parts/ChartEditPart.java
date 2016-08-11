@@ -1,15 +1,5 @@
 package info.limpet.stackedcharts.ui.editor.parts;
 
-import info.limpet.stackedcharts.model.Chart;
-import info.limpet.stackedcharts.model.ChartSet;
-import info.limpet.stackedcharts.model.Orientation;
-import info.limpet.stackedcharts.model.ScatterSet;
-import info.limpet.stackedcharts.model.SelectiveAnnotation;
-import info.limpet.stackedcharts.model.StackedchartsPackage;
-import info.limpet.stackedcharts.ui.editor.commands.DeleteChartCommand;
-import info.limpet.stackedcharts.ui.editor.figures.ChartFigure;
-import info.limpet.stackedcharts.ui.editor.policies.ChartContainerEditPolicy;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -21,6 +11,7 @@ import org.eclipse.draw2d.IFigure;
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.Notifier;
+import org.eclipse.emf.ecore.util.EContentAdapter;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.GraphicalEditPart;
@@ -33,6 +24,17 @@ import org.eclipse.gef.requests.GroupRequest;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
+
+import info.limpet.stackedcharts.model.Chart;
+import info.limpet.stackedcharts.model.ChartSet;
+import info.limpet.stackedcharts.model.IndependentAxis;
+import info.limpet.stackedcharts.model.Orientation;
+import info.limpet.stackedcharts.model.ScatterSet;
+import info.limpet.stackedcharts.model.SelectiveAnnotation;
+import info.limpet.stackedcharts.model.StackedchartsPackage;
+import info.limpet.stackedcharts.ui.editor.commands.DeleteChartCommand;
+import info.limpet.stackedcharts.ui.editor.figures.ChartFigure;
+import info.limpet.stackedcharts.ui.editor.policies.ChartContainerEditPolicy;
 
 public class ChartEditPart extends AbstractGraphicalEditPart implements
     ActionListener
@@ -55,19 +57,27 @@ public class ChartEditPart extends AbstractGraphicalEditPart implements
   }
 
   private ChartAdapter adapter = new ChartAdapter();
+  private SharedAxisAdapter sharedAxisAdapter = new SharedAxisAdapter();
 
   @Override
   public void activate()
   {
     super.activate();
     getModel().eAdapters().add(adapter);
+    getSharedAxis().eAdapters().add(sharedAxisAdapter);
   }
 
   @Override
   public void deactivate()
   {
     getModel().eAdapters().remove(adapter);
+    getSharedAxis().eAdapters().remove(sharedAxisAdapter);
     super.deactivate();
+  }
+
+  private IndependentAxis getSharedAxis()
+  {
+    return getModel().getParent().getSharedAxis();
   }
 
   @Override
@@ -103,15 +113,15 @@ public class ChartEditPart extends AbstractGraphicalEditPart implements
     });
   }
 
-  @SuppressWarnings({"rawtypes", "unchecked"})
+  @SuppressWarnings(
+  {"rawtypes", "unchecked"})
   @Override
   protected List getModelChildren()
   {
     List modelChildren = new ArrayList();
     modelChildren.addAll(Arrays.asList(ChartPanePosition.values()));
     ScatterSetContainer scatterSets = new ScatterSetContainer();
-    for (SelectiveAnnotation annotation : getModel().getParent().getSharedAxis()
-        .getAnnotations())
+    for (SelectiveAnnotation annotation : getSharedAxis().getAnnotations())
     {
       if (annotation.getAnnotation() instanceof ScatterSet && annotation
           .getAppearsIn().contains(getModel()))
@@ -216,4 +226,24 @@ public class ChartEditPart extends AbstractGraphicalEditPart implements
     }
   }
 
+  /**
+   * Update scatter sets in the scatter set container when model changes. Use an
+   * {@link EContentAdapter}, since we'd like to be notified when multiple properties of different
+   * objects in the shared axis get changed.
+   */
+  public class SharedAxisAdapter extends EContentAdapter
+  {
+    public void notifyChanged(Notification notification)
+    {
+      super.notifyChanged(notification);
+      int featureId = notification.getFeatureID(StackedchartsPackage.class);
+      switch (featureId)
+      {
+      case StackedchartsPackage.INDEPENDENT_AXIS__ANNOTATIONS:
+      case StackedchartsPackage.SELECTIVE_ANNOTATION__APPEARS_IN:
+        refreshChildren();
+        break;
+      }
+    }
+  }
 }
