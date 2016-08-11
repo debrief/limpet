@@ -17,7 +17,7 @@ package info.limpet;
 import java.util.List;
 import java.util.UUID;
 
-import info.limpet.data.store.InMemoryStore.StoreChangeListener;
+import info.limpet.data.store.StoreGroup.StoreChangeListener;
 
 /**
  * a storage container for collections, stored in a tree structure.

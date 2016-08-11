@@ -30,8 +30,7 @@ import info.limpet.data.operations.arithmetic.AddQuantityOperation;
 import info.limpet.data.operations.arithmetic.MultiplyQuantityOperation;
 import info.limpet.data.operations.spatial.GeoSupport;
 import info.limpet.data.operations.spatial.IGeoCalculator;
-import info.limpet.data.store.InMemoryStore;
-import info.limpet.data.store.InMemoryStore.StoreGroup;
+import info.limpet.data.store.StoreGroup;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
@@ -51,6 +50,8 @@ public class SampleData
   public static final String SPEED_THREE_LONGER = "Speed Three (longer)";
   public static final String SPEED_IRREGULAR2 = "Speed two irregular time";
   public static final String TIME_INTERVALS = "Time intervals";
+  public static final String TIME_STAMPS_1 = "Time stamps (early)";
+  public static final String TIME_STAMPS_2 = "Time stamps (late)";
   public static final String STRING_TWO = "String two";
   public static final String STRING_ONE = "String one";
   public static final String LENGTH_SINGLETON = "Length Singleton";
@@ -70,9 +71,9 @@ public class SampleData
   public static final String SINGLETON_LOC_1 = "Single Track One";
   public static final String SINGLETON_LOC_2 = "Single Track Two";
 
-  public InMemoryStore getData(long count)
+  public StoreGroup getData(long count)
   {
-    InMemoryStore res = new InMemoryStore();
+    StoreGroup res = new StoreGroup();
 
     // // collate our data series
     StockTypes.NonTemporal.FrequencyHz freq1 =
@@ -108,6 +109,10 @@ public class SampleData
         new StockTypes.NonTemporal.LengthM(LENGTH_SINGLETON, null);
     ElapsedTimeSec timeIntervals =
         new StockTypes.Temporal.ElapsedTimeSec(TIME_INTERVALS, null);
+    StockTypes.NonTemporal.ElapsedTimeSec timeStamps_1 =
+        new StockTypes.NonTemporal.ElapsedTimeSec(TIME_STAMPS_1, null);
+    StockTypes.NonTemporal.ElapsedTimeSec timeStamps_2 =
+        new StockTypes.NonTemporal.ElapsedTimeSec(TIME_STAMPS_2, null);
     TemporalLocation track1 = new TemporalLocation(TRACK_ONE);
     TemporalLocation track2 = new TemporalLocation(TRACK_TWO);
     Location singleLoc1 = new Location(SINGLETON_LOC_1);
@@ -120,9 +125,11 @@ public class SampleData
     Point2D pos1 = calc.createPoint(-4, 55.8);
     Point2D pos2 = calc.createPoint(-4.2, 54.9);
 
+    final long interval = 500L * 60;
+
     for (int i = 1; i <= count; i++)
     {
-      thisTime = new Date().getTime() + i * 500L * 60;
+      thisTime = new Date().getTime() + i * interval;
 
       final long earlyTime = thisTime - (1000 * 60 * 60 * 24 * 365 * 20);
 
@@ -154,6 +161,23 @@ public class SampleData
       timeIntervals.add(thisTime, (4 + Math.sin(Math.toRadians(i) + 3.4
           * Math.random())));
 
+      if (i < ((double)count) * 0.4)
+      {
+        if (Math.random() > 0.3)
+        {
+          timeStamps_1.add(thisTime - interval
+              + (interval * 2d * Math.random()));
+        }
+      }
+      if (i > ((double)count) * 0.7)
+      {
+        if (Math.random() > 0.3)
+        {
+          timeStamps_2.add(thisTime - interval
+              + (interval * 2d * Math.random()));
+        }
+      }
+      
       // sort out the tracks
       Point2D p1 = calc.calculatePoint(pos1, Math.toRadians(77 - (i * 4)), 554);
 
@@ -183,7 +207,7 @@ public class SampleData
 
     singletonLength.add(12d);
 
-    List<IStoreItem> list = new ArrayList<IStoreItem>();
+    IStoreGroup list = new StoreGroup();
     StoreGroup group1 = new StoreGroup("Speed data");
     group1.add(speedSeries1);
     group1.add(speedIrregular);
@@ -225,7 +249,7 @@ public class SampleData
 
     list.add(factors);
     
-    IStoreGroup compositeTrack = new InMemoryStore.StoreGroup(COMPOSITE_ONE);
+    IStoreGroup compositeTrack = new StoreGroup(COMPOSITE_ONE);
     compositeTrack.add(angle1);
     compositeTrack.add(track2);
     compositeTrack.add(freq1);
@@ -241,6 +265,8 @@ public class SampleData
     list.add(singletonRange1);
     list.add(singletonLength);
     list.add(timeIntervals);
+    list.add(timeStamps_1);
+    list.add(timeStamps_2);
     list.add(track1);
     list.add(track2);
     list.add(singleLoc1);

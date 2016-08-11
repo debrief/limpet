@@ -18,18 +18,25 @@ import info.limpet.IChangeListener;
 import info.limpet.ICollection;
 import info.limpet.ICommand;
 import info.limpet.IQuantityCollection;
+import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
 import info.limpet.QuantityRange;
+import info.limpet.data.impl.TemporalQuantityCollection;
 import info.limpet.data.operations.CollectionComplianceTests;
 import info.limpet.data.operations.arithmetic.SimpleMovingAverageOperation.SimpleMovingAverageCommand;
+import info.limpet.stackedcharts.ui.editor.Activator;
 import info.limpet.ui.core_view.CoreAnalysisView;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 import javax.measure.Measurable;
 import javax.measure.quantity.Quantity;
 import javax.measure.unit.Unit;
 
+import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -49,6 +56,376 @@ public class RangeSliderView extends CoreAnalysisView implements
     IChangeListener
 {
 
+  /**
+   * helper class, to embody three types of data we use in range control
+   * 
+   * @author ian
+   * 
+   */
+  private static interface RangeHelper
+  {
+    void updatedTo(int val);
+
+    public String getMinText();
+
+    public String getMaxText();
+
+    public int getMinVal();
+
+    public int getMaxVal();
+
+    public String getValueText();
+
+    String getLabel();
+
+    int getValue();
+
+    /**
+     * stop listening to the subject item
+     * 
+     */
+    void dropListener();
+
+  }
+
+  private static class CommandHelper implements RangeHelper, IChangeListener
+  {
+
+    private final SimpleMovingAverageCommand _myCommand;
+    private final int _sliderThumb;
+
+    public CommandHelper(SimpleMovingAverageCommand command, int sliderThumb)
+    {
+      _myCommand = command;
+      _sliderThumb = sliderThumb;
+      _myCommand.addChangeListener(this);
+    }
+
+    @Override
+    public void updatedTo(int val)
+    {
+      _myCommand.setWindowSize(val);
+      _myCommand.recalculate(null);
+
+    }
+
+    @Override
+    public String getMinText()
+    {
+      return "0";
+    }
+
+    @Override
+    public String getMaxText()
+    {
+      return "50";
+    }
+
+    @Override
+    public int getMinVal()
+    {
+      return 0;
+    }
+
+    @Override
+    public int getMaxVal()
+    {
+      return 50 + _sliderThumb;
+    }
+
+    @Override
+    public String getValueText()
+    {
+      return "" + getValue();
+    }
+
+    @Override
+    public String getLabel()
+    {
+      return _myCommand.getName();
+    }
+
+    @Override
+    public int getValue()
+    {
+      return _myCommand.getWindowSize();
+    }
+
+    @Override
+    public void dataChanged(IStoreItem subject)
+    {
+    }
+
+    @Override
+    public void metadataChanged(IStoreItem subject)
+    {
+    }
+
+    @Override
+    public void collectionDeleted(IStoreItem subject)
+    {
+    }
+
+    @Override
+    public void dropListener()
+    {
+      _myCommand.removeChangeListener(this);
+    }
+
+  }
+
+  private static class DateHelper implements RangeHelper
+  {
+    private final Long _start;
+    private final Long _end;
+    private long _current;
+    private final SimpleDateFormat sdf;
+    private final int _sliderThumb;
+    private final String _name;
+    private final IStoreGroup _group;
+    private final TemporalQuantityCollection<?> _collection;
+    
+    // introduce scale factor, to let us handle more than the number
+    // of millis in Integer.MAX_VALUE
+    private final float scaleFactor;
+
+    public DateHelper(Long start, Long end, int sliderThumb, String name,
+        IStoreGroup group, TemporalQuantityCollection<?> temp)
+    {
+      _start = start;
+      _end = end;
+      
+      // do we have a start time
+      Date gTime = group.getTime();
+      if(gTime != null)
+      {
+        _current = new Long(gTime.getTime());
+      }
+      else
+      {      
+        _current = new Long(start);
+      }
+      _sliderThumb = sliderThumb;
+      _name = name;
+      _group = group;
+
+      final long range = end - start;
+
+      // do we span a day?
+      final long MILLIS_IN_ONE_DAY = 24 * 60 * 60 * 1000;
+      final String DATE_FORMAT;
+      if(range > MILLIS_IN_ONE_DAY)
+      {
+        DATE_FORMAT = "yy/MM/dd HH:mm";
+      }
+      else
+      {
+        DATE_FORMAT = "HH:mm:ss";
+      }
+      
+      sdf = new SimpleDateFormat(DATE_FORMAT);
+      sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+      _collection = temp;
+
+      // do we need to scale the value?
+      if(range < Integer.MAX_VALUE)
+      {
+        scaleFactor = 1;
+      }
+      else
+      {
+        scaleFactor = (float)range / (Integer.MAX_VALUE / 2f);
+      }      
+    }
+
+    @Override
+    public void updatedTo(int val)
+    {
+      _current = _start + (long)(val * scaleFactor);
+
+      // and store the value in the group
+      _group.setTime(new Date(_current));
+    }
+
+    @Override
+    public String getMinText()
+    {
+      return sdf.format(_start);
+    }
+
+    @Override
+    public String getMaxText()
+    {
+      return sdf.format(_end);
+    }
+
+    @Override
+    public int getMinVal()
+    {
+      return 0;
+    }
+
+    @Override
+    public int getMaxVal()
+    {
+      long range = _end - _start;
+      float scaledRange = range / scaleFactor;
+      int maxVal = (int)scaledRange + _sliderThumb;
+      return maxVal;
+    }
+
+    @Override
+    public String getValueText()
+    {
+      return sdf.format(_current);
+    }
+
+    @Override
+    public String getLabel()
+    {
+      return _name;
+    }
+
+    @Override
+    public int getValue()
+    {
+      // how far along are we?
+      long diff = _current - _start;
+      
+      // and scale it
+      int scaled = (int)(diff / scaleFactor);
+      
+      return scaled;
+    }
+
+    @Override
+    public void dropListener()
+    {
+      // don't worry, we don't need to do anything
+    }
+
+  }
+
+  private static class NumberHelper implements RangeHelper, IChangeListener
+  {
+
+    private final QuantityRange<Quantity> _rng;
+    private final Unit<Quantity> _units;
+    private int _curVal;
+    private final int _sliderThumb;
+    private final String _name;
+    private final IQuantityCollection<Quantity> _collection;
+
+    public NumberHelper(QuantityRange<Quantity> rng, Unit<Quantity> theUnits,
+        double startVal, int sliderThumb, String name,
+        IQuantityCollection<Quantity> collection)
+    {
+      _rng = rng;
+      _units = theUnits;
+      _curVal = (int) startVal;
+      _sliderThumb = sliderThumb;
+      _name = name;
+      _collection = collection;
+      collection.addChangeListener(this);
+    }
+
+    @Override
+    public void updatedTo(int val)
+    {
+      _curVal = val;
+
+      // ok, and store it
+      _collection.replaceSingleton(val);
+      _collection.fireDataChanged();
+    }
+
+    @Override
+    public String getMinText()
+    {
+      Object min = _rng.getMinimum();
+      @SuppressWarnings("unchecked")
+      long minVal = ((Measurable<Quantity>) min).longValue(_units);
+      return "" + minVal;
+    }
+
+    @Override
+    public String getMaxText()
+    {
+      Object max = _rng.getMaximum();
+      @SuppressWarnings("unchecked")
+      long maxVal = ((Measurable<Quantity>) max).longValue(_units);
+      return "" + maxVal;
+    }
+
+    @Override
+    public int getMinVal()
+    {
+      return 0;
+    }
+
+    @Override
+    public int getMaxVal()
+    {
+      Object max = _rng.getMaximum();
+      @SuppressWarnings("unchecked")
+      long maxVal =
+          ((Measurable<Quantity>) max).longValue(_units) + _sliderThumb;
+      return (int) maxVal;
+    }
+
+    @Override
+    public String getValueText()
+    {
+      final String unitStr;
+      if (_units != null && _units.toString().length() > 0)
+      {
+        unitStr = _units.toString();
+      }
+      else
+      {
+        unitStr = "n/a";
+      }
+
+      return "" + _curVal + unitStr;
+    }
+
+    @Override
+    public String getLabel()
+    {
+      return _name;
+    }
+
+    @Override
+    public int getValue()
+    {
+      return _curVal;
+    }
+
+    @Override
+    public void dataChanged(IStoreItem subject)
+    {
+    }
+
+    @Override
+    public void metadataChanged(IStoreItem subject)
+    {
+    }
+
+    @Override
+    public void collectionDeleted(IStoreItem subject)
+    {
+    }
+
+    @Override
+    public void dropListener()
+    {
+      _collection.removeChangeListener(this);
+    }
+
+  }
+
+  private RangeHelper _myHelper = null;
+
   private static final String PENDING_TEXT = "     ====== pending  ====== ";
 
   /**
@@ -65,9 +442,6 @@ public class RangeSliderView extends CoreAnalysisView implements
   private Label maxL;
 
   private Label label;
-
-  private IQuantityCollection<Quantity> _currentColl;
-  private SimpleMovingAverageCommand _command;
 
   /**
    * The constructor.
@@ -109,8 +483,12 @@ public class RangeSliderView extends CoreAnalysisView implements
       public void handleEvent(Event event)
       {
         int curVal = slider.getSelection();
-        val.setText("" + curVal);
-        setValue(curVal);
+
+        if (_myHelper != null)
+        {
+          _myHelper.updatedTo(curVal);
+          val.setText(_myHelper.getValueText());
+        }
       }
     });
     minL = new Label(holder, SWT.NONE);
@@ -132,39 +510,12 @@ public class RangeSliderView extends CoreAnalysisView implements
     setupListener();
   }
 
-  protected void setValue(double val)
-  {
-    if (_currentColl != null)
-    {
-      _currentColl.replaceSingleton(val);
-      _currentColl.fireDataChanged();
-    }
-    else if (_command != null)
-    {
-      _command.setWindowSize((int) val);
-      _command.recalculate(null);
-    }
-  }
-
   @SuppressWarnings("unchecked")
   @Override
   public void display(List<IStoreItem> res)
   {
-    if (_currentColl != null)
-    {
-      // ok, stop listening
-      _currentColl.removeChangeListener(this);
-    }
-
     if (res.size() != 1)
     {
-      if (_currentColl != null)
-      {
-        _currentColl.removeChangeListener(this);
-        _currentColl = null;
-      }
-      slider.setEnabled(false);
-      label.setText(PENDING_TEXT);
       return;
     }
 
@@ -173,84 +524,153 @@ public class RangeSliderView extends CoreAnalysisView implements
     {
       ICollection newColl = (ICollection) res.get(0);
 
-      _currentColl = (IQuantityCollection<Quantity>) newColl;
-
-      showData(_currentColl);
+      if (newColl instanceof IQuantityCollection<?>)
+      {
+        IQuantityCollection<Quantity> currentColl =
+            (IQuantityCollection<Quantity>) newColl;
+        showData(currentColl);
+      }
     }
     else if (first instanceof ICommand<?>
         && first instanceof SimpleMovingAverageCommand)
     {
       SimpleMovingAverageCommand command = (SimpleMovingAverageCommand) first;
-
-      // is this different?
-      if (_command != command && _command != null)
-      {
-        _command = null;
-      }
-
-      _command = command;
-
-      showData(_command);
+      showData(command);
 
     }
 
   }
 
-  private void showData(SimpleMovingAverageCommand command)
+  protected void dropListener()
   {
-    int curVal = (int) command.getWindowSize();
-
-    label.setText(command.getName());
-
-    slider.setMinimum((int) 1);
-    slider.setMaximum((int) (50 + slider.getThumb()));
-    // note: add the width of the thumb object to get the true max value
-    slider.setSelection(curVal);
-
-    minL.setText("" + 0);
-    maxL.setText("" + 50);
-    val.setText("" + curVal);
-
-    label.getParent().getParent().layout(true, true);
-    label.getParent().getParent().redraw();
+    if (_myHelper != null)
+    {
+      _myHelper.dropListener();
+      _myHelper = null;
+    }
   }
 
-  @SuppressWarnings("unchecked")
-  private void showData(IQuantityCollection<Quantity> qc)
+  private void showData(final Object object)
   {
 
-    QuantityRange<Quantity> rng = qc.getRange();
-    Unit<Quantity> theUnits = qc.getUnits();
-    int curVal = (int) qc.getValues().iterator().next().doubleValue(theUnits);
-
-    final String unitStr;
-    if (theUnits != null && theUnits.toString().length() > 0)
+    if (object instanceof SimpleMovingAverageCommand)
     {
-      unitStr = theUnits.toString();
+      if (_myHelper != null)
+        if (_myHelper instanceof CommandHelper)
+        {
+          CommandHelper cHelp = (CommandHelper) _myHelper;
+          if(cHelp._myCommand != object)
+          {
+            dropListener();
+          }
+          else
+          {
+            return;
+          }
+        }
+      SimpleMovingAverageCommand sam = (SimpleMovingAverageCommand) object;
+      _myHelper = new CommandHelper(sam, slider.getThumb());
+    }
+    else if (object instanceof IQuantityCollection<?>)
+    {
+      @SuppressWarnings("unchecked")
+      IQuantityCollection<Quantity> qc = (IQuantityCollection<Quantity>) object;
+      
+      if (_myHelper != null)
+        if (_myHelper instanceof NumberHelper)
+        {
+          NumberHelper cHelp = (NumberHelper) _myHelper;
+          if(cHelp._collection != object)
+          {
+            dropListener();
+          }
+          else
+          {
+            return;
+          }
+        }
+      
+
+      // does it have a range?
+      QuantityRange<Quantity> rng = qc.getRange();
+
+      if (rng != null)
+      {
+        Unit<Quantity> theUnits = qc.getUnits();
+        int curVal =
+            (int) qc.getValues().iterator().next().doubleValue(theUnits);
+
+        _myHelper =
+            new NumberHelper(rng, theUnits, curVal, slider.getThumb(), qc
+                .getName(), qc);
+      }
+      else if (qc instanceof TemporalQuantityCollection<?>)
+      {
+        // ok, time data, show the time range
+        TemporalQuantityCollection<?> temp = (TemporalQuantityCollection<?>) qc;
+        
+        if (_myHelper != null)
+          if (_myHelper instanceof DateHelper)
+          {
+            DateHelper cHelp = (DateHelper) _myHelper;
+            if(cHelp._collection != object)
+            {
+              dropListener();
+            }
+            else
+            {
+              return;
+            }
+          }
+        
+        // now we need the time range
+        Long start = temp.getTimes().get(0);
+        Long end = temp.getTimes().get(temp.getTimes().size() - 1);
+        IStoreGroup parent = findTopParent(temp);
+
+        // just double-check we can fit in the period
+        if (parent != null)
+        {
+//          if (end - start < Integer.MAX_VALUE)
+//          {
+            _myHelper =
+                new DateHelper(start, end, slider.getThumb(), temp.getName(),
+                    parent, temp);
+//          }
+//          else
+//          {
+//            Activator.getDefault().getLog().log(
+//                new Status(Status.WARNING, Activator.PLUGIN_ID,
+//                    "Temporal data too large for range control"));
+//          }
+        }
+        else
+        {
+          Activator.getDefault().getLog().log(
+              new Status(Status.WARNING, Activator.PLUGIN_ID,
+                  "Couldn't find top level group"));
+        }
+      }
+    }
+
+    if (_myHelper != null)
+    {
+      // and format them
+      minL.setText(_myHelper.getMinText());
+      maxL.setText(_myHelper.getMaxText());
+      val.setText("   " + _myHelper.getValueText());
+      label.setText(_myHelper.getLabel());
+      slider.setMinimum(_myHelper.getMinVal());
+      slider.setMaximum(_myHelper.getMaxVal());
+      slider.setSelection(_myHelper.getValue());
+      slider.setEnabled(true);
+      label.getParent().getParent().layout(true, true);
+      label.getParent().getParent().redraw();
     }
     else
     {
-      unitStr = "n/a";
+      slider.setEnabled(false);
     }
-
-    label.setText(qc.getName() + " (" + unitStr + ")");
-
-    Object min = rng.getMinimum();
-    Object max = rng.getMaximum();
-
-    long minVal = ((Measurable<Quantity>) min).longValue(qc.getUnits());
-    long maxVal = ((Measurable<Quantity>) max).longValue(qc.getUnits());
-    slider.setMinimum((int) minVal);
-    slider.setMaximum((int) (maxVal + slider.getThumb()));
-    // note: add the width of the thumb object to get the true max value
-    slider.setSelection(curVal);
-
-    minL.setText("" + minVal);
-    maxL.setText("" + maxVal);
-    val.setText("" + curVal);
-
-    label.getParent().getParent().layout(true, true);
-    label.getParent().getParent().redraw();
   }
 
   @Override
@@ -278,6 +698,10 @@ public class RangeSliderView extends CoreAnalysisView implements
           QuantityRange<?> range = qc.getRange();
           res = range != null;
         }
+        else if (coll.isTemporal() && coll.getValuesCount() > 0)
+        {
+          res = true;
+        }
       }
       else if (item instanceof ICommand)
       {
@@ -289,9 +713,6 @@ public class RangeSliderView extends CoreAnalysisView implements
         }
       }
     }
-
-    slider.setEnabled(res);
-
     return res;
   }
 
@@ -305,21 +726,30 @@ public class RangeSliderView extends CoreAnalysisView implements
   public void dataChanged(IStoreItem subject)
   {
     // ok, re=do the update
-    showData(_currentColl);
+    showData(subject);
   }
 
   @Override
   public void collectionDeleted(IStoreItem subject)
   {
-    // TODO Auto-generated method stub
-
   }
 
   @Override
   public void metadataChanged(IStoreItem subject)
   {
-    // TODO: provide a more informed way of doing update
     dataChanged(subject);
+  }
+
+  public static IStoreGroup findTopParent(final IStoreItem subject)
+  {
+    IStoreGroup res = null;
+    IStoreGroup thisItem = subject.getParent();
+    while (thisItem != null)
+    {
+      res = thisItem;
+      thisItem = thisItem.getParent();
+    }
+    return res;
   }
 
 }

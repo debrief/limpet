@@ -184,9 +184,7 @@ public class MultiplyQuantityOperation implements IOperation<IStoreItem>
       }
 
       // ok, done
-      List<IStoreItem> res = new ArrayList<IStoreItem>();
-      res.add(target);
-      getStore().addAll(res);
+      getStore().add(target);
     }
 
     private Unit<?> calculateOutputUnit()

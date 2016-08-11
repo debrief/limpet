@@ -14,23 +14,30 @@
     <tycho-repo.url>https://oss.sonatype.org/content/groups/public/</tycho-repo.url>
     <jacoco.destFile>../target/jacoco.exec</jacoco.destFile>
     <coverage.filter>info.limpet.*</coverage.filter>
+    <limpet.base.version>${project.version}</limpet.base.version>
   </properties>
 
   <modules>
     <module>info.limpet</module>
     <module>info.limpet.libs</module>
     <module>org.geotools</module>
+    <module>org.freehep</module>
     <module>org.geotools.feature</module>
     <module>info.limpet.rcp</module>
     <module>info.limpet.ui</module>
     <module>info.limpet.test</module>
     <module>info.limpet.feature</module>
+    <module>info.limpet.feature.libs</module>
     <module>info.limpet.rcp.feature</module>
     <module>info.limpet.ui.feature</module>
     <module>info.limpet.site</module>
     <module>info.limpet.product</module>
     <module>info.limpet.sample_data</module>
     <module>info.limpet.report</module>
+    <module>org.mwc.cmap.jfreechart</module>
+    <module>info.limpet.stackedcharts.model</module>
+    <module>info.limpet.stackedcharts.ui</module>
+   
   </modules>
 
   <build>
@@ -198,6 +205,12 @@
                                          dir="${source-location}/info.limpet.ui/target/classes" />
                                       <fileset
                                          dir="${source-location}/info.limpet.test/target/classes" />
+                                      <fileset
+                                         dir="${source-location}/info.limpet.stackedcharts.core/target/classes" />
+                                      <fileset
+                                         dir="${source-location}/info.limpet.stackedcharts.model/target/classes" />
+                                      <fileset
+                                         dir="${source-location}/info.limpet.stackedcharts.editor/target/classes" />
                                    </classfiles>
                                    <sourcefiles
                                         encoding="UTF-8">
@@ -209,6 +222,12 @@
                                          dir="${source-location}/info.limpet.ui/src/" />
                                       <fileset
                                          dir="${source-location}/info.limpet.test/src/" />
+                                      <fileset
+                                         dir="${source-location}/info.limpet.stackedcharts.core/src/" />
+                                      <fileset
+                                         dir="${source-location}/info.limpet.stackedcharts.model/src/" />
+                                      <fileset
+                                         dir="${source-location}/info.limpet.stackedcharts.editor/src/" />
                                    </sourcefiles>
                                </structure>
                                <html destdir="../target/jacoco/report" />

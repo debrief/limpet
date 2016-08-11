@@ -14,10 +14,6 @@
  *****************************************************************************/
 package info.limpet.data.operations;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 import info.limpet.ICommand;
 import info.limpet.IContext;
 import info.limpet.IOperation;
@@ -25,7 +21,11 @@ import info.limpet.IStore;
 import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
 import info.limpet.data.commands.AbstractCommand;
-import info.limpet.data.store.InMemoryStore.StoreGroup;
+import info.limpet.data.store.StoreGroup;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public class AddLayerOperation implements IOperation<IStoreItem>
 {
@@ -99,7 +99,9 @@ public class AddLayerOperation implements IOperation<IStoreItem>
           getStore().add(newGroup);
 
         }
-      }else{
+      }
+      else
+      {
     	  super.execute();
       }
     }

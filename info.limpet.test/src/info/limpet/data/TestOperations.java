@@ -41,9 +41,9 @@ import info.limpet.data.impl.QuantityCollection;
 import info.limpet.data.impl.TemporalQuantityCollection;
 import info.limpet.data.impl.samples.SampleData;
 import info.limpet.data.impl.samples.StockTypes;
-import info.limpet.data.impl.samples.TemporalLocation;
 import info.limpet.data.impl.samples.StockTypes.NonTemporal.AngleDegrees;
 import info.limpet.data.impl.samples.StockTypes.Temporal.SpeedKts;
+import info.limpet.data.impl.samples.TemporalLocation;
 import info.limpet.data.operations.AddLayerOperation;
 import info.limpet.data.operations.CollectionComplianceTests;
 import info.limpet.data.operations.GenerateDummyDataOperation;
@@ -61,12 +61,8 @@ import info.limpet.data.operations.arithmetic.SimpleMovingAverageOperation;
 import info.limpet.data.operations.arithmetic.SubtractQuantityOperation;
 import info.limpet.data.operations.arithmetic.UnitaryMathOperation;
 import info.limpet.data.operations.spatial.BearingBetweenTracksOperation;
-import info.limpet.data.operations.spatial.GeoSupport;
-import info.limpet.data.operations.spatial.IGeoCalculator;
-import info.limpet.data.store.InMemoryStore;
-import info.limpet.data.store.InMemoryStore.StoreGroup;
+import info.limpet.data.store.StoreGroup;
 
-import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -105,7 +101,7 @@ public class TestOperations
   public void testInterpolateTests()
   {
     // place to store results data
-    InMemoryStore store = new SampleData().getData(10);
+    StoreGroup store = new SampleData().getData(10);
 
     // ok, let's try one that works
     List<IStoreItem> selection = new ArrayList<IStoreItem>();
@@ -159,7 +155,7 @@ public class TestOperations
     temporalAngleData.add(4000, 13d);
 
     List<ICollection> selection = new ArrayList<ICollection>();
-    InMemoryStore store = new InMemoryStore();
+    StoreGroup store = new StoreGroup();
 
     HashMap<String, List<IOperation<?>>> ops =
         OperationsLibrary.getOperations();
@@ -402,7 +398,7 @@ public class TestOperations
     selection.add(speedGood1);
     selection.add(speedGood2);
 
-    InMemoryStore store = new InMemoryStore();
+    StoreGroup store = new StoreGroup();
     assertEquals("store empty", 0, store.size());
 
     @SuppressWarnings(
@@ -457,7 +453,7 @@ public class TestOperations
   public void testDimensionlessMultiply()
   {
     // place to store results data
-    InMemoryStore store = new SampleData().getData(10);
+    StoreGroup store = new SampleData().getData(10);
 
     // ok, let's try one that works
     List<IStoreItem> selection = new ArrayList<IStoreItem>();
@@ -621,7 +617,7 @@ public class TestOperations
   }
 
   @Test
-  public void testSimpleMovingAverage()
+  public void testTemporalMovingAverage()
   {
     // place to store results data
     IStore store = new SampleData().getData(10);
@@ -670,13 +666,64 @@ public class TestOperations
     assertEquals(average, simpleMovingAverage.doubleValue(newS.getUnits()), 0);
 
   }
+  
+  @Test
+  public void testSimpleMovingAverage()
+  {
+    // place to store results data
+    IStore store = new SampleData().getData(10);
+
+    List<ICollection> selection = new ArrayList<>();
+
+    @SuppressWarnings("unchecked")
+    QuantityCollection<Length> lengthOne =
+        (QuantityCollection<Length>) store.get(SampleData.LENGTH_ONE);
+    selection.add(lengthOne);
+
+   int windowSize=3;
+
+    Collection<ICommand<ICollection>> commands =
+        new SimpleMovingAverageOperation(windowSize).actionsFor(selection,
+            store, context);
+    assertEquals(1, commands.size());
+
+    ICommand<ICollection> command = commands.iterator().next();
+
+    // apply action
+    command.execute();
+
+    @SuppressWarnings("unchecked")
+    IQuantityCollection<Velocity> newS =
+        (IQuantityCollection<Velocity>) store
+            .get("Moving average of Length One non-Time");
+    assertNotNull(newS);
+
+    // test results is same length as thisSpeed
+    assertEquals("correct size", 10, newS.getValuesCount());
+
+    // calculate sum of input values [0..windowSize-1]
+    double sum = 0;
+    for (int i = 0; i < windowSize; i++)
+    {
+      Measurable<Length> inputQuantity = lengthOne.getValues().get(i);
+      sum += inputQuantity.doubleValue(lengthOne.getUnits());
+    }
+    double average = sum / windowSize;
+
+    // compare to output value [windowSize-1]
+    Measurable<Velocity> simpleMovingAverage =
+        newS.getValues().get(windowSize - 1);
+
+    assertEquals(average, simpleMovingAverage.doubleValue(newS.getUnits()), 0);
+
+  }
 
   @Test
   @SuppressWarnings(
   {"unchecked"})
   public void testAddition()
   {
-    InMemoryStore store = new SampleData().getData(10);
+    StoreGroup store = new SampleData().getData(10);
 
     // test invalid dimensions
     ITemporalQuantityCollection<Velocity> speedGood1 =
@@ -719,7 +766,7 @@ public class TestOperations
   {"rawtypes", "unchecked"})
   public void testSubtractionSingleton()
   {
-    InMemoryStore store = new SampleData().getData(10);
+    StoreGroup store = new SampleData().getData(10);
     List<ICollection> selection = new ArrayList<ICollection>(3);
 
     // test invalid dimensions
@@ -753,7 +800,7 @@ public class TestOperations
   {"rawtypes", "unchecked"})
   public void testAddSingleton()
   {
-    InMemoryStore store = new SampleData().getData(10);
+    StoreGroup store = new SampleData().getData(10);
     List<ICollection> selection = new ArrayList<ICollection>(3);
 
     // test invalid dimensions
@@ -792,7 +839,7 @@ public class TestOperations
   {"rawtypes", "unchecked"})
   public void testSubtraction()
   {
-    InMemoryStore store = new SampleData().getData(10);
+    StoreGroup store = new SampleData().getData(10);
     int storeSize = store.size();
     List<ICollection> selection = new ArrayList<ICollection>(3);
 
@@ -863,7 +910,7 @@ public class TestOperations
   {
 	  IContext context=EasyMock.createMock(MockContext.class);
 	  // place to store results data
-	  InMemoryStore store = new SampleData().getData(10);
+	  StoreGroup store = new SampleData().getData(10);
 
 	  List<IStoreItem> selection = new ArrayList<IStoreItem>();
 
@@ -951,7 +998,7 @@ public class TestOperations
 
   @Test
   public void testCreateSingletonGenerator(){
-	  InMemoryStore store = new SampleData().getData(10);
+	  StoreGroup store = new SampleData().getData(10);
 	  CreateSingletonGenerator generator= new CreateSingletonGenerator("dimensionless") {
 		@Override
 		protected QuantityCollection<?> generate(String name, ICommand<?> precedent) {
@@ -980,7 +1027,7 @@ public class TestOperations
   
   @Test
   public void testCreateLocationAction(){
-	  InMemoryStore store = new SampleData().getData(10);
+	  StoreGroup store = new SampleData().getData(10);
 	  CreateLocationAction  createLocationAction= new CreateLocationAction();
 	  assertNotNull("Create Location action is not NULL", createLocationAction);
 
@@ -1005,12 +1052,13 @@ public class TestOperations
   
   @Test
   public void testExportCsvToFileAction(){
-	  InMemoryStore store = new SampleData().getData(10);
+	  StoreGroup store = new SampleData().getData(10);
 	  ExportCsvToFileAction exportCSVFileAction=new ExportCsvToFileAction();
 	  assertNotNull(exportCSVFileAction);
 	  
 	  List<IStoreItem> selection = new ArrayList<IStoreItem>();
-	  IQuantityCollection<Velocity> speedGood1 = (IQuantityCollection<Velocity>) store.get(SampleData.SPEED_ONE);
+	  @SuppressWarnings("unchecked")
+    IQuantityCollection<Velocity> speedGood1 = (IQuantityCollection<Velocity>) store.get(SampleData.SPEED_ONE);
 	  selection.add(speedGood1);
 	  
 	  IContext mockContext=EasyMock.createMock(MockContext.class);
@@ -1031,12 +1079,13 @@ public class TestOperations
   @Test
   public void testCopyCsvToClipboardAction(){
 
-	  InMemoryStore store = new SampleData().getData(10);
+	  StoreGroup store = new SampleData().getData(10);
 	  CopyCsvToClipboardAction copyCSVToClipAction=new CopyCsvToClipboardAction();
 	  assertNotNull(copyCSVToClipAction);
 	  
 	  List<IStoreItem> selection = new ArrayList<IStoreItem>();
-	  IQuantityCollection<Velocity> speedGood1 = (IQuantityCollection<Velocity>) store.get(SampleData.SPEED_ONE);
+	  @SuppressWarnings("unchecked")
+    IQuantityCollection<Velocity> speedGood1 = (IQuantityCollection<Velocity>) store.get(SampleData.SPEED_ONE);
 	  selection.add(speedGood1);
 	  
 	  IContext mockContext=EasyMock.createMock(MockContext.class);
@@ -1086,7 +1135,7 @@ public class TestOperations
   public void testDivision()
   {
     // place to store results data
-    InMemoryStore store = new SampleData().getData(10);
+    StoreGroup store = new SampleData().getData(10);
 
     List<IStoreItem> selection = new ArrayList<IStoreItem>();
 
@@ -1214,7 +1263,7 @@ public class TestOperations
   @SuppressWarnings("unchecked")
   public void testGenerateDummyDataOperation()
     {
-  	  InMemoryStore store = new SampleData().getData(10);
+  	  StoreGroup store = new SampleData().getData(10);
 
   	  List<IStoreItem> selection = new ArrayList<IStoreItem>();
 
@@ -1235,7 +1284,7 @@ public class TestOperations
   
   @Test
   public void testDeleteCollectionOperation(){
-	  InMemoryStore store = new SampleData().getData(10);
+	  StoreGroup store = new SampleData().getData(10);
 	  List<IStoreItem> selection = new ArrayList<IStoreItem>();
 
 	  ICollection speedGood1 = (ICollection) store.get(SampleData.SPEED_ONE);
@@ -1253,7 +1302,7 @@ public class TestOperations
 
   @Test
   public void testBearingBetweenTracksOperation() throws IOException{
-	  InMemoryStore store = new SampleData().getData(10);
+	  StoreGroup store = new SampleData().getData(10);
 	  List<IStoreItem> selection = new ArrayList<IStoreItem>();
 
 	  File file = TestCsvParser.getDataFile("americas_cup/usa.csv");

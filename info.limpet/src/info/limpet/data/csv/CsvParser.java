@@ -24,7 +24,7 @@ import info.limpet.data.impl.samples.StockTypes.Temporal;
 import info.limpet.data.impl.samples.StockTypes.Temporal.Strings;
 import info.limpet.data.impl.samples.TemporalLocation;
 import info.limpet.data.operations.spatial.GeoSupport;
-import info.limpet.data.store.InMemoryStore.StoreGroup;
+import info.limpet.data.store.StoreGroup;
 
 import java.awt.geom.Point2D;
 import java.io.File;
@@ -50,14 +50,17 @@ public class CsvParser
   // 21/09/2015 07:00:31
   private static final DateFormat DATE_FORMAT = new SimpleDateFormat(
       "dd/MM/yyyy hh:mm:ss");
-  private static final DateFormat TIME_FORMAT = new SimpleDateFormat("hh:mm:ss");
+  private static final DateFormat TIME_FORMAT =
+      new SimpleDateFormat("hh:mm:ss");
   private ArrayList<DataImporter> _candidates;
 
   public List<IStoreItem> parse(String filePath) throws IOException
   {
     final List<IStoreItem> res = new ArrayList<IStoreItem>();
     final File inFile = new File(filePath);
-    final Reader in =   new InputStreamReader(new FileInputStream(inFile), Charset.forName("UTF-8"));
+    final Reader in =
+        new InputStreamReader(new FileInputStream(inFile), Charset
+            .forName("UTF-8"));
     final String fullFileName = inFile.getName();
     final String fileName = filePrefix(fullFileName);
     final Iterable<CSVRecord> records = CSVFormat.DEFAULT.parse(in);
@@ -82,6 +85,7 @@ public class CsvParser
     List<ICollection> series = new ArrayList<ICollection>();
 
     boolean isTime = false;
+    DateFormat customDateFormat = null;
 
     for (CSVRecord record : records)
     {
@@ -91,8 +95,20 @@ public class CsvParser
         String time = record.get(0);
         int ctr = 0;
 
-        if (time != null && time.toLowerCase().equals("time"))
+        if (time != null && time.toLowerCase().startsWith("time"))
         {
+          // is it plain time?
+          if (!time.toLowerCase().equals("time"))
+          {
+            // ok, see if we have a time format string
+            if (time.contains("(") && time.contains(")"))
+            {
+              // ok, extract the format string
+              String formatStr =
+                  time.substring(time.indexOf("(") + 1, time.indexOf(")"));
+              customDateFormat = new SimpleDateFormat(formatStr);
+            }
+          }
           isTime = true;
           ctr = 1;
         }
@@ -138,8 +154,6 @@ public class CsvParser
 
           if (!handled)
           {
-            // String units = nextVal.substring(0, i1 - 1);
-
             int i2 = nextVal.indexOf(")");
             if (i2 > 0 && i2 > i1 + 1)
             {
@@ -187,17 +201,25 @@ public class CsvParser
           // ok, get the time field
           try
           {
-            int len = firstRow.length();
-            final DateFormat format;
-            if (len < 10)
+            // do we have a custom date format
+            final DateFormat thisFormat;
+            if (customDateFormat != null)
             {
-              format = TIME_FORMAT;
+              thisFormat = customDateFormat;
             }
             else
             {
-              format = DATE_FORMAT;
+              int len = firstRow.length();
+              if (len < 10)
+              {
+                thisFormat = TIME_FORMAT;
+              }
+              else
+              {
+                thisFormat = DATE_FORMAT;
+              }
             }
-            Date date = format.parse(firstRow);
+            Date date = thisFormat.parse(firstRow);
             theTime = date.getTime();
             thisCol = 1;
           }
@@ -301,7 +323,6 @@ public class CsvParser
     return res;
   }
 
-  
   public static DateFormat getDateFormat()
   {
     return DATE_FORMAT;
@@ -335,10 +356,12 @@ public class CsvParser
         Temporal.TurnRate.class, null, "Degs/sec"));
     _candidates.add(new TemporalSeriesSupporter<Temporal.LengthM>(
         Temporal.LengthM.class, null, "m"));
+    _candidates.add(new TemporalSeriesSupporter<Temporal.LengthYd>(
+        Temporal.LengthM.class, null, "yds"));
     _candidates.add(new TemporalSeriesSupporter<Temporal.AngleDegrees>(
         Temporal.AngleDegrees.class, null, "Degs"));
-    _candidates.add(new TemporalSeriesSupporter<Temporal.SpeedMSec>(
-        Temporal.SpeedMSec.class, null, "kts"));
+    _candidates.add(new TemporalSeriesSupporter<Temporal.SpeedKts>(
+        Temporal.SpeedKts.class, null, "kts"));
     _candidates.add(new TemporalSeriesSupporter<Temporal.SpeedMSec>(
         Temporal.SpeedMSec.class, null, "M/Sec"));
     _candidates.add(new TemporalSeriesSupporter<Temporal.TemperatureC>(

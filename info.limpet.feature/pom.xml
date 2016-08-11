@@ -6,6 +6,7 @@
     <groupId>info.limpet</groupId>
     <artifactId>parent</artifactId>
     <version>1.0.6-SNAPSHOT</version>
+    <relativePath>../</relativePath>
   </parent>
   <groupId>info.limpet</groupId>
   <artifactId>info.limpet.feature</artifactId>

@@ -195,4 +195,25 @@ Library.
          install-size="0"
          version="0.0.0"/>
 
+   <plugin
+         id="info.limpet.stackedcharts.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="info.limpet.stackedcharts.model"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.freehep"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
 </feature>

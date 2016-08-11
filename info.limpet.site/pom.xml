@@ -1,17 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-        <modelVersion>4.0.0</modelVersion>
-        <parent>
-                <groupId>info.limpet</groupId>
-                <artifactId>parent</artifactId>
-                <version>1.0.6-SNAPSHOT</version>
-        </parent>
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>info.limpet</groupId>
+		<artifactId>parent</artifactId>
+		<version>1.0.6-SNAPSHOT</version>
+	</parent>
 
-        <groupId>info.limpet</groupId>
-        <artifactId>site</artifactId>
-        <name>Limpet update site</name>
+	<groupId>info.limpet</groupId>
+	<artifactId>site</artifactId>
+	<name>Limpet update site</name>
 
-        <packaging>eclipse-repository</packaging>
+	<packaging>eclipse-repository</packaging>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-p2-publisher-plugin</artifactId>
+				<version>${tycho.version}</version>
+				<configuration>
+					<publishArtifacts>true</publishArtifacts>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>
 
