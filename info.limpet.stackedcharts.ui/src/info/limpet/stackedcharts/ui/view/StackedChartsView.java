@@ -467,31 +467,25 @@ public class StackedChartsView extends ViewPart implements
         Activator.PLUGIN_ID, "icons/labels.png"));
     manager.add(showMarker);
     
-    
- 
-
     final Action export =
-        new Action("Export to WMF", SWT.PUSH)
+        new Action("Export image to clipboard", SWT.PUSH)
         {
           @Override
           public void run()
           {
-
               toWMF();
-
           }
 
           private void toWMF()
           {
             try
             {
-              
               Clipboard clpbrd =
                   Toolkit.getDefaultToolkit().getSystemClipboard();
               clpbrd.setContents(new WMFTransfer(_chartComposite), null);
               MessageDialog.openInformation(Display.getCurrent()
-                  .getActiveShell(), "WMF Export",
-                  "Exported to Clipboard.[WMF]");
+                  .getActiveShell(), "Image Export",
+                  "Exported to Clipboard in WMF && PDF format");
 
             }
             catch (Exception e)
@@ -943,7 +937,7 @@ public class StackedChartsView extends ViewPart implements
     {
       if (flavor.equals(EMF_FLAVOR))
       {
-        System.out.println("Mime type application/emf recognized");
+        System.out.println("Mime type image/emf recognized");
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         
         EMFGraphics2D g2d =
@@ -960,6 +954,7 @@ public class StackedChartsView extends ViewPart implements
       }
       else if (flavor.equals(PDF_FLAVOR))
       {
+        System.out.println("Mime type application/pdf recognized");
         ByteArrayOutputStream out = new ByteArrayOutputStream();
        
         PDFGraphics2D g2d =
@@ -999,11 +994,4 @@ public class StackedChartsView extends ViewPart implements
       return false;
     }
   }
-  
-  
-  
-  
-  
-  
-
 }
