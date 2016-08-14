@@ -16,7 +16,11 @@ public class DirectionalShape extends RectangleFigure
 
   public DirectionalShape()
   {
-    super.setLayoutManager(new DirectionFlowLayout());
+    DirectionFlowLayout manager = new DirectionFlowLayout();
+    manager.setStretchMinorAxis(true);
+    manager.setMinorAlignment(DirectionFlowLayout.ALIGN_CENTER);
+    manager.setMajorAlignment(DirectionFlowLayout.ALIGN_CENTER);
+    super.setLayoutManager(manager);
     setOutline(false);
   }
 

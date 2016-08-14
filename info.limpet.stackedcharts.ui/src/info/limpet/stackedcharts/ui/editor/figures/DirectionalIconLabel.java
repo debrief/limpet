@@ -1,6 +1,7 @@
 package info.limpet.stackedcharts.ui.editor.figures;
 
 import org.eclipse.draw2d.Label;
+import org.eclipse.draw2d.PositionConstants;
 import org.eclipse.swt.graphics.Image;
 
 /**
@@ -15,6 +16,7 @@ public class DirectionalIconLabel extends DirectionalShape
   {
     add(new Label(icon));
     this.label = new DirectionalLabel();
+    this.label.setTextAlignment(PositionConstants.TOP);
     add(getLabel());
   }
 
