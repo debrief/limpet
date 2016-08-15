@@ -64,14 +64,15 @@ public class ChartEditPart extends AbstractGraphicalEditPart implements
   {
     super.activate();
     getModel().eAdapters().add(adapter);
-    getSharedAxis().eAdapters().add(sharedAxisAdapter);
+    sharedAxisAdapter.attachTo(getSharedAxis());
   }
 
   @Override
   public void deactivate()
   {
     getModel().eAdapters().remove(adapter);
-    getSharedAxis().eAdapters().remove(sharedAxisAdapter);
+    // effectively detach the adapter/listener
+    sharedAxisAdapter.attachTo(null);
     super.deactivate();
   }
 
@@ -233,6 +234,8 @@ public class ChartEditPart extends AbstractGraphicalEditPart implements
    */
   public class SharedAxisAdapter extends EContentAdapter
   {
+    private IndependentAxis independentAxis;
+
     public void notifyChanged(Notification notification)
     {
       super.notifyChanged(notification);
@@ -243,6 +246,19 @@ public class ChartEditPart extends AbstractGraphicalEditPart implements
       case StackedchartsPackage.SELECTIVE_ANNOTATION__APPEARS_IN:
         refreshChildren();
         break;
+      }
+    }
+
+    void attachTo(IndependentAxis independentAxis)
+    {
+      if (this.independentAxis != null)
+      {
+        this.independentAxis.eAdapters().remove(this);
+      }
+      this.independentAxis = independentAxis;
+      if (this.independentAxis != null)
+      {
+        this.independentAxis.eAdapters().add(this);
       }
     }
   }
