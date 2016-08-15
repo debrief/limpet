@@ -17,6 +17,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
 
 import info.limpet.stackedcharts.model.Orientation;
+import info.limpet.stackedcharts.ui.editor.Activator;
 import info.limpet.stackedcharts.ui.editor.figures.DirectionalLabel;
 import info.limpet.stackedcharts.ui.editor.parts.ChartEditPart.ChartPanePosition;
 import info.limpet.stackedcharts.ui.editor.parts.ChartPaneEditPart.AxisLandingPad;
@@ -44,7 +45,7 @@ public class AxisLandingPadEditPart extends AbstractGraphicalEditPart
     figure.setBorder(figureBorder);
 
     figure.setLayoutManager(new GridLayout());
-    nameLabel = new DirectionalLabel();
+    nameLabel = new DirectionalLabel(Activator.FONT_8);
 
     final ChartPaneEditPart.AxisLandingPad pad =
         (ChartPaneEditPart.AxisLandingPad) getModel();

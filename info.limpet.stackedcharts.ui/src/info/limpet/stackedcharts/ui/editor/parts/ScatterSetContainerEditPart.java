@@ -3,6 +3,7 @@ package info.limpet.stackedcharts.ui.editor.parts;
 import info.limpet.stackedcharts.model.Chart;
 import info.limpet.stackedcharts.model.ChartSet;
 import info.limpet.stackedcharts.model.Orientation;
+import info.limpet.stackedcharts.ui.editor.Activator;
 import info.limpet.stackedcharts.ui.editor.StackedchartsImages;
 import info.limpet.stackedcharts.ui.editor.figures.DirectionalLabel;
 import info.limpet.stackedcharts.ui.editor.figures.DirectionalShape;
@@ -28,7 +29,7 @@ public class ScatterSetContainerEditPart extends AbstractGraphicalEditPart
   protected IFigure createFigure()
   {
     DirectionalShape figure = new DirectionalShape();
-    titleLabel = new DirectionalLabel();
+    titleLabel = new DirectionalLabel(Activator.FONT_10);
     figure.add(titleLabel);
     titleLabel.setIcon(StackedchartsImages.getImage(
             StackedchartsImages.DESC_SCATTERSET));

@@ -9,6 +9,7 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Display;
 
+import info.limpet.stackedcharts.ui.editor.Activator;
 import info.limpet.stackedcharts.ui.editor.StackedchartsImages;
 
 public class ChartsetFigure extends DirectionalShape
@@ -20,7 +21,7 @@ public class ChartsetFigure extends DirectionalShape
   {
     add(new Label(StackedchartsImages.getImage(
         StackedchartsImages.DESC_CHARTSET)));
-    chartsetHeader = new DirectionalLabel();
+    chartsetHeader = new DirectionalLabel(Activator.FONT_12);
     chartsetHeader.setText("Chart Set");
     chartsetHeader.setTextAlignment(PositionConstants.TOP);
     if (boldFont == null)

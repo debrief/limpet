@@ -9,6 +9,7 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Display;
 
+import info.limpet.stackedcharts.ui.editor.Activator;
 import info.limpet.stackedcharts.ui.editor.StackedchartsImages;
 
 public class AxisNameFigure extends DirectionalShape
@@ -21,7 +22,7 @@ public class AxisNameFigure extends DirectionalShape
 
 
     add(new Label(StackedchartsImages.getImage(StackedchartsImages.DESC_AXIS)));
-    nameLabel = new DirectionalLabel();
+    nameLabel = new DirectionalLabel(Activator.FONT_10);
     nameLabel.setTextAlignment(PositionConstants.TOP);
 
     add(nameLabel);
