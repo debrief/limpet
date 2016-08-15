@@ -120,9 +120,8 @@ public class AxisEditPart extends AbstractGraphicalEditPart implements
 
     GraphicalEditPart parent = (GraphicalEditPart) getParent();
 
-    boolean horizontal =
-        ((ChartSet) parent.getParent().getParent().getParent().getModel())
-            .getOrientation() == Orientation.HORIZONTAL;
+    boolean horizontal = ((ChartSet) parent.getParent().getParent().getParent()
+        .getModel()).getOrientation() == Orientation.HORIZONTAL;
 
     GridLayout layout = (GridLayout) getFigure().getLayoutManager();
     if (horizontal)
@@ -135,6 +134,8 @@ public class AxisEditPart extends AbstractGraphicalEditPart implements
           GridData.CENTER, true, false));
 
       layout.setConstraint(arrowFigure, new GridData(GridData.FILL,
+          GridData.CENTER, true, false));
+      layout.setConstraint(axisNameLabel, new GridData(GridData.FILL,
           GridData.CENTER, true, false));
 
       axisNameLabel.setVertical(false);
@@ -150,6 +151,8 @@ public class AxisEditPart extends AbstractGraphicalEditPart implements
           GridData.FILL, false, true));
 
       layout.setConstraint(arrowFigure, new GridData(GridData.CENTER,
+          GridData.FILL, false, true));
+      layout.setConstraint(axisNameLabel, new GridData(GridData.CENTER,
           GridData.FILL, false, true));
 
       axisNameLabel.setVertical(true);
@@ -184,8 +187,8 @@ public class AxisEditPart extends AbstractGraphicalEditPart implements
       {
         DependentAxis dataset = (DependentAxis) getHost().getModel();
         Chart parent = (Chart) dataset.eContainer();
-        DeleteAxisFromChartCommand cmd =
-            new DeleteAxisFromChartCommand(parent, dataset);
+        DeleteAxisFromChartCommand cmd = new DeleteAxisFromChartCommand(parent,
+            dataset);
         return cmd;
       }
     });
@@ -249,30 +252,29 @@ public class AxisEditPart extends AbstractGraphicalEditPart implements
     final DependentAxis axis = getAxis();
     final AxisType axisType = getAxis().getAxisType();
 
-    ComposedAdapterFactory adapterFactory =
-        new ComposedAdapterFactory(
-            ComposedAdapterFactory.Descriptor.Registry.INSTANCE);
-    adapterFactory
-        .addAdapterFactory(new ReflectiveItemProviderAdapterFactory());
+    ComposedAdapterFactory adapterFactory = new ComposedAdapterFactory(
+        ComposedAdapterFactory.Descriptor.Registry.INSTANCE);
+    adapterFactory.addAdapterFactory(
+        new ReflectiveItemProviderAdapterFactory());
 
     final IItemPropertySource axisItemPropertySource =
         (IItemPropertySource) adapterFactory.adapt(axisType,
             IItemPropertySource.class);
-    final IPropertySource axisTypePropertySource =
-        new PropertySource(axisType, axisItemPropertySource);
+    final IPropertySource axisTypePropertySource = new PropertySource(axisType,
+        axisItemPropertySource);
     final IItemPropertySource axisTypeItemPropertySource =
         (IItemPropertySource) adapterFactory.adapt(axis,
             IItemPropertySource.class);
-    final IPropertySource axisPropertySource =
-        new PropertySource(axis, axisTypeItemPropertySource);
+    final IPropertySource axisPropertySource = new PropertySource(axis,
+        axisTypeItemPropertySource);
 
     // Proxy two objects in to one
     return new IPropertySource()
     {
-      IPropertySource getSourceById(Object id)
+          IPropertySource getSourceById(Object id)
       {
-        IPropertyDescriptor[] propertyDescriptors =
-            axisTypePropertySource.getPropertyDescriptors();
+        IPropertyDescriptor[] propertyDescriptors = axisTypePropertySource
+            .getPropertyDescriptors();
         for (IPropertyDescriptor iPropertyDescriptor : propertyDescriptors)
         {
           if (iPropertyDescriptor.getId().equals(id))

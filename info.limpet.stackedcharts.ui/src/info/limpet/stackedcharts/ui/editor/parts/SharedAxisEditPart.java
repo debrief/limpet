@@ -75,13 +75,13 @@ public class SharedAxisEditPart extends AbstractGraphicalEditPart
 
     arrowFigure = new ArrowFigure(true);
     rectangle.add(arrowFigure);
-    
+
     // and the text label
     axisNameLabel = new DirectionalIconLabel(StackedchartsImages.getImage(
         StackedchartsImages.DESC_AXIS));
-    axisNameLabel.getLabel().setTextAlignment(PositionConstants.CENTER);
+    axisNameLabel.getLabel().setTextAlignment(PositionConstants.TOP);
     rectangle.add(axisNameLabel);
-    
+
     return rectangle;
   }
 
