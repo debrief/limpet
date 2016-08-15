@@ -552,6 +552,14 @@ public class ChartBuilder
 
     // create this chart
     final XYPlot subplot = createChart(sharedAxisModel, chart, helper);
+    
+    // hide the y axis labels - since our GEF editors show the value
+    int aCnt = subplot.getRangeAxisCount();
+    for(int ctr = 0; ctr < aCnt; ctr++)
+    {
+      ValueAxis axis = subplot.getRangeAxis(ctr);
+      axis.setLabel(null);
+    }
 
     // add chart to stack
     plot.add(subplot);
