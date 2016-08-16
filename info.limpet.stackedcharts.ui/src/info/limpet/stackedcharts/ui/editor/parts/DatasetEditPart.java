@@ -1,5 +1,17 @@
 package info.limpet.stackedcharts.ui.editor.parts;
 
+import info.limpet.stackedcharts.model.Chart;
+import info.limpet.stackedcharts.model.ChartSet;
+import info.limpet.stackedcharts.model.Dataset;
+import info.limpet.stackedcharts.model.DependentAxis;
+import info.limpet.stackedcharts.model.Orientation;
+import info.limpet.stackedcharts.model.StackedchartsPackage;
+import info.limpet.stackedcharts.model.Styling;
+import info.limpet.stackedcharts.ui.editor.StackedchartsImages;
+import info.limpet.stackedcharts.ui.editor.commands.DeleteDatasetsFromAxisCommand;
+import info.limpet.stackedcharts.ui.editor.figures.DatasetFigure;
+import info.limpet.stackedcharts.ui.editor.figures.DirectionalShape;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,24 +33,13 @@ import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 import org.eclipse.gef.editpolicies.ComponentEditPolicy;
 import org.eclipse.gef.editpolicies.NonResizableEditPolicy;
 import org.eclipse.gef.requests.GroupRequest;
-
-import info.limpet.stackedcharts.model.Chart;
-import info.limpet.stackedcharts.model.ChartSet;
-import info.limpet.stackedcharts.model.Dataset;
-import info.limpet.stackedcharts.model.DependentAxis;
-import info.limpet.stackedcharts.model.Orientation;
-import info.limpet.stackedcharts.model.StackedchartsPackage;
-import info.limpet.stackedcharts.model.Styling;
-import info.limpet.stackedcharts.ui.editor.StackedchartsImages;
-import info.limpet.stackedcharts.ui.editor.commands.DeleteDatasetsFromAxisCommand;
-import info.limpet.stackedcharts.ui.editor.figures.DatasetFigure;
-import info.limpet.stackedcharts.ui.editor.figures.DirectionalShape;
+import org.eclipse.ui.views.properties.IPropertySource;
 
 /**
  * An {@link GraphicalEditPart} to represent datasets
  */
 public class DatasetEditPart extends AbstractGraphicalEditPart implements
-    ActionListener
+    ActionListener, IPropertySourceProvider
 {
 
   private DatasetFigure contentPane;
@@ -72,6 +73,17 @@ public class DatasetEditPart extends AbstractGraphicalEditPart implements
   public IFigure getContentPane()
   {
     return contentPane;
+  }
+  
+
+  @Override
+  public IPropertySource getPropertySource()
+  {
+    final Dataset axis = getDataset();
+    final Styling axisType = getDataset().getStyling();
+
+    // Proxy two objects in to one
+    return new CombinedProperty(axis, axisType, "Styling");
   }
 
   @Override
@@ -147,19 +159,6 @@ public class DatasetEditPart extends AbstractGraphicalEditPart implements
       CommandStack commandStack = getViewer().getEditDomain().getCommandStack();
       commandStack.execute(deleteCommand);
     }
-  }
-
-  @SuppressWarnings("rawtypes")
-  @Override
-  protected List getModelChildren()
-  {
-    List<Styling> result = new ArrayList<>();
-    Styling styling = getDataset().getStyling();
-    if (styling != null)
-    {
-      result.add(styling);
-    }
-    return result;
   }
 
   public class DatasetAdapter implements Adapter
