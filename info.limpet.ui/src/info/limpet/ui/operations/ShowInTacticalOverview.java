@@ -141,16 +141,10 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
               break;
             }
           }
-          // Note: skip this test, we now allow multiple sensor datasets
-          // else if (thisG.getName().equals("Sensor"))
-          // {
-          // StoreGroup sensor = (StoreGroup) thisG;
-          // if (sensor.size() != 1)
-          // {
-          // res = false;
-          // break;
-          // }
-          // }
+          else if (thisG.getName().equals("Sensor"))
+          {
+            // great, go for it
+          }
           else
           {
             res = false;
