@@ -5,6 +5,7 @@ import info.limpet.stackedcharts.model.ChartSet;
 import info.limpet.stackedcharts.model.Orientation;
 import info.limpet.stackedcharts.ui.editor.Activator;
 import info.limpet.stackedcharts.ui.editor.StackedchartsImages;
+import info.limpet.stackedcharts.ui.editor.figures.DirectionalIconLabel;
 import info.limpet.stackedcharts.ui.editor.figures.DirectionalLabel;
 import info.limpet.stackedcharts.ui.editor.figures.DirectionalShape;
 import info.limpet.stackedcharts.ui.editor.figures.ScatterSetContainerFigure;
@@ -12,29 +13,31 @@ import info.limpet.stackedcharts.ui.editor.parts.ChartEditPart.ScatterSetContain
 import info.limpet.stackedcharts.ui.editor.policies.ScatterSetContainerEditPolicy;
 
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.eclipse.draw2d.BorderLayout;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
+import org.eclipse.swt.widgets.Display;
 
 public class ScatterSetContainerEditPart extends AbstractGraphicalEditPart
 {
 
   private ScatterSetContainerFigure scatterSetContainerFigure;
-  private DirectionalLabel titleLabel;
+  private DirectionalIconLabel titleLabel;
 
   @Override
   protected IFigure createFigure()
   {
     DirectionalShape figure = new DirectionalShape();
-    titleLabel = new DirectionalLabel(Activator.FONT_10);
+    titleLabel = new DirectionalIconLabel(StackedchartsImages.getImage(
+        StackedchartsImages.DESC_SCATTERSET));
     figure.add(titleLabel);
-    titleLabel.setIcon(StackedchartsImages.getImage(
-            StackedchartsImages.DESC_SCATTERSET));
-    titleLabel.setText("Scatterset");
-    
+    titleLabel.getLabel().setText("Scatterset");
+
     scatterSetContainerFigure = new ScatterSetContainerFigure();
     figure.add(scatterSetContainerFigure);
     return figure;
@@ -63,11 +66,10 @@ public class ScatterSetContainerEditPart extends AbstractGraphicalEditPart
   @Override
   protected void refreshVisuals()
   {
-    final DirectionalShape figure =
-        (DirectionalShape) getFigure();
+    final DirectionalShape figure = (DirectionalShape) getFigure();
 
     ChartSet chartSet = ((Chart) getParent().getModel()).getParent();
-    boolean vertical = chartSet.getOrientation() == Orientation.VERTICAL;
+    final boolean vertical = chartSet.getOrientation() == Orientation.VERTICAL;
 
     ((GraphicalEditPart) getParent()).setLayoutConstraint(this, figure, vertical
         ? BorderLayout.BOTTOM : BorderLayout.RIGHT);
