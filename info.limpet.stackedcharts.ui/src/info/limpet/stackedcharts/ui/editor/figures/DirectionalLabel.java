@@ -61,6 +61,7 @@ public class DirectionalLabel extends Label
   {
     this.vertical = vertical;
     repaint();
+    invalidate();
   }
 
 }
