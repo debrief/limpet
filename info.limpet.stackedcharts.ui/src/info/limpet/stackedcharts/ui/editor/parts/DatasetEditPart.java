@@ -12,9 +12,6 @@ import info.limpet.stackedcharts.ui.editor.commands.DeleteDatasetsFromAxisComman
 import info.limpet.stackedcharts.ui.editor.figures.DatasetFigure;
 import info.limpet.stackedcharts.ui.editor.figures.DirectionalShape;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.draw2d.ActionEvent;
 import org.eclipse.draw2d.ActionListener;
 import org.eclipse.draw2d.Button;
