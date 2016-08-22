@@ -3,25 +3,20 @@ package info.limpet.stackedcharts.ui.editor.parts;
 import info.limpet.stackedcharts.model.Chart;
 import info.limpet.stackedcharts.model.ChartSet;
 import info.limpet.stackedcharts.model.Orientation;
-import info.limpet.stackedcharts.ui.editor.Activator;
 import info.limpet.stackedcharts.ui.editor.StackedchartsImages;
 import info.limpet.stackedcharts.ui.editor.figures.DirectionalIconLabel;
-import info.limpet.stackedcharts.ui.editor.figures.DirectionalLabel;
 import info.limpet.stackedcharts.ui.editor.figures.DirectionalShape;
 import info.limpet.stackedcharts.ui.editor.figures.ScatterSetContainerFigure;
 import info.limpet.stackedcharts.ui.editor.parts.ChartEditPart.ScatterSetContainer;
 import info.limpet.stackedcharts.ui.editor.policies.ScatterSetContainerEditPolicy;
 
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import org.eclipse.draw2d.BorderLayout;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
-import org.eclipse.swt.widgets.Display;
 
 public class ScatterSetContainerEditPart extends AbstractGraphicalEditPart
 {
