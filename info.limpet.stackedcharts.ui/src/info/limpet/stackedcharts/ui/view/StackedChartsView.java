@@ -30,10 +30,10 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.nebula.effects.stw.ImageTransitionable;
 import org.eclipse.nebula.effects.stw.Transition;
 import org.eclipse.nebula.effects.stw.TransitionListener;
 import org.eclipse.nebula.effects.stw.TransitionManager;
+import org.eclipse.nebula.effects.stw.Transitionable;
 import org.eclipse.nebula.effects.stw.transitions.CubicRotationTransition;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
@@ -47,6 +47,7 @@ import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
@@ -364,7 +365,24 @@ public class StackedChartsView extends ViewPart implements
     final boolean IS_LINUX_OS =
         System.getProperty("os.name").toLowerCase().indexOf("nux") >= 0;
     final Image[] compImage = new Image[2]; // stackedPane comp count
-    transitionManager = new TransitionManager(new ImageTransitionable()
+    parent.addDisposeListener(new DisposeListener()
+    {
+      
+      @Override
+      public void widgetDisposed(DisposeEvent e)
+      {
+        for(Image img :compImage)
+        {
+          if(img!=null)
+          {
+            img.dispose();
+          }
+        }
+        
+      }
+    });
+    final Transitionable transitionable;
+    transitionManager = new TransitionManager(transitionable =new Transitionable()
     {
 
       @Override
@@ -385,22 +403,7 @@ public class StackedChartsView extends ViewPart implements
         return stackedPane.getControl(index);
       }
 
-      @Override
-      public Image getControlImage(final int index)
-      {
-        // Linux has problems to get the control image using
-        // <code>org.eclipse.swt.widgets.Control.print(GC)</code>,
-        // so we return the image directly from this
-        // image transitionable object.
-        if (IS_LINUX_OS)
-        {
-          return compImage[index - 1];
-        }
-        else
-        {
-          return null;
-        }
-      }
+      
 
       @Override
       public double getDirection(final int toIndex, final int fromIndex)
@@ -421,15 +424,32 @@ public class StackedChartsView extends ViewPart implements
         stackedPane.showPane(index, false);
       }
 
+     
+    }){
+      
       @Override
-      public void updateControlImage(final Image image, final int index)
+      public void startTransition(int fromIndex, int toIndex, double direction)
       {
-        if (IS_LINUX_OS)
+        if(IS_LINUX_OS)
         {
-          compImage[index - 1] = image;
+          Control from    = transitionable.getControl(fromIndex);
+          Rectangle fromSize  = from.getBounds();
+          Image imgFrom   = new Image(from.getDisplay(), fromSize.width, fromSize.height);
+          GC gcfrom = new GC(from);
+          from.update();
+          gcfrom.copyArea(imgFrom, 0, 0);
+          if( compImage[fromIndex - 1]!=null )
+          {
+            compImage[fromIndex - 1].dispose();
+          }
+          compImage[fromIndex - 1] = imgFrom;
+          gcfrom.dispose();
         }
+        
+        super.startTransition(fromIndex, toIndex, direction);
       }
-    });
+      
+    };
     transitionManager.addTransitionListener(new TransitionListener()
     {
 
@@ -440,6 +460,7 @@ public class StackedChartsView extends ViewPart implements
 
       }
     });
+    transitionManager.setControlImages(compImage);
     // new SlideTransition(_tm)
     transitionManager.setTransition(new CubicRotationTransition(
         transitionManager));
