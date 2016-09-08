@@ -564,6 +564,10 @@ public class ChartBuilder
     // add chart to stack
     plot.add(subplot);
 
+    plot.setOrientation(chart.getParent()
+        .getOrientation() == Orientation.VERTICAL ? PlotOrientation.VERTICAL
+            : PlotOrientation.HORIZONTAL);
+
     final JFreeChart jFreeChart = new JFreeChart(plot);
     jFreeChart.getLegend().setVisible(false);
     return jFreeChart;
