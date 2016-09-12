@@ -11,6 +11,7 @@ import org.eclipse.draw2d.IFigure;
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.Notifier;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.util.EContentAdapter;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.EditPolicy;
@@ -31,6 +32,7 @@ import info.limpet.stackedcharts.model.IndependentAxis;
 import info.limpet.stackedcharts.model.Orientation;
 import info.limpet.stackedcharts.model.ScatterSet;
 import info.limpet.stackedcharts.model.SelectiveAnnotation;
+import info.limpet.stackedcharts.model.StackedchartsFactory;
 import info.limpet.stackedcharts.model.StackedchartsPackage;
 import info.limpet.stackedcharts.ui.editor.commands.DeleteChartCommand;
 import info.limpet.stackedcharts.ui.editor.figures.ChartFigure;
@@ -62,7 +64,7 @@ public class ChartEditPart extends AbstractGraphicalEditPart implements
   @Override
   public void activate()
   {
-    super.activate();
+    super.activate();    
     getModel().eAdapters().add(adapter);
     sharedAxisAdapter.attachTo(getSharedAxis());
   }
@@ -187,43 +189,26 @@ public class ChartEditPart extends AbstractGraphicalEditPart implements
 
   }
 
-  public class ChartAdapter implements Adapter
+  public class ChartAdapter extends EContentAdapter
   {
 
     @Override
     public void notifyChanged(Notification notification)
     {
-      int featureId = notification.getFeatureID(StackedchartsPackage.class);
-      switch (featureId)
+      StackedchartsPackage pckg = StackedchartsPackage.eINSTANCE;
+      Object feature = notification.getFeature();
+      if (feature == pckg.getChart_Name() || feature == pckg
+          .getStyling_LineStyle() || feature == pckg.getStyling_LineThickness()
+          || feature == pckg.getStyling_MarkerSize() || feature == pckg
+              .getStyling_MarkerStyle())
       {
-      case StackedchartsPackage.CHART__NAME:
         refreshVisuals();
-        break;
-      case StackedchartsPackage.CHART__MAX_AXES:
-        refreshChildren();
-        break;
-      case StackedchartsPackage.CHART__MIN_AXES:
-        refreshChildren();
-        break;
       }
-    }
-
-    @Override
-    public Notifier getTarget()
-    {
-      return getModel();
-    }
-
-    @Override
-    public void setTarget(Notifier newTarget)
-    {
-      // Do nothing.
-    }
-
-    @Override
-    public boolean isAdapterForType(Object type)
-    {
-      return type.equals(Chart.class);
+      else if (feature == pckg.getChart_MaxAxes() || feature == pckg
+          .getChart_MinAxes())
+      {
+        refreshChildren();
+      }
     }
   }
 
