@@ -1,5 +1,11 @@
 package info.limpet.stackedcharts.ui.view;
 
+import info.limpet.stackedcharts.model.ChartSet;
+import info.limpet.stackedcharts.model.IndependentAxis;
+import info.limpet.stackedcharts.model.StackedchartsFactory;
+import info.limpet.stackedcharts.ui.editor.Activator;
+import info.limpet.stackedcharts.ui.editor.StackedchartsEditControl;
+
 import java.awt.Color;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
@@ -10,8 +16,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.eclipse.emf.common.util.URI;
@@ -60,12 +64,6 @@ import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributo
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.StandardChartTheme;
 import org.jfree.experimental.chart.swt.ChartComposite;
-
-import info.limpet.stackedcharts.model.ChartSet;
-import info.limpet.stackedcharts.model.IndependentAxis;
-import info.limpet.stackedcharts.model.StackedchartsFactory;
-import info.limpet.stackedcharts.ui.editor.Activator;
-import info.limpet.stackedcharts.ui.editor.StackedchartsEditControl;
 
 public class StackedChartsView extends ViewPart implements
     ITabbedPropertySheetPageContributor, ISelectionProvider, DisposeListener
