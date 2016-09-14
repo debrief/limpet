@@ -354,26 +354,27 @@ public class StackedChartsView extends ViewPart implements
   {
     getViewSite().setSelectionProvider(this);// setup proxy selection provider
     stackedPane = new StackedPane(parent);
-    
+
     // note: The "Show in ..." action specifies a unique secondary id,
-    // which it uses to force a new instance.  Hence, if a secondary
+    // which it uses to force a new instance. Hence, if a secondary
     // id isn't provided we presume a blank chart is being requested
-    String secondaryId = ((IViewSite)getSite()).getSecondaryId();
-    if (secondaryId != null) {
-      
+    String secondaryId = ((IViewSite) getSite()).getSecondaryId();
+    if (secondaryId != null)
+    {
       stackedPane.add(CHART_VIEW, createChartView());
       stackedPane.add(EDIT_VIEW, createEditView());
-      
-      selectView(CHART_VIEW);
-    } else {
 
+      selectView(CHART_VIEW);
+    }
+    else
+    {
       // blank view
       // order is different
       stackedPane.add(EDIT_VIEW, createEditView());
       stackedPane.add(CHART_VIEW, createChartView());
 
       ChartSet blankModel = createBlankModel();
-      setModel(blankModel, EDIT_VIEW);      
+      setModel(blankModel, EDIT_VIEW);
     }
     contributeToActionBars();
 
@@ -485,25 +486,26 @@ public class StackedChartsView extends ViewPart implements
    * 
    * @return
    */
-  private ChartSet createBlankModel() {
+  private ChartSet createBlankModel()
+  {
     ChartSet chartSet = StackedchartsFactory.eINSTANCE.createChartSet();
     chartSet.getCharts().add(StackedchartsFactory.eINSTANCE.createChart());
-    IndependentAxis independentAxis = StackedchartsFactory.eINSTANCE
-        .createIndependentAxis();
-    independentAxis.setAxisType(StackedchartsFactory.eINSTANCE
-        .createDateAxis());
+    IndependentAxis independentAxis =
+        StackedchartsFactory.eINSTANCE.createIndependentAxis();
+    independentAxis
+        .setAxisType(StackedchartsFactory.eINSTANCE.createDateAxis());
     chartSet.setSharedAxis(independentAxis);
     return chartSet;
   }
-  
+
   protected void fillLocalPullDown(final IMenuManager manager)
   {
   }
 
   protected void fillLocalToolBar(final IToolBarManager manager)
   {
-    String actionText = stackedPane.getActiveControlKey() == CHART_VIEW ? "Edit"
-        : "View";
+    String actionText =
+        stackedPane.getActiveControlKey() == CHART_VIEW ? "Edit" : "View";
     Action toggleViewModeAction = new Action(actionText, SWT.TOGGLE)
     {
       @Override
@@ -587,10 +589,10 @@ public class StackedChartsView extends ViewPart implements
       {
         try
         {
-          final Clipboard clpbrd = Toolkit.getDefaultToolkit()
-              .getSystemClipboard();
-          clpbrd.setContents(new DrawableWMFTransfer(_chartComposite.getChart(),
-              _chartComposite.getBounds()), null);
+          final Clipboard clpbrd =
+              Toolkit.getDefaultToolkit().getSystemClipboard();
+          clpbrd.setContents(new DrawableWMFTransfer(
+              _chartComposite.getChart(), _chartComposite.getBounds()), null);
           MessageDialog.openInformation(Display.getCurrent().getActiveShell(),
               "Image Export", "Exported to Clipboard in WMF && PDF format");
 
@@ -795,7 +797,7 @@ public class StackedChartsView extends ViewPart implements
   {
     setModel(charts, CHART_VIEW);
   }
-  
+
   public void setModel(final ChartSet charts, int mode)
   {
     this.charts = charts;
