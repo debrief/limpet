@@ -12,6 +12,8 @@ import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.EAttribute;
+import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.util.EContentAdapter;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.EditPolicy;
@@ -64,7 +66,7 @@ public class ChartEditPart extends AbstractGraphicalEditPart implements
   @Override
   public void activate()
   {
-    super.activate();    
+    super.activate();
     getModel().eAdapters().add(adapter);
     sharedAxisAdapter.attachTo(getSharedAxis());
   }
@@ -100,8 +102,7 @@ public class ChartEditPart extends AbstractGraphicalEditPart implements
   {
     installEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE,
         new NonResizableEditPolicy());
-    installEditPolicy(EditPolicy.CONTAINER_ROLE,
-        new ChartContainerEditPolicy());
+    installEditPolicy(EditPolicy.CONTAINER_ROLE, new ChartContainerEditPolicy());
 
     installEditPolicy(EditPolicy.COMPONENT_ROLE, new ComponentEditPolicy()
     {
@@ -109,8 +110,8 @@ public class ChartEditPart extends AbstractGraphicalEditPart implements
       {
         Chart chart = getModel();
         ChartSet parent = chart.getParent();
-        DeleteChartCommand deleteChartCommand = new DeleteChartCommand(parent,
-            chart);
+        DeleteChartCommand deleteChartCommand =
+            new DeleteChartCommand(parent, chart);
         return deleteChartCommand;
       }
     });
@@ -126,8 +127,8 @@ public class ChartEditPart extends AbstractGraphicalEditPart implements
     ScatterSetContainer scatterSets = new ScatterSetContainer();
     for (SelectiveAnnotation annotation : getSharedAxis().getAnnotations())
     {
-      if (annotation.getAnnotation() instanceof ScatterSet && annotation
-          .getAppearsIn().contains(getModel()))
+      if (annotation.getAnnotation() instanceof ScatterSet
+          && annotation.getAppearsIn().contains(getModel()))
       {
         scatterSets.add((ScatterSet) annotation.getAnnotation());
       }
@@ -142,8 +143,8 @@ public class ChartEditPart extends AbstractGraphicalEditPart implements
     String name = getModel().getName();
     ChartFigure chartFigure = (ChartFigure) getFigure();
     chartFigure.setName(name);
-    chartFigure.setVertical(getModel().getParent()
-        .getOrientation() == Orientation.VERTICAL);
+    chartFigure
+        .setVertical(getModel().getParent().getOrientation() == Orientation.VERTICAL);
 
     GridData gridData = new GridData();
     gridData.grabExcessHorizontalSpace = true;
@@ -197,17 +198,40 @@ public class ChartEditPart extends AbstractGraphicalEditPart implements
     {
       StackedchartsPackage pckg = StackedchartsPackage.eINSTANCE;
       Object feature = notification.getFeature();
-      if (feature == pckg.getChart_Name() || feature == pckg
-          .getStyling_LineStyle() || feature == pckg.getStyling_LineThickness()
-          || feature == pckg.getStyling_MarkerSize() || feature == pckg
-              .getStyling_MarkerStyle())
+
+      // collate a list of what features trigger a visual update
+      ArrayList<EAttribute> visualUpdates = new ArrayList<EAttribute>();
+      visualUpdates.add(pckg.getChart_Name());
+      visualUpdates.add(pckg.getStyling_LineStyle());
+      visualUpdates.add(pckg.getStyling_LineThickness());
+      visualUpdates.add(pckg.getStyling_MarkerSize());
+      visualUpdates.add(pckg.getStyling_MarkerStyle());
+      visualUpdates.add(pckg.getPlainStyling_Color());
+
+      // ok, now check them
+      for (final EAttribute thisA : visualUpdates)
       {
-        refreshVisuals();
+        if (feature == thisA)
+        {
+          refreshVisuals();
+          break;
+        }
       }
-      else if (feature == pckg.getChart_MaxAxes() || feature == pckg
-          .getChart_MinAxes())
+
+      // and now collate a list of which attributes trigger the
+      // chidren to update
+      ArrayList<EReference> childrenUpdates = new ArrayList<EReference>();
+      childrenUpdates.add(pckg.getChart_MaxAxes());
+      childrenUpdates.add(pckg.getChart_MinAxes());
+
+      // ok, now check them
+      for (final EReference thisA : childrenUpdates)
       {
-        refreshChildren();
+        if (feature == thisA)
+        {
+          refreshChildren();
+          break;
+        }
       }
     }
   }
