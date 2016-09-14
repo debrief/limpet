@@ -26,9 +26,9 @@ public class ChartsetFigure extends DirectionalShape
     chartsetHeader.setTextAlignment(PositionConstants.TOP);
     if (boldFont == null)
     {
-      FontData fontData = Display.getCurrent().getActiveShell().getFont()
+      FontData fontData = Display.getDefault().getActiveShell().getFont()
           .getFontData()[0];
-      boldFont = new Font(Display.getCurrent(), new FontData(fontData.getName(),
+      boldFont = new Font(Display.getDefault(), new FontData(fontData.getName(),
           fontData.getHeight(), SWT.BOLD));
     }
     chartsetHeader.setFont(boldFont);
