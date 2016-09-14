@@ -354,7 +354,10 @@ public class StackedChartsView extends ViewPart implements
   {
     getViewSite().setSelectionProvider(this);// setup proxy selection provider
     stackedPane = new StackedPane(parent);
-    // not-null in case view is invoked from a "Show In ..." action 
+    
+    // note: The "Show in ..." action specifies a unique secondary id,
+    // which it uses to force a new instance.  Hence, if a secondary
+    // id isn't provided we presume a blank chart is being requested
     String secondaryId = ((IViewSite)getSite()).getSecondaryId();
     if (secondaryId != null) {
       
@@ -368,7 +371,7 @@ public class StackedChartsView extends ViewPart implements
       // order is different
       stackedPane.add(EDIT_VIEW, createEditView());
       stackedPane.add(CHART_VIEW, createChartView());
-      
+
       ChartSet blankModel = createBlankModel();
       setModel(blankModel, EDIT_VIEW);      
     }
