@@ -51,8 +51,8 @@ public class ChartsetFigure extends DirectionalShape
           .getFontData()[0];
       boldFont = new Font(Display.getDefault(), new FontData(fontData.getName(),
           fontData.getHeight(), SWT.BOLD));
-      chartsetHeader.setFont(boldFont);
     }
+    chartsetHeader.setFont(boldFont);
 
     super.paint(graphics);
   }
