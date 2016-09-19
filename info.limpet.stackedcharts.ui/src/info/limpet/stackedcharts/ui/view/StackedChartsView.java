@@ -1,6 +1,8 @@
 package info.limpet.stackedcharts.ui.view;
 
 import info.limpet.stackedcharts.model.ChartSet;
+import info.limpet.stackedcharts.model.IndependentAxis;
+import info.limpet.stackedcharts.model.StackedchartsFactory;
 import info.limpet.stackedcharts.ui.editor.Activator;
 import info.limpet.stackedcharts.ui.editor.StackedchartsEditControl;
 
@@ -54,6 +56,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
@@ -352,11 +355,29 @@ public class StackedChartsView extends ViewPart implements
     getViewSite().setSelectionProvider(this);// setup proxy selection provider
     stackedPane = new StackedPane(parent);
 
-    stackedPane.add(CHART_VIEW, createChartView());
-    stackedPane.add(EDIT_VIEW, createEditView());
+    // note: The "Show in ..." action specifies a unique secondary id,
+    // which it uses to force a new instance. Hence, if a secondary
+    // id isn't provided we presume a blank chart is being requested
+    String secondaryId = ((IViewSite) getSite()).getSecondaryId();
+    if (secondaryId != null)
+    {
+      stackedPane.add(CHART_VIEW, createChartView());
+      stackedPane.add(EDIT_VIEW, createEditView());
 
-    selectView(CHART_VIEW);
+      selectView(CHART_VIEW);
+    }
+    else
+    {
+      // blank view
+      // order is different
+      stackedPane.add(EDIT_VIEW, createEditView());
+      stackedPane.add(CHART_VIEW, createChartView());
+
+      ChartSet blankModel = createBlankModel();
+      setModel(blankModel, EDIT_VIEW);
+    }
     contributeToActionBars();
+
     chartEditor.init(this);
 
     // Drop Support for *.stackedcharts
@@ -460,13 +481,32 @@ public class StackedChartsView extends ViewPart implements
     addRunOnCloseCallback(dropMe);
   }
 
+  /**
+   * Creates an Chart Set with a single chart so that user would be able to drop datasets in it.
+   * 
+   * @return
+   */
+  private ChartSet createBlankModel()
+  {
+    ChartSet chartSet = StackedchartsFactory.eINSTANCE.createChartSet();
+    chartSet.getCharts().add(StackedchartsFactory.eINSTANCE.createChart());
+    IndependentAxis independentAxis =
+        StackedchartsFactory.eINSTANCE.createIndependentAxis();
+    independentAxis
+        .setAxisType(StackedchartsFactory.eINSTANCE.createDateAxis());
+    chartSet.setSharedAxis(independentAxis);
+    return chartSet;
+  }
+
   protected void fillLocalPullDown(final IMenuManager manager)
   {
   }
 
   protected void fillLocalToolBar(final IToolBarManager manager)
   {
-    manager.add(new Action("Edit", SWT.TOGGLE)
+    String actionText =
+        stackedPane.getActiveControlKey() == CHART_VIEW ? "Edit" : "View";
+    Action toggleViewModeAction = new Action(actionText, SWT.TOGGLE)
     {
       @Override
       public void run()
@@ -496,7 +536,8 @@ public class StackedChartsView extends ViewPart implements
           manager.update(true);
         }
       }
-    });
+    };
+    manager.add(toggleViewModeAction);
 
     final Action showTime = new Action("Show time marker", SWT.TOGGLE)
     {
@@ -550,8 +591,8 @@ public class StackedChartsView extends ViewPart implements
         {
           final Clipboard clpbrd =
               Toolkit.getDefaultToolkit().getSystemClipboard();
-          clpbrd.setContents(new DrawableWMFTransfer(_chartComposite.getChart(),
-              _chartComposite.getBounds()), null);
+          clpbrd.setContents(new DrawableWMFTransfer(
+              _chartComposite.getChart(), _chartComposite.getBounds()), null);
           MessageDialog.openInformation(Display.getCurrent().getActiveShell(),
               "Image Export", "Exported to Clipboard in WMF && PDF format");
 
@@ -754,6 +795,11 @@ public class StackedChartsView extends ViewPart implements
 
   public void setModel(final ChartSet charts)
   {
+    setModel(charts, CHART_VIEW);
+  }
+
+  public void setModel(final ChartSet charts, int mode)
+  {
     this.charts = charts;
     // mark editor to recreate
     initEditor.set(true);
@@ -821,7 +867,7 @@ public class StackedChartsView extends ViewPart implements
 
     chartHolder.pack(true);
     chartHolder.getParent().layout();
-    selectView(CHART_VIEW);
+    selectView(mode);
   }
 
   @Override

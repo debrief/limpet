@@ -558,7 +558,9 @@ public class ChartBuilder
     for(int ctr = 0; ctr < aCnt; ctr++)
     {
       ValueAxis axis = subplot.getRangeAxis(ctr);
-      axis.setLabel(null);
+      if (axis != null) {
+        axis.setLabel(null);
+      }
     }
 
     // add chart to stack
