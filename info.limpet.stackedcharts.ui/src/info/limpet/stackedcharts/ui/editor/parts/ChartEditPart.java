@@ -1,5 +1,16 @@
 package info.limpet.stackedcharts.ui.editor.parts;
 
+import info.limpet.stackedcharts.model.Chart;
+import info.limpet.stackedcharts.model.ChartSet;
+import info.limpet.stackedcharts.model.IndependentAxis;
+import info.limpet.stackedcharts.model.Orientation;
+import info.limpet.stackedcharts.model.ScatterSet;
+import info.limpet.stackedcharts.model.SelectiveAnnotation;
+import info.limpet.stackedcharts.model.StackedchartsPackage;
+import info.limpet.stackedcharts.ui.editor.commands.DeleteChartCommand;
+import info.limpet.stackedcharts.ui.editor.figures.ChartFigure;
+import info.limpet.stackedcharts.ui.editor.policies.ChartContainerEditPolicy;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -8,10 +19,7 @@ import org.eclipse.draw2d.ActionEvent;
 import org.eclipse.draw2d.ActionListener;
 import org.eclipse.draw2d.GridData;
 import org.eclipse.draw2d.IFigure;
-import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notification;
-import org.eclipse.emf.common.notify.Notifier;
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.util.EContentAdapter;
@@ -27,18 +35,6 @@ import org.eclipse.gef.requests.GroupRequest;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
-
-import info.limpet.stackedcharts.model.Chart;
-import info.limpet.stackedcharts.model.ChartSet;
-import info.limpet.stackedcharts.model.IndependentAxis;
-import info.limpet.stackedcharts.model.Orientation;
-import info.limpet.stackedcharts.model.ScatterSet;
-import info.limpet.stackedcharts.model.SelectiveAnnotation;
-import info.limpet.stackedcharts.model.StackedchartsFactory;
-import info.limpet.stackedcharts.model.StackedchartsPackage;
-import info.limpet.stackedcharts.ui.editor.commands.DeleteChartCommand;
-import info.limpet.stackedcharts.ui.editor.figures.ChartFigure;
-import info.limpet.stackedcharts.ui.editor.policies.ChartContainerEditPolicy;
 
 public class ChartEditPart extends AbstractGraphicalEditPart implements
     ActionListener
@@ -60,8 +56,33 @@ public class ChartEditPart extends AbstractGraphicalEditPart implements
     MIN, MAX
   }
 
-  private ChartAdapter adapter = new ChartAdapter();
-  private SharedAxisAdapter sharedAxisAdapter = new SharedAxisAdapter();
+  final private ChartAdapter adapter = new ChartAdapter();
+  final private SharedAxisAdapter sharedAxisAdapter = new SharedAxisAdapter();
+  public final ArrayList<EAttribute> _visualUpdates;
+  public final ArrayList<EReference> _childrenUpdates;
+  
+  public ChartEditPart()
+  {
+    
+    // get our model definition
+    final StackedchartsPackage pckg = StackedchartsPackage.eINSTANCE;
+
+    // collate a list of what features trigger a visual update
+    _visualUpdates = new ArrayList<EAttribute>();
+    _visualUpdates.add(pckg.getChart_Name());
+    _visualUpdates.add(pckg.getStyling_LineStyle());
+    _visualUpdates.add(pckg.getStyling_LineThickness());
+    _visualUpdates.add(pckg.getStyling_MarkerSize());
+    _visualUpdates.add(pckg.getStyling_MarkerStyle());
+    _visualUpdates.add(pckg.getPlainStyling_Color());
+    
+    // and now collate a list of which attributes trigger the
+    // chidren to update
+    _childrenUpdates = new ArrayList<EReference>();
+    _childrenUpdates.add(pckg.getChart_MaxAxes());
+    _childrenUpdates.add(pckg.getChart_MinAxes());
+  }
+  
 
   @Override
   public void activate()
@@ -196,20 +217,10 @@ public class ChartEditPart extends AbstractGraphicalEditPart implements
     @Override
     public void notifyChanged(Notification notification)
     {
-      StackedchartsPackage pckg = StackedchartsPackage.eINSTANCE;
       Object feature = notification.getFeature();
 
-      // collate a list of what features trigger a visual update
-      ArrayList<EAttribute> visualUpdates = new ArrayList<EAttribute>();
-      visualUpdates.add(pckg.getChart_Name());
-      visualUpdates.add(pckg.getStyling_LineStyle());
-      visualUpdates.add(pckg.getStyling_LineThickness());
-      visualUpdates.add(pckg.getStyling_MarkerSize());
-      visualUpdates.add(pckg.getStyling_MarkerStyle());
-      visualUpdates.add(pckg.getPlainStyling_Color());
-
-      // ok, now check them
-      for (final EAttribute thisA : visualUpdates)
+      // ok, now check if anything changed that causes a visual update
+      for (final EAttribute thisA : _visualUpdates)
       {
         if (feature == thisA)
         {
@@ -218,14 +229,8 @@ public class ChartEditPart extends AbstractGraphicalEditPart implements
         }
       }
 
-      // and now collate a list of which attributes trigger the
-      // chidren to update
-      ArrayList<EReference> childrenUpdates = new ArrayList<EReference>();
-      childrenUpdates.add(pckg.getChart_MaxAxes());
-      childrenUpdates.add(pckg.getChart_MinAxes());
-
-      // ok, now check them
-      for (final EReference thisA : childrenUpdates)
+      // ok, now check for a children update
+      for (final EReference thisA : _childrenUpdates)
       {
         if (feature == thisA)
         {
