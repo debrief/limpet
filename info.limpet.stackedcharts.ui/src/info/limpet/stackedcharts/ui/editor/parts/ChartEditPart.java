@@ -1,5 +1,16 @@
 package info.limpet.stackedcharts.ui.editor.parts;
 
+import info.limpet.stackedcharts.model.Chart;
+import info.limpet.stackedcharts.model.ChartSet;
+import info.limpet.stackedcharts.model.IndependentAxis;
+import info.limpet.stackedcharts.model.Orientation;
+import info.limpet.stackedcharts.model.ScatterSet;
+import info.limpet.stackedcharts.model.SelectiveAnnotation;
+import info.limpet.stackedcharts.model.StackedchartsPackage;
+import info.limpet.stackedcharts.ui.editor.commands.DeleteChartCommand;
+import info.limpet.stackedcharts.ui.editor.figures.ChartFigure;
+import info.limpet.stackedcharts.ui.editor.policies.ChartContainerEditPolicy;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -8,9 +19,9 @@ import org.eclipse.draw2d.ActionEvent;
 import org.eclipse.draw2d.ActionListener;
 import org.eclipse.draw2d.GridData;
 import org.eclipse.draw2d.IFigure;
-import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notification;
-import org.eclipse.emf.common.notify.Notifier;
+import org.eclipse.emf.ecore.EAttribute;
+import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.util.EContentAdapter;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.EditPolicy;
@@ -24,17 +35,6 @@ import org.eclipse.gef.requests.GroupRequest;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
-
-import info.limpet.stackedcharts.model.Chart;
-import info.limpet.stackedcharts.model.ChartSet;
-import info.limpet.stackedcharts.model.IndependentAxis;
-import info.limpet.stackedcharts.model.Orientation;
-import info.limpet.stackedcharts.model.ScatterSet;
-import info.limpet.stackedcharts.model.SelectiveAnnotation;
-import info.limpet.stackedcharts.model.StackedchartsPackage;
-import info.limpet.stackedcharts.ui.editor.commands.DeleteChartCommand;
-import info.limpet.stackedcharts.ui.editor.figures.ChartFigure;
-import info.limpet.stackedcharts.ui.editor.policies.ChartContainerEditPolicy;
 
 public class ChartEditPart extends AbstractGraphicalEditPart implements
     ActionListener
@@ -56,8 +56,33 @@ public class ChartEditPart extends AbstractGraphicalEditPart implements
     MIN, MAX
   }
 
-  private ChartAdapter adapter = new ChartAdapter();
-  private SharedAxisAdapter sharedAxisAdapter = new SharedAxisAdapter();
+  final private ChartAdapter adapter = new ChartAdapter();
+  final private SharedAxisAdapter sharedAxisAdapter = new SharedAxisAdapter();
+  public final ArrayList<EAttribute> _visualUpdates;
+  public final ArrayList<EReference> _childrenUpdates;
+  
+  public ChartEditPart()
+  {
+    
+    // get our model definition
+    final StackedchartsPackage pckg = StackedchartsPackage.eINSTANCE;
+
+    // collate a list of what features trigger a visual update
+    _visualUpdates = new ArrayList<EAttribute>();
+    _visualUpdates.add(pckg.getChart_Name());
+    _visualUpdates.add(pckg.getStyling_LineStyle());
+    _visualUpdates.add(pckg.getStyling_LineThickness());
+    _visualUpdates.add(pckg.getStyling_MarkerSize());
+    _visualUpdates.add(pckg.getStyling_MarkerStyle());
+    _visualUpdates.add(pckg.getPlainStyling_Color());
+    
+    // and now collate a list of which attributes trigger the
+    // chidren to update
+    _childrenUpdates = new ArrayList<EReference>();
+    _childrenUpdates.add(pckg.getChart_MaxAxes());
+    _childrenUpdates.add(pckg.getChart_MinAxes());
+  }
+  
 
   @Override
   public void activate()
@@ -98,8 +123,7 @@ public class ChartEditPart extends AbstractGraphicalEditPart implements
   {
     installEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE,
         new NonResizableEditPolicy());
-    installEditPolicy(EditPolicy.CONTAINER_ROLE,
-        new ChartContainerEditPolicy());
+    installEditPolicy(EditPolicy.CONTAINER_ROLE, new ChartContainerEditPolicy());
 
     installEditPolicy(EditPolicy.COMPONENT_ROLE, new ComponentEditPolicy()
     {
@@ -107,8 +131,8 @@ public class ChartEditPart extends AbstractGraphicalEditPart implements
       {
         Chart chart = getModel();
         ChartSet parent = chart.getParent();
-        DeleteChartCommand deleteChartCommand = new DeleteChartCommand(parent,
-            chart);
+        DeleteChartCommand deleteChartCommand =
+            new DeleteChartCommand(parent, chart);
         return deleteChartCommand;
       }
     });
@@ -124,8 +148,8 @@ public class ChartEditPart extends AbstractGraphicalEditPart implements
     ScatterSetContainer scatterSets = new ScatterSetContainer();
     for (SelectiveAnnotation annotation : getSharedAxis().getAnnotations())
     {
-      if (annotation.getAnnotation() instanceof ScatterSet && annotation
-          .getAppearsIn().contains(getModel()))
+      if (annotation.getAnnotation() instanceof ScatterSet
+          && annotation.getAppearsIn().contains(getModel()))
       {
         scatterSets.add((ScatterSet) annotation.getAnnotation());
       }
@@ -140,8 +164,8 @@ public class ChartEditPart extends AbstractGraphicalEditPart implements
     String name = getModel().getName();
     ChartFigure chartFigure = (ChartFigure) getFigure();
     chartFigure.setName(name);
-    chartFigure.setVertical(getModel().getParent()
-        .getOrientation() == Orientation.VERTICAL);
+    chartFigure
+        .setVertical(getModel().getParent().getOrientation() == Orientation.VERTICAL);
 
     GridData gridData = new GridData();
     gridData.grabExcessHorizontalSpace = true;
@@ -187,43 +211,33 @@ public class ChartEditPart extends AbstractGraphicalEditPart implements
 
   }
 
-  public class ChartAdapter implements Adapter
+  public class ChartAdapter extends EContentAdapter
   {
 
     @Override
     public void notifyChanged(Notification notification)
     {
-      int featureId = notification.getFeatureID(StackedchartsPackage.class);
-      switch (featureId)
+      Object feature = notification.getFeature();
+
+      // ok, now check if anything changed that causes a visual update
+      for (final EAttribute thisA : _visualUpdates)
       {
-      case StackedchartsPackage.CHART__NAME:
-        refreshVisuals();
-        break;
-      case StackedchartsPackage.CHART__MAX_AXES:
-        refreshChildren();
-        break;
-      case StackedchartsPackage.CHART__MIN_AXES:
-        refreshChildren();
-        break;
+        if (feature == thisA)
+        {
+          refreshVisuals();
+          break;
+        }
       }
-    }
 
-    @Override
-    public Notifier getTarget()
-    {
-      return getModel();
-    }
-
-    @Override
-    public void setTarget(Notifier newTarget)
-    {
-      // Do nothing.
-    }
-
-    @Override
-    public boolean isAdapterForType(Object type)
-    {
-      return type.equals(Chart.class);
+      // ok, now check for a children update
+      for (final EReference thisA : _childrenUpdates)
+      {
+        if (feature == thisA)
+        {
+          refreshChildren();
+          break;
+        }
+      }
     }
   }
 
