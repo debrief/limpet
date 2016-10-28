@@ -1,10 +1,8 @@
 package info.limpet.stackedcharts.ui.editor;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EventObject;
-import java.util.Hashtable;
 import java.util.List;
 
 import org.eclipse.draw2d.ColorConstants;
@@ -28,15 +26,12 @@ import org.eclipse.gef.ui.parts.ScrollingGraphicalViewer;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.views.properties.IPropertySheetPage;
 import org.eclipse.ui.views.properties.IPropertySource;
 import org.eclipse.ui.views.properties.PropertySheetPage;
 
@@ -53,13 +48,29 @@ import info.limpet.stackedcharts.ui.emfgefstack.EmfGefCommandStack;
 public class StackedchartsEditControl extends Composite
 {
 
-  private class CustomComposedAdapterFactory extends ComposedAdapterFactory
-      implements IEditingDomainProvider
+  /**
+   * Provides seamless integration with the Generic EMF property editors (in the property sheet
+   * page).
+   */
+  public class EmfAwareViewer extends ScrollingGraphicalViewer
+  {
+    public EditingDomain getEditingDomain()
+    {
+      return emfEditingDomain;
+    }
+  }
+
+  /**
+   * A {@link ComposedAdapterFactory}, which can supply {@link EditingDomain} in order to support
+   * Undo/Redo operations.
+   */
+  public static class CommandStackReadyComposedAdapterFactory extends
+      ComposedAdapterFactory implements IEditingDomainProvider
   {
 
     private EditingDomain editingDomain;
 
-    public CustomComposedAdapterFactory(Registry instance)
+    public CommandStackReadyComposedAdapterFactory(Registry instance)
     {
       super(instance);
     }
@@ -80,7 +91,7 @@ public class StackedchartsEditControl extends Composite
   private final GraphicalViewer viewer;
 
   protected AdapterFactoryEditingDomain emfEditingDomain;
-  private CustomComposedAdapterFactory adapterFactory;
+  private CommandStackReadyComposedAdapterFactory adapterFactory;
   private ExtendedPropertySheetPage propertySheetPage;
 
   public StackedchartsEditControl(Composite parent)
@@ -91,10 +102,13 @@ public class StackedchartsEditControl extends Composite
 
     EditDomain editDomain = new EditDomain();
 
+    // create EMF-GEF 'bridging' command stack
     EmfGefCommandStack commandStack = new EmfGefCommandStack();
+
+    // Use the proper GEF command stack
     editDomain.setCommandStack(commandStack.getWrappedGefCommandStack());
 
-    viewer = new ScrollingGraphicalViewer();
+    viewer = new EmfAwareViewer();
 
     // connect external Drop support
     // add Dataset to Axis
@@ -113,7 +127,7 @@ public class StackedchartsEditControl extends Composite
     viewer.setEditPartFactory(new StackedChartsEditPartFactory());
 
     // emf edit domain
-    adapterFactory = new CustomComposedAdapterFactory(
+    adapterFactory = new CommandStackReadyComposedAdapterFactory(
         ComposedAdapterFactory.Descriptor.Registry.INSTANCE);
     adapterFactory.addAdapterFactory(new ResourceItemProviderAdapterFactory());
     adapterFactory.addAdapterFactory(new EcoreItemProviderAdapterFactory());
@@ -122,13 +136,14 @@ public class StackedchartsEditControl extends Composite
     emfEditingDomain = new AdapterFactoryEditingDomain(adapterFactory,
         commandStack);
 
-    adapterFactory.setEditingDomain(emfEditingDomain);    
+    adapterFactory.setEditingDomain(emfEditingDomain);
+
   }
 
   /**
    * This accesses a cached version of the property sheet.
    */
-  public IPropertySheetPage getPropertySheetPage()
+  public PropertySheetPage getPropertySheetPage()
   {
     if (propertySheetPage == null)
     {
@@ -228,11 +243,29 @@ public class StackedchartsEditControl extends Composite
     IActionBars actionBars = view.getViewSite().getActionBars();
     IToolBarManager toolBarManager = actionBars.getToolBarManager();
 
-    final UndoAction undoAction = new UndoAction(view);
+    final UndoAction undoAction = new UndoAction(view)
+    {
+      @Override
+      public void run()
+      {
+        super.run();
+        getPropertySheetPage().refresh();
+      }
+    };
+
     toolBarManager.add(undoAction);
     undoAction.setImageDescriptor(Activator.imageDescriptorFromPlugin(
         Activator.PLUGIN_ID, "icons/undo.png"));
-    final RedoAction redoAction = new RedoAction(view);
+    final RedoAction redoAction = new RedoAction(view)
+    {
+      @Override
+      public void run()
+      {
+        super.run();
+        getPropertySheetPage().refresh();
+      }
+    };
+
     redoAction.setImageDescriptor(Activator.imageDescriptorFromPlugin(
         Activator.PLUGIN_ID, "icons/redo.png"));
     toolBarManager.add(redoAction);
