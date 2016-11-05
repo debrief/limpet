@@ -17,6 +17,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -119,6 +120,25 @@ public class StackedChartsView extends ViewPart implements
   private ControllableDate _controllableDate = null;
 
   private JFreeChart jFreeChart;
+  
+  
+  /**
+   * flag for if we're currently in update
+   * 
+   */
+  private static boolean _amUpdating = false;
+  
+  /**
+   * value we use for null-time
+   * 
+   */
+  private final long INVALID_TIME = -1L;
+
+  /**
+   * we don't want to process all new-time events, only the most recent one. So, take a note of the
+   * most recent one
+   */
+  AtomicLong _pendingTime = new AtomicLong(INVALID_TIME);
 
   /**
    * let classes pass callbacks to be run when we are closing
@@ -878,7 +898,7 @@ public class StackedChartsView extends ViewPart implements
       chartEditor.getViewer().setSelection(selection);
     }
   }
-
+  
   /**
    * update (or clear) the displayed time marker
    * 
@@ -888,16 +908,66 @@ public class StackedChartsView extends ViewPart implements
   {
     final Date oldTime = _currentTime;
     _currentTime = newTime;
+    
 
     if (newTime != null && !newTime.equals(oldTime) || newTime != oldTime)
     {
-      // try to get the time aware plot
-      final JFreeChart combined = _chartComposite.getChart();
-      final TimeBarPlot plot = (TimeBarPlot) combined.getPlot();
-      plot.setTime(newTime);
 
-      // ok, trigger ui update
-      refreshPlot();
+      if (!_amUpdating)
+      {
+        // ok, remember that we're updating
+        _amUpdating = true;
+
+        // remember the new one
+        _pendingTime.set(newTime.getTime());
+
+        // get on with the update
+        try
+        {
+          Display.getDefault().asyncExec(new Runnable()
+          {
+
+            @Override
+            public void run()
+            {
+              // quick, capture the time
+              final long safeTime = _pendingTime.get();
+
+              // do we have a pending time value
+              if (safeTime != INVALID_TIME)
+              {
+                _pendingTime.set(INVALID_TIME);
+
+                // now create the time object
+                final Date theDTG = new Date(safeTime);
+
+                // try to get the time aware plot
+                final JFreeChart combined = _chartComposite.getChart();
+                final TimeBarPlot plot = (TimeBarPlot) combined.getPlot();
+                plot.setTime(theDTG);
+
+                // ok, trigger ui update
+                refreshPlot();
+              }
+              else
+              {
+                // ok, there isn't a pending date, we can just skip the update
+              }
+
+              // Note: we don't need to clear the lock, we do it in the finally block
+            }
+          });
+        }
+        finally
+        {
+          // clear the updating lock
+          _amUpdating = false;
+        }
+      }
+      
+          
+      
+      
     }
   }
 
