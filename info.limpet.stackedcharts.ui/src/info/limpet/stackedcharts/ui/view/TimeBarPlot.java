@@ -649,7 +649,7 @@ public class TimeBarPlot extends CombinedDomainXYPlot
       {
         final XYDataset dataset = plot.getDataset(i);
 
-        if (axisHelper != null)
+        if (axisHelper != null && dataset != null)
         {
 
           final int num = dataset.getSeriesCount();
