@@ -17,11 +17,17 @@ package info.limpet;
 import java.beans.PropertyChangeListener;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Spliterator;
 
 
 public interface IStoreGroup extends IStoreItem, Collection<IStoreItem>,
     IChangeListener
 {
+
+  /** overcome problem when using 1.7 code under JRE 1.8
+   * 
+   */
+  Spliterator<IStoreItem> spliterator();
 
   /** retrieve the current "focus time"
    * 

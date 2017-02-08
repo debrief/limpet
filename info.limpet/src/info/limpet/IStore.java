@@ -15,6 +15,7 @@
 package info.limpet;
 
 import java.util.List;
+import java.util.Spliterator;
 import java.util.UUID;
 
 import info.limpet.data.store.StoreGroup.StoreChangeListener;
@@ -28,6 +29,11 @@ import info.limpet.data.store.StoreGroup.StoreChangeListener;
 public interface IStore extends IStoreGroup
 {
 
+  /** overcome problem when using 1.7 code under JRE 1.8
+   * 
+   */
+  Spliterator<IStoreItem> spliterator();
+  
   /**
    * add the new collections at the root level
    * 
