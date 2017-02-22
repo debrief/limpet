@@ -2,6 +2,7 @@ package info.limpet.stackedcharts.ui.editor.figures;
 
 import org.eclipse.draw2d.ActionListener;
 import org.eclipse.draw2d.Button;
+import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.PositionConstants;
 import org.eclipse.swt.SWT;
@@ -24,14 +25,6 @@ public class ChartsetFigure extends DirectionalShape
     chartsetHeader = new DirectionalLabel(Activator.FONT_12);
     chartsetHeader.setText("Chart Set");
     chartsetHeader.setTextAlignment(PositionConstants.TOP);
-    if (boldFont == null)
-    {
-      FontData fontData = Display.getCurrent().getActiveShell().getFont()
-          .getFontData()[0];
-      boldFont = new Font(Display.getCurrent(), new FontData(fontData.getName(),
-          fontData.getHeight(), SWT.BOLD));
-    }
-    chartsetHeader.setFont(boldFont);
     add(chartsetHeader);
 
     Button button = new Button(StackedchartsImages.getImage(
@@ -46,6 +39,22 @@ public class ChartsetFigure extends DirectionalShape
   {
     super.setVertical(vertical);
     chartsetHeader.setVertical(vertical);
+  }
+  
+  @Override
+  public void paint(Graphics graphics)
+  {
+
+    if (boldFont == null)
+    {
+      FontData fontData = Display.getDefault().getActiveShell().getFont()
+          .getFontData()[0];
+      boldFont = new Font(Display.getDefault(), new FontData(fontData.getName(),
+          fontData.getHeight(), SWT.BOLD));
+    }
+    chartsetHeader.setFont(boldFont);
+
+    super.paint(graphics);
   }
 
 }

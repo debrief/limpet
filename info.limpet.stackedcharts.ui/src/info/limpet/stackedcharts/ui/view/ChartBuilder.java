@@ -558,11 +558,17 @@ public class ChartBuilder
     for(int ctr = 0; ctr < aCnt; ctr++)
     {
       ValueAxis axis = subplot.getRangeAxis(ctr);
-      axis.setLabel(null);
+      if (axis != null) {
+        axis.setLabel(null);
+      }
     }
 
     // add chart to stack
     plot.add(subplot);
+
+    plot.setOrientation(chart.getParent()
+        .getOrientation() == Orientation.VERTICAL ? PlotOrientation.VERTICAL
+            : PlotOrientation.HORIZONTAL);
 
     final JFreeChart jFreeChart = new JFreeChart(plot);
     jFreeChart.getLegend().setVisible(false);

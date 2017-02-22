@@ -9,7 +9,6 @@ import info.limpet.stackedcharts.ui.editor.commands.AddDatasetsToAxisCommand;
 import info.limpet.stackedcharts.ui.editor.commands.MoveScatterSetCommand;
 import info.limpet.stackedcharts.ui.editor.parts.AxisEditPart;
 import info.limpet.stackedcharts.ui.editor.parts.AxisLandingPadEditPart;
-import info.limpet.stackedcharts.ui.editor.parts.ChartEditPart;
 import info.limpet.stackedcharts.ui.editor.parts.ChartEditPart.ChartPanePosition;
 import info.limpet.stackedcharts.ui.editor.parts.ChartPaneEditPart;
 import info.limpet.stackedcharts.ui.editor.parts.DatasetEditPart;

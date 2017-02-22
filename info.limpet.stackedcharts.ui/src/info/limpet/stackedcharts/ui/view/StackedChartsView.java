@@ -1,6 +1,8 @@
 package info.limpet.stackedcharts.ui.view;
 
 import info.limpet.stackedcharts.model.ChartSet;
+import info.limpet.stackedcharts.model.IndependentAxis;
+import info.limpet.stackedcharts.model.StackedchartsFactory;
 import info.limpet.stackedcharts.ui.editor.Activator;
 import info.limpet.stackedcharts.ui.editor.StackedchartsEditControl;
 
@@ -15,6 +17,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -30,10 +33,10 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.nebula.effects.stw.ImageTransitionable;
 import org.eclipse.nebula.effects.stw.Transition;
 import org.eclipse.nebula.effects.stw.TransitionListener;
 import org.eclipse.nebula.effects.stw.TransitionManager;
+import org.eclipse.nebula.effects.stw.Transitionable;
 import org.eclipse.nebula.effects.stw.transitions.CubicRotationTransition;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
@@ -47,6 +50,7 @@ import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
@@ -54,6 +58,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
@@ -116,6 +121,25 @@ public class StackedChartsView extends ViewPart implements
   private ControllableDate _controllableDate = null;
 
   private JFreeChart jFreeChart;
+  
+  
+  /**
+   * flag for if we're currently in update
+   * 
+   */
+  private static boolean _amUpdating = false;
+  
+  /**
+   * value we use for null-time
+   * 
+   */
+  private final long INVALID_TIME = -1L;
+
+  /**
+   * we don't want to process all new-time events, only the most recent one. So, take a note of the
+   * most recent one
+   */
+  AtomicLong _pendingTime = new AtomicLong(INVALID_TIME);
 
   /**
    * let classes pass callbacks to be run when we are closing
@@ -352,11 +376,29 @@ public class StackedChartsView extends ViewPart implements
     getViewSite().setSelectionProvider(this);// setup proxy selection provider
     stackedPane = new StackedPane(parent);
 
-    stackedPane.add(CHART_VIEW, createChartView());
-    stackedPane.add(EDIT_VIEW, createEditView());
+    // note: The "Show in ..." action specifies a unique secondary id,
+    // which it uses to force a new instance. Hence, if a secondary
+    // id isn't provided we presume a blank chart is being requested
+    String secondaryId = ((IViewSite) getSite()).getSecondaryId();
+    if (secondaryId != null)
+    {
+      stackedPane.add(CHART_VIEW, createChartView());
+      stackedPane.add(EDIT_VIEW, createEditView());
 
-    selectView(CHART_VIEW);
+      selectView(CHART_VIEW);
+    }
+    else
+    {
+      // blank view
+      // order is different
+      stackedPane.add(EDIT_VIEW, createEditView());
+      stackedPane.add(CHART_VIEW, createChartView());
+
+      ChartSet blankModel = createBlankModel();
+      setModel(blankModel, EDIT_VIEW);
+    }
     contributeToActionBars();
+
     chartEditor.init(this);
 
     // Drop Support for *.stackedcharts
@@ -364,7 +406,24 @@ public class StackedChartsView extends ViewPart implements
     final boolean IS_LINUX_OS =
         System.getProperty("os.name").toLowerCase().indexOf("nux") >= 0;
     final Image[] compImage = new Image[2]; // stackedPane comp count
-    transitionManager = new TransitionManager(new ImageTransitionable()
+    parent.addDisposeListener(new DisposeListener()
+    {
+      
+      @Override
+      public void widgetDisposed(DisposeEvent e)
+      {
+        for(Image img :compImage)
+        {
+          if(img!=null)
+          {
+            img.dispose();
+          }
+        }
+        
+      }
+    });
+    final Transitionable transitionable;
+    transitionManager = new TransitionManager(transitionable =new Transitionable()
     {
 
       @Override
@@ -385,22 +444,7 @@ public class StackedChartsView extends ViewPart implements
         return stackedPane.getControl(index);
       }
 
-      @Override
-      public Image getControlImage(final int index)
-      {
-        // Linux has problems to get the control image using
-        // <code>org.eclipse.swt.widgets.Control.print(GC)</code>,
-        // so we return the image directly from this
-        // image transitionable object.
-        if (IS_LINUX_OS)
-        {
-          return compImage[index - 1];
-        }
-        else
-        {
-          return null;
-        }
-      }
+      
 
       @Override
       public double getDirection(final int toIndex, final int fromIndex)
@@ -421,15 +465,32 @@ public class StackedChartsView extends ViewPart implements
         stackedPane.showPane(index, false);
       }
 
+     
+    }){
+      
       @Override
-      public void updateControlImage(final Image image, final int index)
+      public void startTransition(int fromIndex, int toIndex, double direction)
       {
-        if (IS_LINUX_OS)
+        if(IS_LINUX_OS)
         {
-          compImage[index - 1] = image;
+          Control from    = transitionable.getControl(fromIndex);
+          Rectangle fromSize  = from.getBounds();
+          Image imgFrom   = new Image(from.getDisplay(), fromSize.width, fromSize.height);
+          GC gcfrom = new GC(from);
+          from.update();
+          gcfrom.copyArea(imgFrom, 0, 0);
+          if( compImage[fromIndex - 1]!=null )
+          {
+            compImage[fromIndex - 1].dispose();
+          }
+          compImage[fromIndex - 1] = imgFrom;
+          gcfrom.dispose();
         }
+        
+        super.startTransition(fromIndex, toIndex, direction);
       }
-    });
+      
+    };
     transitionManager.addTransitionListener(new TransitionListener()
     {
 
@@ -440,6 +501,7 @@ public class StackedChartsView extends ViewPart implements
 
       }
     });
+    transitionManager.setControlImages(compImage);
     // new SlideTransition(_tm)
     transitionManager.setTransition(new CubicRotationTransition(
         transitionManager));
@@ -460,13 +522,32 @@ public class StackedChartsView extends ViewPart implements
     addRunOnCloseCallback(dropMe);
   }
 
+  /**
+   * Creates an Chart Set with a single chart so that user would be able to drop datasets in it.
+   * 
+   * @return
+   */
+  private ChartSet createBlankModel()
+  {
+    ChartSet chartSet = StackedchartsFactory.eINSTANCE.createChartSet();
+    chartSet.getCharts().add(StackedchartsFactory.eINSTANCE.createChart());
+    IndependentAxis independentAxis =
+        StackedchartsFactory.eINSTANCE.createIndependentAxis();
+    independentAxis
+        .setAxisType(StackedchartsFactory.eINSTANCE.createDateAxis());
+    chartSet.setSharedAxis(independentAxis);
+    return chartSet;
+  }
+
   protected void fillLocalPullDown(final IMenuManager manager)
   {
   }
 
   protected void fillLocalToolBar(final IToolBarManager manager)
   {
-    manager.add(new Action("Edit", SWT.TOGGLE)
+    String actionText =
+        stackedPane.getActiveControlKey() == CHART_VIEW ? "Edit" : "View";
+    Action toggleViewModeAction = new Action(actionText, SWT.TOGGLE)
     {
       @Override
       public void run()
@@ -496,7 +577,8 @@ public class StackedChartsView extends ViewPart implements
           manager.update(true);
         }
       }
-    });
+    };
+    manager.add(toggleViewModeAction);
 
     final Action showTime = new Action("Show time marker", SWT.TOGGLE)
     {
@@ -550,8 +632,8 @@ public class StackedChartsView extends ViewPart implements
         {
           final Clipboard clpbrd =
               Toolkit.getDefaultToolkit().getSystemClipboard();
-          clpbrd.setContents(new DrawableWMFTransfer(_chartComposite.getChart(),
-              _chartComposite.getBounds()), null);
+          clpbrd.setContents(new DrawableWMFTransfer(
+              _chartComposite.getChart(), _chartComposite.getBounds()), null);
           MessageDialog.openInformation(Display.getCurrent().getActiveShell(),
               "Image Export", "Exported to Clipboard in WMF && PDF format");
 
@@ -754,6 +836,11 @@ public class StackedChartsView extends ViewPart implements
 
   public void setModel(final ChartSet charts)
   {
+    setModel(charts, CHART_VIEW);
+  }
+
+  public void setModel(final ChartSet charts, int mode)
+  {
     this.charts = charts;
     // mark editor to recreate
     initEditor.set(true);
@@ -821,7 +908,7 @@ public class StackedChartsView extends ViewPart implements
 
     chartHolder.pack(true);
     chartHolder.getParent().layout();
-    selectView(CHART_VIEW);
+    selectView(mode);
   }
 
   @Override
@@ -832,7 +919,7 @@ public class StackedChartsView extends ViewPart implements
       chartEditor.getViewer().setSelection(selection);
     }
   }
-
+  
   /**
    * update (or clear) the displayed time marker
    * 
@@ -842,16 +929,66 @@ public class StackedChartsView extends ViewPart implements
   {
     final Date oldTime = _currentTime;
     _currentTime = newTime;
+    
 
     if (newTime != null && !newTime.equals(oldTime) || newTime != oldTime)
     {
-      // try to get the time aware plot
-      final JFreeChart combined = _chartComposite.getChart();
-      final TimeBarPlot plot = (TimeBarPlot) combined.getPlot();
-      plot.setTime(newTime);
 
-      // ok, trigger ui update
-      refreshPlot();
+      if (!_amUpdating)
+      {
+        // ok, remember that we're updating
+        _amUpdating = true;
+
+        // remember the new one
+        _pendingTime.set(newTime.getTime());
+
+        // get on with the update
+        try
+        {
+          Display.getDefault().asyncExec(new Runnable()
+          {
+
+            @Override
+            public void run()
+            {
+              // quick, capture the time
+              final long safeTime = _pendingTime.get();
+
+              // do we have a pending time value
+              if (safeTime != INVALID_TIME)
+              {
+                _pendingTime.set(INVALID_TIME);
+
+                // now create the time object
+                final Date theDTG = new Date(safeTime);
+
+                // try to get the time aware plot
+                final JFreeChart combined = _chartComposite.getChart();
+                final TimeBarPlot plot = (TimeBarPlot) combined.getPlot();
+                plot.setTime(theDTG);
+
+                // ok, trigger ui update
+                refreshPlot();
+              }
+              else
+              {
+                // ok, there isn't a pending date, we can just skip the update
+              }
+
+              // Note: we don't need to clear the lock, we do it in the finally block
+            }
+          });
+        }
+        finally
+        {
+          // clear the updating lock
+          _amUpdating = false;
+        }
+      }
+      
+          
+      
+      
     }
   }
 

@@ -649,7 +649,7 @@ public class TimeBarPlot extends CombinedDomainXYPlot
       {
         final XYDataset dataset = plot.getDataset(i);
 
-        if (axisHelper != null)
+        if (axisHelper != null && dataset != null)
         {
 
           final int num = dataset.getSeriesCount();
@@ -666,7 +666,6 @@ public class TimeBarPlot extends CombinedDomainXYPlot
             {
 
               // we may need to trim the interpolated value to be in the correct range
-              double range = rangeA.getUpperBound() - rangeA.getLowerBound();
               final double chartLocation;
               if (interpolated > rangeA.getUpperBound())
               {
