@@ -149,7 +149,7 @@ public class ChartBuilder
       final TimeSeries ns = (TimeSeries) series;
       final long time = (long) item.getIndependentVal();
       final Millisecond milli = new Millisecond(new Date(time));
-      ns.add(milli, item.getDependentVal());
+      ns.addOrUpdate(milli, item.getDependentVal());
     }
 
     @Override

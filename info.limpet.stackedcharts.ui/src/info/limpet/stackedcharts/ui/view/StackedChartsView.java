@@ -5,6 +5,8 @@ import info.limpet.stackedcharts.model.IndependentAxis;
 import info.limpet.stackedcharts.model.StackedchartsFactory;
 import info.limpet.stackedcharts.ui.editor.Activator;
 import info.limpet.stackedcharts.ui.editor.StackedchartsEditControl;
+import info.limpet.stackedcharts.ui.view.adapter.IStackedTimeListener;
+import info.limpet.stackedcharts.ui.view.adapter.IStackedTimeProvider;
 
 import java.awt.Color;
 import java.awt.Toolkit;
@@ -19,6 +21,12 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
@@ -68,7 +76,8 @@ import org.jfree.chart.StandardChartTheme;
 import org.jfree.experimental.chart.swt.ChartComposite;
 
 public class StackedChartsView extends ViewPart implements
-    ITabbedPropertySheetPageContributor, ISelectionProvider, DisposeListener
+    ITabbedPropertySheetPageContributor, ISelectionProvider, DisposeListener,
+    IStackedTimeListener
 {
 
   /**
@@ -103,6 +112,8 @@ public class StackedChartsView extends ViewPart implements
 
   public static final String ID = "info.limpet.StackedChartsView";
 
+  private static final String TIME_PROVIDER_ID = "stacked_time_provider";
+
   private StackedPane stackedPane;
   // effects
   protected TransitionManager transitionManager = null;
@@ -121,14 +132,13 @@ public class StackedChartsView extends ViewPart implements
   private ControllableDate _controllableDate = null;
 
   private JFreeChart jFreeChart;
-  
-  
+
   /**
    * flag for if we're currently in update
    * 
    */
   private static boolean _amUpdating = false;
-  
+
   /**
    * value we use for null-time
    * 
@@ -408,89 +418,90 @@ public class StackedChartsView extends ViewPart implements
     final Image[] compImage = new Image[2]; // stackedPane comp count
     parent.addDisposeListener(new DisposeListener()
     {
-      
+
       @Override
       public void widgetDisposed(DisposeEvent e)
       {
-        for(Image img :compImage)
+        for (Image img : compImage)
         {
-          if(img!=null)
+          if (img != null)
           {
             img.dispose();
           }
         }
-        
+
       }
     });
     final Transitionable transitionable;
-    transitionManager = new TransitionManager(transitionable =new Transitionable()
-    {
-
-      @Override
-      public void addSelectionListener(final SelectionListener listener)
-      {
-        stackedPane.addSelectionListener(listener);
-      }
-
-      @Override
-      public Composite getComposite()
-      {
-        return stackedPane;
-      }
-
-      @Override
-      public Control getControl(final int index)
-      {
-        return stackedPane.getControl(index);
-      }
-
-      
-
-      @Override
-      public double getDirection(final int toIndex, final int fromIndex)
-      {
-        return toIndex == CHART_VIEW ? Transition.DIR_RIGHT
-            : Transition.DIR_LEFT;
-      }
-
-      @Override
-      public int getSelection()
-      {
-        return stackedPane.getActiveControlKey();
-      }
-
-      @Override
-      public void setSelection(final int index)
-      {
-        stackedPane.showPane(index, false);
-      }
-
-     
-    }){
-      
-      @Override
-      public void startTransition(int fromIndex, int toIndex, double direction)
-      {
-        if(IS_LINUX_OS)
+    transitionManager =
+        new TransitionManager(transitionable = new Transitionable()
         {
-          Control from    = transitionable.getControl(fromIndex);
-          Rectangle fromSize  = from.getBounds();
-          Image imgFrom   = new Image(from.getDisplay(), fromSize.width, fromSize.height);
-          GC gcfrom = new GC(from);
-          from.update();
-          gcfrom.copyArea(imgFrom, 0, 0);
-          if( compImage[fromIndex - 1]!=null )
+
+          @Override
+          public void addSelectionListener(final SelectionListener listener)
           {
-            compImage[fromIndex - 1].dispose();
+            stackedPane.addSelectionListener(listener);
           }
-          compImage[fromIndex - 1] = imgFrom;
-          gcfrom.dispose();
-        }
-        
-        super.startTransition(fromIndex, toIndex, direction);
-      }
-      
-    };
+
+          @Override
+          public Composite getComposite()
+          {
+            return stackedPane;
+          }
+
+          @Override
+          public Control getControl(final int index)
+          {
+            return stackedPane.getControl(index);
+          }
+
+          @Override
+          public double getDirection(final int toIndex, final int fromIndex)
+          {
+            return toIndex == CHART_VIEW ? Transition.DIR_RIGHT
+                : Transition.DIR_LEFT;
+          }
+
+          @Override
+          public int getSelection()
+          {
+            return stackedPane.getActiveControlKey();
+          }
+
+          @Override
+          public void setSelection(final int index)
+          {
+            stackedPane.showPane(index, false);
+          }
+
+        })
+        {
+
+          @Override
+          public void startTransition(int fromIndex, int toIndex,
+              double direction)
+          {
+            if (IS_LINUX_OS)
+            {
+              Control from = transitionable.getControl(fromIndex);
+              Rectangle fromSize = from.getBounds();
+              Image imgFrom =
+                  new Image(from.getDisplay(), fromSize.width, fromSize.height);
+              GC gcfrom = new GC(from);
+              from.update();
+              gcfrom.copyArea(imgFrom, 0, 0);
+              if (compImage[fromIndex - 1] != null)
+              {
+                compImage[fromIndex - 1].dispose();
+              }
+              compImage[fromIndex - 1] = imgFrom;
+              gcfrom.dispose();
+            }
+
+            super.startTransition(fromIndex, toIndex, direction);
+          }
+
+        };
     transitionManager.addTransitionListener(new TransitionListener()
     {
 
@@ -520,6 +531,98 @@ public class StackedChartsView extends ViewPart implements
       }
     };
     addRunOnCloseCallback(dropMe);
+
+    // ok, see if we have a time controller
+    findTimeController();
+  }
+
+  private void findTimeController()
+  {
+    IExtensionRegistry registry = Platform.getExtensionRegistry();
+    if (registry != null)
+    {
+
+      final IExtensionPoint point =
+          Platform.getExtensionRegistry().getExtensionPoint(
+              Activator.PLUGIN_ID, TIME_PROVIDER_ID);
+
+      final IExtension[] extensions = point.getExtensions();
+      for (int i = 0; i < extensions.length; i++)
+      {
+        final IExtension iExtension = extensions[i];
+        final IConfigurationElement[] confE =
+            iExtension.getConfigurationElements();
+        for (IConfigurationElement extension : confE)
+        {
+          try
+          {
+            final IStackedTimeProvider provider=
+                (IStackedTimeProvider) extension
+                    .createExecutableExtension("class");
+            final IStackedTimeListener listener = this;
+            
+            // ok, can it provide time control?
+            if(provider.canProvideControl())
+            {
+              provider.controlThis(listener);
+              
+              // ok, remember that we need to close this
+              addRunOnCloseCallback(new Runnable()
+              {
+                @Override
+                public void run()
+                {
+                  provider.releaseThis(listener);
+                }
+              });
+            }
+          }
+          catch (final CoreException ex)
+          {
+            ex.printStackTrace();
+          }
+        }
+      }
+    }
+    
+//    
+//    
+//    IConfigurationElement[] config =
+//        Platform.getExtensionRegistry().getConfigurationElementsFor(
+//            TIME_PROVIDER_ID);
+//    for (IConfigurationElement e : config)
+//    {
+//      Object o;
+//      try
+//      {
+//        o = e.createExecutableExtension("class");
+//        if (o instanceof IStackedTimeProvider)
+//        {
+//          final IStackedTimeProvider sa = (IStackedTimeProvider) o;
+//          final IStackedTimeListener listener = this;
+//          
+//          // ok, can it provide time control?
+//          if(sa.canProvideControl())
+//          {
+//            sa.controlThis(listener);
+//            
+//            // ok, remember that we need to close this
+//            addRunOnCloseCallback(new Runnable()
+//            {
+//              @Override
+//              public void run()
+//              {
+//                sa.releaseThis(listener);
+//              }
+//            });
+//          }
+//        }
+//      }
+//      catch (CoreException e1)
+//      {
+//        e1.printStackTrace();
+//      }
+//    }
   }
 
   /**
@@ -919,17 +1022,17 @@ public class StackedChartsView extends ViewPart implements
       chartEditor.getViewer().setSelection(selection);
     }
   }
-  
+
   /**
    * update (or clear) the displayed time marker
    * 
    * @param newTime
    */
+  @Override
   public void updateTime(final Date newTime)
   {
     final Date oldTime = _currentTime;
     _currentTime = newTime;
-    
 
     if (newTime != null && !newTime.equals(oldTime) || newTime != oldTime)
     {
@@ -985,10 +1088,7 @@ public class StackedChartsView extends ViewPart implements
           _amUpdating = false;
         }
       }
-      
-          
-      
-      
+
     }
   }
 
