@@ -556,16 +556,16 @@ public class StackedChartsView extends ViewPart implements
         {
           try
           {
-            final IStackedTimeProvider provider=
+            final IStackedTimeProvider provider =
                 (IStackedTimeProvider) extension
                     .createExecutableExtension("class");
             final IStackedTimeListener listener = this;
-            
+
             // ok, can it provide time control?
-            if(provider.canProvideControl())
+            if (provider.canProvideControl())
             {
               provider.controlThis(listener);
-              
+
               // ok, remember that we need to close this
               addRunOnCloseCallback(new Runnable()
               {
@@ -584,45 +584,45 @@ public class StackedChartsView extends ViewPart implements
         }
       }
     }
-    
-//    
-//    
-//    IConfigurationElement[] config =
-//        Platform.getExtensionRegistry().getConfigurationElementsFor(
-//            TIME_PROVIDER_ID);
-//    for (IConfigurationElement e : config)
-//    {
-//      Object o;
-//      try
-//      {
-//        o = e.createExecutableExtension("class");
-//        if (o instanceof IStackedTimeProvider)
-//        {
-//          final IStackedTimeProvider sa = (IStackedTimeProvider) o;
-//          final IStackedTimeListener listener = this;
-//          
-//          // ok, can it provide time control?
-//          if(sa.canProvideControl())
-//          {
-//            sa.controlThis(listener);
-//            
-//            // ok, remember that we need to close this
-//            addRunOnCloseCallback(new Runnable()
-//            {
-//              @Override
-//              public void run()
-//              {
-//                sa.releaseThis(listener);
-//              }
-//            });
-//          }
-//        }
-//      }
-//      catch (CoreException e1)
-//      {
-//        e1.printStackTrace();
-//      }
-//    }
+
+    //
+    //
+    // IConfigurationElement[] config =
+    // Platform.getExtensionRegistry().getConfigurationElementsFor(
+    // TIME_PROVIDER_ID);
+    // for (IConfigurationElement e : config)
+    // {
+    // Object o;
+    // try
+    // {
+    // o = e.createExecutableExtension("class");
+    // if (o instanceof IStackedTimeProvider)
+    // {
+    // final IStackedTimeProvider sa = (IStackedTimeProvider) o;
+    // final IStackedTimeListener listener = this;
+    //
+    // // ok, can it provide time control?
+    // if(sa.canProvideControl())
+    // {
+    // sa.controlThis(listener);
+    //
+    // // ok, remember that we need to close this
+    // addRunOnCloseCallback(new Runnable()
+    // {
+    // @Override
+    // public void run()
+    // {
+    // sa.releaseThis(listener);
+    // }
+    // });
+    // }
+    // }
+    // }
+    // catch (CoreException e1)
+    // {
+    // e1.printStackTrace();
+    // }
+    // }
   }
 
   /**
@@ -1065,13 +1065,17 @@ public class StackedChartsView extends ViewPart implements
                 // now create the time object
                 final Date theDTG = new Date(safeTime);
 
-                // try to get the time aware plot
-                final JFreeChart combined = _chartComposite.getChart();
-                final TimeBarPlot plot = (TimeBarPlot) combined.getPlot();
-                plot.setTime(theDTG);
+                // try to get the time aware plot, if we have one.
+                // it may be null if we're blank.
+                if (_chartComposite != null)
+                {
+                  final JFreeChart combined = _chartComposite.getChart();
+                  final TimeBarPlot plot = (TimeBarPlot) combined.getPlot();
+                  plot.setTime(theDTG);
 
-                // ok, trigger ui update
-                refreshPlot();
+                  // ok, trigger ui update
+                  refreshPlot();
+                }
               }
               else
               {
