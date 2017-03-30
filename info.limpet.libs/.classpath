@@ -6,6 +6,9 @@
 	<classpathentry exported="true" kind="lib" path="libs/si-units-0.4-SNAPSHOT.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/systems-common-0.2-SNAPSHOT.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/systems-quantity-0.2-SNAPSHOT.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/January.jar" sourcepath="C:/git/january_dinko/org.eclipse.january/src"/>
+	<classpathentry kind="lib" path="libs/slf4j-api.jar"/>
+	<classpathentry kind="lib" path="libs/slf4j-simple-1.7.25.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="src" path="src"/>
