@@ -30,6 +30,15 @@ import java.util.List;
 
 import javax.measure.unit.Unit;
 
+import org.eclipse.january.dataset.Comparisons;
+import org.eclipse.january.dataset.Comparisons.Monotonicity;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Maths;
+import org.eclipse.january.metadata.AxesMetadata;
+import org.eclipse.january.metadata.internal.AxesMetadataImpl;
+
 public abstract class CoreQuantityOperation
 {
 
@@ -177,42 +186,128 @@ public abstract class CoreQuantityOperation
      * @param outputs
      *          the list of output series
      */
-    protected void performCalc(Unit<?> unit, List<Document> outputs)
+    protected IDataset performCalc()
     {
-      IStoreItem target = outputs.iterator().next();
+      final IDataset res;
 
-      clearOutputs(outputs);
+      final IDataset in1 = getInputs().get(0).getDataset();
+      final IDataset in2 = getInputs().get(1).getDataset();
 
-      if (timeProvider != null)
+      // look for axes metadata
+      final AxesMetadata axis1 = in1.getFirstMetadata(AxesMetadata.class);
+      
+      // keep track of the indices to use in the output
+      final Dataset outputIndices;
+
+      AxesMetadata axis2 = null;
+
+      final boolean doInterp;
+
+      if (axis1 != null)
       {
-        // TODO: sort out the timings
-        // Collection<Long> times = timeProvider.getTimes();
-        // Iterator<Long> iter = times.iterator();
-        // while (iter.hasNext())
-        // {
-        // long thisT = (long) iter.next();
-        // Double val = calcThisInterpolatedElement(thisT);
-        // if (val != null)
-        // {
-        // storeTemporalValue(target, thisT, val);
-        // }
-        // }
+        // ok, is that axis monotonic?
+        final Monotonicity axis1Mono =
+            Comparisons.findMonotonicity(axis1.getAxes()[0]);
+
+        if (axis1Mono.equals(Monotonicity.NOT_ORDERED))
+        {
+          // ok, not ordered. we can't use it
+          doInterp = false;
+          outputIndices = null;
+        }
+        else
+        {
+          axis2 = in2.getFirstMetadata(AxesMetadata.class);
+
+          final Monotonicity axis2Mono =
+              Comparisons.findMonotonicity(axis2.getAxes()[0]);
+
+          if (axis1.getAxes()[0].equals(axis2.getAxes()[0]))
+          {
+            // identical indexes, we don't need to intepolate
+            doInterp = false;
+            outputIndices = (Dataset) axis1.getAxes()[0];
+          }
+          else if (axis2Mono.equals(Monotonicity.NOT_ORDERED))
+          {
+            // ok, not ordered. we can't use it
+            throw new IllegalArgumentException("Axes must be ordered");
+          }
+          else
+          {
+            // ok, are they in the same direction?
+            if (axis1Mono.equals(axis2Mono))
+            {
+              // ok, check they overlap
+              // TODO: once January sample code is reviewed, insert it here
+
+              // fake index
+              outputIndices = (Dataset) axis1.getAxes()[0];
+              
+              // ok, do an interpolated add operation.
+              doInterp = true;
+              
+
+            }
+            else
+            {
+              // wrong directions, can't do
+              doInterp = false;
+              outputIndices = null;
+            }
+
+          }
+        }
       }
       else
       {
-        int numItems = numElements();
-        for (int elementCount = 0; elementCount < numItems; elementCount++)
-        {
-          Double thisResult = calcThisElement(elementCount);
+        doInterp = false;
+        outputIndices = null;
+      }
 
-          // ok, done - store it!
-          storeValue(target, elementCount, thisResult);
+      if (doInterp)
+      {
+        res = null;
+        // TODO: do an interpolated operation
+      }
+      else if (getATests().allEqualLengthOrSingleton(getInputs()))
+      {
+        // ok, is one a singleton?
+
+        // ok, can't interpolate. are they the same size?
+        // ok, just do plain add
+        res = Maths.add(in1, in2);
+      }
+      else
+      {
+        res = null;
+      }
+
+      if (res != null)
+      {
+        // store the name
+        res.setName("Sum of " + in1.getName() + " + " + in2.getName());
+        
+        // if there are indices, store them
+        if(outputIndices != null)
+        {
+          AxesMetadata am = new AxesMetadataImpl();
+          am.initialize(1);
+          am.setAxis(0, outputIndices);
+          res.addMetadata(am);
         }
       }
 
+      
+      
       // and fire out the update
-      target.fireDataChanged();
+      for (Document output : getOutputs())
+      {
+        output.fireDataChanged();
+      }
 
+      // done
+      return res;
     }
 
     protected int numElements()
@@ -234,106 +329,105 @@ public abstract class CoreQuantityOperation
       return res;
     }
 
-    private void storeTemporalValue(IStoreItem target, long thisT, double val)
-    {
-      // TODO: we won't be running like this. we've got produce a whole
-      // output dataset, then store that
-      // ITemporalQuantityCollection<Q> qc =
-      // (ITemporalQuantityCollection<Q>) target;
-      // qc.add(thisT, Measure.valueOf(val, determineOutputUnit(target)));
-    }
+    // private void storeTemporalValue(IStoreItem target, long thisT, double val)
+    // {
+    // // TODO: we won't be running like this. we've got produce a whole
+    // // output dataset, then store that
+    // // ITemporalQuantityCollection<Q> qc =
+    // // (ITemporalQuantityCollection<Q>) target;
+    // // qc.add(thisT, Measure.valueOf(val, determineOutputUnit(target)));
+    // }
 
-    /**
-     * store this value into the target (optionally including temporal aspects)
-     * 
-     * @param target
-     *          destination
-     * @param count
-     *          index for this value
-     * @param value
-     *          the value to store
-     */
-    private void storeValue(IStoreItem target, int count, Double value)
-    {
-      // TODO: we won't be doing it like this.
-      // if (target.isTemporal())
-      // {
-      // // ok, the input and output arrays must be temporal.
-      // ITemporalQuantityCollection<Q> qc =
-      // (ITemporalQuantityCollection<Q>) target;
-      // ITemporalQuantityCollection<Q> qi =
-      // (ITemporalQuantityCollection<Q>) getInputs().get(0);
-      // Long[] timeData = qi.getTimes().toArray(new Long[]
-      // {});
-      // qc.add(timeData[count], Measure.valueOf(value,
-      // determineOutputUnit(target)));
-      // }
-      // else
-      // {
-      // target.add(Measure.valueOf(value, determineOutputUnit(target)));
-      // }
-    }
+    // /**
+    // * store this value into the target (optionally including temporal aspects)
+    // *
+    // * @param target
+    // * destination
+    // * @param count
+    // * index for this value
+    // * @param value
+    // * the value to store
+    // */
+    // private void storeValue(IStoreItem target, int count, Double value)
+    // {
+    // // TODO: we won't be doing it like this.
+    // // if (target.isTemporal())
+    // // {
+    // // // ok, the input and output arrays must be temporal.
+    // // ITemporalQuantityCollection<Q> qc =
+    // // (ITemporalQuantityCollection<Q>) target;
+    // // ITemporalQuantityCollection<Q> qi =
+    // // (ITemporalQuantityCollection<Q>) getInputs().get(0);
+    // // Long[] timeData = qi.getTimes().toArray(new Long[]
+    // // {});
+    // // qc.add(timeData[count], Measure.valueOf(value,
+    // // determineOutputUnit(target)));
+    // // }
+    // // else
+    // // {
+    // // target.add(Measure.valueOf(value, determineOutputUnit(target)));
+    // // }
+    // }
 
-    /**
-     * produce a calculated value for the relevant index of the first input collection
-     * 
-     * @param elementCount
-     * @return
-     */
-    protected abstract Double calcThisElement(int elementCount);
+    // /**
+    // * produce a calculated value for the relevant index of the first input collection
+    // *
+    // * @param elementCount
+    // * @return
+    // */
+    // protected abstract Double calcThisElement(int elementCount);
 
-    /**
-     * produce a calculated value for the relevant index of the first input collection
-     * 
-     * @param elementCount
-     * @return
-     */
-    protected abstract Double calcThisInterpolatedElement(long time);
+    // /**
+    // * produce a calculated value for the relevant index of the first input collection
+    // *
+    // * @param elementCount
+    // * @return
+    // */
+    // protected abstract Double calcThisInterpolatedElement(long time);
 
     @Override
     protected void recalculate(IStoreItem subject)
     {
-      // get the unit
-      Document first = getInputs().get(0);
-      Unit<?> unit = determineOutputUnit(first);
+      // calculate the results
+      IDataset newSet = performCalc();
 
-      // update the results
-      performCalc(unit, getOutputs());
+      // store the new dataset
+      getOutputs().get(0).setDataset(newSet);
     }
 
-    /**
-     * produce a target of the correct type
-     * 
-     * @param input
-     *          one of the input series
-     * @param unit
-     *          the units to use
-     * @return
-     */
-    @Deprecated
-    protected Document createQuantityTarget(IStoreItem input, Unit<?> unit)
-    {
-      // TODO: change this - it's actually got to happen once we've generated
-      // all of the output data
-      // double check the name is ok
-      final String outName = getOutputName();
-
-      Document target = null;
-
-      // if (outName != null)
-      // {
-      // if (timeProvider != null)
-      // {
-      // target = new TemporalQuantityCollection<Q>(outName, this, unit);
-      // }
-      // else
-      // {
-      // target = new QuantityCollection<Q>(outName, this, unit);
-      // }
-      // }
-
-      return target;
-    }
+    // /**
+    // * produce a target of the correct type
+    // *
+    // * @param input
+    // * one of the input series
+    // * @param unit
+    // * the units to use
+    // * @return
+    // */
+    // @Deprecated
+    // protected Document createQuantityTarget(IStoreItem input, Unit<?> unit)
+    // {
+    // // TODO: change this - it's actually got to happen once we've generated
+    // // all of the output data
+    // // double check the name is ok
+    // final String outName = getOutputName();
+    //
+    // Document target = null;
+    //
+    // // if (outName != null)
+    // // {
+    // // if (timeProvider != null)
+    // // {
+    // // target = new TemporalQuantityCollection<Q>(outName, this, unit);
+    // // }
+    // // else
+    // // {
+    // // target = new QuantityCollection<Q>(outName, this, unit);
+    // // }
+    // // }
+    //
+    // return target;
+    // }
 
     @Override
     public void execute()
@@ -341,28 +435,24 @@ public abstract class CoreQuantityOperation
       // get the unit
       IStoreItem first = getInputs().get(0);
 
-      List<Document> outputs = new ArrayList<Document>();
-
       // sort out the output unit
       Unit<?> unit = determineOutputUnit(first);
 
-      // ok, generate the new series
-      final Document target = createQuantityTarget(first, unit);
-
-      if (target == null)
-      {
-        getContext().logError(IContext.Status.WARNING,
-            "User cancelled create operation", null);
-        return;
-      }
-
-      outputs.add(target);
-
-      // store the output
-      super.addOutput(target);
+      // clear the results sets
+      clearOutputs(getOutputs());
 
       // start adding values.
-      performCalc(unit, outputs);
+      IDataset dataset = performCalc();
+
+      // ok, wrap the dataset
+      NumberDocument output =
+          new NumberDocument((DoubleDataset) dataset, this, unit);
+
+      // and fire out the update
+      output.fireDataChanged();
+
+      // store the output
+      super.addOutput(output);
 
       // tell each series that we're a dependent
       Iterator<Document> iter = getInputs().iterator();
@@ -373,7 +463,7 @@ public abstract class CoreQuantityOperation
       }
 
       // ok, done
-      getStore().add(target);
+      getStore().add(output);
     }
 
     protected Unit<?> determineOutputUnit(IStoreItem first)

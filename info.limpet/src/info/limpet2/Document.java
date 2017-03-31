@@ -33,6 +33,16 @@ public class Document implements IStoreItem
     _uuid = UUID.randomUUID();
   }
   
+  public IDataset getDataset()
+  {
+    return _dataset;
+  }
+  
+  public void setDataset(IDataset dataset)
+  {
+    _dataset = dataset;
+  }
+  
   public String getName()
   {
     return _dataset.getName();
@@ -113,4 +123,12 @@ public class Document implements IStoreItem
   {
     _dataset = null;
   }
+
+  @Override
+  public String toString()
+  {
+    return _dataset.toString();
+  }
+  
+  
 }

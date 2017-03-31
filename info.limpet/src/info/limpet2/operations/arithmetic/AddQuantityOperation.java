@@ -81,81 +81,81 @@ public class AddQuantityOperation extends
           timeProvider, context);
     }
 
-    @Override
-    protected Double calcThisElement(int elementCount)
-    {
-      Double thisResult = null;
-
-      for (int seriesCount = 0; seriesCount < getInputs().size(); seriesCount++)
-      {
-        // TODO: re-implement this.
-//        Document thisC = getInputs().get(seriesCount);
-//        Measurable<Q> thisV = thisC.size() == 1 ? thisC.getValues().get(0)
-//            : (Measurable<Q>) thisC.getValues().get(elementCount);
+//    @Override
+//    protected Double calcThisElement(int elementCount)
+//    {
+//      Double thisResult = null;
 //
-//        // is this the first field?
-//        if (thisResult == null)
-//        {
-//          thisResult = thisV.doubleValue(thisC.getUnits());
-//        }
-//        else
-//        {
-//          thisResult += thisV.doubleValue(thisC.getUnits());
-//        }
-      }
-      return thisResult;
-    }
-
-    @Override
-    protected Double calcThisInterpolatedElement(long time)
-    {
-      Double thisResult = null;
-      
-      // TODO: implement this
-
 //      for (int seriesCount = 0; seriesCount < getInputs().size(); seriesCount++)
 //      {
-//        Document thisC = (Document) getInputs()
-//            .get(seriesCount);
-//
-//        final Measurable<Q> thisV;
-//
-//        if (thisC.isTemporal())
-//        {
-//          // find the value to use
-//          NumberDocument tq = (NumberDocument) thisC;
-//          thisV = tq.interpolateValue(time, Document.InterpMethod.Linear);
-//
-//        }
-//        else
-//        {
-//          if (thisC.size() == 1)
-//          {
-//            // ok, it's a singleton that we're applying to all values
-//            thisV = thisC.getValues().get(0);
-//          }
-//          else
-//          {
-//            throw new RuntimeException(
-//                "We should not be adding a non-singleton non-temporal to a temporal");
-//          }
-//        }
-//
-//        if (thisV != null)
-//        {
-//          // is this the first field?
-//          if (thisResult == null)
-//          {
-//            thisResult = thisV.doubleValue(thisC.getUnits());
-//          }
-//          else
-//          {
-//            thisResult += thisV.doubleValue(thisC.getUnits());
-//          }
-//        }
+//        // TODO: re-implement this.
+////        Document thisC = getInputs().get(seriesCount);
+////        Measurable<Q> thisV = thisC.size() == 1 ? thisC.getValues().get(0)
+////            : (Measurable<Q>) thisC.getValues().get(elementCount);
+////
+////        // is this the first field?
+////        if (thisResult == null)
+////        {
+////          thisResult = thisV.doubleValue(thisC.getUnits());
+////        }
+////        else
+////        {
+////          thisResult += thisV.doubleValue(thisC.getUnits());
+////        }
 //      }
-      return thisResult;
-    }
+//      return thisResult;
+//    }
+
+//    @Override
+//    protected Double calcThisInterpolatedElement(long time)
+//    {
+//      Double thisResult = null;
+//      
+//      // TODO: implement this
+//
+////      for (int seriesCount = 0; seriesCount < getInputs().size(); seriesCount++)
+////      {
+////        Document thisC = (Document) getInputs()
+////            .get(seriesCount);
+////
+////        final Measurable<Q> thisV;
+////
+////        if (thisC.isTemporal())
+////        {
+////          // find the value to use
+////          NumberDocument tq = (NumberDocument) thisC;
+////          thisV = tq.interpolateValue(time, Document.InterpMethod.Linear);
+////
+////        }
+////        else
+////        {
+////          if (thisC.size() == 1)
+////          {
+////            // ok, it's a singleton that we're applying to all values
+////            thisV = thisC.getValues().get(0);
+////          }
+////          else
+////          {
+////            throw new RuntimeException(
+////                "We should not be adding a non-singleton non-temporal to a temporal");
+////          }
+////        }
+////
+////        if (thisV != null)
+////        {
+////          // is this the first field?
+////          if (thisResult == null)
+////          {
+////            thisResult = thisV.doubleValue(thisC.getUnits());
+////          }
+////          else
+////          {
+////            thisResult += thisV.doubleValue(thisC.getUnits());
+////          }
+////        }
+////      }
+//      return thisResult;
+//    }
 
     @Override
     protected String getOutputName()

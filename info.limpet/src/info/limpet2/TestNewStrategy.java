@@ -37,7 +37,7 @@ public class TestNewStrategy extends TestCase
   
   public void testAddingDocuments()
   {
-    StoreGroup data = new SampleData().getData(3);
+    StoreGroup data = new SampleData().getData(12);
     
     IStoreItem doc1 = data.get(SampleData.SPEED_ONE);
     IStoreItem doc2 = data.get(SampleData.SPEED_TWO);
@@ -61,11 +61,15 @@ public class TestNewStrategy extends TestCase
     
     assertEquals("target has data", 1, target.size());
     
+    Document output = (Document) target.iterator().next();
+    
+    System.out.println(output);
     
   }
   
   public void testSampleData()
   {
+    @SuppressWarnings("unused")
     StoreGroup data = new SampleData().getData(10);
     
   }

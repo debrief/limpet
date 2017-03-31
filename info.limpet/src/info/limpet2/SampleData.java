@@ -103,8 +103,8 @@ public class SampleData
       LongDataset timeData = (LongDataset) DatasetFactory.createFromObject(_times);
       final AxesMetadata timeAxis = new AxesMetadataImpl();
       timeAxis.initialize(1);      
-      timeAxis.setAxis(0, timeData);
-      
+      timeAxis.setAxis(0, timeData);      
+      dataset.addMetadata(timeAxis);
       
       NumberDocument res = new NumberDocument(dataset, _predecessor, _units);
       return res;
@@ -117,6 +117,7 @@ public class SampleData
     private Unit<?> _units;
     private List<Double> _values;
     private ICommand _predecessor;
+    @SuppressWarnings("unused")
     private Range _range;
 
     TmpStore(String name, Unit<?> units, ICommand predecessor)
@@ -124,9 +125,7 @@ public class SampleData
       _name = name;
       _units = units;
       _predecessor = predecessor;
-
       _values = new ArrayList<Double>();
-
     }
 
     void add(double value)
@@ -239,7 +238,7 @@ public class SampleData
       speedSeries2.add(thisTime, 7 + 2 * Math.sin(i));
 
       // we want the irregular series to only have occasional
-      if (i % 5 == 0)
+      if (i % 3 == 0)
       {
         speedIrregular.add(thisTime + 500 * 45, 7 + 2 * Math.sin(i + 1));
       }
