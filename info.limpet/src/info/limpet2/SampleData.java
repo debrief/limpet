@@ -70,83 +70,6 @@ public class SampleData
   public static final String SINGLETON_LOC_1 = "Single Track One";
   public static final String SINGLETON_LOC_2 = "Single Track Two";
 
-  private static class TmpTemporalStore
-  {
-    private String _name;
-    private Unit<?> _units;
-    private ArrayList<Long> _times;
-    private ArrayList<Double> _values;
-    private ICommand _predecessor;
-
-    TmpTemporalStore(String name, Unit<?> units, ICommand predecessor)
-    {
-      _name = name;
-      _units = units;
-      _predecessor = predecessor;
-
-      _times = new ArrayList<Long>();
-      _values = new ArrayList<Double>();
-
-    }
-
-    void add(long time, double value)
-    {
-      _times.add(time);
-      _values.add(value);
-    }
-    
-    public Document toDocument()
-    {
-      DoubleDataset dataset = (DoubleDataset) DatasetFactory.createFromObject(_values);
-      dataset.setName(_name);
-      
-      // sort out the time axis
-      LongDataset timeData = (LongDataset) DatasetFactory.createFromObject(_times);
-      final AxesMetadata timeAxis = new AxesMetadataImpl();
-      timeAxis.initialize(1);      
-      timeAxis.setAxis(0, timeData);      
-      dataset.addMetadata(timeAxis);
-      
-      NumberDocument res = new NumberDocument(dataset, _predecessor, _units);
-      return res;
-    }
-  }
-
-  private static class TmpStore
-  {
-    private String _name;
-    private Unit<?> _units;
-    private List<Double> _values;
-    private ICommand _predecessor;
-    @SuppressWarnings("unused")
-    private Range _range;
-
-    TmpStore(String name, Unit<?> units, ICommand predecessor)
-    {
-      _name = name;
-      _units = units;
-      _predecessor = predecessor;
-      _values = new ArrayList<Double>();
-    }
-
-    void add(double value)
-    {
-      _values.add(value);
-    }
-
-    public void setRange(Range range)
-    {
-      _range = range;
-    }
-
-    public Document toDocument()
-    {
-      DoubleDataset dataset = (DoubleDataset) DatasetFactory.createFromObject(_values);
-      dataset.setName(_name);
-      NumberDocument res = new NumberDocument(dataset, _predecessor, _units);
-      return res;
-    }
-  }
 
   private static class ObjectColl extends ArrayList<Object>
   {
@@ -175,48 +98,48 @@ public class SampleData
     final StoreGroup list = new StoreGroup("Sample Data");
 
     // // collate our data series
-    TmpStore freq1 =
-        new TmpStore(FREQ_ONE, HERTZ.asType(Frequency.class), null);
-    TmpTemporalStore angle1 =
-        new TmpTemporalStore(ANGLE_ONE, DEGREE_ANGLE.asType(Angle.class), null);
-    TmpTemporalStore speedSeries1 =
-        new TmpTemporalStore(SPEED_ONE, METRE.divide(SECOND).asType(
+    NumberDocumentBuilder freq1 =
+        new NumberDocumentBuilder(FREQ_ONE, HERTZ.asType(Frequency.class), null);
+    IndexedNumberDocumentBuilder angle1 =
+        new IndexedNumberDocumentBuilder(ANGLE_ONE, DEGREE_ANGLE.asType(Angle.class), null);
+    IndexedNumberDocumentBuilder speedSeries1 =
+        new IndexedNumberDocumentBuilder(SPEED_ONE, METRE.divide(SECOND).asType(
             Velocity.class), null);
-    TmpTemporalStore speedSeries2 =
-        new TmpTemporalStore(SPEED_TWO, METRE.divide(SECOND).asType(
+    IndexedNumberDocumentBuilder speedSeries2 =
+        new IndexedNumberDocumentBuilder(SPEED_TWO, METRE.divide(SECOND).asType(
             Velocity.class), null);
-    TmpTemporalStore speedSeries3 =
-        new TmpTemporalStore(SPEED_THREE_LONGER, METRE.divide(SECOND).asType(
+    IndexedNumberDocumentBuilder speedSeries3 =
+        new IndexedNumberDocumentBuilder(SPEED_THREE_LONGER, METRE.divide(SECOND).asType(
             Velocity.class), null);
-    TmpTemporalStore speedEarly1 =
-        new TmpTemporalStore(SPEED_EARLY, METRE.divide(SECOND).asType(
+    IndexedNumberDocumentBuilder speedEarly1 =
+        new IndexedNumberDocumentBuilder(SPEED_EARLY, METRE.divide(SECOND).asType(
             Velocity.class), null);
-    TmpTemporalStore speedIrregular =
-        new TmpTemporalStore(SPEED_IRREGULAR2, METRE.divide(SECOND).asType(
+    IndexedNumberDocumentBuilder speedIrregular =
+        new IndexedNumberDocumentBuilder(SPEED_IRREGULAR2, METRE.divide(SECOND).asType(
             Velocity.class), null);
-    TmpTemporalStore speedSeries4 =
-        new TmpTemporalStore(SPEED_FOUR, METRE.divide(SECOND).asType(
+    IndexedNumberDocumentBuilder speedSeries4 =
+        new IndexedNumberDocumentBuilder(SPEED_FOUR, METRE.divide(SECOND).asType(
             Velocity.class), null);
-    TmpStore length1 =
-        new TmpStore(LENGTH_ONE, METRE.asType(Length.class), null);
-    TmpStore length2 =
-        new TmpStore(LENGTH_TWO, METRE.asType(Length.class), null);
+    NumberDocumentBuilder length1 =
+        new NumberDocumentBuilder(LENGTH_ONE, METRE.asType(Length.class), null);
+    NumberDocumentBuilder length2 =
+        new NumberDocumentBuilder(LENGTH_TWO, METRE.asType(Length.class), null);
     ObjectColl string1 = new ObjectColl(STRING_ONE, null);
     ObjectColl string2 = new ObjectColl(STRING_TWO, null);
-    TmpStore singleton1 =
-        new TmpStore(FLOATING_POINT_FACTOR, Dimensionless.UNIT, null);
-    TmpStore singletonRange1 =
-        new TmpStore(RANGED_SPEED_SINGLETON, METRE.divide(SECOND).asType(
+    NumberDocumentBuilder singleton1 =
+        new NumberDocumentBuilder(FLOATING_POINT_FACTOR, Dimensionless.UNIT, null);
+    NumberDocumentBuilder singletonRange1 =
+        new NumberDocumentBuilder(RANGED_SPEED_SINGLETON, METRE.divide(SECOND).asType(
             Velocity.class), null);
-    TmpStore singletonLength =
-        new TmpStore(LENGTH_SINGLETON, METRE.asType(Length.class), null);
-    TmpTemporalStore timeIntervals =
-        new TmpTemporalStore(TIME_INTERVALS, SECOND.asType(Duration.class),
+    NumberDocumentBuilder singletonLength =
+        new NumberDocumentBuilder(LENGTH_SINGLETON, METRE.asType(Length.class), null);
+    IndexedNumberDocumentBuilder timeIntervals =
+        new IndexedNumberDocumentBuilder(TIME_INTERVALS, SECOND.asType(Duration.class),
             null);
-    TmpStore timeStamps_1 =
-        new TmpStore(TIME_STAMPS_1, SECOND.asType(Duration.class), null);
-    TmpStore timeStamps_2 =
-        new TmpStore(TIME_STAMPS_2, SECOND.asType(Duration.class), null);
+    NumberDocumentBuilder timeStamps_1 =
+        new NumberDocumentBuilder(TIME_STAMPS_1, SECOND.asType(Duration.class), null);
+    NumberDocumentBuilder timeStamps_2 =
+        new NumberDocumentBuilder(TIME_STAMPS_2, SECOND.asType(Duration.class), null);
     // TemporalLocation track1 = new TemporalLocation(TRACK_ONE);
     // TemporalLocation track2 = new TemporalLocation(TRACK_TWO);
 //    Location singleLoc1 = new Location(SINGLETON_LOC_1);
