@@ -1,5 +1,7 @@
 package info.limpet2;
 
+import info.limpet2.Document.InterpMethod;
+
 import javax.measure.unit.Unit;
 
 import org.eclipse.january.DatasetException;
@@ -8,6 +10,7 @@ import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.IndexIterator;
+import org.eclipse.january.dataset.Maths;
 import org.eclipse.january.metadata.AxesMetadata;
 
 public class NumberDocument extends Document
@@ -98,6 +101,14 @@ public class NumberDocument extends Document
     res.append("\n");
     
     return res.toString();
+  }
+
+  public Double interpolateValue(int i, InterpMethod linear)
+  {
+    // TODO implement this
+    // check the index is in range
+    DoubleDataset ds = (DoubleDataset) _dataset;
+    return Maths.interpolate(ds, i);
   }
 
 }
