@@ -59,9 +59,9 @@ public abstract class CoreQuantityOperation
       }
 
       // aah, what about temporal (interpolated) values?
-      if (getATests().allTemporal(selection)
-          && getATests().suitableForTimeInterpolation(selection)
-          || getATests().hasTemporal(selection)
+      if (getATests().allIndexed(selection)
+          && getATests().suitableForIndexedInterpolation(selection)
+          || getATests().hasIndexed(selection)
           && getATests().allEqualLengthOrSingleton(selection))
       {
         addInterpolatedCommands(selection, destination, res, context);
@@ -72,7 +72,7 @@ public abstract class CoreQuantityOperation
     return res;
   }
 
-  protected Document getLongestTemporalCollections(List<Document> selection)
+  protected Document getLongestIndexedCollection(List<Document> selection)
   {
     // find the longest time series.
     Iterator<Document> iter = selection.iterator();
@@ -81,7 +81,7 @@ public abstract class CoreQuantityOperation
     while (iter.hasNext())
     {
       Document doc = iter.next();
-      if (doc.isTemporal())
+      if (doc.isIndexed())
       {
         if (longest == null)
         {

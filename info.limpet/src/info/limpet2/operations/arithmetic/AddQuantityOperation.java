@@ -32,7 +32,7 @@ public class AddQuantityOperation extends
       List<Document> selection, IStoreGroup destination,
       Collection<ICommand> res, IContext context)
   {
-    Document longest = getLongestTemporalCollections(selection);
+    Document longest = getLongestIndexedCollection(selection);
 
     if (longest != null)
     {
@@ -57,7 +57,7 @@ public class AddQuantityOperation extends
   {
     boolean nonEmpty = getATests().nonEmpty(selection);
     boolean allQuantity = getATests().allQuantity(selection);
-    boolean suitableLength = getATests().allTemporal(selection)
+    boolean suitableLength = getATests().allIndexed(selection)
         || getATests().allEqualLengthOrSingleton(selection);
     boolean equalDimensions = getATests().allEqualDimensions(selection);
     boolean equalUnits = getATests().allEqualUnits(selection);

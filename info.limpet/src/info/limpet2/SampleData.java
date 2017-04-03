@@ -40,6 +40,7 @@ import javax.measure.unit.Unit;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.LongDataset;
+import org.eclipse.january.dataset.StringDataset;
 import org.eclipse.january.metadata.AxesMetadata;
 import org.eclipse.january.metadata.internal.AxesMetadataImpl;
 
@@ -149,17 +150,21 @@ public class SampleData
 
   private static class ObjectColl extends ArrayList<Object>
   {
-    private String _name;
+    final private String _name;
+    final private ICommand _predecessor;
 
-    public ObjectColl(String name)
+    public ObjectColl(String name, ICommand predecessor)
     {
       _name = name;
+      _predecessor = predecessor;
     }
 
     public IStoreItem toDocument()
     {
-      // TODO Auto-generated method stub
-      return null;
+      StringDataset dataset = (StringDataset) DatasetFactory.createFromObject(this);
+      dataset.setName(_name);
+      Document res = new Document(dataset, _predecessor);
+      return res;
     }
   }
 
@@ -196,8 +201,8 @@ public class SampleData
         new TmpStore(LENGTH_ONE, METRE.asType(Length.class), null);
     TmpStore length2 =
         new TmpStore(LENGTH_TWO, METRE.asType(Length.class), null);
-    ObjectColl string1 = new ObjectColl(STRING_ONE);
-    ObjectColl string2 = new ObjectColl(STRING_TWO);
+    ObjectColl string1 = new ObjectColl(STRING_ONE, null);
+    ObjectColl string2 = new ObjectColl(STRING_TWO, null);
     TmpStore singleton1 =
         new TmpStore(FLOATING_POINT_FACTOR, Dimensionless.UNIT, null);
     TmpStore singletonRange1 =
@@ -268,7 +273,7 @@ public class SampleData
               + (interval * 2d * Math.random()));
         }
       }
-      if (i > ((double) count) * 0.7)
+      if (i > ((double) count) * 0.6)
       {
         if (Math.random() > 0.3)
         {
@@ -278,9 +283,9 @@ public class SampleData
       }
 
       // sort out the tracks
-      Point2D p1 = calc.calculatePoint(pos1, Math.toRadians(77 - (i * 4)), 554);
+  //    Point2D p1 = calc.calculatePoint(pos1, Math.toRadians(77 - (i * 4)), 554);
 
-      Point2D p2 = calc.calculatePoint(pos2, Math.toRadians(54 + (i * 5)), 133);
+   //   Point2D p2 = calc.calculatePoint(pos2, Math.toRadians(54 + (i * 5)), 133);
 
       // track1.add(thisTime, p1);
       // track2.add(thisTime, p2);
@@ -317,7 +322,7 @@ public class SampleData
 //    Range speedRange1 = new Range(minR1, maxR1);
 //    singletonRange2.setRange(speedRange1);
 //    singletonRange2.add(998);
-    Unit<Velocity> unit = Velocity.UNIT;
+//    Unit<Velocity> unit = Velocity.UNIT;
 
 //    IQuantityCollection<Velocity> singletonSpeed =
 //        new QuantityCollection<Velocity>("Ranged Speed", null, Velocity.UNIT);

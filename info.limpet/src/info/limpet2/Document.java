@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.metadata.AxesMetadata;
 
 public class Document implements IStoreItem
 {
@@ -24,7 +25,7 @@ public class Document implements IStoreItem
       new ArrayList<IChangeListener>();
   private IStoreGroup _parent;
   final private UUID _uuid;
-  private List<IChangeListener> _dependents = new ArrayList<IChangeListener>();
+  private List<ICommand> _dependents = new ArrayList<ICommand>();
 
   public Document(IDataset dataset, ICommand predecessor)
   {
@@ -98,12 +99,13 @@ public class Document implements IStoreItem
     return null;
   }
 
-  public boolean isTemporal()
+  public boolean isIndexed()
   {
     // is there an axis?
+    final AxesMetadata am = _dataset.getFirstMetadata(AxesMetadata.class);
     
     // is it a time axis?
-    return false;
+    return am != null;
   }
 
   public boolean isQuantity()
@@ -116,6 +118,11 @@ public class Document implements IStoreItem
     _dependents .add(command);
   }
 
+  public List<ICommand> getDependents()
+  {
+    return _dependents;
+  }
+  
   /** temporarily use this - until we're confident about replacing child Dataset objects
    * 
    */

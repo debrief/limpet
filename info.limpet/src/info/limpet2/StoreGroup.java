@@ -18,6 +18,20 @@ public class StoreGroup extends LinkedList<IStoreItem> implements IStoreGroup
     _name = name;
     _uuid = UUID.randomUUID();
   }
+  
+  
+
+  @Override
+  public boolean add(IStoreItem e)
+  {
+    // tell it who's the daddy
+    e.setParent(this);
+    
+    // actually store it.
+    return super.add(e);
+  }
+
+
 
   @Override
   public IStoreGroup getParent()

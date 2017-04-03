@@ -1,7 +1,16 @@
-package info.limpet2;
+package info.limpet.data2;
 
 import static javax.measure.unit.SI.METRE;
-
+import info.limpet2.Document;
+import info.limpet2.ICommand;
+import info.limpet2.IContext;
+import info.limpet2.IOperation;
+import info.limpet2.IStoreGroup;
+import info.limpet2.IStoreItem;
+import info.limpet2.MockContext;
+import info.limpet2.NumberDocument;
+import info.limpet2.SampleData;
+import info.limpet2.StoreGroup;
 import info.limpet2.operations.arithmetic.AddQuantityOperation;
 
 import java.util.ArrayList;
@@ -28,16 +37,14 @@ public class TestNewStrategy extends TestCase
     assertNotNull("failed to create", ds);
     NumberDocument nd = new NumberDocument(ds, null, METRE.asType(Length.class));
     
-    assertEquals("correct name", D_NAME, nd.getName());
-    
+    assertEquals("correct name", D_NAME, nd.getName());    
     assertEquals("correct units", "m", nd.getUnits().toString());
-    assertEquals("correct dimension", "[L]", nd.getUnits().getDimension().toString());
-    
+    assertEquals("correct dimension", "[L]", nd.getUnits().getDimension().toString());    
   }
   
   public void testAddingDocuments()
   {
-    StoreGroup data = new SampleData().getData(12);
+    StoreGroup data = new SampleData().getData(15);
     
     IStoreItem doc1 = data.get(SampleData.SPEED_ONE);
     IStoreItem doc2 = data.get(SampleData.SPEED_TWO);
@@ -65,12 +72,14 @@ public class TestNewStrategy extends TestCase
     
     System.out.println(output);
     
+    assertEquals("correct name", "Sum of Speed One Time + Speed Two Time", output.getName());
+    assertEquals("correct parent", "Destination", output.getParent().getName());
+    
   }
   
-  public void testSampleData()
+  public void testGenerateSampleData()
   {
-    @SuppressWarnings("unused")
     StoreGroup data = new SampleData().getData(10);
-    
+    assertEquals("top level items created", 13, data.size());
   }
 }

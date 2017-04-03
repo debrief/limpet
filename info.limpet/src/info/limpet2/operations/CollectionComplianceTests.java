@@ -117,7 +117,7 @@ public class CollectionComplianceTests
    * @param selection
    * @return true/false
    */
-  public boolean allNonTemporal(List<IStoreItem> selection)
+  public boolean allNonIndexed(List<IStoreItem> selection)
   {
     // are they all temporal?
     boolean allValid = true;
@@ -128,7 +128,7 @@ public class CollectionComplianceTests
       if (thisI instanceof Document)
       {
         Document thisC = (Document) thisI;
-        if (thisC.isTemporal())
+        if (thisC.isIndexed())
         {
           // oops, no
           allValid = false;
@@ -184,7 +184,7 @@ public class CollectionComplianceTests
    * @param selection
    * @return
    */
-  public boolean suitableForTimeInterpolation(List<Document> selection)
+  public boolean suitableForIndexedInterpolation(List<Document> selection)
   {
     // are suitable
     boolean suitable = selection.size() >= 2;
@@ -200,7 +200,7 @@ public class CollectionComplianceTests
         Document thisC = (Document) thisI;
         if (thisC.isQuantity() || thisC instanceof ILocations)
         {
-          if (thisC.isTemporal())
+          if (thisC.isIndexed())
           {
             // TODO: access the timings, check if they match
             // IBaseTemporalCollection tq = (IBaseTemporalCollection) thisC;
@@ -373,12 +373,12 @@ public class CollectionComplianceTests
   }
 
   /**
-   * check if the series are all time series datasets (temporal)
+   * check if the list has at least on indexed dataset
    * 
    * @param selection
    * @return true/false
    */
-  public boolean hasTemporal(List<Document> selection)
+  public boolean hasIndexed(List<Document> selection)
   {
     // are they all temporal?
     boolean allValid = false;
@@ -389,7 +389,7 @@ public class CollectionComplianceTests
       if (thisI instanceof Document)
       {
         Document thisC = (Document) thisI;
-        if (thisC.isTemporal())
+        if (thisC.isIndexed())
         {
           allValid = true;
           break;
@@ -400,12 +400,12 @@ public class CollectionComplianceTests
   }
 
   /**
-   * check if the series are all time series datasets (temporal)
+   * check if the series all have indixes
    * 
    * @param selection
    * @return true/false
    */
-  public boolean allTemporal(List<Document> selection)
+  public boolean allIndexed(List<Document> selection)
   {
     // are they all temporal?
     boolean allValid = true;
@@ -416,7 +416,7 @@ public class CollectionComplianceTests
       if (thisI instanceof Document)
       {
         Document thisC = (Document) thisI;
-        if (!thisC.isTemporal())
+        if (!thisC.isIndexed())
         {
           // oops, no
           allValid = false;
@@ -439,7 +439,7 @@ public class CollectionComplianceTests
    * @param selection
    * @return true/false
    */
-  public boolean allTemporalOrSingleton(List<IStoreItem> selection)
+  public boolean allIndexedOrSingleton(List<IStoreItem> selection)
   {
     // are they all temporal?
     boolean allValid = false;
@@ -450,7 +450,7 @@ public class CollectionComplianceTests
       if (thisI instanceof Document)
       {
         Document thisC = (Document) thisI;
-        if (thisC.isTemporal())
+        if (thisC.isIndexed())
         {
           allValid = true;
         }
@@ -966,7 +966,7 @@ public class CollectionComplianceTests
     return longest;
   }
 
-  public Document getLongestTemporalCollections(List<IStoreItem> selection)
+  public Document getLongestIndexedCollection(List<IStoreItem> selection)
   {
     // find the longest time series.
     Iterator<IStoreItem> iter = selection.iterator();
@@ -978,7 +978,7 @@ public class CollectionComplianceTests
       if (thisC instanceof Document)
       {
         Document thisD = (Document) thisC;
-        if (thisD.isTemporal()
+        if (thisD.isIndexed()
             && (thisD.isQuantity() || thisC instanceof ILocations))
         {
           // TODO: sort out the time stuff
@@ -1032,12 +1032,12 @@ public class CollectionComplianceTests
   }
 
   /**
-   * find the time period for overlapping data
+   * find the indexed range for overlapping data
    * 
    * @param items
    * @return
    */
-  public TimePeriod getBoundingTime(final Collection<Document> items)
+  public TimePeriod getBoundingRange(final Collection<Document> items)
   {
     TimePeriod res = null;
 
@@ -1048,7 +1048,7 @@ public class CollectionComplianceTests
 
       // allow for empty value. sometimes our logic allows null objects for some
       // data types
-      if (iCollection != null && iCollection.isTemporal())
+      if (iCollection != null && iCollection.isIndexed())
       {
         // TODO: sort out this time axis
         // IBaseTemporalCollection timeC = (IBaseTemporalCollection) iCollection;
@@ -1072,8 +1072,8 @@ public class CollectionComplianceTests
   }
 
   /**
-   * find the best collection to use as a time-base. Which collection has the most values within the
-   * specified time period?
+   * find the best collection to use as a interpolation-base. Which collection has the most values within the
+   * specified range?
    * 
    * @param period
    *          (optional) period in which we count valid times
@@ -1094,7 +1094,7 @@ public class CollectionComplianceTests
 
       // occasionally we may store a null dataset, since it is optional in some
       // circumstances
-      if (iCollection != null && iCollection.isTemporal())
+      if (iCollection != null && iCollection.isIndexed())
       {
         // TODO: implement these bits
         // IBaseTemporalCollection timeC = (IBaseTemporalCollection) iCollection;
@@ -1121,7 +1121,7 @@ public class CollectionComplianceTests
   }
 
   /**
-   * retrieve the value at the specified time (even if it's a non-temporal collection)
+   * retrieve the value at the specified index (even if it's a non-temporal collection)
    * 
    * @param iCollection
    *          set of locations to use
@@ -1150,7 +1150,7 @@ public class CollectionComplianceTests
         return 0;
       }
 
-      if (iCollection.isTemporal())
+      if (iCollection.isIndexed())
       {
         // TODO: implement this
         // TemporalQuantityCollection<?> tQ =
