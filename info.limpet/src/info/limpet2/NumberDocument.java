@@ -1,15 +1,15 @@
 package info.limpet2;
 
-import info.limpet2.Document.InterpMethod;
-
 import javax.measure.unit.Unit;
 
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.IndexIterator;
+import org.eclipse.january.dataset.LongDataset;
 import org.eclipse.january.dataset.Maths;
 import org.eclipse.january.metadata.AxesMetadata;
 
@@ -103,12 +103,40 @@ public class NumberDocument extends Document
     return res.toString();
   }
 
-  public Double interpolateValue(int i, InterpMethod linear)
+  public Double interpolateValue(long i, InterpMethod linear)
   {
-    // TODO implement this
-    // check the index is in range
-    DoubleDataset ds = (DoubleDataset) _dataset;
-    return Maths.interpolate(ds, i);
+    Double res = null;
+    
+    // do we have axes?
+    AxesMetadata index = _dataset.getFirstMetadata(AxesMetadata.class);
+    ILazyDataset indexDataLazy = index.getAxes()[0];
+    try
+    {
+      Dataset indexData = DatasetUtils.sliceAndConvertLazyDataset(indexDataLazy);
+      
+      // check the target index is within the range      
+      double lowerIndex = indexData.getDouble(0);
+      int indexSize = indexData.getSize();
+      double upperVal = indexData.getDouble(indexSize - 1);
+      if(i >= lowerIndex && i <= upperVal)
+      {
+        // ok, in range
+        DoubleDataset ds = (DoubleDataset) _dataset;
+        LongDataset indexes = (LongDataset) DatasetFactory.createFromObject(new Long[]{i});
+        
+        // perform the interpolation
+        Dataset dOut = Maths.interpolate(indexData, ds, indexes, 0, 0);
+        
+        // get the single matching value out
+        res = dOut.getDouble(0);
+      }
+    }
+    catch (DatasetException e)
+    {
+      e.printStackTrace();
+    }
+    
+    return res;
   }
 
 }
