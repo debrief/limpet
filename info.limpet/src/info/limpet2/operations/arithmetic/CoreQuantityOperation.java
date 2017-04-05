@@ -22,6 +22,7 @@ import info.limpet2.IStoreItem;
 import info.limpet2.NumberDocument;
 import info.limpet2.operations.AbstractCommand;
 import info.limpet2.operations.CollectionComplianceTests;
+import info.limpet2.operations.arithmetic.InterpolatedMaths.IOperationPerformer;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,9 +31,11 @@ import java.util.List;
 
 import javax.measure.unit.Unit;
 
+import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.Comparisons;
 import org.eclipse.january.dataset.Comparisons.Monotonicity;
 import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.Maths;
@@ -143,6 +146,7 @@ public abstract class CoreQuantityOperation
   public abstract class CoreQuantityCommand extends AbstractCommand
   {
 
+    @SuppressWarnings("unused")
     private final Document timeProvider;
 
     public CoreQuantityCommand(String title, String description,
@@ -195,7 +199,7 @@ public abstract class CoreQuantityOperation
 
       // look for axes metadata
       final AxesMetadata axis1 = in1.getFirstMetadata(AxesMetadata.class);
-      
+
       // keep track of the indices to use in the output
       final Dataset outputIndices;
 
@@ -243,10 +247,9 @@ public abstract class CoreQuantityOperation
 
               // fake index
               outputIndices = (Dataset) axis1.getAxes()[0];
-              
+
               // ok, do an interpolated add operation.
               doInterp = true;
-              
 
             }
             else
@@ -267,8 +270,35 @@ public abstract class CoreQuantityOperation
 
       if (doInterp)
       {
-        res = null;
-        // TODO: do an interpolated operation
+        final InterpolatedMaths.IOperationPerformer doAdd = getOperation();            
+
+        Dataset ind1 = null;
+        Dataset ind2 = null;
+        // extract the datasets
+        try
+        {
+          // load the datasets
+          ind1 = DatasetUtils.sliceAndConvertLazyDataset(in1);
+          ind2 = DatasetUtils.sliceAndConvertLazyDataset(in2);
+        }
+        catch (DatasetException e)
+        {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
+        
+        if(ind2 != null)
+        {
+          // apply our operation to the two datasets
+          res =
+              InterpolatedMaths.performWithInterpolation(ind1, ind2, null,
+                  doAdd);
+        }
+        else
+        {
+          res =null;
+        }
+
       }
       else if (getATests().allEqualLengthOrSingleton(getInputs()))
       {
@@ -277,6 +307,15 @@ public abstract class CoreQuantityOperation
         // ok, can't interpolate. are they the same size?
         // ok, just do plain add
         res = Maths.add(in1, in2);
+        
+        // if there are indices, store them
+        if (outputIndices != null)
+        {
+          AxesMetadata am = new AxesMetadataImpl();
+          am.initialize(1);
+          am.setAxis(0, outputIndices);
+          res.addMetadata(am);
+        }
       }
       else
       {
@@ -287,19 +326,8 @@ public abstract class CoreQuantityOperation
       {
         // store the name
         res.setName("Sum of " + in1.getName() + " + " + in2.getName());
-        
-        // if there are indices, store them
-        if(outputIndices != null)
-        {
-          AxesMetadata am = new AxesMetadataImpl();
-          am.initialize(1);
-          am.setAxis(0, outputIndices);
-          res.addMetadata(am);
-        }
       }
 
-      
-      
       // and fire out the update
       for (Document output : getOutputs())
       {
@@ -309,6 +337,8 @@ public abstract class CoreQuantityOperation
       // done
       return res;
     }
+
+    abstract protected  IOperationPerformer getOperation();
 
     protected int numElements()
     {

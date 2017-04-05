@@ -19,9 +19,13 @@ import info.limpet2.ICommand;
 import info.limpet2.IContext;
 import info.limpet2.IOperation;
 import info.limpet2.IStoreGroup;
+import info.limpet2.operations.arithmetic.InterpolatedMaths.IOperationPerformer;
 
 import java.util.Collection;
 import java.util.List;
+
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.Maths;
 
 public class AddQuantityOperation extends
     CoreQuantityOperation implements IOperation
@@ -163,6 +167,19 @@ public class AddQuantityOperation extends
       return getContext().getInput("Add datasets",
           "Please provide a name for the dataset",
           "Sum of " + super.getSubjectList());
+    }
+
+    @Override
+    protected IOperationPerformer getOperation()
+    {
+      return new InterpolatedMaths.IOperationPerformer()
+      {
+        @Override
+        public Dataset perform(Dataset a, Dataset b, Dataset o)
+        {
+          return Maths.add(a, b, o);
+        }
+      };
     }
   }
 

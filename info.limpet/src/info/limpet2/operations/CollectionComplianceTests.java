@@ -36,6 +36,12 @@ import javax.measure.unit.Dimension;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 
+import org.eclipse.january.DatasetException;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.ILazyDataset;
+import org.eclipse.january.metadata.AxesMetadata;
+
 public class CollectionComplianceTests
 {
 
@@ -202,25 +208,38 @@ public class CollectionComplianceTests
         {
           if (thisC.isIndexed())
           {
-            // TODO: access the timings, check if they match
-            // IBaseTemporalCollection tq = (IBaseTemporalCollection) thisC;
-            // long thisStart = tq.start();
-            // long thisEnd = tq.finish();
-            //
-            // if (startT == null)
-            // {
-            // startT = thisStart;
-            // endT = thisEnd;
-            // }
-            // else
-            // {
-            // // check the overlap
-            // if (thisStart > endT || thisEnd < startT)
-            // {
-            // suitable = false;
-            // break;
-            // }
-            // }
+            NumberDocument nd = (NumberDocument) thisC;
+            AxesMetadata axes =
+                nd.getDataset().getFirstMetadata(AxesMetadata.class);
+            ILazyDataset axesDatasetLazy = axes.getAxes()[0];
+            Dataset axesDataset;
+            try
+            {
+              axesDataset =
+                  DatasetUtils.sliceAndConvertLazyDataset(axesDatasetLazy);
+              long thisStart = axesDataset.getLong(0);
+              long thisEnd = axesDataset.getLong(axesDataset.getSize() - 1);
+
+              if (startT == null)
+              {
+                startT = thisStart;
+                endT = thisEnd;
+              }
+              else
+              {
+                // check the overlap
+                if (thisStart > endT || thisEnd < startT)
+                {
+                  suitable = false;
+                  break;
+                }
+              }
+            }
+            catch (DatasetException e)
+            {
+              // TODO Auto-generated catch block
+              e.printStackTrace();
+            }
           }
         }
         else
@@ -1072,8 +1091,8 @@ public class CollectionComplianceTests
   }
 
   /**
-   * find the best collection to use as a interpolation-base. Which collection has the most values within the
-   * specified range?
+   * find the best collection to use as a interpolation-base. Which collection has the most values
+   * within the specified range?
    * 
    * @param period
    *          (optional) period in which we count valid times
