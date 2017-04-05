@@ -38,11 +38,7 @@ import javax.measure.quantity.Velocity;
 import javax.measure.unit.Unit;
 
 import org.eclipse.january.dataset.DatasetFactory;
-import org.eclipse.january.dataset.DoubleDataset;
-import org.eclipse.january.dataset.LongDataset;
 import org.eclipse.january.dataset.StringDataset;
-import org.eclipse.january.metadata.AxesMetadata;
-import org.eclipse.january.metadata.internal.AxesMetadataImpl;
 
 public class SampleData
 {
@@ -73,6 +69,11 @@ public class SampleData
 
   private static class ObjectColl extends ArrayList<Object>
   {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+    
     final private String _name;
     final private ICommand _predecessor;
 
@@ -149,7 +150,9 @@ public class SampleData
 
     // get ready for the track generation
     final IGeoCalculator calc = GeoSupport.getCalculator();
+    @SuppressWarnings("unused")
     Point2D pos1 = calc.createPoint(-4, 55.8);
+    @SuppressWarnings("unused")
     Point2D pos2 = calc.createPoint(-4.2, 54.9);
 
     final long interval = 500L * 60;

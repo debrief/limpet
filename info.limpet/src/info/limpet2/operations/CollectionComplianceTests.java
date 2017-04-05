@@ -1100,6 +1100,7 @@ public class CollectionComplianceTests
    *          list of datasets we're examining
    * @return most suited collection
    */
+  @SuppressWarnings("unused")
   public Document
       getOptimalTimes(TimePeriod period, Collection<Document> items)
   {
@@ -1148,7 +1149,7 @@ public class CollectionComplianceTests
    *          time we're need a location for
    * @return
    */
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({"unchecked", "unused"})
   public double valueAt(Document iCollection, long thisTime,
       Unit<?> requiredUnits)
   {
