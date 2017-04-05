@@ -17,6 +17,7 @@ package info.limpet2.operations.arithmetic;
 import info.limpet2.Document;
 import info.limpet2.ICommand;
 import info.limpet2.IContext;
+import info.limpet2.IOperation;
 import info.limpet2.IStoreGroup;
 import info.limpet2.NumberDocument;
 import info.limpet2.operations.CollectionComplianceTests;
@@ -39,19 +40,19 @@ import org.eclipse.january.dataset.Maths;
 import org.eclipse.january.metadata.AxesMetadata;
 import org.eclipse.january.metadata.internal.AxesMetadataImpl;
 
-public abstract class BinaryQuantityOperation 
+public abstract class BinaryQuantityOperation implements IOperation
 {
 
   private final CollectionComplianceTests aTests =
       new CollectionComplianceTests();
 
+  @Override
   public Collection<ICommand> actionsFor(List<Document> selection,
       IStoreGroup destination, IContext context)
   {
     Collection<ICommand> res = new ArrayList<ICommand>();
     if (appliesTo(selection))
     {
-
       // so, do we do our indexed commands?
       if (getATests().allEqualLengthOrSingleton(selection))
       {
@@ -66,9 +67,7 @@ public abstract class BinaryQuantityOperation
       {
         addInterpolatedCommands(selection, destination, res, context);
       }
-
     }
-
     return res;
   }
 
@@ -162,10 +161,10 @@ public abstract class BinaryQuantityOperation
       this.timeProvider = timeProvider;
     }
 
-
     /**
      * wrap the actual operation. We're doing this since we need to separate it from the core
-     * "execute" operation in order to support dynamic updates
+     * "execute" operation in order to support dynamic updates. That is, we need to create it when
+     * run initially, then re-generate it on data updates
      * 
      * @param unit
      *          the units to use
@@ -310,22 +309,24 @@ public abstract class BinaryQuantityOperation
       return res;
     }
 
-    /** provide class that can perform required operation
+    /**
+     * provide class that can perform required operation
      * 
      * @return
      */
     abstract protected IOperationPerformer getOperation();
 
+    @Override
     protected Unit<?> getUnits()
     {
       // get the unit
       NumberDocument first = (NumberDocument) getInputs().get(0);
       NumberDocument second = (NumberDocument) getInputs().get(1);
-      
+
       return getBinaryOutputUnit(first.getUnits(), second.getUnits());
     }
 
-
+    @Override
     protected String generateName()
     {
       // get the unit
@@ -335,7 +336,8 @@ public abstract class BinaryQuantityOperation
       return getBinaryNameFor(first.getName(), second.getName());
     }
 
-    /** determine the units of the product
+    /**
+     * determine the units of the product
      * 
      * @param first
      * @param second
@@ -343,8 +345,9 @@ public abstract class BinaryQuantityOperation
      */
     abstract protected Unit<?>
         getBinaryOutputUnit(Unit<?> first, Unit<?> second);
-    
-    /** provide the name for the product dataset
+
+    /**
+     * provide the name for the product dataset
      * 
      * @param name
      * @param name2

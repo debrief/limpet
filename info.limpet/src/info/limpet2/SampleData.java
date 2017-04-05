@@ -18,7 +18,7 @@ import static javax.measure.unit.SI.HERTZ;
 import static javax.measure.unit.SI.METRE;
 import static javax.measure.unit.SI.RADIAN;
 import static javax.measure.unit.SI.SECOND;
-import info.limpet2.operations.arithmetic.AddQuantityOperation;
+import info.limpet2.operations.arithmetic.simple.AddQuantityOperation;
 import info.limpet2.operations.spatial.GeoSupport;
 import info.limpet2.operations.spatial.IGeoCalculator;
 

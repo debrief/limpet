@@ -17,10 +17,10 @@ package info.limpet2.operations.arithmetic;
 import info.limpet2.Document;
 import info.limpet2.ICommand;
 import info.limpet2.IContext;
+import info.limpet2.IOperation;
 import info.limpet2.IStoreGroup;
 import info.limpet2.NumberDocument;
 import info.limpet2.operations.CollectionComplianceTests;
-import info.limpet2.operations.arithmetic.InterpolatedMaths.IOperationPerformer;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -29,19 +29,28 @@ import java.util.List;
 import javax.measure.unit.Unit;
 
 import org.eclipse.january.DatasetException;
-import org.eclipse.january.dataset.Comparisons;
-import org.eclipse.january.dataset.Comparisons.Monotonicity;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
-import org.eclipse.january.dataset.Maths;
+import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.metadata.AxesMetadata;
 import org.eclipse.january.metadata.internal.AxesMetadataImpl;
 
-public abstract class UnaryQuantityOperation 
+public abstract class UnaryQuantityOperation implements IOperation
 {
+  private final String _opName;
 
-  private final CollectionComplianceTests aTests =
+  public UnaryQuantityOperation(String opName)
+  {
+    _opName = opName;
+  }
+
+  public String getName()
+  {
+    return _opName;
+  }
+
+  protected final CollectionComplianceTests aTests =
       new CollectionComplianceTests();
 
   public Collection<ICommand> actionsFor(List<Document> selection,
@@ -50,21 +59,11 @@ public abstract class UnaryQuantityOperation
     Collection<ICommand> res = new ArrayList<ICommand>();
     if (appliesTo(selection))
     {
-
-      // so, do we do our indexed commands?
-      if (getATests().allEqualLengthOrSingleton(selection))
-      {
-        addIndexedCommands(selection, destination, res, context);
-      }
-
-      // aah, what about temporal (interpolated) values?
-      if (getATests().allIndexed(selection)
-          && getATests().suitableForIndexedInterpolation(selection)
-          || getATests().hasIndexed(selection)
-          && getATests().allEqualLengthOrSingleton(selection))
-      {
-        addInterpolatedCommands(selection, destination, res, context);
-      }
+      ICommand newC =
+          new UnaryQuantityCommand("Math - " + _opName, "description here",
+              destination, selection, context);
+      
+      res.add(newC);
     }
 
     return res;
@@ -79,27 +78,22 @@ public abstract class UnaryQuantityOperation
   protected abstract boolean appliesTo(List<Document> selection);
 
   /**
-   * produce any new commands for this s election
+   * determine the units of the product
    * 
-   * @param selection
-   *          current selection
-   * @param destination
-   *          where the results will end up
-   * @param commands
-   *          the list of commands
+   * @param first
+   * @param second
+   * @return
    */
-  protected abstract void addIndexedCommands(List<Document> selection,
-      IStoreGroup destination, Collection<ICommand> commands, IContext context);
+  abstract protected Unit<?> getUnaryOutputUnit(Unit<?> first);
 
   /**
-   * add any commands that require temporal interpolation
+   * provide the name for the product dataset
    * 
-   * @param selection
-   * @param destination
-   * @param res
+   * @param name
+   * @param name2
+   * @return
    */
-  protected abstract void addInterpolatedCommands(List<Document> selection,
-      IStoreGroup destination, Collection<ICommand> res, IContext context);
+  abstract protected String getUnaryNameFor(String name);
 
   public CollectionComplianceTests getATests()
   {
@@ -107,31 +101,26 @@ public abstract class UnaryQuantityOperation
   }
 
   /**
+   * perform the operation on the subject dataset
+   * 
+   * @param input
+   * @return
+   */
+  abstract public Dataset calculate(Dataset input);
+
+  /**
    * the command that actually produces data
    * 
    * @author ian
    * 
    */
-  public abstract class UnaryQuantityCommand extends CoreQuantityCommand
+  public class UnaryQuantityCommand extends CoreQuantityCommand
   {
 
-    @SuppressWarnings("unused")
-    private final Document timeProvider;
-
     public UnaryQuantityCommand(String title, String description,
-        IStoreGroup store, boolean canUndo, boolean canRedo,
-        List<Document> inputs, IContext context)
+        IStoreGroup store, List<Document> inputs, IContext context)
     {
-      this(title, description, store, canUndo, canRedo, inputs, null, context);
-    }
-
-    public UnaryQuantityCommand(String title, String description,
-        IStoreGroup store, boolean canUndo, boolean canRedo,
-        List<Document> inputs, Document timeProvider, IContext context)
-    {
-      super(title, description, store, canUndo, canRedo, inputs, context);
-
-      this.timeProvider = timeProvider;
+      super(title, description, store, true, true, inputs, context);
     }
 
     /**
@@ -145,130 +134,43 @@ public abstract class UnaryQuantityOperation
      */
     protected IDataset performCalc()
     {
-      final IDataset res;
-
       final IDataset in1 = getInputs().get(0).getDataset();
-      final IDataset in2 = getInputs().get(1).getDataset();
+      Dataset in1d;
+      try
+      {
+        in1d = DatasetUtils.sliceAndConvertLazyDataset(in1);
+      }
+      catch (DatasetException e)
+      {
+        throw new IllegalArgumentException("Unable to load subject dataset:"
+            + in1.getName());
+      }
+
+      final Dataset res = calculate(in1d);
 
       // look for axes metadata
       final AxesMetadata axis1 = in1.getFirstMetadata(AxesMetadata.class);
 
-      // keep track of the indices to use in the output
-      final Dataset outputIndices;
-
-      AxesMetadata axis2 = null;
-
-      final boolean doInterp;
-
+      // if there are indices, store them
       if (axis1 != null)
       {
-        // ok, is that axis monotonic?
-        final Monotonicity axis1Mono =
-            Comparisons.findMonotonicity(axis1.getAxes()[0]);
-
-        if (axis1Mono.equals(Monotonicity.NOT_ORDERED))
-        {
-          // ok, not ordered. we can't use it
-          doInterp = false;
-          outputIndices = null;
-        }
-        else
-        {
-          axis2 = in2.getFirstMetadata(AxesMetadata.class);
-
-          final Monotonicity axis2Mono =
-              Comparisons.findMonotonicity(axis2.getAxes()[0]);
-
-          if (axis1.getAxes()[0].equals(axis2.getAxes()[0]))
-          {
-            // identical indexes, we don't need to intepolate
-            doInterp = false;
-            outputIndices = (Dataset) axis1.getAxes()[0];
-          }
-          else if (axis2Mono.equals(Monotonicity.NOT_ORDERED))
-          {
-            // ok, not ordered. we can't use it
-            throw new IllegalArgumentException("Axes must be ordered");
-          }
-          else
-          {
-            // ok, are they in the same direction?
-            if (axis1Mono.equals(axis2Mono))
-            {
-              // fake index
-              outputIndices = (Dataset) axis1.getAxes()[0];
-
-              // ok, do an interpolated add operation.
-              doInterp = true;
-
-            }
-            else
-            {
-              // wrong directions, can't do
-              doInterp = false;
-              outputIndices = null;
-            }
-
-          }
-        }
-      }
-      else
-      {
-        doInterp = false;
-        outputIndices = null;
-      }
-
-      if (doInterp)
-      {
-        final InterpolatedMaths.IOperationPerformer doAdd = getOperation();
-
-        Dataset ind1 = null;
-        Dataset ind2 = null;
-        // extract the datasets
+        AxesMetadata am = new AxesMetadataImpl();
+        // keep track of the indices to use in the output
+        final ILazyDataset outputIndicesLazy = axis1.getAxes()[0];
+        Dataset outputIndices = null;
         try
         {
-          // load the datasets
-          ind1 = DatasetUtils.sliceAndConvertLazyDataset(in1);
-          ind2 = DatasetUtils.sliceAndConvertLazyDataset(in2);
+          outputIndices =
+              DatasetUtils.sliceAndConvertLazyDataset(outputIndicesLazy);
         }
         catch (DatasetException e)
         {
-          e.printStackTrace();
+          throw new IllegalArgumentException("Unable to load axis for dataset:"
+              + in1.getName());
         }
-
-        if (ind2 != null)
-        {
-          // apply our operation to the two datasets
-          res =
-              InterpolatedMaths.performWithInterpolation(ind1, ind2, null,
-                  doAdd);
-        }
-        else
-        {
-          res = null;
-        }
-
-      }
-      else if (getATests().allEqualLengthOrSingleton(getInputs()))
-      {
-        // ok, is one a singleton?
-
-        // ok, can't interpolate. are they the same size?
-        // ok, just do plain add
-        res = Maths.add(in1, in2);
-
-        // if there are indices, store them
-        if (outputIndices != null)
-        {
-          AxesMetadata am = new AxesMetadataImpl();
-          am.initialize(1);
-          am.setAxis(0, outputIndices);
-          res.addMetadata(am);
-        }
-      }
-      else
-      {
-        res = null;
+        am.initialize(1);
+        am.setAxis(0, outputIndices);
+        res.addMetadata(am);
       }
 
       // and fire out the update
@@ -281,20 +183,13 @@ public abstract class UnaryQuantityOperation
       return res;
     }
 
-    /** provide class that can perform required operation
-     * 
-     * @return
-     */
-    abstract protected IOperationPerformer getOperation();
-
     protected Unit<?> getUnits()
     {
       // get the unit
       NumberDocument first = (NumberDocument) getInputs().get(0);
-      
+
       return getUnaryOutputUnit(first.getUnits());
     }
-
 
     protected String generateName()
     {
@@ -304,22 +199,6 @@ public abstract class UnaryQuantityOperation
       return getUnaryNameFor(first.getName());
     }
 
-    /** determine the units of the product
-     * 
-     * @param first
-     * @param second
-     * @return
-     */
-    abstract protected Unit<?>
-        getUnaryOutputUnit(Unit<?> first);
-    
-    /** provide the name for the product dataset
-     * 
-     * @param name
-     * @param name2
-     * @return
-     */
-    abstract protected String getUnaryNameFor(String name);
   }
 
 }

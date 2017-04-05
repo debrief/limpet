@@ -36,7 +36,7 @@ public class NumberDocumentBuilder
     _range = range;
   }
 
-  public Document toDocument()
+  public NumberDocument toDocument()
   {
     DoubleDataset dataset = (DoubleDataset) DatasetFactory.createFromObject(_values);
     dataset.setName(_name);

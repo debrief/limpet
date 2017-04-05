@@ -12,13 +12,14 @@
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  *****************************************************************************/
-package info.limpet2.operations.arithmetic;
+package info.limpet2.operations.arithmetic.simple;
 
 import info.limpet2.Document;
 import info.limpet2.ICommand;
 import info.limpet2.IContext;
-import info.limpet2.IOperation;
 import info.limpet2.IStoreGroup;
+import info.limpet2.operations.arithmetic.BinaryQuantityOperation;
+import info.limpet2.operations.arithmetic.InterpolatedMaths;
 import info.limpet2.operations.arithmetic.InterpolatedMaths.IOperationPerformer;
 
 import java.util.Collection;
@@ -29,8 +30,7 @@ import javax.measure.unit.Unit;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.Maths;
 
-public class AddQuantityOperation extends BinaryQuantityOperation implements
-    IOperation
+public class MultiplyQuantityOperation extends BinaryQuantityOperation
 {
 
   @Override
@@ -43,7 +43,7 @@ public class AddQuantityOperation extends BinaryQuantityOperation implements
     {
       ICommand newC =
           new AddQuantityValues(
-              "Add numeric values in provided series (interpolated)",
+              "Multiply numeric values in provided series (interpolated)",
               selection, destination, longest, context);
       res.add(newC);
     }
@@ -54,7 +54,7 @@ public class AddQuantityOperation extends BinaryQuantityOperation implements
   {
     ICommand newC =
         new AddQuantityValues(
-            "Add numeric values in provided series (indexed)", selection,
+            "Multiple numeric values in provided series (indexed)", selection,
             destination, context);
     res.add(newC);
   }
@@ -84,7 +84,7 @@ public class AddQuantityOperation extends BinaryQuantityOperation implements
     public AddQuantityValues(String name, List<Document> selection,
         IStoreGroup destination, Document timeProvider, IContext context)
     {
-      super(name, "Add datasets", destination, false, false, selection,
+      super(name, "Multiply datasets", destination, false, false, selection,
           timeProvider, context);
     }
 
@@ -96,7 +96,7 @@ public class AddQuantityOperation extends BinaryQuantityOperation implements
         @Override
         public Dataset perform(Dataset a, Dataset b, Dataset o)
         {
-          return Maths.add(a, b, o);
+          return Maths.multiply(a, b, o);
         }
       };
     }
@@ -104,8 +104,8 @@ public class AddQuantityOperation extends BinaryQuantityOperation implements
     @Override
     protected Unit<?> getBinaryOutputUnit(Unit<?> first, Unit<?> second)
     {
-      // addition doesn't modify units, just use first ones
-      return first;
+      // return product of units
+      return first.times(second);
     }
 
     @Override

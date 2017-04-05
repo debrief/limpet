@@ -11,7 +11,7 @@ import info.limpet2.MockContext;
 import info.limpet2.NumberDocument;
 import info.limpet2.SampleData;
 import info.limpet2.StoreGroup;
-import info.limpet2.operations.arithmetic.AddQuantityOperation;
+import info.limpet2.operations.arithmetic.simple.AddQuantityOperation;
 
 import java.util.ArrayList;
 import java.util.Collection;

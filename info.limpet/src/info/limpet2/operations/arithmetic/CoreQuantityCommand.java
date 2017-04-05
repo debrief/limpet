@@ -31,6 +31,20 @@ public abstract class CoreQuantityCommand extends AbstractCommand
    */
   abstract protected Unit<?> getUnits();
   
+
+  /** produce a name for the results dataset
+   * 
+   * @return
+   */
+  abstract protected String generateName();
+
+  /** perform the calculation, get a new dataset results object
+   * 
+   * @return
+   */
+  abstract protected IDataset performCalc();
+
+  
   @Override
   protected void recalculate(IStoreItem subject)
   {
@@ -93,8 +107,4 @@ public abstract class CoreQuantityCommand extends AbstractCommand
     // ok, done
     getStore().add(output);
   }
-
-  abstract protected String generateName();
-
-  abstract protected IDataset performCalc();
 }
