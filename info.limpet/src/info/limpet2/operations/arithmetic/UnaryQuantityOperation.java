@@ -24,7 +24,6 @@ import info.limpet2.operations.arithmetic.InterpolatedMaths.IOperationPerformer;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.measure.unit.Unit;
@@ -39,7 +38,7 @@ import org.eclipse.january.dataset.Maths;
 import org.eclipse.january.metadata.AxesMetadata;
 import org.eclipse.january.metadata.internal.AxesMetadataImpl;
 
-public abstract class BinaryQuantityOperation 
+public abstract class UnaryQuantityOperation 
 {
 
   private final CollectionComplianceTests aTests =
@@ -66,36 +65,9 @@ public abstract class BinaryQuantityOperation
       {
         addInterpolatedCommands(selection, destination, res, context);
       }
-
     }
 
     return res;
-  }
-
-  protected Document getLongestIndexedCollection(List<Document> selection)
-  {
-    // find the longest time series.
-    Iterator<Document> iter = selection.iterator();
-    Document longest = null;
-
-    while (iter.hasNext())
-    {
-      Document doc = iter.next();
-      if (doc.isIndexed())
-      {
-        if (longest == null)
-        {
-          longest = doc;
-        }
-        else
-        {
-          // store the longest one
-          longest = doc.size() > longest.size() ? doc : longest;
-        }
-      }
-
-    }
-    return longest;
   }
 
   /**
@@ -140,20 +112,20 @@ public abstract class BinaryQuantityOperation
    * @author ian
    * 
    */
-  public abstract class BinaryQuantityCommand extends CoreQuantityCommand
+  public abstract class UnaryQuantityCommand extends CoreQuantityCommand
   {
 
     @SuppressWarnings("unused")
     private final Document timeProvider;
 
-    public BinaryQuantityCommand(String title, String description,
+    public UnaryQuantityCommand(String title, String description,
         IStoreGroup store, boolean canUndo, boolean canRedo,
         List<Document> inputs, IContext context)
     {
       this(title, description, store, canUndo, canRedo, inputs, null, context);
     }
 
-    public BinaryQuantityCommand(String title, String description,
+    public UnaryQuantityCommand(String title, String description,
         IStoreGroup store, boolean canUndo, boolean canRedo,
         List<Document> inputs, Document timeProvider, IContext context)
     {
@@ -161,7 +133,6 @@ public abstract class BinaryQuantityOperation
 
       this.timeProvider = timeProvider;
     }
-
 
     /**
      * wrap the actual operation. We're doing this since we need to separate it from the core
@@ -320,9 +291,8 @@ public abstract class BinaryQuantityOperation
     {
       // get the unit
       NumberDocument first = (NumberDocument) getInputs().get(0);
-      NumberDocument second = (NumberDocument) getInputs().get(1);
       
-      return getBinaryOutputUnit(first.getUnits(), second.getUnits());
+      return getUnaryOutputUnit(first.getUnits());
     }
 
 
@@ -330,9 +300,8 @@ public abstract class BinaryQuantityOperation
     {
       // get the unit
       NumberDocument first = (NumberDocument) getInputs().get(0);
-      NumberDocument second = (NumberDocument) getInputs().get(1);
 
-      return getBinaryNameFor(first.getName(), second.getName());
+      return getUnaryNameFor(first.getName());
     }
 
     /** determine the units of the product
@@ -342,7 +311,7 @@ public abstract class BinaryQuantityOperation
      * @return
      */
     abstract protected Unit<?>
-        getBinaryOutputUnit(Unit<?> first, Unit<?> second);
+        getUnaryOutputUnit(Unit<?> first);
     
     /** provide the name for the product dataset
      * 
@@ -350,7 +319,7 @@ public abstract class BinaryQuantityOperation
      * @param name2
      * @return
      */
-    abstract protected String getBinaryNameFor(String name, String name2);
+    abstract protected String getUnaryNameFor(String name);
   }
 
 }

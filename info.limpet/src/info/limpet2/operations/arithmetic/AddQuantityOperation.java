@@ -89,14 +89,6 @@ public class AddQuantityOperation extends BinaryQuantityOperation implements
     }
 
     @Override
-    protected String getOutputName()
-    {
-      return getContext().getInput("Add datasets",
-          "Please provide a name for the dataset",
-          "Sum of " + super.getSubjectList());
-    }
-
-    @Override
     protected IOperationPerformer getOperation()
     {
       return new InterpolatedMaths.IOperationPerformer()
@@ -110,14 +102,14 @@ public class AddQuantityOperation extends BinaryQuantityOperation implements
     }
 
     @Override
-    protected Unit<?> determineOutputUnit(Unit<?> first, Unit<?> second)
+    protected Unit<?> getBinaryOutputUnit(Unit<?> first, Unit<?> second)
     {
       // addition doesn't modify units, just use first ones
       return first;
     }
 
     @Override
-    protected String getNameFor(String name1, String name2)
+    protected String getBinaryNameFor(String name1, String name2)
     {
       return "Sum of " + name1 + " + " + name2;
     }

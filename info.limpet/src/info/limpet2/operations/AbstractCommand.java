@@ -127,7 +127,7 @@ public abstract class AbstractCommand implements
    * 
    * @return a string to use, or null to cancel the operation
    */
-  protected abstract String getOutputName();
+//  protected abstract String getOutputName();
 
   /**
    * convenience function, to return the datasets as a comma separated list
