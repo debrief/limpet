@@ -148,67 +148,7 @@ public class TestCollections extends TestCase
     assertNull("returned null for out of intersection", tq.interpolateValue(
         420, InterpMethod.Linear));
   }
-    //
-    // @SuppressWarnings("unchecked")
-    // public void testUUID()
-    // {
-    // ITemporalQuantityCollection<?> tq1 =
-    // new StockTypes.Temporal.SpeedMSec("Some data1", null);
-    // tq1.add(100, 10);
-    // tq1.add(200, 20);
-    // tq1.add(300, 30);
-    // tq1.add(400, 40);
-    //
-    // ITemporalQuantityCollection<?> tq2 =
-    // new StockTypes.Temporal.SpeedMSec("Some data2", null);
-    // tq2.add(220, 11);
-    // tq2.add(340, 17);
-    // tq2.add(440, 22);
-    //
-    // ITemporalQuantityCollection<?> tq3 =
-    // new StockTypes.Temporal.SpeedMSec("Some data3", null);
-    // tq3.add(220, 11);
-    // tq3.add(340, 17);
-    // tq3.add(440, 22);
-    //
-    // List<IQuantityCollection<Quantity>> selection =
-    // new ArrayList<IQuantityCollection<Quantity>>();
-    // selection.add((IQuantityCollection<Quantity>) tq1);
-    // selection.add((IQuantityCollection<Quantity>) tq2);
-    //
-    // StoreGroup store = new StoreGroup();
-    //
-    // StoreGroup group1 = new StoreGroup("Some group");
-    //
-    // store.add(group1);
-    // group1.add(tq1);
-    // store.add(tq2);
-    //
-    // // ok, check we can find them
-    // assertNotNull("has uuid", tq1.getUUID());
-    // assertNotNull("has uuid", tq2.getUUID());
-    // assertNotNull("can find it", store.get(tq1.getUUID()));
-    // assertNotNull("can find it", store.get(tq2.getUUID()));
-    // assertNull("can't find it", store.get(tq3.getUUID()));
-    //
-    // Collection<ICommand<IQuantityCollection<Quantity>>> commands =
-    // new AddQuantityOperation<>().actionsFor(selection, store, context);
-    // ICommand<IQuantityCollection<Quantity>> firstC = commands.iterator().next();
-    //
-    // assertEquals("store empty", 2, store.size());
-    //
-    // firstC.execute();
-    //
-    // assertEquals("new collection created", 3, store.size());
-    //
-    // ICollection series =
-    // (ICollection) store.get("Sum of Some data1, Some data2");
-    // assertTrue("non empty", series.getValuesCount() > 0);
-    // assertTrue("temporal", series.isTemporal());
-    // assertTrue("quantity", series.isQuantity());
-    //
-    // assertNotNull("can find it", store.get(series.getUUID()));
-    // }
+   
     //
     // @SuppressWarnings(
     // {"unchecked", "rawtypes"})

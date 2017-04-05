@@ -24,36 +24,38 @@ import info.limpet2.operations.arithmetic.InterpolatedMaths.IOperationPerformer;
 import java.util.Collection;
 import java.util.List;
 
+import javax.measure.unit.Unit;
+
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.Maths;
 
-public class AddQuantityOperation extends
-    CoreQuantityOperation implements IOperation
+public class AddQuantityOperation extends BinaryQuantityOperation implements
+    IOperation
 {
 
   @Override
-  protected void addInterpolatedCommands(
-      List<Document> selection, IStoreGroup destination,
-      Collection<ICommand> res, IContext context)
+  protected void addInterpolatedCommands(List<Document> selection,
+      IStoreGroup destination, Collection<ICommand> res, IContext context)
   {
     Document longest = getLongestIndexedCollection(selection);
 
     if (longest != null)
     {
-      ICommand newC = new AddQuantityValues(
-          "Add numeric values in provided series (interpolated)", selection,
-          destination, longest, context);
+      ICommand newC =
+          new AddQuantityValues(
+              "Add numeric values in provided series (interpolated)",
+              selection, destination, longest, context);
       res.add(newC);
     }
   }
 
   protected void addIndexedCommands(List<Document> selection,
-      IStoreGroup destination, Collection<ICommand> res,
-      IContext context)
+      IStoreGroup destination, Collection<ICommand> res, IContext context)
   {
-    ICommand newC = new AddQuantityValues(
-        "Add numeric values in provided series (indexed)", selection,
-        destination, context);
+    ICommand newC =
+        new AddQuantityValues(
+            "Add numeric values in provided series (indexed)", selection,
+            destination, context);
     res.add(newC);
   }
 
@@ -61,105 +63,30 @@ public class AddQuantityOperation extends
   {
     boolean nonEmpty = getATests().nonEmpty(selection);
     boolean allQuantity = getATests().allQuantity(selection);
-    boolean suitableLength = getATests().allIndexed(selection)
-        || getATests().allEqualLengthOrSingleton(selection);
+    boolean suitableLength =
+        getATests().allIndexed(selection)
+            || getATests().allEqualLengthOrSingleton(selection);
     boolean equalDimensions = getATests().allEqualDimensions(selection);
     boolean equalUnits = getATests().allEqualUnits(selection);
 
-    return nonEmpty && allQuantity && suitableLength && equalDimensions && equalUnits;
+    return nonEmpty && allQuantity && suitableLength && equalDimensions
+        && equalUnits;
   }
 
-  public class AddQuantityValues extends CoreQuantityCommand
+  public class AddQuantityValues extends BinaryQuantityCommand
   {
-    public AddQuantityValues(String name,
-        List<Document> selection, IStoreGroup store, IContext context)
+    public AddQuantityValues(String name, List<Document> selection,
+        IStoreGroup store, IContext context)
     {
       this(name, selection, store, null, context);
     }
 
-    public AddQuantityValues(String name,
-        List<Document> selection, IStoreGroup destination,
-        Document timeProvider, IContext context)
+    public AddQuantityValues(String name, List<Document> selection,
+        IStoreGroup destination, Document timeProvider, IContext context)
     {
       super(name, "Add datasets", destination, false, false, selection,
           timeProvider, context);
     }
-
-//    @Override
-//    protected Double calcThisElement(int elementCount)
-//    {
-//      Double thisResult = null;
-//
-//      for (int seriesCount = 0; seriesCount < getInputs().size(); seriesCount++)
-//      {
-//        // TODO: re-implement this.
-////        Document thisC = getInputs().get(seriesCount);
-////        Measurable<Q> thisV = thisC.size() == 1 ? thisC.getValues().get(0)
-////            : (Measurable<Q>) thisC.getValues().get(elementCount);
-////
-////        // is this the first field?
-////        if (thisResult == null)
-////        {
-////          thisResult = thisV.doubleValue(thisC.getUnits());
-////        }
-////        else
-////        {
-////          thisResult += thisV.doubleValue(thisC.getUnits());
-////        }
-//      }
-//      return thisResult;
-//    }
-
-//    @Override
-//    protected Double calcThisInterpolatedElement(long time)
-//    {
-//      Double thisResult = null;
-//      
-//      // TODO: implement this
-//
-////      for (int seriesCount = 0; seriesCount < getInputs().size(); seriesCount++)
-////      {
-////        Document thisC = (Document) getInputs()
-////            .get(seriesCount);
-////
-////        final Measurable<Q> thisV;
-////
-////        if (thisC.isTemporal())
-////        {
-////          // find the value to use
-////          NumberDocument tq = (NumberDocument) thisC;
-////          thisV = tq.interpolateValue(time, Document.InterpMethod.Linear);
-////
-////        }
-////        else
-////        {
-////          if (thisC.size() == 1)
-////          {
-////            // ok, it's a singleton that we're applying to all values
-////            thisV = thisC.getValues().get(0);
-////          }
-////          else
-////          {
-////            throw new RuntimeException(
-////                "We should not be adding a non-singleton non-temporal to a temporal");
-////          }
-////        }
-////
-////        if (thisV != null)
-////        {
-////          // is this the first field?
-////          if (thisResult == null)
-////          {
-////            thisResult = thisV.doubleValue(thisC.getUnits());
-////          }
-////          else
-////          {
-////            thisResult += thisV.doubleValue(thisC.getUnits());
-////          }
-////        }
-////      }
-//      return thisResult;
-//    }
 
     @Override
     protected String getOutputName()
@@ -180,6 +107,19 @@ public class AddQuantityOperation extends
           return Maths.add(a, b, o);
         }
       };
+    }
+
+    @Override
+    protected Unit<?> determineOutputUnit(Unit<?> first, Unit<?> second)
+    {
+      // addition doesn't modify units, just use first ones
+      return first;
+    }
+
+    @Override
+    protected String getNameFor(String name1, String name2)
+    {
+      return "Sum of " + name1 + " + " + name2;
     }
   }
 

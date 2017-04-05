@@ -42,7 +42,7 @@ import org.eclipse.january.dataset.Maths;
 import org.eclipse.january.metadata.AxesMetadata;
 import org.eclipse.january.metadata.internal.AxesMetadataImpl;
 
-public abstract class CoreQuantityOperation
+public abstract class BinaryQuantityOperation
 {
 
   private final CollectionComplianceTests aTests =
@@ -143,20 +143,20 @@ public abstract class CoreQuantityOperation
    * @author ian
    * 
    */
-  public abstract class CoreQuantityCommand extends AbstractCommand
+  public abstract class BinaryQuantityCommand extends AbstractCommand
   {
 
     @SuppressWarnings("unused")
     private final Document timeProvider;
 
-    public CoreQuantityCommand(String title, String description,
+    public BinaryQuantityCommand(String title, String description,
         IStoreGroup store, boolean canUndo, boolean canRedo,
         List<Document> inputs, IContext context)
     {
       this(title, description, store, canUndo, canRedo, inputs, null, context);
     }
 
-    public CoreQuantityCommand(String title, String description,
+    public BinaryQuantityCommand(String title, String description,
         IStoreGroup store, boolean canUndo, boolean canRedo,
         List<Document> inputs, Document timeProvider, IContext context)
     {
@@ -270,7 +270,7 @@ public abstract class CoreQuantityOperation
 
       if (doInterp)
       {
-        final InterpolatedMaths.IOperationPerformer doAdd = getOperation();            
+        final InterpolatedMaths.IOperationPerformer doAdd = getOperation();
 
         Dataset ind1 = null;
         Dataset ind2 = null;
@@ -286,8 +286,8 @@ public abstract class CoreQuantityOperation
           // TODO Auto-generated catch block
           e.printStackTrace();
         }
-        
-        if(ind2 != null)
+
+        if (ind2 != null)
         {
           // apply our operation to the two datasets
           res =
@@ -296,7 +296,7 @@ public abstract class CoreQuantityOperation
         }
         else
         {
-          res =null;
+          res = null;
         }
 
       }
@@ -307,7 +307,7 @@ public abstract class CoreQuantityOperation
         // ok, can't interpolate. are they the same size?
         // ok, just do plain add
         res = Maths.add(in1, in2);
-        
+
         // if there are indices, store them
         if (outputIndices != null)
         {
@@ -325,7 +325,7 @@ public abstract class CoreQuantityOperation
       if (res != null)
       {
         // store the name
-        res.setName("Sum of " + in1.getName() + " + " + in2.getName());
+        res.setName(getNameFor(in1.getName(), in2.getName()));
       }
 
       // and fire out the update
@@ -338,7 +338,9 @@ public abstract class CoreQuantityOperation
       return res;
     }
 
-    abstract protected  IOperationPerformer getOperation();
+    abstract protected String getNameFor(String name, String name2);
+
+    abstract protected IOperationPerformer getOperation();
 
     protected int numElements()
     {
@@ -463,10 +465,11 @@ public abstract class CoreQuantityOperation
     public void execute()
     {
       // get the unit
-      IStoreItem first = getInputs().get(0);
+      NumberDocument first = (NumberDocument) getInputs().get(0);
+      NumberDocument second = (NumberDocument) getInputs().get(1);
 
       // sort out the output unit
-      Unit<?> unit = determineOutputUnit(first);
+      Unit<?> unit = determineOutputUnit(first.getUnits(), second.getUnits());
 
       // clear the results sets
       clearOutputs(getOutputs());
@@ -496,17 +499,8 @@ public abstract class CoreQuantityOperation
       getStore().add(output);
     }
 
-    protected Unit<?> determineOutputUnit(IStoreItem first)
-    {
-      Unit<?> res = null;
-      if (first instanceof NumberDocument)
-      {
-        NumberDocument doc = (NumberDocument) first;
-        res = doc.getUnits();
-      }
-      return res;
-    }
-
+    abstract protected Unit<?>
+        determineOutputUnit(Unit<?> first, Unit<?> second);
   }
 
 }
