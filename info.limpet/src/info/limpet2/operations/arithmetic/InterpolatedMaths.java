@@ -339,8 +339,10 @@ public class InterpolatedMaths extends Maths
               interpolatedValues.addMetadata(newAxis);
               bValues.addMetadata(newAxis);
 
-              operandA = bValues;
-              operandB = interpolatedValues;
+              // note: swap them over, so they remain in the correct order for
+              // non-commutative operations
+              operandB = bValues;
+              operandA = interpolatedValues;
             }
           }
         }

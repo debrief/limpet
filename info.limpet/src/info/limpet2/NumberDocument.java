@@ -149,4 +149,43 @@ public class NumberDocument extends Document
     _qType = unit;
   }
 
+
+  public MyStats stats()
+  {
+    return new MyStats();
+  }
+
+  public class MyStats
+  {
+    public double min()
+    {
+      DoubleDataset ds = (DoubleDataset) _dataset;
+      return (Double) ds.min(true);
+    }
+
+    public double max()
+    {
+      DoubleDataset ds = (DoubleDataset) _dataset;
+      return (Double) ds.max();
+      
+    }
+
+    public double mean()
+    {
+      DoubleDataset ds = (DoubleDataset) _dataset;
+      return (Double) ds.mean(true);
+    }
+
+    public double variance()
+    {
+      DoubleDataset ds = (DoubleDataset) _dataset;
+      return (Double) ds.variance(true);
+    }
+
+    public double sd()
+    {
+      DoubleDataset ds = (DoubleDataset) _dataset;
+      return (Double) ds.stdDeviation(true);
+    }    
+  }
 }
