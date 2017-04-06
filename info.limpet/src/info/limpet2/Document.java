@@ -112,6 +112,11 @@ public class Document implements IStoreItem
   {
     return false;
   }
+  
+  public ICommand getPrecedent()
+  {
+    return _predecessor;
+  }
 
   public void addDependent(ICommand command)
   {

@@ -1,9 +1,9 @@
 package info.limpet2;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.UUID;
 
-public class StoreGroup extends LinkedList<IStoreItem> implements IStoreGroup
+public class StoreGroup extends ArrayList<IStoreItem> implements IStoreGroup
 {
   /**
    * 

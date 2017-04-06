@@ -1,5 +1,6 @@
 package info.limpet2;
 
+import javax.measure.quantity.Dimensionless;
 import javax.measure.unit.Unit;
 
 import org.eclipse.january.DatasetException;
@@ -22,7 +23,17 @@ public class NumberDocument extends Document
       Unit<?> qType)
   {
     super(dataset, predecessor);
+    
+    if(qType == null)
+    {
+     _qType = Dimensionless.UNIT; 
+    }
+    else
+    {
     _qType = qType;
+    }
+    
+    
   }
 
   public Unit<?> getType()

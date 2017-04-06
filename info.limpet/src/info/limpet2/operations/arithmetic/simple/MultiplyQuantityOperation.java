@@ -54,7 +54,7 @@ public class MultiplyQuantityOperation extends BinaryQuantityOperation
   {
     ICommand newC =
         new AddQuantityValues(
-            "Multiple numeric values in provided series (indexed)", selection,
+            "Multiply numeric values in provided series (indexed)", selection,
             destination, context);
     res.add(newC);
   }
@@ -66,11 +66,8 @@ public class MultiplyQuantityOperation extends BinaryQuantityOperation
     boolean suitableLength =
         getATests().allIndexed(selection)
             || getATests().allEqualLengthOrSingleton(selection);
-    boolean equalDimensions = getATests().allEqualDimensions(selection);
-    boolean equalUnits = getATests().allEqualUnits(selection);
 
-    return nonEmpty && allQuantity && suitableLength && equalDimensions
-        && equalUnits;
+    return nonEmpty && allQuantity && suitableLength;
   }
 
   public class AddQuantityValues extends BinaryQuantityCommand

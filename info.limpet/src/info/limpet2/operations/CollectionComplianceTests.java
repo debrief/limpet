@@ -322,25 +322,32 @@ public class CollectionComplianceTests
       if (thisI instanceof NumberDocument)
       {
         NumberDocument thisC = (NumberDocument) thisI;
-        Dimension thisD = thisC.getUnits().getDimension();
-        if (theD == null)
+        if (thisC.getUnits() != null)
         {
-          theD = thisD;
-        }
-        else
-        {
-          if (thisD.equals(theD))
+          Dimension thisD = thisC.getUnits().getDimension();
+          if (theD == null)
           {
-            // all fine.
-            allValid = true;
+            theD = thisD;
           }
           else
           {
-            allValid = false;
-            break;
+            if (thisD.equals(theD))
+            {
+              // all fine.
+              allValid = true;
+            }
+            else
+            {
+              allValid = false;
+              break;
+            }
           }
         }
-
+        else
+        {
+          allValid = false;
+          break;
+        }
       }
       else
       {
@@ -1149,7 +1156,8 @@ public class CollectionComplianceTests
    *          time we're need a location for
    * @return
    */
-  @SuppressWarnings({"unchecked", "unused"})
+  @SuppressWarnings(
+  {"unchecked", "unused"})
   public double valueAt(Document iCollection, long thisTime,
       Unit<?> requiredUnits)
   {

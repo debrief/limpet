@@ -63,8 +63,7 @@ public abstract class BinaryQuantityOperation implements IOperation
       // aah, what about temporal (interpolated) values?
       if (getATests().allIndexed(selection)
           && getATests().suitableForIndexedInterpolation(selection)
-          || getATests().hasIndexed(selection)
-          && getATests().allEqualLengthOrSingleton(selection))
+          || getATests().hasIndexed(selection))
       {
         addInterpolatedCommands(selection, destination, res, context);
       }
