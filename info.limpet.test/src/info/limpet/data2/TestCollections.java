@@ -24,6 +24,8 @@ import info.limpet2.IndexedNumberDocumentBuilder;
 import info.limpet2.MockContext;
 import info.limpet2.NumberDocument;
 import info.limpet2.NumberDocumentBuilder;
+import info.limpet2.Range;
+import info.limpet2.SampleData;
 import info.limpet2.StoreGroup;
 import info.limpet2.operations.arithmetic.UnaryQuantityOperation;
 import info.limpet2.operations.arithmetic.simple.AddQuantityOperation;
@@ -39,8 +41,10 @@ import javax.measure.unit.Unit;
 
 import junit.framework.TestCase;
 
+import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.Maths;
 import org.eclipse.january.dataset.StringDataset;
 
@@ -371,218 +375,231 @@ public class TestCollections extends TestCase
     assertEquals("correct value", 110d, series.getValue(0));
 
     tq2b.add(11);
-    
+
     NumberDocument tq3 = tq2b.toDocument();
-    
+
     selection.remove(tq2);
     selection.add(tq3);
-    
+
     commands =
         new MultiplyQuantityOperation().actionsFor(selection, store, context);
     assertEquals("no commands returned", 0, commands.size());
 
   }
-  //
-  // @SuppressWarnings(
-  // {"unchecked", "rawtypes"})
-  // public void testMultiplyQuantityTemporalInterp()
-  // {
-  // ITemporalQuantityCollection<?> tq1 =
-  // new StockTypes.Temporal.SpeedMSec("Some data1", null);
-  // tq1.add(100, 10);
-  // tq1.add(200, 20);
-  // tq1.add(300, 30);
-  // tq1.add(400, 40);
-  //
-  // ITemporalQuantityCollection<?> tq2 =
-  // new StockTypes.Temporal.SpeedMSec("Some data2", null);
-  // tq2.add(220, 11);
-  // tq2.add(340, 17);
-  // tq2.add(440, 22);
-  //
-  // List<IStoreItem> selection = new ArrayList<IStoreItem>();
-  // selection.add((IQuantityCollection<Quantity>) tq1);
-  // selection.add((IQuantityCollection<Quantity>) tq2);
-  //
-  // StoreGroup store = new StoreGroup();
-  // Collection<ICommand<IStoreItem>> commands =
-  // new MultiplyQuantityOperation().actionsFor(selection, store, context);
-  // ICommand<IStoreItem> firstC = commands.iterator().next();
-  //
-  // assertEquals("store empty", 0, store.size());
-  //
-  // firstC.execute();
-  //
-  // assertEquals("new collection created", 1, store.size());
-  //
-  // ICollection series = (ICollection) firstC.getOutputs().iterator().next();
-  // assertTrue("non empty", series.getValuesCount() > 0);
-  // assertEquals("corrent length results", 4, series.getValuesCount());
-  // assertTrue("temporal", series.isTemporal());
-  // assertTrue("quantity", series.isQuantity());
-  //
-  // ITemporalQuantityCollection<?> tq = (ITemporalQuantityCollection<?>) series;
-  //
-  // assertEquals("returned correct value", 10d, tq.interpolateValue(100,
-  // InterpMethod.Linear).doubleValue((Unit) tq.getUnits()));
-  // assertEquals("returned correct value", 20d, tq.interpolateValue(200,
-  // InterpMethod.Linear).doubleValue((Unit) tq.getUnits()));
-  // assertEquals("returned correct value", 450d, tq.interpolateValue(300,
-  // InterpMethod.Linear).doubleValue((Unit) tq.getUnits()));
-  // assertEquals("returned correct value", 800d, tq.interpolateValue(400,
-  // InterpMethod.Linear).doubleValue((Unit) tq.getUnits()));
-  //
-  // // ok, mangle the second array a bit more
-  // tq2 = new StockTypes.Temporal.SpeedMSec("Some data2", null);
-  // tq2.add(20, 11);
-  // tq2.add(340, 17);
-  // tq2.add(440, 22);
-  //
-  // selection = new ArrayList<IStoreItem>();
-  // selection.add((IQuantityCollection<Quantity>) tq1);
-  // selection.add((IQuantityCollection<Quantity>) tq2);
-  //
-  // store = new StoreGroup();
-  // commands =
-  // new MultiplyQuantityOperation().actionsFor(selection, store, context);
-  // firstC = commands.iterator().next();
-  //
-  // assertEquals("store empty", 0, store.size());
-  //
-  // firstC.execute();
-  //
-  // assertEquals("new collection created", 1, store.size());
-  //
-  // series = (ICollection) firstC.getOutputs().iterator().next();
-  // assertTrue("non empty", series.getValuesCount() > 0);
-  // assertEquals("corrent length results", 4, series.getValuesCount());
-  // assertTrue("temporal", series.isTemporal());
-  // assertTrue("quantity", series.isQuantity());
-  //
-  // tq = (ITemporalQuantityCollection<?>) series;
-  //
-  // assertEquals("returned correct value", 125d, tq.interpolateValue(100,
-  // InterpMethod.Linear).doubleValue((Unit) tq.getUnits()));
-  // assertEquals("returned correct value", 287.5d, tq.interpolateValue(200,
-  // InterpMethod.Linear).doubleValue((Unit) tq.getUnits()));
-  // assertEquals("returned correct value", 487.5d, tq.interpolateValue(300,
-  // InterpMethod.Linear).doubleValue((Unit) tq.getUnits()));
-  // assertEquals("returned correct value", 800d, tq.interpolateValue(400,
-  // InterpMethod.Linear).doubleValue((Unit) tq.getUnits()));
-  //
-  // // ok, make the second array longer
-  // tq2 = new StockTypes.Temporal.SpeedMSec("Some data2", null);
-  // tq2.add(200, 11);
-  // tq2.add(250, 13);
-  // tq2.add(330, 17);
-  // tq2.add(360, 19);
-  // tq2.add(440, 22);
-  //
-  // selection = new ArrayList<IStoreItem>();
-  // selection.add((IQuantityCollection<Quantity>) tq1);
-  // selection.add((IQuantityCollection<Quantity>) tq2);
-  //
-  // store = new StoreGroup();
-  // commands =
-  // new MultiplyQuantityOperation().actionsFor(selection, store, context);
-  // firstC = commands.iterator().next();
-  //
-  // assertEquals("store empty", 0, store.size());
-  //
-  // firstC.execute();
-  //
-  // assertEquals("new collection created", 1, store.size());
-  //
-  // series = (ICollection) firstC.getOutputs().iterator().next();
-  // assertTrue("non empty", series.getValuesCount() > 0);
-  // assertEquals("corrent length results", 5, series.getValuesCount());
-  // assertTrue("temporal", series.isTemporal());
-  // assertTrue("quantity", series.isQuantity());
-  //
-  // tq = (ITemporalQuantityCollection<?>) series;
-  //
-  // assertEquals("returned correct value", null, tq.interpolateValue(100,
-  // InterpMethod.Linear));
-  // assertEquals("returned correct value", 220d, tq.interpolateValue(200,
-  // InterpMethod.Linear).doubleValue((Unit) tq.getUnits()));
-  // assertEquals("returned correct value", 472.5d, tq.interpolateValue(300,
-  // InterpMethod.Linear).doubleValue((Unit) tq.getUnits()));
-  // assertEquals("returned correct value", 353d, tq.interpolateValue(400,
-  // InterpMethod.Linear).doubleValue((Unit) tq.getUnits()));
-  // assertEquals("returned correct value", 187.5d, tq.interpolateValue(420,
-  // InterpMethod.Linear).doubleValue((Unit) tq.getUnits()));
-  // assertEquals("returned correct value", 22d, tq.interpolateValue(440,
-  // InterpMethod.Linear).doubleValue((Unit) tq.getUnits()));
-  //
-  // }
-  //
-  // public void testSampleData()
-  // {
-  // IStore data = new SampleData().getData(10);
-  // @SuppressWarnings("unchecked")
-  // IQuantityCollection<Quantity> ranged =
-  // (IQuantityCollection<Quantity>) data
-  // .get(SampleData.RANGED_SPEED_SINGLETON);
-  // assertNotNull("found series", ranged);
-  //
-  // QuantityRange<Quantity> range = ranged.getRange();
-  // assertNotNull("found range", range);
-  //
-  // // check the range has values
-  // assertEquals("correct values", 940d, range.getMinimum().doubleValue(
-  // ranged.getUnits()), 0.1);
-  // assertEquals("correct values", 1050d, range.getMaximum().doubleValue(
-  // ranged.getUnits()), 0.1);
-  // }
-  //
-  // public void testCreateTemporalObject()
-  // {
-  // // the target collection
-  // TemporalObjectCollection<String> stringCollection =
-  // new TemporalObjectCollection<String>("strings");
-  //
-  // for (int i = 1; i <= 12; i++)
-  // {
-  // // store the measurement
-  // stringCollection.add(i, i + "aaa");
-  // }
-  //
-  // // check it didn't get stored
-  // assertEquals("correct number of samples", 12, stringCollection
-  // .getValuesCount());
-  //
-  // IBaseTemporalCollection it = stringCollection;
-  // assertEquals("correct start", 1, it.start());
-  // assertEquals("correct finish", 12, it.finish());
-  // assertEquals("correct duration", 11, it.duration());
-  // assertEquals("correct start", 1.1d, it.rate(), 0.1);
-  //
-  // // ok, now check the iterator
-  // long runningValueSum = 0;
-  // long runningTimeSum = 0;
-  // Iterator<Doublet<String>> iter = stringCollection.iterator();
-  // while (iter.hasNext())
-  // {
-  // Doublet<String> doublet = iter.next();
-  // runningValueSum += doublet.getObservation().length();
-  // runningTimeSum += doublet.getTime();
-  // }
-  // assertEquals("values adds up", 51, runningValueSum);
-  // assertEquals("times adds up", 78, runningTimeSum);
-  //
-  // boolean eThrown = false;
-  // try
-  // {
-  // stringCollection.add("done");
-  // }
-  // catch (UnsupportedOperationException er)
-  // {
-  // eThrown = true;
-  // }
-  //
-  // assertTrue("exception thrown for invalid add operation", eThrown);
-  //
-  // }
+
+  public void testMultiplyQuantityTemporalInterp()
+  {
+    IndexedNumberDocumentBuilder tq1b =
+        new IndexedNumberDocumentBuilder("Some data1", METRE.divide(SECOND)
+            .asType(Velocity.class), null);
+
+    tq1b.add(100, 10);
+    tq1b.add(200, 20);
+    tq1b.add(300, 30);
+    tq1b.add(400, 40);
+
+    IndexedNumberDocumentBuilder tq2b =
+        new IndexedNumberDocumentBuilder("Some data1", METRE.divide(SECOND)
+            .asType(Velocity.class), null);
+
+    tq2b.add(220, 11);
+    tq2b.add(340, 17);
+    tq2b.add(440, 22);
+
+    NumberDocument tq1 = tq1b.toDocument();
+    NumberDocument tq2 = tq2b.toDocument();
+
+    List<Document> selection = new ArrayList<Document>();
+    selection.add(tq1);
+    selection.add(tq2);
+
+    StoreGroup store = new StoreGroup("Store");
+    Collection<ICommand> commands =
+        new MultiplyQuantityOperation().actionsFor(selection, store, context);
+    ICommand firstC = commands.iterator().next();
+
+    assertEquals("store empty", 0, store.size());
+
+    firstC.execute();
+
+    assertEquals("new collection created", 1, store.size());
+
+    NumberDocument series = (NumberDocument) firstC.getOutputs().get(0);
+    assertTrue("non empty", series.size() > 0);
+    assertEquals("corrent length results", 2, series.size());
+    assertTrue("temporal", series.isIndexed());
+    assertTrue("quantity", series.isQuantity());
+
+    try
+    {
+      Dataset oDataset =
+          DatasetUtils.sliceAndConvertLazyDataset(series.getDataset());
+      System.out.println(oDataset.toString(true));
+    }
+    catch (DatasetException e)
+    {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+
+    // ITemporalQuantityCollection<?> tq = (ITemporalQuantityCollection<?>) series;
+
+    assertEquals("returned correct value", null, series.interpolateValue(100,
+        InterpMethod.Linear));
+    assertEquals("returned correct value", 242d, series.interpolateValue(220,
+        InterpMethod.Linear));
+    assertEquals("returned correct value", 578d, series.interpolateValue(340,
+        InterpMethod.Linear));
+    assertEquals("returned correct value", null, series.interpolateValue(400,
+        InterpMethod.Linear));
+
+    // ok, mangle the second array a bit more
+    tq2b.clear();
+    tq2b.add(20, 11);
+    tq2b.add(340, 17);
+    tq2b.add(440, 22);
+
+    tq2 = tq2b.toDocument();
+
+    selection.clear();
+    selection.add(tq1);
+    selection.add(tq2);
+
+    store = new StoreGroup("Out");
+    commands =
+        new MultiplyQuantityOperation().actionsFor(selection, store, context);
+    firstC = commands.iterator().next();
+
+    assertEquals("store empty", 0, store.size());
+
+    firstC.execute();
+
+    assertEquals("new collection created", 1, store.size());
+
+    series = (NumberDocument) firstC.getOutputs().get(0);
+    assertTrue("non empty", series.size() > 0);
+    assertEquals("corrent length results", 4, series.size());
+    assertTrue("temporal", series.isIndexed());
+    assertTrue("quantity", series.isQuantity());
+
+    assertEquals("returned correct value", 125d, series.interpolateValue(100,
+        InterpMethod.Linear));
+    assertEquals("returned correct value", 287.5d, series.interpolateValue(200,
+        InterpMethod.Linear));
+    assertEquals("returned correct value", 487.5d, series.interpolateValue(300,
+        InterpMethod.Linear));
+    assertEquals("returned correct value", 800d, series.interpolateValue(400,
+        InterpMethod.Linear));
+
+    // ok, make the second array longer
+    tq2b.clear();
+    tq2b.add(200, 11);
+    tq2b.add(250, 13);
+    tq2b.add(330, 17);
+    tq2b.add(360, 19);
+    tq2b.add(440, 22);
+
+    tq2 = tq2b.toDocument();
+
+    selection.clear();
+    selection.add(tq1);
+    selection.add(tq2);
+
+    store = new StoreGroup("output");
+    commands =
+        new MultiplyQuantityOperation().actionsFor(selection, store, context);
+    firstC = commands.iterator().next();
+
+    assertEquals("store empty", 0, store.size());
+
+    firstC.execute();
+
+    assertEquals("new collection created", 1, store.size());
+
+    series = (NumberDocument) firstC.getOutputs().iterator().next();
+    assertTrue("non empty", series.size() > 0);
+    assertEquals("corrent length results", 4, series.size());
+    assertTrue("temporal", series.isIndexed());
+    assertTrue("quantity", series.isQuantity());
+
+    assertEquals("returned correct value", null, series.interpolateValue(100,
+        InterpMethod.Linear));
+    assertEquals("returned correct value", 220d, series.interpolateValue(200,
+        InterpMethod.Linear));
+    assertEquals("returned correct value", 472.5d, series.interpolateValue(300,
+        InterpMethod.Linear));
+    assertEquals("returned correct value", null, series.interpolateValue(400,
+        InterpMethod.Linear));
+    assertEquals("returned correct value", null, series.interpolateValue(420,
+        InterpMethod.Linear));
+    assertEquals("returned correct value", null, series.interpolateValue(440,
+        InterpMethod.Linear));
+
+  }
+
+  public void testSampleData()
+  {
+    StoreGroup data = new SampleData().getData(10);
+    NumberDocument ranged =
+        (NumberDocument) data.get(SampleData.RANGED_SPEED_SINGLETON);
+    assertNotNull("found series", ranged);
+
+    Range range = ranged.getRange();
+    assertNotNull("found range", range);
+
+    // check the range has values
+    assertEquals("correct values", 940d, (Double) range.getMinimum(), 0.1);
+    assertEquals("correct values", 1050d, (Double) range.getMaximum(), 0.1);
+  }
+
+//  public void testCreateTemporalObject()
+//  {
+//    // the target collection
+//    TemporalObjectCollection<String> stringCollection =
+//        new TemporalObjectCollection<String>("strings");
+//
+//    for (int i = 1; i <= 12; i++)
+//    {
+//      // store the measurement
+//      stringCollection.add(i, i + "aaa");
+//    }
+//
+//    // check it didn't get stored
+//    assertEquals("correct number of samples", 12, stringCollection
+//        .getValuesCount());
+//
+//    IBaseTemporalCollection it = stringCollection;
+//    assertEquals("correct start", 1, it.start());
+//    assertEquals("correct finish", 12, it.finish());
+//    assertEquals("correct duration", 11, it.duration());
+//    assertEquals("correct start", 1.1d, it.rate(), 0.1);
+//
+//    // ok, now check the iterator
+//    long runningValueSum = 0;
+//    long runningTimeSum = 0;
+//    Iterator<Doublet<String>> iter = stringCollection.iterator();
+//    while (iter.hasNext())
+//    {
+//      Doublet<String> doublet = iter.next();
+//      runningValueSum += doublet.getObservation().length();
+//      runningTimeSum += doublet.getTime();
+//    }
+//    assertEquals("values adds up", 51, runningValueSum);
+//    assertEquals("times adds up", 78, runningTimeSum);
+//
+//    boolean eThrown = false;
+//    try
+//    {
+//      stringCollection.add("done");
+//    }
+//    catch (UnsupportedOperationException er)
+//    {
+//      eThrown = true;
+//    }
+//
+//    assertTrue("exception thrown for invalid add operation", eThrown);
+//
+//  }
   //
   // public void testUnitlessQuantity()
   // {
