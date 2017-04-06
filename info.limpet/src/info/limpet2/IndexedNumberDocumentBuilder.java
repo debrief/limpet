@@ -50,4 +50,10 @@ public class IndexedNumberDocumentBuilder
     NumberDocument res = new NumberDocument(dataset, _predecessor, _units);
     return res;
   }
+
+  public void clear()
+  {
+    _times.clear();
+    _values.clear();
+  }
 }

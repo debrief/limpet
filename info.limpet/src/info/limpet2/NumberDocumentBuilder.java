@@ -15,7 +15,6 @@ public class NumberDocumentBuilder
   final private Unit<?> _units;
   final private List<Double> _values;
   final private ICommand _predecessor;
-  @SuppressWarnings("unused")
   private Range _range;
 
   public NumberDocumentBuilder(String name, Unit<?> units, ICommand predecessor)
@@ -41,6 +40,10 @@ public class NumberDocumentBuilder
     DoubleDataset dataset = (DoubleDataset) DatasetFactory.createFromObject(_values);
     dataset.setName(_name);
     NumberDocument res = new NumberDocument(dataset, _predecessor, _units);
+    if(_range != null)
+    {
+      res.setRange(_range);
+    }
     return res;
   }
 }
