@@ -139,4 +139,14 @@ public class NumberDocument extends Document
     return res;
   }
 
+  public double getValue(int i)
+  {
+    return _dataset.getDouble(i);
+  }
+
+  public void setUnits(Unit<?> unit)
+  {
+    _qType = unit;
+  }
+
 }

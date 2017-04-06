@@ -19,6 +19,7 @@ import info.limpet2.ICommand;
 import info.limpet2.IContext;
 import info.limpet2.IOperation;
 import info.limpet2.IStoreGroup;
+import info.limpet2.IStoreItem;
 import info.limpet2.NumberDocument;
 import info.limpet2.operations.CollectionComplianceTests;
 import info.limpet2.operations.arithmetic.InterpolatedMaths.IOperationPerformer;
@@ -35,8 +36,8 @@ import org.eclipse.january.dataset.Comparisons;
 import org.eclipse.january.dataset.Comparisons.Monotonicity;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
-import org.eclipse.january.dataset.Maths;
 import org.eclipse.january.metadata.AxesMetadata;
 import org.eclipse.january.metadata.internal.AxesMetadataImpl;
 
@@ -162,6 +163,56 @@ public abstract class BinaryQuantityOperation implements IOperation
     }
 
     /**
+     * for binary operations we act on a set of inputs, so, if one has changed then we will
+     * recalculate all of them.
+     */
+    protected void recalculate(IStoreItem subject)
+    {
+      // calculate the results
+      IDataset newSet = performCalc();
+
+      // store the new dataset
+      getOutputs().get(0).setDataset(newSet);
+    }
+
+    @Override
+    public void execute()
+    {
+      // sort out the output unit
+      Unit<?> unit = getUnits();
+
+      // clear the results sets
+      clearOutputs(getOutputs());
+
+      // start adding values.
+      IDataset dataset = performCalc();
+
+      // store the name
+      dataset.setName(generateName());
+
+      // ok, wrap the dataset
+      NumberDocument output =
+          new NumberDocument((DoubleDataset) dataset, this, unit);
+
+      // and fire out the update
+      output.fireDataChanged();
+
+      // store the output
+      super.addOutput(output);
+
+      // tell each series that we're a dependent
+      Iterator<Document> iter = getInputs().iterator();
+      while (iter.hasNext())
+      {
+        Document iCollection = iter.next();
+        iCollection.addDependent(this);
+      }
+
+      // ok, done
+      getStore().add(output);
+    }
+
+    /**
      * wrap the actual operation. We're doing this since we need to separate it from the core
      * "execute" operation in order to support dynamic updates. That is, we need to create it when
      * run initially, then re-generate it on data updates
@@ -204,39 +255,49 @@ public abstract class BinaryQuantityOperation implements IOperation
         {
           axis2 = in2.getFirstMetadata(AxesMetadata.class);
 
-          final Monotonicity axis2Mono =
-              Comparisons.findMonotonicity(axis2.getAxes()[0]);
-
-          if (axis1.getAxes()[0].equals(axis2.getAxes()[0]))
+          if (axis2 == null || axis2.getAxes() == null
+              || axis2.getAxes().length == 0)
           {
-            // identical indexes, we don't need to intepolate
+            // the axes don't match. We can't do interp
             doInterp = false;
+            // we'll use A indices in the output
             outputIndices = (Dataset) axis1.getAxes()[0];
-          }
-          else if (axis2Mono.equals(Monotonicity.NOT_ORDERED))
-          {
-            // ok, not ordered. we can't use it
-            throw new IllegalArgumentException("Axes must be ordered");
           }
           else
           {
-            // ok, are they in the same direction?
-            if (axis1Mono.equals(axis2Mono))
+            final Monotonicity axis2Mono =
+                Comparisons.findMonotonicity(axis2.getAxes()[0]);
+
+            if (axis1.getAxes()[0].equals(axis2.getAxes()[0]))
             {
-              // fake index
+              // identical indexes, we don't need to intepolate
+              doInterp = false;
               outputIndices = (Dataset) axis1.getAxes()[0];
-
-              // ok, do an interpolated add operation.
-              doInterp = true;
-
+            }
+            else if (axis2Mono.equals(Monotonicity.NOT_ORDERED))
+            {
+              // ok, not ordered. we can't use it
+              throw new IllegalArgumentException("Axes must be ordered");
             }
             else
             {
-              // wrong directions, can't do
-              doInterp = false;
-              outputIndices = null;
-            }
+              // ok, are they in the same direction?
+              if (axis1Mono.equals(axis2Mono))
+              {
+                // fake index
+                outputIndices = (Dataset) axis1.getAxes()[0];
 
+                // ok, do an interpolated add operation.
+                doInterp = true;
+
+              }
+              else
+              {
+                // wrong directions, can't do
+                doInterp = false;
+                outputIndices = null;
+              }
+            }
           }
         }
       }
@@ -279,19 +340,36 @@ public abstract class BinaryQuantityOperation implements IOperation
       }
       else if (getATests().allEqualLengthOrSingleton(getInputs()))
       {
-        // ok, is one a singleton?
-
-        // ok, can't interpolate. are they the same size?
-        // ok, just do plain add
-        res = Maths.add(in1, in2);
-
-        // if there are indices, store them
-        if (outputIndices != null)
+        // extract the datasets
+        Dataset ind1 = null;
+        Dataset ind2 = null;
+        try
         {
-          AxesMetadata am = new AxesMetadataImpl();
-          am.initialize(1);
-          am.setAxis(0, outputIndices);
-          res.addMetadata(am);
+          // load the datasets
+          ind1 = DatasetUtils.sliceAndConvertLazyDataset(in1);
+          ind2 = DatasetUtils.sliceAndConvertLazyDataset(in2);
+        }
+        catch (DatasetException de)
+        {
+          de.printStackTrace();
+        }
+        
+        if(ind2 != null)
+        {
+          res = getOperation().perform(ind1, ind2, null);
+
+          // if there are indices, store them
+          if (outputIndices != null)
+          {
+            AxesMetadata am = new AxesMetadataImpl();
+            am.initialize(1);
+            am.setAxis(0, outputIndices);
+            res.addMetadata(am);
+          }
+        }
+        else
+        {
+          res = null;
         }
       }
       else
@@ -316,7 +394,6 @@ public abstract class BinaryQuantityOperation implements IOperation
      */
     abstract protected IOperationPerformer getOperation();
 
-    @Override
     protected Unit<?> getUnits()
     {
       // get the unit
@@ -326,7 +403,6 @@ public abstract class BinaryQuantityOperation implements IOperation
       return getBinaryOutputUnit(first.getUnits(), second.getUnits());
     }
 
-    @Override
     protected String generateName()
     {
       // get the unit

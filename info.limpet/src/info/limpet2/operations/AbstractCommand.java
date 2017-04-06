@@ -211,16 +211,6 @@ public abstract class AbstractCommand implements
     {
       // do the recalc
       recalculate(subject);
-
-//      // now tell the outputs they have changed
-      // TODO: fire updates from the performCalc event, not here
-      // - then we can minimise the number of updates we send
-//      Iterator<IStoreItem> iter = getOutputs().iterator();
-//      while (iter.hasNext())
-//      {
-//        T t = (T) iter.next();
-//        t.fireDataChanged();
-//      }
     }
   }
 

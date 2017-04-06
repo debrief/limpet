@@ -27,11 +27,13 @@ import info.limpet2.NumberDocumentBuilder;
 import info.limpet2.StoreGroup;
 import info.limpet2.operations.arithmetic.UnaryQuantityOperation;
 import info.limpet2.operations.arithmetic.simple.AddQuantityOperation;
+import info.limpet2.operations.arithmetic.simple.MultiplyQuantityOperation;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javax.measure.quantity.Dimensionless;
 import javax.measure.quantity.Velocity;
 import javax.measure.unit.Unit;
 
@@ -163,7 +165,7 @@ public class TestCollections extends TestCase
     tq1.add(200, -20);
     tq1.add(300, 30);
     tq1.add(400, -20);
-    
+
     NumberDocument tq1d = tq1.toDocument();
 
     IndexedNumberDocumentBuilder tq2 =
@@ -172,18 +174,17 @@ public class TestCollections extends TestCase
     tq2.add(220, -11);
     tq2.add(340, -17);
     tq2.add(440, -22);
-    
+
     NumberDocument tq2d = tq2.toDocument();
 
     NumberDocumentBuilder nq1 =
-        new NumberDocumentBuilder("Some data1", METRE.divide(SECOND)
-            .asType(Velocity.class), null);
+        new NumberDocumentBuilder("Some data1", METRE.divide(SECOND).asType(
+            Velocity.class), null);
     nq1.add(10);
     nq1.add(-20);
     nq1.add(30);
     nq1.add(-20);
-    
-    @SuppressWarnings("unused")
+
     NumberDocument nq1d = nq1.toDocument();
 
     List<Document> selection = new ArrayList<Document>();
@@ -198,7 +199,7 @@ public class TestCollections extends TestCase
       protected boolean appliesTo(List<Document> selection)
       {
         // check it's numerical
-        return false;
+        return true;
       }
 
       @Override
@@ -218,158 +219,169 @@ public class TestCollections extends TestCase
       {
         return Maths.abs(input);
       }
-
-
     };
+    Collection<ICommand> commands = absOp.actionsFor(selection, store, context);
+
+    assertEquals("have some commands", 1, commands.size());
+
+    ICommand firstC = commands.iterator().next();
+
+    assertEquals("store empty", 0, store.size());
+
+    firstC.execute();
+
+    assertEquals("new collection created", 2, store.size());
+    assertEquals("corrent num of outputs", 2, firstC.getOutputs().size());
+
+    // get the first one.
+    NumberDocument series = (NumberDocument) firstC.getOutputs().get(0);
+    assertTrue("non empty", series.size() > 0);
+    assertEquals("corrent length results", 4, series.size());
+    assertTrue("temporal", series.isIndexed());
+    assertTrue("quantity", series.isQuantity());
+
+    // check some values
+    assertEquals("value correct", 10d, series.getValue(0), 0.001);
+    assertEquals("value correct", 20d, series.getValue(1), 0.001);
+    assertEquals("value correct", 30d, series.getValue(2), 0.001);
+    assertEquals("value correct", 20d, series.getValue(3), 0.001);
+
+    series = (NumberDocument) firstC.getOutputs().get(1);
+    assertTrue("non empty", series.size() > 0);
+    assertEquals("corrent length results", 3, series.size());
+    assertTrue("temporal", series.isIndexed());
+    assertTrue("quantity", series.isQuantity());
+
+    // check some values
+    assertEquals("value correct", 11d, series.getValue(0));
+    assertEquals("value correct", 17d, series.getValue(1));
+    assertEquals("value correct", 22d, series.getValue(2));
+
+    // try to clear the units
+    UnaryQuantityOperation clearU = new UnaryQuantityOperation("Clear units")
+    {
+
+      @Override
+      protected boolean appliesTo(List<Document> selection)
+      {
+        return true;
+      }
+
+      @Override
+      protected Unit<?> getUnaryOutputUnit(Unit<?> first)
+      {
+        return Dimensionless.UNIT;
+      }
+
+      @Override
+      protected String getUnaryNameFor(String name)
+      {
+        return "Dimensionless " + name;
+      }
+
+      @Override
+      public Dataset calculate(Dataset input)
+      {
+        return input;
+      }
+    };
+
+    assertEquals("previous type:", "[L]/[T]", tq1d.getUnits().getDimension()
+        .toString());
+
+    selection.clear();
+    selection.add(tq1d);
+    store.clear();
+
+    Collection<ICommand> ops = clearU.actionsFor(selection, store, context);
+    ICommand command = ops.iterator().next();
+    command.execute();
+
+    NumberDocument output =
+        (NumberDocument) command.getOutputs().iterator().next();
+
+    assertEquals("new type:", "", output.getUnits().getDimension().toString());
+    assertEquals("same size", output.size(), tq1d.size());
+    assertEquals("first item same value", output.getValue(0), tq1d.getValue(0));
+    // assertEquals("same num times", output.getTimes().size(), tq1.getTimes()
+    // .size());
+
+    // try again with a non temporal collection
+    selection.clear();
+    selection.add(nq1d);
+    store.clear();
+
+    assertEquals("previous type:", "[L]/[T]", nq1d.getUnits().getDimension()
+        .toString());
+
+    ops = clearU.actionsFor(selection, store, context);
+    command = ops.iterator().next();
+    command.execute();
+
+    NumberDocument output2 =
+        (NumberDocument) command.getOutputs().iterator().next();
+
+    assertEquals("new type:", "", output2.getUnits().getDimension().toString());
+    assertEquals("same size", output2.size(), nq1d.size());
+    assertEquals("first item same value", output2.getValue(0),
+        nq1d.getValue(0), 0.001);
+  }
+
+  public void testMultiplyQuantitySingleton()
+  {
+
+    IndexedNumberDocumentBuilder tq1b =
+        new IndexedNumberDocumentBuilder("Some data1", METRE.divide(SECOND)
+            .asType(Velocity.class), null);
+    tq1b.add(100, 10);
+    tq1b.add(200, 20);
+    tq1b.add(300, 30);
+    tq1b.add(400, 40);
+
+    NumberDocument tq1 = tq1b.toDocument();
+
+    NumberDocumentBuilder tq2b =
+        new NumberDocumentBuilder("Some data2", METRE.divide(SECOND).asType(
+            Velocity.class), null);
+    tq2b.add(11);
+
+    NumberDocument tq2 = tq2b.toDocument();
+
+    List<Document> selection = new ArrayList<Document>();
+    selection.add(tq1);
+    selection.add(tq2);
+
+    StoreGroup store = new StoreGroup("Store");
     Collection<ICommand> commands =
-        absOp.actionsFor(selection, store, context);
-//    ICommand firstC = commands.iterator().next();
-//
-//    assertEquals("store empty", 0, store.size());
-//
-//    firstC.execute();
-//
-//    assertEquals("new collection created", 2, store.size());
-//    assertEquals("corrent num of outputs", 2, firstC.getOutputs().size());
-//
-//    // get the first one.
-//    ITemporalQuantityCollection<?> series =
-//        (ITemporalQuantityCollection<?>) firstC.getOutputs().iterator().next();
-//    assertTrue("non empty", series.getValuesCount() > 0);
-//    assertEquals("corrent length results", 4, series.getValuesCount());
-//    assertTrue("temporal", series.isTemporal());
-//    assertTrue("quantity", series.isQuantity());
-//
-//    // check some values
-//    assertEquals("value correct", 10d, series.getValues().get(0).doubleValue(
-//        (Unit) series.getUnits()));
-//    assertEquals("value correct", 20d, series.getValues().get(1).doubleValue(
-//        (Unit) series.getUnits()));
-//    assertEquals("value correct", 30d, series.getValues().get(2).doubleValue(
-//        (Unit) series.getUnits()));
-//    assertEquals("value correct", 20d, series.getValues().get(3).doubleValue(
-//        (Unit) series.getUnits()));
-//
-//    series = (ITemporalQuantityCollection<?>) firstC.getOutputs().get(1);
-//    assertTrue("non empty", series.getValuesCount() > 0);
-//    assertEquals("corrent length results", 3, series.getValuesCount());
-//    assertTrue("temporal", series.isTemporal());
-//    assertTrue("quantity", series.isQuantity());
-//
-//    // check some values
-//    assertEquals("value correct", 11d, series.getValues().get(0).doubleValue(
-//        (Unit) series.getUnits()));
-//    assertEquals("value correct", 17d, series.getValues().get(1).doubleValue(
-//        (Unit) series.getUnits()));
-//    assertEquals("value correct", 22d, series.getValues().get(2).doubleValue(
-//        (Unit) series.getUnits()));
-//
-//    // try to clear the units
-//    UnitaryMathOperation clearU = new UnitaryMathOperation("Clear units")
-//    {
-//      public double calcFor(double val)
-//      {
-//        return val;
-//      }
-//
-//      protected Unit getUnits(IQuantityCollection input)
-//      {
-//        return Dimensionless.UNIT;
-//      }
-//    };
-//
-//    assertEquals("previous type:", "[L]/[T]", tq1.getUnits().getDimension()
-//        .toString());
-//
-//    selection.clear();
-//    selection.add(tq1);
-//    store.clear();
-//
-//    Collection<ICommand<ICollection>> ops =
-//        clearU.actionsFor(selection, store, context);
-//    ICommand<ICollection> command = ops.iterator().next();
-//    command.execute();
-//
-//    ITemporalQuantityCollection<Quantity> output =
-//        (ITemporalQuantityCollection<Quantity>) command.getOutputs().iterator()
-//            .next();
-//
-//    assertEquals("new type:", "", output.getUnits().getDimension().toString());
-//    assertEquals("same size", output.getValuesCount(), tq1.getValuesCount());
-//    assertEquals("first item same value", output.getValues().iterator().next()
-//        .doubleValue(output.getUnits()), tq1.getValues().iterator().next()
-//        .doubleValue(tq1.getUnits()));
-//    assertEquals("same num times", output.getTimes().size(), tq1.getTimes()
-//        .size());
-//
-//    // try again with a non temporal collection
-//    selection.clear();
-//    selection.add(nq1);
-//    store.clear();
-//
-//    assertEquals("previous type:", "[L]/[T]", nq1.getUnits().getDimension()
-//        .toString());
-//
-//    ops = clearU.actionsFor(selection, store, context);
-//    command = ops.iterator().next();
-//    command.execute();
-//
-//    IQuantityCollection<Quantity> output2 =
-//        (IQuantityCollection<Quantity>) command.getOutputs().iterator().next();
-//
-//    assertEquals("new type:", "", output2.getUnits().getDimension().toString());
-//    assertEquals("same size", output2.getValuesCount(), nq1.getValuesCount());
-//    assertEquals("first item same value", output2.getValues().iterator().next()
-//        .doubleValue(output2.getUnits()), nq1.getValues().iterator().next()
-//        .doubleValue(nq1.getUnits()));
+        new MultiplyQuantityOperation().actionsFor(selection, store, context);
+    ICommand firstC = commands.iterator().next();
+
+    assertEquals("store empty", 0, store.size());
+
+    firstC.execute();
+
+    assertEquals("new collection created", 1, store.size());
+
+    NumberDocument series =
+        (NumberDocument) firstC.getOutputs().iterator().next();
+    assertTrue("non empty", series.size() > 0);
+    assertEquals("corrent length results", 4, series.size());
+    assertTrue("temporal", series.isIndexed());
+    assertTrue("quantity", series.isQuantity());
+    assertEquals("correct value", 110d, series.getValue(0));
+
+    tq2b.add(11);
+    
+    NumberDocument tq3 = tq2b.toDocument();
+    
+    selection.remove(tq2);
+    selection.add(tq3);
+    
+    commands =
+        new MultiplyQuantityOperation().actionsFor(selection, store, context);
+    assertEquals("no commands returned", 0, commands.size());
 
   }
-  //
-  // @SuppressWarnings(
-  // {"unchecked"})
-  // public void testMultiplyQuantitySingleton()
-  // {
-  // ITemporalQuantityCollection<Velocity> tq1 =
-  // new StockTypes.Temporal.SpeedMSec("Some data1", null);
-  // tq1.add(100, 10);
-  // tq1.add(200, 20);
-  // tq1.add(300, 30);
-  // tq1.add(400, 40);
-  //
-  // IQuantityCollection<Velocity> tq2 =
-  // new StockTypes.NonTemporal.SpeedMSec("Some data2", null);
-  // tq2.add(11);
-  //
-  // List<IStoreItem> selection = new ArrayList<IStoreItem>();
-  // selection.add((IQuantityCollection<Velocity>) tq1);
-  // selection.add((IQuantityCollection<Velocity>) tq2);
-  //
-  // StoreGroup store = new StoreGroup();
-  // Collection<ICommand<IStoreItem>> commands =
-  // new MultiplyQuantityOperation().actionsFor(selection, store, context);
-  // ICommand<IStoreItem> firstC = commands.iterator().next();
-  //
-  // assertEquals("store empty", 0, store.size());
-  //
-  // firstC.execute();
-  //
-  // assertEquals("new collection created", 1, store.size());
-  //
-  // IQuantityCollection<Velocity> series =
-  // (IQuantityCollection<Velocity>) firstC.getOutputs().iterator().next();
-  // assertTrue("non empty", series.getValuesCount() > 0);
-  // assertEquals("corrent length results", 4, series.getValuesCount());
-  // assertTrue("temporal", series.isTemporal());
-  // assertTrue("quantity", series.isQuantity());
-  // assertEquals("correct value", 110d, series.getValues().get(0).doubleValue(
-  // series.getUnits()));
-  //
-  // tq2.add(11);
-  // commands =
-  // new MultiplyQuantityOperation().actionsFor(selection, store, context);
-  // assertEquals("no commands returned", 0, commands.size());
-  //
-  // }
   //
   // @SuppressWarnings(
   // {"unchecked", "rawtypes"})

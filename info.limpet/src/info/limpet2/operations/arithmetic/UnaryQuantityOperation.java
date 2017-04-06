@@ -19,11 +19,13 @@ import info.limpet2.ICommand;
 import info.limpet2.IContext;
 import info.limpet2.IOperation;
 import info.limpet2.IStoreGroup;
+import info.limpet2.IStoreItem;
 import info.limpet2.NumberDocument;
 import info.limpet2.operations.CollectionComplianceTests;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.measure.unit.Unit;
@@ -31,6 +33,7 @@ import javax.measure.unit.Unit;
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.metadata.AxesMetadata;
@@ -62,7 +65,7 @@ public abstract class UnaryQuantityOperation implements IOperation
       ICommand newC =
           new UnaryQuantityCommand("Math - " + _opName, "description here",
               destination, selection, context);
-      
+
       res.add(newC);
     }
 
@@ -124,79 +127,162 @@ public abstract class UnaryQuantityOperation implements IOperation
     }
 
     /**
+     * for unitary operations we only act on a single input. We may be acting on an number of
+     * datasets, so find the relevant one, and re-calculate it
+     */
+    protected void recalculate(IStoreItem subject)
+    {
+      // TODO: change logic, we should only re-generate the
+      // single output
+      
+      // workaround: we don't know which output derives
+      // from this input.  So, we will have to regenerate
+      // all outputs
+
+      Iterator<Document> oIter = getOutputs().iterator();
+      
+      // we may be acting separately on multiple inputs.
+      // so, loop through them
+      for (final Document input : getInputs())
+      {
+        final NumberDocument inputDoc = (NumberDocument) input;
+        final NumberDocument outputDoc = (NumberDocument) oIter.next();
+
+        // ok, process this one.
+        Unit<?> unit = getUnits(inputDoc);
+        
+        // update the units
+        if(outputDoc.getUnits() != unit)
+        {
+          outputDoc.setUnits(unit);
+        }
+
+        // clear the results sets
+        clearOutputs(getOutputs());
+
+        // start adding values.
+        IDataset dataset = performCalc(inputDoc);
+
+        // update the name
+        dataset.setName(generateName(inputDoc));
+        
+        // store the data
+        outputDoc.setDataset(dataset);
+
+        // and fire out the update
+        outputDoc.fireDataChanged();
+      }
+    }
+
+    @Override
+    public void execute()
+    {
+      // clear the results sets
+      clearOutputs(getOutputs());
+
+      // we may be acting separately on multiple inputs.
+      // so, loop through them
+      for (final Document input : getInputs())
+      {
+        final NumberDocument inputDoc = (NumberDocument) input;
+
+        // ok, process this one.
+        // sort out the output unit
+        Unit<?> unit = getUnits(inputDoc);
+
+        // start adding values.
+        IDataset dataset = performCalc(inputDoc);
+
+        // store the name
+        dataset.setName(generateName(inputDoc));
+
+        // ok, wrap the dataset
+        NumberDocument output =
+            new NumberDocument((DoubleDataset) dataset, this, unit);
+
+        // and fire out the update
+        output.fireDataChanged();
+
+        // store the output
+        super.addOutput(output);
+
+        // tell the series that we're a dependent
+        inputDoc.addDependent(this);
+
+        // ok, store the results
+        getStore().add(output);
+
+      }
+
+    }
+
+    /**
      * wrap the actual operation. We're doing this since we need to separate it from the core
      * "execute" operation in order to support dynamic updates
+     * 
+     * @param nd
      * 
      * @param unit
      *          the units to use
      * @param outputs
      *          the list of output series
      */
-    protected IDataset performCalc()
+    protected IDataset performCalc(NumberDocument nd)
     {
-      final IDataset in1 = getInputs().get(0).getDataset();
-      Dataset in1d;
+      final IDataset ids = nd.getDataset();
+      Dataset res = null;
       try
       {
-        in1d = DatasetUtils.sliceAndConvertLazyDataset(in1);
+        final Dataset ds = DatasetUtils.sliceAndConvertLazyDataset(ids);
+
+        // ok, re-calculate this
+        res = calculate(ds);
+
+        // store the axes
+        final AxesMetadata axis1 = ds.getFirstMetadata(AxesMetadata.class);
+
+        // if there are indices, store them
+        if (axis1 != null)
+        {
+          AxesMetadata am = new AxesMetadataImpl();
+          // keep track of the indices to use in the output
+          final ILazyDataset outputIndicesLazy = axis1.getAxes()[0];
+          Dataset outputIndices = null;
+          try
+          {
+            outputIndices =
+                DatasetUtils.sliceAndConvertLazyDataset(outputIndicesLazy);
+          }
+          catch (DatasetException e)
+          {
+            throw new IllegalArgumentException(
+                "Unable to load axis for dataset:" + ds.getName());
+          }
+          am.initialize(1);
+          am.setAxis(0, outputIndices);
+          res.addMetadata(am);
+        }
       }
       catch (DatasetException e)
       {
-        throw new IllegalArgumentException("Unable to load subject dataset:"
-            + in1.getName());
-      }
-
-      final Dataset res = calculate(in1d);
-
-      // look for axes metadata
-      final AxesMetadata axis1 = in1.getFirstMetadata(AxesMetadata.class);
-
-      // if there are indices, store them
-      if (axis1 != null)
-      {
-        AxesMetadata am = new AxesMetadataImpl();
-        // keep track of the indices to use in the output
-        final ILazyDataset outputIndicesLazy = axis1.getAxes()[0];
-        Dataset outputIndices = null;
-        try
-        {
-          outputIndices =
-              DatasetUtils.sliceAndConvertLazyDataset(outputIndicesLazy);
-        }
-        catch (DatasetException e)
-        {
-          throw new IllegalArgumentException("Unable to load axis for dataset:"
-              + in1.getName());
-        }
-        am.initialize(1);
-        am.setAxis(0, outputIndices);
-        res.addMetadata(am);
-      }
-
-      // and fire out the update
-      for (Document output : getOutputs())
-      {
-        output.fireDataChanged();
+        // TODO Auto-generated catch block
+        e.printStackTrace();
       }
 
       // done
       return res;
     }
 
-    protected Unit<?> getUnits()
+    protected Unit<?> getUnits(NumberDocument inputDoc)
     {
       // get the unit
-      NumberDocument first = (NumberDocument) getInputs().get(0);
-
-      return getUnaryOutputUnit(first.getUnits());
+      return getUnaryOutputUnit(inputDoc.getUnits());
     }
 
-    protected String generateName()
+    protected String generateName(NumberDocument inputDoc)
     {
-      // get the unit
-      NumberDocument first = (NumberDocument) getInputs().get(0);
-
-      return getUnaryNameFor(first.getName());
+      // get the name
+      return getUnaryNameFor(inputDoc.getName());
     }
 
   }
