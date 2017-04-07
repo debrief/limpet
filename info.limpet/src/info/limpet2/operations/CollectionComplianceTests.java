@@ -268,7 +268,7 @@ public class CollectionComplianceTests
   public boolean allQuantity(List<IStoreItem> selection)
   {
     // are they all temporal?
-    boolean allValid = true;
+    boolean allValid = selection.size() > 0;
 
     for (int i = 0; i < selection.size(); i++)
     {
