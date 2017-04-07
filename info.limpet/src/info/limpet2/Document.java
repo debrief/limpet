@@ -49,6 +49,11 @@ public class Document implements IStoreItem
     return _dataset.getName();
   }
 
+  public void setName(String name)
+  {
+    _dataset.setName(name);
+  }
+  
   @Override
   public IStoreGroup getParent()
   {

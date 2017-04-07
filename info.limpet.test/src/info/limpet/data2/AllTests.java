@@ -42,7 +42,8 @@ import junit.framework.TestSuite;
 	TestExport.class,
 	TestReflectivePropertySource.class,
 	TestOperations.class,
-	TestAnalysis.class
+	TestAnalysis.class,
+	TestCsvParser.class
 })
 
 @RunWith(Suite.class)

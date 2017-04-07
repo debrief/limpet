@@ -9,7 +9,7 @@ import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DoubleDataset;
 
 
-public class NumberDocumentBuilder
+public class NumberDocumentBuilder implements IDocumentBuilder
 {
   final private String _name;
   final private Unit<?> _units;

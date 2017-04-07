@@ -46,6 +46,7 @@ Export-Package: com.thoughtworks.xstream,
  info.limpet2.operations.admin,
  info.limpet2.operations.arithmetic,
  info.limpet2.operations.arithmetic.simple,
+ info.limpet2.persistence,
  org.xmlpull.mxp1,
  org.xmlpull.v1
 Require-Bundle: info.limpet.libs;visibility:=reexport,

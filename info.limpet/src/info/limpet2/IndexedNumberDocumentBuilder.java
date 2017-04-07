@@ -10,7 +10,7 @@ import org.eclipse.january.dataset.LongDataset;
 import org.eclipse.january.metadata.AxesMetadata;
 import org.eclipse.january.metadata.internal.AxesMetadataImpl;
 
-public class IndexedNumberDocumentBuilder
+public class IndexedNumberDocumentBuilder implements IDocumentBuilder
 {
   private String _name;
   private Unit<?> _units;
