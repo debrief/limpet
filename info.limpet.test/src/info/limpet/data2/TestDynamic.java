@@ -14,7 +14,6 @@
  *****************************************************************************/
 package info.limpet.data2;
 
-import info.limpet2.Document;
 import info.limpet2.IChangeListener;
 import info.limpet2.ICommand;
 import info.limpet2.IContext;
@@ -43,7 +42,7 @@ public class TestDynamic extends TestCase
 		StoreGroup store = new SampleData().getData(10);
 
 		// ok, let's try one that works
-		List<Document> selection = new ArrayList<Document>();
+		List<IStoreItem> selection = new ArrayList<IStoreItem>();
 		NumberDocument speedOne =  (NumberDocument) store.get(SampleData.SPEED_ONE);
 		NumberDocument speedTwo =  (NumberDocument) store.get(SampleData.SPEED_TWO);
 		selection.add(speedOne);

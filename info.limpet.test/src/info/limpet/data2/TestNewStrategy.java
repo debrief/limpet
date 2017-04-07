@@ -51,7 +51,7 @@ public class TestNewStrategy extends TestCase
     
     assertNotNull("found sample data", doc1);
     
-    List<Document> selection = new ArrayList<Document>();
+    List<IStoreItem> selection = new ArrayList<IStoreItem>();
     selection.add((Document) doc1);
     selection.add((Document) doc2);
     
@@ -80,6 +80,6 @@ public class TestNewStrategy extends TestCase
   public void testGenerateSampleData()
   {
     StoreGroup data = new SampleData().getData(10);
-    assertEquals("top level items created", 16, data.size());
+    assertEquals("top level items created", 15, data.size());
   }
 }

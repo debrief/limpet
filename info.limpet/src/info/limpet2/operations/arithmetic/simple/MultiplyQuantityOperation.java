@@ -18,6 +18,7 @@ import info.limpet2.Document;
 import info.limpet2.ICommand;
 import info.limpet2.IContext;
 import info.limpet2.IStoreGroup;
+import info.limpet2.IStoreItem;
 import info.limpet2.operations.arithmetic.BinaryQuantityOperation;
 import info.limpet2.operations.arithmetic.InterpolatedMaths;
 import info.limpet2.operations.arithmetic.InterpolatedMaths.IOperationPerformer;
@@ -34,7 +35,7 @@ public class MultiplyQuantityOperation extends BinaryQuantityOperation
 {
 
   @Override
-  protected void addInterpolatedCommands(List<Document> selection,
+  protected void addInterpolatedCommands(List<IStoreItem> selection,
       IStoreGroup destination, Collection<ICommand> res, IContext context)
   {
     Document longest = getLongestIndexedCollection(selection);
@@ -49,7 +50,7 @@ public class MultiplyQuantityOperation extends BinaryQuantityOperation
     }
   }
 
-  protected void addIndexedCommands(List<Document> selection,
+  protected void addIndexedCommands(List<IStoreItem> selection,
       IStoreGroup destination, Collection<ICommand> res, IContext context)
   {
     ICommand newC =
@@ -59,7 +60,7 @@ public class MultiplyQuantityOperation extends BinaryQuantityOperation
     res.add(newC);
   }
 
-  protected boolean appliesTo(List<Document> selection)
+  protected boolean appliesTo(List<IStoreItem> selection)
   {
     boolean nonEmpty = getATests().nonEmpty(selection);
     boolean allQuantity = getATests().allQuantity(selection);
@@ -72,13 +73,13 @@ public class MultiplyQuantityOperation extends BinaryQuantityOperation
 
   public class AddQuantityValues extends BinaryQuantityCommand
   {
-    public AddQuantityValues(String name, List<Document> selection,
+    public AddQuantityValues(String name, List<IStoreItem> selection,
         IStoreGroup store, IContext context)
     {
       this(name, selection, store, null, context);
     }
 
-    public AddQuantityValues(String name, List<Document> selection,
+    public AddQuantityValues(String name, List<IStoreItem> selection,
         IStoreGroup destination, Document timeProvider, IContext context)
     {
       super(name, "Multiply datasets", destination, false, false, selection,

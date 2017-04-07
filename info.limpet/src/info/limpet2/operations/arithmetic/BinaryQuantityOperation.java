@@ -48,7 +48,7 @@ public abstract class BinaryQuantityOperation implements IOperation
       new CollectionComplianceTests();
 
   @Override
-  public Collection<ICommand> actionsFor(List<Document> selection,
+  public Collection<ICommand> actionsFor(List<IStoreItem> selection,
       IStoreGroup destination, IContext context)
   {
     Collection<ICommand> res = new ArrayList<ICommand>();
@@ -71,29 +71,31 @@ public abstract class BinaryQuantityOperation implements IOperation
     return res;
   }
 
-  protected Document getLongestIndexedCollection(List<Document> selection)
+  protected Document getLongestIndexedCollection(List<IStoreItem> selection)
   {
     // find the longest time series.
-    Iterator<Document> iter = selection.iterator();
     Document longest = null;
 
-    while (iter.hasNext())
+    for(final IStoreItem sItem: selection)
     {
-      Document doc = iter.next();
-      if (doc.isIndexed())
+      if(sItem instanceof Document)
       {
-        if (longest == null)
+        final Document doc = (Document) sItem;
+        if (doc.isIndexed())
         {
-          longest = doc;
-        }
-        else
-        {
-          // store the longest one
-          longest = doc.size() > longest.size() ? doc : longest;
+          if (longest == null)
+          {
+            longest = doc;
+          }
+          else
+          {
+            // store the longest one
+            longest = doc.size() > longest.size() ? doc : longest;
+          }
         }
       }
-
     }
+    
     return longest;
   }
 
@@ -103,7 +105,7 @@ public abstract class BinaryQuantityOperation implements IOperation
    * @param selection
    * @return
    */
-  protected abstract boolean appliesTo(List<Document> selection);
+  protected abstract boolean appliesTo(List<IStoreItem> selection);
 
   /**
    * produce any new commands for this s election
@@ -115,7 +117,7 @@ public abstract class BinaryQuantityOperation implements IOperation
    * @param commands
    *          the list of commands
    */
-  protected abstract void addIndexedCommands(List<Document> selection,
+  protected abstract void addIndexedCommands(List<IStoreItem> selection,
       IStoreGroup destination, Collection<ICommand> commands, IContext context);
 
   /**
@@ -125,7 +127,7 @@ public abstract class BinaryQuantityOperation implements IOperation
    * @param destination
    * @param res
    */
-  protected abstract void addInterpolatedCommands(List<Document> selection,
+  protected abstract void addInterpolatedCommands(List<IStoreItem> selection,
       IStoreGroup destination, Collection<ICommand> res, IContext context);
 
   public CollectionComplianceTests getATests()
@@ -147,14 +149,14 @@ public abstract class BinaryQuantityOperation implements IOperation
 
     public BinaryQuantityCommand(String title, String description,
         IStoreGroup store, boolean canUndo, boolean canRedo,
-        List<Document> inputs, IContext context)
+        List<IStoreItem> inputs, IContext context)
     {
       this(title, description, store, canUndo, canRedo, inputs, null, context);
     }
 
     public BinaryQuantityCommand(String title, String description,
         IStoreGroup store, boolean canUndo, boolean canRedo,
-        List<Document> inputs, Document timeProvider, IContext context)
+        List<IStoreItem> inputs, Document timeProvider, IContext context)
     {
       super(title, description, store, canUndo, canRedo, inputs, context);
 
@@ -200,11 +202,15 @@ public abstract class BinaryQuantityOperation implements IOperation
       super.addOutput(output);
 
       // tell each series that we're a dependent
-      Iterator<Document> iter = getInputs().iterator();
+      Iterator<IStoreItem> iter = getInputs().iterator();
       while (iter.hasNext())
       {
-        Document iCollection = iter.next();
-        iCollection.addDependent(this);
+        IStoreItem sItem = iter.next();
+        if(sItem instanceof Document)
+        {
+          Document iCollection = (Document) sItem;
+          iCollection.addDependent(this);          
+        }
       }
 
       // ok, done
@@ -225,8 +231,8 @@ public abstract class BinaryQuantityOperation implements IOperation
     {
       final IDataset res;
 
-      final IDataset in1 = getInputs().get(0).getDataset();
-      final IDataset in2 = getInputs().get(1).getDataset();
+      final IDataset in1 = ((NumberDocument) getInputs().get(0)).getDataset();
+      final IDataset in2 = ((NumberDocument) getInputs().get(1)).getDataset();
 
       // look for axes metadata
       final AxesMetadata axis1 = in1.getFirstMetadata(AxesMetadata.class);

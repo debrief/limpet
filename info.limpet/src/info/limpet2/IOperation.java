@@ -22,5 +22,5 @@ import java.util.List;
 
 public interface IOperation
 {
-	Collection<ICommand> actionsFor(List<Document> selection, IStoreGroup destination, IContext context);
+	Collection<ICommand> actionsFor(List<IStoreItem> selection, IStoreGroup destination, IContext context);
 }

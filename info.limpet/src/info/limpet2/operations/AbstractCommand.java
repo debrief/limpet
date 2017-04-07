@@ -37,7 +37,7 @@ public abstract class AbstractCommand implements
   private final boolean canRedo;
   private final IStoreGroup store;
 
-  private final List<Document> inputs;
+  private final List<IStoreItem> inputs;
   private final List<Document> outputs;
 
   private IStoreGroup _parent;
@@ -51,7 +51,7 @@ public abstract class AbstractCommand implements
   private final transient IContext context;
 
   public AbstractCommand(String title, String description, IStoreGroup store,
-      boolean canUndo, boolean canRedo, List<Document> inputs, IContext context)
+      boolean canUndo, boolean canRedo, List<IStoreItem> inputs, IContext context)
   {
     this.title = title;
     this.description = description;
@@ -60,7 +60,7 @@ public abstract class AbstractCommand implements
     this.canRedo = canRedo;
     this.context = context;
 
-    this.inputs = new ArrayList<Document>();
+    this.inputs = new ArrayList<IStoreItem>();
     this.outputs = new ArrayList<Document>();
 
     // store any inputs, if we have any
@@ -138,7 +138,7 @@ public abstract class AbstractCommand implements
   {
     StringBuffer res = new StringBuffer();
 
-    Iterator<Document> iter = (Iterator<Document>) getInputs().iterator();
+    Iterator<IStoreItem> iter = (Iterator<IStoreItem>) getInputs().iterator();
     int ctr = 0;
     while (iter.hasNext())
     {
@@ -237,10 +237,10 @@ public abstract class AbstractCommand implements
   public void execute()
   {
     // ok, register as a listener with the input files
-    Iterator<Document> iter = getInputs().iterator();
+    Iterator<IStoreItem> iter = getInputs().iterator();
     while (iter.hasNext())
     {
-      Document t = (Document) iter.next();
+      IStoreItem t = (IStoreItem) iter.next();
       t.addChangeListener(this);
     }
   }
@@ -272,7 +272,7 @@ public abstract class AbstractCommand implements
   }
 
   @Override
-  public final List<Document> getInputs()
+  public final List<IStoreItem> getInputs()
   {
     return inputs;
   }

@@ -3,6 +3,7 @@ package info.limpet2.operations.arithmetic;
 import info.limpet2.Document;
 import info.limpet2.IContext;
 import info.limpet2.IStoreGroup;
+import info.limpet2.IStoreItem;
 import info.limpet2.operations.AbstractCommand;
 
 import java.util.Iterator;
@@ -13,7 +14,7 @@ public abstract class CoreQuantityCommand extends AbstractCommand
 
   public CoreQuantityCommand(String title, String description,
       IStoreGroup store, boolean canUndo, boolean canRedo,
-      List<Document> inputs, IContext context)
+      List<IStoreItem> inputs, IContext context)
   {
     super(title, description, store, canUndo, canRedo, inputs, context);
   }

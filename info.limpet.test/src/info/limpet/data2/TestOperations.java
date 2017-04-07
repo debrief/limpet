@@ -24,13 +24,20 @@ import static org.junit.Assert.assertTrue;
 import info.limpet2.Document;
 import info.limpet2.ICommand;
 import info.limpet2.IContext;
+import info.limpet2.IOperation;
 import info.limpet2.IStoreGroup;
 import info.limpet2.IStoreItem;
+import info.limpet2.IndexedNumberDocumentBuilder;
 import info.limpet2.MockContext;
 import info.limpet2.NumberDocument;
 import info.limpet2.NumberDocumentBuilder;
 import info.limpet2.SampleData;
 import info.limpet2.StoreGroup;
+import info.limpet2.operations.OperationsLibrary;
+import info.limpet2.operations.admin.AddLayerOperation;
+import info.limpet2.operations.admin.CreateSingletonGenerator;
+import info.limpet2.operations.admin.DeleteCollectionOperation;
+import info.limpet2.operations.arithmetic.UnaryQuantityOperation;
 import info.limpet2.operations.arithmetic.simple.AddQuantityOperation;
 import info.limpet2.operations.arithmetic.simple.MultiplyQuantityOperation;
 import info.limpet2.operations.arithmetic.simple.SubtractQuantityOperation;
@@ -38,17 +45,22 @@ import info.limpet2.operations.arithmetic.simple.UnitConversionOperation;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.measure.quantity.Angle;
+import javax.measure.quantity.Dimensionless;
 import javax.measure.quantity.Velocity;
 
+import org.easymock.EasyMock;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 public class TestOperations
 {
+
   private IContext context = new MockContext();
   @Rule
   public final ExpectedException thrown = ExpectedException.none();
@@ -60,7 +72,7 @@ public class TestOperations
     StoreGroup store = new SampleData().getData(10);
 
     // ok, let's try one that works
-    List<Document> selection = new ArrayList<Document>();
+    List<IStoreItem> selection = new ArrayList<IStoreItem>();
 
     // ///////////////
     // TEST INVALID PERMUTATIONS
@@ -93,116 +105,125 @@ public class TestOperations
 
   }
 
-  // @Test
-  // public void testTrig()
-  // {
-  // // prepare some data
-  // SpeedKts speedData = new StockTypes.Temporal.SpeedKts("speed", null);
-  // speedData.add(100, 23);
-  // speedData.add(200, 44);
-  //
-  // AngleDegrees angleData =
-  // new StockTypes.NonTemporal.AngleDegrees("degs", null);
-  // angleData.add(200d);
-  // angleData.add(123d);
-  //
-  // StockTypes.Temporal.AngleDegrees temporalAngleData =
-  // new StockTypes.Temporal.AngleDegrees("degs", null);
-  // temporalAngleData.add(1000, 200d);
-  // temporalAngleData.add(3000, 123d);
-  // temporalAngleData.add(4000, 13d);
-  //
-  // List<ICollection> selection = new ArrayList<ICollection>();
-  // StoreGroup store = new StoreGroup();
-  //
-  // HashMap<String, List<IOperation<?>>> ops =
-  // OperationsLibrary.getOperations();
-  // List<IOperation<?>> arith = ops.get(OperationsLibrary.ARITHMETIC);
-  // // ok, now find the trig op
-  // Iterator<IOperation<?>> iter = arith.iterator();
-  // IOperation<ICollection> sinOp = null;
-  // IOperation<ICollection> cosOp = null;
-  // while (iter.hasNext())
-  // {
-  // IOperation<?> thisO = (IOperation<?>) iter.next();
-  // if (thisO instanceof UnitaryMathOperation)
-  // {
-  // UnitaryMathOperation umo = (UnitaryMathOperation) thisO;
-  // if (umo.getName().equals("Sin"))
-  // {
-  // sinOp = umo;
-  // }
-  // if (umo.getName().equals("Cos"))
-  // {
-  // cosOp = umo;
-  // }
-  // }
-  // }
-  //
-  // assertNotNull("check we found it", sinOp);
-  //
-  // // ok, try it with empty data
-  // Collection<ICommand<ICollection>> validOps =
-  // sinOp.actionsFor(selection, null, null);
-  // assertEquals("null for empty selection", 0, validOps.size());
-  //
-  // // add some speed data
-  // selection.add(speedData);
-  // // ok, try it with empty data
-  // validOps = sinOp.actionsFor(selection, store, null);
-  // assertEquals("empty for invalid selection", 0, validOps.size());
-  //
-  // // add some valid data
-  // selection.add(angleData);
-  //
-  // // ok, try it with empty data
-  // validOps = sinOp.actionsFor(selection, store, null);
-  // assertEquals("empty for invalid selection", 0, validOps.size());
-  //
-  // // ok, try it with empty data
-  // validOps = cosOp.actionsFor(selection, store, null);
-  // assertEquals(" cos also empty for invalid selection", 0, validOps.size());
-  //
-  // // and remove the speed data
-  // selection.remove(speedData);
-  //
-  // // ok, try it with empty data
-  // validOps = sinOp.actionsFor(selection, store, context);
-  // assertEquals("non-empty for valid selection", 1, validOps.size());
-  //
-  // ICommand<ICollection> theOp = validOps.iterator().next();
-  // theOp.execute();
-  //
-  // assertEquals("has new dataset", 1, store.size());
-  // ICollection output = theOp.getOutputs().iterator().next();
-  //
-  // // check the size
-  // assertEquals("correct size", 2, output.getValuesCount());
-  //
-  // // check data type
-  // assertTrue("isn't temporal", !output.isTemporal());
-  // assertTrue("is quantity", output.isQuantity());
-  //
-  // // ok, try it temporal data
-  // selection.remove(angleData);
-  // selection.add(temporalAngleData);
-  //
-  // validOps = sinOp.actionsFor(selection, store, context);
-  // assertEquals("non-empty for valid selection", 1, validOps.size());
-  //
-  // theOp = validOps.iterator().next();
-  // theOp.execute();
-  //
-  // assertEquals("has new dataset", 2, store.size());
-  // output = theOp.getOutputs().iterator().next();
-  //
-  // // check the size
-  // assertEquals("correct size", 3, output.getValuesCount());
-  //
-  // // check data type
-  // assertTrue("isn't temporal", output.isTemporal());
-  //
-  // }
+  @SuppressWarnings("unused")
+  @Test
+  public void testTrig()
+  {
+    // prepare some data
+    IndexedNumberDocumentBuilder speedDatab =
+        new IndexedNumberDocumentBuilder("speed", METRE.divide(SECOND).asType(
+            Velocity.class), null);
+    speedDatab.add(100, 23);
+    speedDatab.add(200, 44);
+    NumberDocument speedData = speedDatab.toDocument();
+
+    NumberDocumentBuilder angledataB =
+        new NumberDocumentBuilder("degs", Dimensionless.UNIT, null);
+    angledataB.add(200d);
+    angledataB.add(123d);
+
+    NumberDocument angleData = angledataB.toDocument();
+
+    IndexedNumberDocumentBuilder temporalAngleDataB =
+        new IndexedNumberDocumentBuilder("degs", SampleData.DEGREE_ANGLE
+            .asType(Angle.class), null);
+    temporalAngleDataB.add(1000, 200d);
+    temporalAngleDataB.add(3000, 123d);
+    temporalAngleDataB.add(4000, 13d);
+
+    NumberDocument temporalAngleData = temporalAngleDataB.toDocument();
+
+    List<IStoreItem> selection = new ArrayList<IStoreItem>();
+    StoreGroup store = new StoreGroup("Store");
+
+    HashMap<String, List<IOperation>> ops = OperationsLibrary.getOperations();
+    List<IOperation> arith = ops.get(OperationsLibrary.ARITHMETIC);
+    // ok, now find the trig op
+    Iterator<IOperation> iter = arith.iterator();
+    IOperation sinOp = null;
+    IOperation cosOp = null;
+    while (iter.hasNext())
+    {
+      IOperation thisO = (IOperation) iter.next();
+      if (thisO instanceof UnaryQuantityOperation)
+      {
+        UnaryQuantityOperation umo = (UnaryQuantityOperation) thisO;
+        if (umo.getName().equals("Sin"))
+        {
+          sinOp = umo;
+        }
+        if (umo.getName().equals("Cos"))
+        {
+          cosOp = umo;
+        }
+      }
+    }
+
+    assertNotNull("check we found it", sinOp);
+
+    // ok, try it with empty data
+    Collection<ICommand> validOps =
+        sinOp.actionsFor(selection, null, null);
+    assertEquals("null for empty selection", 0, validOps.size());
+
+    // add some speed data
+    selection.add(speedData);
+    // ok, try it with empty data
+    validOps = sinOp.actionsFor(selection, store, null);
+    assertEquals("empty for invalid selection", 0, validOps.size());
+
+    // add some valid data
+    selection.add(angleData);
+
+    // ok, try it with empty data
+    validOps = sinOp.actionsFor(selection, store, null);
+    assertEquals("empty for invalid selection", 0, validOps.size());
+
+    // ok, try it with empty data
+    validOps = cosOp.actionsFor(selection, store, null);
+    assertEquals(" cos also empty for invalid selection", 0, validOps.size());
+
+    // and remove the speed data
+    selection.remove(speedData);
+
+    // ok, try it with empty data
+    validOps = sinOp.actionsFor(selection, store, context);
+    assertEquals("non-empty for valid selection", 1, validOps.size());
+
+    ICommand theOp = validOps.iterator().next();
+    theOp.execute();
+
+    assertEquals("has new dataset", 1, store.size());
+    Document output = theOp.getOutputs().iterator().next();
+
+    // check the size
+    assertEquals("correct size", 2, output.size());
+
+    // check data type
+    assertTrue("isn't temporal", !output.isIndexed());
+    assertTrue("is quantity", output.isQuantity());
+
+    // ok, try it temporal data
+    selection.remove(angleData);
+    selection.add(temporalAngleData);
+
+    validOps = sinOp.actionsFor(selection, store, context);
+    assertEquals("non-empty for valid selection", 1, validOps.size());
+
+    theOp = validOps.iterator().next();
+    theOp.execute();
+
+    assertEquals("has new dataset", 2, store.size());
+    output = theOp.getOutputs().iterator().next();
+
+    // check the size
+    assertEquals("correct size", 3, output.size());
+
+    // check data type
+    assertTrue("isn't temporal", output.isIndexed());
+
+  }
+
   // @Test
   // public void testAppliesTo()
   // {
@@ -414,7 +435,7 @@ public class TestOperations
     StoreGroup store = new SampleData().getData(30);
 
     // ok, let's try one that works
-    List<Document> selection = new ArrayList<Document>();
+    List<IStoreItem> selection = new ArrayList<IStoreItem>();
 
     // ///////////////
     // TEST INVALID PERMUTATIONS
@@ -519,7 +540,7 @@ public class TestOperations
     // place to store results data
     IStoreGroup store = new SampleData().getData(10);
 
-    List<Document> selection = new ArrayList<Document>();
+    List<IStoreItem> selection = new ArrayList<IStoreItem>();
     // speed one defined in m/s
     NumberDocument speedGood1 =
         (NumberDocument) store.get(SampleData.SPEED_ONE);
@@ -560,6 +581,7 @@ public class TestOperations
 
     NumberDocument inputSpeed = speedGood1;
 
+    @SuppressWarnings("unused")
     double firstInputSpeed = inputSpeed.getValue(0);
   }
 
@@ -709,7 +731,7 @@ public class TestOperations
   public void testSubtractionSingleton()
   {
     StoreGroup store = new SampleData().getData(10);
-    List<Document> selection = new ArrayList<Document>();
+    List<IStoreItem> selection = new ArrayList<IStoreItem>();
 
     // test invalid dimensions
     NumberDocument speedGood1 =
@@ -724,6 +746,7 @@ public class TestOperations
 
     selection.add(speedGood1);
     selection.add(speedSingle);
+    @SuppressWarnings("unused")
     Collection<ICommand> commands =
         new SubtractQuantityOperation().actionsFor(selection, store, context);
 
@@ -745,7 +768,7 @@ public class TestOperations
   public void testAddSingleton()
   {
     StoreGroup store = new SampleData().getData(10);
-    List<Document> selection = new ArrayList<Document>();
+    List<IStoreItem> selection = new ArrayList<IStoreItem>();
 
     // test invalid dimensions
     NumberDocument speedGood1 =
@@ -783,8 +806,7 @@ public class TestOperations
   public void testSubtraction()
   {
     StoreGroup store = new SampleData().getData(10);
-    int storeSize = store.size();
-    List<Document> selection = new ArrayList<>();
+    List<IStoreItem> selection = new ArrayList<IStoreItem>();
 
     // test invalid dimensions
     NumberDocument speedGood1 =
@@ -844,11 +866,10 @@ public class TestOperations
     // context.logError(IContext.Status.ERROR, "Error", null);
   }
 
-  @SuppressWarnings("unchecked")
   @Test
   public void testAddLayerOperation() throws RuntimeException
   {
-    IContext context = new MockContext();
+    IContext context = EasyMock.createMock(MockContext.class);
     // place to store results data
     StoreGroup store = new SampleData().getData(10);
 
@@ -861,8 +882,8 @@ public class TestOperations
         new AddLayerOperation().actionsFor(selection, store, context);
     assertEquals("Valid number of commands", 1, commands.size());
     commands.contains(track1);
-    Iterator<ICommand<IStoreItem>> iterator = commands.iterator();
-    ICommand<IStoreItem> firstItem = iterator.next();
+    Iterator<ICommand> iterator = commands.iterator();
+    ICommand firstItem = iterator.next();
 
     EasyMock.expect(
         context.getInput("Add layer", "Provide name for new folder", ""))
@@ -912,8 +933,7 @@ public class TestOperations
     }
     catch (Throwable throwable)
     {
-      Assert.assertEquals(true,
-          throwable instanceof UnsupportedOperationException);
+      assertEquals(true, throwable instanceof UnsupportedOperationException);
     }
     try
     {
@@ -921,88 +941,93 @@ public class TestOperations
     }
     catch (Throwable throwable)
     {
-      Assert.assertEquals(true,
-          throwable instanceof UnsupportedOperationException);
+      assertEquals(true, throwable instanceof UnsupportedOperationException);
     }
     assertEquals("CanUndo operation", false, firstItem.canRedo());
     assertEquals("CanRedo operation", false, firstItem.canUndo());
 
-    boolean hasChildren = firstItem.hasChildren();
-    assertEquals("Parent have children", true, hasChildren);
+    // boolean hasChildren = firstItem.hasChildren();
+    // assertEquals("Parent have children", true, hasChildren);
 
     firstItem.execute();
 
-    IQuantityCollection<Velocity> speedGood1 =
-        (IQuantityCollection<Velocity>) store.get(SampleData.SPEED_ONE);
+    NumberDocument speedGood1 =
+        (NumberDocument) store.get(SampleData.SPEED_ONE);
     selection = new ArrayList<>();
     selection.add(speedGood1);
 
     commands = new AddLayerOperation().actionsFor(selection, store, context);
     assertEquals("invalid number of inputs", 1, commands.size());
-    for (ICommand<IStoreItem> iCommand : commands)
+    for (ICommand iCommand : commands)
     {
       iCommand.execute();
       iCommand.dataChanged(speedGood1);
     }
+  }
+
+  @Test
+  public void testCreateSingletonGenerator()
+  {
+    StoreGroup store = new SampleData().getData(10);
+    CreateSingletonGenerator generator =
+        new CreateSingletonGenerator("dimensionless", Dimensionless.UNIT);
+    assertNotNull("Create Single Generator is not NULL", generator);
+
+    List<IStoreItem> selection = new ArrayList<IStoreItem>();
+    StoreGroup storeGroup = new StoreGroup("Track 1");
+    selection.add(storeGroup);
+
+    IContext mockContext = EasyMock.createMock(MockContext.class);
+
+    Collection<ICommand> singleGeneratorActionFor =
+        generator.actionsFor(selection, store, mockContext);
+    assertEquals("Create location collection size", 1, singleGeneratorActionFor
+        .size());
+    ICommand singleGenCommand = singleGeneratorActionFor.iterator().next();
+
+    EasyMock.expect(
+        mockContext.getInput("New variable", "Enter name for variable", ""))
+        .andReturn("new dimensionless").times(1);
+    EasyMock.expect(
+        mockContext.getInput("New variable",
+            "Enter initial value for variable", "")).andReturn("1234.56")
+        .times(1);
+    EasyMock.replay(mockContext);
+
+    singleGenCommand.execute();
 
   }
-  //
+
   // @Test
-  // public void testCreateSingletonGenerator(){
+  // public void testCreateLocationAction()
+  // {
   // StoreGroup store = new SampleData().getData(10);
-  // CreateSingletonGenerator generator= new CreateSingletonGenerator("dimensionless") {
-  // @Override
-  // protected QuantityCollection<?> generate(String name, ICommand<?> precedent) {
-  // return new StockTypes.NonTemporal.DimensionlessDouble(name, precedent);
-  // }
-  // };
-  // assertNotNull("Create Single Generator is not NULL", generator);
-  //
-  // List<IStoreItem> selection = new ArrayList<IStoreItem>();
-  // StoreGroup storeGroup = new StoreGroup("Track 1");
-  // selection.add(storeGroup);
-  //
-  // IContext mockContext=EasyMock.createMock(MockContext.class);
-  //
-  // Collection<ICommand<IStoreItem>> singleGeneratorActionFor = generator.actionsFor(selection,
-  // store, mockContext);
-  // assertEquals("Create location collection size", 1,singleGeneratorActionFor.size());
-  // ICommand<IStoreItem> singleGenCommand = singleGeneratorActionFor.iterator().next();
-  //
-  // EasyMock.expect(mockContext.getInput("New variable", "Enter name for variable",
-  // "")).andReturn("new dimensionless").times(1);
-  // EasyMock.expect(mockContext.getInput("New variable", "Enter initial value for variable",
-  // "")).andReturn("1234.56").times(1);
-  // EasyMock.replay(mockContext);
-  //
-  // singleGenCommand.execute();
-  //
-  // }
-  //
-  // @Test
-  // public void testCreateLocationAction(){
-  // StoreGroup store = new SampleData().getData(10);
-  // CreateLocationAction createLocationAction= new CreateLocationAction();
+  // CreateLocationAction createLocationAction = new CreateLocationAction();
   // assertNotNull("Create Location action is not NULL", createLocationAction);
   //
   // List<IStoreItem> selection = new ArrayList<IStoreItem>();
   // StoreGroup storeGroup = new StoreGroup("Track 1");
   // selection.add(storeGroup);
   //
-  // IContext mockContext=EasyMock.createMock(MockContext.class);
+  // IContext mockContext = EasyMock.createMock(MockContext.class);
   //
-  // Collection<ICommand<IStoreItem>> actionsFor = createLocationAction.actionsFor(selection, store,
-  // mockContext);
-  // assertEquals("Create location collection size", 1,actionsFor.size());
+  // Collection<ICommand<IStoreItem>> actionsFor =
+  // createLocationAction.actionsFor(selection, store, mockContext);
+  // assertEquals("Create location collection size", 1, actionsFor.size());
   // Iterator<ICommand<IStoreItem>> creationLocIterator = actionsFor.iterator();
-  // ICommand<IStoreItem> command= creationLocIterator.next();
+  // ICommand<IStoreItem> command = creationLocIterator.next();
   //
-  // EasyMock.expect(mockContext.getInput("New fixed location", "Enter name for location",
+  // EasyMock.expect(
+  // mockContext.getInput("New fixed location", "Enter name for location",
   // "")).andReturn("seriesName").times(1);
-  // EasyMock.expect(mockContext.getInput("New location","Enter initial value for latitude",
-  // "")).andReturn("123.23").times(1);
-  // EasyMock.expect(mockContext.getInput("New location","Enter initial value for longitude",
-  // "")).andReturn("3456.78").times(1);
+  // EasyMock.expect(
+  // mockContext.getInput("New location",
+  // "Enter initial value for latitude", "")).andReturn("123.23").times(
+  // 1);
+  // EasyMock.expect(
+  // mockContext.getInput("New location",
+  // "Enter initial value for longitude", "")).andReturn("3456.78")
+  // .times(1);
   // EasyMock.replay(mockContext);
   //
   // command.execute();
@@ -1074,23 +1099,25 @@ public class TestOperations
   // double calcFor = clearUnit.calcFor(123.45);
   // assertTrue("Calc for",123.45==calcFor);
   // }
-  //
-  // @Test
-  // public void testOperations(){
-  // // place to store results data
-  // HashMap<String, List<IOperation<?>>> ops = OperationsLibrary.getOperations();
-  //
-  // List<IOperation<?>> create = ops.get(OperationsLibrary.CREATE);
-  // assertEquals("Creation size",7, create.size());
-  // //Administrator Operations.
-  //
-  // List<IOperation<?>> adminOperations = ops.get(OperationsLibrary.ADMINISTRATION);
-  // assertEquals("Creation size",6, adminOperations.size());
-  //
-  // List<IOperation<?>> topLevel = OperationsLibrary.getTopLevel();
-  // assertNotNull(topLevel);
-  // }
-  //
+
+  @Test
+  public void testOperations()
+  {
+    // place to store results data
+    HashMap<String, List<IOperation>> ops = OperationsLibrary.getOperations();
+
+    List<IOperation> create = ops.get(OperationsLibrary.CREATE);
+    assertEquals("Creation size", 6, create.size());
+    // Administrator Operations.
+
+    List<IOperation> adminOperations =
+        ops.get(OperationsLibrary.ADMINISTRATION);
+    assertEquals("Creation size", 4, adminOperations.size());
+
+    List<IOperation> topLevel = OperationsLibrary.getTopLevel();
+    assertNotNull(topLevel);
+  }
+
   //
   // @Test
   // @SuppressWarnings("unchecked")
@@ -1244,25 +1271,37 @@ public class TestOperations
   // iCommand.dataChanged(speedGood1);
   // }
   // }
-  //
-  // @Test
-  // public void testDeleteCollectionOperation(){
-  // StoreGroup store = new SampleData().getData(10);
-  // List<IStoreItem> selection = new ArrayList<IStoreItem>();
-  //
-  // ICollection speedGood1 = (ICollection) store.get(SampleData.SPEED_ONE);
-  // ICollection string1 = (ICollection) store.get(SampleData.STRING_ONE);
-  // selection.add(speedGood1);
-  // selection.add(string1);
-  //
-  // DeleteCollectionOperation deleteCollectionOperation=new DeleteCollectionOperation();
-  // Collection<ICommand<IStoreItem>> commands =
-  // deleteCollectionOperation.actionsFor(selection, store, context);
-  // assertEquals("Delete collection operation", 1, commands.size());
-  // ICommand<IStoreItem> command = commands.iterator().next();
-  // command.execute();
-  // }
-  //
+
+  @Test
+  public void testDeleteCollectionOperation()
+  {
+    StoreGroup store = new SampleData().getData(10);
+    List<IStoreItem> selection = new ArrayList<IStoreItem>();
+
+    Document speedGood1 = (Document) store.get(SampleData.SPEED_ONE);
+    Document string1 = (Document) store.get(SampleData.TIME_STAMPS_1);
+    Document len1 = (Document) store.get(SampleData.LENGTH_ONE);
+
+    selection.add(speedGood1);
+    selection.add(string1);
+    selection.add(len1);
+
+    int storeLen = store.size();
+    IStoreGroup speedParent = speedGood1.getParent();
+    int factorLen = speedParent.size();
+
+    DeleteCollectionOperation deleteCollectionOperation =
+        new DeleteCollectionOperation();
+    Collection<ICommand> commands =
+        deleteCollectionOperation.actionsFor(selection, store, context);
+    assertEquals("Delete collection operation", 1, commands.size());
+    ICommand command = commands.iterator().next();
+    command.execute();
+
+    assertEquals("store smaller", storeLen - 2, store.size());
+    assertEquals("speeds smaller", factorLen - 1, speedParent.size());
+  }
+
   // @Test
   // public void testBearingBetweenTracksOperation() throws IOException{
   // StoreGroup store = new SampleData().getData(10);

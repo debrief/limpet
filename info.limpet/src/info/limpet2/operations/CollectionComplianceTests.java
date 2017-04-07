@@ -190,7 +190,7 @@ public class CollectionComplianceTests
    * @param selection
    * @return
    */
-  public boolean suitableForIndexedInterpolation(List<Document> selection)
+  public boolean suitableForIndexedInterpolation(List<IStoreItem> selection)
   {
     // are suitable
     boolean suitable = selection.size() >= 2;
@@ -265,7 +265,7 @@ public class CollectionComplianceTests
    * @param selection
    * @return true/false
    */
-  public boolean allQuantity(List<Document> selection)
+  public boolean allQuantity(List<IStoreItem> selection)
   {
     // are they all temporal?
     boolean allValid = true;
@@ -299,7 +299,7 @@ public class CollectionComplianceTests
    * @param selection
    * @return true/false
    */
-  public boolean nonEmpty(List<Document> selection)
+  public boolean nonEmpty(List<IStoreItem> selection)
   {
     return selection.size() > 0;
   }
@@ -310,7 +310,7 @@ public class CollectionComplianceTests
    * @param selection
    * @return true/false
    */
-  public boolean allEqualDimensions(List<Document> selection)
+  public boolean allEqualDimensions(List<IStoreItem> selection)
   {
     // are they all temporal?
     boolean allValid = false;
@@ -365,7 +365,7 @@ public class CollectionComplianceTests
    * @param selection
    * @return true/false
    */
-  public boolean allEqualUnits(List<Document> selection)
+  public boolean allEqualUnits(List<IStoreItem> selection)
   {
     // are they all temporal?
     boolean allValid = true;
@@ -404,7 +404,7 @@ public class CollectionComplianceTests
    * @param selection
    * @return true/false
    */
-  public boolean hasIndexed(List<Document> selection)
+  public boolean hasIndexed(List<IStoreItem> selection)
   {
     // are they all temporal?
     boolean allValid = false;
@@ -431,7 +431,7 @@ public class CollectionComplianceTests
    * @param selection
    * @return true/false
    */
-  public boolean allIndexed(List<Document> selection)
+  public boolean allIndexed(List<IStoreItem> selection)
   {
     // are they all temporal?
     boolean allValid = true;
@@ -507,7 +507,7 @@ public class CollectionComplianceTests
    * @param selection
    * @return true/false
    */
-  public boolean allEqualLengthOrSingleton(List<Document> selection)
+  public boolean allEqualLengthOrSingleton(List<IStoreItem> selection)
   {
     // are they all temporal?
     boolean allValid = true;
@@ -515,29 +515,33 @@ public class CollectionComplianceTests
 
     for (int i = 0; i < selection.size(); i++)
     {
-      Document thisC = selection.get(i);
+      IStoreItem thisC = selection.get(i);
 
-      int thisSize = thisC.size();
-
-      // valid, check the size
-      if (size == -1)
+      if (thisC instanceof Document)
       {
-        // ok, is this a singleton?
-        if (thisSize != 1)
-        {
-          // nope, it's a real array store it.
-          size = thisSize;
-        }
-      }
-      else
-      {
-        if (thisSize != size && thisSize != 1)
-        {
-          // oops, no
-          allValid = false;
-          break;
-        }
+        Document thisD = (Document) thisC;
+        int thisSize = thisD.size();
 
+        // valid, check the size
+        if (size == -1)
+        {
+          // ok, is this a singleton?
+          if (thisSize != 1)
+          {
+            // nope, it's a real array store it.
+            size = thisSize;
+          }
+        }
+        else
+        {
+          if (thisSize != size && thisSize != 1)
+          {
+            // oops, no
+            allValid = false;
+            break;
+          }
+
+        }
       }
     }
 
@@ -819,22 +823,24 @@ public class CollectionComplianceTests
    *          we're looking for
    * @return yes/no
    */
-  public boolean allHaveDimension(List<Document> kids, Dimension dim)
+  public boolean allHaveDimension(List<IStoreItem> kids, Dimension dim)
   {
     boolean res = true;
 
-    Iterator<Document> iter = kids.iterator();
-    while (iter.hasNext())
+    for (IStoreItem sItem : kids)
     {
-      Document item = iter.next();
-
-      if (item.isQuantity())
+      if (sItem instanceof Document)
       {
-        NumberDocument coll = (NumberDocument) item;
-        if (!coll.getUnits().getDimension().equals(dim))
+        Document item = (Document) sItem;
+
+        if (item.isQuantity())
         {
-          res = false;
-          break;
+          NumberDocument coll = (NumberDocument) item;
+          if (!coll.getUnits().getDimension().equals(dim))
+          {
+            res = false;
+            break;
+          }
         }
       }
     }
@@ -1063,11 +1069,11 @@ public class CollectionComplianceTests
    * @param items
    * @return
    */
-  public TimePeriod getBoundingRange(final Collection<Document> items)
+  public TimePeriod getBoundingRange(final Collection<IStoreItem> items)
   {
     TimePeriod res = null;
 
-    Iterator<Document> iter = items.iterator();
+    Iterator<IStoreItem> iter = items.iterator();
     while (iter.hasNext())
     {
       Document iCollection = (Document) iter.next();
@@ -1108,13 +1114,13 @@ public class CollectionComplianceTests
    * @return most suited collection
    */
   @SuppressWarnings("unused")
-  public Document
-      getOptimalTimes(TimePeriod period, Collection<Document> items)
+  public Document getOptimalTimes(TimePeriod period,
+      Collection<IStoreItem> items)
   {
     Document res = null;
     long resScore = 0;
 
-    Iterator<Document> iter = items.iterator();
+    Iterator<IStoreItem> iter = items.iterator();
     while (iter.hasNext())
     {
       Document iCollection = (Document) iter.next();

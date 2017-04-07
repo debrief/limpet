@@ -67,7 +67,6 @@ public class SampleData
   public static final String SINGLETON_LOC_1 = "Single Track One";
   public static final String SINGLETON_LOC_2 = "Single Track Two";
 
-
   private static class ObjectColl extends ArrayList<Object>
   {
     /**
@@ -176,7 +175,7 @@ public class SampleData
       }
       else
       {
-        if (Math.random() > 0.6)
+        if (i % 7 > 4)
         {
           speedIrregular.add(thisTime + 500 * 25 * 2, 7 + 2 * Math.sin(i - 1));
         }
@@ -194,7 +193,7 @@ public class SampleData
 
       if (i < ((double) count) * 0.4)
       {
-        if (Math.random() > 0.3)
+        if (i % 6 > 2)
         {
           timeStamps_1.add(thisTime - interval
               + (interval * 2d * Math.random()));
@@ -202,7 +201,7 @@ public class SampleData
       }
       if (i > ((double) count) * 0.6)
       {
-        if (Math.random() > 0.3)
+        if (i % 6 > 2)
         {
           timeStamps_2.add(thisTime - interval
               + (interval * 2d * Math.random()));
@@ -294,8 +293,8 @@ public class SampleData
     list.add(string1.toDocument());
     list.add(string2.toDocument());
     list.add(singleton1.toDocument());
-    list.add(singletonRange1b.toDocument());
-    list.add(singletonLength.toDocument());
+  //  list.add(singletonRange1b.toDocument());
+   // list.add(singletonLength.toDocument());
     list.add(timeIntervals.toDocument());
     list.add(timeStamps_1.toDocument());
     list.add(timeStamps_2.toDocument());
@@ -308,7 +307,7 @@ public class SampleData
 //    res.addAll(list);
 
     // perform an operation, so we have some audit trail
-    List<Document> selection = new ArrayList<Document>();
+    List<IStoreItem> selection = new ArrayList<IStoreItem>();
     selection.add(speedSeries1);
     selection.add(speedSeries2);
     IContext context = new MockContext();

@@ -20,6 +20,7 @@ import info.limpet2.Document;
 import info.limpet2.Document.InterpMethod;
 import info.limpet2.ICommand;
 import info.limpet2.IContext;
+import info.limpet2.IStoreItem;
 import info.limpet2.IndexedNumberDocumentBuilder;
 import info.limpet2.MockContext;
 import info.limpet2.NumberDocument;
@@ -126,7 +127,7 @@ public class TestCollections extends TestCase
     NumberDocument tq1 = tqb1.toDocument();
     NumberDocument tq2 = tqb2.toDocument();
 
-    List<Document> selection = new ArrayList<Document>();
+    List<IStoreItem> selection = new ArrayList<IStoreItem>();
     selection.add(tq1);
     selection.add(tq2);
 
@@ -192,7 +193,7 @@ public class TestCollections extends TestCase
 
     NumberDocument nq1d = nq1.toDocument();
 
-    List<Document> selection = new ArrayList<Document>();
+    List<IStoreItem> selection = new ArrayList<IStoreItem>();
     selection.add(tq1d);
     selection.add(tq2d);
 
@@ -201,7 +202,7 @@ public class TestCollections extends TestCase
     {
 
       @Override
-      protected boolean appliesTo(List<Document> selection)
+      protected boolean appliesTo(List<IStoreItem> selection)
       {
         // check it's numerical
         return true;
@@ -267,7 +268,7 @@ public class TestCollections extends TestCase
     {
 
       @Override
-      protected boolean appliesTo(List<Document> selection)
+      protected boolean appliesTo(List<IStoreItem> selection)
       {
         return true;
       }
@@ -352,7 +353,7 @@ public class TestCollections extends TestCase
 
     NumberDocument tq2 = tq2b.toDocument();
 
-    List<Document> selection = new ArrayList<Document>();
+    List<IStoreItem> selection = new ArrayList<IStoreItem>();
     selection.add(tq1);
     selection.add(tq2);
 
@@ -410,7 +411,7 @@ public class TestCollections extends TestCase
     NumberDocument tq1 = tq1b.toDocument();
     NumberDocument tq2 = tq2b.toDocument();
 
-    List<Document> selection = new ArrayList<Document>();
+    List<IStoreItem> selection = new ArrayList<IStoreItem>();
     selection.add(tq1);
     selection.add(tq2);
 
@@ -603,7 +604,7 @@ public class TestCollections extends TestCase
 
     NumberDocument tq2 = tq2b.toDocument();
 
-    List<Document> selection = new ArrayList<Document>();
+    List<IStoreItem> selection = new ArrayList<IStoreItem>();
     selection.add(tq1);
     selection.add(tq2);
 

@@ -7,7 +7,7 @@ import javax.measure.unit.Unit;
 import org.eclipse.january.dataset.Dataset;
 
 import info.limpet.IQuantityCollection;
-import info.limpet2.Document;
+import info.limpet2.IStoreItem;
 import info.limpet2.NumberDocument;
 import info.limpet2.operations.arithmetic.UnaryQuantityOperation;
 
@@ -23,7 +23,7 @@ public class UnitConversionOperation extends UnaryQuantityOperation
   }
 
   @Override
-  protected boolean appliesTo(List<Document> selection)
+  protected boolean appliesTo(List<IStoreItem> selection)
   {
     boolean singleSeries = selection.size() == 1;
     boolean allQuantity = aTests.allQuantity(selection);

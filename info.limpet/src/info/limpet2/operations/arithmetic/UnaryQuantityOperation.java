@@ -56,7 +56,7 @@ public abstract class UnaryQuantityOperation implements IOperation
   protected final CollectionComplianceTests aTests =
       new CollectionComplianceTests();
 
-  public Collection<ICommand> actionsFor(List<Document> selection,
+  public Collection<ICommand> actionsFor(List<IStoreItem> selection,
       IStoreGroup destination, IContext context)
   {
     Collection<ICommand> res = new ArrayList<ICommand>();
@@ -78,7 +78,7 @@ public abstract class UnaryQuantityOperation implements IOperation
    * @param selection
    * @return
    */
-  protected abstract boolean appliesTo(List<Document> selection);
+  protected abstract boolean appliesTo(List<IStoreItem> selection);
 
   /**
    * determine the units of the product
@@ -96,7 +96,10 @@ public abstract class UnaryQuantityOperation implements IOperation
    * @param name2
    * @return
    */
-  abstract protected String getUnaryNameFor(String name);
+  protected String getUnaryNameFor(String name)
+  {
+    return name + ": " + _opName;
+  }
 
   public CollectionComplianceTests getATests()
   {
@@ -121,7 +124,7 @@ public abstract class UnaryQuantityOperation implements IOperation
   {
 
     public UnaryQuantityCommand(String title, String description,
-        IStoreGroup store, List<Document> inputs, IContext context)
+        IStoreGroup store, List<IStoreItem> inputs, IContext context)
     {
       super(title, description, store, true, true, inputs, context);
     }
@@ -143,7 +146,7 @@ public abstract class UnaryQuantityOperation implements IOperation
       
       // we may be acting separately on multiple inputs.
       // so, loop through them
-      for (final Document input : getInputs())
+      for (final IStoreItem input : getInputs())
       {
         final NumberDocument inputDoc = (NumberDocument) input;
         final NumberDocument outputDoc = (NumberDocument) oIter.next();
@@ -182,7 +185,7 @@ public abstract class UnaryQuantityOperation implements IOperation
 
       // we may be acting separately on multiple inputs.
       // so, loop through them
-      for (final Document input : getInputs())
+      for (final IStoreItem input : getInputs())
       {
         final NumberDocument inputDoc = (NumberDocument) input;
 
