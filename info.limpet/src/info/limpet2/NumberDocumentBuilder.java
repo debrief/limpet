@@ -46,4 +46,9 @@ public class NumberDocumentBuilder
     }
     return res;
   }
+
+  public void clear()
+  {
+    _values.clear();
+  }
 }

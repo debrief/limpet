@@ -41,7 +41,8 @@ import junit.framework.TestSuite;
 	TestDynamic.class,
 	TestExport.class,
 	TestReflectivePropertySource.class,
-	TestOperations.class
+	TestOperations.class,
+	TestAnalysis.class
 })
 
 @RunWith(Suite.class)
