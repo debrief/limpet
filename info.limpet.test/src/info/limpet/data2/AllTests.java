@@ -40,7 +40,8 @@ import junit.framework.TestSuite;
 	TestCollections.class,
 	TestDynamic.class,
 	TestExport.class,
-	TestReflectivePropertySource.class
+	TestReflectivePropertySource.class,
+	TestOperations.class
 })
 
 @RunWith(Suite.class)

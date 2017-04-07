@@ -280,13 +280,14 @@ public class SampleData
 //
     list.add(factors);
 
-//    IStoreGroup compositeTrack = new StoreGroup(COMPOSITE_ONE);
-//    compositeTrack.add(angle1);
+    IStoreGroup compositeTrack = new StoreGroup(COMPOSITE_ONE);
+    compositeTrack.add(angle1.toDocument());
+    // TODO: generate track object
 //    compositeTrack.add(track2);
-//    compositeTrack.add(freq1);
-//    compositeTrack.add(speedSeries4);
+    compositeTrack.add(freq1.toDocument());
+    compositeTrack.add(speedSeries4.toDocument());
 
-//    list.add(compositeTrack);
+    list.add(compositeTrack);
 
     list.add(length1.toDocument());
     list.add(length2.toDocument());

@@ -17,6 +17,7 @@ package info.limpet.data2;
 import static javax.measure.unit.NonSI.KILOMETRES_PER_HOUR;
 import static javax.measure.unit.SI.METRE;
 import static javax.measure.unit.SI.METRES_PER_SECOND;
+import static javax.measure.unit.SI.SECOND;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -24,6 +25,7 @@ import info.limpet2.Document;
 import info.limpet2.ICommand;
 import info.limpet2.IContext;
 import info.limpet2.IStoreGroup;
+import info.limpet2.IStoreItem;
 import info.limpet2.MockContext;
 import info.limpet2.NumberDocument;
 import info.limpet2.NumberDocumentBuilder;
@@ -36,7 +38,10 @@ import info.limpet2.operations.arithmetic.simple.UnitConversionOperation;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+
+import javax.measure.quantity.Velocity;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -716,224 +721,231 @@ public class TestOperations
     NumberDocument speedSingle = speedSingleb.toDocument();
 
     // TODO: subtract should offer operations that go both ways.
-    
-//    selection.add(speedGood1);
-//    selection.add(speedSingle);
-//    Collection<ICommand> commands =
-//        new SubtractQuantityOperation().actionsFor(selection, store, context);
-//    assertEquals("got two commands", 4, commands.size());
-//
-//    // have a look
-//    ICommand first = commands.iterator().next();
-//    first.execute();
-//    NumberDocument output =
-//        (NumberDocument) first.getOutputs().iterator().next();
-//    assertNotNull("produced output", output);
-//    assertEquals("correct size", speedGood1.size(), output.size());
-//
-//    assertEquals("correct value", 2.3767, speedGood1.getValue(0) * 2, 0.001);
+
+    selection.add(speedGood1);
+    selection.add(speedSingle);
+    Collection<ICommand> commands =
+        new SubtractQuantityOperation().actionsFor(selection, store, context);
+
+    // TODO: reinstate these tests once two-way subtract done
+    // assertEquals("got two commands", 4, commands.size());
+    //
+    // // have a look
+    // ICommand first = commands.iterator().next();
+    // first.execute();
+    // NumberDocument output =
+    // (NumberDocument) first.getOutputs().iterator().next();
+    // assertNotNull("produced output", output);
+    // assertEquals("correct size", speedGood1.size(), output.size());
+    //
+    // assertEquals("correct value", 2.3767, speedGood1.getValue(0) * 2, 0.001);
   }
 
-  // @Test
-  // @SuppressWarnings(
-  // {"rawtypes", "unchecked"})
-  // public void testAddSingleton()
-  // {
-  // StoreGroup store = new SampleData().getData(10);
-  // List<ICollection> selection = new ArrayList<ICollection>(3);
-  //
-  // // test invalid dimensions
-  // IQuantityCollection<Velocity> speedGood1 =
-  // (IQuantityCollection<Velocity>) store.get(SampleData.SPEED_ONE);
-  // IQuantityCollection<Velocity> speedSingle =
-  // new StockTypes.NonTemporal.SpeedMSec("singleton", null);
-  //
-  // speedSingle.add(2d);
-  //
-  // selection.add(speedGood1);
-  // selection.add(speedSingle);
-  // Collection<ICommand<ICollection>> commands =
-  // new AddQuantityOperation().actionsFor(selection, store, context);
-  // assertEquals("got two commands", 2, commands.size());
-  //
-  // // have a look
-  // Iterator<ICommand<ICollection>> iter = commands.iterator();
-  // iter.next();
-  // ICommand<ICollection> first = iter.next();
-  // first.execute();
-  // IQuantityCollection<Velocity> output =
-  // (IQuantityCollection) first.getOutputs().iterator().next();
-  // assertNotNull("produced output", output);
-  // assertTrue("output is temporal", output.isTemporal());
-  // assertEquals("correct size", speedGood1.getValuesCount(), output
-  // .getValuesCount());
-  //
-  // assertEquals("correct value", output.getValues().get(0).doubleValue(
-  // Velocity.UNIT), speedGood1.getValues().get(0)
-  // .doubleValue(Velocity.UNIT) + 2, 0.001);
-  // }
-  //
-  // @Test
-  // @SuppressWarnings(
-  // {"rawtypes", "unchecked"})
-  // public void testSubtraction()
-  // {
-  // StoreGroup store = new SampleData().getData(10);
-  // int storeSize = store.size();
-  // List<ICollection> selection = new ArrayList<ICollection>(3);
-  //
-  // // test invalid dimensions
-  // IQuantityCollection<Velocity> speedGood1 =
-  // (IQuantityCollection<Velocity>) store.get(SampleData.SPEED_ONE);
-  // IQuantityCollection<Angle> angle1 =
-  // (IQuantityCollection<Angle>) store.get(SampleData.ANGLE_ONE);
-  // selection.add(speedGood1);
-  // selection.add(angle1);
-  // Collection<ICommand<ICollection>> commands =
-  // new SubtractQuantityOperation().actionsFor(selection, store, context);
-  // assertEquals("invalid collections - not same dimensions", 0, commands
-  // .size());
-  //
-  // selection.clear();
-  //
-  // // test not all quantities
-  // ICollection string1 = (ICollection) store.get(SampleData.STRING_ONE);
-  // selection.add(speedGood1);
-  // selection.add(string1);
-  // commands =
-  // new SubtractQuantityOperation().actionsFor(selection, store, context);
-  // assertEquals("invalid collections - not all quantities", 0, commands.size());
-  //
-  // selection.clear();
-  //
-  // // test valid command
-  // IQuantityCollection<Velocity> speedGood2 =
-  // (IQuantityCollection<Velocity>) store.get(SampleData.SPEED_TWO);
-  // selection.add(speedGood1);
-  // selection.add(speedGood2);
-  //
-  // commands =
-  // new SubtractQuantityOperation().actionsFor(selection, store, context);
-  // assertEquals("valid command", 4, commands.size());
-  //
-  // ICommand<ICollection> command = commands.iterator().next();
-  // command.execute();
-  //
-  // // test store has a new item in it
-  // assertEquals("store not empty", storeSize + 1, store.size());
-  //
-  // IQuantityCollection<Velocity> newS =
-  // (IQuantityCollection<Velocity>) store.get(speedGood2.getName()
-  // + " from " + speedGood1.getName());
-  //
-  // assertNotNull(newS);
-  // assertEquals("correct size", 10, newS.getValuesCount());
-  //
-  // // assert same unit
-  // assertEquals(newS.getUnits(), speedGood1.getUnits());
-  //
-  // double firstDifference =
-  // newS.getValues().get(0).doubleValue(newS.getUnits());
-  // double speed1firstValue =
-  // speedGood1.getValues().get(0).doubleValue(speedGood1.getUnits());
-  // double speed2firstValue =
-  // speedGood2.getValues().get(0).doubleValue(speedGood2.getUnits());
-  //
-  // assertEquals(firstDifference, speed1firstValue - speed2firstValue,0);
-  // context.logError(IContext.Status.ERROR, "Error", null);
-  // }
-  //
-  // @SuppressWarnings("unchecked")
-  // @Test
-  // public void testAddLayerOperation() throws RuntimeException
-  // {
-  // IContext context=EasyMock.createMock(MockContext.class);
-  // // place to store results data
-  // StoreGroup store = new SampleData().getData(10);
-  //
-  // List<IStoreItem> selection = new ArrayList<IStoreItem>();
-  //
-  // StoreGroup track1 = new StoreGroup("Track 1");
-  // selection.add(track1);
-  //
-  // Collection<ICommand<IStoreItem>> commands =
-  // new AddLayerOperation().actionsFor(selection, store, context);
-  // assertEquals("Valid number of commands", 1, commands.size());
-  // commands.contains(track1);
-  // Iterator<ICommand<IStoreItem>> iterator = commands.iterator();
-  // ICommand<IStoreItem> firstItem = iterator.next();
-  //
-  // EasyMock.expect(context.getInput("Add layer", "Provide name for new folder",
-  // "")).andReturn("").times(2);
-  // EasyMock.expect(context.getInput("Add layer", "Provide name for new folder",
-  // "")).andReturn(null).times(1);
-  // EasyMock.expect(context.getInput("Add layer", "Provide name for new folder",
-  // "")).andReturn("").times(1);
-  //
-  // EasyMock.replay(context);
-  //
-  // firstItem.execute();
-  //
-  // //Coverage purpose for Equals method.
-  // boolean equals = firstItem.equals(track1);
-  // assertEquals("Two objects are not equal", false,equals);
-  //
-  // //Coverage purpose for Hash code method
-  // long hashCode= firstItem.hashCode();
-  // final int prime = 31;
-  // int result = 1;
-  // result = prime * result + firstItem.getUUID().hashCode();
-  // assertEquals(result, hashCode);
-  //
-  // assertEquals("Parent not defined",null, firstItem.getParent());
-  //
-  // firstItem.setParent(track1);
-  // assertEquals("Parent defined as a Track1",track1, firstItem.getParent());
-  //
-  // assertNotNull("UUID is generated randomly",firstItem.getUUID());
-  //
-  // StoreGroup dummyStoreTrack = new StoreGroup("Dummy Store Track");
-  // firstItem.metadataChanged(dummyStoreTrack);
-  //
-  // assertTrue("First Item is dynamic", firstItem.getDynamic());
-  //
-  // assertEquals("Store Item Description","Add a new layer",firstItem.getDescription());
-  // firstItem.execute();
-  // firstItem.collectionDeleted(dummyStoreTrack);
-  //
-  //
-  // try{
-  // firstItem.undo();
-  // }catch(Throwable throwable){
-  // Assert.assertEquals(true, throwable instanceof UnsupportedOperationException);
-  // }
-  // try{
-  // firstItem.redo();
-  // }catch(Throwable throwable){
-  // Assert.assertEquals(true, throwable instanceof UnsupportedOperationException);
-  // }
-  // assertEquals("CanUndo operation",false, firstItem.canRedo());
-  // assertEquals("CanRedo operation",false, firstItem.canUndo());
-  //
-  // boolean hasChildren = firstItem.hasChildren();
-  // assertEquals("Parent have children",true,hasChildren);
-  //
-  // firstItem.execute();
-  //
-  // IQuantityCollection<Velocity> speedGood1 =
-  // (IQuantityCollection<Velocity>) store.get(SampleData.SPEED_ONE);
-  // selection = new ArrayList<>();
-  // selection.add(speedGood1);
-  //
-  // commands = new AddLayerOperation().actionsFor(selection, store, context);
-  // assertEquals("invalid number of inputs", 1, commands.size());
-  // for (ICommand<IStoreItem> iCommand : commands)
-  // {
-  // iCommand.execute();
-  // iCommand.dataChanged(speedGood1);
-  // }
-  //
-  // }
+  @Test
+  public void testAddSingleton()
+  {
+    StoreGroup store = new SampleData().getData(10);
+    List<Document> selection = new ArrayList<Document>();
+
+    // test invalid dimensions
+    NumberDocument speedGood1 =
+        (NumberDocument) store.get(SampleData.SPEED_ONE);
+    NumberDocumentBuilder speedSingleb =
+        new NumberDocumentBuilder("singleton", METRE.divide(SECOND).asType(
+            Velocity.class), null);
+
+    speedSingleb.add(2d);
+
+    NumberDocument speedSingle = speedSingleb.toDocument();
+
+    selection.add(speedGood1);
+    selection.add(speedSingle);
+    Collection<ICommand> commands =
+        new AddQuantityOperation().actionsFor(selection, store, context);
+    assertEquals("got two commands", 2, commands.size());
+
+    // have a look
+    Iterator<ICommand> iter = commands.iterator();
+    iter.next();
+    ICommand first = iter.next();
+    first.execute();
+    NumberDocument output =
+        (NumberDocument) first.getOutputs().iterator().next();
+    assertNotNull("produced output", output);
+    assertTrue("output is temporal", output.isIndexed());
+    assertEquals("correct size", speedGood1.size(), output.size());
+
+    assertEquals("correct value", output.getValue(0),
+        speedGood1.getValue(0) + 2, 0.001);
+  }
+
+  @Test
+  public void testSubtraction()
+  {
+    StoreGroup store = new SampleData().getData(10);
+    int storeSize = store.size();
+    List<Document> selection = new ArrayList<>();
+
+    // test invalid dimensions
+    NumberDocument speedGood1 =
+        (NumberDocument) store.get(SampleData.SPEED_ONE);
+    NumberDocument angle1 = (NumberDocument) store.get(SampleData.ANGLE_ONE);
+    selection.add(speedGood1);
+    selection.add(angle1);
+    Collection<ICommand> commands =
+        new SubtractQuantityOperation().actionsFor(selection, store, context);
+    assertEquals("invalid collections - not same dimensions", 0, commands
+        .size());
+
+    selection.clear();
+
+    // test not all quantities
+    Document string1 = (Document) store.get(SampleData.STRING_ONE);
+    selection.add(speedGood1);
+    selection.add(string1);
+    commands =
+        new SubtractQuantityOperation().actionsFor(selection, store, context);
+    assertEquals("invalid collections - not all quantities", 0, commands.size());
+
+    selection.clear();
+
+    // test valid command
+    NumberDocument speedGood2 =
+        (NumberDocument) store.get(SampleData.SPEED_TWO);
+    selection.add(speedGood1);
+    selection.add(speedGood2);
+
+    // TODO: reinstate this test once subtract provides both-ways commands
+    // commands =
+    // new SubtractQuantityOperation().actionsFor(selection, store, context);
+    // assertEquals("valid command", 4, commands.size());
+    //
+    // ICommand command = commands.iterator().next();
+    // command.execute();
+    //
+    // // test store has a new item in it
+    // assertEquals("store not empty", storeSize + 1, store.size());
+    //
+    // NumberDocument newS =
+    // (NumberDocument) store.get(speedGood2.getName() + " from "
+    // + speedGood1.getName());
+    //
+    // assertNotNull(newS);
+    // assertEquals("correct size", 10, newS.size());
+    //
+    // // assert same unit
+    // assertEquals(newS.getUnits(), speedGood1.getUnits());
+    //
+    // double firstDifference = newS.getValue(0);
+    // double speed1firstValue = speedGood1.getValue(0);
+    // double speed2firstValue = speedGood2.getValue(0);
+    //
+    // assertEquals(firstDifference, speed1firstValue - speed2firstValue, 0);
+    // context.logError(IContext.Status.ERROR, "Error", null);
+  }
+
+  @SuppressWarnings("unchecked")
+  @Test
+  public void testAddLayerOperation() throws RuntimeException
+  {
+    IContext context = new MockContext();
+    // place to store results data
+    StoreGroup store = new SampleData().getData(10);
+
+    List<IStoreItem> selection = new ArrayList<IStoreItem>();
+
+    StoreGroup track1 = new StoreGroup("Track 1");
+    selection.add(track1);
+
+    Collection<ICommand> commands =
+        new AddLayerOperation().actionsFor(selection, store, context);
+    assertEquals("Valid number of commands", 1, commands.size());
+    commands.contains(track1);
+    Iterator<ICommand<IStoreItem>> iterator = commands.iterator();
+    ICommand<IStoreItem> firstItem = iterator.next();
+
+    EasyMock.expect(
+        context.getInput("Add layer", "Provide name for new folder", ""))
+        .andReturn("").times(2);
+    EasyMock.expect(
+        context.getInput("Add layer", "Provide name for new folder", ""))
+        .andReturn(null).times(1);
+    EasyMock.expect(
+        context.getInput("Add layer", "Provide name for new folder", ""))
+        .andReturn("").times(1);
+
+    EasyMock.replay(context);
+
+    firstItem.execute();
+
+    // Coverage purpose for Equals method.
+    boolean equals = firstItem.equals(track1);
+    assertEquals("Two objects are not equal", false, equals);
+
+    // Coverage purpose for Hash code method
+    long hashCode = firstItem.hashCode();
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + firstItem.getUUID().hashCode();
+    assertEquals(result, hashCode);
+
+    assertEquals("Parent not defined", null, firstItem.getParent());
+
+    firstItem.setParent(track1);
+    assertEquals("Parent defined as a Track1", track1, firstItem.getParent());
+
+    assertNotNull("UUID is generated randomly", firstItem.getUUID());
+
+    StoreGroup dummyStoreTrack = new StoreGroup("Dummy Store Track");
+    firstItem.metadataChanged(dummyStoreTrack);
+
+    assertTrue("First Item is dynamic", firstItem.getDynamic());
+
+    assertEquals("Store Item Description", "Add a new layer", firstItem
+        .getDescription());
+    firstItem.execute();
+    firstItem.collectionDeleted(dummyStoreTrack);
+
+    try
+    {
+      firstItem.undo();
+    }
+    catch (Throwable throwable)
+    {
+      Assert.assertEquals(true,
+          throwable instanceof UnsupportedOperationException);
+    }
+    try
+    {
+      firstItem.redo();
+    }
+    catch (Throwable throwable)
+    {
+      Assert.assertEquals(true,
+          throwable instanceof UnsupportedOperationException);
+    }
+    assertEquals("CanUndo operation", false, firstItem.canRedo());
+    assertEquals("CanRedo operation", false, firstItem.canUndo());
+
+    boolean hasChildren = firstItem.hasChildren();
+    assertEquals("Parent have children", true, hasChildren);
+
+    firstItem.execute();
+
+    IQuantityCollection<Velocity> speedGood1 =
+        (IQuantityCollection<Velocity>) store.get(SampleData.SPEED_ONE);
+    selection = new ArrayList<>();
+    selection.add(speedGood1);
+
+    commands = new AddLayerOperation().actionsFor(selection, store, context);
+    assertEquals("invalid number of inputs", 1, commands.size());
+    for (ICommand<IStoreItem> iCommand : commands)
+    {
+      iCommand.execute();
+      iCommand.dataChanged(speedGood1);
+    }
+
+  }
   //
   // @Test
   // public void testCreateSingletonGenerator(){
