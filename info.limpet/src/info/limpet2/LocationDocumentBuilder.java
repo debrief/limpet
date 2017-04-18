@@ -45,25 +45,33 @@ public class LocationDocumentBuilder implements IDocumentBuilder
 
   public LocationDocument toDocument()
   {
+    final LocationDocument res;
     Object[] arr = _values.toArray();
-    ObjectDataset dataset =
-        (ObjectDataset) DatasetFactory.createFromObject(ObjectDataset.class,
-            arr, null);
-    dataset.setName(_name);
-
-    // do we have any indices to add?
-    if (_times != null)
+    if (arr.length > 0)
     {
-      // sort out the time axis
-      LongDataset timeData =
-          (LongDataset) DatasetFactory.createFromObject(_times);
-      final AxesMetadata timeAxis = new AxesMetadataImpl();
-      timeAxis.initialize(1);
-      timeAxis.setAxis(0, timeData);
-      dataset.addMetadata(timeAxis);
-    }
+      ObjectDataset dataset =
+          (ObjectDataset) DatasetFactory.createFromObject(ObjectDataset.class,
+              arr, null);
+      dataset.setName(_name);
 
-    LocationDocument res = new LocationDocument(dataset, _predecessor);
+      // do we have any indices to add?
+      if (_times != null)
+      {
+        // sort out the time axis
+        LongDataset timeData =
+            (LongDataset) DatasetFactory.createFromObject(_times);
+        final AxesMetadata timeAxis = new AxesMetadataImpl();
+        timeAxis.initialize(1);
+        timeAxis.setAxis(0, timeData);
+        dataset.addMetadata(timeAxis);
+      }
+
+      res = new LocationDocument(dataset, _predecessor);
+    }
+    else
+    {
+      res = null;
+    }
     return res;
   }
 

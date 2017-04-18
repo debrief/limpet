@@ -59,11 +59,11 @@ public class GenerateCourseAndSpeedOperation implements IOperation
       super(title, description, store, false, false, selection, context);
     }
 
-    protected String getOutputName()
-    {
-      // TODO Auto-generated method stub
-      return null;
-    }
+    /** produce a name for the output
+     * 
+     * @return
+     */
+    abstract protected String getOutputName();
 
     @Override
     public void execute()
@@ -285,7 +285,6 @@ public class GenerateCourseAndSpeedOperation implements IOperation
               return METRE.divide(SECOND).asType(Velocity.class);
             }
 
-            @Override
             protected String getOutputName()
             {
               return getContext().getInput("Generate speed",

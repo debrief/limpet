@@ -14,6 +14,7 @@
  *****************************************************************************/
 package info.limpet.data2;
 
+import static javax.measure.unit.SI.METRE;
 import info.limpet2.Document;
 import info.limpet2.ICommand;
 import info.limpet2.IContext;
@@ -22,8 +23,11 @@ import info.limpet2.LocationDocument;
 import info.limpet2.LocationDocumentBuilder;
 import info.limpet2.MockContext;
 import info.limpet2.NumberDocument;
+import info.limpet2.NumberDocumentBuilder;
 import info.limpet2.StoreGroup;
 import info.limpet2.operations.spatial.GenerateCourseAndSpeedOperation;
+import info.limpet2.operations.spatial.GeoSupport;
+import info.limpet2.operations.spatial.IGeoCalculator;
 import info.limpet2.persistence.CsvParser;
 
 import java.awt.geom.Point2D;
@@ -32,6 +36,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import javax.measure.quantity.Length;
+
+import org.junit.Assert;
 
 import junit.framework.TestCase;
 
@@ -134,60 +142,60 @@ public class TestGeotoolsGeometry extends TestCase
         .size());
 
   }
-//
-//  public void testBuilder()
-//  {
-//    final Location track1 =
-//        new StockTypes.NonTemporal.Location("some location data");
-//
-//    IGeoCalculator calc = GeoSupport.getCalculator();
-//    Point2D pos1 = calc.createPoint(-4, 55.8);
-//    Point2D pos2 = calc.calculatePoint(pos1, Math.toRadians(54), 0.003);
-//
-//    track1.add(pos2);
-//
-//    assertEquals("track has point", 1, track1.getValuesCount());
-//
-//  }
-//
-//  public void testCreatePoint()
-//  {
-//    IGeoCalculator builder = GeoSupport.getCalculator();
-//    Point2D point = builder.createPoint(48.44, -123.37);
-//    Assert.assertNotNull(point);
-//
-//    Point2D point2 = builder.createPoint(48.44, -123.37);
-//    Assert.assertNotNull(point2);
-//  }
-//
-//  public void testRangeCalc()
-//  {
-//
-//    IGeoCalculator builder = GeoSupport.getCalculator();
-//
-//    Point2D p1 = builder.createPoint(0, 80);
-//    Point2D p2 = builder.createPoint(0, 81);
-//    Point2D p3 = builder.createPoint(1, 80);
-//
-//    final double dest1 = builder.getDistanceBetween(p1, p2);
-//    final double dest2 = builder.getDistanceBetween(p1, p3);
-//
-//    assertEquals("range 1 right", 111663, dest1, 10);
-//    assertEquals("range 2 right", 19393, dest2, 10);
-//
-//  }
-//
-//  public void testBearingCalc()
-//  {
-//
-//    IGeoCalculator builder = GeoSupport.getCalculator();
-//
-//    Point2D p1 = builder.createPoint(1, 0);
-//    Point2D p2 = builder.createPoint(2, 1);
-//
-//    assertEquals("correct result", 45, builder.getAngleBetween(p1, p2), 0.2);
-//
-//  }
+
+  public void testBuilder()
+  {
+    final LocationDocumentBuilder track1 =
+        new LocationDocumentBuilder("some location data", null);
+
+    IGeoCalculator calc = GeoSupport.getCalculator();
+    Point2D pos1 = calc.createPoint(-4, 55.8);
+    Point2D pos2 = calc.calculatePoint(pos1, Math.toRadians(54), 0.003);
+
+    track1.add(pos1);
+    track1.add(pos2);
+
+    LocationDocument doc = track1.toDocument();
+    
+    assertEquals("track has points", 2, doc.size());
+
+  }
+
+  public void testCreatePoint()
+  {
+    IGeoCalculator builder = GeoSupport.getCalculator();
+    Point2D point = builder.createPoint(48.44, -123.37);
+    Assert.assertNotNull(point);
+
+    Point2D point2 = builder.createPoint(48.44, -123.37);
+    Assert.assertNotNull(point2);
+  }
+
+  public void testRangeCalc()
+  {
+    IGeoCalculator builder = GeoSupport.getCalculator();
+
+    Point2D p1 = builder.createPoint(0, 80);
+    Point2D p2 = builder.createPoint(0, 81);
+    Point2D p3 = builder.createPoint(1, 80);
+
+    final double dest1 = builder.getDistanceBetween(p1, p2);
+    final double dest2 = builder.getDistanceBetween(p1, p3);
+
+    assertEquals("range 1 right", 111663, dest1, 10);
+    assertEquals("range 2 right", 19393, dest2, 10);
+  }
+
+  public void testBearingCalc()
+  {
+
+    IGeoCalculator builder = GeoSupport.getCalculator();
+
+    Point2D p1 = builder.createPoint(1, 0);
+    Point2D p2 = builder.createPoint(2, 1);
+
+    assertEquals("correct result", 45, builder.getAngleBetween(p1, p2), 0.2);
+  }
 //
 //  public void testLocationInterp()
 //  {
@@ -203,7 +211,6 @@ public class TestGeotoolsGeometry extends TestCase
 //    geo1 = loc1.interpolateValue(1700, InterpMethod.Linear);
 //    assertEquals("correct value", 2.7, geo1.getX());
 //    assertEquals("correct value", 3.7, geo1.getY());
-//
 //  }
 //
 //  public void testInterpolatedLocationCalcNonTemporal()
@@ -401,19 +408,20 @@ public class TestGeotoolsGeometry extends TestCase
 //    assertEquals("correct length", 2, iQ.getValuesCount());
 //
 //  }
-//
-//  public void testLocationCalc()
-//  {
-//    TemporalLocation loc1 = new TemporalLocation("loc1");
-//    TemporalLocation loc2 = new TemporalLocation("loc2");
-//    Temporal.LengthM len1 = new Temporal.LengthM("dummy2", null);
-//
-//    List<IStoreItem> selection = new ArrayList<IStoreItem>();
-//    selection.add(loc1);
-//
-//    IStore store = new StoreGroup();
-//
-//    Collection<ICommand<IStoreItem>> ops =
+
+  public void testLocationCalc()
+  {
+    LocationDocumentBuilder loc1 = new LocationDocumentBuilder("loc1", null);
+    LocationDocumentBuilder loc2 = new LocationDocumentBuilder("loc2", null);
+    NumberDocumentBuilder len1 = new NumberDocumentBuilder("dummy", METRE.asType(Length.class), null);
+
+    List<IStoreItem> selection = new ArrayList<IStoreItem>();
+    selection.add(loc1.toDocument());
+
+    StoreGroup store = new StoreGroup("Results");
+
+    // TODO: reintstate distance between tracks operation
+//    Collection<ICommand> ops =
 //        new DistanceBetweenTracksOperation().actionsFor(selection, store,
 //            context);
 //    assertEquals("empty collection", 0, ops.size());
@@ -441,8 +449,8 @@ public class TestGeotoolsGeometry extends TestCase
 //        new DistanceBetweenTracksOperation().actionsFor(selection, store,
 //            context);
 //    assertEquals("not empty collection", 1, ops.size());
-//  }
-//
+  }
+
 //  public void testFindingDopplerTracks()
 //  {
 //    final List<IStoreItem> items = new ArrayList<IStoreItem>();
