@@ -22,11 +22,13 @@ import static javax.measure.unit.SI.METRE;
 import static javax.measure.unit.SI.SECOND;
 import info.limpet2.IDocumentBuilder;
 import info.limpet2.IStoreItem;
-import info.limpet2.IndexedNumberDocumentBuilder;
+import info.limpet2.LocationDocumentBuilder;
 import info.limpet2.NumberDocumentBuilder;
 import info.limpet2.SampleData;
 import info.limpet2.StoreGroup;
+import info.limpet2.operations.spatial.GeoSupport;
 
+import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -355,7 +357,7 @@ public class CsvParser
     }
 
     _candidates = new ArrayList<DataImporter>();
-    // _candidates.add(new LocationImporter());
+    _candidates.add(new LocationImporter());
     _candidates.add(new TemporalSeriesSupporter(SECOND.asType(Duration.class),
         null, "secs"));
     _candidates.add(new TemporalSeriesSupporter(HERTZ.asType(Frequency.class),
@@ -567,43 +569,49 @@ public class CsvParser
   // * @author ian
   // *
   // */
-  // protected static class LocationImporter extends DataImporter
-  // {
-  // protected LocationImporter()
-  // {
-  // super(TemporalLocation.class, "Lat", null);
-  // }
-  //
-  // public String nameFor(String colName)
-  // {
-  // return "Location";
-  // }
-  //
-  // public TemporalLocation create(String name)
-  // {
-  // return new TemporalLocation(name);
-  // }
-  //
-  // public void consume(ICollection series, long thisTime, int colStart,
-  // CSVRecord row)
-  // {
-  // final TemporalLocation locS = (TemporalLocation) series;
-  //
-  // String latVal = row.get(colStart);
-  // Double valLat = Double.parseDouble(latVal);
-  // String longVal = row.get(colStart + 1);
-  // Double valLong = Double.parseDouble(longVal);
-  //
-  // Point2D point = GeoSupport.getCalculator().createPoint(valLong, valLat);
-  //
-  // locS.add(thisTime, point);
-  // }
-  //
-  // public int numCols()
-  // {
-  // return 2;
-  // }
-  // }
+  protected static class LocationImporter extends DataImporter
+  {
+    protected LocationImporter()
+    {
+      super(null, "Lat", null);
+    }
+
+    public String nameFor(String colName)
+    {
+      return "Location";
+    }
+    
+    /**
+     * create an instance of this series, using the specified name
+     * 
+     * @param name
+     * @return
+     */
+    public IDocumentBuilder create(String name)
+    {
+      LocationDocumentBuilder res =
+          new LocationDocumentBuilder(name, null);
+      return res;
+    }
+
+    public void consume(IDocumentBuilder series, long thisTime, int colStart,
+        CSVRecord row)
+    {
+      String latVal = row.get(colStart);
+      Double valLat = Double.parseDouble(latVal);
+      String longVal = row.get(colStart + 1);
+      Double valLong = Double.parseDouble(longVal);
+
+      Point2D point = GeoSupport.getCalculator().createPoint(valLong, valLat);
+      LocationDocumentBuilder builder = (LocationDocumentBuilder) series;
+      builder.add(point, thisTime);
+    }
+
+    public int numCols()
+    {
+      return 2;
+    }
+  }
 
   /**
    * generic class to handle importing series of data
@@ -662,8 +670,8 @@ public class CsvParser
       super(units, colName, unitsStr);
     }
 
-    protected void add(IndexedNumberDocumentBuilder series, long time,
-        Number quantity)
+    protected void
+        add(NumberDocumentBuilder series, long time, Number quantity)
     {
       series.add(time, quantity.doubleValue());
     }
@@ -673,7 +681,7 @@ public class CsvParser
     {
       String thisVal = row.get(colStart);
       Double val = Double.parseDouble(thisVal);
-      IndexedNumberDocumentBuilder inm = (IndexedNumberDocumentBuilder) series;
+      NumberDocumentBuilder inm = (NumberDocumentBuilder) series;
       add(inm, thisTime, val);
     }
 
@@ -685,8 +693,8 @@ public class CsvParser
      */
     public IDocumentBuilder create(String name)
     {
-      IndexedNumberDocumentBuilder res =
-          new IndexedNumberDocumentBuilder(name, super._units, null);
+      NumberDocumentBuilder res =
+          new NumberDocumentBuilder(name, super._units, null);
       return res;
     }
 

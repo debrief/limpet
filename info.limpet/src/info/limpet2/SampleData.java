@@ -101,25 +101,25 @@ public class SampleData
     // // collate our data series
     NumberDocumentBuilder freq1 =
         new NumberDocumentBuilder(FREQ_ONE, HERTZ.asType(Frequency.class), null);
-    IndexedNumberDocumentBuilder angle1 =
-        new IndexedNumberDocumentBuilder(ANGLE_ONE, DEGREE_ANGLE.asType(Angle.class), null);
-    IndexedNumberDocumentBuilder speedSeries1b =
-        new IndexedNumberDocumentBuilder(SPEED_ONE, METRE.divide(SECOND).asType(
+    NumberDocumentBuilder angle1 =
+        new NumberDocumentBuilder(ANGLE_ONE, DEGREE_ANGLE.asType(Angle.class), null);
+    NumberDocumentBuilder speedSeries1b =
+        new NumberDocumentBuilder(SPEED_ONE, METRE.divide(SECOND).asType(
             Velocity.class), null);
-    IndexedNumberDocumentBuilder speedSeries2b =
-        new IndexedNumberDocumentBuilder(SPEED_TWO, METRE.divide(SECOND).asType(
+    NumberDocumentBuilder speedSeries2b =
+        new NumberDocumentBuilder(SPEED_TWO, METRE.divide(SECOND).asType(
             Velocity.class), null);
-    IndexedNumberDocumentBuilder speedSeries3 =
-        new IndexedNumberDocumentBuilder(SPEED_THREE_LONGER, METRE.divide(SECOND).asType(
+    NumberDocumentBuilder speedSeries3 =
+        new NumberDocumentBuilder(SPEED_THREE_LONGER, METRE.divide(SECOND).asType(
             Velocity.class), null);
-    IndexedNumberDocumentBuilder speedEarly1 =
-        new IndexedNumberDocumentBuilder(SPEED_EARLY, METRE.divide(SECOND).asType(
+    NumberDocumentBuilder speedEarly1 =
+        new NumberDocumentBuilder(SPEED_EARLY, METRE.divide(SECOND).asType(
             Velocity.class), null);
-    IndexedNumberDocumentBuilder speedIrregular =
-        new IndexedNumberDocumentBuilder(SPEED_IRREGULAR2, METRE.divide(SECOND).asType(
+    NumberDocumentBuilder speedIrregular =
+        new NumberDocumentBuilder(SPEED_IRREGULAR2, METRE.divide(SECOND).asType(
             Velocity.class), null);
-    IndexedNumberDocumentBuilder speedSeries4 =
-        new IndexedNumberDocumentBuilder(SPEED_FOUR, METRE.divide(SECOND).asType(
+    NumberDocumentBuilder speedSeries4 =
+        new NumberDocumentBuilder(SPEED_FOUR, METRE.divide(SECOND).asType(
             Velocity.class), null);
     NumberDocumentBuilder length1 =
         new NumberDocumentBuilder(LENGTH_ONE, METRE.asType(Length.class), null);
@@ -134,8 +134,8 @@ public class SampleData
             Velocity.class), null);
     NumberDocumentBuilder singletonLength =
         new NumberDocumentBuilder(LENGTH_SINGLETON, METRE.asType(Length.class), null);
-    IndexedNumberDocumentBuilder timeIntervals =
-        new IndexedNumberDocumentBuilder(TIME_INTERVALS, SECOND.asType(Duration.class),
+    NumberDocumentBuilder timeIntervals =
+        new NumberDocumentBuilder(TIME_INTERVALS, SECOND.asType(Duration.class),
             null);
     NumberDocumentBuilder timeStamps_1 =
         new NumberDocumentBuilder(TIME_STAMPS_1, SECOND.asType(Duration.class), null);

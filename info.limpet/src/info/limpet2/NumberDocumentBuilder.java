@@ -1,23 +1,26 @@
 package info.limpet2;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import javax.measure.unit.Unit;
 
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DoubleDataset;
-
+import org.eclipse.january.dataset.LongDataset;
+import org.eclipse.january.metadata.AxesMetadata;
+import org.eclipse.january.metadata.internal.AxesMetadataImpl;
 
 public class NumberDocumentBuilder implements IDocumentBuilder
 {
-  final private String _name;
-  final private Unit<?> _units;
-  final private List<Double> _values;
-  final private ICommand _predecessor;
+  private String _name;
+  private Unit<?> _units;
+  private ArrayList<Long> _times;
+  private ArrayList<Double> _values;
+  private ICommand _predecessor;
   private Range _range;
 
-  public NumberDocumentBuilder(String name, Unit<?> units, ICommand predecessor)
+  public NumberDocumentBuilder(String name, Unit<?> units,
+      ICommand predecessor)
   {
     _name = name;
     _units = units;
@@ -25,30 +28,63 @@ public class NumberDocumentBuilder implements IDocumentBuilder
     _values = new ArrayList<Double>();
   }
 
+  public void add(long time, double value)
+  {
+    add(value);
+
+    if (_times == null)
+    {
+      _times = new ArrayList<Long>();
+    }
+
+    _times.add(time);
+  }
+
   public void add(double value)
   {
     _values.add(value);
   }
 
-  public void setRange(Range range)
-  {
-    _range = range;
-  }
-
   public NumberDocument toDocument()
   {
-    DoubleDataset dataset = (DoubleDataset) DatasetFactory.createFromObject(_values);
+    DoubleDataset dataset =
+        (DoubleDataset) DatasetFactory.createFromObject(_values);
     dataset.setName(_name);
+
+    if (_times != null)
+    {
+      // sort out the time axis
+      LongDataset timeData =
+          (LongDataset) DatasetFactory.createFromObject(_times);
+      final AxesMetadata timeAxis = new AxesMetadataImpl();
+      timeAxis.initialize(1);
+      timeAxis.setAxis(0, timeData);
+      dataset.addMetadata(timeAxis);
+    }
+
     NumberDocument res = new NumberDocument(dataset, _predecessor, _units);
+    
     if(_range != null)
     {
       res.setRange(_range);
     }
+    
     return res;
   }
 
   public void clear()
   {
     _values.clear();
+    if (_times != null)
+    {
+      _times.clear();
+      _times = null;
+    }
+    _range = null;
+  }
+
+  public void setRange(Range range)
+  {
+    _range = range;
   }
 }

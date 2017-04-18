@@ -31,10 +31,9 @@ import info.limpet2.IContext;
 import info.limpet2.IOperation;
 import info.limpet2.IStoreGroup;
 import info.limpet2.IStoreItem;
-import info.limpet2.IndexedNumberDocumentBuilder;
+import info.limpet2.NumberDocumentBuilder;
 import info.limpet2.MockContext;
 import info.limpet2.NumberDocument;
-import info.limpet2.NumberDocumentBuilder;
 import info.limpet2.Range;
 import info.limpet2.SampleData;
 import info.limpet2.StoreGroup;
@@ -118,8 +117,8 @@ public class TestOperations
   public void testTrig()
   {
     // prepare some data
-    IndexedNumberDocumentBuilder speedDatab =
-        new IndexedNumberDocumentBuilder("speed", METRE.divide(SECOND).asType(
+    NumberDocumentBuilder speedDatab =
+        new NumberDocumentBuilder("speed", METRE.divide(SECOND).asType(
             Velocity.class), null);
     speedDatab.add(100, 23);
     speedDatab.add(200, 44);
@@ -132,8 +131,8 @@ public class TestOperations
 
     NumberDocument angleData = angledataB.toDocument();
 
-    IndexedNumberDocumentBuilder temporalAngleDataB =
-        new IndexedNumberDocumentBuilder("degs", SampleData.DEGREE_ANGLE
+    NumberDocumentBuilder temporalAngleDataB =
+        new NumberDocumentBuilder("degs", SampleData.DEGREE_ANGLE
             .asType(Angle.class), null);
     temporalAngleDataB.add(1000, 200d);
     temporalAngleDataB.add(3000, 123d);
@@ -250,10 +249,10 @@ public class TestOperations
         new NumberDocumentBuilder("Speed 4", kmm, null);
     NumberDocumentBuilder len1b =
         new NumberDocumentBuilder("Length 1", m, null);
-    IndexedNumberDocumentBuilder temporalSpeed1b =
-        new IndexedNumberDocumentBuilder("Speed 5", kmh, null);
-    IndexedNumberDocumentBuilder temporalSpeed2b =
-        new IndexedNumberDocumentBuilder("Speed 6", kmh, null);
+    NumberDocumentBuilder temporalSpeed1b =
+        new NumberDocumentBuilder("Speed 5", kmh, null);
+    NumberDocumentBuilder temporalSpeed2b =
+        new NumberDocumentBuilder("Speed 6", kmh, null);
     // ObjectCollection<String> string1 = new ObjectCollection<>("strings 1");
     // ObjectCollection<String> string2 = new ObjectCollection<>("strings 2");
 

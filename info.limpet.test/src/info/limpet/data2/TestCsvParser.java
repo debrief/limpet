@@ -16,6 +16,7 @@ package info.limpet.data2;
 
 import info.limpet2.Document;
 import info.limpet2.IStoreItem;
+import info.limpet2.StoreGroup;
 import info.limpet2.persistence.CsvParser;
 
 import java.io.File;
@@ -45,32 +46,32 @@ public class TestCsvParser extends TestCase
 		Document firstColl = (Document) items.get(0);
 		assertEquals("correct num rows", 11, firstColl.size());
 	}
-//
-//	public void testMultiColumn() throws Exception
-//	{
-//		File file = getDataFile("data/track_one.csv");
-//		assertTrue(file.isFile());
-//		CsvParser parser = new CsvParser();
-//		List<IStoreItem> items = parser.parse(file.getAbsolutePath());
-//		assertEquals("correct group", 1, items.size());
-//		StoreGroup group = (StoreGroup) items.get(0);
-//		assertEquals("correct num collections", 6, group.size());
-//		Document firstColl = (Document) group.get(0);
-//		assertEquals("correct num rows", 69, firstColl.size());
-//	}
 
-//	public void testMultiColumnUSA() throws Exception
-//	{
-//		File file = getDataFile("americas_cup/usa.csv");
-//		assertTrue(file.isFile());
-//		CsvParser parser = new CsvParser();
-//		List<IStoreItem> items = parser.parse(file.getAbsolutePath());
-//		assertEquals("correct group", 1, items.size());
-//		StoreGroup group = (StoreGroup) items.get(0);
-//		assertEquals("correct num collections", 3, group.size());
-//		Document firstColl = (Document) group.get(0);
-//		assertEquals("correct num rows", 1708, firstColl.size());
-//	}
+	public void testMultiColumn() throws Exception
+	{
+		File file = getDataFile("data/track_one.csv");
+		assertTrue(file.isFile());
+		CsvParser parser = new CsvParser();
+		List<IStoreItem> items = parser.parse(file.getAbsolutePath());
+		assertEquals("correct group", 1, items.size());
+		StoreGroup group = (StoreGroup) items.get(0);
+		assertEquals("correct num collections", 6, group.size());
+		Document firstColl = (Document) group.get(0);
+		assertEquals("correct num rows", 69, firstColl.size());
+	}
+
+	public void testMultiColumnUSA() throws Exception
+	{
+		File file = getDataFile("americas_cup/usa.csv");
+		assertTrue(file.isFile());
+		CsvParser parser = new CsvParser();
+		List<IStoreItem> items = parser.parse(file.getAbsolutePath());
+		assertEquals("correct group", 1, items.size());
+		StoreGroup group = (StoreGroup) items.get(0);
+		assertEquals("correct num collections", 3, group.size());
+		Document firstColl = (Document) group.get(0);
+		assertEquals("correct num rows", 1708, firstColl.size());
+	}
 	
 	public static File getDataFile(String name)
 	{
