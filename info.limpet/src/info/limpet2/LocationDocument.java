@@ -1,6 +1,7 @@
 package info.limpet2;
 
 import java.awt.geom.Point2D;
+import java.util.List;
 
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.Dataset;
@@ -11,7 +12,7 @@ import org.eclipse.january.dataset.IndexIterator;
 import org.eclipse.january.dataset.ObjectDataset;
 import org.eclipse.january.metadata.AxesMetadata;
 
-public class LocationDocument extends Document
+public class LocationDocument extends Document implements ILocations
 {
   
   public LocationDocument(ObjectDataset dataset, ICommand predecessor)
@@ -158,5 +159,11 @@ public class LocationDocument extends Document
       DoubleDataset ds = (DoubleDataset) _dataset;
       return (Double) ds.stdDeviation(true);
     }    
+  }
+
+  @Override
+  public List<Point2D> getLocations()
+  {
+    throw new RuntimeException("Not yet implemented");
   }
 }

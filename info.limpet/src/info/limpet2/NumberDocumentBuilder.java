@@ -87,4 +87,9 @@ public class NumberDocumentBuilder implements IDocumentBuilder
   {
     _range = range;
   }
+
+  public Unit<?> getUnits()
+  {
+    return _units;
+  }
 }
