@@ -14,9 +14,9 @@
  *****************************************************************************/
 package info.limpet2.operations.arithmetic.simple;
 
+import info.limpet.IContext;
 import info.limpet2.Document;
 import info.limpet2.ICommand;
-import info.limpet2.IContext;
 import info.limpet2.IStoreGroup;
 import info.limpet2.IStoreItem;
 import info.limpet2.operations.arithmetic.BinaryQuantityOperation;
@@ -43,7 +43,7 @@ public class MultiplyQuantityOperation extends BinaryQuantityOperation
     if (longest != null)
     {
       ICommand newC =
-          new AddQuantityValues(
+          new MultiplyQuantityValues(
               "Multiply numeric values in provided series (interpolated)",
               selection, destination, longest, context);
       res.add(newC);
@@ -54,7 +54,7 @@ public class MultiplyQuantityOperation extends BinaryQuantityOperation
       IStoreGroup destination, Collection<ICommand> res, IContext context)
   {
     ICommand newC =
-        new AddQuantityValues(
+        new MultiplyQuantityValues(
             "Multiply numeric values in provided series (indexed)", selection,
             destination, context);
     res.add(newC);
@@ -71,15 +71,15 @@ public class MultiplyQuantityOperation extends BinaryQuantityOperation
     return nonEmpty && allQuantity && suitableLength;
   }
 
-  public class AddQuantityValues extends BinaryQuantityCommand
+  public class MultiplyQuantityValues extends BinaryQuantityCommand
   {
-    public AddQuantityValues(String name, List<IStoreItem> selection,
+    public MultiplyQuantityValues(String name, List<IStoreItem> selection,
         IStoreGroup store, IContext context)
     {
       this(name, selection, store, null, context);
     }
 
-    public AddQuantityValues(String name, List<IStoreItem> selection,
+    public MultiplyQuantityValues(String name, List<IStoreItem> selection,
         IStoreGroup destination, Document timeProvider, IContext context)
     {
       super(name, "Multiply datasets", destination, false, false, selection,

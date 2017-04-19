@@ -14,6 +14,8 @@
  *****************************************************************************/
 package info.limpet2;
 
+import info.limpet.IContext;
+
 public class MockContext implements IContext
 {
 

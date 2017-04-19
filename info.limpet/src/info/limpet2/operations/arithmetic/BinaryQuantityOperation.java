@@ -14,9 +14,9 @@
  *****************************************************************************/
 package info.limpet2.operations.arithmetic;
 
+import info.limpet.IContext;
 import info.limpet2.Document;
 import info.limpet2.ICommand;
-import info.limpet2.IContext;
 import info.limpet2.IOperation;
 import info.limpet2.IStoreGroup;
 import info.limpet2.IStoreItem;

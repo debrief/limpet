@@ -30,5 +30,4 @@ public interface IStoreItem
 	void fireDataChanged();
 
 	UUID getUUID();
-
 }

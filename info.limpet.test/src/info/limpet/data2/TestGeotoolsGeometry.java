@@ -14,16 +14,14 @@
  *****************************************************************************/
 package info.limpet.data2;
 
-import static javax.measure.unit.SI.METRE;
+import info.limpet.IContext;
 import info.limpet2.Document;
 import info.limpet2.ICommand;
-import info.limpet2.IContext;
 import info.limpet2.IStoreItem;
 import info.limpet2.LocationDocument;
 import info.limpet2.LocationDocumentBuilder;
 import info.limpet2.MockContext;
 import info.limpet2.NumberDocument;
-import info.limpet2.NumberDocumentBuilder;
 import info.limpet2.StoreGroup;
 import info.limpet2.operations.spatial.GenerateCourseAndSpeedOperation;
 import info.limpet2.operations.spatial.GeoSupport;
@@ -37,11 +35,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import javax.measure.quantity.Length;
+import junit.framework.TestCase;
 
 import org.junit.Assert;
-
-import junit.framework.TestCase;
 
 public class TestGeotoolsGeometry extends TestCase
 {
@@ -411,16 +407,16 @@ public class TestGeotoolsGeometry extends TestCase
 
   public void testLocationCalc()
   {
-    LocationDocumentBuilder loc1 = new LocationDocumentBuilder("loc1", null);
-    LocationDocumentBuilder loc2 = new LocationDocumentBuilder("loc2", null);
-    NumberDocumentBuilder len1 = new NumberDocumentBuilder("dummy", METRE.asType(Length.class), null);
+//    LocationDocumentBuilder loc1 = new LocationDocumentBuilder("loc1", null);
+//    LocationDocumentBuilder loc2 = new LocationDocumentBuilder("loc2", null);
+//    NumberDocumentBuilder len1 = new NumberDocumentBuilder("dummy", METRE.asType(Length.class), null);
+//
+//    List<IStoreItem> selection = new ArrayList<IStoreItem>();
+//    selection.add(loc1.toDocument());
+//
+//    StoreGroup store = new StoreGroup("Results");
 
-    List<IStoreItem> selection = new ArrayList<IStoreItem>();
-    selection.add(loc1.toDocument());
-
-    StoreGroup store = new StoreGroup("Results");
-
-    // TODO: reintstate distance between tracks operation
+//     TODO: reintstate distance between tracks operation
 //    Collection<ICommand> ops =
 //        new DistanceBetweenTracksOperation().actionsFor(selection, store,
 //            context);

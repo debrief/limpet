@@ -12,17 +12,27 @@
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  *****************************************************************************/
-package info.limpet2;
+package info.limpet.ui.data_provider.data2;
 
-
-
-import info.limpet.IContext;
-
-import java.util.Collection;
-import java.util.List;
-
-
-public interface IOperation
+/**
+ * objects that are used in the Limpet object tree
+ * 
+ * @author ian
+ * 
+ */
+public interface LimpetWrapper
 {
-	Collection<ICommand> actionsFor(List<IStoreItem> selection, IStoreGroup destination, IContext context);
+  /**
+   * retrieve the parent of the current object
+   * 
+   * @return the parent of the current object (to let us walk the tree)
+   */
+  LimpetWrapper getParent();
+
+  /**
+   * retrieve the pure limpet object that this instance is wrapping
+   * 
+   * @return the wrapped entity
+   */
+  Object getSubject();
 }

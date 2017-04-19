@@ -16,17 +16,18 @@ package info.limpet.data2;
 
 import static javax.measure.unit.SI.METRE;
 import static javax.measure.unit.SI.SECOND;
+import info.limpet.IContext;
 import info.limpet2.Document;
 import info.limpet2.Document.InterpMethod;
 import info.limpet2.ICommand;
-import info.limpet2.IContext;
 import info.limpet2.IStoreItem;
-import info.limpet2.NumberDocumentBuilder;
 import info.limpet2.MockContext;
 import info.limpet2.NumberDocument;
+import info.limpet2.NumberDocumentBuilder;
 import info.limpet2.Range;
 import info.limpet2.SampleData;
 import info.limpet2.StoreGroup;
+import info.limpet2.StringDocument;
 import info.limpet2.operations.arithmetic.UnaryQuantityOperation;
 import info.limpet2.operations.arithmetic.simple.AddQuantityOperation;
 import info.limpet2.operations.arithmetic.simple.MultiplyQuantityOperation;
@@ -66,7 +67,7 @@ public class TestCollections extends TestCase
 
     StringDataset str =
         (StringDataset) DatasetFactory.createFromObject(stringCollection);
-    Document strDoc = new Document(str, null);
+    Document strDoc = new StringDocument(str, null);
 
     // check it got stored
     assertEquals("correct number of samples", 10, strDoc.size());

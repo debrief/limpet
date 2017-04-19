@@ -14,13 +14,13 @@
  *****************************************************************************/
 package info.limpet2.operations;
 
+import info.limpet.IContext;
+import info.limpet.UIProperty;
 import info.limpet2.Document;
 import info.limpet2.IChangeListener;
 import info.limpet2.ICommand;
-import info.limpet2.IContext;
 import info.limpet2.IStoreGroup;
 import info.limpet2.IStoreItem;
-import info.limpet2.annotations.UIProperty;
 
 import java.util.ArrayList;
 import java.util.Iterator;

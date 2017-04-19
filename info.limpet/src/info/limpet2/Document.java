@@ -1,13 +1,16 @@
 package info.limpet2;
 
+import info.limpet.UIProperty;
+
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.metadata.AxesMetadata;
 
-public class Document implements IStoreItem
+abstract public class Document implements IStoreItem
 {
   
   // TODO: long-term, find a better place for this
@@ -44,6 +47,30 @@ public class Document implements IStoreItem
     _dataset = dataset;
   }
   
+  /** tell listeners that it's about to be deleted
+   * 
+   */
+  public void beingDeleted()
+  {
+    if (_changeListeners != null)
+    {
+      // tell any standard listeners
+      for(IChangeListener thisL: _changeListeners)
+      {
+        thisL.collectionDeleted(this);
+      }
+    }
+
+    // now tell the dependents
+    Iterator<ICommand> iter = _dependents.iterator();
+    while (iter.hasNext())
+    {
+      ICommand iC = (ICommand) iter.next();
+      iC.collectionDeleted(this);
+    }
+  }
+  
+  @UIProperty(name = "Name", category = UIProperty.CATEGORY_LABEL)
   public String getName()
   {
     return _dataset.getName();
@@ -93,6 +120,7 @@ public class Document implements IStoreItem
     return _uuid;
   }
 
+  @UIProperty(name = "Size", category = UIProperty.CATEGORY_LABEL)
   public int size()
   {
     return _dataset.getSize();
@@ -104,6 +132,7 @@ public class Document implements IStoreItem
     return null;
   }
 
+  @UIProperty(name = "Indexed", category = UIProperty.CATEGORY_LABEL)
   public boolean isIndexed()
   {
     // is there an axis?
@@ -113,6 +142,7 @@ public class Document implements IStoreItem
     return am != null;
   }
 
+  @UIProperty(name = "Quantity", category = UIProperty.CATEGORY_LABEL)
   public boolean isQuantity()
   {
     return false;

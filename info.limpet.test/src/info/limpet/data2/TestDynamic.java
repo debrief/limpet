@@ -14,9 +14,9 @@
  *****************************************************************************/
 package info.limpet.data2;
 
+import info.limpet.IContext;
 import info.limpet2.IChangeListener;
 import info.limpet2.ICommand;
-import info.limpet2.IContext;
 import info.limpet2.IStoreItem;
 import info.limpet2.MockContext;
 import info.limpet2.NumberDocument;

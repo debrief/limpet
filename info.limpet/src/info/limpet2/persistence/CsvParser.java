@@ -26,6 +26,7 @@ import info.limpet2.LocationDocumentBuilder;
 import info.limpet2.NumberDocumentBuilder;
 import info.limpet2.SampleData;
 import info.limpet2.StoreGroup;
+import info.limpet2.StringDocumentBuilder;
 import info.limpet2.operations.spatial.GeoSupport;
 
 import java.awt.geom.Point2D;
@@ -82,8 +83,8 @@ public class CsvParser
 
     final DataImporter temporalDimensionless =
         new TemporalSeriesSupporter(null, null, null);
-    // final DataImporter temporalStrings = new TemporalStringImporter();
-    // final DataImporter strings = new StringImporter();
+    final DataImporter temporalStrings = new TemporalStringImporter();
+    final DataImporter strings = new StringImporter();
     final DataImporter dimensionless = new SeriesSupporter(null, null, null);
 
     // store one importer per column-set
@@ -188,14 +189,14 @@ public class CsvParser
           // have we managed it?
           if (!handled)
           {
-            // TODO: reinstate this once we have object support
-
             // ok, in that case we don't know. Let's introduce a deferred
             // decision
             // maker, so we can make a decision once we've read in some data
-            // importers.add(new DeferredLoadSupporter(colName));
-            // builders.add(new ObjectCollection<String>("null"));
-            // ctr += 1;
+            final DeferredLoadSupporter thisI =
+                new DeferredLoadSupporter(colName);
+            importers.add(thisI);
+            builders.add(thisI.create(fileName + "-" + thisI.nameFor(colName)));
+            ctr += 1;
           }
         }
       }
@@ -272,8 +273,7 @@ public class CsvParser
               }
               else
               {
-                // TODO: reinstate, once we have string support
-                // importer = temporalStrings;
+                importer = temporalStrings;
               }
             }
             else
@@ -285,8 +285,7 @@ public class CsvParser
               }
               else
               {
-                // TODO: reinstate, once we have string support
-                // importer = strings;
+                importer = strings;
               }
             }
 
@@ -304,7 +303,6 @@ public class CsvParser
 
           IDocumentBuilder thisS = builders.get(i);
 
-          // TODO: get this processing working
           thisI.consume(thisS, theTime, thisCol, record);
 
           thisCol += thisI.numCols();
@@ -523,22 +521,29 @@ public class CsvParser
    * @author ian
    * 
    */
-  // protected static class TemporalStringImporter extends DataImporter
-  // {
-  // protected TemporalStringImporter()
-  // {
-  // super(Temporal.Strings.class, null, null);
-  // }
-  //
-  // @Override
-  // public void consume(ICollection series, long thisTime, int colStart,
-  // CSVRecord row)
-  // {
-  // String thisVal = row.get(colStart);
-  // Temporal.Strings thisS = (Strings) series;
-  // thisS.add(thisTime, thisVal);
-  // }
-  // }
+  protected static class TemporalStringImporter extends DataImporter
+  {
+    protected TemporalStringImporter()
+    {
+      super(null, null, null);
+    }
+
+    @Override
+    public IDocumentBuilder create(String name)
+    {
+      StringDocumentBuilder res = new StringDocumentBuilder(name, null);
+      return res;
+    }
+
+    @Override
+    public void consume(IDocumentBuilder series, long thisTime, int colStart,
+        CSVRecord row)
+    {
+      String thisVal = row.get(colStart);
+      StringDocumentBuilder builder = (StringDocumentBuilder) series;
+      builder.add(thisVal, thisTime);
+    }
+  }
 
   /**
    * class to handle importing time-related strings
@@ -546,22 +551,28 @@ public class CsvParser
    * @author ian
    * 
    */
-  // protected static class StringImporter extends DataImporter
-  // {
-  // protected StringImporter()
-  // {
-  // super(NonTemporal.Strings.class, null, null);
-  // }
-  //
-  // @Override
-  // public void consume(ICollection series, long thisTime, int colStart,
-  // CSVRecord row)
-  // {
-  // String thisVal = row.get(colStart);
-  // NonTemporal.Strings thisS = (NonTemporal.Strings) series;
-  // thisS.add(thisVal);
-  // }
-  // }
+  protected static class StringImporter extends DataImporter
+  {
+    protected StringImporter()
+    {
+      super(null, null, null);
+    }
+
+    public IDocumentBuilder create(String name)
+    {
+      StringDocumentBuilder res = new StringDocumentBuilder(name, null);
+      return res;
+    }
+
+    @Override
+    public void consume(IDocumentBuilder series, long thisTime, int colStart,
+        CSVRecord row)
+    {
+      String thisVal = row.get(colStart);
+      StringDocumentBuilder builder = (StringDocumentBuilder) series;
+      builder.add(thisVal, thisTime);
+    }
+  }
 
   // /**
   // * class to handle importing two columns of location data
@@ -580,7 +591,7 @@ public class CsvParser
     {
       return "Location";
     }
-    
+
     /**
      * create an instance of this series, using the specified name
      * 
@@ -589,8 +600,7 @@ public class CsvParser
      */
     public IDocumentBuilder create(String name)
     {
-      LocationDocumentBuilder res =
-          new LocationDocumentBuilder(name, null);
+      LocationDocumentBuilder res = new LocationDocumentBuilder(name, null);
       return res;
     }
 

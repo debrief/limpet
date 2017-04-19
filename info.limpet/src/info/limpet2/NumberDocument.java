@@ -1,5 +1,7 @@
 package info.limpet2;
 
+import info.limpet.UIProperty;
+
 import javax.measure.quantity.Dimensionless;
 import javax.measure.unit.Unit;
 
@@ -32,8 +34,6 @@ public class NumberDocument extends Document
     {
     _qType = qType;
     }
-    
-    
   }
 
   public Unit<?> getType()
@@ -56,6 +56,7 @@ public class NumberDocument extends Document
     return _qType;
   }
 
+  @UIProperty(name = "Quantity", category = UIProperty.CATEGORY_LABEL)
   public boolean isQuantity()
   {
     return true;
