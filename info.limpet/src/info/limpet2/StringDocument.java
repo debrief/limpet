@@ -1,5 +1,8 @@
 package info.limpet2;
 
+import java.util.Arrays;
+import java.util.Iterator;
+
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetUtils;
@@ -9,7 +12,7 @@ import org.eclipse.january.dataset.IndexIterator;
 import org.eclipse.january.dataset.StringDataset;
 import org.eclipse.january.metadata.AxesMetadata;
 
-public class StringDocument extends Document
+public class StringDocument extends Document implements IObjectDocument
 {
   
   public StringDocument(StringDataset dataset, ICommand predecessor)
@@ -117,6 +120,23 @@ public class StringDocument extends Document
   {
     StringDataset od = (StringDataset) _dataset;
     return od.getString(i);
+  }
+
+  public Iterator<String> getIterator()
+  {
+    StringDataset od = (StringDataset) _dataset;
+    String[] strings = od.getData();
+    Iterable<String> iterable = Arrays.asList(strings);
+    return iterable.iterator();
+  }
+
+  @Override
+  public Iterator<?> getObjectIterator()
+  {
+    StringDataset od = (StringDataset) _dataset;
+    String[] strings = od.getData();
+    Iterable<String> iterable = Arrays.asList(strings);
+    return iterable.iterator();
   }
 
 }

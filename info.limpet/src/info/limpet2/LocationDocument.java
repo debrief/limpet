@@ -1,6 +1,8 @@
 package info.limpet2;
 
 import java.awt.geom.Point2D;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.january.DatasetException;
@@ -12,7 +14,7 @@ import org.eclipse.january.dataset.IndexIterator;
 import org.eclipse.january.dataset.ObjectDataset;
 import org.eclipse.january.metadata.AxesMetadata;
 
-public class LocationDocument extends Document implements ILocations
+public class LocationDocument extends Document implements ILocations, IObjectDocument
 {
   
   public LocationDocument(ObjectDataset dataset, ICommand predecessor)
@@ -166,4 +168,12 @@ public class LocationDocument extends Document implements ILocations
   {
     throw new RuntimeException("Not yet implemented");
   }
-}
+
+  @Override
+  public Iterator<?> getObjectIterator()
+  {
+    ObjectDataset od = (ObjectDataset) _dataset;
+    Object[] strings = od.getData();
+    Iterable<Object> iterable = Arrays.asList(strings);
+    return iterable.iterator();
+  }}

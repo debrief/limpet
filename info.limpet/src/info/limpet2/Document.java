@@ -7,20 +7,24 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
+import org.eclipse.january.DatasetException;
+import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.ILazyDataset;
+import org.eclipse.january.dataset.LongDataset;
 import org.eclipse.january.metadata.AxesMetadata;
 
 abstract public class Document implements IStoreItem
 {
-  
+
   // TODO: long-term, find a better place for this
   public static enum InterpMethod
   {
     Linear, Nearest, Before, After
   };
-  
-  /** _dataset isn't final, sincew we replace it when the 
-   * document is re-calculated 
+
+  /**
+   * _dataset isn't final, sincew we replace it when the document is re-calculated
    */
   protected IDataset _dataset;
   final protected ICommand _predecessor;
@@ -36,18 +40,19 @@ abstract public class Document implements IStoreItem
     _predecessor = predecessor;
     _uuid = UUID.randomUUID();
   }
-  
+
   public IDataset getDataset()
   {
     return _dataset;
   }
-  
+
   public void setDataset(IDataset dataset)
   {
     _dataset = dataset;
   }
-  
-  /** tell listeners that it's about to be deleted
+
+  /**
+   * tell listeners that it's about to be deleted
    * 
    */
   public void beingDeleted()
@@ -55,7 +60,7 @@ abstract public class Document implements IStoreItem
     if (_changeListeners != null)
     {
       // tell any standard listeners
-      for(IChangeListener thisL: _changeListeners)
+      for (IChangeListener thisL : _changeListeners)
       {
         thisL.collectionDeleted(this);
       }
@@ -69,7 +74,7 @@ abstract public class Document implements IStoreItem
       iC.collectionDeleted(this);
     }
   }
-  
+
   @UIProperty(name = "Name", category = UIProperty.CATEGORY_LABEL)
   public String getName()
   {
@@ -80,7 +85,7 @@ abstract public class Document implements IStoreItem
   {
     _dataset.setName(name);
   }
-  
+
   @Override
   public IStoreGroup getParent()
   {
@@ -108,7 +113,7 @@ abstract public class Document implements IStoreItem
   @Override
   public void fireDataChanged()
   {
-    for(final IChangeListener thisL: _changeListeners)
+    for (final IChangeListener thisL : _changeListeners)
     {
       thisL.dataChanged(this);
     }
@@ -137,9 +142,67 @@ abstract public class Document implements IStoreItem
   {
     // is there an axis?
     final AxesMetadata am = _dataset.getFirstMetadata(AxesMetadata.class);
-    
+
     // is it a time axis?
     return am != null;
+  }
+
+  private static class LongIterator implements Iterator<Long>
+  {
+    private long[] _data;
+    private int _ctr;
+
+    private LongIterator(long[] data)
+    {
+      _data = data;
+      _ctr = 0;
+    }
+
+    @Override
+    public boolean hasNext()
+    {
+      return _ctr < _data.length;
+    }
+
+    @Override
+    public Long next()
+    {
+      return _data[_ctr++];
+    }
+
+    @Override
+    public void remove()
+    {
+      throw new RuntimeException(
+          "Remove operation not provided for this iterator");
+    }
+
+  }
+
+  public Iterator<Long> getIndexes()
+  {
+    LongIterator res = null;
+
+    if (isIndexed())
+    {
+      final AxesMetadata am = _dataset.getFirstMetadata(AxesMetadata.class);
+
+      ILazyDataset ds = am.getAxes()[0];
+      try
+      {
+        LongDataset dd =
+            (LongDataset) DatasetUtils.sliceAndConvertLazyDataset(ds);
+        long[] items = dd.getData();
+        res = new LongIterator(items);
+      }
+      catch (DatasetException e)
+      {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+    }
+
+    return res;
   }
 
   @UIProperty(name = "Quantity", category = UIProperty.CATEGORY_LABEL)
@@ -147,7 +210,7 @@ abstract public class Document implements IStoreItem
   {
     return false;
   }
-  
+
   public ICommand getPrecedent()
   {
     return _predecessor;
@@ -155,15 +218,16 @@ abstract public class Document implements IStoreItem
 
   public void addDependent(ICommand command)
   {
-    _dependents .add(command);
+    _dependents.add(command);
   }
 
   public List<ICommand> getDependents()
   {
     return _dependents;
   }
-  
-  /** temporarily use this - until we're confident about replacing child Dataset objects
+
+  /**
+   * temporarily use this - until we're confident about replacing child Dataset objects
    * 
    */
   public void clearQuiet()
@@ -176,6 +240,5 @@ abstract public class Document implements IStoreItem
   {
     return _dataset.toString();
   }
-  
-  
+
 }

@@ -257,6 +257,11 @@ public class StoreGroup extends ArrayList<IStoreItem> implements IStoreGroup
     return null;
   }
 
+  @Override
+  public Date getTime()
+  {
+    return _currentTime;
+  }
 
   @Override
   public void setTime(final Date time)

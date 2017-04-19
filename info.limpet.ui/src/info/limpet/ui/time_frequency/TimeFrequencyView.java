@@ -14,14 +14,13 @@
  *****************************************************************************/
 package info.limpet.ui.time_frequency;
 
-import info.limpet.IBaseTemporalCollection;
-import info.limpet.ICollection;
-import info.limpet.IStoreItem;
-import info.limpet.analysis.TimeFrequencyBins;
-import info.limpet.analysis.TimeFrequencyBins.Bin;
-import info.limpet.data.operations.CollectionComplianceTests;
 import info.limpet.ui.PlottingHelpers;
 import info.limpet.ui.core_view.CoreAnalysisView;
+import info.limpet2.Document;
+import info.limpet2.IStoreItem;
+import info.limpet2.analysis.TimeFrequencyBins;
+import info.limpet2.analysis.TimeFrequencyBins.Bin;
+import info.limpet2.operations.CollectionComplianceTests;
 
 import java.util.Date;
 import java.util.Iterator;
@@ -35,8 +34,8 @@ import org.swtchart.ILineSeries;
 import org.swtchart.ILineSeries.PlotSymbolType;
 import org.swtchart.ISeries;
 import org.swtchart.ISeries.SeriesType;
-import org.swtchart.ext.InteractiveChart;
 import org.swtchart.Range;
+import org.swtchart.ext.InteractiveChart;
 
 /**
  * display analysis overview of selection
@@ -90,7 +89,7 @@ public class TimeFrequencyView extends CoreAnalysisView
   @Override
   public void display(List<IStoreItem> res)
   {
-    if (getATests().allTemporal(res))
+    if (getATests().allIndexed(res))
     {
       // sort out what type of data this is.
       showData(res);
@@ -116,13 +115,12 @@ public class TimeFrequencyView extends CoreAnalysisView
 
     while (iter.hasNext())
     {
-      ICollection iCollection = (ICollection) iter.next();
+      Document iCollection = (Document) iter.next();
       TimeFrequencyBins.BinnedData bins = null;
-      if (iCollection.isTemporal() && iCollection.getValuesCount() > 1
-          && iCollection.getValuesCount() <= MAX_SIZE)
+      if (iCollection.isIndexed() && iCollection.size() > 1
+          && iCollection.size() <= MAX_SIZE)
       {
-        IBaseTemporalCollection thisQ = (IBaseTemporalCollection) iCollection;
-        bins = TimeFrequencyBins.doBins(iCollection, thisQ);
+        bins = TimeFrequencyBins.doBins(iCollection);
 
         String seriesName = iCollection.getName();
         ILineSeries newSeries =

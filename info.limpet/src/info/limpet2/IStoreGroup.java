@@ -71,4 +71,6 @@ public interface IStoreGroup extends IStoreItem, Collection<IStoreItem>,
    */
   void removeTimeChangeListener(PropertyChangeListener listener);
 
+  Date getTime();
+
 }

@@ -15,6 +15,7 @@ import info.limpet2.operations.arithmetic.simple.AddQuantityOperation;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.measure.quantity.Length;
@@ -43,6 +44,14 @@ public class TestNewStrategy extends TestCase
     assertEquals("correct units", "m", nd.getUnits().toString());
     assertEquals("correct dimension", "[L]", nd.getUnits().getDimension()
         .toString());
+    
+    Iterator<Double> iter = nd.getIterator();
+    while (iter.hasNext())
+    {
+      Double double1 = (Double) iter.next();
+      System.out.println("value:" + double1);
+    }
+    
   }
 
   public void testAddingDocuments()

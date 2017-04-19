@@ -14,26 +14,23 @@
  *****************************************************************************/
 package info.limpet.ui.range_slider;
 
-import info.limpet.IChangeListener;
-import info.limpet.ICollection;
-import info.limpet.ICommand;
-import info.limpet.IQuantityCollection;
-import info.limpet.IStoreGroup;
-import info.limpet.IStoreItem;
-import info.limpet.QuantityRange;
-import info.limpet.data.impl.TemporalQuantityCollection;
-import info.limpet.data.operations.CollectionComplianceTests;
-import info.limpet.data.operations.arithmetic.SimpleMovingAverageOperation.SimpleMovingAverageCommand;
 import info.limpet.stackedcharts.ui.editor.Activator;
 import info.limpet.ui.core_view.CoreAnalysisView;
+import info.limpet2.Document;
+import info.limpet2.IChangeListener;
+import info.limpet2.ICommand;
+import info.limpet2.IStoreGroup;
+import info.limpet2.IStoreItem;
+import info.limpet2.NumberDocument;
+import info.limpet2.Range;
+import info.limpet2.operations.CollectionComplianceTests;
+import info.limpet2.operations.arithmetic.SimpleMovingAverageOperation.SimpleMovingAverageCommand;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
-import javax.measure.Measurable;
-import javax.measure.quantity.Quantity;
 import javax.measure.unit.Unit;
 
 import org.eclipse.core.runtime.Status;
@@ -183,26 +180,27 @@ public class RangeSliderView extends CoreAnalysisView implements
     private final int _sliderThumb;
     private final String _name;
     private final IStoreGroup _group;
-    private final TemporalQuantityCollection<?> _collection;
-    
+    private final NumberDocument _collection;
+
     // introduce scale factor, to let us handle more than the number
     // of millis in Integer.MAX_VALUE
     private final float scaleFactor;
 
+    @SuppressWarnings("unused")
     public DateHelper(Long start, Long end, int sliderThumb, String name,
-        IStoreGroup group, TemporalQuantityCollection<?> temp)
+        IStoreGroup group, NumberDocument temp)
     {
       _start = start;
       _end = end;
-      
+
       // do we have a start time
       Date gTime = group.getTime();
-      if(gTime != null)
+      if (gTime != null)
       {
         _current = new Long(gTime.getTime());
       }
       else
-      {      
+      {
         _current = new Long(start);
       }
       _sliderThumb = sliderThumb;
@@ -214,7 +212,7 @@ public class RangeSliderView extends CoreAnalysisView implements
       // do we span a day?
       final long MILLIS_IN_ONE_DAY = 24 * 60 * 60 * 1000;
       final String DATE_FORMAT;
-      if(range > MILLIS_IN_ONE_DAY)
+      if (range > MILLIS_IN_ONE_DAY)
       {
         DATE_FORMAT = "yy/MM/dd HH:mm";
       }
@@ -222,26 +220,26 @@ public class RangeSliderView extends CoreAnalysisView implements
       {
         DATE_FORMAT = "HH:mm:ss";
       }
-      
+
       sdf = new SimpleDateFormat(DATE_FORMAT);
       sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
       _collection = temp;
 
       // do we need to scale the value?
-      if(range < Integer.MAX_VALUE)
+      if (range < Integer.MAX_VALUE)
       {
         scaleFactor = 1;
       }
       else
       {
-        scaleFactor = (float)range / (Integer.MAX_VALUE / 2f);
-      }      
+        scaleFactor = (float) range / (Integer.MAX_VALUE / 2f);
+      }
     }
 
     @Override
     public void updatedTo(int val)
     {
-      _current = _start + (long)(val * scaleFactor);
+      _current = _start + (long) (val * scaleFactor);
 
       // and store the value in the group
       _group.setTime(new Date(_current));
@@ -270,7 +268,7 @@ public class RangeSliderView extends CoreAnalysisView implements
     {
       long range = _end - _start;
       float scaledRange = range / scaleFactor;
-      int maxVal = (int)scaledRange + _sliderThumb;
+      int maxVal = (int) scaledRange + _sliderThumb;
       return maxVal;
     }
 
@@ -291,10 +289,10 @@ public class RangeSliderView extends CoreAnalysisView implements
     {
       // how far along are we?
       long diff = _current - _start;
-      
+
       // and scale it
-      int scaled = (int)(diff / scaleFactor);
-      
+      int scaled = (int) (diff / scaleFactor);
+
       return scaled;
     }
 
@@ -309,16 +307,15 @@ public class RangeSliderView extends CoreAnalysisView implements
   private static class NumberHelper implements RangeHelper, IChangeListener
   {
 
-    private final QuantityRange<Quantity> _rng;
-    private final Unit<Quantity> _units;
+    private final Range _rng;
+    private final Unit<?> _units;
     private int _curVal;
     private final int _sliderThumb;
     private final String _name;
-    private final IQuantityCollection<Quantity> _collection;
+    private final NumberDocument _collection;
 
-    public NumberHelper(QuantityRange<Quantity> rng, Unit<Quantity> theUnits,
-        double startVal, int sliderThumb, String name,
-        IQuantityCollection<Quantity> collection)
+    public NumberHelper(Range rng, Unit<?> theUnits, double startVal,
+        int sliderThumb, String name, NumberDocument collection)
     {
       _rng = rng;
       _units = theUnits;
@@ -342,19 +339,15 @@ public class RangeSliderView extends CoreAnalysisView implements
     @Override
     public String getMinText()
     {
-      Object min = _rng.getMinimum();
-      @SuppressWarnings("unchecked")
-      long minVal = ((Measurable<Quantity>) min).longValue(_units);
-      return "" + minVal;
+      Number min = _rng.getMinimum();
+      return "" + min;
     }
 
     @Override
     public String getMaxText()
     {
-      Object max = _rng.getMaximum();
-      @SuppressWarnings("unchecked")
-      long maxVal = ((Measurable<Quantity>) max).longValue(_units);
-      return "" + maxVal;
+      Number max = _rng.getMaximum();
+      return "" + max;
     }
 
     @Override
@@ -366,11 +359,9 @@ public class RangeSliderView extends CoreAnalysisView implements
     @Override
     public int getMaxVal()
     {
-      Object max = _rng.getMaximum();
-      @SuppressWarnings("unchecked")
-      long maxVal =
-          ((Measurable<Quantity>) max).longValue(_units) + _sliderThumb;
-      return (int) maxVal;
+      Number max = _rng.getMaximum();
+      int maxVal = max.intValue() + _sliderThumb;
+      return maxVal;
     }
 
     @Override
@@ -510,7 +501,6 @@ public class RangeSliderView extends CoreAnalysisView implements
     setupListener();
   }
 
-  @SuppressWarnings("unchecked")
   @Override
   public void display(List<IStoreItem> res)
   {
@@ -520,18 +510,17 @@ public class RangeSliderView extends CoreAnalysisView implements
     }
 
     IStoreItem first = res.get(0);
-    if (first instanceof ICollection)
+    if (first instanceof Document)
     {
-      ICollection newColl = (ICollection) res.get(0);
+      Document newColl = (Document) res.get(0);
 
-      if (newColl instanceof IQuantityCollection<?>)
+      if (newColl instanceof NumberDocument)
       {
-        IQuantityCollection<Quantity> currentColl =
-            (IQuantityCollection<Quantity>) newColl;
+        NumberDocument currentColl = (NumberDocument) newColl;
         showData(currentColl);
       }
     }
-    else if (first instanceof ICommand<?>
+    else if (first instanceof ICommand
         && first instanceof SimpleMovingAverageCommand)
     {
       SimpleMovingAverageCommand command = (SimpleMovingAverageCommand) first;
@@ -559,7 +548,7 @@ public class RangeSliderView extends CoreAnalysisView implements
         if (_myHelper instanceof CommandHelper)
         {
           CommandHelper cHelp = (CommandHelper) _myHelper;
-          if(cHelp._myCommand != object)
+          if (cHelp._myCommand != object)
           {
             dropListener();
           }
@@ -571,16 +560,15 @@ public class RangeSliderView extends CoreAnalysisView implements
       SimpleMovingAverageCommand sam = (SimpleMovingAverageCommand) object;
       _myHelper = new CommandHelper(sam, slider.getThumb());
     }
-    else if (object instanceof IQuantityCollection<?>)
+    else if (object instanceof NumberDocument)
     {
-      @SuppressWarnings("unchecked")
-      IQuantityCollection<Quantity> qc = (IQuantityCollection<Quantity>) object;
-      
+      NumberDocument qc = (NumberDocument) object;
+
       if (_myHelper != null)
         if (_myHelper instanceof NumberHelper)
         {
           NumberHelper cHelp = (NumberHelper) _myHelper;
-          if(cHelp._collection != object)
+          if (cHelp._collection != object)
           {
             dropListener();
           }
@@ -589,31 +577,32 @@ public class RangeSliderView extends CoreAnalysisView implements
             return;
           }
         }
-      
 
       // does it have a range?
-      QuantityRange<Quantity> rng = qc.getRange();
+      Range rng = qc.getRange();
 
       if (rng != null)
       {
-        Unit<Quantity> theUnits = qc.getUnits();
-        int curVal =
-            (int) qc.getValues().iterator().next().doubleValue(theUnits);
+        Unit<?> theUnits = qc.getUnits();
+        if (qc.size() > 0)
+        {
+          int curVal = (int) qc.getValue(0);
 
-        _myHelper =
-            new NumberHelper(rng, theUnits, curVal, slider.getThumb(), qc
-                .getName(), qc);
+          _myHelper =
+              new NumberHelper(rng, theUnits, curVal, slider.getThumb(), qc
+                  .getName(), qc);
+        }
       }
-      else if (qc instanceof TemporalQuantityCollection<?>)
+      else if (qc.isIndexed())
       {
         // ok, time data, show the time range
-        TemporalQuantityCollection<?> temp = (TemporalQuantityCollection<?>) qc;
-        
+        NumberDocument temp = (NumberDocument) qc;
+
         if (_myHelper != null)
           if (_myHelper instanceof DateHelper)
           {
             DateHelper cHelp = (DateHelper) _myHelper;
-            if(cHelp._collection != object)
+            if (cHelp._collection != object)
             {
               dropListener();
             }
@@ -622,27 +611,20 @@ public class RangeSliderView extends CoreAnalysisView implements
               return;
             }
           }
-        
+
         // now we need the time range
-        Long start = temp.getTimes().get(0);
-        Long end = temp.getTimes().get(temp.getTimes().size() - 1);
+        // TODO: we need to support indexing the data
+        // Long start = temp.getTimes().get(0);
+        // Long end = temp.getTimes().get(temp.getTimes().size() - 1);
         IStoreGroup parent = findTopParent(temp);
 
         // just double-check we can fit in the period
         if (parent != null)
         {
-//          if (end - start < Integer.MAX_VALUE)
-//          {
-            _myHelper =
-                new DateHelper(start, end, slider.getThumb(), temp.getName(),
-                    parent, temp);
-//          }
-//          else
-//          {
-//            Activator.getDefault().getLog().log(
-//                new Status(Status.WARNING, Activator.PLUGIN_ID,
-//                    "Temporal data too large for range control"));
-//          }
+          // TODO: reinstate the date helper
+//          _myHelper =
+//              new DateHelper(start, end, slider.getThumb(), temp.getName(),
+//                  parent, temp);
         }
         else
         {
@@ -688,24 +670,24 @@ public class RangeSliderView extends CoreAnalysisView implements
     if (selection.size() == 1)
     {
       IStoreItem item = selection.iterator().next();
-      if (item instanceof ICollection)
+      if (item instanceof Document)
       {
-        ICollection coll = (ICollection) item;
+        Document coll = (Document) item;
 
-        if (coll.isQuantity() && coll.getValuesCount() == 1)
+        if (coll.isQuantity() && coll.size() == 1)
         {
-          IQuantityCollection<?> qc = (IQuantityCollection<?>) coll;
-          QuantityRange<?> range = qc.getRange();
+          NumberDocument qc = (NumberDocument) coll;
+          Range range = qc.getRange();
           res = range != null;
         }
-        else if (coll.isTemporal() && coll.getValuesCount() > 0)
+        else if (coll.isIndexed() && coll.size() > 0)
         {
           res = true;
         }
       }
       else if (item instanceof ICommand)
       {
-        ICommand<?> coll = (ICommand<?>) item;
+        ICommand coll = (ICommand) item;
 
         if (coll instanceof SimpleMovingAverageCommand)
         {

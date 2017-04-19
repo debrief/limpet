@@ -14,10 +14,10 @@
  *****************************************************************************/
 package info.limpet.ui.core_view;
 
-import info.limpet.IChangeListener;
-import info.limpet.IStoreItem;
-import info.limpet.data.operations.CollectionComplianceTests;
 import info.limpet.ui.Activator;
+import info.limpet2.IChangeListener;
+import info.limpet2.IStoreItem;
+import info.limpet2.operations.CollectionComplianceTests;
 
 import java.util.ArrayList;
 import java.util.Iterator;

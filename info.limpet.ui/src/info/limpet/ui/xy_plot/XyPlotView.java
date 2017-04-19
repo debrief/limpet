@@ -14,25 +14,21 @@
  *****************************************************************************/
 package info.limpet.ui.xy_plot;
 
-import info.limpet.ICollection;
-import info.limpet.IQuantityCollection;
-import info.limpet.IStoreItem;
-import info.limpet.ITemporalQuantityCollection;
-import info.limpet.data.impl.samples.TemporalLocation;
-import info.limpet.data.operations.CollectionComplianceTests;
-import info.limpet.data.operations.CollectionComplianceTests.TimePeriod;
 import info.limpet.ui.PlottingHelpers;
 import info.limpet.ui.core_view.CoreAnalysisView;
+import info.limpet2.Document;
+import info.limpet2.IStoreItem;
+import info.limpet2.LocationDocument;
+import info.limpet2.NumberDocument;
+import info.limpet2.operations.CollectionComplianceTests;
+import info.limpet2.operations.CollectionComplianceTests.TimePeriod;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.measure.Measurable;
-import javax.measure.quantity.Quantity;
 import javax.measure.unit.Unit;
 
 import org.eclipse.swt.SWT;
@@ -107,12 +103,12 @@ public class XyPlotView extends CoreAnalysisView
       // they're all the same type - check the first one
       Iterator<IStoreItem> iter = res.iterator();
 
-      ICollection first = (ICollection) iter.next();
+      Document first = (Document) iter.next();
 
       // sort out what type of data this is.
       if (first.isQuantity())
       {
-        if (aTests.allTemporalOrSingleton(res))
+        if (aTests.allIndexedOrSingleton(res))
         {
           showTemporalQuantity(res);
         }
@@ -138,29 +134,28 @@ public class XyPlotView extends CoreAnalysisView
     }
   }
 
-  @SuppressWarnings("unchecked")
   private void showQuantity(List<IStoreItem> res)
   {
     Iterator<IStoreItem> iter = res.iterator();
 
     clearGraph();
 
-    Unit<Quantity> existingUnits = null;
+    Unit<?> existingUnits = null;
 
     // get the longest collection length (used for plotting singletons)
     int longestColl = aTests.getLongestCollectionLength(res);
 
     while (iter.hasNext())
     {
-      ICollection coll = (ICollection) iter.next();
-      if (coll.isQuantity() && coll.getValuesCount() >= 1
-          && coll.getValuesCount() < MAX_SIZE)
+      Document coll = (Document) iter.next();
+      if (coll.isQuantity() && coll.size() >= 1
+          && coll.size() < MAX_SIZE)
       {
 
-        IQuantityCollection<Quantity> thisQ =
-            (IQuantityCollection<Quantity>) coll;
+        NumberDocument thisQ =
+            (NumberDocument) coll;
 
-        final Unit<Quantity> theseUnits = thisQ.getUnits();
+        final Unit<?> theseUnits = thisQ.getUnits();
         String seriesName = seriesNameFor(thisQ, theseUnits);
 
         // do we need to create this series
@@ -177,7 +172,7 @@ public class XyPlotView extends CoreAnalysisView
         final PlotSymbolType theSym;
         // if it's a singleton, show the symbol
         // markers
-        if (thisQ.getValuesCount() > 100 || thisQ.getValuesCount() == 1)
+        if (thisQ.size() > 100 || thisQ.size() == 1)
         {
           theSym = PlotSymbolType.NONE;
         }
@@ -192,12 +187,12 @@ public class XyPlotView extends CoreAnalysisView
 
         final double[] yData;
 
-        if (coll.getValuesCount() == 1)
+        if (coll.size() == 1)
         {
           // singleton = insert it's value at every point
           yData = new double[longestColl];
-          Measurable<Quantity> thisValue = thisQ.getValues().iterator().next();
-          double dVal = thisValue.doubleValue(thisQ.getUnits());
+          Number thisValue = thisQ.getValue(0);
+          double dVal = thisValue.doubleValue();
           for (int i = 0; i < longestColl; i++)
           {
             yData[i] = dVal;
@@ -205,13 +200,12 @@ public class XyPlotView extends CoreAnalysisView
         }
         else
         {
-          yData = new double[thisQ.getValuesCount()];
-          Iterator<?> values = thisQ.getValues().iterator();
+          yData = new double[thisQ.size()];
+          Iterator<Double> values = thisQ.getIterator();
           int ctr = 0;
           while (values.hasNext())
           {
-            Measurable<Quantity> tQ = (Measurable<Quantity>) values.next();
-            yData[ctr++] = tQ.doubleValue(thisQ.getUnits());
+            yData[ctr++] = values.next();
           }
         }
 
@@ -249,38 +243,37 @@ public class XyPlotView extends CoreAnalysisView
     }
   }
 
-  private String seriesNameFor(IQuantityCollection<Quantity> thisQ,
-      final Unit<Quantity> theseUnits)
+  private String seriesNameFor(NumberDocument thisQ,
+      final Unit<?> theseUnits)
   {
     String seriesName = thisQ.getName() + " (" + theseUnits + ")";
     return seriesName;
   }
 
-  @SuppressWarnings("unchecked")
   private void showTemporalQuantity(List<IStoreItem> res)
   {
     Iterator<IStoreItem> iter = res.iterator();
 
     clearGraph();
 
-    Unit<Quantity> existingUnits = null;
+    Unit<?> existingUnits = null;
 
     // get the outer time period (used for plotting singletons)
-    List<ICollection> safeColl = new ArrayList<ICollection>();
-    safeColl.addAll((Collection<? extends ICollection>) res);
-    TimePeriod outerPeriod = aTests.getBoundingTime(safeColl);
+    List<IStoreItem> safeColl = new ArrayList<IStoreItem>();
+    safeColl.addAll( res);
+    TimePeriod outerPeriod = aTests.getBoundingRange(safeColl);
 
     while (iter.hasNext())
     {
-      ICollection coll = (ICollection) iter.next();
+      Document coll = (Document) iter.next();
 
-      if (coll.isQuantity() && coll.getValuesCount() >= 1
-          && coll.getValuesCount() < MAX_SIZE)
+      if (coll.isQuantity() && coll.size() >= 1
+          && coll.size() < MAX_SIZE)
       {
-        IQuantityCollection<Quantity> thisQ =
-            (IQuantityCollection<Quantity>) coll;
+        NumberDocument thisQ =
+            (NumberDocument) coll;
 
-        final Unit<Quantity> theseUnits = thisQ.getUnits();
+        final Unit<?> theseUnits = thisQ.getUnits();
 
         String seriesName = seriesNameFor(thisQ, theseUnits);
 
@@ -299,24 +292,21 @@ public class XyPlotView extends CoreAnalysisView
         final Date[] xTimeData;
         final double[] yData;
 
-        if (coll.isTemporal())
+        if (coll.isIndexed())
         {
+          xTimeData = new Date[thisQ.size()];
+          yData = new double[thisQ.size()];
+
           // must be temporal
-          ITemporalQuantityCollection<Quantity> thisTQ =
-              (ITemporalQuantityCollection<Quantity>) coll;
-
-          xTimeData = new Date[thisQ.getValuesCount()];
-          yData = new double[thisQ.getValuesCount()];
-
-          Iterator<?> values = thisTQ.getValues().iterator();
-          Iterator<Long> times = thisTQ.getTimes().iterator();
+          Iterator<Long> times = coll.getIndexes();
+          Iterator<Double> values = thisQ.getIterator();
+          
           int ctr = 0;
           while (values.hasNext())
           {
-            Measurable<Quantity> tQ = (Measurable<Quantity>) values.next();
             long t = times.next();
             xTimeData[ctr] = new Date(t);
-            yData[ctr++] = tQ.doubleValue(thisQ.getUnits());
+            yData[ctr++] = values.next();
           }
         }
         else
@@ -327,13 +317,13 @@ public class XyPlotView extends CoreAnalysisView
           yData = new double[2];
 
           // get the singleton value
-          Measurable<Quantity> theValue = thisQ.getValues().iterator().next();
+          Double theValue = thisQ.getIterator().next();
 
           // create the marker line
           xTimeData[0] = new Date(outerPeriod.getStartTime());
-          yData[0] = theValue.doubleValue(thisQ.getUnits());
+          yData[0] = theValue;
           xTimeData[1] = new Date(outerPeriod.getEndTime());
-          yData[1] = theValue.doubleValue(thisQ.getUnits());
+          yData[1] = theValue;
 
         }
 
@@ -361,7 +351,7 @@ public class XyPlotView extends CoreAnalysisView
 
         // if it's a monster line, or just a singleton value, we won't plot
         // markers
-        if (thisQ.getValuesCount() > 90 || thisQ.getValuesCount() == 1)
+        if (thisQ.size() > 90 || thisQ.size() == 1)
         {
           newSeries.setSymbolType(PlotSymbolType.NONE);
         }
@@ -415,23 +405,23 @@ public class XyPlotView extends CoreAnalysisView
 
     while (iter.hasNext())
     {
-      ICollection coll = (ICollection) iter.next();
-      if (!coll.isQuantity() && coll.getValuesCount() >= 1
-          && coll.getValuesCount() < MAX_SIZE)
+      Document coll = (Document) iter.next();
+      if (!coll.isQuantity() && coll.size() >= 1
+          && coll.size() < MAX_SIZE)
       {
         final List<Point2D> values;
 
-        if (coll.isTemporal())
-        {
-          TemporalLocation loc = (TemporalLocation) coll;
-          values = loc.getValues();
-        }
-        else
-        {
-          info.limpet.data.impl.samples.StockTypes.NonTemporal.Location loc =
-              (info.limpet.data.impl.samples.StockTypes.NonTemporal.Location) coll;
-          values = loc.getValues();
-        }
+        LocationDocument loc = (LocationDocument) coll;
+        values = loc.getLocations();
+//        if (coll.isIndexed())
+//        {
+//        }
+//        else
+//        {
+//          info.limpet.data.impl.samples.StockTypes.NonTemporal.Location loc =
+//              (info.limpet.data.impl.samples.StockTypes.NonTemporal.Location) coll;
+//          values = loc.getValues();
+//        }
 
         String seriesName = coll.getName();
         ILineSeries newSeries =
@@ -491,16 +481,15 @@ public class XyPlotView extends CoreAnalysisView
     return "Pending";
   }
 
-  @SuppressWarnings("unchecked")
   @Override
   protected void datasetDataChanged(IStoreItem subject)
   {
     final String name;
-    ICollection coll = (ICollection) subject;
+    Document coll = (Document) subject;
     if (coll.isQuantity())
     {
-      IQuantityCollection<Quantity> cq = (IQuantityCollection<Quantity>) coll;
-      Unit<Quantity> units = cq.getUnits();
+      NumberDocument cq = (NumberDocument) coll;
+      Unit<?> units = cq.getUnits();
       name = seriesNameFor(cq, units);
     }
     else

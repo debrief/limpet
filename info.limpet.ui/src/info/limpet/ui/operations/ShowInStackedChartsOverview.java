@@ -15,17 +15,7 @@
 package info.limpet.ui.operations;
 
 import info.limpet.ICollection;
-import info.limpet.ICommand;
 import info.limpet.IContext;
-import info.limpet.IOperation;
-import info.limpet.IStore;
-import info.limpet.IStoreGroup;
-import info.limpet.IStoreItem;
-import info.limpet.ITemporalQuantityCollection;
-import info.limpet.data.commands.AbstractCommand;
-import info.limpet.data.impl.TemporalQuantityCollection;
-import info.limpet.data.operations.CollectionComplianceTests;
-import info.limpet.data.store.IGroupWrapper;
 import info.limpet.stackedcharts.model.AngleAxis;
 import info.limpet.stackedcharts.model.AxisType;
 import info.limpet.stackedcharts.model.Chart;
@@ -41,6 +31,14 @@ import info.limpet.stackedcharts.ui.view.StackedChartsView.ControllableDate;
 import info.limpet.ui.data_provider.data.CollectionWrapper;
 import info.limpet.ui.range_slider.RangeSliderView;
 import info.limpet.ui.stacked.LimpetStackedChartsAdapter;
+import info.limpet2.ICommand;
+import info.limpet2.IOperation;
+import info.limpet2.IStoreGroup;
+import info.limpet2.IStoreItem;
+import info.limpet2.NumberDocument;
+import info.limpet2.operations.AbstractCommand;
+import info.limpet2.operations.CollectionComplianceTests;
+import info.limpet2.store.IGroupWrapper;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -56,7 +54,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 
-public class ShowInStackedChartsOverview implements IOperation<IStoreItem>
+public class ShowInStackedChartsOverview implements IOperation
 {
   private final CollectionComplianceTests aTests =
       new CollectionComplianceTests();
@@ -72,14 +70,14 @@ public class ShowInStackedChartsOverview implements IOperation<IStoreItem>
     return aTests;
   }
 
-  public Collection<ICommand<IStoreItem>> actionsFor(
-      List<IStoreItem> selection, IStore destination, IContext context)
+  public Collection<ICommand> actionsFor(
+      List<IStoreItem> selection, IStoreGroup destination, IContext context)
   {
-    Collection<ICommand<IStoreItem>> res =
-        new ArrayList<ICommand<IStoreItem>>();
+    Collection<ICommand> res =
+        new ArrayList<ICommand>();
     if (appliesTo(selection))
     {
-      ICommand<IStoreItem> newC =
+      ICommand newC =
           new ShowInStackedChartsOperation(_title, selection, context);
       res.add(newC);
     }
@@ -92,13 +90,13 @@ public class ShowInStackedChartsOverview implements IOperation<IStoreItem>
     boolean nonEmpty = aTests.nonEmpty(selection);
     boolean allData = aTests.allCollections(selection);
     boolean allQuantity = aTests.allQuantity(selection);
-    boolean allTemporal = aTests.allTemporal(selection);
+    boolean allTemporal = aTests.allIndexed(selection);
 
     return (nonEmpty && allData && allQuantity && allTemporal);
   }
 
   public static class ShowInStackedChartsOperation extends
-      AbstractCommand<IStoreItem>
+      AbstractCommand
   {
     public ShowInStackedChartsOperation(String title,
         List<IStoreItem> selection, IContext context)
@@ -107,11 +105,11 @@ public class ShowInStackedChartsOverview implements IOperation<IStoreItem>
           selection, context);
     }
 
-    @Override
-    protected String getOutputName()
-    {
-      return null;
-    }
+//    @Override
+//    protected String getOutputName()
+//    {
+//      return null;
+//    }
 
     @Override
     public void execute()
@@ -228,10 +226,10 @@ public class ShowInStackedChartsOverview implements IOperation<IStoreItem>
 
   }
 
-  protected static TemporalQuantityCollection<?> getFirstCollectionFor(
+  protected static NumberDocument getFirstCollectionFor(
       List<IStoreItem> selection)
   {
-    TemporalQuantityCollection<?> res = null;
+    NumberDocument res = null;
 
     if (selection != null)
     {
@@ -250,7 +248,7 @@ public class ShowInStackedChartsOverview implements IOperation<IStoreItem>
           ICollection coll = (ICollection) nextItem;
           if (coll.isQuantity() && coll.isTemporal())
           {
-            res = (TemporalQuantityCollection<?>) coll;
+            res = (NumberDocument) coll;
           }
         }
       }
@@ -259,11 +257,11 @@ public class ShowInStackedChartsOverview implements IOperation<IStoreItem>
         CollectionWrapper cw = (CollectionWrapper) first;
         ICollection collection = cw.getCollection();
         if (collection.isQuantity() && collection.isTemporal())
-          res = (TemporalQuantityCollection<?>) collection;
+          res = (NumberDocument) collection;
       }
-      else if (first instanceof TemporalQuantityCollection<?>)
+      else if (first instanceof NumberDocument)
       {
-        res = (TemporalQuantityCollection<?>) first;
+        res = (NumberDocument) first;
       }
     }
 
@@ -302,10 +300,10 @@ public class ShowInStackedChartsOverview implements IOperation<IStoreItem>
               res.setOrientation(Orientation.VERTICAL);
 
               // get the first item, so we can determine the independent axis
-              TemporalQuantityCollection<?> firstItem =
+              NumberDocument firstItem =
                   getFirstCollectionFor(selection);
 
-              if (firstItem instanceof ITemporalQuantityCollection)
+              if (firstItem.isIndexed())
               {
                 IndependentAxis ia = factory.createIndependentAxis();
                 ia.setAxisType(factory.createDateAxis());

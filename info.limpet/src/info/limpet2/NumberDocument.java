@@ -2,6 +2,8 @@ package info.limpet2;
 
 import info.limpet.UIProperty;
 
+import java.util.Iterator;
+
 import javax.measure.quantity.Dimensionless;
 import javax.measure.unit.Unit;
 
@@ -54,6 +56,44 @@ public class NumberDocument extends Document
   public Unit<?> getUnits()
   {
     return _qType;
+  }
+  
+  private static class DoubleIterator implements Iterator<Double>
+  {
+    private double[] _data;
+    private int _ctr;
+
+    private DoubleIterator(double[] data)
+    {
+      _data = data;
+      _ctr = 0;
+    }
+
+    @Override
+    public boolean hasNext()
+    {
+      return _ctr < _data.length;
+    }
+
+    @Override
+    public Double next()
+    {
+      return _data[_ctr++];
+    }
+
+    @Override
+    public void remove()
+    {
+      throw new RuntimeException("Remove operation not provided for this iterator");
+    }
+    
+  }
+  
+  public Iterator<Double> getIterator()
+  {
+    DoubleDataset od = (DoubleDataset) _dataset;
+    double[] data = od.getData();
+    return new DoubleIterator(data);
   }
 
   @UIProperty(name = "Quantity", category = UIProperty.CATEGORY_LABEL)
@@ -199,5 +239,10 @@ public class NumberDocument extends Document
       DoubleDataset ds = (DoubleDataset) _dataset;
       return (Double) ds.stdDeviation(true);
     }    
+  }
+
+  public void replaceSingleton(double val)
+  {
+    throw new RuntimeException("Replace singleton not yet implemented");
   }
 }

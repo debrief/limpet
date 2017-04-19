@@ -14,22 +14,20 @@
  *****************************************************************************/
 package info.limpet.ui.data_frequency;
 
-import info.limpet.ICollection;
-import info.limpet.IObjectCollection;
-import info.limpet.IQuantityCollection;
-import info.limpet.IStoreItem;
-import info.limpet.analysis.ObjectFrequencyBins;
-import info.limpet.analysis.ObjectFrequencyBins.BinnedData;
-import info.limpet.analysis.QuantityFrequencyBins;
-import info.limpet.analysis.QuantityFrequencyBins.Bin;
-import info.limpet.data.operations.CollectionComplianceTests;
 import info.limpet.ui.PlottingHelpers;
 import info.limpet.ui.core_view.CoreAnalysisView;
+import info.limpet2.Document;
+import info.limpet2.IObjectDocument;
+import info.limpet2.IStoreItem;
+import info.limpet2.NumberDocument;
+import info.limpet2.analysis.ObjectFrequencyBins;
+import info.limpet2.analysis.ObjectFrequencyBins.BinnedData;
+import info.limpet2.analysis.QuantityFrequencyBins;
+import info.limpet2.analysis.QuantityFrequencyBins.Bin;
+import info.limpet2.operations.CollectionComplianceTests;
 
 import java.util.Iterator;
 import java.util.List;
-
-import javax.measure.quantity.Quantity;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -37,10 +35,10 @@ import org.swtchart.Chart;
 import org.swtchart.IAxis;
 import org.swtchart.IBarSeries;
 import org.swtchart.ILineSeries;
-import org.swtchart.Range;
 import org.swtchart.ILineSeries.PlotSymbolType;
 import org.swtchart.ISeries;
 import org.swtchart.ISeries.SeriesType;
+import org.swtchart.Range;
 import org.swtchart.ext.InteractiveChart;
 
 /**
@@ -103,7 +101,7 @@ public class DataFrequencyView extends CoreAnalysisView
     // they're all the same type - check the first one
     Iterator<IStoreItem> iter = res.iterator();
 
-    ICollection first = (ICollection) iter.next();
+    Document first = (Document) iter.next();
 
     // sort out what type of data this is.
     if (first.isQuantity())
@@ -130,12 +128,12 @@ public class DataFrequencyView extends CoreAnalysisView
 
     while (iter.hasNext())
     {
-      ICollection iCollection = (ICollection) iter.next();
-      if (iCollection.getValuesCount() <= MAX_SIZE)
+      Document iCollection = (Document) iter.next();
+      if (iCollection.size() <= MAX_SIZE)
       {
         BinnedData bins = null;
-        IObjectCollection<?> thisQ = (IObjectCollection<?>) iCollection;
-        bins = ObjectFrequencyBins.doBins(thisQ);
+        IObjectDocument objDoc = (IObjectDocument) iCollection;
+        bins = ObjectFrequencyBins.doBins(objDoc);
 
         String seriesName = iCollection.getName();
         IBarSeries newSeries =
@@ -171,7 +169,6 @@ public class DataFrequencyView extends CoreAnalysisView
     }
   }
 
-  @SuppressWarnings("unchecked")
   private void showQuantity(List<IStoreItem> res)
   {
     Iterator<IStoreItem> iter = res.iterator();
@@ -186,17 +183,15 @@ public class DataFrequencyView extends CoreAnalysisView
 
     while (iter.hasNext())
     {
-      ICollection iCollection = (ICollection) iter.next();
+      NumberDocument iCollection = (NumberDocument) iter.next();
       QuantityFrequencyBins.BinnedData bins = null;
-      if (iCollection.isQuantity() && iCollection.getValuesCount() > 1
-          && iCollection.getValuesCount() <= MAX_SIZE)
+      if (iCollection.isQuantity() && iCollection.size() > 1
+          && iCollection.size() <= MAX_SIZE)
       {
-        IQuantityCollection<Quantity> thisQ =
-            (IQuantityCollection<Quantity>) iCollection;
-        bins = QuantityFrequencyBins.doBins(thisQ);
+        bins = QuantityFrequencyBins.doBins(iCollection);
 
         String seriesName =
-            iCollection.getName() + " (" + thisQ.getUnits() + ")";
+            iCollection.getName() + " (" + iCollection.getUnits() + ")";
         ILineSeries newSeries =
             (ILineSeries) chart.getSeriesSet().createSeries(SeriesType.LINE,
                 seriesName);
