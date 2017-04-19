@@ -80,7 +80,7 @@ public class LocationDocument extends Document implements ILocations, IObjectDoc
     return res.toString();
   }
 
-  public Double interpolateValue(long i, InterpMethod linear)
+  public Point2D interpolateValue(long i, InterpMethod linear)
   {
     // TODO: implement positional interpolation
     throw new RuntimeException("Not yet implemented");

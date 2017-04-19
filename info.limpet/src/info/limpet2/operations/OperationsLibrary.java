@@ -133,8 +133,7 @@ public class OperationsLibrary
       @Override
       public Dataset calculate(Dataset input)
       {
-        // TODO Auto-generated method stub
-        return null;
+        throw new RuntimeException("Not implemented");
       }
     });
 

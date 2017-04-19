@@ -715,7 +715,13 @@ public class CsvParser
     }
   }
 
-  protected static class DeferredLoadSupporter extends DataImporter
+  /** if we don't know the units, or data-type for a column,
+   * we'll defer creating the importer until we've actually 
+   * read in some data
+   * @author Ian
+   *
+   */
+  final protected static class DeferredLoadSupporter extends DataImporter
   {
 
     public DeferredLoadSupporter(String name)
@@ -731,8 +737,7 @@ public class CsvParser
     @Override
     public IDocumentBuilder create(String name)
     {
-      // TODO Auto-generated method stub
-      return null;
+      throw new RuntimeException("Should not get called");
     }
 
     @Override

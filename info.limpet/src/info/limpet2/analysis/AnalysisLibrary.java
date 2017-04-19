@@ -60,14 +60,13 @@ public abstract class AnalysisLibrary extends CoreAnalysis
         output(getName(), titles, values);
       }
     });
-    // TODO: re-do, once we have object collections
-//    _library.add(new ObjectFrequencyBins()
-//    {
-//      protected void presentResults(List<String> titles, List<String> values)
-//      {
-//        output(getName(), titles, values);
-//      }
-//    });
+    _library.add(new ObjectFrequencyBins()
+    {
+      protected void presentResults(List<String> titles, List<String> values)
+      {
+        output(getName(), titles, values);
+      }
+    });
 
   }
 

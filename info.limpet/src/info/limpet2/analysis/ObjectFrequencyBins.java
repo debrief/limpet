@@ -17,7 +17,6 @@ package info.limpet2.analysis;
 import info.limpet2.Document;
 import info.limpet2.IObjectDocument;
 import info.limpet2.IStoreItem;
-import info.limpet2.StringDocument;
 import info.limpet2.operations.CollectionComplianceTests;
 
 import java.util.ArrayList;
@@ -111,7 +110,7 @@ public abstract class ObjectFrequencyBins extends CoreAnalysis
 
         if (thisC.size() <= MAX_SIZE)
         {
-          StringDocument o = (StringDocument) thisC;
+          IObjectDocument o = (IObjectDocument) thisC;
 
           BinnedData res = doBins(o);
 

@@ -15,6 +15,7 @@
 package info.limpet2.analysis;
 
 import info.limpet2.Document;
+import info.limpet2.IObjectDocument;
 import info.limpet2.IStoreItem;
 import info.limpet2.operations.CollectionComplianceTests;
 
@@ -47,15 +48,15 @@ public abstract class SimpleDescriptiveObject extends CoreAnalysis
       // ok, let's go for it.
       for (Iterator<IStoreItem> iter = selection.iterator(); iter.hasNext();)
       {
-        Document thisC = (Document) iter.next();
+        IObjectDocument thisC = (IObjectDocument) iter.next();
+        Document thisD = (Document) thisC;
 
         // check it has some data
-        if (thisC.size() > 0)
+        if (thisD.size() > 0)
         {
-          // TODO: reinstate once we have structure for objects
-//          titles.add("Content Type");
-//          Object nextObject = o.getValues().iterator().next();
-//          values.add(typeFor(nextObject, nextObject.getClass()));
+          titles.add("Content Type");
+          Object nextObject = thisC.getObjectIterator().next();
+          values.add(typeFor(nextObject, nextObject.getClass()));
         }
       }
     }

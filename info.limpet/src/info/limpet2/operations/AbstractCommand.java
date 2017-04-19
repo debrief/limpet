@@ -312,6 +312,6 @@ public abstract class AbstractCommand implements
   {
     // hmm, we don't really implement this, because apps listen to the 
     // results collections, not the command.
-    // TODO Auto-generated method stub
+    throw new RuntimeException("Not implemented");
   }
 }

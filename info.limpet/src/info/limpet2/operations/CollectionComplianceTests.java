@@ -16,11 +16,12 @@ package info.limpet2.operations;
 
 import static javax.measure.unit.SI.METRE;
 import static javax.measure.unit.SI.SECOND;
-
 import info.limpet2.Document;
+import info.limpet2.Document.InterpMethod;
 import info.limpet2.ILocations;
 import info.limpet2.IStoreGroup;
 import info.limpet2.IStoreItem;
+import info.limpet2.LocationDocument;
 import info.limpet2.NumberDocument;
 
 import java.awt.geom.Point2D;
@@ -29,9 +30,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.measure.Measurable;
 import javax.measure.converter.UnitConverter;
-import javax.measure.quantity.Quantity;
 import javax.measure.unit.Dimension;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
@@ -237,8 +236,7 @@ public class CollectionComplianceTests
             }
             catch (DatasetException e)
             {
-              // TODO Auto-generated catch block
-              e.printStackTrace();
+              throw new RuntimeException(e);
             }
           }
         }
@@ -1013,24 +1011,20 @@ public class CollectionComplianceTests
         if (thisD.isIndexed()
             && (thisD.isQuantity() || thisC instanceof ILocations))
         {
-          // TODO: sort out the time stuff
 
-          // // check it has some data
-          // if (tqc.getTimes().size() > 0)
-          // {
-          // if (longest == null)
-          // {
-          // longest = tqc;
-          // }
-          // else
-          // {
-          // // store the longest one
-          // ICollection asColl = (ICollection) longest;
-          // longest =
-          // thisC.getValuesCount() > asColl.getValuesCount() ? tqc
-          // : longest;
-          // }
-          // }
+          // check it has some data
+          if (thisD.size() > 0)
+          {
+            if (longest == null)
+            {
+              longest = thisD;
+            }
+            else
+            {
+              // store the longest one
+              longest = longest.size() > thisD.size() ? longest : thisD;
+            }
+          }
         }
       }
     }
@@ -1082,21 +1076,30 @@ public class CollectionComplianceTests
       // data types
       if (iCollection != null && iCollection.isIndexed())
       {
-        // TODO: sort out this time axis
-        // IBaseTemporalCollection timeC = (IBaseTemporalCollection) iCollection;
-        // check it has some data
-        // if (timeC.getTimes().size() > 0)
-        // {
-        // if (res == null)
-        // {
-        // res = new TimePeriod(timeC.start(), timeC.finish());
-        // }
-        // else
-        // {
-        // res.setStartTime(Math.max(res.getStartTime(), timeC.start()));
-        // res.setEndTime(Math.min(res.getEndTime(), timeC.finish()));
-        // }
-        // }
+        Iterator<Long> lIter = iCollection.getIndexes();
+        Long start = null;
+        Long end = null;
+        while (lIter.hasNext())
+        {
+          long thisT = lIter.next();
+          if (start == null)
+          {
+            start = thisT;
+          }
+
+          // remember the last item
+          end = thisT;
+        }
+
+        if (res == null)
+        {
+          res = new TimePeriod(start, end);
+        }
+        else
+        {
+          res.setStartTime(Math.max(res.getStartTime(), start));
+          res.setEndTime(Math.min(res.getEndTime(), end));
+        }
       }
     }
 
@@ -1113,7 +1116,6 @@ public class CollectionComplianceTests
    *          list of datasets we're examining
    * @return most suited collection
    */
-  @SuppressWarnings("unused")
   public Document getOptimalTimes(TimePeriod period,
       Collection<IStoreItem> items)
   {
@@ -1129,24 +1131,22 @@ public class CollectionComplianceTests
       // circumstances
       if (iCollection != null && iCollection.isIndexed())
       {
-        // TODO: implement these bits
-        // IBaseTemporalCollection timeC = (IBaseTemporalCollection) iCollection;
-        // Iterator<Long> times = timeC.getTimes().iterator();
-        // int score = 0;
-        // while (times.hasNext())
-        // {
-        // long long1 = (long) times.next();
-        // if (period == null || period.contains(long1))
-        // {
-        // score++;
-        // }
-        // }
-        //
-        // if (res == null || score > resScore)
-        // {
-        // res = timeC;
-        // resScore = score;
-        // }
+        Iterator<Long> lIter = iCollection.getIndexes();
+        int score = 0;
+        while (lIter.hasNext())
+        {
+          long long1 = lIter.next();
+          if (period == null || period.contains(long1))
+          {
+            score++;
+          }
+        }
+
+        if (res == null || score > resScore)
+        {
+          res = iCollection;
+          resScore = score;
+        }
       }
     }
 
@@ -1162,12 +1162,10 @@ public class CollectionComplianceTests
    *          time we're need a location for
    * @return
    */
-  @SuppressWarnings(
-  {"unchecked", "unused"})
   public double valueAt(Document iCollection, long thisTime,
       Unit<?> requiredUnits)
   {
-    Measurable<Quantity> res = null;
+    Double res = null;
 
     // just check it's not an empty set, since we return zero for empty dataset
     if (iCollection == null)
@@ -1186,25 +1184,19 @@ public class CollectionComplianceTests
 
       if (iCollection.isIndexed())
       {
-        // TODO: implement this
-        // TemporalQuantityCollection<?> tQ =
-        // (TemporalQuantityCollection<?>) iCollection;
-        // res =
-        // (Measurable<Quantity>) tQ.interpolateValue(thisTime,
-        // InterpMethod.Linear);
+        NumberDocument tQ = (NumberDocument) iCollection;
+        res = tQ.interpolateValue(thisTime, InterpMethod.Linear);
       }
       else
       {
-        // TODO: implement this
-        // IQuantityCollection<?> qC = (IQuantityCollection<?>) iCollection;
-        // res = (Measurable<Quantity>) qC.getValues().iterator().next();
+        NumberDocument qC = (NumberDocument) iCollection;
+        res = qC.getIterator().next();
       }
 
       if (res != null)
       {
         UnitConverter converter = iQ.getUnits().getConverterTo(requiredUnits);
-        Unit<?> sourceUnits = iQ.getUnits();
-        double doubleValue = res.doubleValue((Unit<Quantity>) sourceUnits);
+        double doubleValue = res;
         double result = converter.convert(doubleValue);
         return result;
       }
@@ -1231,20 +1223,19 @@ public class CollectionComplianceTests
   public Point2D locationFor(Document iCollection, Long thisTime)
   {
     Point2D res = null;
-    // TODO: implement this
-    // if (iCollection.isTemporal())
-    // {
-    // Document tLoc = (Document) iCollection;
-    // res = tLoc.interpolateValue(thisTime, Document.InterpMethod.Linear);
-    // }
-    // else
-    // {
-    // NonTemporal.Location tLoc = (Location) iCollection;
-    // if (tLoc.getValuesCount() > 0)
-    // {
-    // res = tLoc.getValues().iterator().next();
-    // }
-    // }
+    if (iCollection.isIndexed())
+    {
+      LocationDocument tLoc = (LocationDocument) iCollection;
+      res = tLoc.interpolateValue(thisTime, Document.InterpMethod.Linear);
+    }
+    else
+    {
+      LocationDocument tLoc = (LocationDocument) iCollection;
+      if (tLoc.getLocations().size() > 0)
+      {
+        res = tLoc.getLocation(0);
+      }
+    }
     return res;
   }
 

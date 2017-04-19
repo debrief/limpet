@@ -131,7 +131,6 @@ public class CreateLocationAction extends CreateSingletonGenerator
 	protected AbstractCommand<IStoreItem> getCommand(IStore destination,
 			IContext context, String thisTitle, StoreGroup group)
 	{
-		// TODO Auto-generated method stub
 		return new CreateLocationCommand(thisTitle, group, destination, context);
 	}
 

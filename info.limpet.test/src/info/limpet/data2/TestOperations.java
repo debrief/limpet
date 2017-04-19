@@ -37,6 +37,8 @@ import info.limpet2.NumberDocumentBuilder;
 import info.limpet2.Range;
 import info.limpet2.SampleData;
 import info.limpet2.StoreGroup;
+import info.limpet2.StringDocument;
+import info.limpet2.StringDocumentBuilder;
 import info.limpet2.operations.CollectionComplianceTests;
 import info.limpet2.operations.OperationsLibrary;
 import info.limpet2.operations.admin.AddLayerOperation;
@@ -253,8 +255,8 @@ public class TestOperations
         new NumberDocumentBuilder("Speed 5", kmh, null);
     NumberDocumentBuilder temporalSpeed2b =
         new NumberDocumentBuilder("Speed 6", kmh, null);
-    // ObjectCollection<String> string1 = new ObjectCollection<>("strings 1");
-    // ObjectCollection<String> string2 = new ObjectCollection<>("strings 2");
+    StringDocumentBuilder string1 = new StringDocumentBuilder("strings 1", null);
+    StringDocumentBuilder string2 = new StringDocumentBuilder("strings 2", null);
 
     for (int i = 1; i <= 10; i++)
     {
@@ -269,8 +271,8 @@ public class TestOperations
       temporalSpeed1b.add(i, thisSpeed * 2);
       temporalSpeed2b.add(i, thisSpeed / 2);
       len1b.add(thisSpeed / 2);
-      // string1.add(i + " ");
-      // string2.add(i + "a ");
+      string1.add(i + " ");
+      string2.add(i + "a ");
     }
 
     speedLongerb.add(2);
@@ -362,27 +364,27 @@ public class TestOperations
     assertTrue("all quantities", testOp.allQuantity(selection));
     assertTrue("all temporal", testOp.allIndexed(selection));
 
-    // TODO: create object to store strings, then reinstate these tests
-    // selection.clear();
-    // selection.add(temporalSpeed1);
-    // selection.add(string1);
-    //
-    // assertFalse("all same dim", testOp.allEqualDimensions(selection));
-    // assertFalse("all same units", testOp.allEqualUnits(selection));
-    // assertTrue("all same length", testOp.allEqualLength(selection));
-    // assertFalse("all quantities", testOp.allQuantity(selection));
-    // assertFalse("all temporal", testOp.allIndexed(selection));
+    selection.clear();
+    selection.add(temporalSpeed1);
+    final StringDocument string1d = string1.toDocument();
+    selection.add(string1d);
 
-    // selection.clear();
-    // selection.add(string1);
-    // selection.add(string1);
-    //
-    // assertFalse("all same dim", testOp.allEqualDimensions(selection));
-    // assertFalse("all same units", testOp.allEqualUnits(selection));
-    // assertTrue("all same length", testOp.allEqualLength(selection));
-    // assertTrue("all non quantities", testOp.allNonQuantity(selection));
-    // assertFalse("all temporal", testOp.allTemporal(selection));
-    //
+    assertFalse("all same dim", testOp.allEqualDimensions(selection));
+    assertFalse("all same units", testOp.allEqualUnits(selection));
+    assertTrue("all same length", testOp.allEqualLength(selection));
+    assertFalse("all quantities", testOp.allQuantity(selection));
+    assertFalse("all temporal", testOp.allIndexed(selection));
+
+    selection.clear();
+    selection.add(string1d);
+    selection.add(string1d);
+
+    assertFalse("all same dim", testOp.allEqualDimensions(selection));
+    assertFalse("all same units", testOp.allEqualUnits(selection));
+    assertTrue("all same length", testOp.allEqualLength(selection));
+    assertTrue("all non quantities", testOp.allNonQuantity(selection));
+    assertFalse("all temporal", testOp.allIndexed(selection));
+
     // ok, let's try one that works
     selection.clear();
     selection.add(speedGood1);

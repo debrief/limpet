@@ -80,40 +80,7 @@ public class StringDocument extends Document implements IObjectDocument
 
   public Double interpolateValue(long i, InterpMethod linear)
   {
-    // TODO: implement positional interpolation
-    throw new RuntimeException("Not yet implemented");
-//    Double res = null;
-//    
-//    // do we have axes?
-//    AxesMetadata index = _dataset.getFirstMetadata(AxesMetadata.class);
-//    ILazyDataset indexDataLazy = index.getAxes()[0];
-//    try
-//    {
-//      Dataset indexData = DatasetUtils.sliceAndConvertLazyDataset(indexDataLazy);
-//      
-//      // check the target index is within the range      
-//      double lowerIndex = indexData.getDouble(0);
-//      int indexSize = indexData.getSize();
-//      double upperVal = indexData.getDouble(indexSize - 1);
-//      if(i >= lowerIndex && i <= upperVal)
-//      {
-//        // ok, in range
-//        DoubleDataset ds = (DoubleDataset) _dataset;
-//        LongDataset indexes = (LongDataset) DatasetFactory.createFromObject(new Long[]{i});
-//        
-//        // perform the interpolation
-//        Dataset dOut = Maths.interpolate(indexData, ds, indexes, 0, 0);
-//        
-//        // get the single matching value out
-//        res = dOut.getDouble(0);
-//      }
-//    }
-//    catch (DatasetException e)
-//    {
-//      e.printStackTrace();
-//    }
-//    
-//    return res;
+    throw new IllegalArgumentException("Not valid for collections of Strings");
   }
 
   public String getString(int i)

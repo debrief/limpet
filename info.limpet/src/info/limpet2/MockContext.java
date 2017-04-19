@@ -38,50 +38,43 @@ public class MockContext implements IContext
   @Override
   public void openWarning(String title, String message)
   {
-    // TODO Auto-generated method stub
-
+    throw new RuntimeException("Not implemented");
   }
 
   @Override
   public void openInformation(String title, String message)
   {
-    // TODO Auto-generated method stub
-
+    throw new RuntimeException("Not implemented");
   }
 
   @Override
   public String getCsvFilename()
   {
-    // TODO Auto-generated method stub
-    return null;
+    throw new RuntimeException("Not implemented");
   }
 
   @Override
   public boolean openQuestion(String title, String message)
   {
-    // TODO Auto-generated method stub
-    return false;
+    throw new RuntimeException("Not implemented");
   }
 
   @Override
   public void openError(String title, String message)
   {
-    // TODO Auto-generated method stub
-
+    throw new RuntimeException("Not implemented");
   }
 
   @Override
   public void log(Exception e)
   {
-    // TODO Auto-generated method stub
-
+    throw new RuntimeException("Not implemented");
   }
 
   @Override
   public void placeOnClipboard(String text)
   {
-    // TODO Auto-generated method stub
-
+    throw new RuntimeException("Not implemented");
   }
 
 }

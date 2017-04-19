@@ -87,15 +87,13 @@ public class TestDynamic extends TestCase
       @Override
       public void metadataChanged(IStoreItem subject)
       {
-        // TODO Auto-generated method stub
-        
+        throw new RuntimeException("Not implemented");
       }
 
       @Override
       public void collectionDeleted(IStoreItem subject)
       {
-        // TODO Auto-generated method stub
-        
+        throw new RuntimeException("Not implemented");
       }
 		};
 		resSeries.addChangeListener(listener);

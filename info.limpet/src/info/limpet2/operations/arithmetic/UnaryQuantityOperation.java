@@ -268,8 +268,7 @@ public abstract class UnaryQuantityOperation implements IOperation
       }
       catch (DatasetException e)
       {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
+        throw new RuntimeException(e);
       }
 
       // done

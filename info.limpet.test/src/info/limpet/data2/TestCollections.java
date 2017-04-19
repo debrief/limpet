@@ -440,8 +440,7 @@ public class TestCollections extends TestCase
     }
     catch (DatasetException e)
     {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      throw new RuntimeException(e);
     }
 
     // ITemporalQuantityCollection<?> tq = (ITemporalQuantityCollection<?>) series;
