@@ -40,15 +40,44 @@ public class ProplossBetweenTwoTracksOperation extends TwoTrackOperation
 
   private final class ProplossBetweenOperation extends DistanceOperation
   {
-    private ProplossBetweenOperation(List<IStoreItem> selection, IStore store,
-        String title, String description, IBaseTemporalCollection timeProvider,
-        IContext context)
+    private ProplossBetweenOperation(final List<IStoreItem> selection,
+        final IStore store, final String title, final String description,
+        final IBaseTemporalCollection timeProvider, final IContext context)
     {
       super(selection, store, title, description, timeProvider, context);
     }
 
-    protected IQuantityCollection<?> getOutputCollection(String title,
-        boolean isTemporal)
+    @Override
+    protected void calcAndStore(final IGeoCalculator calc, final Point2D locA,
+        final Point2D locB, final Long time)
+    {
+      final Unit<Dimensionless> outUnits = NonSI.DECIBEL;
+      final double thisDistMetres = calc.getDistanceBetween(locA, locB);
+
+      // ok, we've got to do 20 log R
+      final double thisLoss = 20d * Math.log(thisDistMetres);
+      final Measure<Double, Dimensionless> thisRes =
+          Measure.valueOf(thisLoss, outUnits);
+
+      if (time != null)
+      {
+        // get the output dataset
+        final AcousticStrength target2 =
+            (Temporal.AcousticStrength) getOutputs().get(0);
+        target2.add(time, thisRes);
+      }
+      else
+      {
+        // get the output dataset
+        final NonTemporal.AcousticStrength target2 =
+            (NonTemporal.AcousticStrength) getOutputs().get(0);
+        target2.add(thisRes);
+      }
+    }
+
+    @Override
+    protected IQuantityCollection<?> getOutputCollection(final String title,
+        final boolean isTemporal)
     {
       final IQuantityCollection<?> res;
       if (isTemporal)
@@ -68,47 +97,17 @@ public class ProplossBetweenTwoTracksOperation extends TwoTrackOperation
       return getContext().getInput("Generate propagation loss",
           NEW_DATASET_MESSAGE, "Proploss between " + super.getSubjectList());
     }
-
-    protected void calcAndStore(final IGeoCalculator calc, final Point2D locA,
-        final Point2D locB, Long time)
-    {
-      final Unit<Dimensionless> outUnits = NonSI.DECIBEL;
-
-      // now find the range between them
-      // calc.setStartingGeographicPoint(locA.getCentroid().getOrdinate(0), locA
-      // .getCentroid().getOrdinate(1));
-      // calc.setDestinationGeographicPoint(locB.getCentroid().getOrdinate(0),
-      // locB.getCentroid().getOrdinate(1));
-      double thisDistMetres = calc.getDistanceBetween(locA, locB);
-
-      // ok, we've got to do 20 log R
-      double thisLoss = 20d * Math.log(thisDistMetres);
-      final Measure<Double, Dimensionless> thisRes = Measure.valueOf(thisLoss,
-          outUnits);
-
-      if (time != null)
-      {
-        // get the output dataset
-        AcousticStrength target2 = (Temporal.AcousticStrength) getOutputs()
-            .get(0);
-        target2.add(time, thisRes);
-      }
-      else
-      {
-        // get the output dataset
-        NonTemporal.AcousticStrength target2 = (NonTemporal.AcousticStrength) getOutputs()
-            .get(0);
-        target2.add(thisRes);
-      }
-    }
   }
 
+  @Override
   public Collection<ICommand<IStoreItem>> actionsFor(
-      List<IStoreItem> rawSelection, IStore destination, IContext context)
+      final List<IStoreItem> rawSelection, final IStore destination,
+      final IContext context)
   {
-    Collection<ICommand<IStoreItem>> res = new ArrayList<ICommand<IStoreItem>>();
+    final Collection<ICommand<IStoreItem>> res =
+        new ArrayList<ICommand<IStoreItem>>();
 
-    List<IStoreItem> collatedTracks = getLocationDatasets(rawSelection);
+    final List<IStoreItem> collatedTracks = getLocationDatasets(rawSelection);
 
     if (appliesTo(collatedTracks))
     {
@@ -116,23 +115,23 @@ public class ProplossBetweenTwoTracksOperation extends TwoTrackOperation
       if (getATests().suitableForTimeInterpolation(collatedTracks))
       {
         // hmm, find the time provider
-        final IBaseTemporalCollection timeProvider = getATests()
-            .getLongestTemporalCollections(collatedTracks);
+        final IBaseTemporalCollection timeProvider =
+            getATests().getLongestTemporalCollections(collatedTracks);
 
-        ICommand<IStoreItem> newC = new ProplossBetweenOperation(
-            collatedTracks, destination,
-            "Propagation loss between tracks (interpolated)",
-            "Propagation loss between two tracks", timeProvider, context);
+        final ICommand<IStoreItem> newC =
+            new ProplossBetweenOperation(collatedTracks, destination,
+                "Propagation loss between tracks (interpolated)",
+                "Propagation loss between two tracks", timeProvider, context);
 
         res.add(newC);
       }
 
       if (getATests().allEqualLengthOrSingleton(collatedTracks))
       {
-        ICommand<IStoreItem> newC = new ProplossBetweenOperation(
-            collatedTracks, destination,
-            "Propagation loss between tracks (indexed)",
-            "Propagation loss between two tracks", null, context);
+        final ICommand<IStoreItem> newC =
+            new ProplossBetweenOperation(collatedTracks, destination,
+                "Propagation loss between tracks (indexed)",
+                "Propagation loss between two tracks", null, context);
 
         res.add(newC);
       }
