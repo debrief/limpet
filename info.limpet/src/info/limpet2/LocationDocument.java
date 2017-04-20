@@ -78,11 +78,9 @@ public class LocationDocument extends Document implements ILocations, IObjectDoc
     
     return res.toString();
   }
-
+//
 //  public Point2D interpolateValue(long i, InterpMethod linear)
 //  {
-//    // TODO: implement positional interpolation
-//    throw new RuntimeException("Not yet implemented");
 //    Point2D res = null;
 //    
 //    // do we have axes?
@@ -98,8 +96,7 @@ public class LocationDocument extends Document implements ILocations, IObjectDoc
 //      double upperVal = indexData.getDouble(indexSize - 1);
 //      if(i >= lowerIndex && i <= upperVal)
 //      {
-//        // ok, in range
-//        DoubleDataset ds = (DoubleDataset) dataset;
+//        // ok, create an dataset that captures this specific time
 //        LongDataset indexes = (LongDataset) DatasetFactory.createFromObject(new Long[]{i});
 //        
 //        // perform the interpolation

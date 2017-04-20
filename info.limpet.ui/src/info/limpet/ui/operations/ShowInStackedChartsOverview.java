@@ -43,7 +43,6 @@ import info.limpet2.store.IGroupWrapper;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -70,10 +69,10 @@ public class ShowInStackedChartsOverview implements IOperation
     return aTests;
   }
 
-  public Collection<ICommand> actionsFor(
+  public List<ICommand> actionsFor(
       List<IStoreItem> selection, IStoreGroup destination, IContext context)
   {
-    Collection<ICommand> res =
+    List<ICommand> res =
         new ArrayList<ICommand>();
     if (appliesTo(selection))
     {

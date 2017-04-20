@@ -19,8 +19,7 @@ public class NumberDocumentBuilder implements IDocumentBuilder
   private ICommand _predecessor;
   private Range _range;
 
-  public NumberDocumentBuilder(String name, Unit<?> units,
-      ICommand predecessor)
+  public NumberDocumentBuilder(String name, Unit<?> units, ICommand predecessor)
   {
     _name = name;
     _units = units;
@@ -47,28 +46,36 @@ public class NumberDocumentBuilder implements IDocumentBuilder
 
   public NumberDocument toDocument()
   {
-    DoubleDataset dataset =
-        (DoubleDataset) DatasetFactory.createFromObject(_values);
-    dataset.setName(_name);
-
-    if (_times != null)
+    final NumberDocument res;
+    if (_values.size() == 0)
     {
-      // sort out the time axis
-      LongDataset timeData =
-          (LongDataset) DatasetFactory.createFromObject(_times);
-      final AxesMetadata timeAxis = new AxesMetadataImpl();
-      timeAxis.initialize(1);
-      timeAxis.setAxis(0, timeData);
-      dataset.addMetadata(timeAxis);
+      res = null;
+    }
+    else
+    {
+      DoubleDataset dataset =
+          (DoubleDataset) DatasetFactory.createFromObject(_values);
+      dataset.setName(_name);
+
+      if (_times != null)
+      {
+        // sort out the time axis
+        LongDataset timeData =
+            (LongDataset) DatasetFactory.createFromObject(_times);
+        final AxesMetadata timeAxis = new AxesMetadataImpl();
+        timeAxis.initialize(1);
+        timeAxis.setAxis(0, timeData);
+        dataset.addMetadata(timeAxis);
+      }
+
+      res = new NumberDocument(dataset, _predecessor, _units);
+
+      if (_range != null)
+      {
+        res.setRange(_range);
+      }
     }
 
-    NumberDocument res = new NumberDocument(dataset, _predecessor, _units);
-    
-    if(_range != null)
-    {
-      res.setRange(_range);
-    }
-    
     return res;
   }
 

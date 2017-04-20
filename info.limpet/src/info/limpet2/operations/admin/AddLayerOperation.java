@@ -23,17 +23,16 @@ import info.limpet2.StoreGroup;
 import info.limpet2.operations.AbstractCommand;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public class AddLayerOperation implements IOperation
 {
 
   @Override
-  public Collection<ICommand> actionsFor(
+  public List<ICommand> actionsFor(
       List<IStoreItem> selection, IStoreGroup destination, IContext context)
   {
-    Collection<ICommand> res =
+    List<ICommand> res =
         new ArrayList<ICommand>();
 
     // note: we don't do "applies to" - we apply to everything

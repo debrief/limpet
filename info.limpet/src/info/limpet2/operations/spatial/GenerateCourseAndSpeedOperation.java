@@ -31,7 +31,6 @@ import info.limpet2.operations.CollectionComplianceTests;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -226,10 +225,10 @@ public class GenerateCourseAndSpeedOperation implements IOperation
         && aTests.allLocation(selection);
   }
 
-  public Collection<ICommand> actionsFor(List<IStoreItem> selection,
+  public List<ICommand> actionsFor(List<IStoreItem> selection,
       IStoreGroup destination, IContext context)
   {
-    Collection<ICommand> res = new ArrayList<ICommand>();
+    List<ICommand> res = new ArrayList<ICommand>();
     if (appliesTo(selection))
     {
 

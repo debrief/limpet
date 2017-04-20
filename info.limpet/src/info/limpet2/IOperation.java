@@ -18,11 +18,10 @@ package info.limpet2;
 
 import info.limpet.IContext;
 
-import java.util.Collection;
 import java.util.List;
 
 
 public interface IOperation
 {
-	Collection<ICommand> actionsFor(List<IStoreItem> selection, IStoreGroup destination, IContext context);
+	List<ICommand> actionsFor(List<IStoreItem> selection, IStoreGroup destination, IContext context);
 }

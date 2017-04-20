@@ -25,7 +25,6 @@ import info.limpet2.operations.AbstractCommand;
 import info.limpet2.operations.CollectionComplianceTests;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import javax.measure.unit.Unit;
@@ -130,10 +129,10 @@ public class CreateSingletonGenerator implements IOperation
 
   }
 
-  public Collection<ICommand> actionsFor(List<IStoreItem> selection,
+  public List<ICommand> actionsFor(List<IStoreItem> selection,
       IStoreGroup destination, IContext context)
   {
-    Collection<ICommand> res = new ArrayList<ICommand>();
+    List<ICommand> res = new ArrayList<ICommand>();
     if (appliesTo(selection))
     {
       final String thisTitle = "Add single " + _name;

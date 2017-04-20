@@ -25,7 +25,6 @@ import info.limpet2.operations.AbstractCommand;
 import info.limpet2.operations.CollectionComplianceTests;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public class SimpleMovingAverageOperation implements IOperation
@@ -42,10 +41,10 @@ public class SimpleMovingAverageOperation implements IOperation
     this._windowSize = windowSize;
   }
 
-  public Collection<ICommand> actionsFor(
+  public List<ICommand> actionsFor(
       List<IStoreItem> selection, IStoreGroup destination, IContext context)
   {
-    Collection<ICommand> res =
+    List<ICommand> res =
         new ArrayList<ICommand>();
     if (appliesTo(selection))
     {

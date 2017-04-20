@@ -23,16 +23,15 @@ import info.limpet2.StoreGroup;
 import info.limpet2.operations.AbstractCommand;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
 public class DeleteCollectionOperation implements IOperation
 {
-	public Collection<ICommand> actionsFor(
+	public List<ICommand> actionsFor(
 			List<IStoreItem> selection, IStoreGroup destination, IContext context)
 	{
-		Collection<ICommand> res = new ArrayList<ICommand>();
+	  List<ICommand> res = new ArrayList<ICommand>();
 		if (appliesTo(selection))
 		{
 			final String commandTitle;

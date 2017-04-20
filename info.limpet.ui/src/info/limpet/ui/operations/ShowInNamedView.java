@@ -24,7 +24,6 @@ import info.limpet2.operations.AbstractCommand;
 import info.limpet2.operations.CollectionComplianceTests;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.ui.IViewPart;
@@ -52,10 +51,10 @@ public class ShowInNamedView implements IOperation
     return aTests;
   }
 
-  public Collection<ICommand> actionsFor(
+  public List<ICommand> actionsFor(
       List<IStoreItem> selection, IStoreGroup destination, IContext context)
   {
-    Collection<ICommand> res =
+    List<ICommand> res =
         new ArrayList<ICommand>();
     if (appliesTo(selection))
     {

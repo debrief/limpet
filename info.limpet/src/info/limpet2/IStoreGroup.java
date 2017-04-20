@@ -17,6 +17,7 @@ package info.limpet2;
 import java.beans.PropertyChangeListener;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 
@@ -72,5 +73,7 @@ public interface IStoreGroup extends IStoreItem, Collection<IStoreItem>,
   void removeTimeChangeListener(PropertyChangeListener listener);
 
   Date getTime();
+
+  void addAll(List<IStoreItem> results);
 
 }

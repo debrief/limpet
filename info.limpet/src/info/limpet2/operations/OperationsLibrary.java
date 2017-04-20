@@ -35,6 +35,7 @@ import info.limpet2.operations.arithmetic.simple.AddQuantityOperation;
 import info.limpet2.operations.arithmetic.simple.MultiplyQuantityOperation;
 import info.limpet2.operations.arithmetic.simple.SubtractQuantityOperation;
 import info.limpet2.operations.arithmetic.simple.UnitConversionOperation;
+import info.limpet2.operations.spatial.DistanceBetweenTracksOperation;
 import info.limpet2.operations.spatial.GenerateCourseAndSpeedOperation;
 
 import java.util.ArrayList;
@@ -303,7 +304,7 @@ public class OperationsLibrary
   private static List<IOperation> getSpatial()
   {
     List<IOperation> spatial = new ArrayList<IOperation>();
-    // spatial.add(new DistanceBetweenTracksOperation());
+    spatial.add(new DistanceBetweenTracksOperation());
     // spatial.add(new BearingBetweenTracksOperation());
     spatial.add(new GenerateCourseAndSpeedOperation());
     // spatial.add(new DopplerShiftBetweenTracksOperation());

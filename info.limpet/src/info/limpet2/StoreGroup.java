@@ -97,6 +97,20 @@ public class StoreGroup extends ArrayList<IStoreItem> implements IStoreGroup
 
     return res;
   }
+  
+  @Override
+  public void addAll(List<IStoreItem> results)
+  {
+    // add the items individually, so we can register as a listener
+    Iterator<IStoreItem> iter = results.iterator();
+    while (iter.hasNext())
+    {
+      IStoreItem iCollection = iter.next();
+      add(iCollection);
+    }
+
+    fireModified();
+  }
 
   @Override
   public IStoreGroup getParent()

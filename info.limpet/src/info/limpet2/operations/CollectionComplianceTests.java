@@ -206,9 +206,9 @@ public class CollectionComplianceTests
         {
           if (thisC.isIndexed())
           {
-            NumberDocument nd = (NumberDocument) thisC;
+//            NumberDocument nd = (NumberDocument) thisC;
             AxesMetadata axes =
-                nd.getDataset().getFirstMetadata(AxesMetadata.class);
+                thisC.getDataset().getFirstMetadata(AxesMetadata.class);
             ILazyDataset axesDatasetLazy = axes.getAxes()[0];
             Dataset axesDataset;
             try

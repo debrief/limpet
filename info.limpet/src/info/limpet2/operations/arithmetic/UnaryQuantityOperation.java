@@ -24,7 +24,6 @@ import info.limpet2.NumberDocument;
 import info.limpet2.operations.CollectionComplianceTests;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -56,10 +55,10 @@ public abstract class UnaryQuantityOperation implements IOperation
   protected final CollectionComplianceTests aTests =
       new CollectionComplianceTests();
 
-  public Collection<ICommand> actionsFor(List<IStoreItem> selection,
+  public List<ICommand> actionsFor(List<IStoreItem> selection,
       IStoreGroup destination, IContext context)
   {
-    Collection<ICommand> res = new ArrayList<ICommand>();
+    List<ICommand> res = new ArrayList<ICommand>();
     if (appliesTo(selection))
     {
       ICommand newC =
