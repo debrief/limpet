@@ -85,13 +85,13 @@ public class StringDocument extends Document implements IObjectDocument
 
   public String getString(int i)
   {
-    StringDataset od = (StringDataset) _dataset;
+    StringDataset od = (StringDataset) dataset;
     return od.getString(i);
   }
 
   public Iterator<String> getIterator()
   {
-    StringDataset od = (StringDataset) _dataset;
+    StringDataset od = (StringDataset) dataset;
     String[] strings = od.getData();
     Iterable<String> iterable = Arrays.asList(strings);
     return iterable.iterator();
@@ -100,7 +100,7 @@ public class StringDocument extends Document implements IObjectDocument
   @Override
   public Iterator<?> getObjectIterator()
   {
-    StringDataset od = (StringDataset) _dataset;
+    StringDataset od = (StringDataset) dataset;
     String[] strings = od.getData();
     Iterable<String> iterable = Arrays.asList(strings);
     return iterable.iterator();

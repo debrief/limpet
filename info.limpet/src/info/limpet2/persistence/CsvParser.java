@@ -60,8 +60,10 @@ public class CsvParser
 {
 
   // 21/09/2015 07:00:31
-  private static final DateFormat DATE_FORMAT = new SimpleDateFormat(
+  private static final DateFormat DATE_SECS_FORMAT = new SimpleDateFormat(
       "dd/MM/yyyy hh:mm:ss");
+  private static final DateFormat DATE_FORMAT = new SimpleDateFormat(
+      "dd/MM/yyyy hh:mm");
   private static final DateFormat TIME_FORMAT =
       new SimpleDateFormat("hh:mm:ss");
   private ArrayList<DataImporter> _candidates;
@@ -228,7 +230,15 @@ public class CsvParser
               }
               else
               {
-                thisFormat = DATE_FORMAT;
+                // hmm, are there secs present
+                if (len == 16)
+                {
+                  thisFormat = DATE_FORMAT;
+                }
+                else
+                {
+                  thisFormat = DATE_SECS_FORMAT;
+                }
               }
             }
             Date date = thisFormat.parse(firstRow);
@@ -715,11 +725,12 @@ public class CsvParser
     }
   }
 
-  /** if we don't know the units, or data-type for a column,
-   * we'll defer creating the importer until we've actually 
-   * read in some data
+  /**
+   * if we don't know the units, or data-type for a column, we'll defer creating the importer until
+   * we've actually read in some data
+   * 
    * @author Ian
-   *
+   * 
    */
   final protected static class DeferredLoadSupporter extends DataImporter
   {
@@ -737,7 +748,10 @@ public class CsvParser
     @Override
     public IDocumentBuilder create(String name)
     {
-      throw new RuntimeException("Should not get called");
+      return null;
+//      NumberDocumentBuilder res =
+//          new NumberDocumentBuilder("Dummy", null, null);
+//      return res;
     }
 
     @Override

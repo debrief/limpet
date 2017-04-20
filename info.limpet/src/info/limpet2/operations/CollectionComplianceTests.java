@@ -21,7 +21,6 @@ import info.limpet2.Document.InterpMethod;
 import info.limpet2.ILocations;
 import info.limpet2.IStoreGroup;
 import info.limpet2.IStoreItem;
-import info.limpet2.LocationDocument;
 import info.limpet2.NumberDocument;
 
 import java.awt.geom.Point2D;
@@ -702,14 +701,14 @@ public class CollectionComplianceTests
   {
     boolean res = false;
 
-    Iterator<IStoreItem> iter = group.iterator();
+    final Iterator<IStoreItem> iter = group.iterator();
     while (iter.hasNext())
     {
-      IStoreItem item = iter.next();
-      if (item instanceof ILocations)
+      final IStoreItem item = iter.next();
+      if (item instanceof Document)
       {
-        ILocations locs = (ILocations) item;
-        if (locs.getLocations().size() == 1)
+        final Document doc = (Document) item;
+        if (doc instanceof ILocations && doc.size() == 1)
         {
           res = true;
           break;
@@ -1076,7 +1075,7 @@ public class CollectionComplianceTests
       // data types
       if (iCollection != null && iCollection.isIndexed())
       {
-        Iterator<Long> lIter = iCollection.getIndexes();
+        Iterator<Long> lIter = iCollection.getIndices();
         Long start = null;
         Long end = null;
         while (lIter.hasNext())
@@ -1131,7 +1130,7 @@ public class CollectionComplianceTests
       // circumstances
       if (iCollection != null && iCollection.isIndexed())
       {
-        Iterator<Long> lIter = iCollection.getIndexes();
+        Iterator<Long> lIter = iCollection.getIndices();
         int score = 0;
         while (lIter.hasNext())
         {
@@ -1211,33 +1210,33 @@ public class CollectionComplianceTests
     }
   }
 
-  /**
-   * retrieve the location at the specified time (even if it's a non-temporal collection)
-   * 
-   * @param iCollection
-   *          set of locations to use
-   * @param thisTime
-   *          time we're need a location for
-   * @return
-   */
-  public Point2D locationFor(Document iCollection, Long thisTime)
-  {
-    Point2D res = null;
-    if (iCollection.isIndexed())
-    {
-      LocationDocument tLoc = (LocationDocument) iCollection;
-      res = tLoc.interpolateValue(thisTime, Document.InterpMethod.Linear);
-    }
-    else
-    {
-      LocationDocument tLoc = (LocationDocument) iCollection;
-      if (tLoc.getLocations().size() > 0)
-      {
-        res = tLoc.getLocation(0);
-      }
-    }
-    return res;
-  }
+//  /**
+//   * retrieve the location at the specified time (even if it's a non-temporal collection)
+//   * 
+//   * @param iCollection
+//   *          set of locations to use
+//   * @param thisTime
+//   *          time we're need a location for
+//   * @return
+//   */
+//  public Point2D locationFor(Document iCollection, Long thisTime)
+//  {
+//    Point2D res = null;
+//    if (iCollection.isIndexed())
+//    {
+//      LocationDocument tLoc = (LocationDocument) iCollection;
+//      res = tLoc.interpolateValue(thisTime, Document.InterpMethod.Linear);
+//    }
+//    else
+//    {
+//      LocationDocument tLoc = (LocationDocument) iCollection;
+//      if (tLoc.size() > 0)
+//      {
+//        res = tLoc.getLocationIterator().next();
+//      }
+//    }
+//    return res;
+//  }
 
   public static class TimePeriod
   {

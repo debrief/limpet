@@ -20,42 +20,42 @@ import org.eclipse.january.metadata.AxesMetadata;
 
 public class NumberDocument extends Document
 {
-  private Unit<?> _qType;
-  private Range _range;
+  private Unit<?> qType;
+  private Range range;
 
-  public NumberDocument(DoubleDataset dataset, ICommand predecessor,
-      Unit<?> qType)
+  public NumberDocument(final DoubleDataset dataset, final ICommand predecessor,
+      final Unit<?> qType)
   {
     super(dataset, predecessor);
     
     if(qType == null)
     {
-     _qType = Dimensionless.UNIT; 
+     this.qType = Dimensionless.UNIT; 
     }
     else
     {
-    _qType = qType;
+    this.qType = qType;
     }
   }
 
   public Unit<?> getType()
   {
-    return _qType;
+    return qType;
   }
 
   public Range getRange()
   {
-    return _range;
+    return range;
   }
 
   public void setRange(Range range)
   {
-    _range = range;
+    this.range = range;
   }
 
   public Unit<?> getUnits()
   {
-    return _qType;
+    return qType;
   }
   
   private static class DoubleIterator implements Iterator<Double>
@@ -91,7 +91,7 @@ public class NumberDocument extends Document
   
   public Iterator<Double> getIterator()
   {
-    DoubleDataset od = (DoubleDataset) _dataset;
+    DoubleDataset od = (DoubleDataset) dataset;
     double[] data = od.getData();
     return new DoubleIterator(data);
   }
@@ -160,7 +160,7 @@ public class NumberDocument extends Document
     Double res = null;
     
     // do we have axes?
-    AxesMetadata index = _dataset.getFirstMetadata(AxesMetadata.class);
+    AxesMetadata index = dataset.getFirstMetadata(AxesMetadata.class);
     ILazyDataset indexDataLazy = index.getAxes()[0];
     try
     {
@@ -173,7 +173,7 @@ public class NumberDocument extends Document
       if(i >= lowerIndex && i <= upperVal)
       {
         // ok, in range
-        DoubleDataset ds = (DoubleDataset) _dataset;
+        DoubleDataset ds = (DoubleDataset) dataset;
         LongDataset indexes = (LongDataset) DatasetFactory.createFromObject(new Long[]{i});
         
         // perform the interpolation
@@ -193,12 +193,12 @@ public class NumberDocument extends Document
 
   public double getValue(int i)
   {
-    return _dataset.getDouble(i);
+    return dataset.getDouble(i);
   }
 
   public void setUnits(Unit<?> unit)
   {
-    _qType = unit;
+    qType = unit;
   }
 
 
@@ -211,32 +211,32 @@ public class NumberDocument extends Document
   {
     public double min()
     {
-      DoubleDataset ds = (DoubleDataset) _dataset;
+      DoubleDataset ds = (DoubleDataset) dataset;
       return (Double) ds.min(true);
     }
 
     public double max()
     {
-      DoubleDataset ds = (DoubleDataset) _dataset;
+      DoubleDataset ds = (DoubleDataset) dataset;
       return (Double) ds.max();
       
     }
 
     public double mean()
     {
-      DoubleDataset ds = (DoubleDataset) _dataset;
+      DoubleDataset ds = (DoubleDataset) dataset;
       return (Double) ds.mean(true);
     }
 
     public double variance()
     {
-      DoubleDataset ds = (DoubleDataset) _dataset;
+      DoubleDataset ds = (DoubleDataset) dataset;
       return (Double) ds.variance(true);
     }
 
     public double sd()
     {
-      DoubleDataset ds = (DoubleDataset) _dataset;
+      DoubleDataset ds = (DoubleDataset) dataset;
       return (Double) ds.stdDeviation(true);
     }    
   }

@@ -80,7 +80,7 @@
             lightweight="true"
             adaptable="true"
             label="Limpet Decorator"
-            class="info.limpet.ui.decorators.LimpetDecorator"
+            class="info.limpet.ui.editors2.LimpetDecorator"
             state="true"
             id="info.limpet.ui.decorators.LimpetDecorator">
          <description>

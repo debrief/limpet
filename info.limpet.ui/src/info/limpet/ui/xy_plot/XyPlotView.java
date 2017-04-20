@@ -298,7 +298,7 @@ public class XyPlotView extends CoreAnalysisView
           yData = new double[thisQ.size()];
 
           // must be temporal
-          Iterator<Long> times = coll.getIndexes();
+          Iterator<Long> times = coll.getIndices();
           Iterator<Double> values = thisQ.getIterator();
           
           int ctr = 0;
@@ -409,20 +409,6 @@ public class XyPlotView extends CoreAnalysisView
       if (!coll.isQuantity() && coll.size() >= 1
           && coll.size() < MAX_SIZE)
       {
-        final List<Point2D> values;
-
-        LocationDocument loc = (LocationDocument) coll;
-        values = loc.getLocations();
-//        if (coll.isIndexed())
-//        {
-//        }
-//        else
-//        {
-//          info.limpet.data.impl.samples.StockTypes.NonTemporal.Location loc =
-//              (info.limpet.data.impl.samples.StockTypes.NonTemporal.Location) coll;
-//          values = loc.getValues();
-//        }
-
         String seriesName = coll.getName();
         ILineSeries newSeries =
             (ILineSeries) chart.getSeriesSet().createSeries(SeriesType.LINE,
@@ -430,15 +416,15 @@ public class XyPlotView extends CoreAnalysisView
         newSeries.setSymbolType(PlotSymbolType.NONE);
         newSeries.setLineColor(PlottingHelpers.colorFor(seriesName));
 
-        double[] xData = new double[values.size()];
-        double[] yData = new double[values.size()];
+        double[] xData = new double[coll.size()];
+        double[] yData = new double[coll.size()];
 
-        Iterator<Point2D> vIter = values.iterator();
-
+        LocationDocument loc = (LocationDocument) coll;
+        Iterator<Point2D> lIter = loc.getLocationIterator();
         int ctr = 0;
-        while (vIter.hasNext())
+        while(lIter.hasNext())
         {
-          Point2D geom = vIter.next();
+          Point2D geom = lIter.next();
           xData[ctr] = geom.getX();
           yData[ctr++] = geom.getY();
         }

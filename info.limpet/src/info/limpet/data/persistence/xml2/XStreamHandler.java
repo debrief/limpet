@@ -90,19 +90,21 @@ public class XStreamHandler
     // TODO: KUMAR: create equivalent alias operations (as above) for other defined operations
 
     // and force some objects to be represnted as attributes, rather than child objects
-    XSTREAM.useAttributeFor(Document.class, "name");
     XSTREAM.useAttributeFor(AbstractCommand.class, "title");
     XSTREAM.useAttributeFor(AbstractCommand.class, "canUndo");
     XSTREAM.useAttributeFor(AbstractCommand.class, "canRedo");
     XSTREAM.useAttributeFor(AbstractCommand.class, "dynamic");
 
+    // No: Document doesn't have a name attribute, it's stored in the dataset
+    //XSTREAM.useAttributeFor(Document.class, "name");
+
     // setup converter
-    XSTREAM.registerConverter(
-        new LimpetCollectionConverter(XSTREAM.getMapper()),
-        XStream.PRIORITY_NORMAL);
-    XSTREAM.registerConverter(
-        new TimesCollectionConverter(XSTREAM.getMapper()),
-        XStream.PRIORITY_NORMAL);
+//    XSTREAM.registerConverter(
+//        new LimpetCollectionConverter(XSTREAM.getMapper()),
+//        XStream.PRIORITY_NORMAL);
+//    XSTREAM.registerConverter(
+//        new TimesCollectionConverter(XSTREAM.getMapper()),
+//        XStream.PRIORITY_NORMAL);
     XSTREAM.registerConverter(new PointConverter(), XStream.PRIORITY_NORMAL);
     XSTREAM.setMode(XStream.ID_REFERENCES);
   }

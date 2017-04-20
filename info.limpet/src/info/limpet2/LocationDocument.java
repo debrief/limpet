@@ -3,7 +3,6 @@ package info.limpet2;
 import java.awt.geom.Point2D;
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.List;
 
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.Dataset;
@@ -80,14 +79,14 @@ public class LocationDocument extends Document implements ILocations, IObjectDoc
     return res.toString();
   }
 
-  public Point2D interpolateValue(long i, InterpMethod linear)
-  {
-    // TODO: implement positional interpolation
-    throw new RuntimeException("Not yet implemented");
-//    Double res = null;
+//  public Point2D interpolateValue(long i, InterpMethod linear)
+//  {
+//    // TODO: implement positional interpolation
+//    throw new RuntimeException("Not yet implemented");
+//    Point2D res = null;
 //    
 //    // do we have axes?
-//    AxesMetadata index = _dataset.getFirstMetadata(AxesMetadata.class);
+//    AxesMetadata index = dataset.getFirstMetadata(AxesMetadata.class);
 //    ILazyDataset indexDataLazy = index.getAxes()[0];
 //    try
 //    {
@@ -100,7 +99,7 @@ public class LocationDocument extends Document implements ILocations, IObjectDoc
 //      if(i >= lowerIndex && i <= upperVal)
 //      {
 //        // ok, in range
-//        DoubleDataset ds = (DoubleDataset) _dataset;
+//        DoubleDataset ds = (DoubleDataset) dataset;
 //        LongDataset indexes = (LongDataset) DatasetFactory.createFromObject(new Long[]{i});
 //        
 //        // perform the interpolation
@@ -116,13 +115,7 @@ public class LocationDocument extends Document implements ILocations, IObjectDoc
 //    }
 //    
 //    return res;
-  }
-
-  public Point2D getLocation(int i)
-  {
-    ObjectDataset od = (ObjectDataset) _dataset;
-    return (Point2D) od.getObject(i);
-  }
+//  }
 
   public MyStats stats()
   {
@@ -133,46 +126,68 @@ public class LocationDocument extends Document implements ILocations, IObjectDoc
   {
     public double min()
     {
-      DoubleDataset ds = (DoubleDataset) _dataset;
+      DoubleDataset ds = (DoubleDataset) dataset;
       return (Double) ds.min(true);
     }
 
     public double max()
     {
-      DoubleDataset ds = (DoubleDataset) _dataset;
+      DoubleDataset ds = (DoubleDataset) dataset;
       return (Double) ds.max();
       
     }
 
     public double mean()
     {
-      DoubleDataset ds = (DoubleDataset) _dataset;
+      DoubleDataset ds = (DoubleDataset) dataset;
       return (Double) ds.mean(true);
     }
 
     public double variance()
     {
-      DoubleDataset ds = (DoubleDataset) _dataset;
+      DoubleDataset ds = (DoubleDataset) dataset;
       return (Double) ds.variance(true);
     }
 
     public double sd()
     {
-      DoubleDataset ds = (DoubleDataset) _dataset;
+      DoubleDataset ds = (DoubleDataset) dataset;
       return (Double) ds.stdDeviation(true);
     }    
   }
 
   @Override
-  public List<Point2D> getLocations()
+  public Iterator<Point2D> getLocationIterator()
   {
-    throw new RuntimeException("Not yet implemented");
+    final Iterator<?> oIter = getObjectIterator();
+    return new Iterator<Point2D>()
+        {
+
+          @Override
+          public boolean hasNext()
+          {
+            return oIter.hasNext();
+          }
+
+          @Override
+          public Point2D next()
+          {
+            return (Point2D) oIter.next();
+          }
+
+          @Override
+          public void remove()
+          {
+            oIter.remove();
+          }      
+        };
   }
+
 
   @Override
   public Iterator<?> getObjectIterator()
   {
-    ObjectDataset od = (ObjectDataset) _dataset;
+    ObjectDataset od = (ObjectDataset) dataset;
     Object[] strings = od.getData();
     Iterable<Object> iterable = Arrays.asList(strings);
     return iterable.iterator();

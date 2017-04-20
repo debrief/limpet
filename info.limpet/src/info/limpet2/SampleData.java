@@ -44,6 +44,7 @@ import org.eclipse.january.dataset.StringDataset;
 
 public class SampleData
 {
+  public static final String SPEED_DATA_FOLDER = "Speed data";
   public static final String SPEED_THREE_LONGER = "Speed Three (longer)";
   public static final String SPEED_IRREGULAR2 = "Speed two irregular time";
   public static final String TIME_INTERVALS = "Time intervals";
@@ -245,7 +246,7 @@ public class SampleData
     final NumberDocument speedSeries1 = speedSeries1b.toDocument();
     final NumberDocument speedSeries2 = speedSeries2b.toDocument();
 
-    StoreGroup group1 = new StoreGroup("Speed data");
+    StoreGroup group1 = new StoreGroup(SPEED_DATA_FOLDER);
     group1.add(speedSeries1);
     group1.add(speedIrregular.toDocument());
     group1.add(speedEarly1.toDocument());

@@ -151,7 +151,7 @@ public class LimpetLabelProvider extends LabelProvider
       
       if(res == null)
       {
-        System.out.println("no icon for:" + item);
+        System.err.println("no icon for:" + item);
       }
     }
 

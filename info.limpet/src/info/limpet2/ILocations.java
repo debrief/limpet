@@ -1,9 +1,9 @@
 package info.limpet2;
 
 import java.awt.geom.Point2D;
-import java.util.List;
+import java.util.Iterator;
 
 public interface ILocations
 {
-  List<Point2D> getLocations();
+  Iterator<Point2D> getLocationIterator();
 }
