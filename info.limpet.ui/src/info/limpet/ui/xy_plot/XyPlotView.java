@@ -99,11 +99,13 @@ public class XyPlotView extends CoreAnalysisView
     }
     else
     {
-
+      // transform them to a lsit of documents
+      List<Document> docList = aTests.getDocumentsIn(res);
+      
       // they're all the same type - check the first one
-      Iterator<IStoreItem> iter = res.iterator();
+      Iterator<Document> iter = docList.iterator();
 
-      Document first = (Document) iter.next();
+      Document first = iter.next();
 
       // sort out what type of data this is.
       if (first.isQuantity())
@@ -252,21 +254,19 @@ public class XyPlotView extends CoreAnalysisView
 
   private void showTemporalQuantity(List<IStoreItem> res)
   {
-    Iterator<IStoreItem> iter = res.iterator();
-
     clearGraph();
 
     Unit<?> existingUnits = null;
 
+    List<Document> docList = aTests.getDocumentsIn(res);
+    
     // get the outer time period (used for plotting singletons)
-    List<IStoreItem> safeColl = new ArrayList<IStoreItem>();
-    safeColl.addAll( res);
-    TimePeriod outerPeriod = aTests.getBoundingRange(safeColl);
+    List<Document> safeColl = new ArrayList<Document>();
+    safeColl.addAll(docList);
+    TimePeriod outerPeriod = aTests.getBoundingRange(res);
 
-    while (iter.hasNext())
+    for(Document coll: docList)
     {
-      Document coll = (Document) iter.next();
-
       if (coll.isQuantity() && coll.size() >= 1
           && coll.size() < MAX_SIZE)
       {

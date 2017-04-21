@@ -564,20 +564,6 @@ public class RangeSliderView extends CoreAnalysisView implements
     {
       NumberDocument qc = (NumberDocument) object;
 
-      if (_myHelper != null)
-        if (_myHelper instanceof NumberHelper)
-        {
-          NumberHelper cHelp = (NumberHelper) _myHelper;
-          if (cHelp._collection != object)
-          {
-            dropListener();
-          }
-          else
-          {
-            return;
-          }
-        }
-
       // does it have a range?
       Range rng = qc.getRange();
 
@@ -586,6 +572,23 @@ public class RangeSliderView extends CoreAnalysisView implements
         Unit<?> theUnits = qc.getUnits();
         if (qc.size() > 0)
         {
+          // ok, drop the current object
+          if (_myHelper != null)
+          {
+            if (_myHelper instanceof NumberHelper)
+            {
+              NumberHelper cHelp = (NumberHelper) _myHelper;
+              if (cHelp._collection != object)
+              {
+                dropListener();
+              }
+              else
+              {
+                return;
+              }
+            }
+          }
+
           int curVal = (int) qc.getValue(0);
 
           _myHelper =
@@ -622,9 +625,9 @@ public class RangeSliderView extends CoreAnalysisView implements
         if (parent != null)
         {
           // TODO: reinstate the date helper
-//          _myHelper =
-//              new DateHelper(start, end, slider.getThumb(), temp.getName(),
-//                  parent, temp);
+          // _myHelper =
+          // new DateHelper(start, end, slider.getThumb(), temp.getName(),
+          // parent, temp);
         }
         else
         {
