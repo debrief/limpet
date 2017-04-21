@@ -27,6 +27,11 @@ public class NumberDocumentBuilder implements IDocumentBuilder
     _values = new ArrayList<Double>();
   }
 
+  public int size()
+  {
+    return _values.size();
+  }
+  
   public void add(long time, double value)
   {
     add(value);

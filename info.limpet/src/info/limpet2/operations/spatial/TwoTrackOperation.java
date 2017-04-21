@@ -101,7 +101,8 @@ public abstract class TwoTrackOperation implements IOperation
       output.fireDataChanged();
     }
 
-    /** convert the output to a document
+    /**
+     * convert the output to a document
      * 
      * @return
      */
@@ -110,7 +111,6 @@ public abstract class TwoTrackOperation implements IOperation
       return (DoubleDataset) _builder.toDocument().getDataset();
     }
 
-
     /**
      * produce a name for the output document
      * 
@@ -118,7 +118,8 @@ public abstract class TwoTrackOperation implements IOperation
      */
     abstract protected String getOutputName();
 
-    /** reset the builder
+    /**
+     * reset the builder
      * 
      */
     private void init()
@@ -245,13 +246,22 @@ public abstract class TwoTrackOperation implements IOperation
       throw new RuntimeException(e);
     }
 
+    long[] data = ds.getData();
+    return locationsFor(track1, data);
+  }
+
+  public static LocationDocument locationsFor(final LocationDocument track,
+      final long[] times)
+  {
+    final LongDataset ds = (LongDataset) DatasetFactory.createFromObject(times);
+
     // ok, put the lats & longs into arrays
     final ArrayList<Double> latVals = new ArrayList<Double>();
     final ArrayList<Double> longVals = new ArrayList<Double>();
     final ArrayList<Long> timeVals = new ArrayList<Long>();
 
-    final Iterator<Point2D> lIter = track1.getLocationIterator();
-    final Iterator<Long> tIter = track1.getIndices();
+    final Iterator<Point2D> lIter = track.getLocationIterator();
+    final Iterator<Long> tIter = track.getIndices();
     while (lIter.hasNext())
     {
       final long thisT = tIter.next();
@@ -280,8 +290,8 @@ public abstract class TwoTrackOperation implements IOperation
     for (int i = 0; i < ds.getSize(); i++)
     {
       final Point2D pt =
-          new Point2D.Double(longInterpolated.getDouble(i), latInterpolated
-              .getDouble(i));
+          GeoSupport.getCalculator().createPoint(longInterpolated.getDouble(i),
+              latInterpolated.getDouble(i));
       ldb.add(pt, ds.getLong(i));
     }
 

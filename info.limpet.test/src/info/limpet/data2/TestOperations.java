@@ -76,6 +76,37 @@ public class TestOperations
   public final ExpectedException thrown = ExpectedException.none();
 
   @Test
+  public void testSingletonGenerator()
+  {
+    CreateSingletonGenerator op = new CreateSingletonGenerator("Some data",METRE.asType(Length.class) );
+    List<IStoreItem> sel = new ArrayList<IStoreItem>();
+    IStoreGroup target = new StoreGroup("data");
+    IContext context = new MockContext(){
+
+      @Override
+      public String getInput(String title, String description,
+          String defaultText)
+      {
+        if(description.equals("Enter name for variable"))
+        {
+          return "output variable name";
+        }
+        else
+        {
+          return "1000";
+        }
+      }};
+    List<ICommand> ops = op.actionsFor(sel, target, context);
+    assertEquals("operation created", 1, ops.size());
+    ICommand firstOp = ops.get(0);
+    firstOp.execute();
+    NumberDocument output = (NumberDocument) firstOp.getOutputs().get(0);
+    assertNotNull("output created", output);
+    assertEquals("single value", 1, output.size());
+    assertEquals("correct units", METRE.asType(Length.class), output.getUnits());
+  }
+
+  @Test
   public void testInterpolateTests()
   {
     // place to store results data

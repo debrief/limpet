@@ -117,6 +117,10 @@ abstract public class Document implements IStoreItem
     {
       thisL.dataChanged(this);
     }
+    for(final ICommand thisL: dependents)
+    {
+      thisL.dataChanged(this);
+    }
   }
 
   @Override

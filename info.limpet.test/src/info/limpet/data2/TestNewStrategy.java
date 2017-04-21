@@ -9,6 +9,7 @@ import info.limpet2.IStoreGroup;
 import info.limpet2.IStoreItem;
 import info.limpet2.MockContext;
 import info.limpet2.NumberDocument;
+import info.limpet2.NumberDocumentBuilder;
 import info.limpet2.SampleData;
 import info.limpet2.StoreGroup;
 import info.limpet2.operations.arithmetic.simple.AddQuantityOperation;
@@ -53,7 +54,16 @@ public class TestNewStrategy extends TestCase
     }
     
   }
-
+  
+  public void testSingletonDocument()
+  {
+    NumberDocumentBuilder builder = new NumberDocumentBuilder("some data", null, null);
+    builder.add(1d);
+    NumberDocument doc = builder.toDocument();
+    double val = doc.getValue(0);
+    assertEquals("correct value", 1d, val);
+  }
+  
   public void testAddingDocuments()
   {
     StoreGroup data = new SampleData().getData(15);

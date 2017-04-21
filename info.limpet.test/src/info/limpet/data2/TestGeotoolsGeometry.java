@@ -17,6 +17,7 @@ package info.limpet.data2;
 import static javax.measure.unit.SI.METRE;
 import info.limpet.IContext;
 import info.limpet2.Document;
+import info.limpet2.IChangeListener;
 import info.limpet2.ICommand;
 import info.limpet2.IStoreGroup;
 import info.limpet2.IStoreItem;
@@ -25,8 +26,12 @@ import info.limpet2.LocationDocumentBuilder;
 import info.limpet2.MockContext;
 import info.limpet2.NumberDocument;
 import info.limpet2.NumberDocumentBuilder;
+import info.limpet2.SampleData;
 import info.limpet2.StoreGroup;
+import info.limpet2.operations.CollectionComplianceTests;
 import info.limpet2.operations.spatial.DistanceBetweenTracksOperation;
+import info.limpet2.operations.spatial.DopplerShiftBetweenTracksOperation;
+import info.limpet2.operations.spatial.DopplerShiftBetweenTracksOperation.DopplerShiftOperation.TrackProvider;
 import info.limpet2.operations.spatial.GenerateCourseAndSpeedOperation;
 import info.limpet2.operations.spatial.GeoSupport;
 import info.limpet2.operations.spatial.IGeoCalculator;
@@ -38,6 +43,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.measure.quantity.Length;
@@ -359,7 +365,7 @@ public class TestGeotoolsGeometry extends TestCase
     assertNotNull("output produced", output);
     assertEquals("correct items", 3, output.size());
     assertNotNull("has indices", output.getIndices());
-    
+
     System.out.println(output.toString());
 
     // ok, add a couple more entries, so it could be indexed or interpolated
@@ -532,155 +538,166 @@ public class TestGeotoolsGeometry extends TestCase
     // assertEquals("not empty collection", 1, ops.size());
   }
 
-  // public void testFindingDopplerTracks()
-  // {
-  // final List<IStoreItem> items = new ArrayList<IStoreItem>();
-  // final DopplerShiftBetweenTracksOperation doppler =
-  // new DopplerShiftBetweenTracksOperation();
-  // final StoreGroup store = new StoreGroup();
-  // final CollectionComplianceTests tests = new CollectionComplianceTests();
-  //
-  // IContext mockContext = new MockContext();
-  // List<TrackProvider> matches =
-  // DopplerShiftBetweenTracksOperation.DSOperation.getTracks(
-  // null, items, tests);
-  // assertEquals("empty", 0, matches.size());
-  //
-  // // create a good track
-  // IStore tmpStore = new SampleData().getData(20);
-  // IStoreGroup cTrack = (IStoreGroup) tmpStore.get(SampleData.COMPOSITE_ONE);
-  // assertNotNull("not found track", cTrack);
-  // items.add(cTrack);
-  // matches =
-  // DopplerShiftBetweenTracksOperation.DSOperation.getTracks(
-  // null, items, tests);
-  // assertEquals("not empty", 1, matches.size());
-  //
-  // // ignore that track
-  // matches =
-  // DopplerShiftBetweenTracksOperation.DSOperation.getTracks(
-  // (IStoreGroup) cTrack, items, tests);
-  // assertEquals("empty", 0, matches.size());
-  //
-  // // ok, add a singleton location
-  // StockTypes.NonTemporal.Location loc1 = (Location) tmpStore.get(SampleData.SINGLETON_LOC_1);
-  // assertNotNull("not found track", loc1);
-  // items.add(loc1);
-  // matches =
-  // DopplerShiftBetweenTracksOperation.DSOperation.getTracks(
-  // (IStoreGroup) cTrack, items, tests);
-  // assertEquals("not empty", 1, matches.size());
-  //
-  // IStoreItem loc2 = tmpStore.get(SampleData.SINGLETON_LOC_2);
-  // items.add(loc2);
-  // matches =
-  // DopplerShiftBetweenTracksOperation.DSOperation.getTracks(
-  // (IStoreGroup) cTrack, items, tests);
-  // assertEquals("not empty", 2, matches.size());
-  //
-  // // ok - they work at the top level, see if they work
-  // // in a child group
-  // items.remove(loc1);
-  // items.remove(loc2);
-  //
-  // // check it's empty
-  // matches =
-  // DopplerShiftBetweenTracksOperation.DSOperation.getTracks(
-  // (IStoreGroup) cTrack, items, tests);
-  // assertEquals("empty", 0, matches.size());
-  //
-  //
-  // IStoreGroup sensors = new StoreGroup("Sensor");
-  // sensors.add(loc1);
-  // sensors.add(loc2);
-  // items.add(sensors);
-  //
-  // matches =
-  // DopplerShiftBetweenTracksOperation.DSOperation.getTracks(
-  // (IStoreGroup) cTrack, items, tests);
-  // assertEquals("not empty", 2, matches.size());
-  //
-  // // ok, move up a level
-  // Collection<ICommand<IStoreItem>> ops = doppler.actionsFor(items, store, mockContext);
-  // assertEquals("single action", 0, ops.size());
-  //
-  // // ok, give it a top-level sounds speed
-  // final IStoreItem soundSpeed = tmpStore.get(SampleData.SPEED_ONE);
-  // items.add(soundSpeed);
-  //
-  // ops = doppler.actionsFor(items, store, mockContext);
-  // assertEquals("single action", 1, ops.size());
-  //
-  // // ok, we have two static sensors, ets them
-  // ICommand<IStoreItem> firstOp = ops.iterator().next();
-  // firstOp.execute();
-  // List<IStoreItem> outputs = firstOp.getOutputs();
-  // assertEquals("two output datasets", 2, outputs.size());
-  //
-  // // hmm, ensure we only get updates on tracks that have changed
-  // final List<String> messages = new ArrayList<String>();
-  // final IChangeListener listener = new IChangeListener()
-  // {
-  //
-  // @Override
-  // public void metadataChanged(IStoreItem subject)
-  // {
-  // // TODO Auto-generated method stub
-  //
-  // }
-  //
-  // @Override
-  // public void dataChanged(IStoreItem subject)
-  // {
-  // messages.add("" + subject.getName());
-  // }
-  //
-  // @Override
-  // public void collectionDeleted(IStoreItem subject)
-  // {
-  // // TODO Auto-generated method stub
-  //
-  // }
-  // };
-  //
-  // Iterator<IStoreItem> iter = outputs.iterator();
-  // while (iter.hasNext())
-  // {
-  // IStoreItem iStoreItem = (IStoreItem) iter.next();
-  // iStoreItem.addChangeListener(listener);
-  // }
-  //
-  // // ok, make a change to loc1
-  // loc1.clearQuiet();
-  // loc1.add(new Point2D.Double(22, 33));
-  // loc1.fireDataChanged();
-  //
-  // assertEquals("only one update", 1, messages.size());
-  //
-  // // restart
-  // messages.clear();
-  //
-  // // get the freq
-  // tmpStore.get(SampleData.FREQ_ONE).fireDataChanged();
-  // assertEquals("both outputs updated", 2, messages.size());
-  //
-  // // restart
-  // messages.clear();
-  //
-  // // get the freq
-  // soundSpeed.fireDataChanged();
-  // assertEquals("both outputs updated", 2, messages.size());
-  //
-  // // and what if we make the sensors group look like a track?
-  // sensors.remove(loc2);
-  // sensors.add(tmpStore.get(SampleData.FREQ_ONE));
-  // sensors.add(soundSpeed);
-  //
-  // ops = doppler.actionsFor(items, store, mockContext);
-  // assertEquals("single action", 2, ops.size());
-  //
-  //
-  // }
+  public void testFindingDopplerTracks()
+  {
+    final List<IStoreItem> items = new ArrayList<IStoreItem>();
+    final DopplerShiftBetweenTracksOperation doppler =
+        new DopplerShiftBetweenTracksOperation();
+    final StoreGroup store = new StoreGroup("Data");
+    final CollectionComplianceTests tests = new CollectionComplianceTests();
+
+    IContext mockContext = new MockContext();
+    List<TrackProvider> matches =
+        DopplerShiftBetweenTracksOperation.DopplerShiftOperation.getTracks(null, items,
+            tests);
+    assertEquals("empty", 0, matches.size());
+
+    // create a good track
+    IStoreGroup tmpStore = new SampleData().getData(20);
+    IStoreGroup cTrack = (IStoreGroup) tmpStore.get(SampleData.COMPOSITE_ONE);
+    assertNotNull("not found track", cTrack);
+    items.add(cTrack);
+    matches =
+        DopplerShiftBetweenTracksOperation.DopplerShiftOperation.getTracks(null, items,
+            tests);
+    assertEquals("not empty", 1, matches.size());
+
+    // ignore that track
+    matches =
+        DopplerShiftBetweenTracksOperation.DopplerShiftOperation.getTracks(
+            (IStoreGroup) cTrack, items, tests);
+    assertEquals("empty", 0, matches.size());
+
+    // ok, add a singleton location
+    LocationDocument loc1 =
+         (LocationDocument) tmpStore.get(SampleData.SINGLETON_LOC_1);
+    assertNotNull("not found track", loc1);
+    items.add(loc1);
+    matches =
+        DopplerShiftBetweenTracksOperation.DopplerShiftOperation.getTracks(
+            (IStoreGroup) cTrack, items, tests);
+    assertEquals("not empty", 1, matches.size());
+
+    IStoreItem loc2 = tmpStore.get(SampleData.SINGLETON_LOC_2);
+    items.add(loc2);
+    matches =
+        DopplerShiftBetweenTracksOperation.DopplerShiftOperation.getTracks(
+            (IStoreGroup) cTrack, items, tests);
+    assertEquals("not empty", 2, matches.size());
+
+    // ok - they work at the top level, see if they work
+    // in a child group
+    items.remove(loc1);
+    items.remove(loc2);
+
+    // check it's empty
+    matches =
+        DopplerShiftBetweenTracksOperation.DopplerShiftOperation.getTracks(
+            (IStoreGroup) cTrack, items, tests);
+    assertEquals("empty", 0, matches.size());
+
+    IStoreGroup sensors = new StoreGroup("Sensor");
+    sensors.add(loc1);
+    sensors.add(loc2);
+    items.add(sensors);
+
+    matches =
+        DopplerShiftBetweenTracksOperation.DopplerShiftOperation.getTracks(
+            (IStoreGroup) cTrack, items, tests);
+    assertEquals("not empty", 2, matches.size());
+
+    // ok, move up a level
+    Collection<ICommand> ops =
+        doppler.actionsFor(items, store, mockContext);
+    assertEquals("single action", 0, ops.size());
+
+    // ok, give it a top-level sounds speed
+    final IStoreItem soundSpeed = tmpStore.get(SampleData.SPEED_ONE);
+    items.add(soundSpeed);
+
+    ops = doppler.actionsFor(items, store, mockContext);
+    assertEquals("single action", 1, ops.size());
+
+    assertEquals("Loc doens't yet have deps", 0, loc1.getDependents().size());
+    
+    // ok, we have two static sensors, ets them
+    ICommand firstOp = ops.iterator().next();
+    firstOp.execute();
+    List<Document> outputs = firstOp.getOutputs();
+    assertEquals("two output datasets", 2, outputs.size());
+
+    assertEquals("Loc now has deps", 1, loc1.getDependents().size());
+
+    // hmm, ensure we only get updates on tracks that have changed
+    final List<String> messages = new ArrayList<String>();
+    final IChangeListener listener = new IChangeListener()
+    {
+
+      @Override
+      public void metadataChanged(IStoreItem subject)
+      {
+        // TODO Auto-generated method stub
+
+      }
+
+      @Override
+      public void dataChanged(IStoreItem subject)
+      {
+        messages.add("" + subject.getName());
+      }
+
+      @Override
+      public void collectionDeleted(IStoreItem subject)
+      {
+        // TODO Auto-generated method stub
+      }
+    };
+
+    Iterator<Document> iter = outputs.iterator();
+    while (iter.hasNext())
+    {
+      IStoreItem iStoreItem = (IStoreItem) iter.next();
+      iStoreItem.addChangeListener(listener);
+    }
+
+    assertEquals("no updates yet", 0, messages.size());
+
+    // ok, make a change to loc1
+    String locName = loc1.getName();
+    loc1.clearQuiet();
+    LocationDocumentBuilder lb = new LocationDocumentBuilder(locName, null);    
+    lb.add(new Point2D.Double(22, 33));
+    loc1.setDataset(lb.toDocument().getDataset());
+    
+    assertEquals("no updates yet", 0, messages.size());
+    
+    loc1.fireDataChanged();
+
+    assertEquals("two updates (since we update all outputs)", 2, messages.size());
+
+    // restart
+    messages.clear();
+
+    // get the freq
+    tmpStore.get(SampleData.FREQ_ONE).fireDataChanged();
+    assertEquals("both outputs updated", 2, messages.size());
+
+    // restart
+    messages.clear();
+
+    // get the freq
+    soundSpeed.fireDataChanged();
+    assertEquals("both outputs updated", 2, messages.size());
+
+    // and what if we make the sensors group look like a track?
+    sensors.remove(loc2);
+    sensors.add(tmpStore.get(SampleData.FREQ_ONE));
+    sensors.add(soundSpeed);
+
+    ops = doppler.actionsFor(items, store, mockContext);
+    assertEquals("single action", 2, ops.size());
+
+  }
   //
   // @SuppressWarnings("unused")
   // public void testDoppler()

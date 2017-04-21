@@ -37,6 +37,7 @@ import info.limpet2.operations.arithmetic.simple.SubtractQuantityOperation;
 import info.limpet2.operations.arithmetic.simple.UnitConversionOperation;
 import info.limpet2.operations.spatial.BearingBetweenTracksOperation;
 import info.limpet2.operations.spatial.DistanceBetweenTracksOperation;
+import info.limpet2.operations.spatial.DopplerShiftBetweenTracksOperation;
 import info.limpet2.operations.spatial.GenerateCourseAndSpeedOperation;
 import info.limpet2.operations.spatial.ProplossBetweenTwoTracksOperation;
 
@@ -309,7 +310,7 @@ public class OperationsLibrary
     spatial.add(new DistanceBetweenTracksOperation());
     spatial.add(new BearingBetweenTracksOperation());
     spatial.add(new GenerateCourseAndSpeedOperation());
-    // spatial.add(new DopplerShiftBetweenTracksOperation());
+    spatial.add(new DopplerShiftBetweenTracksOperation());
     spatial.add(new ProplossBetweenTwoTracksOperation());
     return spatial;
   }

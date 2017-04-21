@@ -1,5 +1,6 @@
 package info.limpet.data2;
 
+import info.limpet.data.operations.spatial.GeoSupport;
 import info.limpet2.LocationDocument;
 import info.limpet2.LocationDocumentBuilder;
 
@@ -20,7 +21,7 @@ public class TestLocations extends TestCase
         new LocationDocumentBuilder(DOC_NAME, null);
     for (int i = 0; i < 10; i++)
     {
-      Point2D newP = new Point2D.Double(i, i * 2);
+      Point2D newP = GeoSupport.getCalculator().createPoint(i, i * 2);
       builder.add(newP);
     }
 
@@ -38,7 +39,7 @@ public class TestLocations extends TestCase
         new LocationDocumentBuilder(DOC_NAME, null);
     for (int i = 0; i < 10; i++)
     {
-      Point2D newP = new Point2D.Double(i, i * 2);
+      Point2D newP = GeoSupport.getCalculator().createPoint(i, i * 2);
       builder.add(newP, (long) (i * 100000));
     }
 

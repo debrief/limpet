@@ -42,7 +42,15 @@ public class NumberDocument extends Document
   {
     return qType;
   }
+  
+  public int getSize()
+  {
+    return size();
+  }
+//  @UIProperty(name = "Range", category = UIProperty.CATEGORY_METADATA,
+//      visibleWhen = "size == 1")
 
+  @UIProperty(name = "Range", category = UIProperty.CATEGORY_METADATA)
   public Range getRange()
   {
     return range;
@@ -193,7 +201,7 @@ public class NumberDocument extends Document
 
   public double getValue(int i)
   {
-    return dataset.getDouble(i);
+    return  dataset.getDouble(i);
   }
 
   public void setUnits(Unit<?> unit)
@@ -243,6 +251,11 @@ public class NumberDocument extends Document
 
   public void replaceSingleton(double val)
   {
-    throw new RuntimeException("Replace singleton not yet implemented");
+    DoubleDataset ds = (DoubleDataset) DatasetFactory.createFromObject(new double[]{val});
+    ds.setName(getName());
+    setDataset(ds);
+    
+    // ok share the good news
+    fireDataChanged();
   }
 }

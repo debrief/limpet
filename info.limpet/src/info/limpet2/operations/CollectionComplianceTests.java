@@ -206,7 +206,7 @@ public class CollectionComplianceTests
         {
           if (thisC.isIndexed())
           {
-//            NumberDocument nd = (NumberDocument) thisC;
+            // NumberDocument nd = (NumberDocument) thisC;
             AxesMetadata axes =
                 thisC.getDataset().getFirstMetadata(AxesMetadata.class);
             ILazyDataset axesDatasetLazy = axes.getAxes()[0];
@@ -912,7 +912,7 @@ public class CollectionComplianceTests
    *          dimension we need to be present
    * @return yes/no
    */
-  public NumberDocument collectionWith(Collection<IStoreItem> kids,
+  public NumberDocument findCollectionWith(Collection<IStoreItem> kids,
       Dimension dimension, final boolean walkTree)
   {
     NumberDocument res = null;
@@ -924,7 +924,7 @@ public class CollectionComplianceTests
       if (item instanceof IStoreGroup && walkTree)
       {
         IStoreGroup group = (IStoreGroup) item;
-        res = collectionWith(group, dimension, walkTree);
+        res = findCollectionWith(group, dimension, walkTree);
         if (res != null)
         {
           break;
@@ -1210,33 +1210,33 @@ public class CollectionComplianceTests
     }
   }
 
-//  /**
-//   * retrieve the location at the specified time (even if it's a non-temporal collection)
-//   * 
-//   * @param iCollection
-//   *          set of locations to use
-//   * @param thisTime
-//   *          time we're need a location for
-//   * @return
-//   */
-//  public Point2D locationFor(Document iCollection, Long thisTime)
-//  {
-//    Point2D res = null;
-//    if (iCollection.isIndexed())
-//    {
-//      LocationDocument tLoc = (LocationDocument) iCollection;
-//      res = tLoc.interpolateValue(thisTime, Document.InterpMethod.Linear);
-//    }
-//    else
-//    {
-//      LocationDocument tLoc = (LocationDocument) iCollection;
-//      if (tLoc.size() > 0)
-//      {
-//        res = tLoc.getLocationIterator().next();
-//      }
-//    }
-//    return res;
-//  }
+  // /**
+  // * retrieve the location at the specified time (even if it's a non-temporal collection)
+  // *
+  // * @param iCollection
+  // * set of locations to use
+  // * @param thisTime
+  // * time we're need a location for
+  // * @return
+  // */
+  // public Point2D locationFor(Document iCollection, Long thisTime)
+  // {
+  // Point2D res = null;
+  // if (iCollection.isIndexed())
+  // {
+  // LocationDocument tLoc = (LocationDocument) iCollection;
+  // res = tLoc.interpolateValue(thisTime, Document.InterpMethod.Linear);
+  // }
+  // else
+  // {
+  // LocationDocument tLoc = (LocationDocument) iCollection;
+  // if (tLoc.size() > 0)
+  // {
+  // res = tLoc.getLocationIterator().next();
+  // }
+  // }
+  // return res;
+  // }
 
   public static class TimePeriod
   {
@@ -1277,6 +1277,40 @@ public class CollectionComplianceTests
     public void setEndTime(long endTime)
     {
       this.endTime = endTime;
+    }
+  }
+
+  public List<Document> getDocumentsIn(Collection<IStoreItem> selection)
+  {
+    List<Document> res = new ArrayList<Document>();
+
+    for (IStoreItem sel : selection)
+    {
+      if (sel instanceof Document)
+      {
+        res.add((Document) sel);
+      }
+      else
+      {
+        processThis(res, (IStoreGroup) sel);
+      }
+    }
+
+    return res;
+  }
+
+  private void processThis(List<Document> target, IStoreGroup selection)
+  {
+    for (IStoreItem sel : selection)
+    {
+      if (sel instanceof Document)
+      {
+        target.add((Document) sel);
+      }
+      else
+      {
+        processThis(target, (IStoreGroup) sel);
+      }
     }
   }
 }

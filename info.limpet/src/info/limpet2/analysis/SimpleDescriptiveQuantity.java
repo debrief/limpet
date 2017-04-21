@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
+import org.eclipse.january.dataset.DoubleDataset;
 
 public abstract class SimpleDescriptiveQuantity extends CoreAnalysis
 {
@@ -83,15 +84,9 @@ public abstract class SimpleDescriptiveQuantity extends CoreAnalysis
         if (o.size() > 1)
         {
           // collate the values into an array
-          double[] data = new double[o.size()];
-
-          // Add the data from the array
-          int ctr = 0;
-          for(int i=0;i<o.size();i++)
-          {
-            data[ctr++] = o.getValue(i);
-          }
-
+          DoubleDataset dd = (DoubleDataset) o.getDataset();;
+          double[] data = dd.getData();
+          
           // Get a DescriptiveStatistics instance
           DescriptiveStatistics stats = new DescriptiveStatistics(data);
 
