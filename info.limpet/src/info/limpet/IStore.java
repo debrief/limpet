@@ -14,10 +14,10 @@
  *****************************************************************************/
 package info.limpet;
 
+import info.limpet.data.store.StoreGroup.StoreChangeListener;
+
 import java.util.List;
 import java.util.UUID;
-
-import info.limpet.data.store.StoreGroup.StoreChangeListener;
 
 /**
  * a storage container for collections, stored in a tree structure.
@@ -27,7 +27,7 @@ import info.limpet.data.store.StoreGroup.StoreChangeListener;
  */
 public interface IStore extends IStoreGroup
 {
-
+  
   /**
    * add the new collections at the root level
    * 
