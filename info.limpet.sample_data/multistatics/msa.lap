@@ -16285,7 +16285,7 @@
         </odata>
         <data reference="1815"/>
       </dataset>
-      <predecessor class="info.limpet2.operations.admin.CreateSingletonGenerator$CreateSingletonCommand" id="1816" title="Add single speed (m/s)" canUndo="false" canRedo="false" dynamic="true">
+      <predecessor class="info.limpet.operations.admin.CreateSingletonGenerator$CreateSingletonCommand" id="1816" title="Add single speed (m/s)" canUndo="false" canRedo="false" dynamic="true">
         <description>Create single speed (m/s)</description>
         <store class="Folder" reference="1"/>
         <inputs id="1817"/>

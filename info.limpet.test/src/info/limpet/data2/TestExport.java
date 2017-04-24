@@ -1,10 +1,10 @@
 package info.limpet.data2;
 
-import info.limpet2.Document;
-import info.limpet2.IStoreItem;
-import info.limpet2.SampleData;
-import info.limpet2.StoreGroup;
-import info.limpet2.persistence.CsvGenerator;
+import info.limpet.Document;
+import info.limpet.IStoreItem;
+import info.limpet.SampleData;
+import info.limpet.StoreGroup;
+import info.limpet.persistence.CsvGenerator;
 
 import java.util.ArrayList;
 import java.util.Iterator;

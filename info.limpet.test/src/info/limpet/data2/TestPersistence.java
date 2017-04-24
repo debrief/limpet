@@ -14,11 +14,11 @@
  *****************************************************************************/
 package info.limpet.data2;
 
-import info.limpet.data.persistence.xml2.XStreamHandler;
-import info.limpet2.IStoreGroup;
-import info.limpet2.NumberDocument;
-import info.limpet2.SampleData;
-import info.limpet2.StoreGroup;
+import info.limpet.IStoreGroup;
+import info.limpet.NumberDocument;
+import info.limpet.SampleData;
+import info.limpet.StoreGroup;
+import info.limpet.data.persistence.xml.XStreamHandler;
 
 import java.io.File;
 import java.io.IOException;

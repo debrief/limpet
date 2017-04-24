@@ -14,9 +14,9 @@
  *****************************************************************************/
 package info.limpet.analysis;
 
-import info.limpet.ICollection;
+import info.limpet.Document;
 import info.limpet.IStoreItem;
-import info.limpet.data.operations.CollectionComplianceTests;
+import info.limpet.operations.CollectionComplianceTests;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -45,14 +45,14 @@ public abstract class GeneralDescription extends CoreAnalysis
       // ok, let's go for it.
       for (Iterator<IStoreItem> iter = selection.iterator(); iter.hasNext();)
       {
-        ICollection thisC = (ICollection) iter.next();
+        Document thisC = (Document) iter.next();
 
         titles.add("Collection");
         values.add(thisC.getName());
         titles.add("Size");
-        values.add("" + thisC.getValuesCount());
+        values.add("" + thisC.size());
         titles.add("Temporal");
-        values.add("" + thisC.isTemporal());
+        values.add("" + thisC.isIndexed());
         titles.add("Quantity");
         values.add("" + thisC.isQuantity());
 

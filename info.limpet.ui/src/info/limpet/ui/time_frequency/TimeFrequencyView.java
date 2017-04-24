@@ -14,13 +14,13 @@
  *****************************************************************************/
 package info.limpet.ui.time_frequency;
 
+import info.limpet.Document;
+import info.limpet.IStoreItem;
+import info.limpet.analysis.TimeFrequencyBins;
+import info.limpet.analysis.TimeFrequencyBins.Bin;
+import info.limpet.operations.CollectionComplianceTests;
 import info.limpet.ui.PlottingHelpers;
 import info.limpet.ui.core_view.CoreAnalysisView;
-import info.limpet2.Document;
-import info.limpet2.IStoreItem;
-import info.limpet2.analysis.TimeFrequencyBins;
-import info.limpet2.analysis.TimeFrequencyBins.Bin;
-import info.limpet2.operations.CollectionComplianceTests;
 
 import java.util.Date;
 import java.util.Iterator;

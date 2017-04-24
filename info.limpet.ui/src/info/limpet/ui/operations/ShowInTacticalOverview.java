@@ -14,7 +14,15 @@
  *****************************************************************************/
 package info.limpet.ui.operations;
 
+import info.limpet.ICommand;
 import info.limpet.IContext;
+import info.limpet.IOperation;
+import info.limpet.IStoreGroup;
+import info.limpet.IStoreItem;
+import info.limpet.NumberDocument;
+import info.limpet.StoreGroup;
+import info.limpet.operations.AbstractCommand;
+import info.limpet.operations.CollectionComplianceTests;
 import info.limpet.stackedcharts.model.AngleAxis;
 import info.limpet.stackedcharts.model.Chart;
 import info.limpet.stackedcharts.model.ChartSet;
@@ -31,14 +39,6 @@ import info.limpet.stackedcharts.model.SelectiveAnnotation;
 import info.limpet.stackedcharts.model.StackedchartsFactory;
 import info.limpet.stackedcharts.ui.view.StackedChartsView;
 import info.limpet.ui.range_slider.RangeSliderView;
-import info.limpet2.ICommand;
-import info.limpet2.IOperation;
-import info.limpet2.IStoreGroup;
-import info.limpet2.IStoreItem;
-import info.limpet2.NumberDocument;
-import info.limpet2.StoreGroup;
-import info.limpet2.operations.AbstractCommand;
-import info.limpet2.operations.CollectionComplianceTests;
 
 import java.awt.Color;
 import java.beans.PropertyChangeEvent;

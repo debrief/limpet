@@ -14,7 +14,15 @@
  *****************************************************************************/
 package info.limpet.ui.operations;
 
+import info.limpet.Document;
+import info.limpet.ICommand;
 import info.limpet.IContext;
+import info.limpet.IOperation;
+import info.limpet.IStoreGroup;
+import info.limpet.IStoreItem;
+import info.limpet.NumberDocument;
+import info.limpet.operations.AbstractCommand;
+import info.limpet.operations.CollectionComplianceTests;
 import info.limpet.stackedcharts.model.AngleAxis;
 import info.limpet.stackedcharts.model.AxisType;
 import info.limpet.stackedcharts.model.Chart;
@@ -27,18 +35,10 @@ import info.limpet.stackedcharts.model.Orientation;
 import info.limpet.stackedcharts.model.StackedchartsFactory;
 import info.limpet.stackedcharts.ui.view.StackedChartsView;
 import info.limpet.stackedcharts.ui.view.StackedChartsView.ControllableDate;
-import info.limpet.ui.data_provider.data2.CollectionWrapper;
+import info.limpet.store.IGroupWrapper;
+import info.limpet.ui.data_provider.data.CollectionWrapper;
 import info.limpet.ui.range_slider.RangeSliderView;
 import info.limpet.ui.stacked.LimpetStackedChartsAdapter;
-import info.limpet2.Document;
-import info.limpet2.ICommand;
-import info.limpet2.IOperation;
-import info.limpet2.IStoreGroup;
-import info.limpet2.IStoreItem;
-import info.limpet2.NumberDocument;
-import info.limpet2.operations.AbstractCommand;
-import info.limpet2.operations.CollectionComplianceTests;
-import info.limpet2.store.IGroupWrapper;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;

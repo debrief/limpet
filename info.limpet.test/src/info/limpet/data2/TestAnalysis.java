@@ -15,11 +15,11 @@
 package info.limpet.data2;
 
 import static javax.measure.unit.SI.METRE;
-import info.limpet2.IStoreItem;
-import info.limpet2.NumberDocumentBuilder;
-import info.limpet2.NumberDocument;
-import info.limpet2.analysis.AnalysisLibrary;
-import info.limpet2.analysis.IAnalysis;
+import info.limpet.IStoreItem;
+import info.limpet.NumberDocument;
+import info.limpet.NumberDocumentBuilder;
+import info.limpet.analysis.AnalysisLibrary;
+import info.limpet.analysis.IAnalysis;
 
 import java.util.ArrayList;
 import java.util.Iterator;

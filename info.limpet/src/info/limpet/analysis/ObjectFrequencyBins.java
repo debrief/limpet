@@ -14,10 +14,10 @@
  *****************************************************************************/
 package info.limpet.analysis;
 
-import info.limpet.ICollection;
-import info.limpet.IObjectCollection;
+import info.limpet.Document;
+import info.limpet.IObjectDocument;
 import info.limpet.IStoreItem;
-import info.limpet.data.operations.CollectionComplianceTests;
+import info.limpet.operations.CollectionComplianceTests;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -70,12 +70,12 @@ public abstract class ObjectFrequencyBins extends CoreAnalysis
     }
   }
 
-  public static BinnedData doBins(IObjectCollection<?> collection)
+  public static BinnedData doBins(IObjectDocument collection)
   {
 
     // build up the histogram
     Frequency freq = new Frequency();
-    Iterator<?> iter2 = collection.getValues().iterator();
+    Iterator<?> iter2 = collection.getObjectIterator();
     while (iter2.hasNext())
     {
       Object object = (Object) iter2.next();
@@ -106,11 +106,11 @@ public abstract class ObjectFrequencyBins extends CoreAnalysis
       // ok, let's go for it.
       for (Iterator<IStoreItem> iter = selection.iterator(); iter.hasNext();)
       {
-        ICollection thisC = (ICollection) iter.next();
+        Document thisC = (Document) iter.next();
 
-        if (thisC.getValuesCount() <= MAX_SIZE)
+        if (thisC.size() <= MAX_SIZE)
         {
-          IObjectCollection<?> o = (IObjectCollection<?>) thisC;
+          IObjectDocument o = (IObjectDocument) thisC;
 
           BinnedData res = doBins(o);
 

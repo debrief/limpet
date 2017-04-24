@@ -14,10 +14,10 @@
  *****************************************************************************/
 package info.limpet.ui;
 
-import java.util.ArrayList;
+import info.limpet.operations.spatial.GeoSupport;
+import info.limpet.operations.spatial.GeotoolsCalculator;
 
-import info.limpet.data.operations.spatial.GeoSupport;
-import info.limpet.data.operations.spatial.GeotoolsCalculator;
+import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.core.runtime.IStatus;

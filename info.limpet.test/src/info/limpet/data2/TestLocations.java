@@ -1,8 +1,8 @@
 package info.limpet.data2;
 
-import info.limpet.data.operations.spatial.GeoSupport;
-import info.limpet2.LocationDocument;
-import info.limpet2.LocationDocumentBuilder;
+import info.limpet.LocationDocument;
+import info.limpet.LocationDocumentBuilder;
+import info.limpet.operations.spatial.GeoSupport;
 
 import java.awt.geom.Point2D;
 

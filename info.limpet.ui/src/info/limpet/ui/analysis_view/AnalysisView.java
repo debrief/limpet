@@ -14,10 +14,10 @@
  *****************************************************************************/
 package info.limpet.ui.analysis_view;
 
+import info.limpet.IStoreItem;
+import info.limpet.analysis.AnalysisLibrary;
+import info.limpet.operations.CollectionComplianceTests;
 import info.limpet.ui.core_view.CoreAnalysisView;
-import info.limpet2.IStoreItem;
-import info.limpet2.analysis.AnalysisLibrary;
-import info.limpet2.operations.CollectionComplianceTests;
 
 import java.util.ArrayList;
 import java.util.Iterator;

@@ -14,18 +14,13 @@
  *****************************************************************************/
 package info.limpet.analysis;
 
-import info.limpet.ICollection;
-import info.limpet.IQuantityCollection;
 import info.limpet.IStoreItem;
-import info.limpet.data.operations.CollectionComplianceTests;
+import info.limpet.NumberDocument;
+import info.limpet.operations.CollectionComplianceTests;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import javax.measure.Measurable;
-import javax.measure.quantity.Quantity;
-import javax.measure.unit.Unit;
 
 import org.apache.commons.math3.random.EmpiricalDistribution;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
@@ -84,20 +79,16 @@ public abstract class QuantityFrequencyBins extends CoreAnalysis
     }
   }
 
-  public static BinnedData doBins(IQuantityCollection<Quantity> collection)
+  public static BinnedData doBins(NumberDocument collection)
   {
     // collate the values into an array
-    double[] data = new double[collection.getValuesCount()];
+    double[] data = new double[collection.size()];
 
     // Add the data from the array
     int ctr = 0;
-    Iterator<Measurable<Quantity>> iterV = collection.getValues().iterator();
-    while (iterV.hasNext())
+    for (int i = 0; i < collection.size(); i++)
     {
-      Measurable<Quantity> object = (Measurable<Quantity>) iterV.next();
-
-      Unit<Quantity> theseUnits = collection.getUnits();
-      data[ctr++] = object.doubleValue(theseUnits);
+      data[ctr++] = collection.getValue(i);
     }
 
     // Get a DescriptiveStatistics instance
@@ -156,13 +147,11 @@ public abstract class QuantityFrequencyBins extends CoreAnalysis
       // ok, let's go for it.
       for (Iterator<IStoreItem> iter = selection.iterator(); iter.hasNext();)
       {
-        ICollection thisC = (ICollection) iter.next();
-        @SuppressWarnings("unchecked")
-        IQuantityCollection<Quantity> o = (IQuantityCollection<Quantity>) thisC;
+        NumberDocument thisC = (NumberDocument) iter.next();
 
-        if (thisC.getValuesCount() > 1 && thisC.getValuesCount() < MAX_SIZE)
+        if (thisC.size() > 1 && thisC.size() < MAX_SIZE)
         {
-          BinnedData res = doBins(o);
+          BinnedData res = doBins(thisC);
 
           // now output the bins
           StringBuffer freqBins = new StringBuffer();

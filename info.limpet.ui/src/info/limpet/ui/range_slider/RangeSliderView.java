@@ -14,17 +14,17 @@
  *****************************************************************************/
 package info.limpet.ui.range_slider;
 
+import info.limpet.Document;
+import info.limpet.IChangeListener;
+import info.limpet.ICommand;
+import info.limpet.IStoreGroup;
+import info.limpet.IStoreItem;
+import info.limpet.NumberDocument;
+import info.limpet.Range;
+import info.limpet.operations.CollectionComplianceTests;
+import info.limpet.operations.arithmetic.SimpleMovingAverageOperation.SimpleMovingAverageCommand;
 import info.limpet.stackedcharts.ui.editor.Activator;
 import info.limpet.ui.core_view.CoreAnalysisView;
-import info.limpet2.Document;
-import info.limpet2.IChangeListener;
-import info.limpet2.ICommand;
-import info.limpet2.IStoreGroup;
-import info.limpet2.IStoreItem;
-import info.limpet2.NumberDocument;
-import info.limpet2.Range;
-import info.limpet2.operations.CollectionComplianceTests;
-import info.limpet2.operations.arithmetic.SimpleMovingAverageOperation.SimpleMovingAverageCommand;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

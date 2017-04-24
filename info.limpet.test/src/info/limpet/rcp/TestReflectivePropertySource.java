@@ -1,11 +1,11 @@
 package info.limpet.rcp;
 
+import info.limpet.ICommand;
+import info.limpet.NumberDocument;
+import info.limpet.Range;
 import info.limpet.UIProperty;
-import info.limpet.ui.data_provider.data2.PropertyTypeHandler;
-import info.limpet.ui.data_provider.data2.ReflectivePropertySource;
-import info.limpet2.ICommand;
-import info.limpet2.NumberDocument;
-import info.limpet2.Range;
+import info.limpet.ui.data_provider.data.PropertyTypeHandler;
+import info.limpet.ui.data_provider.data.ReflectivePropertySource;
 
 import javax.measure.quantity.Temperature;
 import javax.measure.quantity.Velocity;

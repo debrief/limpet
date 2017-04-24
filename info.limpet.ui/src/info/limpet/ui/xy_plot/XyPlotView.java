@@ -14,14 +14,14 @@
  *****************************************************************************/
 package info.limpet.ui.xy_plot;
 
+import info.limpet.Document;
+import info.limpet.IStoreItem;
+import info.limpet.LocationDocument;
+import info.limpet.NumberDocument;
+import info.limpet.operations.CollectionComplianceTests;
+import info.limpet.operations.CollectionComplianceTests.TimePeriod;
 import info.limpet.ui.PlottingHelpers;
 import info.limpet.ui.core_view.CoreAnalysisView;
-import info.limpet2.Document;
-import info.limpet2.IStoreItem;
-import info.limpet2.LocationDocument;
-import info.limpet2.NumberDocument;
-import info.limpet2.operations.CollectionComplianceTests;
-import info.limpet2.operations.CollectionComplianceTests.TimePeriod;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;

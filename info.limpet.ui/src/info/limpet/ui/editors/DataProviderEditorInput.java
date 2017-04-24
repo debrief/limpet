@@ -14,7 +14,7 @@
  *****************************************************************************/
 package info.limpet.ui.editors;
 
-import info.limpet.ui.data_provider.data2.DataModel;
+import info.limpet.ui.data_provider.data.DataModel;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IEditorInput;

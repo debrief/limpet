@@ -14,10 +14,10 @@
  *****************************************************************************/
 package info.limpet.analysis;
 
-import info.limpet.IBaseTemporalCollection;
-import info.limpet.ICollection;
+import info.limpet.Document;
 import info.limpet.IStoreItem;
-import info.limpet.data.operations.CollectionComplianceTests;
+import info.limpet.NumberDocument;
+import info.limpet.operations.CollectionComplianceTests;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -80,20 +80,19 @@ public abstract class TimeFrequencyBins extends CoreAnalysis
     }
   }
 
-  public static BinnedData doBins(ICollection c, IBaseTemporalCollection o)
+  public static BinnedData doBins(Document o)
   {
     // collate the values into an array
-    double[] data = new double[c.getValuesCount()];
-
+    double[] data = new double[o.size()];
+    
     // Add the data from the array
+    Iterator<Long> oIter = o.getIndices();
     int ctr = 0;
-    Iterator<Long> iterV = o.getTimes().iterator();
-    while (iterV.hasNext())
+    while(oIter.hasNext())
     {
-      long time = iterV.next();
-      data[ctr++] = time;
+      data[ctr++] = oIter.next();
     }
-
+    
     // Get a DescriptiveStatistics instance
     DescriptiveStatistics stats = new DescriptiveStatistics(data);
 
@@ -151,12 +150,11 @@ public abstract class TimeFrequencyBins extends CoreAnalysis
       // ok, let's go for it.
       for (Iterator<IStoreItem> iter = selection.iterator(); iter.hasNext();)
       {
-        ICollection thisC = (ICollection) iter.next();
-        IBaseTemporalCollection o = (IBaseTemporalCollection) thisC;
+        NumberDocument o = (NumberDocument) iter.next();
 
-        if (thisC.getValuesCount() > 1 && thisC.getValuesCount() < MAX_SIZE)
+        if (o.size() > 1 && o.size() < MAX_SIZE)
         {
-          BinnedData res = doBins(thisC, o);
+          BinnedData res = doBins(o);
 
           // now output the bins
           StringBuffer freqBins = new StringBuffer();
@@ -188,7 +186,7 @@ public abstract class TimeFrequencyBins extends CoreAnalysis
 
   private boolean appliesTo(List<IStoreItem> selection)
   {
-    return aTests.allCollections(selection) && aTests.allTemporal(selection);
+    return aTests.allCollections(selection) && aTests.allIndexed(selection);
   }
 
   protected abstract void presentResults(List<String> titles,

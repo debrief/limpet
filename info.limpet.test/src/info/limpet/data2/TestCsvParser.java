@@ -14,10 +14,10 @@
  *****************************************************************************/
 package info.limpet.data2;
 
-import info.limpet2.Document;
-import info.limpet2.IStoreItem;
-import info.limpet2.StoreGroup;
-import info.limpet2.persistence.CsvParser;
+import info.limpet.Document;
+import info.limpet.IStoreItem;
+import info.limpet.StoreGroup;
+import info.limpet.persistence.CsvParser;
 
 import java.io.File;
 import java.util.List;

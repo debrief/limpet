@@ -14,14 +14,14 @@
  *****************************************************************************/
 package info.limpet.ui.editors.dnd;
 
-import info.limpet.data.persistence.xml2.XStreamHandler;
+import info.limpet.IStoreGroup;
+import info.limpet.IStoreItem;
+import info.limpet.StoreGroup;
+import info.limpet.data.persistence.xml.XStreamHandler;
+import info.limpet.persistence.CsvParser;
 import info.limpet.ui.Activator;
-import info.limpet.ui.data_provider.data2.GroupWrapper;
-import info.limpet.ui.editors2.LimpetDragListener;
-import info.limpet2.IStoreGroup;
-import info.limpet2.IStoreItem;
-import info.limpet2.StoreGroup;
-import info.limpet2.persistence.CsvParser;
+import info.limpet.ui.data_provider.data.GroupWrapper;
+import info.limpet.ui.editors.LimpetDragListener;
 
 import java.io.IOException;
 import java.util.ArrayList;

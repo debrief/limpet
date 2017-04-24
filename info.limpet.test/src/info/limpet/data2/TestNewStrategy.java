@@ -1,18 +1,18 @@
 package info.limpet.data2;
 
 import static javax.measure.unit.SI.METRE;
+import info.limpet.Document;
+import info.limpet.ICommand;
 import info.limpet.IContext;
-import info.limpet2.Document;
-import info.limpet2.ICommand;
-import info.limpet2.IOperation;
-import info.limpet2.IStoreGroup;
-import info.limpet2.IStoreItem;
-import info.limpet2.MockContext;
-import info.limpet2.NumberDocument;
-import info.limpet2.NumberDocumentBuilder;
-import info.limpet2.SampleData;
-import info.limpet2.StoreGroup;
-import info.limpet2.operations.arithmetic.simple.AddQuantityOperation;
+import info.limpet.IOperation;
+import info.limpet.IStoreGroup;
+import info.limpet.IStoreItem;
+import info.limpet.MockContext;
+import info.limpet.NumberDocument;
+import info.limpet.NumberDocumentBuilder;
+import info.limpet.SampleData;
+import info.limpet.StoreGroup;
+import info.limpet.operations.arithmetic.simple.AddQuantityOperation;
 
 import java.util.ArrayList;
 import java.util.Collection;

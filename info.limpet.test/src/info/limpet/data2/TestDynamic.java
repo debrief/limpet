@@ -14,15 +14,15 @@
  *****************************************************************************/
 package info.limpet.data2;
 
+import info.limpet.IChangeListener;
+import info.limpet.ICommand;
 import info.limpet.IContext;
-import info.limpet2.IChangeListener;
-import info.limpet2.ICommand;
-import info.limpet2.IStoreItem;
-import info.limpet2.MockContext;
-import info.limpet2.NumberDocument;
-import info.limpet2.SampleData;
-import info.limpet2.StoreGroup;
-import info.limpet2.operations.arithmetic.simple.AddQuantityOperation;
+import info.limpet.IStoreItem;
+import info.limpet.MockContext;
+import info.limpet.NumberDocument;
+import info.limpet.SampleData;
+import info.limpet.StoreGroup;
+import info.limpet.operations.arithmetic.simple.AddQuantityOperation;
 
 import java.util.ArrayList;
 import java.util.Collection;

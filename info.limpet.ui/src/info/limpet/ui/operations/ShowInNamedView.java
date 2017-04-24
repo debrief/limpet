@@ -14,14 +14,14 @@
  *****************************************************************************/
 package info.limpet.ui.operations;
 
+import info.limpet.ICommand;
 import info.limpet.IContext;
+import info.limpet.IOperation;
+import info.limpet.IStoreGroup;
+import info.limpet.IStoreItem;
+import info.limpet.operations.AbstractCommand;
+import info.limpet.operations.CollectionComplianceTests;
 import info.limpet.ui.core_view.CoreAnalysisView;
-import info.limpet2.ICommand;
-import info.limpet2.IOperation;
-import info.limpet2.IStoreGroup;
-import info.limpet2.IStoreItem;
-import info.limpet2.operations.AbstractCommand;
-import info.limpet2.operations.CollectionComplianceTests;
 
 import java.util.ArrayList;
 import java.util.List;

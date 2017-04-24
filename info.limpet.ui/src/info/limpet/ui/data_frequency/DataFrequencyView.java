@@ -14,17 +14,17 @@
  *****************************************************************************/
 package info.limpet.ui.data_frequency;
 
+import info.limpet.Document;
+import info.limpet.IObjectDocument;
+import info.limpet.IStoreItem;
+import info.limpet.NumberDocument;
+import info.limpet.analysis.ObjectFrequencyBins;
+import info.limpet.analysis.QuantityFrequencyBins;
+import info.limpet.analysis.ObjectFrequencyBins.BinnedData;
+import info.limpet.analysis.QuantityFrequencyBins.Bin;
+import info.limpet.operations.CollectionComplianceTests;
 import info.limpet.ui.PlottingHelpers;
 import info.limpet.ui.core_view.CoreAnalysisView;
-import info.limpet2.Document;
-import info.limpet2.IObjectDocument;
-import info.limpet2.IStoreItem;
-import info.limpet2.NumberDocument;
-import info.limpet2.analysis.ObjectFrequencyBins;
-import info.limpet2.analysis.ObjectFrequencyBins.BinnedData;
-import info.limpet2.analysis.QuantityFrequencyBins;
-import info.limpet2.analysis.QuantityFrequencyBins.Bin;
-import info.limpet2.operations.CollectionComplianceTests;
 
 import java.util.Iterator;
 import java.util.List;

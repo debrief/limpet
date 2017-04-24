@@ -4,12 +4,6 @@ import java.util.UUID;
 
 public interface IStoreItem
 {
-
-	/** if this object has children
-	 * 
-	 * @return
-	 */
-	boolean hasChildren();
 	
 	/** find the layer that contains this collection (or null if applicable)
 	 * 
@@ -30,7 +24,7 @@ public interface IStoreItem
 	void removeChangeListener(IChangeListener listener);
 
 	/**
-	 * indicate that the collection has changed Note: both registeered listeners
+	 * indicate that the collection has changed Note: both registered listeners
 	 * and dependents are informed of the change
 	 */
 	void fireDataChanged();

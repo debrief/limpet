@@ -1,5 +1,10 @@
 package info.limpet.ui.stacked;
 
+import info.limpet.Document;
+import info.limpet.IChangeListener;
+import info.limpet.IStoreGroup;
+import info.limpet.IStoreItem;
+import info.limpet.NumberDocument;
 import info.limpet.stackedcharts.model.DataItem;
 import info.limpet.stackedcharts.model.Dataset;
 import info.limpet.stackedcharts.model.Datum;
@@ -8,13 +13,8 @@ import info.limpet.stackedcharts.model.ScatterSet;
 import info.limpet.stackedcharts.model.impl.StackedchartsFactoryImpl;
 import info.limpet.stackedcharts.ui.view.adapter.IStackedDatasetAdapter;
 import info.limpet.stackedcharts.ui.view.adapter.IStackedScatterSetAdapter;
-import info.limpet.ui.data_provider.data2.CollectionWrapper;
-import info.limpet.ui.data_provider.data2.GroupWrapper;
-import info.limpet2.Document;
-import info.limpet2.IChangeListener;
-import info.limpet2.IStoreGroup;
-import info.limpet2.IStoreItem;
-import info.limpet2.NumberDocument;
+import info.limpet.ui.data_provider.data.CollectionWrapper;
+import info.limpet.ui.data_provider.data.GroupWrapper;
 
 import java.awt.Color;
 import java.util.ArrayList;
