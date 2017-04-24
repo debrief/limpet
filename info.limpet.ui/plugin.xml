@@ -61,18 +61,6 @@
       	id="info.limpet.ui.editors.dataManagerEditor">
    	</editor>
    </extension>
-   
-      <extension
-         point="org.eclipse.ui.editors">
-   	<editor
-      	name="Data Manager Editor (legacy)"
-      	extensions="lap"
-      	icon="icons/limpet.png"
-      	class="info.limpet.ui.editors.DataManagerEditor"
-      	contributorClass="info.limpet.ui.editors.DataManagerEditorActionBarContributor"
-      	id="info.limpet.ui.editors.dataManagerEditorLegacy">
-   	</editor>
-   </extension>
 
    <extension
          point="org.eclipse.ui.decorators">
@@ -88,7 +76,7 @@
          </description>
          <enablement>
             <objectClass
-                  name="info.limpet.ui.data_provider.data.LimpetWrapper">
+                  name="info.limpet.ui.data_provider.data2.LimpetWrapper">
             </objectClass>
          </enablement>
       </decorator>

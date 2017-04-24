@@ -27,8 +27,10 @@ import info.limpet2.IOperation;
 import info.limpet2.IStoreItem;
 import info.limpet2.SampleData;
 import info.limpet2.operations.admin.AddLayerOperation;
+import info.limpet2.operations.admin.CopyCsvToClipboardAction;
 import info.limpet2.operations.admin.CreateSingletonGenerator;
 import info.limpet2.operations.admin.DeleteCollectionOperation;
+import info.limpet2.operations.admin.ExportCsvToFileAction;
 import info.limpet2.operations.admin.GenerateDummyDataOperation;
 import info.limpet2.operations.arithmetic.UnaryQuantityOperation;
 import info.limpet2.operations.arithmetic.simple.AddQuantityOperation;
@@ -78,7 +80,8 @@ public class OperationsLibrary
     @Override
     protected final boolean appliesTo(List<IStoreItem> selection)
     {
-      return selection.size() > 0 && getATests().allHaveDimension(selection, SI.RADIAN.getDimension());
+      return selection.size() > 0
+          && getATests().allHaveDimension(selection, SI.RADIAN.getDimension());
     }
   }
 
@@ -142,8 +145,8 @@ public class OperationsLibrary
     });
 
     // and the export operations
-    // admin.add(new ExportCsvToFileAction());
-    // admin.add(new CopyCsvToClipboardAction());
+    admin.add(new ExportCsvToFileAction());
+    admin.add(new CopyCsvToClipboardAction());
 
     return admin;
   }

@@ -12,22 +12,21 @@
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  *****************************************************************************/
-package info.limpet.data.operations.admin;
+package info.limpet2.operations.admin;
 
-import info.limpet.ICollection;
-import info.limpet.ICommand;
 import info.limpet.IContext;
-import info.limpet.IOperation;
-import info.limpet.IStore;
-import info.limpet.IStoreItem;
-import info.limpet.data.commands.AbstractCommand;
-import info.limpet.data.csv.CsvGenerator;
+import info.limpet2.Document;
+import info.limpet2.ICommand;
+import info.limpet2.IOperation;
+import info.limpet2.IStoreGroup;
+import info.limpet2.IStoreItem;
+import info.limpet2.operations.AbstractCommand;
+import info.limpet2.persistence.CsvGenerator;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
-public class CopyCsvToClipboardAction implements IOperation<IStoreItem>
+public class CopyCsvToClipboardAction implements IOperation
 {
 
   /**
@@ -37,21 +36,21 @@ public class CopyCsvToClipboardAction implements IOperation<IStoreItem>
    * 
    */
   public static class CopyCsvToClipboardCommand extends
-      AbstractCommand<IStoreItem>
+      AbstractCommand
   {
     private List<IStoreItem> _selection;
 
     public static String getCsvString(List<IStoreItem> selection)
     {
-      if (selection.size() == 1 && selection.get(0) instanceof ICollection)
+      if (selection.size() == 1 && selection.get(0) instanceof Document)
       {
-        return CsvGenerator.generate((ICollection) selection.get(0));
+        return CsvGenerator.generate(selection.get(0));
       }
       return null;
     }
 
     public CopyCsvToClipboardCommand(String title, List<IStoreItem> selection,
-        IStore store, IContext context)
+        IStoreGroup store, IContext context)
     {
       super(title, "Export selection to clipboard as CSV", store, false, false,
           null, context);
@@ -78,25 +77,17 @@ public class CopyCsvToClipboardAction implements IOperation<IStoreItem>
     {
       // don't worry
     }
-
-    @Override
-    protected String getOutputName()
-    {
-      // we don't actually use this
-      return null;
-    }
-
   }
 
-  public Collection<ICommand<IStoreItem>> actionsFor(
-      List<IStoreItem> selection, IStore destination, IContext context)
+  public List<ICommand> actionsFor(
+      List<IStoreItem> selection, IStoreGroup destination, IContext context)
   {
-    Collection<ICommand<IStoreItem>> res =
-        new ArrayList<ICommand<IStoreItem>>();
+    List<ICommand> res =
+        new ArrayList<ICommand>();
     if (appliesTo(selection))
     {
       // hmm, see if we have a single collection selected
-      ICommand<IStoreItem> newC = null;
+      ICommand newC = null;
       if (selection.size() == 1)
       {
         newC =
@@ -111,7 +102,7 @@ public class CopyCsvToClipboardAction implements IOperation<IStoreItem>
 
   private boolean appliesTo(List<IStoreItem> selection)
   {
-    return selection.size() == 1 && selection.get(0) instanceof ICollection;
+    return selection.size() == 1 && selection.get(0) instanceof Document;
   }
 
 }

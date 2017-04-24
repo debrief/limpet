@@ -12,24 +12,22 @@
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  *****************************************************************************/
-package info.limpet.data.operations.admin;
+package info.limpet2.operations.admin;
 
-import info.limpet.ICollection;
-import info.limpet.ICommand;
 import info.limpet.IContext;
-import info.limpet.IContext.Status;
-import info.limpet.IOperation;
-import info.limpet.IStore;
-import info.limpet.IStoreItem;
-import info.limpet.data.commands.AbstractCommand;
-import info.limpet.data.operations.admin.CopyCsvToClipboardAction.CopyCsvToClipboardCommand;
+import info.limpet2.Document;
+import info.limpet2.ICommand;
+import info.limpet2.IOperation;
+import info.limpet2.IStoreGroup;
+import info.limpet2.IStoreItem;
+import info.limpet2.operations.AbstractCommand;
+import info.limpet2.operations.admin.CopyCsvToClipboardAction.CopyCsvToClipboardCommand;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -38,7 +36,7 @@ import java.util.List;
  * @author ian
  * 
  */
-public class ExportCsvToFileAction implements IOperation<IStoreItem>
+public class ExportCsvToFileAction implements IOperation
 {
 
   /**
@@ -47,13 +45,12 @@ public class ExportCsvToFileAction implements IOperation<IStoreItem>
    * @author ian
    * 
    */
-  public static class ExportCsvToFileCommand extends
-      AbstractCommand<IStoreItem>
+  public static class ExportCsvToFileCommand extends AbstractCommand
   {
     private List<IStoreItem> _selection;
 
     public ExportCsvToFileCommand(String title, List<IStoreItem> selection,
-        IStore store, IContext context)
+        IStoreGroup store, IContext context)
     {
       super(title, "Export selection to CSV file", store, false, false, null,
           context);
@@ -100,7 +97,7 @@ public class ExportCsvToFileAction implements IOperation<IStoreItem>
             }
             catch (IOException e)
             {
-              getContext().logError(Status.ERROR,
+              getContext().logError(IContext.Status.ERROR,
                   "Failed to close fop in DataManagerEditor export to CSV", e);
             }
           }
@@ -116,26 +113,18 @@ public class ExportCsvToFileAction implements IOperation<IStoreItem>
     @Override
     protected void recalculate(IStoreItem subject)
     {
-      // don't worry
     }
 
-    @Override
-    protected String getOutputName()
-    {
-      // we don't actually use this
-      return null;
-    }
   }
 
-  public Collection<ICommand<IStoreItem>> actionsFor(
-      List<IStoreItem> selection, IStore destination, IContext context)
+  public List<ICommand> actionsFor(List<IStoreItem> selection,
+      IStoreGroup destination, IContext context)
   {
-    Collection<ICommand<IStoreItem>> res =
-        new ArrayList<ICommand<IStoreItem>>();
+    List<ICommand> res = new ArrayList<ICommand>();
     if (appliesTo(selection))
     {
       // hmm, see if we have a single collection selected
-      ICommand<IStoreItem> newC = null;
+      ICommand newC = null;
       if (selection.size() == 1)
       {
         newC =
@@ -150,7 +139,7 @@ public class ExportCsvToFileAction implements IOperation<IStoreItem>
 
   private boolean appliesTo(List<IStoreItem> selection)
   {
-    return selection.size() == 1 && selection.get(0) instanceof ICollection;
+    return selection.size() == 1 && selection.get(0) instanceof Document;
   }
 
 }

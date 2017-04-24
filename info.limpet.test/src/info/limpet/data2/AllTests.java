@@ -31,7 +31,6 @@ package info.limpet.data2;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
-import info.limpet.data.export.csv.TestExport;
 import info.limpet.rcp.TestReflectivePropertySource;
 import junit.framework.TestSuite;
 

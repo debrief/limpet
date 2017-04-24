@@ -1140,7 +1140,7 @@ public class TestOperations
 
     List<IOperation> adminOperations =
         ops.get(OperationsLibrary.ADMINISTRATION);
-    assertEquals("Creation size", 4, adminOperations.size());
+    assertEquals("Creation size", 6, adminOperations.size());
 
     List<IOperation> topLevel = OperationsLibrary.getTopLevel();
     assertNotNull(topLevel);

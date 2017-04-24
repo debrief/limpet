@@ -14,15 +14,14 @@
  *****************************************************************************/
 package info.limpet.ui.editors.dnd;
 
-import info.limpet.IStore;
-import info.limpet.IStoreGroup;
-import info.limpet.IStoreItem;
-import info.limpet.data.csv.CsvParser;
-import info.limpet.data.persistence.xml.XStreamHandler;
-import info.limpet.data.store.StoreGroup;
+import info.limpet.data.persistence.xml2.XStreamHandler;
 import info.limpet.ui.Activator;
-import info.limpet.ui.data_provider.data.GroupWrapper;
-import info.limpet.ui.editors.LimpetDragListener;
+import info.limpet.ui.data_provider.data2.GroupWrapper;
+import info.limpet.ui.editors2.LimpetDragListener;
+import info.limpet2.IStoreGroup;
+import info.limpet2.IStoreItem;
+import info.limpet2.StoreGroup;
+import info.limpet2.persistence.CsvParser;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -41,9 +40,9 @@ import org.eclipse.swt.dnd.TransferData;
 public class DataManagerDropAdapter extends ViewerDropAdapter
 {
 
-  private IStore _store;
+  private IStoreGroup _store;
 
-  public DataManagerDropAdapter(Viewer viewer, IStore store)
+  public DataManagerDropAdapter(Viewer viewer, IStoreGroup store)
   {
     super(viewer);
     this._store = store;
@@ -256,7 +255,7 @@ public class DataManagerDropAdapter extends ViewerDropAdapter
   private void parseLap(String fileName) throws IOException
   {
     Object target = getCurrentTarget();
-    IStore store = new XStreamHandler().load(fileName);
+    IStoreGroup store = new XStreamHandler().load(fileName);
     final List<IStoreItem> list = new ArrayList<IStoreItem>();
     if (store instanceof StoreGroup && target instanceof GroupWrapper)
     {
