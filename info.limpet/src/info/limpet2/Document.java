@@ -140,7 +140,7 @@ abstract public class Document implements IStoreItem
     // no, I don't know how we do this :-)
     return null;
   }
-
+  
   @UIProperty(name = "Indexed", category = UIProperty.CATEGORY_LABEL)
   public boolean isIndexed()
   {
@@ -241,7 +241,7 @@ abstract public class Document implements IStoreItem
   @Override
   public String toString()
   {
-    return dataset.toString();
+    return getName();
   }
 
 }

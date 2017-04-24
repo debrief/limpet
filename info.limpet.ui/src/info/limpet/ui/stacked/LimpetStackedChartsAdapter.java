@@ -1,30 +1,28 @@
 package info.limpet.ui.stacked;
 
-import info.limpet.IBaseQuantityCollection;
-import info.limpet.IChangeListener;
-import info.limpet.ICollection;
-import info.limpet.IStoreGroup;
-import info.limpet.IStoreItem;
-import info.limpet.ITemporalQuantityCollection;
-import info.limpet.data.impl.QuantityCollection;
-import info.limpet.data.impl.TemporalQuantityCollection;
 import info.limpet.stackedcharts.model.DataItem;
 import info.limpet.stackedcharts.model.Dataset;
 import info.limpet.stackedcharts.model.Datum;
+import info.limpet.stackedcharts.model.PlainStyling;
 import info.limpet.stackedcharts.model.ScatterSet;
 import info.limpet.stackedcharts.model.impl.StackedchartsFactoryImpl;
 import info.limpet.stackedcharts.ui.view.adapter.IStackedDatasetAdapter;
 import info.limpet.stackedcharts.ui.view.adapter.IStackedScatterSetAdapter;
-import info.limpet.ui.data_provider.data.CollectionWrapper;
-import info.limpet.ui.data_provider.data.GroupWrapper;
+import info.limpet.ui.data_provider.data2.CollectionWrapper;
+import info.limpet.ui.data_provider.data2.GroupWrapper;
+import info.limpet2.Document;
+import info.limpet2.IChangeListener;
+import info.limpet2.IStoreGroup;
+import info.limpet2.IStoreItem;
+import info.limpet2.NumberDocument;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 
-import javax.measure.Measurable;
 import javax.measure.quantity.Duration;
-import javax.measure.quantity.Quantity;
 import javax.measure.unit.Unit;
 
 public class LimpetStackedChartsAdapter implements IStackedDatasetAdapter,
@@ -32,11 +30,11 @@ public class LimpetStackedChartsAdapter implements IStackedDatasetAdapter,
 
 	protected static class CollectionChangeListener implements IChangeListener {
 
-		private final TemporalQuantityCollection<Quantity> _collection;
+		private final NumberDocument _collection;
 		private final Dataset _dataset;
 
 		public CollectionChangeListener(
-				TemporalQuantityCollection<Quantity> collection, Dataset subject) {
+				NumberDocument collection, Dataset subject) {
 			_dataset = subject;
 			_collection = collection;
 			_collection.addChangeListener(this);
@@ -64,7 +62,7 @@ public class LimpetStackedChartsAdapter implements IStackedDatasetAdapter,
 
 	protected static void populateDataset(
 			final StackedchartsFactoryImpl factory,
-			final TemporalQuantityCollection<Quantity> tqc,
+			final NumberDocument tqc,
 			final Dataset dataset) {
 		// get ready to store the data
 		dataset.setName(tqc.getName() + "(" + tqc.getUnits() + ")");
@@ -75,17 +73,13 @@ public class LimpetStackedChartsAdapter implements IStackedDatasetAdapter,
 		// clear the dataset
 		dataset.getMeasurements().clear();
 
-		final Unit<Quantity> hisUnits = tqc.getUnits();
-		Iterator<Long> times = tqc.getTimes().iterator();
-		Iterator<?> values = tqc.getValues().iterator();
+		Iterator<Long> times = tqc.getIndices();
+		Iterator<Double> values = tqc.getIterator();
 		while (times.hasNext()) {
 			long thisTime = times.next();
-			@SuppressWarnings("unchecked")
-			final Measurable<Quantity> meas = (Measurable<Quantity>) values
-					.next();
+			final double value = values.next();
 			final DataItem item = factory.createDataItem();
 			item.setIndependentVal(thisTime);
-			final Double value = meas.doubleValue(hisUnits);
 			item.setDependentVal(value);
 
 			// and store it
@@ -93,7 +87,7 @@ public class LimpetStackedChartsAdapter implements IStackedDatasetAdapter,
 		}
 	}
 
-	@SuppressWarnings({ "unchecked" })
+	@SuppressWarnings({ })
 	@Override
 	public List<Dataset> convertToDataset(Object data) {
 		List<Dataset> res = null;
@@ -104,12 +98,21 @@ public class LimpetStackedChartsAdapter implements IStackedDatasetAdapter,
 			final StackedchartsFactoryImpl factory = new StackedchartsFactoryImpl();
 
 			// have a look at the type
-			if (data instanceof CollectionWrapper) {
-				CollectionWrapper cw = (CollectionWrapper) data;
-				ICollection collection = cw.getCollection();
-				if (collection.isQuantity() && collection.isTemporal()) {
+      final PlainStyling plainS = factory.createPlainStyling();
 
-					TemporalQuantityCollection<Quantity> qq = (TemporalQuantityCollection<Quantity>) collection;
+      Random random = new Random();
+      float h = random.nextFloat();
+      float s = random.nextFloat();
+      float b = 0.8f + ((1f - 0.8f) * random.nextFloat());
+      Color c = Color.getHSBColor(h, s, b);
+      plainS.setColor(c);
+      
+      if (data instanceof CollectionWrapper) {
+				CollectionWrapper cw = (CollectionWrapper) data;
+				Document collection = cw.getCollection();
+				if (collection.isQuantity() && collection.isIndexed()) {
+
+					NumberDocument qq = (NumberDocument) collection;
 					final Dataset dataset = factory.createDataset();
 					populateDataset(factory, qq, dataset);
 
@@ -124,7 +127,7 @@ public class LimpetStackedChartsAdapter implements IStackedDatasetAdapter,
 					}
 
 					// give it some style
-					dataset.setStyling(factory.createPlainStyling());
+					dataset.setStyling(plainS);
 
 					res.add(dataset);
 				}
@@ -134,9 +137,9 @@ public class LimpetStackedChartsAdapter implements IStackedDatasetAdapter,
 				Iterator<IStoreItem> cIter = group.iterator();
 				while (cIter.hasNext()) {
 					IStoreItem thisI = (IStoreItem) cIter.next();
-					if (thisI instanceof ICollection) {
-						ICollection thisC = (ICollection) thisI;
-						if (thisC.isQuantity() && thisC.isTemporal()) {
+					if (thisI instanceof Document) {
+					  Document thisC = (Document) thisI;
+						if (thisC.isQuantity() && thisC.isIndexed()) {
 							List<Dataset> newItems = convertToDataset(thisC);
 
 							if (newItems != null && newItems.size() > 0) {
@@ -149,22 +152,22 @@ public class LimpetStackedChartsAdapter implements IStackedDatasetAdapter,
 					}
 
 				}
-			} else if (data instanceof ICollection) {
-				ICollection coll = (ICollection) data;
-				if (coll.isQuantity() && coll.isTemporal()) {
+			} else if (data instanceof Document) {
+			  Document coll = (Document) data;
+				if (coll.isQuantity() && coll.isIndexed()) {
 					Dataset dataset = factory.createDataset();
 					populateDataset(factory,
-							(TemporalQuantityCollection<Quantity>) coll,
+							(NumberDocument) coll,
 							dataset);
 
 					// setup the listener
-					TemporalQuantityCollection<Quantity> tempColl = (TemporalQuantityCollection<Quantity>) coll;
+					NumberDocument tempColl = (NumberDocument) coll;
 					@SuppressWarnings("unused")
 					CollectionChangeListener listener = new CollectionChangeListener(
 							tempColl, dataset);
 
 					// give it some style
-					dataset.setStyling(factory.createPlainStyling());
+					dataset.setStyling(plainS);
 
 					// collate the results
 					if (res == null) {
@@ -196,12 +199,12 @@ public class LimpetStackedChartsAdapter implements IStackedDatasetAdapter,
 		// have a look at the type
 		if (data instanceof CollectionWrapper) {
 			CollectionWrapper cw = (CollectionWrapper) data;
-			ICollection collection = cw.getCollection();
-			if (collection.isQuantity() && collection.isTemporal()) {
+			Document collection = cw.getCollection();
+			if (collection.isQuantity() && collection.isIndexed()) {
 				res = true;
-			} else if (collection.isQuantity() && !collection.isTemporal()) {
+			} else if (collection.isQuantity() && !collection.isIndexed()) {
 				// check if its' a series of timestampes
-				IBaseQuantityCollection<?> qc = (IBaseQuantityCollection<?>) collection;
+				NumberDocument qc = (NumberDocument) collection;
 				Unit<?> units = qc.getUnits();
 				if (units.equals(Duration.UNIT)) {
 					res = true;
@@ -209,7 +212,7 @@ public class LimpetStackedChartsAdapter implements IStackedDatasetAdapter,
 			}
 		} else if (data instanceof GroupWrapper) {
 			res = true;
-		} else if (data instanceof ITemporalQuantityCollection<?>) {
+		} else if (data instanceof NumberDocument) {
 			res = true;
 		} else if (data instanceof List) {
 			List<?> list = (List<?>) data;
@@ -226,7 +229,7 @@ public class LimpetStackedChartsAdapter implements IStackedDatasetAdapter,
 		return res;
 	}
 
-	@SuppressWarnings({ "unchecked" })
+	@SuppressWarnings({ })
 	@Override
 	public List<ScatterSet> convertToScatterSet(Object data) {
 		List<ScatterSet> res = null;
@@ -239,22 +242,20 @@ public class LimpetStackedChartsAdapter implements IStackedDatasetAdapter,
 			// have a look at the type
 			if (data instanceof CollectionWrapper) {
 				CollectionWrapper cw = (CollectionWrapper) data;
-				ICollection collection = cw.getCollection();
-				if (collection.isQuantity() && !collection.isTemporal()) {
+				Document collection = cw.getCollection();
+				if (collection.isQuantity() && !collection.isIndexed()) {
 					// check if its' a series of timestampes
-					QuantityCollection<?> qc = (QuantityCollection<?>) collection;
+					NumberDocument qc = (NumberDocument) collection;
 					Unit<?> units = qc.getUnits();
 					if (units.equals(Duration.UNIT)) {
 						// ok, create scatter set
-						if (qc.getValuesCount() > 0) {
+						if (qc.size() > 0) {
 							ScatterSet scatter = factory.createScatterSet();
 							scatter.setName(qc.getName());
-							final List<?> values = qc.getValues();
-							for (Object value : values) {
-								Measurable<Duration> val = (Measurable<Duration>) value;
-								double time = val
-										.doubleValue((Unit<Duration>) qc
-												.getUnits());
+							final Iterator<Long> times = qc.getIndices();
+              while (times.hasNext())
+              {
+								final double time = times.next();
 								Datum datum = factory.createDatum();
 								datum.setVal(time);
 								scatter.getDatums().add(datum);
@@ -296,10 +297,10 @@ public class LimpetStackedChartsAdapter implements IStackedDatasetAdapter,
 		// have a look at the type
 		if (data instanceof CollectionWrapper) {
 			CollectionWrapper cw = (CollectionWrapper) data;
-			ICollection collection = cw.getCollection();
-			if (collection.isQuantity() && !collection.isTemporal()) {
+			Document collection = cw.getCollection();
+			if (collection.isQuantity() && !collection.isIndexed()) {
 				// check if its' a series of timestampes
-				IBaseQuantityCollection<?> qc = (IBaseQuantityCollection<?>) collection;
+        NumberDocument qc = (NumberDocument) collection;
 				Unit<?> units = qc.getUnits();
 				if (units.equals(Duration.UNIT)) {
 					res = true;

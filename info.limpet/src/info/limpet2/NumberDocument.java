@@ -110,8 +110,7 @@ public class NumberDocument extends Document
     return true;
   }
 
-  @Override
-  public String toString()
+  public String toListing()
   {
     StringBuffer res = new StringBuffer();
     

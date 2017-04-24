@@ -14,7 +14,6 @@
  *****************************************************************************/
 package info.limpet.ui.operations;
 
-import info.limpet.ICollection;
 import info.limpet.IContext;
 import info.limpet.stackedcharts.model.AngleAxis;
 import info.limpet.stackedcharts.model.AxisType;
@@ -28,9 +27,10 @@ import info.limpet.stackedcharts.model.Orientation;
 import info.limpet.stackedcharts.model.StackedchartsFactory;
 import info.limpet.stackedcharts.ui.view.StackedChartsView;
 import info.limpet.stackedcharts.ui.view.StackedChartsView.ControllableDate;
-import info.limpet.ui.data_provider.data.CollectionWrapper;
+import info.limpet.ui.data_provider.data2.CollectionWrapper;
 import info.limpet.ui.range_slider.RangeSliderView;
 import info.limpet.ui.stacked.LimpetStackedChartsAdapter;
+import info.limpet2.Document;
 import info.limpet2.ICommand;
 import info.limpet2.IOperation;
 import info.limpet2.IStoreGroup;
@@ -244,8 +244,8 @@ public class ShowInStackedChartsOverview implements IOperation
         }
         if (nextItem != null)
         {
-          ICollection coll = (ICollection) nextItem;
-          if (coll.isQuantity() && coll.isTemporal())
+          Document coll = (Document) nextItem;
+          if (coll.isQuantity() && coll.isIndexed())
           {
             res = (NumberDocument) coll;
           }
@@ -254,8 +254,8 @@ public class ShowInStackedChartsOverview implements IOperation
       else if (first instanceof CollectionWrapper)
       {
         CollectionWrapper cw = (CollectionWrapper) first;
-        ICollection collection = cw.getCollection();
-        if (collection.isQuantity() && collection.isTemporal())
+        Document collection = cw.getCollection();
+        if (collection.isQuantity() && collection.isIndexed())
           res = (NumberDocument) collection;
       }
       else if (first instanceof NumberDocument)
