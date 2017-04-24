@@ -90,7 +90,7 @@ public class LocationDocument extends Document implements ILocations,
    *          time we're need a location for
    * @return
    */
-  public Point2D locationAt(long thisTime)
+  public Point2D locationAt(double thisTime)
   {
     Point2D res = null;
     if (isIndexed())
@@ -140,19 +140,19 @@ public class LocationDocument extends Document implements ILocations,
   // return res;
   // }
 
-  private Point2D interpolateValue(long time)
+  private Point2D interpolateValue(double time)
   {
     final Point2D res;
 
     // ok, find the values either side
     int beforeIndex = -1, afterIndex = -1;
-    long beforeTime = 0, afterTime = 0;
+    double beforeTime = 0, afterTime = 0;
 
-    Iterator<Long> tIter = getIndices();
+    Iterator<Double> tIter = getIndices();
     int ctr = 0;
     while (tIter.hasNext())
     {
-      Long thisT = (Long) tIter.next();
+      Double thisT = tIter.next();
       if (thisT <= time)
       {
         beforeIndex = ctr;

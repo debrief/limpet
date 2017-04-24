@@ -298,14 +298,14 @@ public class XyPlotView extends CoreAnalysisView
           yData = new double[thisQ.size()];
 
           // must be temporal
-          Iterator<Long> times = coll.getIndices();
+          Iterator<Double> times = coll.getIndices();
           Iterator<Double> values = thisQ.getIterator();
           
           int ctr = 0;
           while (values.hasNext())
           {
-            long t = times.next();
-            xTimeData[ctr] = new Date(t);
+            double t = times.next();
+            xTimeData[ctr] = new Date((long) t);
             yData[ctr++] = values.next();
           }
         }
@@ -320,9 +320,9 @@ public class XyPlotView extends CoreAnalysisView
           Double theValue = thisQ.getIterator().next();
 
           // create the marker line
-          xTimeData[0] = new Date(outerPeriod.getStartTime());
+          xTimeData[0] = new Date((long) outerPeriod.getStartTime());
           yData[0] = theValue;
-          xTimeData[1] = new Date(outerPeriod.getEndTime());
+          xTimeData[1] = new Date((long) outerPeriod.getEndTime());
           yData[1] = theValue;
 
         }

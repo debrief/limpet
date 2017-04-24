@@ -10,7 +10,7 @@ import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
-import org.eclipse.january.dataset.LongDataset;
+import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.metadata.AxesMetadata;
 
 abstract public class Document implements IStoreItem
@@ -150,12 +150,12 @@ abstract public class Document implements IStoreItem
     return am != null;
   }
 
-  private static class LongIterator implements Iterator<Long>
+  private static class DoubleIterator implements Iterator<Double>
   {
-    private long[] _data;
+    private double[] _data;
     private int _ctr;
 
-    private LongIterator(long[] data)
+    private DoubleIterator(double[] data)
     {
       _data = data;
       _ctr = 0;
@@ -168,7 +168,7 @@ abstract public class Document implements IStoreItem
     }
 
     @Override
-    public Long next()
+    public Double next()
     {
       return _data[_ctr++];
     }
@@ -182,9 +182,9 @@ abstract public class Document implements IStoreItem
 
   }
 
-  public Iterator<Long> getIndices()
+  public Iterator<Double> getIndices()
   {
-    LongIterator res = null;
+    DoubleIterator res = null;
 
     if (isIndexed())
     {
@@ -193,10 +193,10 @@ abstract public class Document implements IStoreItem
       ILazyDataset ds = am.getAxes()[0];
       try
       {
-        LongDataset dd =
-            (LongDataset) DatasetUtils.sliceAndConvertLazyDataset(ds);
-        long[] items = dd.getData();
-        res = new LongIterator(items);
+        DoubleDataset dd =
+            (DoubleDataset) DatasetUtils.sliceAndConvertLazyDataset(ds);
+        double[] items = dd.getData();
+        res = new DoubleIterator(items);
       }
       catch (DatasetException e)
       {

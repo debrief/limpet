@@ -86,7 +86,7 @@ public abstract class TimeFrequencyBins extends CoreAnalysis
     double[] data = new double[o.size()];
     
     // Add the data from the array
-    Iterator<Long> oIter = o.getIndices();
+    Iterator<Double> oIter = o.getIndices();
     int ctr = 0;
     while(oIter.hasNext())
     {

@@ -56,7 +56,7 @@ public class CsvGenerator
     }
     header.append(LINE_SEPARATOR);
 
-    Iterator<Long> timesIterator = null;
+    Iterator<Double> timesIterator = null;
     if (collection.isIndexed())
     {
       timesIterator = collection.getIndices();
@@ -70,8 +70,8 @@ public class CsvGenerator
       {
         if (timesIterator != null && timesIterator.hasNext())
         {
-          Long time = timesIterator.next();
-          header.append(CsvParser.getDateFormat().format(new Date(time)));
+          double time = timesIterator.next();
+          header.append(CsvParser.getDateFormat().format(new Date((long) time)));
           header.append(COMMA_SEPARATOR);
         }
         Point2D point = (Point2D) locs.next();
@@ -89,11 +89,11 @@ public class CsvGenerator
       {
         if (timesIterator != null && timesIterator.hasNext())
         {
-          Long time = timesIterator.next();
-          header.append(CsvParser.getDateFormat().format(new Date(time)));
+          double time = timesIterator.next();
+          header.append(CsvParser.getDateFormat().format(new Date((long) time)));
           header.append(COMMA_SEPARATOR);
         }
-        Double point = locs.next();
+        double point = locs.next();
         header.append(point);
         header.append(LINE_SEPARATOR);
       }

@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.january.dataset.DatasetFactory;
-import org.eclipse.january.dataset.LongDataset;
+import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.ObjectDataset;
 import org.eclipse.january.metadata.AxesMetadata;
 import org.eclipse.january.metadata.internal.AxesMetadataImpl;
@@ -14,7 +14,7 @@ public class LocationDocumentBuilder implements IDocumentBuilder
 {
   final private String _name;
   final private List<Point2D> _values;
-  private ArrayList<Long> _times;
+  private ArrayList<Double> _times;
   final private ICommand _predecessor;
 
   public LocationDocumentBuilder(String name, ICommand predecessor)
@@ -24,7 +24,7 @@ public class LocationDocumentBuilder implements IDocumentBuilder
     _values = new ArrayList<Point2D>();
   }
 
-  public void add(Point2D point, long index)
+  public void add(Point2D point, double index)
   {
     // sort out the observation
     add(point);
@@ -32,7 +32,7 @@ public class LocationDocumentBuilder implements IDocumentBuilder
     // and now the index
     if (_times == null)
     {
-      _times = new ArrayList<Long>();
+      _times = new ArrayList<Double>();
     }
 
     _times.add(index);
@@ -58,8 +58,8 @@ public class LocationDocumentBuilder implements IDocumentBuilder
       if (_times != null)
       {
         // sort out the time axis
-        LongDataset timeData =
-            (LongDataset) DatasetFactory.createFromObject(_times);
+        DoubleDataset timeData =
+            (DoubleDataset) DatasetFactory.createFromObject(_times);
         final AxesMetadata timeAxis = new AxesMetadataImpl();
         timeAxis.initialize(1);
         timeAxis.setAxis(0, timeData);

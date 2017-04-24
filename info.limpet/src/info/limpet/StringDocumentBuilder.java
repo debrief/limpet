@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.january.dataset.DatasetFactory;
-import org.eclipse.january.dataset.LongDataset;
+import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.StringDataset;
 import org.eclipse.january.metadata.AxesMetadata;
 import org.eclipse.january.metadata.internal.AxesMetadataImpl;
@@ -57,8 +57,8 @@ public class StringDocumentBuilder implements IDocumentBuilder
       if (_times != null)
       {
         // sort out the time axis
-        LongDataset timeData =
-            (LongDataset) DatasetFactory.createFromObject(_times);
+        DoubleDataset timeData =
+            (DoubleDataset) DatasetFactory.createFromObject(_times);
         final AxesMetadata timeAxis = new AxesMetadataImpl();
         timeAxis.initialize(1);
         timeAxis.setAxis(0, timeData);

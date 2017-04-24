@@ -51,7 +51,6 @@ import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
-import org.eclipse.january.dataset.LongDataset;
 import org.eclipse.january.dataset.Maths;
 import org.eclipse.january.metadata.AxesMetadata;
 
@@ -398,10 +397,10 @@ public class DopplerShiftBetweenTracksOperation implements IOperation
                 .asType(Frequency.class), this);
 
         // and now we can start looping through
-        final Iterator<Long> tIter = times.getIndices();
+        final Iterator<Double> tIter = times.getIndices();
         while (tIter.hasNext())
         {
-          final long thisTime = tIter.next();
+          final double thisTime = tIter.next();
 
           if (thisTime >= period.getStartTime()
               && thisTime <= period.getEndTime())
@@ -412,24 +411,24 @@ public class DopplerShiftBetweenTracksOperation implements IOperation
             final Point2D txLoc = txLocDoc.locationAt(thisTime);
 
             final double txCourseRads =
-                aTests.valueAt((Document) _data.get(TX + COURSE), thisTime,
+                aTests.valueAt((Document) _data.get(TX + COURSE), (long) thisTime,
                     SI.RADIAN);
 
             final double txSpeedMSec =
-                aTests.valueAt((Document) _data.get(TX + SPEED), thisTime,
+                aTests.valueAt((Document) _data.get(TX + SPEED), (long) thisTime,
                     SI.METERS_PER_SECOND);
 
             final double freq =
-                aTests.valueAt((Document) _data.get(TX + FREQ), thisTime,
+                aTests.valueAt((Document) _data.get(TX + FREQ), (long) thisTime,
                     SI.HERTZ);
 
             final double soundSpeed =
-                aTests.valueAt((Document) _data.get(SOUND_SPEED), thisTime,
+                aTests.valueAt((Document) _data.get(SOUND_SPEED), (long) thisTime,
                     SI.METERS_PER_SECOND);
 
-            final Point2D rxLoc = trackProvider.getLocationAt(thisTime);
-            final double rxCourseRads = trackProvider.getCourseAt(thisTime);
-            final double rxSpeedMSec = trackProvider.getSpeedAt(thisTime);
+            final Point2D rxLoc = trackProvider.getLocationAt((long) thisTime);
+            final double rxCourseRads = trackProvider.getCourseAt((long) thisTime);
+            final double rxSpeedMSec = trackProvider.getSpeedAt((long) thisTime);
 
             // check we have locations. During some property editing we receive
             // recalc call
@@ -573,35 +572,35 @@ public class DopplerShiftBetweenTracksOperation implements IOperation
     final AxesMetadata axis =
         times.getDataset().getFirstMetadata(AxesMetadata.class);
     final ILazyDataset lazyds = axis.getAxes()[0];
-    LongDataset ds = null;
+    DoubleDataset ds = null;
     try
     {
-      ds = (LongDataset) DatasetUtils.sliceAndConvertLazyDataset(lazyds);
+      ds = (DoubleDataset) DatasetUtils.sliceAndConvertLazyDataset(lazyds);
     }
     catch (final DatasetException e)
     {
       throw new RuntimeException(e);
     }
 
-    long[] data = ds.getData();
+    double[] data = ds.getData();
     return locationsFor(track1, data);
   }
 
   public static LocationDocument locationsFor(final LocationDocument track,
-      final long[] times)
+      final double[] times)
   {
-    final LongDataset ds = (LongDataset) DatasetFactory.createFromObject(times);
+    final DoubleDataset ds = (DoubleDataset) DatasetFactory.createFromObject(times);
 
     // ok, put the lats & longs into arrays
     final ArrayList<Double> latVals = new ArrayList<Double>();
     final ArrayList<Double> longVals = new ArrayList<Double>();
-    final ArrayList<Long> timeVals = new ArrayList<Long>();
+    final ArrayList<Double> timeVals = new ArrayList<Double>();
 
     final Iterator<Point2D> lIter = track.getLocationIterator();
-    final Iterator<Long> tIter = track.getIndices();
+    final Iterator<Double> tIter = track.getIndices();
     while (lIter.hasNext())
     {
-      final long thisT = tIter.next();
+      final double thisT = tIter.next();
       final Point2D pt = lIter.next();
 
       latVals.add(pt.getY());
@@ -611,15 +610,15 @@ public class DopplerShiftBetweenTracksOperation implements IOperation
 
     final DoubleDataset latDataset =
         DatasetFactory.createFromObject(DoubleDataset.class, latVals);
-    final DoubleDataset longDataset =
+    final DoubleDataset DoubleDataset =
         DatasetFactory.createFromObject(DoubleDataset.class, longVals);
-    final LongDataset timeDataset =
-        DatasetFactory.createFromObject(LongDataset.class, timeVals);
+    final DoubleDataset timeDataset =
+        DatasetFactory.createFromObject(DoubleDataset.class, timeVals);
 
     final DoubleDataset latInterpolated =
         (DoubleDataset) Maths.interpolate(timeDataset, latDataset, ds, 0, 0);
     final DoubleDataset longInterpolated =
-        (DoubleDataset) Maths.interpolate(timeDataset, longDataset, ds, 0, 0);
+        (DoubleDataset) Maths.interpolate(timeDataset, DoubleDataset, ds, 0, 0);
 
     // ok, now we need to re-create a locations document
     final LocationDocumentBuilder ldb =

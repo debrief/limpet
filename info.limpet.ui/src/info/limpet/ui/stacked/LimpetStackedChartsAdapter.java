@@ -73,10 +73,10 @@ public class LimpetStackedChartsAdapter implements IStackedDatasetAdapter,
 		// clear the dataset
 		dataset.getMeasurements().clear();
 
-		Iterator<Long> times = tqc.getIndices();
+		Iterator<Double> times = tqc.getIndices();
 		Iterator<Double> values = tqc.getIterator();
 		while (times.hasNext()) {
-			long thisTime = times.next();
+		  double thisTime = times.next();
 			final double value = values.next();
 			final DataItem item = factory.createDataItem();
 			item.setIndependentVal(thisTime);
@@ -252,7 +252,7 @@ public class LimpetStackedChartsAdapter implements IStackedDatasetAdapter,
 						if (qc.size() > 0) {
 							ScatterSet scatter = factory.createScatterSet();
 							scatter.setName(qc.getName());
-							final Iterator<Long> times = qc.getIndices();
+							final Iterator<Double> times = qc.getIndices();
               while (times.hasNext())
               {
 								final double time = times.next();

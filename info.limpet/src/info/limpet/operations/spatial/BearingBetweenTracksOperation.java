@@ -65,7 +65,7 @@ public class BearingBetweenTracksOperation extends TwoTrackOperation
 
               @Override
               protected void calcAndStore(final IGeoCalculator calc, final Point2D locA,
-                  final Point2D locB, final Long time)
+                  final Point2D locB, final Double time)
               {
                 // now find the range between them
                 final double thisDist = calc.getAngleBetween(locA, locB);
@@ -103,7 +103,7 @@ public class BearingBetweenTracksOperation extends TwoTrackOperation
 
               @Override
               protected void calcAndStore(final IGeoCalculator calc, final Point2D locA,
-                  final Point2D locB, final Long time)
+                  final Point2D locB, final Double time)
               {
                 // now find the range between them
                 final double thisDist = calc.getAngleBetween(locA, locB);

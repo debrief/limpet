@@ -423,10 +423,10 @@ public class ShowInTacticalOverview implements IOperation
             // name the scatter set
             scatter.setName(cuts.getName());
 
-            Iterator<Long> lIter = cuts.getIndices();
+            Iterator<Double> lIter = cuts.getIndices();
             while(lIter.hasNext())
             {            
-              Long long1 = (Long) lIter.next();
+              Double long1 = (Double) lIter.next();
               Datum item = factory.createDatum();
               item.setVal(long1);
               scatter.getDatums().add(item);
@@ -483,7 +483,7 @@ public class ShowInTacticalOverview implements IOperation
   {
     NumberDocument it =
         (NumberDocument) iStoreItem;
-    Iterator<Long> times = it.getIndices();
+    Iterator<Double> times = it.getIndices();
     Iterator<Double> values = it.getIterator();
 
     Dataset newD = factory.createDataset();
@@ -498,7 +498,7 @@ public class ShowInTacticalOverview implements IOperation
 
     while(times.hasNext())
     {
-      long time = times.next();
+      double time = times.next();
       double value = values.next();
       DataItem newI = factory.createDataItem();
       newI.setDependentVal(value);

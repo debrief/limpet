@@ -1075,12 +1075,12 @@ public class CollectionComplianceTests
       // data types
       if (iCollection != null && iCollection.isIndexed())
       {
-        Iterator<Long> lIter = iCollection.getIndices();
-        Long start = null;
-        Long end = null;
+        Iterator<Double> lIter = iCollection.getIndices();
+        Double start = null;
+        Double end = null;
         while (lIter.hasNext())
         {
-          long thisT = lIter.next();
+          double thisT = lIter.next();
           if (start == null)
           {
             start = thisT;
@@ -1130,11 +1130,11 @@ public class CollectionComplianceTests
       // circumstances
       if (iCollection != null && iCollection.isIndexed())
       {
-        Iterator<Long> lIter = iCollection.getIndices();
+        Iterator<Double> lIter = iCollection.getIndices();
         int score = 0;
         while (lIter.hasNext())
         {
-          long long1 = lIter.next();
+          double long1 = lIter.next();
           if (period == null || period.contains(long1))
           {
             score++;
@@ -1240,10 +1240,10 @@ public class CollectionComplianceTests
 
   public static class TimePeriod
   {
-    private long startTime;
-    private long endTime;
+    private double startTime;
+    private double endTime;
 
-    public TimePeriod(final long tStart, final long tEnd)
+    public TimePeriod(final double tStart, final double tEnd)
     {
       setStartTime(tStart);
       setEndTime(tEnd);
@@ -1254,27 +1254,27 @@ public class CollectionComplianceTests
       return getEndTime() < getStartTime();
     }
 
-    public boolean contains(long time)
+    public boolean contains(double time)
     {
       return getStartTime() <= time && getEndTime() >= time;
     }
 
-    public long getStartTime()
+    public double getStartTime()
     {
       return startTime;
     }
 
-    public void setStartTime(long startTime)
+    public void setStartTime(double startTime)
     {
       this.startTime = startTime;
     }
 
-    public long getEndTime()
+    public double getEndTime()
     {
       return endTime;
     }
 
-    public void setEndTime(long endTime)
+    public void setEndTime(double endTime)
     {
       this.endTime = endTime;
     }

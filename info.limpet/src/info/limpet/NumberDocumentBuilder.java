@@ -6,7 +6,6 @@ import javax.measure.unit.Unit;
 
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DoubleDataset;
-import org.eclipse.january.dataset.LongDataset;
 import org.eclipse.january.metadata.AxesMetadata;
 import org.eclipse.january.metadata.internal.AxesMetadataImpl;
 
@@ -14,7 +13,7 @@ public class NumberDocumentBuilder implements IDocumentBuilder
 {
   private String _name;
   private Unit<?> _units;
-  private ArrayList<Long> _times;
+  private ArrayList<Double> _times;
   private ArrayList<Double> _values;
   private ICommand _predecessor;
   private Range _range;
@@ -32,13 +31,13 @@ public class NumberDocumentBuilder implements IDocumentBuilder
     return _values.size();
   }
   
-  public void add(long time, double value)
+  public void add(double time, double value)
   {
     add(value);
 
     if (_times == null)
     {
-      _times = new ArrayList<Long>();
+      _times = new ArrayList<Double>();
     }
 
     _times.add(time);
@@ -65,8 +64,8 @@ public class NumberDocumentBuilder implements IDocumentBuilder
       if (_times != null)
       {
         // sort out the time axis
-        LongDataset timeData =
-            (LongDataset) DatasetFactory.createFromObject(_times);
+        DoubleDataset timeData =
+            (DoubleDataset) DatasetFactory.createFromObject(_times);
         final AxesMetadata timeAxis = new AxesMetadataImpl();
         timeAxis.initialize(1);
         timeAxis.setAxis(0, timeData);

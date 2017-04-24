@@ -13,7 +13,6 @@ import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.IndexIterator;
-import org.eclipse.january.dataset.LongDataset;
 import org.eclipse.january.dataset.Maths;
 import org.eclipse.january.metadata.AxesMetadata;
 
@@ -161,7 +160,7 @@ public class NumberDocument extends Document
     return res.toString();
   }
 
-  public Double interpolateValue(long i, InterpMethod linear)
+  public Double interpolateValue(double i, InterpMethod linear)
   {
     Double res = null;
     
@@ -180,7 +179,7 @@ public class NumberDocument extends Document
       {
         // ok, in range
         DoubleDataset ds = (DoubleDataset) dataset;
-        LongDataset indexes = (LongDataset) DatasetFactory.createFromObject(new Long[]{i});
+        DoubleDataset indexes = (DoubleDataset) DatasetFactory.createFromObject(new Double[]{i});
         
         // perform the interpolation
         Dataset dOut = Maths.interpolate(indexData, ds, indexes, 0, 0);

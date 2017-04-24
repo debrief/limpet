@@ -41,7 +41,6 @@ import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.ILazyDataset;
-import org.eclipse.january.dataset.LongDataset;
 import org.eclipse.january.dataset.Maths;
 import org.eclipse.january.metadata.AxesMetadata;
 
@@ -67,7 +66,7 @@ public abstract class TwoTrackOperation implements IOperation
     }
 
     protected abstract void calcAndStore(final IGeoCalculator calc,
-        final Point2D locA, final Point2D locB, Long time);
+        final Point2D locA, final Point2D locB, Double time);
 
     @Override
     public void execute()
@@ -188,7 +187,7 @@ public abstract class TwoTrackOperation implements IOperation
 
       final Iterator<Point2D> t1Iter = interp1.getLocationIterator();
       final Iterator<Point2D> t2Iter = interp2.getLocationIterator();
-      final Iterator<Long> timeIter;
+      final Iterator<Double> timeIter;
       if (times != null)
       {
         timeIter = times.getIndices();
@@ -201,7 +200,7 @@ public abstract class TwoTrackOperation implements IOperation
       {
         final Point2D p1 = t1Iter.next();
         final Point2D p2 = t2Iter.next();
-        final Long time;
+        final Double time;
         if (timeIter != null)
         {
           time = timeIter.next();
@@ -236,35 +235,35 @@ public abstract class TwoTrackOperation implements IOperation
     final AxesMetadata axis =
         times.getDataset().getFirstMetadata(AxesMetadata.class);
     final ILazyDataset lazyds = axis.getAxes()[0];
-    LongDataset ds = null;
+    DoubleDataset ds = null;
     try
     {
-      ds = (LongDataset) DatasetUtils.sliceAndConvertLazyDataset(lazyds);
+      ds = (DoubleDataset) DatasetUtils.sliceAndConvertLazyDataset(lazyds);
     }
     catch (final DatasetException e)
     {
       throw new RuntimeException(e);
     }
 
-    long[] data = ds.getData();
+    double[] data = ds.getData();
     return locationsFor(track1, data);
   }
 
   public static LocationDocument locationsFor(final LocationDocument track,
-      final long[] times)
+      final double[] times)
   {
-    final LongDataset ds = (LongDataset) DatasetFactory.createFromObject(times);
+    final DoubleDataset ds = (DoubleDataset) DatasetFactory.createFromObject(times);
 
     // ok, put the lats & longs into arrays
     final ArrayList<Double> latVals = new ArrayList<Double>();
     final ArrayList<Double> longVals = new ArrayList<Double>();
-    final ArrayList<Long> timeVals = new ArrayList<Long>();
+    final ArrayList<Double> timeVals = new ArrayList<Double>();
 
     final Iterator<Point2D> lIter = track.getLocationIterator();
-    final Iterator<Long> tIter = track.getIndices();
+    final Iterator<Double> tIter = track.getIndices();
     while (lIter.hasNext())
     {
-      final long thisT = tIter.next();
+      final double thisT = tIter.next();
       final Point2D pt = lIter.next();
 
       latVals.add(pt.getY());
@@ -274,15 +273,15 @@ public abstract class TwoTrackOperation implements IOperation
 
     final DoubleDataset latDataset =
         DatasetFactory.createFromObject(DoubleDataset.class, latVals);
-    final DoubleDataset longDataset =
+    final DoubleDataset DoubleDataset =
         DatasetFactory.createFromObject(DoubleDataset.class, longVals);
-    final LongDataset timeDataset =
-        DatasetFactory.createFromObject(LongDataset.class, timeVals);
+    final DoubleDataset timeDataset =
+        DatasetFactory.createFromObject(DoubleDataset.class, timeVals);
 
     final DoubleDataset latInterpolated =
         (DoubleDataset) Maths.interpolate(timeDataset, latDataset, ds, 0, 0);
     final DoubleDataset longInterpolated =
-        (DoubleDataset) Maths.interpolate(timeDataset, longDataset, ds, 0, 0);
+        (DoubleDataset) Maths.interpolate(timeDataset, DoubleDataset, ds, 0, 0);
 
     // ok, now we need to re-create a locations document
     final LocationDocumentBuilder ldb =

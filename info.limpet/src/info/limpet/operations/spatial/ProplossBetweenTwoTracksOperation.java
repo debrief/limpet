@@ -48,7 +48,7 @@ public class ProplossBetweenTwoTracksOperation extends TwoTrackOperation
 
     @Override
     protected void calcAndStore(final IGeoCalculator calc, final Point2D locA,
-        final Point2D locB, final Long time)
+        final Point2D locB, final Double time)
     {
       // now find the range between them
       final double thisDistMetres = calc.getDistanceBetween(locA, locB);
