@@ -39,6 +39,12 @@ public class NumberDocumentBuilder implements IDocumentBuilder
 
   public void add(double index, double value)
   {
+    // check we have units
+    if(_indexUnits == null)
+    {
+      throw new IllegalArgumentException("We don't know index units");
+    }
+    
     add(value);
 
     if (_indices == null)

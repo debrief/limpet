@@ -48,7 +48,7 @@ import org.eclipse.january.dataset.StringDataset;
 
 public class SampleData
 {
-  public static final Unit<?> M_SEC = SI.MILLI(SI.SECOND)
+  public static final Unit<?> MILLIS = SI.MILLI(SI.SECOND)
       .asType(Duration.class);
 
   public static final String SPEED_DATA_FOLDER = "Speed data";
@@ -114,25 +114,25 @@ public class SampleData
             null, null);
     NumberDocumentBuilder angle1 =
         new NumberDocumentBuilder(ANGLE_ONE, DEGREE_ANGLE.asType(Angle.class),
-            null, SampleData.M_SEC);
+            null, SampleData.MILLIS);
     NumberDocumentBuilder speedSeries1b =
         new NumberDocumentBuilder(SPEED_ONE, METRE.divide(SECOND).asType(
-            Velocity.class), null, SampleData.M_SEC);
+            Velocity.class), null, SampleData.MILLIS);
     NumberDocumentBuilder speedSeries2b =
         new NumberDocumentBuilder(SPEED_TWO, METRE.divide(SECOND).asType(
-            Velocity.class), null, SampleData.M_SEC);
+            Velocity.class), null, SampleData.MILLIS);
     NumberDocumentBuilder speedSeries3 =
         new NumberDocumentBuilder(SPEED_THREE_LONGER, METRE.divide(SECOND)
-            .asType(Velocity.class), null, SampleData.M_SEC);
+            .asType(Velocity.class), null, SampleData.MILLIS);
     NumberDocumentBuilder speedEarly1 =
         new NumberDocumentBuilder(SPEED_EARLY, METRE.divide(SECOND).asType(
-            Velocity.class), null, SampleData.M_SEC);
+            Velocity.class), null, SampleData.MILLIS);
     NumberDocumentBuilder speedIrregular =
         new NumberDocumentBuilder(SPEED_IRREGULAR2, METRE.divide(SECOND)
-            .asType(Velocity.class), null, SampleData.M_SEC);
+            .asType(Velocity.class), null, SampleData.MILLIS);
     NumberDocumentBuilder speedSeries4 =
         new NumberDocumentBuilder(SPEED_FOUR, METRE.divide(SECOND).asType(
-            Velocity.class), null, SampleData.M_SEC);
+            Velocity.class), null, SampleData.MILLIS);
     NumberDocumentBuilder length1 =
         new NumberDocumentBuilder(LENGTH_ONE, METRE.asType(Length.class), null,
             null);
@@ -152,7 +152,7 @@ public class SampleData
             null, null);
     NumberDocumentBuilder timeIntervals =
         new NumberDocumentBuilder(TIME_INTERVALS,
-            SECOND.asType(Duration.class), null, SampleData.M_SEC);
+            SECOND.asType(Duration.class), null, SampleData.MILLIS);
     NumberDocumentBuilder timeStamps_1 =
         new NumberDocumentBuilder(TIME_STAMPS_1, SECOND.asType(Duration.class),
             null, null);
@@ -160,9 +160,9 @@ public class SampleData
         new NumberDocumentBuilder(TIME_STAMPS_2, SECOND.asType(Duration.class),
             null, null);
     LocationDocumentBuilder track1 =
-        new LocationDocumentBuilder(TRACK_ONE, null, SampleData.M_SEC);
+        new LocationDocumentBuilder(TRACK_ONE, null, SampleData.MILLIS);
     LocationDocumentBuilder track2 =
-        new LocationDocumentBuilder(TRACK_TWO, null, SampleData.M_SEC);
+        new LocationDocumentBuilder(TRACK_TWO, null, SampleData.MILLIS);
     LocationDocumentBuilder singleLoc1 =
         new LocationDocumentBuilder(SINGLETON_LOC_1, null, null);
     LocationDocumentBuilder singleLoc2 =

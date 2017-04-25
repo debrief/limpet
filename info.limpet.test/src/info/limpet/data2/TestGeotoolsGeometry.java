@@ -206,14 +206,14 @@ public class TestGeotoolsGeometry extends TestCase
   public void testGenerateInterpLocation()
   {
     LocationDocumentBuilder locB =
-        new LocationDocumentBuilder("track 1", null, SampleData.M_SEC);
+        new LocationDocumentBuilder("track 1", null, SampleData.MILLIS);
     locB.add(0000, new Point2D.Double(0d, 0d));
     locB.add(1000, new Point2D.Double(1d, 2d));
     locB.add(2000, new Point2D.Double(2d, 4d));
     locB.add(3000, new Point2D.Double(3d, 6d));
 
     NumberDocumentBuilder numB =
-        new NumberDocumentBuilder("times", null, null, SampleData.M_SEC);
+        new NumberDocumentBuilder("times", null, null, SampleData.MILLIS);
     numB.add(800, 10);
     numB.add(1200, 10);
     numB.add(1300, 10);
@@ -311,12 +311,12 @@ public class TestGeotoolsGeometry extends TestCase
   public void testInterpolatedLocationCalcTemporal()
   {
     LocationDocumentBuilder loc1 =
-        new LocationDocumentBuilder("loc1", null, SampleData.M_SEC);
+        new LocationDocumentBuilder("loc1", null, SampleData.MILLIS);
     LocationDocumentBuilder loc2 =
-        new LocationDocumentBuilder("loc2", null, SampleData.M_SEC);
+        new LocationDocumentBuilder("loc2", null, SampleData.MILLIS);
     NumberDocumentBuilder len1 =
         new NumberDocumentBuilder("dummy2", METRE.asType(Length.class), null,
-            SampleData.M_SEC);
+            SampleData.MILLIS);
 
     List<IStoreItem> selection = new ArrayList<IStoreItem>();
     selection.add(loc1.toDocument());

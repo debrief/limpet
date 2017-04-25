@@ -77,7 +77,7 @@ public class TestCollections extends TestCase
   {
     NumberDocumentBuilder speeds =
         new NumberDocumentBuilder("Speeds", METRE.divide(SECOND).asType(
-            Velocity.class), null, SampleData.M_SEC);
+            Velocity.class), null, SampleData.MILLIS);
 
     speeds.add(100, 10);
     speeds.add(200, 20);
@@ -109,7 +109,7 @@ public class TestCollections extends TestCase
   {
     NumberDocumentBuilder tqb1 =
         new NumberDocumentBuilder("Some data1", METRE.divide(SECOND).asType(
-            Velocity.class), null, SampleData.M_SEC);
+            Velocity.class), null, SampleData.MILLIS);
     tqb1.add(100, 10);
     tqb1.add(230, 23);
     tqb1.add(270, 27);
@@ -119,7 +119,7 @@ public class TestCollections extends TestCase
 
     NumberDocumentBuilder tqb2 =
         new NumberDocumentBuilder("Some data2", METRE.divide(SECOND).asType(
-            Velocity.class), null, SampleData.M_SEC);
+            Velocity.class), null, SampleData.MILLIS);
     tqb2.add(220, 22);
     tqb2.add(340, 34);
     tqb2.add(440, 44);
@@ -166,7 +166,7 @@ public class TestCollections extends TestCase
   {
     NumberDocumentBuilder tq1 =
         new NumberDocumentBuilder("Some data1", METRE.divide(SECOND).asType(
-            Velocity.class), null, SampleData.M_SEC);
+            Velocity.class), null, SampleData.MILLIS);
     tq1.add(100, 10);
     tq1.add(200, -20);
     tq1.add(300, 30);
@@ -176,7 +176,7 @@ public class TestCollections extends TestCase
 
     NumberDocumentBuilder tq2 =
         new NumberDocumentBuilder("Some data2", METRE.divide(SECOND).asType(
-            Velocity.class), null, SampleData.M_SEC);
+            Velocity.class), null, SampleData.MILLIS);
     tq2.add(220, -11);
     tq2.add(340, -17);
     tq2.add(440, -22);
@@ -338,7 +338,7 @@ public class TestCollections extends TestCase
 
     NumberDocumentBuilder tq1b =
         new NumberDocumentBuilder("Some data1", METRE.divide(SECOND).asType(
-            Velocity.class), null, SampleData.M_SEC);
+            Velocity.class), null, SampleData.MILLIS);
     tq1b.add(100, 10);
     tq1b.add(200, 20);
     tq1b.add(300, 30);
@@ -393,7 +393,7 @@ public class TestCollections extends TestCase
   {
     NumberDocumentBuilder tq1b =
         new NumberDocumentBuilder("Some data1", METRE.divide(SECOND).asType(
-            Velocity.class), null, SampleData.M_SEC);
+            Velocity.class), null, SampleData.MILLIS);
 
     tq1b.add(100, 10);
     tq1b.add(200, 20);
@@ -402,7 +402,7 @@ public class TestCollections extends TestCase
 
     NumberDocumentBuilder tq2b =
         new NumberDocumentBuilder("Some data1", METRE.divide(SECOND).asType(
-            Velocity.class), null, SampleData.M_SEC);
+            Velocity.class), null, SampleData.MILLIS);
 
     tq2b.add(220, 11);
     tq2b.add(340, 17);
@@ -586,7 +586,7 @@ public class TestCollections extends TestCase
   {
     NumberDocumentBuilder tq1b =
         new NumberDocumentBuilder("Some data1", METRE.divide(SECOND).asType(
-            Velocity.class), null, SampleData.M_SEC);
+            Velocity.class), null, SampleData.MILLIS);
     tq1b.add(100, 10);
     tq1b.add(200, 20);
     tq1b.add(300, 30);
@@ -596,7 +596,7 @@ public class TestCollections extends TestCase
 
     NumberDocumentBuilder tq2b =
         new NumberDocumentBuilder("Some data2", METRE.divide(SECOND).asType(
-            Velocity.class), null, SampleData.M_SEC);
+            Velocity.class), null, SampleData.MILLIS);
     tq2b.add(220, 11);
     tq2b.add(340, 17);
     tq2b.add(440, 22);

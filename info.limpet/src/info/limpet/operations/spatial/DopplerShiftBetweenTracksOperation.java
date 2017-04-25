@@ -397,7 +397,7 @@ public class DopplerShiftBetweenTracksOperation implements IOperation
 
         NumberDocumentBuilder builder =
             new NumberDocumentBuilder(thisOutName, HERTZ
-                .asType(Frequency.class), this, SampleData.M_SEC);
+                .asType(Frequency.class), this, SampleData.MILLIS);
 
         // and now we can start looping through
         final Iterator<Double> tIter = times.getIndex();
@@ -627,7 +627,7 @@ public class DopplerShiftBetweenTracksOperation implements IOperation
         (DoubleDataset) Maths.interpolate(timeDataset, DoubleDataset, ds, 0, 0);
 
     // ok, now we need to re-create a locations document
-    final Unit<?> indexUnits = times == null ? null : SampleData.M_SEC;
+    final Unit<?> indexUnits = times == null ? null : SampleData.MILLIS;
     final LocationDocumentBuilder ldb =
         new LocationDocumentBuilder("Interpolated locations", null, indexUnits);
     for (int i = 0; i < ds.getSize(); i++)

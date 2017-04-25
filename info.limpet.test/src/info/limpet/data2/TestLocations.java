@@ -37,7 +37,7 @@ public class TestLocations extends TestCase
   public void testIndexedData()
   {
     LocationDocumentBuilder builder =
-        new LocationDocumentBuilder(DOC_NAME, null, SampleData.M_SEC);
+        new LocationDocumentBuilder(DOC_NAME, null, SampleData.MILLIS);
     for (int i = 0; i < 10; i++)
     {
       Point2D newP = GeoSupport.getCalculator().createPoint(i, i * 2);

@@ -673,7 +673,7 @@ public class CsvParser
     public IDocumentBuilder create(String name)
     {
       return new NumberDocumentBuilder(name, super._units, null,
-          SampleData.M_SEC);
+          SampleData.MILLIS);
     }
   }
 
@@ -716,7 +716,7 @@ public class CsvParser
     public IDocumentBuilder create(String name)
     {
       NumberDocumentBuilder res =
-          new NumberDocumentBuilder(name, super._units, null, SampleData.M_SEC);
+          new NumberDocumentBuilder(name, super._units, null, SampleData.MILLIS);
       return res;
     }
 

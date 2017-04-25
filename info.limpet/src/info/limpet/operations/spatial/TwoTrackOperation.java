@@ -66,7 +66,7 @@ public abstract class TwoTrackOperation implements IOperation
       _timeProvider = timeProvider;
       _outputUnits = outputUnits;
       final Unit<?> indexUnits =
-          _timeProvider == null ? null : SampleData.M_SEC;
+          _timeProvider == null ? null : SampleData.MILLIS;
       _builder =
           new NumberDocumentBuilder(title, _outputUnits, null, indexUnits);
     }
@@ -291,7 +291,7 @@ public abstract class TwoTrackOperation implements IOperation
         (DoubleDataset) Maths.interpolate(timeDataset, DoubleDataset, ds, 0, 0);
 
     // ok, now we need to re-create a locations document
-    final Unit<?> indexUnits = times == null ? null : SampleData.M_SEC;
+    final Unit<?> indexUnits = times == null ? null : SampleData.MILLIS;
     final LocationDocumentBuilder ldb =
         new LocationDocumentBuilder("Interpolated locations", null, indexUnits);
     for (int i = 0; i < ds.getSize(); i++)

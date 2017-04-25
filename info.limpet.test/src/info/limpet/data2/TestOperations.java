@@ -156,7 +156,7 @@ public class TestOperations
     // prepare some data
     NumberDocumentBuilder speedDatab =
         new NumberDocumentBuilder("speed", METRE.divide(SECOND).asType(
-            Velocity.class), null, null);
+            Velocity.class), null, SampleData.MILLIS);
     speedDatab.add(100, 23);
     speedDatab.add(200, 44);
     NumberDocument speedData = speedDatab.toDocument();
@@ -170,7 +170,7 @@ public class TestOperations
 
     NumberDocumentBuilder temporalAngleDataB =
         new NumberDocumentBuilder("degs", SampleData.DEGREE_ANGLE
-            .asType(Angle.class), null, SampleData.M_SEC);
+            .asType(Angle.class), null, SampleData.MILLIS);
     temporalAngleDataB.add(1000, 200d);
     temporalAngleDataB.add(3000, 123d);
     temporalAngleDataB.add(4000, 13d);
@@ -266,6 +266,55 @@ public class TestOperations
     assertTrue("isn't temporal", output.isIndexed());
 
   }
+  
+  @Test
+  public void testIndexUnits()
+  {
+    CollectionComplianceTests testOp = new CollectionComplianceTests();
+
+    NumberDocumentBuilder sec1 = new NumberDocumentBuilder("sec1", null, null, SECOND);
+    NumberDocumentBuilder sec2 = new NumberDocumentBuilder("sec2", null, null, SECOND);
+    NumberDocumentBuilder len1 = new NumberDocumentBuilder("len1", null, null, METRE);
+    NumberDocumentBuilder len2 = new NumberDocumentBuilder("len2", null, null, METRE);
+
+    sec1.add(1000, 12d);
+    sec1.add(2000, 13d);
+    sec2.add(1000, 12d);
+    sec2.add(2000, 13d);
+    len1.add(1000, 13d);
+    len1.add(2000, 13d);
+    len2.add(1000, 13d);
+    len2.add(2000, 13d);
+    len2.add(3000, 13d);
+    
+    List<IStoreItem> sel = new ArrayList<IStoreItem>();
+    sel.add(sec1.toDocument());
+    sel.add(sec2.toDocument());
+    
+    assertTrue("all equal", testOp.allIndexed(sel));
+
+    AddQuantityOperation adder = new AddQuantityOperation();
+    IStoreGroup destination = new StoreGroup("data");
+    List<ICommand> ops = adder.actionsFor(sel, destination, context);
+    assertEquals("one found", 2, ops.size());
+
+    sel.clear();
+    sel.add(len1.toDocument());
+    sel.add(len2.toDocument());
+    
+    assertTrue("all equal", testOp.allIndexed(sel));
+    ops = adder.actionsFor(sel, destination, context);
+    assertEquals("one found", 1, ops.size());
+
+    sel.clear();
+    sel.add(sec1.toDocument());
+    sel.add(len2.toDocument());
+    
+    assertFalse("all not equal", testOp.allIndexed(sel));
+    ops = adder.actionsFor(sel, destination, context);
+    assertEquals("none found", 0, ops.size());
+    
+  }
 
   @Test
   public void testAppliesTo()
@@ -287,9 +336,9 @@ public class TestOperations
     NumberDocumentBuilder len1b =
         new NumberDocumentBuilder("Length 1", m, null, null);
     NumberDocumentBuilder temporalSpeed1b =
-        new NumberDocumentBuilder("Speed 5", kmh, null, null);
+        new NumberDocumentBuilder("Speed 5", kmh, null, SampleData.MILLIS);
     NumberDocumentBuilder temporalSpeed2b =
-        new NumberDocumentBuilder("Speed 6", kmh, null, null);
+        new NumberDocumentBuilder("Speed 6", kmh, null, SampleData.MILLIS);
     StringDocumentBuilder string1 =
         new StringDocumentBuilder("strings 1", null);
     StringDocumentBuilder string2 =

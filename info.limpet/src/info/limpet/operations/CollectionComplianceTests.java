@@ -181,8 +181,8 @@ public class CollectionComplianceTests
   }
 
   /**
-   * determine if these datasets are suited to a temporal operation - where we interpolate time
-   * values
+   * determine if these datasets are suited to an indexed
+   * operation - where we interpolate time values
    * 
    * @param selection
    * @return
@@ -194,6 +194,7 @@ public class CollectionComplianceTests
 
     Long startT = null;
     Long endT = null;
+    Unit<?> units = null;
 
     for (int i = 0; i < selection.size(); i++)
     {
@@ -205,6 +206,22 @@ public class CollectionComplianceTests
         {
           if (thisC.isIndexed())
           {
+            Unit<?> thisUnit = thisC.getIndexUnits();
+            
+            if(units == null)
+            {
+              units = thisUnit;
+            }
+            else
+            {
+              if(!units.equals(thisUnit))
+              {
+                // incompatible units, don't bother
+                suitable = false;
+                break;
+              }
+            }
+            
             // NumberDocument nd = (NumberDocument) thisC;
             AxesMetadata axes =
                 thisC.getDataset().getFirstMetadata(AxesMetadata.class);
@@ -395,7 +412,7 @@ public class CollectionComplianceTests
   }
 
   /**
-   * check if the list has at least on indexed dataset
+   * check if the list has at least one indexed dataset
    * 
    * @param selection
    * @return true/false
@@ -422,7 +439,7 @@ public class CollectionComplianceTests
   }
 
   /**
-   * check if the series all have indixes
+   * check if the series all have equal indixes
    * 
    * @param selection
    * @return true/false
@@ -431,18 +448,35 @@ public class CollectionComplianceTests
   {
     // are they all temporal?
     boolean allValid = true;
+    Unit<?> _indexUnits = null;
 
     for (int i = 0; i < selection.size(); i++)
     {
-      IStoreItem thisI = selection.get(i);
+      final IStoreItem thisI = selection.get(i);
       if (thisI instanceof IDocument)
       {
-        IDocument thisC = (IDocument) thisI;
+        final IDocument thisC = (IDocument) thisI;
         if (!thisC.isIndexed())
         {
           // oops, no
           allValid = false;
           break;
+        }
+        else
+        {
+          final Unit<?> theseUnits = thisC.getIndexUnits();
+          if (_indexUnits == null)
+          {
+            _indexUnits = theseUnits;
+          }
+          else
+          {
+            if (!theseUnits.equals(_indexUnits))
+            {
+              allValid = false;
+              break;
+            }
+          }
         }
       }
       else

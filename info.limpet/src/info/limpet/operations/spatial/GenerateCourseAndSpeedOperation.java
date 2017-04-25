@@ -157,7 +157,7 @@ public class GenerateCourseAndSpeedOperation implements IOperation
       final IGeoCalculator calc = GeoSupport.getCalculator();
 
       final NumberDocumentBuilder builder =
-          new NumberDocumentBuilder(name, units, this, SampleData.M_SEC);
+          new NumberDocumentBuilder(name, units, this, SampleData.MILLIS);
 
       // get the objects
       ObjectDataset od = (ObjectDataset) thisTrack.getDataset();
