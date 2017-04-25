@@ -1,9 +1,9 @@
 package info.limpet.rcp;
 
 import info.limpet.ICommand;
-import info.limpet.NumberDocument;
-import info.limpet.Range;
-import info.limpet.UIProperty;
+import info.limpet.impl.NumberDocument;
+import info.limpet.impl.Range;
+import info.limpet.impl.UIProperty;
 import info.limpet.ui.data_provider.data.PropertyTypeHandler;
 import info.limpet.ui.data_provider.data.ReflectivePropertySource;
 

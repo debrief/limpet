@@ -18,10 +18,10 @@ import info.limpet.IChangeListener;
 import info.limpet.ICommand;
 import info.limpet.IContext;
 import info.limpet.IStoreItem;
-import info.limpet.MockContext;
-import info.limpet.NumberDocument;
-import info.limpet.SampleData;
-import info.limpet.StoreGroup;
+import info.limpet.impl.MockContext;
+import info.limpet.impl.NumberDocument;
+import info.limpet.impl.SampleData;
+import info.limpet.impl.StoreGroup;
 import info.limpet.operations.arithmetic.simple.AddQuantityOperation;
 
 import java.util.ArrayList;

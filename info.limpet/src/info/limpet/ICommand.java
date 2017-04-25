@@ -14,6 +14,8 @@
  *****************************************************************************/
 package info.limpet;
 
+import info.limpet.impl.Document;
+
 import java.util.List;
 
 

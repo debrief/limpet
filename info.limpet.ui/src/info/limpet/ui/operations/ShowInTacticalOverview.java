@@ -19,8 +19,8 @@ import info.limpet.IContext;
 import info.limpet.IOperation;
 import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
-import info.limpet.NumberDocument;
-import info.limpet.StoreGroup;
+import info.limpet.impl.NumberDocument;
+import info.limpet.impl.StoreGroup;
 import info.limpet.operations.AbstractCommand;
 import info.limpet.operations.CollectionComplianceTests;
 import info.limpet.stackedcharts.model.AngleAxis;
@@ -423,7 +423,7 @@ public class ShowInTacticalOverview implements IOperation
             // name the scatter set
             scatter.setName(cuts.getName());
 
-            Iterator<Double> lIter = cuts.getIndices();
+            Iterator<Double> lIter = cuts.getIndex();
             while(lIter.hasNext())
             {            
               Double long1 = (Double) lIter.next();
@@ -483,7 +483,7 @@ public class ShowInTacticalOverview implements IOperation
   {
     NumberDocument it =
         (NumberDocument) iStoreItem;
-    Iterator<Double> times = it.getIndices();
+    Iterator<Double> times = it.getIndex();
     Iterator<Double> values = it.getIterator();
 
     Dataset newD = factory.createDataset();

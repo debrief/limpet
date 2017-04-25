@@ -14,16 +14,18 @@
  *****************************************************************************/
 package info.limpet.operations.spatial;
 
-import info.limpet.Document;
 import info.limpet.IContext;
+import info.limpet.IDocument;
 import info.limpet.ILocations;
 import info.limpet.IOperation;
 import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
-import info.limpet.LocationDocument;
-import info.limpet.LocationDocumentBuilder;
-import info.limpet.NumberDocument;
-import info.limpet.NumberDocumentBuilder;
+import info.limpet.impl.Document;
+import info.limpet.impl.LocationDocument;
+import info.limpet.impl.LocationDocumentBuilder;
+import info.limpet.impl.NumberDocument;
+import info.limpet.impl.NumberDocumentBuilder;
+import info.limpet.impl.SampleData;
 import info.limpet.operations.AbstractCommand;
 import info.limpet.operations.CollectionComplianceTests;
 import info.limpet.operations.CollectionComplianceTests.TimePeriod;
@@ -49,7 +51,7 @@ public abstract class TwoTrackOperation implements IOperation
 
   public abstract static class DistanceOperation extends AbstractCommand
   {
-    private final Document _timeProvider;
+    private final IDocument _timeProvider;
     private final CollectionComplianceTests aTests =
         new CollectionComplianceTests();
     final protected NumberDocumentBuilder _builder;
@@ -57,12 +59,16 @@ public abstract class TwoTrackOperation implements IOperation
 
     public DistanceOperation(final List<IStoreItem> selection,
         final IStoreGroup store, final String title, final String description,
-        final Document timeProvider, final IContext context, Unit<?> outputUnits)
+        final IDocument timeProvider, final IContext context,
+        Unit<?> outputUnits)
     {
       super(title, description, store, false, false, selection, context);
       _timeProvider = timeProvider;
       _outputUnits = outputUnits;
-      _builder = new NumberDocumentBuilder(title, _outputUnits, null);
+      final Unit<?> indexUnits =
+          _timeProvider == null ? null : SampleData.M_SEC;
+      _builder =
+          new NumberDocumentBuilder(title, _outputUnits, null, indexUnits);
     }
 
     protected abstract void calcAndStore(final IGeoCalculator calc,
@@ -88,7 +94,7 @@ public abstract class TwoTrackOperation implements IOperation
       final Iterator<IStoreItem> iter = getInputs().iterator();
       while (iter.hasNext())
       {
-        final Document iCollection = (Document) iter.next();
+        final IDocument iCollection = (IDocument) iter.next();
         iCollection.addDependent(this);
       }
 
@@ -145,7 +151,7 @@ public abstract class TwoTrackOperation implements IOperation
 
       final LocationDocument interp1;
       final LocationDocument interp2;
-      final Document times;
+      final IDocument times;
 
       if (_timeProvider != null)
       {
@@ -165,7 +171,7 @@ public abstract class TwoTrackOperation implements IOperation
         }
 
         // ok, let's start by finding our time sync
-        times = aTests.getOptimalTimes(period, selection);
+        times = aTests.getOptimalIndex(period, selection);
 
         // check we were able to find some times
         if (times == null)
@@ -175,8 +181,8 @@ public abstract class TwoTrackOperation implements IOperation
         }
 
         // ok, produce the sets of intepolated positions, at the specified times
-        interp1 = locationsFor(track1, times);
-        interp2 = locationsFor(track2, times);
+        interp1 = locationsFor(track1, (Document) times);
+        interp2 = locationsFor(track2, (Document) times);
       }
       else
       {
@@ -190,7 +196,7 @@ public abstract class TwoTrackOperation implements IOperation
       final Iterator<Double> timeIter;
       if (times != null)
       {
-        timeIter = times.getIndices();
+        timeIter = times.getIndex();
       }
       else
       {
@@ -252,7 +258,8 @@ public abstract class TwoTrackOperation implements IOperation
   public static LocationDocument locationsFor(final LocationDocument track,
       final double[] times)
   {
-    final DoubleDataset ds = (DoubleDataset) DatasetFactory.createFromObject(times);
+    final DoubleDataset ds =
+        (DoubleDataset) DatasetFactory.createFromObject(times);
 
     // ok, put the lats & longs into arrays
     final ArrayList<Double> latVals = new ArrayList<Double>();
@@ -260,7 +267,7 @@ public abstract class TwoTrackOperation implements IOperation
     final ArrayList<Double> timeVals = new ArrayList<Double>();
 
     final Iterator<Point2D> lIter = track.getLocationIterator();
-    final Iterator<Double> tIter = track.getIndices();
+    final Iterator<Double> tIter = track.getIndex();
     while (lIter.hasNext())
     {
       final double thisT = tIter.next();
@@ -284,14 +291,15 @@ public abstract class TwoTrackOperation implements IOperation
         (DoubleDataset) Maths.interpolate(timeDataset, DoubleDataset, ds, 0, 0);
 
     // ok, now we need to re-create a locations document
+    final Unit<?> indexUnits = times == null ? null : SampleData.M_SEC;
     final LocationDocumentBuilder ldb =
-        new LocationDocumentBuilder("Interpolated locations", null);
+        new LocationDocumentBuilder("Interpolated locations", null, indexUnits);
     for (int i = 0; i < ds.getSize(); i++)
     {
       final Point2D pt =
           GeoSupport.getCalculator().createPoint(longInterpolated.getDouble(i),
               latInterpolated.getDouble(i));
-      ldb.add(pt, ds.getLong(i));
+      ldb.add(ds.getLong(i), pt);
     }
 
     return ldb.toDocument();

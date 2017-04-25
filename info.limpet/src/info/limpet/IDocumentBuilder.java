@@ -11,5 +11,5 @@ public interface IDocumentBuilder
    * 
    * @return
    */
-  Document toDocument();
+  IDocument toDocument();
 }

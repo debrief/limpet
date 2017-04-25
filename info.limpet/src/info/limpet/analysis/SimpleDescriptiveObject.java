@@ -14,7 +14,7 @@
  *****************************************************************************/
 package info.limpet.analysis;
 
-import info.limpet.Document;
+import info.limpet.IDocument;
 import info.limpet.IObjectDocument;
 import info.limpet.IStoreItem;
 import info.limpet.operations.CollectionComplianceTests;
@@ -49,7 +49,7 @@ public abstract class SimpleDescriptiveObject extends CoreAnalysis
       for (Iterator<IStoreItem> iter = selection.iterator(); iter.hasNext();)
       {
         IObjectDocument thisC = (IObjectDocument) iter.next();
-        Document thisD = (Document) thisC;
+        IDocument thisD = (IDocument) thisC;
 
         // check it has some data
         if (thisD.size() > 0)

@@ -1,7 +1,8 @@
 package info.limpet.data2;
 
-import info.limpet.LocationDocument;
-import info.limpet.LocationDocumentBuilder;
+import info.limpet.impl.LocationDocument;
+import info.limpet.impl.LocationDocumentBuilder;
+import info.limpet.impl.SampleData;
 import info.limpet.operations.spatial.GeoSupport;
 
 import java.awt.geom.Point2D;
@@ -18,7 +19,7 @@ public class TestLocations extends TestCase
   public void testNonIndexedData()
   {
     LocationDocumentBuilder builder =
-        new LocationDocumentBuilder(DOC_NAME, null);
+        new LocationDocumentBuilder(DOC_NAME, null, null);
     for (int i = 0; i < 10; i++)
     {
       Point2D newP = GeoSupport.getCalculator().createPoint(i, i * 2);
@@ -36,11 +37,11 @@ public class TestLocations extends TestCase
   public void testIndexedData()
   {
     LocationDocumentBuilder builder =
-        new LocationDocumentBuilder(DOC_NAME, null);
+        new LocationDocumentBuilder(DOC_NAME, null, SampleData.M_SEC);
     for (int i = 0; i < 10; i++)
     {
       Point2D newP = GeoSupport.getCalculator().createPoint(i, i * 2);
-      builder.add(newP, (long) (i * 100000));
+      builder.add((long) (i * 100000), newP);
     }
 
     LocationDocument res = builder.toDocument();

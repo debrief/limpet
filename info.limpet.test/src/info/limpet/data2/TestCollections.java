@@ -16,18 +16,18 @@ package info.limpet.data2;
 
 import static javax.measure.unit.SI.METRE;
 import static javax.measure.unit.SI.SECOND;
-import info.limpet.Document;
 import info.limpet.ICommand;
 import info.limpet.IContext;
+import info.limpet.IDocument;
 import info.limpet.IStoreItem;
-import info.limpet.MockContext;
-import info.limpet.NumberDocument;
-import info.limpet.NumberDocumentBuilder;
-import info.limpet.Range;
-import info.limpet.SampleData;
-import info.limpet.StoreGroup;
-import info.limpet.StringDocument;
-import info.limpet.Document.InterpMethod;
+import info.limpet.impl.MockContext;
+import info.limpet.impl.NumberDocument;
+import info.limpet.impl.NumberDocumentBuilder;
+import info.limpet.impl.Range;
+import info.limpet.impl.SampleData;
+import info.limpet.impl.StoreGroup;
+import info.limpet.impl.StringDocument;
+import info.limpet.impl.Document.InterpMethod;
 import info.limpet.operations.arithmetic.UnaryQuantityOperation;
 import info.limpet.operations.arithmetic.simple.AddQuantityOperation;
 import info.limpet.operations.arithmetic.simple.MultiplyQuantityOperation;
@@ -67,7 +67,7 @@ public class TestCollections extends TestCase
 
     StringDataset str =
         (StringDataset) DatasetFactory.createFromObject(stringCollection);
-    Document strDoc = new StringDocument(str, null);
+    IDocument strDoc = new StringDocument(str, null);
 
     // check it got stored
     assertEquals("correct number of samples", 10, strDoc.size());
@@ -77,7 +77,7 @@ public class TestCollections extends TestCase
   {
     NumberDocumentBuilder speeds =
         new NumberDocumentBuilder("Speeds", METRE.divide(SECOND).asType(
-            Velocity.class), null);
+            Velocity.class), null, SampleData.M_SEC);
 
     speeds.add(100, 10);
     speeds.add(200, 20);
@@ -108,8 +108,8 @@ public class TestCollections extends TestCase
   public void testAddQuantityTemporalInterp()
   {
     NumberDocumentBuilder tqb1 =
-        new NumberDocumentBuilder("Some data1", METRE.divide(SECOND)
-            .asType(Velocity.class), null);
+        new NumberDocumentBuilder("Some data1", METRE.divide(SECOND).asType(
+            Velocity.class), null, SampleData.M_SEC);
     tqb1.add(100, 10);
     tqb1.add(230, 23);
     tqb1.add(270, 27);
@@ -118,8 +118,8 @@ public class TestCollections extends TestCase
     tqb1.add(400, 40);
 
     NumberDocumentBuilder tqb2 =
-        new NumberDocumentBuilder("Some data2", METRE.divide(SECOND)
-            .asType(Velocity.class), null);
+        new NumberDocumentBuilder("Some data2", METRE.divide(SECOND).asType(
+            Velocity.class), null, SampleData.M_SEC);
     tqb2.add(220, 22);
     tqb2.add(340, 34);
     tqb2.add(440, 44);
@@ -142,7 +142,7 @@ public class TestCollections extends TestCase
 
     assertEquals("new collection created", 1, store.size());
 
-    Document series = (Document) store.get("Sum of Some data1 + Some data2");
+    IDocument series = (IDocument) store.get("Sum of Some data1 + Some data2");
     assertTrue("non empty", series.size() > 0);
     assertTrue("temporal", series.isIndexed());
     assertTrue("quantity", series.isQuantity());
@@ -165,8 +165,8 @@ public class TestCollections extends TestCase
   public void testMathOperators()
   {
     NumberDocumentBuilder tq1 =
-        new NumberDocumentBuilder("Some data1", METRE.divide(SECOND)
-            .asType(Velocity.class), null);
+        new NumberDocumentBuilder("Some data1", METRE.divide(SECOND).asType(
+            Velocity.class), null, SampleData.M_SEC);
     tq1.add(100, 10);
     tq1.add(200, -20);
     tq1.add(300, 30);
@@ -175,8 +175,8 @@ public class TestCollections extends TestCase
     NumberDocument tq1d = tq1.toDocument();
 
     NumberDocumentBuilder tq2 =
-        new NumberDocumentBuilder("Some data2", METRE.divide(SECOND)
-            .asType(Velocity.class), null);
+        new NumberDocumentBuilder("Some data2", METRE.divide(SECOND).asType(
+            Velocity.class), null, SampleData.M_SEC);
     tq2.add(220, -11);
     tq2.add(340, -17);
     tq2.add(440, -22);
@@ -185,7 +185,7 @@ public class TestCollections extends TestCase
 
     NumberDocumentBuilder nq1 =
         new NumberDocumentBuilder("Some data1", METRE.divide(SECOND).asType(
-            Velocity.class), null);
+            Velocity.class), null, null);
     nq1.add(10);
     nq1.add(-20);
     nq1.add(30);
@@ -337,8 +337,8 @@ public class TestCollections extends TestCase
   {
 
     NumberDocumentBuilder tq1b =
-        new NumberDocumentBuilder("Some data1", METRE.divide(SECOND)
-            .asType(Velocity.class), null);
+        new NumberDocumentBuilder("Some data1", METRE.divide(SECOND).asType(
+            Velocity.class), null, SampleData.M_SEC);
     tq1b.add(100, 10);
     tq1b.add(200, 20);
     tq1b.add(300, 30);
@@ -348,7 +348,7 @@ public class TestCollections extends TestCase
 
     NumberDocumentBuilder tq2b =
         new NumberDocumentBuilder("Some data2", METRE.divide(SECOND).asType(
-            Velocity.class), null);
+            Velocity.class), null, null);
     tq2b.add(11);
 
     NumberDocument tq2 = tq2b.toDocument();
@@ -392,8 +392,8 @@ public class TestCollections extends TestCase
   public void testMultiplyQuantityTemporalInterp()
   {
     NumberDocumentBuilder tq1b =
-        new NumberDocumentBuilder("Some data1", METRE.divide(SECOND)
-            .asType(Velocity.class), null);
+        new NumberDocumentBuilder("Some data1", METRE.divide(SECOND).asType(
+            Velocity.class), null, SampleData.M_SEC);
 
     tq1b.add(100, 10);
     tq1b.add(200, 20);
@@ -401,8 +401,8 @@ public class TestCollections extends TestCase
     tq1b.add(400, 40);
 
     NumberDocumentBuilder tq2b =
-        new NumberDocumentBuilder("Some data1", METRE.divide(SECOND)
-            .asType(Velocity.class), null);
+        new NumberDocumentBuilder("Some data1", METRE.divide(SECOND).asType(
+            Velocity.class), null, SampleData.M_SEC);
 
     tq2b.add(220, 11);
     tq2b.add(340, 17);
@@ -557,7 +557,7 @@ public class TestCollections extends TestCase
   {
     NumberDocumentBuilder speedCollectionB =
         new NumberDocumentBuilder("Speed", METRE.divide(SECOND).asType(
-            Velocity.class), null);
+            Velocity.class), null, null);
 
     for (int i = 1; i <= 10; i++)
     {
@@ -585,8 +585,8 @@ public class TestCollections extends TestCase
   public void testSubtractQuantityTemporalInterp()
   {
     NumberDocumentBuilder tq1b =
-        new NumberDocumentBuilder("Some data1", METRE.divide(SECOND)
-            .asType(Velocity.class), null);
+        new NumberDocumentBuilder("Some data1", METRE.divide(SECOND).asType(
+            Velocity.class), null, SampleData.M_SEC);
     tq1b.add(100, 10);
     tq1b.add(200, 20);
     tq1b.add(300, 30);
@@ -595,8 +595,8 @@ public class TestCollections extends TestCase
     NumberDocument tq1 = tq1b.toDocument();
 
     NumberDocumentBuilder tq2b =
-        new NumberDocumentBuilder("Some data2", METRE.divide(SECOND)
-            .asType(Velocity.class), null);
+        new NumberDocumentBuilder("Some data2", METRE.divide(SECOND).asType(
+            Velocity.class), null, SampleData.M_SEC);
     tq2b.add(220, 11);
     tq2b.add(340, 17);
     tq2b.add(440, 22);

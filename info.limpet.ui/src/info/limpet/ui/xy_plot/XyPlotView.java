@@ -14,10 +14,10 @@
  *****************************************************************************/
 package info.limpet.ui.xy_plot;
 
-import info.limpet.Document;
+import info.limpet.IDocument;
 import info.limpet.IStoreItem;
-import info.limpet.LocationDocument;
-import info.limpet.NumberDocument;
+import info.limpet.impl.LocationDocument;
+import info.limpet.impl.NumberDocument;
 import info.limpet.operations.CollectionComplianceTests;
 import info.limpet.operations.CollectionComplianceTests.TimePeriod;
 import info.limpet.ui.PlottingHelpers;
@@ -100,12 +100,12 @@ public class XyPlotView extends CoreAnalysisView
     else
     {
       // transform them to a lsit of documents
-      List<Document> docList = aTests.getDocumentsIn(res);
+      List<IDocument> docList = aTests.getDocumentsIn(res);
       
       // they're all the same type - check the first one
-      Iterator<Document> iter = docList.iterator();
+      Iterator<IDocument> iter = docList.iterator();
 
-      Document first = iter.next();
+      IDocument first = iter.next();
 
       // sort out what type of data this is.
       if (first.isQuantity())
@@ -149,7 +149,7 @@ public class XyPlotView extends CoreAnalysisView
 
     while (iter.hasNext())
     {
-      Document coll = (Document) iter.next();
+      IDocument coll = (IDocument) iter.next();
       if (coll.isQuantity() && coll.size() >= 1
           && coll.size() < MAX_SIZE)
       {
@@ -258,14 +258,14 @@ public class XyPlotView extends CoreAnalysisView
 
     Unit<?> existingUnits = null;
 
-    List<Document> docList = aTests.getDocumentsIn(res);
+    List<IDocument> docList = aTests.getDocumentsIn(res);
     
     // get the outer time period (used for plotting singletons)
-    List<Document> safeColl = new ArrayList<Document>();
+    List<IDocument> safeColl = new ArrayList<IDocument>();
     safeColl.addAll(docList);
     TimePeriod outerPeriod = aTests.getBoundingRange(res);
 
-    for(Document coll: docList)
+    for(IDocument coll: docList)
     {
       if (coll.isQuantity() && coll.size() >= 1
           && coll.size() < MAX_SIZE)
@@ -298,7 +298,7 @@ public class XyPlotView extends CoreAnalysisView
           yData = new double[thisQ.size()];
 
           // must be temporal
-          Iterator<Double> times = coll.getIndices();
+          Iterator<Double> times = coll.getIndex();
           Iterator<Double> values = thisQ.getIterator();
           
           int ctr = 0;
@@ -405,7 +405,7 @@ public class XyPlotView extends CoreAnalysisView
 
     while (iter.hasNext())
     {
-      Document coll = (Document) iter.next();
+      IDocument coll = (IDocument) iter.next();
       if (!coll.isQuantity() && coll.size() >= 1
           && coll.size() < MAX_SIZE)
       {
@@ -471,7 +471,7 @@ public class XyPlotView extends CoreAnalysisView
   protected void datasetDataChanged(IStoreItem subject)
   {
     final String name;
-    Document coll = (Document) subject;
+    IDocument coll = (IDocument) subject;
     if (coll.isQuantity())
     {
       NumberDocument cq = (NumberDocument) coll;

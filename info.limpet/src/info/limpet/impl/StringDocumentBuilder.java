@@ -1,4 +1,7 @@
-package info.limpet;
+package info.limpet.impl;
+
+import info.limpet.ICommand;
+import info.limpet.IDocumentBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +16,7 @@ public class StringDocumentBuilder implements IDocumentBuilder
 {
   final private String _name;
   final private List<String> _values;
-  private ArrayList<Long> _times;
+  private ArrayList<Long> _indices;
   final private ICommand _predecessor;
 
   public StringDocumentBuilder(String name, ICommand predecessor)
@@ -29,12 +32,12 @@ public class StringDocumentBuilder implements IDocumentBuilder
     add(item);
 
     // and now the index
-    if (_times == null)
+    if (_indices == null)
     {
-      _times = new ArrayList<Long>();
+      _indices = new ArrayList<Long>();
     }
 
-    _times.add(index);
+    _indices.add(index);
   }
 
   public void add(String item)
@@ -54,15 +57,15 @@ public class StringDocumentBuilder implements IDocumentBuilder
       dataset.setName(_name);
 
       // do we have any indices to add?
-      if (_times != null)
+      if (_indices != null)
       {
         // sort out the time axis
-        DoubleDataset timeData =
-            (DoubleDataset) DatasetFactory.createFromObject(_times);
-        final AxesMetadata timeAxis = new AxesMetadataImpl();
-        timeAxis.initialize(1);
-        timeAxis.setAxis(0, timeData);
-        dataset.addMetadata(timeAxis);
+        DoubleDataset indexData =
+            (DoubleDataset) DatasetFactory.createFromObject(_indices);
+        final AxesMetadata index = new AxesMetadataImpl();
+        index.initialize(1);
+        index.setAxis(0, indexData);
+        dataset.addMetadata(index);
       }
 
       res = new StringDocument(dataset, _predecessor);

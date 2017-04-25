@@ -14,7 +14,7 @@
  *****************************************************************************/
 package info.limpet.analysis;
 
-import info.limpet.Document;
+import info.limpet.IDocument;
 import info.limpet.IStoreItem;
 import info.limpet.operations.CollectionComplianceTests;
 
@@ -45,7 +45,7 @@ public abstract class GeneralDescription extends CoreAnalysis
       // ok, let's go for it.
       for (Iterator<IStoreItem> iter = selection.iterator(); iter.hasNext();)
       {
-        Document thisC = (Document) iter.next();
+        IDocument thisC = (IDocument) iter.next();
 
         titles.add("Collection");
         values.add(thisC.getName());

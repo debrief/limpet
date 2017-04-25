@@ -14,9 +14,9 @@
  *****************************************************************************/
 package info.limpet.data2;
 
-import info.limpet.Document;
+import info.limpet.IDocument;
 import info.limpet.IStoreItem;
-import info.limpet.StoreGroup;
+import info.limpet.impl.StoreGroup;
 import info.limpet.persistence.CsvParser;
 
 import java.io.File;
@@ -33,7 +33,7 @@ public class TestCsvParser extends TestCase
 		assertTrue(file.isFile());
 		List<IStoreItem> items = new CsvParser().parse(file.getAbsolutePath());
 		assertTrue(items.size() == 1);
-		Document firstColl = (Document) items.get(0);
+		IDocument firstColl = (IDocument) items.get(0);
 		assertEquals("correct num rows", 69, firstColl.size());
 	}
 
@@ -43,7 +43,7 @@ public class TestCsvParser extends TestCase
 		assertTrue(file.isFile());
 		List<IStoreItem> items = new CsvParser().parse(file.getAbsolutePath());
 		assertTrue(items.size() == 1);
-		Document firstColl = (Document) items.get(0);
+		IDocument firstColl = (IDocument) items.get(0);
 		assertEquals("correct num rows", 11, firstColl.size());
 	}
 
@@ -56,7 +56,7 @@ public class TestCsvParser extends TestCase
 		assertEquals("correct group", 1, items.size());
 		StoreGroup group = (StoreGroup) items.get(0);
 		assertEquals("correct num collections", 6, group.size());
-		Document firstColl = (Document) group.get(0);
+		IDocument firstColl = (IDocument) group.get(0);
 		assertEquals("correct num rows", 69, firstColl.size());
 	}
 
@@ -69,7 +69,7 @@ public class TestCsvParser extends TestCase
 		assertEquals("correct group", 1, items.size());
 		StoreGroup group = (StoreGroup) items.get(0);
 		assertEquals("correct num collections", 3, group.size());
-		Document firstColl = (Document) group.get(0);
+		IDocument firstColl = (IDocument) group.get(0);
 		assertEquals("correct num rows", 1708, firstColl.size());
 	}
 	

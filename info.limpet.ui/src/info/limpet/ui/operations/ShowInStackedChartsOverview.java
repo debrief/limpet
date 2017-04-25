@@ -14,13 +14,14 @@
  *****************************************************************************/
 package info.limpet.ui.operations;
 
-import info.limpet.Document;
 import info.limpet.ICommand;
 import info.limpet.IContext;
+import info.limpet.IDocument;
+import info.limpet.IGroupWrapper;
 import info.limpet.IOperation;
 import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
-import info.limpet.NumberDocument;
+import info.limpet.impl.NumberDocument;
 import info.limpet.operations.AbstractCommand;
 import info.limpet.operations.CollectionComplianceTests;
 import info.limpet.stackedcharts.model.AngleAxis;
@@ -35,8 +36,7 @@ import info.limpet.stackedcharts.model.Orientation;
 import info.limpet.stackedcharts.model.StackedchartsFactory;
 import info.limpet.stackedcharts.ui.view.StackedChartsView;
 import info.limpet.stackedcharts.ui.view.StackedChartsView.ControllableDate;
-import info.limpet.store.IGroupWrapper;
-import info.limpet.ui.data_provider.data.CollectionWrapper;
+import info.limpet.ui.data_provider.data.DocumentWrapper;
 import info.limpet.ui.range_slider.RangeSliderView;
 import info.limpet.ui.stacked.LimpetStackedChartsAdapter;
 
@@ -244,17 +244,17 @@ public class ShowInStackedChartsOverview implements IOperation
         }
         if (nextItem != null)
         {
-          Document coll = (Document) nextItem;
+          IDocument coll = (IDocument) nextItem;
           if (coll.isQuantity() && coll.isIndexed())
           {
             res = (NumberDocument) coll;
           }
         }
       }
-      else if (first instanceof CollectionWrapper)
+      else if (first instanceof DocumentWrapper)
       {
-        CollectionWrapper cw = (CollectionWrapper) first;
-        Document collection = cw.getCollection();
+        DocumentWrapper cw = (DocumentWrapper) first;
+        IDocument collection = cw.getDocument();
         if (collection.isQuantity() && collection.isIndexed())
           res = (NumberDocument) collection;
       }

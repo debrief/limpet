@@ -14,12 +14,12 @@
  *****************************************************************************/
 package info.limpet.operations.spatial;
 
-import info.limpet.Document;
 import info.limpet.ICommand;
 import info.limpet.IContext;
+import info.limpet.IDocument;
 import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
-import info.limpet.SampleData;
+import info.limpet.impl.SampleData;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
@@ -45,7 +45,7 @@ public class BearingBetweenTracksOperation extends TwoTrackOperation
       if (getATests().suitableForIndexedInterpolation(collatedTracks))
       {
         // hmm, find the time provider
-        final Document timeProvider =
+        final IDocument timeProvider =
             getATests().getLongestIndexedCollection(collatedTracks);
 
         ICommand newC =

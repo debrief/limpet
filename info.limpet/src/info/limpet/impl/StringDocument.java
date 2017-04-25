@@ -1,4 +1,7 @@
-package info.limpet;
+package info.limpet.impl;
+
+import info.limpet.ICommand;
+import info.limpet.IObjectDocument;
 
 import java.util.Arrays;
 import java.util.Iterator;

@@ -1,7 +1,7 @@
 package info.limpet.operations.arithmetic.simple;
 
 import info.limpet.IStoreItem;
-import info.limpet.NumberDocument;
+import info.limpet.impl.NumberDocument;
 import info.limpet.operations.arithmetic.UnaryQuantityOperation;
 
 import java.util.List;

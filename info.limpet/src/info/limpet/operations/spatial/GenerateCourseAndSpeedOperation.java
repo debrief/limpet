@@ -16,16 +16,17 @@ package info.limpet.operations.spatial;
 
 import static javax.measure.unit.SI.METRE;
 import static javax.measure.unit.SI.SECOND;
-import info.limpet.Document;
 import info.limpet.ICommand;
 import info.limpet.IContext;
+import info.limpet.IDocument;
 import info.limpet.IOperation;
 import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
-import info.limpet.LocationDocument;
-import info.limpet.NumberDocument;
-import info.limpet.NumberDocumentBuilder;
-import info.limpet.SampleData;
+import info.limpet.impl.Document;
+import info.limpet.impl.LocationDocument;
+import info.limpet.impl.NumberDocument;
+import info.limpet.impl.NumberDocumentBuilder;
+import info.limpet.impl.SampleData;
 import info.limpet.operations.AbstractCommand;
 import info.limpet.operations.CollectionComplianceTests;
 
@@ -58,7 +59,8 @@ public class GenerateCourseAndSpeedOperation implements IOperation
       super(title, description, store, false, false, selection, context);
     }
 
-    /** produce a name for the output
+    /**
+     * produce a name for the output
      * 
      * @return
      */
@@ -97,7 +99,7 @@ public class GenerateCourseAndSpeedOperation implements IOperation
       Iterator<IStoreItem> iter = getInputs().iterator();
       while (iter.hasNext())
       {
-        Document iCollection = (Document) iter.next();
+        IDocument iCollection = (IDocument) iter.next();
         iCollection.addDependent(this);
       }
 
@@ -155,7 +157,7 @@ public class GenerateCourseAndSpeedOperation implements IOperation
       final IGeoCalculator calc = GeoSupport.getCalculator();
 
       final NumberDocumentBuilder builder =
-          new NumberDocumentBuilder(name, units, this);
+          new NumberDocumentBuilder(name, units, this, SampleData.M_SEC);
 
       // get the objects
       ObjectDataset od = (ObjectDataset) thisTrack.getDataset();

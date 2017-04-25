@@ -19,7 +19,7 @@ import info.limpet.IContext;
 import info.limpet.IOperation;
 import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
-import info.limpet.StoreGroup;
+import info.limpet.impl.StoreGroup;
 import info.limpet.operations.AbstractCommand;
 
 import java.util.ArrayList;

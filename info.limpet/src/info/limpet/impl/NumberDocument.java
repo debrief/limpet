@@ -1,5 +1,7 @@
-package info.limpet;
+package info.limpet.impl;
 
+
+import info.limpet.ICommand;
 
 import java.util.Iterator;
 

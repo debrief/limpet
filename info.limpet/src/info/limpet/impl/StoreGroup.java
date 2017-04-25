@@ -1,4 +1,9 @@
-package info.limpet;
+package info.limpet.impl;
+
+import info.limpet.IChangeListener;
+import info.limpet.IDocument;
+import info.limpet.IStoreGroup;
+import info.limpet.IStoreItem;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -54,9 +59,9 @@ public class StoreGroup extends ArrayList<IStoreItem> implements IStoreGroup
     while (iter.hasNext())
     {
       IStoreItem iC = iter.next();
-      if (iC instanceof Document)
+      if (iC instanceof IDocument)
       {
-        Document coll = (Document) iC;
+        IDocument coll = (IDocument) iC;
         coll.removeChangeListener(this);
       }
     }
@@ -70,9 +75,9 @@ public class StoreGroup extends ArrayList<IStoreItem> implements IStoreGroup
     final boolean res = super.remove(item);
 
     // stop listening to this one
-    if (item instanceof Document)
+    if (item instanceof IDocument)
     {
-      Document collection = (Document) item;
+      IDocument collection = (IDocument) item;
       collection.removeChangeListener(this);
 
       // ok, also tell it that it's being deleted

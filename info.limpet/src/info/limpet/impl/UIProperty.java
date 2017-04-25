@@ -1,4 +1,4 @@
-package info.limpet;
+package info.limpet.impl;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

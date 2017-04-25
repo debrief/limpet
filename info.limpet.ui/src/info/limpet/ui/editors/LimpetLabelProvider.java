@@ -14,13 +14,13 @@
  *****************************************************************************/
 package info.limpet.ui.editors;
 
-import info.limpet.Document;
 import info.limpet.ICommand;
+import info.limpet.IDocument;
 import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
-import info.limpet.LocationDocument;
-import info.limpet.NumberDocument;
-import info.limpet.StringDocument;
+import info.limpet.impl.LocationDocument;
+import info.limpet.impl.NumberDocument;
+import info.limpet.impl.StringDocument;
 import info.limpet.ui.Activator;
 import info.limpet.ui.data_provider.data.DataModel;
 import info.limpet.ui.data_provider.data.LimpetWrapper;
@@ -73,10 +73,10 @@ public class LimpetLabelProvider extends LabelProvider
         // is it just one, or multiple?
         res = Activator.getImageDescriptor("icons/folder.png");
       }
-      if (item instanceof Document)
+      if (item instanceof IDocument)
       {
         // is it just one, or multiple?
-        Document coll = (Document) item;
+        IDocument coll = (IDocument) item;
         if (coll.isQuantity())
         {
           NumberDocument q = (NumberDocument) coll;

@@ -18,18 +18,20 @@ import static javax.measure.unit.SI.HERTZ;
 import static javax.measure.unit.SI.METRE;
 import static javax.measure.unit.SI.RADIAN;
 import static javax.measure.unit.SI.SECOND;
-import info.limpet.Document;
 import info.limpet.ICommand;
 import info.limpet.IContext;
+import info.limpet.IDocument;
 import info.limpet.ILocations;
 import info.limpet.IOperation;
 import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
-import info.limpet.LocationDocument;
-import info.limpet.LocationDocumentBuilder;
-import info.limpet.NumberDocument;
-import info.limpet.NumberDocumentBuilder;
-import info.limpet.StoreGroup;
+import info.limpet.impl.Document;
+import info.limpet.impl.LocationDocument;
+import info.limpet.impl.LocationDocumentBuilder;
+import info.limpet.impl.NumberDocument;
+import info.limpet.impl.NumberDocumentBuilder;
+import info.limpet.impl.SampleData;
+import info.limpet.impl.StoreGroup;
 import info.limpet.operations.AbstractCommand;
 import info.limpet.operations.CollectionComplianceTests;
 import info.limpet.operations.CollectionComplianceTests.TimePeriod;
@@ -44,6 +46,7 @@ import javax.measure.quantity.Angle;
 import javax.measure.quantity.Frequency;
 import javax.measure.quantity.Velocity;
 import javax.measure.unit.SI;
+import javax.measure.unit.Unit;
 
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.DatasetFactory;
@@ -153,7 +156,7 @@ public class DopplerShiftBetweenTracksOperation implements IOperation
               while (iter2.hasNext())
               {
                 IStoreItem iStoreItem = (IStoreItem) iter2.next();
-                if (iStoreItem instanceof Document)
+                if (iStoreItem instanceof IDocument)
                 {
                   Document coll = (Document) iStoreItem;
                   if (coll.size() == 1)
@@ -329,7 +332,7 @@ public class DopplerShiftBetweenTracksOperation implements IOperation
       // tell the inputs that we're a dependent
       for (IStoreItem c : _data.values())
       {
-        Document doc = (Document) c;
+        IDocument doc = (IDocument) c;
         doc.addDependent(this);
       }
 
@@ -372,7 +375,7 @@ public class DopplerShiftBetweenTracksOperation implements IOperation
       }
 
       // ok, let's start by finding our time sync
-      final Document times = aTests.getOptimalTimes(period, _data.values());
+      final IDocument times = aTests.getOptimalIndex(period, _data.values());
 
       // check we were able to find some times
       if (times == null)
@@ -394,10 +397,10 @@ public class DopplerShiftBetweenTracksOperation implements IOperation
 
         NumberDocumentBuilder builder =
             new NumberDocumentBuilder(thisOutName, HERTZ
-                .asType(Frequency.class), this);
+                .asType(Frequency.class), this, SampleData.M_SEC);
 
         // and now we can start looping through
-        final Iterator<Double> tIter = times.getIndices();
+        final Iterator<Double> tIter = times.getIndex();
         while (tIter.hasNext())
         {
           final double thisTime = tIter.next();
@@ -411,24 +414,26 @@ public class DopplerShiftBetweenTracksOperation implements IOperation
             final Point2D txLoc = txLocDoc.locationAt(thisTime);
 
             final double txCourseRads =
-                aTests.valueAt((Document) _data.get(TX + COURSE), (long) thisTime,
-                    SI.RADIAN);
+                aTests.valueAt((IDocument) _data.get(TX + COURSE),
+                    (long) thisTime, SI.RADIAN);
 
             final double txSpeedMSec =
-                aTests.valueAt((Document) _data.get(TX + SPEED), (long) thisTime,
-                    SI.METERS_PER_SECOND);
+                aTests.valueAt((IDocument) _data.get(TX + SPEED),
+                    (long) thisTime, SI.METERS_PER_SECOND);
 
             final double freq =
-                aTests.valueAt((Document) _data.get(TX + FREQ), (long) thisTime,
-                    SI.HERTZ);
+                aTests.valueAt((IDocument) _data.get(TX + FREQ),
+                    (long) thisTime, SI.HERTZ);
 
             final double soundSpeed =
-                aTests.valueAt((Document) _data.get(SOUND_SPEED), (long) thisTime,
-                    SI.METERS_PER_SECOND);
+                aTests.valueAt((IDocument) _data.get(SOUND_SPEED),
+                    (long) thisTime, SI.METERS_PER_SECOND);
 
             final Point2D rxLoc = trackProvider.getLocationAt((long) thisTime);
-            final double rxCourseRads = trackProvider.getCourseAt((long) thisTime);
-            final double rxSpeedMSec = trackProvider.getSpeedAt((long) thisTime);
+            final double rxCourseRads =
+                trackProvider.getCourseAt((long) thisTime);
+            final double rxSpeedMSec =
+                trackProvider.getSpeedAt((long) thisTime);
 
             // check we have locations. During some property editing we receive
             // recalc call
@@ -469,7 +474,7 @@ public class DopplerShiftBetweenTracksOperation implements IOperation
         {
           // ok, we need to create it
           _outputMap.put(trackProvider, outputData);
-          
+
           // and store it as an output
           getOutputs().add(outputData);
         }
@@ -478,7 +483,7 @@ public class DopplerShiftBetweenTracksOperation implements IOperation
           // capture the name, so we don't overwrite it
           IDataset ds = outputData.getDataset();
           ds.setName(targetDoc.getName());
-          
+
           // ok, just repalce teh contents
           targetDoc.setDataset(outputData.getDataset());
         }
@@ -589,7 +594,8 @@ public class DopplerShiftBetweenTracksOperation implements IOperation
   public static LocationDocument locationsFor(final LocationDocument track,
       final double[] times)
   {
-    final DoubleDataset ds = (DoubleDataset) DatasetFactory.createFromObject(times);
+    final DoubleDataset ds =
+        (DoubleDataset) DatasetFactory.createFromObject(times);
 
     // ok, put the lats & longs into arrays
     final ArrayList<Double> latVals = new ArrayList<Double>();
@@ -597,7 +603,7 @@ public class DopplerShiftBetweenTracksOperation implements IOperation
     final ArrayList<Double> timeVals = new ArrayList<Double>();
 
     final Iterator<Point2D> lIter = track.getLocationIterator();
-    final Iterator<Double> tIter = track.getIndices();
+    final Iterator<Double> tIter = track.getIndex();
     while (lIter.hasNext())
     {
       final double thisT = tIter.next();
@@ -621,14 +627,15 @@ public class DopplerShiftBetweenTracksOperation implements IOperation
         (DoubleDataset) Maths.interpolate(timeDataset, DoubleDataset, ds, 0, 0);
 
     // ok, now we need to re-create a locations document
+    final Unit<?> indexUnits = times == null ? null : SampleData.M_SEC;
     final LocationDocumentBuilder ldb =
-        new LocationDocumentBuilder("Interpolated locations", null);
+        new LocationDocumentBuilder("Interpolated locations", null, indexUnits);
     for (int i = 0; i < ds.getSize(); i++)
     {
       final Point2D pt =
           GeoSupport.getCalculator().createPoint(longInterpolated.getDouble(i),
               latInterpolated.getDouble(i));
-      ldb.add(pt, ds.getLong(i));
+      ldb.add(ds.getLong(i), pt);
     }
 
     return ldb.toDocument();

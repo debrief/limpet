@@ -17,9 +17,9 @@ package info.limpet.operations.admin;
 import info.limpet.IContext;
 import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
-import info.limpet.LocationDocument;
-import info.limpet.LocationDocumentBuilder;
-import info.limpet.StoreGroup;
+import info.limpet.impl.LocationDocument;
+import info.limpet.impl.LocationDocumentBuilder;
+import info.limpet.impl.StoreGroup;
 import info.limpet.operations.AbstractCommand;
 import info.limpet.operations.CollectionComplianceTests;
 import info.limpet.operations.spatial.GeoSupport;
@@ -90,7 +90,7 @@ public class CreateLocationAction extends CreateSingletonGenerator
             GeoSupport.getCalculator().createPoint(dblLong, dblLat);
 
         LocationDocumentBuilder builder =
-            new LocationDocumentBuilder(seriesName, this);
+            new LocationDocumentBuilder(seriesName, this, null);
         builder.add(newLoc);
         LocationDocument newData = builder.toDocument();
 

@@ -15,27 +15,28 @@
 package info.limpet.data2;
 
 import static javax.measure.unit.SI.METRE;
-import info.limpet.Document;
 import info.limpet.IChangeListener;
 import info.limpet.ICommand;
 import info.limpet.IContext;
+import info.limpet.IDocument;
 import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
-import info.limpet.LocationDocument;
-import info.limpet.LocationDocumentBuilder;
-import info.limpet.MockContext;
-import info.limpet.NumberDocument;
-import info.limpet.NumberDocumentBuilder;
-import info.limpet.SampleData;
-import info.limpet.StoreGroup;
+import info.limpet.impl.Document;
+import info.limpet.impl.LocationDocument;
+import info.limpet.impl.LocationDocumentBuilder;
+import info.limpet.impl.MockContext;
+import info.limpet.impl.NumberDocument;
+import info.limpet.impl.NumberDocumentBuilder;
+import info.limpet.impl.SampleData;
+import info.limpet.impl.StoreGroup;
 import info.limpet.operations.CollectionComplianceTests;
 import info.limpet.operations.spatial.DistanceBetweenTracksOperation;
 import info.limpet.operations.spatial.DopplerShiftBetweenTracksOperation;
+import info.limpet.operations.spatial.DopplerShiftBetweenTracksOperation.DopplerShiftOperation.TrackProvider;
 import info.limpet.operations.spatial.GenerateCourseAndSpeedOperation;
 import info.limpet.operations.spatial.GeoSupport;
 import info.limpet.operations.spatial.IGeoCalculator;
 import info.limpet.operations.spatial.TwoTrackOperation;
-import info.limpet.operations.spatial.DopplerShiftBetweenTracksOperation.DopplerShiftOperation.TrackProvider;
 import info.limpet.persistence.CsvParser;
 
 import java.awt.geom.Point2D;
@@ -59,7 +60,8 @@ public class TestGeotoolsGeometry extends TestCase
 
   public void testCreateTemporalObjectCollection()
   {
-    LocationDocumentBuilder ld = new LocationDocumentBuilder("test", null);
+    LocationDocumentBuilder ld =
+        new LocationDocumentBuilder("test", null, null);
     ld.add(new Point2D.Double(12d, 14d));
     LocationDocument locations = ld.toDocument();
     assertNotNull(locations);
@@ -74,10 +76,10 @@ public class TestGeotoolsGeometry extends TestCase
     assertEquals("correct group", 1, items.size());
     StoreGroup group = (StoreGroup) items.get(0);
     assertEquals("correct num collections", 3, group.size());
-    Document firstColl = (Document) group.get(2);
+    IDocument firstColl = (IDocument) group.get(2);
     assertEquals("correct num rows", 1708, firstColl.size());
 
-    Document track = firstColl;
+    IDocument track = firstColl;
     GenerateCourseAndSpeedOperation genny =
         new GenerateCourseAndSpeedOperation();
     List<IStoreItem> sel = new ArrayList<IStoreItem>();
@@ -109,14 +111,14 @@ public class TestGeotoolsGeometry extends TestCase
     assertEquals("correct group", 1, items.size());
     StoreGroup group = (StoreGroup) items.get(0);
     assertEquals("correct num collections", 3, group.size());
-    Document firstColl = (Document) group.get(2);
+    IDocument firstColl = (IDocument) group.get(2);
     assertEquals("correct num rows", 1708, firstColl.size());
 
     List<IStoreItem> items2 = parser.parse(file2.getAbsolutePath());
     assertEquals("correct group", 1, items2.size());
     StoreGroup group2 = (StoreGroup) items2.get(0);
     assertEquals("correct num collections", 3, group2.size());
-    Document secondColl = (Document) group2.get(2);
+    IDocument secondColl = (IDocument) group2.get(2);
     assertEquals("correct num rows", 1708, secondColl.size());
 
     LocationDocument track1 = (LocationDocument) firstColl;
@@ -136,7 +138,7 @@ public class TestGeotoolsGeometry extends TestCase
     assertEquals("store empty", 0, store.size());
     courseOp.execute();
     assertEquals("new colls created", 2, store.size());
-    Document newColl = (Document) courseOp.getOutputs().get(0);
+    IDocument newColl = (IDocument) courseOp.getOutputs().get(0);
     assertEquals("correct size", firstColl.size() - 1, newColl.size());
     ICommand speedOp = ops.get(1);
     assertEquals("store empty", 2, store.size());
@@ -150,7 +152,7 @@ public class TestGeotoolsGeometry extends TestCase
   public void testBuilder()
   {
     final LocationDocumentBuilder track1 =
-        new LocationDocumentBuilder("some location data", null);
+        new LocationDocumentBuilder("some location data", null, null);
 
     IGeoCalculator calc = GeoSupport.getCalculator();
     Point2D pos1 = calc.createPoint(-4, 55.8);
@@ -203,13 +205,15 @@ public class TestGeotoolsGeometry extends TestCase
 
   public void testGenerateInterpLocation()
   {
-    LocationDocumentBuilder locB = new LocationDocumentBuilder("track 1", null);
-    locB.add(new Point2D.Double(0d, 0d), 0000);
-    locB.add(new Point2D.Double(1d, 2d), 1000);
-    locB.add(new Point2D.Double(2d, 4d), 2000);
-    locB.add(new Point2D.Double(3d, 6d), 3000);
+    LocationDocumentBuilder locB =
+        new LocationDocumentBuilder("track 1", null, SampleData.M_SEC);
+    locB.add(0000, new Point2D.Double(0d, 0d));
+    locB.add(1000, new Point2D.Double(1d, 2d));
+    locB.add(2000, new Point2D.Double(2d, 4d));
+    locB.add(3000, new Point2D.Double(3d, 6d));
 
-    NumberDocumentBuilder numB = new NumberDocumentBuilder("times", null, null);
+    NumberDocumentBuilder numB =
+        new NumberDocumentBuilder("times", null, null, SampleData.M_SEC);
     numB.add(800, 10);
     numB.add(1200, 10);
     numB.add(1300, 10);
@@ -242,10 +246,13 @@ public class TestGeotoolsGeometry extends TestCase
   //
   public void testInterpolatedLocationCalcNonTemporal()
   {
-    LocationDocumentBuilder loc1 = new LocationDocumentBuilder("loc1", null);
-    LocationDocumentBuilder loc2 = new LocationDocumentBuilder("loc2", null);
+    LocationDocumentBuilder loc1 =
+        new LocationDocumentBuilder("loc1", null, null);
+    LocationDocumentBuilder loc2 =
+        new LocationDocumentBuilder("loc2", null, null);
     NumberDocumentBuilder len1 =
-        new NumberDocumentBuilder("dummy2", METRE.asType(Length.class), null);
+        new NumberDocumentBuilder("dummy2", METRE.asType(Length.class), null,
+            null);
 
     List<IStoreItem> selection = new ArrayList<IStoreItem>();
     selection.add(loc1.toDocument());
@@ -303,10 +310,13 @@ public class TestGeotoolsGeometry extends TestCase
 
   public void testInterpolatedLocationCalcTemporal()
   {
-    LocationDocumentBuilder loc1 = new LocationDocumentBuilder("loc1", null);
-    LocationDocumentBuilder loc2 = new LocationDocumentBuilder("loc2", null);
+    LocationDocumentBuilder loc1 =
+        new LocationDocumentBuilder("loc1", null, SampleData.M_SEC);
+    LocationDocumentBuilder loc2 =
+        new LocationDocumentBuilder("loc2", null, SampleData.M_SEC);
     NumberDocumentBuilder len1 =
-        new NumberDocumentBuilder("dummy2", METRE.asType(Length.class), null);
+        new NumberDocumentBuilder("dummy2", METRE.asType(Length.class), null,
+            SampleData.M_SEC);
 
     List<IStoreItem> selection = new ArrayList<IStoreItem>();
     selection.add(loc1.toDocument());
@@ -335,15 +345,15 @@ public class TestGeotoolsGeometry extends TestCase
     // ok, try adding some data
     IGeoCalculator builder = GeoSupport.getCalculator();
 
-    loc1.add(builder.createPoint(1, 3), 1000);
-    loc1.add(builder.createPoint(2, 3), 2000);
-    loc1.add(builder.createPoint(3, 3), 3000);
-    loc1.add(builder.createPoint(4, 3), 4000);
-    loc1.add(builder.createPoint(5, 3), 5000);
+    loc1.add(1000, builder.createPoint(1, 3));
+    loc1.add(2000, builder.createPoint(2, 3));
+    loc1.add(3000, builder.createPoint(3, 3));
+    loc1.add(4000, builder.createPoint(4, 3));
+    loc1.add(5000, builder.createPoint(5, 3));
 
-    loc2.add(builder.createPoint(2.2, 4), 1100);
-    loc2.add(builder.createPoint(2.4, 4), 1200);
-    loc2.add(builder.createPoint(2.6, 4), 1300);
+    loc2.add(1100, builder.createPoint(2.2, 4));
+    loc2.add(1200, builder.createPoint(2.4, 4));
+    loc2.add(1300, builder.createPoint(2.6, 4));
 
     selection.clear();
     selection.add(loc1.toDocument());
@@ -361,16 +371,16 @@ public class TestGeotoolsGeometry extends TestCase
 
     assertEquals("store not empty", 1, store.size());
 
-    Document output = ops.get(0).getOutputs().get(0);
+    IDocument output = ops.get(0).getOutputs().get(0);
     assertNotNull("output produced", output);
     assertEquals("correct items", 3, output.size());
-    assertNotNull("has indices", output.getIndices());
+    assertNotNull("has indices", output.getIndex());
 
     System.out.println(output.toString());
 
     // ok, add a couple more entries, so it could be indexed or interpolated
-    loc2.add(builder.createPoint(1.4, 4), 1400);
-    loc2.add(builder.createPoint(1.5, 4), 1500);
+    loc2.add(1400, builder.createPoint(1.4, 4));
+    loc2.add(1500, builder.createPoint(1.5, 4));
 
     // rebuild the selection
     selection.clear();
@@ -393,7 +403,7 @@ public class TestGeotoolsGeometry extends TestCase
     output = ops.iterator().next().getOutputs().get(0);
     assertNotNull("output produced", output);
     assertEquals("correct items", 5, output.size());
-    assertNotNull("has indices", output.getIndices());
+    assertNotNull("has indices", output.getIndex());
 
     // ok, let's check how it works for an indexed dataset
     // check output is empty
@@ -408,7 +418,7 @@ public class TestGeotoolsGeometry extends TestCase
     output = newOp.getOutputs().get(0);
     assertNotNull("output produced", output);
     assertEquals("correct items", 5, output.size());
-    assertNull("does not have indices", output.getIndices());
+    assertNull("does not have indices", output.getIndex());
 
   }
 
@@ -548,8 +558,8 @@ public class TestGeotoolsGeometry extends TestCase
 
     IContext mockContext = new MockContext();
     List<TrackProvider> matches =
-        DopplerShiftBetweenTracksOperation.DopplerShiftOperation.getTracks(null, items,
-            tests);
+        DopplerShiftBetweenTracksOperation.DopplerShiftOperation.getTracks(
+            null, items, tests);
     assertEquals("empty", 0, matches.size());
 
     // create a good track
@@ -558,8 +568,8 @@ public class TestGeotoolsGeometry extends TestCase
     assertNotNull("not found track", cTrack);
     items.add(cTrack);
     matches =
-        DopplerShiftBetweenTracksOperation.DopplerShiftOperation.getTracks(null, items,
-            tests);
+        DopplerShiftBetweenTracksOperation.DopplerShiftOperation.getTracks(
+            null, items, tests);
     assertEquals("not empty", 1, matches.size());
 
     // ignore that track
@@ -570,7 +580,7 @@ public class TestGeotoolsGeometry extends TestCase
 
     // ok, add a singleton location
     LocationDocument loc1 =
-         (LocationDocument) tmpStore.get(SampleData.SINGLETON_LOC_1);
+        (LocationDocument) tmpStore.get(SampleData.SINGLETON_LOC_1);
     assertNotNull("not found track", loc1);
     items.add(loc1);
     matches =
@@ -607,8 +617,7 @@ public class TestGeotoolsGeometry extends TestCase
     assertEquals("not empty", 2, matches.size());
 
     // ok, move up a level
-    Collection<ICommand> ops =
-        doppler.actionsFor(items, store, mockContext);
+    Collection<ICommand> ops = doppler.actionsFor(items, store, mockContext);
     assertEquals("single action", 0, ops.size());
 
     // ok, give it a top-level sounds speed
@@ -619,7 +628,7 @@ public class TestGeotoolsGeometry extends TestCase
     assertEquals("single action", 1, ops.size());
 
     assertEquals("Loc doens't yet have deps", 0, loc1.getDependents().size());
-    
+
     // ok, we have two static sensors, ets them
     ICommand firstOp = ops.iterator().next();
     firstOp.execute();
@@ -665,15 +674,17 @@ public class TestGeotoolsGeometry extends TestCase
     // ok, make a change to loc1
     String locName = loc1.getName();
     loc1.clearQuiet();
-    LocationDocumentBuilder lb = new LocationDocumentBuilder(locName, null);    
+    LocationDocumentBuilder lb =
+        new LocationDocumentBuilder(locName, null, null);
     lb.add(new Point2D.Double(22, 33));
     loc1.setDataset(lb.toDocument().getDataset());
-    
+
     assertEquals("no updates yet", 0, messages.size());
-    
+
     loc1.fireDataChanged();
 
-    assertEquals("two updates (since we update all outputs)", 2, messages.size());
+    assertEquals("two updates (since we update all outputs)", 2, messages
+        .size());
 
     // restart
     messages.clear();

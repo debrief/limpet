@@ -16,8 +16,8 @@ package info.limpet.ui.editors.dnd;
 
 import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
-import info.limpet.StoreGroup;
 import info.limpet.data.persistence.xml.XStreamHandler;
+import info.limpet.impl.StoreGroup;
 import info.limpet.persistence.CsvParser;
 import info.limpet.ui.Activator;
 import info.limpet.ui.data_provider.data.GroupWrapper;

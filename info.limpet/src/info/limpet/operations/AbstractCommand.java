@@ -14,13 +14,14 @@
  *****************************************************************************/
 package info.limpet.operations;
 
-import info.limpet.Document;
 import info.limpet.IChangeListener;
 import info.limpet.ICommand;
 import info.limpet.IContext;
+import info.limpet.IDocument;
 import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
-import info.limpet.UIProperty;
+import info.limpet.impl.Document;
+import info.limpet.impl.UIProperty;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -160,7 +161,7 @@ public abstract class AbstractCommand implements
     Iterator<IStoreItem> iter = inputs.iterator();
     while (iter.hasNext())
     {
-      Document thisC = (Document) iter.next();
+      IDocument thisC = (IDocument) iter.next();
       if (thisC.size() >= 1)
       {
         size = thisC.size();

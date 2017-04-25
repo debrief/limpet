@@ -14,9 +14,9 @@
  *****************************************************************************/
 package info.limpet.operations.arithmetic.simple;
 
-import info.limpet.Document;
 import info.limpet.ICommand;
 import info.limpet.IContext;
+import info.limpet.IDocument;
 import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
 import info.limpet.operations.arithmetic.BinaryQuantityOperation;
@@ -38,7 +38,7 @@ public class SubtractQuantityOperation extends BinaryQuantityOperation
   protected void addInterpolatedCommands(List<IStoreItem> selection,
       IStoreGroup destination, Collection<ICommand> res, IContext context)
   {
-    Document longest = getLongestIndexedCollection(selection);
+    IDocument longest = getLongestIndexedCollection(selection);
 
     if (longest != null)
     {
@@ -103,7 +103,7 @@ public class SubtractQuantityOperation extends BinaryQuantityOperation
     }
 
     public SubtractQuantityValues(String name, List<IStoreItem> selection,
-        IStoreGroup destination, Document timeProvider, IContext context)
+        IStoreGroup destination, IDocument timeProvider, IContext context)
     {
       super(name, "Subtract datasets", destination, false, false, selection,
           timeProvider, context);

@@ -1,10 +1,10 @@
 package info.limpet.persistence;
 
-import info.limpet.Document;
+import info.limpet.IDocument;
 import info.limpet.ILocations;
 import info.limpet.IStoreItem;
-import info.limpet.LocationDocument;
-import info.limpet.NumberDocument;
+import info.limpet.impl.LocationDocument;
+import info.limpet.impl.NumberDocument;
 
 import java.awt.geom.Point2D;
 import java.util.Date;
@@ -30,11 +30,11 @@ public class CsvGenerator
 
   public static String generate(IStoreItem doc)
   {
-    if (!(doc instanceof Document))
+    if (!(doc instanceof IDocument))
     {
       return null;
     }
-    Document collection = (Document) doc;
+    IDocument collection = (IDocument) doc;
     StringBuilder header = new StringBuilder();
     if (collection.isIndexed())
     {
@@ -56,10 +56,10 @@ public class CsvGenerator
     }
     header.append(LINE_SEPARATOR);
 
-    Iterator<Double> timesIterator = null;
+    Iterator<Double> indexIterator = null;
     if (collection.isIndexed())
     {
-      timesIterator = collection.getIndices();
+      indexIterator = collection.getIndex();
     }
 
     if (collection instanceof LocationDocument)
@@ -68,9 +68,9 @@ public class CsvGenerator
       Iterator<Point2D> locs = ldoc.getLocationIterator();
       while (locs.hasNext())
       {
-        if (timesIterator != null && timesIterator.hasNext())
+        if (indexIterator != null && indexIterator.hasNext())
         {
-          double time = timesIterator.next();
+          double time = indexIterator.next();
           header.append(CsvParser.getDateFormat().format(new Date((long) time)));
           header.append(COMMA_SEPARATOR);
         }
@@ -87,9 +87,9 @@ public class CsvGenerator
       Iterator<Double> locs = ldoc.getIterator();
       while (locs.hasNext())
       {
-        if (timesIterator != null && timesIterator.hasNext())
+        if (indexIterator != null && indexIterator.hasNext())
         {
-          double time = timesIterator.next();
+          double time = indexIterator.next();
           header.append(CsvParser.getDateFormat().format(new Date((long) time)));
           header.append(COMMA_SEPARATOR);
         }
@@ -102,7 +102,7 @@ public class CsvGenerator
     return header.toString();
   }
 
-  private static void addUnit(StringBuilder header, Document collection)
+  private static void addUnit(StringBuilder header, IDocument collection)
   {
     if (collection.isQuantity())
     {

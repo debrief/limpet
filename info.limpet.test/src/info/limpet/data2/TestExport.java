@@ -1,9 +1,9 @@
 package info.limpet.data2;
 
-import info.limpet.Document;
+import info.limpet.IDocument;
 import info.limpet.IStoreItem;
-import info.limpet.SampleData;
-import info.limpet.StoreGroup;
+import info.limpet.impl.SampleData;
+import info.limpet.impl.StoreGroup;
 import info.limpet.persistence.CsvGenerator;
 
 import java.util.ArrayList;
@@ -47,13 +47,13 @@ public class TestExport extends TestCase
 				while (iter2.hasNext())
 				{
 					IStoreItem iStoreItem = (IStoreItem) iter2.next();
-					if (iStoreItem instanceof Document)
+					if (iStoreItem instanceof IDocument)
 					{
-						collections.add((Document) iStoreItem);
+						collections.add((IDocument) iStoreItem);
 					}
 				}
 			}
-			if (item instanceof Document)
+			if (item instanceof IDocument)
 			{
 				collections.add(item);
 			}

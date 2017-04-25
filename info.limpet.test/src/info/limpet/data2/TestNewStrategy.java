@@ -1,17 +1,17 @@
 package info.limpet.data2;
 
 import static javax.measure.unit.SI.METRE;
-import info.limpet.Document;
 import info.limpet.ICommand;
 import info.limpet.IContext;
+import info.limpet.IDocument;
 import info.limpet.IOperation;
 import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
-import info.limpet.MockContext;
-import info.limpet.NumberDocument;
-import info.limpet.NumberDocumentBuilder;
-import info.limpet.SampleData;
-import info.limpet.StoreGroup;
+import info.limpet.impl.MockContext;
+import info.limpet.impl.NumberDocument;
+import info.limpet.impl.NumberDocumentBuilder;
+import info.limpet.impl.SampleData;
+import info.limpet.impl.StoreGroup;
 import info.limpet.operations.arithmetic.simple.AddQuantityOperation;
 
 import java.util.ArrayList;
@@ -45,25 +45,26 @@ public class TestNewStrategy extends TestCase
     assertEquals("correct units", "m", nd.getUnits().toString());
     assertEquals("correct dimension", "[L]", nd.getUnits().getDimension()
         .toString());
-    
+
     Iterator<Double> iter = nd.getIterator();
     while (iter.hasNext())
     {
       Double double1 = (Double) iter.next();
       System.out.println("value:" + double1);
     }
-    
+
   }
-  
+
   public void testSingletonDocument()
   {
-    NumberDocumentBuilder builder = new NumberDocumentBuilder("some data", null, null);
+    NumberDocumentBuilder builder =
+        new NumberDocumentBuilder("some data", null, null, null);
     builder.add(1d);
     NumberDocument doc = builder.toDocument();
     double val = doc.getValue(0);
     assertEquals("correct value", 1d, val);
   }
-  
+
   public void testAddingDocuments()
   {
     StoreGroup data = new SampleData().getData(15);
@@ -74,8 +75,8 @@ public class TestNewStrategy extends TestCase
     assertNotNull("found sample data", doc1);
 
     List<IStoreItem> selection = new ArrayList<IStoreItem>();
-    selection.add((Document) doc1);
-    selection.add((Document) doc2);
+    selection.add((IDocument) doc1);
+    selection.add((IDocument) doc2);
 
     IOperation adder = new AddQuantityOperation();
     IStoreGroup target = new StoreGroup("Destination");
@@ -90,7 +91,7 @@ public class TestNewStrategy extends TestCase
 
     assertEquals("target has data", 1, target.size());
 
-    Document output = (Document) target.iterator().next();
+    IDocument output = (IDocument) target.iterator().next();
 
     System.out.println(output);
 

@@ -14,10 +14,10 @@
  *****************************************************************************/
 package info.limpet.ui.editors;
 
-import info.limpet.Document;
 import info.limpet.ICommand;
+import info.limpet.IDocument;
 import info.limpet.ui.Activator;
-import info.limpet.ui.data_provider.data.CollectionWrapper;
+import info.limpet.ui.data_provider.data.DocumentWrapper;
 import info.limpet.ui.data_provider.data.CommandWrapper;
 import info.limpet.ui.data_provider.data.GroupWrapper;
 
@@ -90,9 +90,9 @@ public class LimpetDecorator implements ILightweightLabelDecorator
   @Override
   public void decorate(Object element, IDecoration decoration)
   {
-    if (element instanceof CollectionWrapper)
+    if (element instanceof DocumentWrapper)
     {
-      decorateWrapper((CollectionWrapper) element, decoration);
+      decorateWrapper((DocumentWrapper) element, decoration);
     }
     if (element instanceof CommandWrapper)
     {
@@ -125,10 +125,10 @@ public class LimpetDecorator implements ILightweightLabelDecorator
     }
   }
 
-  protected void decorateWrapper(CollectionWrapper element,
+  protected void decorateWrapper(DocumentWrapper element,
       IDecoration decoration)
   {
-    final Document coll = element.getCollection();
+    final IDocument coll = element.getDocument();
     boolean out = coll.getPrecedent() != null;
     boolean in =
         coll.getDependents() != null && coll.getDependents().size() > 0;

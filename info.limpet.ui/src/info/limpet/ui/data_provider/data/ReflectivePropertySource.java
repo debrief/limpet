@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
 
-import info.limpet.UIProperty;
+import info.limpet.impl.UIProperty;
 import info.limpet.ui.Activator;
 
 /**

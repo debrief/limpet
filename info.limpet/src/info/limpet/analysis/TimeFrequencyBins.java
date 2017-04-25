@@ -14,9 +14,9 @@
  *****************************************************************************/
 package info.limpet.analysis;
 
-import info.limpet.Document;
+import info.limpet.IDocument;
 import info.limpet.IStoreItem;
-import info.limpet.NumberDocument;
+import info.limpet.impl.NumberDocument;
 import info.limpet.operations.CollectionComplianceTests;
 
 import java.util.ArrayList;
@@ -80,13 +80,13 @@ public abstract class TimeFrequencyBins extends CoreAnalysis
     }
   }
 
-  public static BinnedData doBins(Document o)
+  public static BinnedData doBins(IDocument o)
   {
     // collate the values into an array
     double[] data = new double[o.size()];
     
     // Add the data from the array
-    Iterator<Double> oIter = o.getIndices();
+    Iterator<Double> oIter = o.getIndex();
     int ctr = 0;
     while(oIter.hasNext())
     {

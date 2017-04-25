@@ -14,9 +14,9 @@
  *****************************************************************************/
 package info.limpet.ui.data_provider.data;
 
+import info.limpet.IGroupWrapper;
 import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
-import info.limpet.store.IGroupWrapper;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ui.views.properties.IPropertySource;

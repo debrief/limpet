@@ -14,14 +14,14 @@
  *****************************************************************************/
 package info.limpet.ui.data_frequency;
 
-import info.limpet.Document;
+import info.limpet.IDocument;
 import info.limpet.IObjectDocument;
 import info.limpet.IStoreItem;
-import info.limpet.NumberDocument;
 import info.limpet.analysis.ObjectFrequencyBins;
-import info.limpet.analysis.QuantityFrequencyBins;
 import info.limpet.analysis.ObjectFrequencyBins.BinnedData;
+import info.limpet.analysis.QuantityFrequencyBins;
 import info.limpet.analysis.QuantityFrequencyBins.Bin;
+import info.limpet.impl.NumberDocument;
 import info.limpet.operations.CollectionComplianceTests;
 import info.limpet.ui.PlottingHelpers;
 import info.limpet.ui.core_view.CoreAnalysisView;
@@ -101,7 +101,7 @@ public class DataFrequencyView extends CoreAnalysisView
     // they're all the same type - check the first one
     Iterator<IStoreItem> iter = res.iterator();
 
-    Document first = (Document) iter.next();
+    IDocument first = (IDocument) iter.next();
 
     // sort out what type of data this is.
     if (first.isQuantity())
@@ -128,7 +128,7 @@ public class DataFrequencyView extends CoreAnalysisView
 
     while (iter.hasNext())
     {
-      Document iCollection = (Document) iter.next();
+      IDocument iCollection = (IDocument) iter.next();
       if (iCollection.size() <= MAX_SIZE)
       {
         BinnedData bins = null;

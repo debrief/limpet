@@ -1,10 +1,10 @@
 package info.limpet.ui.stacked;
 
-import info.limpet.Document;
 import info.limpet.IChangeListener;
+import info.limpet.IDocument;
 import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
-import info.limpet.NumberDocument;
+import info.limpet.impl.NumberDocument;
 import info.limpet.stackedcharts.model.DataItem;
 import info.limpet.stackedcharts.model.Dataset;
 import info.limpet.stackedcharts.model.Datum;
@@ -13,7 +13,7 @@ import info.limpet.stackedcharts.model.ScatterSet;
 import info.limpet.stackedcharts.model.impl.StackedchartsFactoryImpl;
 import info.limpet.stackedcharts.ui.view.adapter.IStackedDatasetAdapter;
 import info.limpet.stackedcharts.ui.view.adapter.IStackedScatterSetAdapter;
-import info.limpet.ui.data_provider.data.CollectionWrapper;
+import info.limpet.ui.data_provider.data.DocumentWrapper;
 import info.limpet.ui.data_provider.data.GroupWrapper;
 
 import java.awt.Color;
@@ -73,7 +73,7 @@ public class LimpetStackedChartsAdapter implements IStackedDatasetAdapter,
 		// clear the dataset
 		dataset.getMeasurements().clear();
 
-		Iterator<Double> times = tqc.getIndices();
+		Iterator<Double> times = tqc.getIndex();
 		Iterator<Double> values = tqc.getIterator();
 		while (times.hasNext()) {
 		  double thisTime = times.next();
@@ -107,9 +107,9 @@ public class LimpetStackedChartsAdapter implements IStackedDatasetAdapter,
       Color c = Color.getHSBColor(h, s, b);
       plainS.setColor(c);
       
-      if (data instanceof CollectionWrapper) {
-				CollectionWrapper cw = (CollectionWrapper) data;
-				Document collection = cw.getCollection();
+      if (data instanceof DocumentWrapper) {
+				DocumentWrapper cw = (DocumentWrapper) data;
+				IDocument collection = cw.getDocument();
 				if (collection.isQuantity() && collection.isIndexed()) {
 
 					NumberDocument qq = (NumberDocument) collection;
@@ -137,8 +137,8 @@ public class LimpetStackedChartsAdapter implements IStackedDatasetAdapter,
 				Iterator<IStoreItem> cIter = group.iterator();
 				while (cIter.hasNext()) {
 					IStoreItem thisI = (IStoreItem) cIter.next();
-					if (thisI instanceof Document) {
-					  Document thisC = (Document) thisI;
+					if (thisI instanceof IDocument) {
+					  IDocument thisC = (IDocument) thisI;
 						if (thisC.isQuantity() && thisC.isIndexed()) {
 							List<Dataset> newItems = convertToDataset(thisC);
 
@@ -152,8 +152,8 @@ public class LimpetStackedChartsAdapter implements IStackedDatasetAdapter,
 					}
 
 				}
-			} else if (data instanceof Document) {
-			  Document coll = (Document) data;
+			} else if (data instanceof IDocument) {
+			  IDocument coll = (IDocument) data;
 				if (coll.isQuantity() && coll.isIndexed()) {
 					Dataset dataset = factory.createDataset();
 					populateDataset(factory,
@@ -197,9 +197,9 @@ public class LimpetStackedChartsAdapter implements IStackedDatasetAdapter,
 		boolean res = false;
 
 		// have a look at the type
-		if (data instanceof CollectionWrapper) {
-			CollectionWrapper cw = (CollectionWrapper) data;
-			Document collection = cw.getCollection();
+		if (data instanceof DocumentWrapper) {
+			DocumentWrapper cw = (DocumentWrapper) data;
+			IDocument collection = cw.getDocument();
 			if (collection.isQuantity() && collection.isIndexed()) {
 				res = true;
 			} else if (collection.isQuantity() && !collection.isIndexed()) {
@@ -240,9 +240,9 @@ public class LimpetStackedChartsAdapter implements IStackedDatasetAdapter,
 			final StackedchartsFactoryImpl factory = new StackedchartsFactoryImpl();
 
 			// have a look at the type
-			if (data instanceof CollectionWrapper) {
-				CollectionWrapper cw = (CollectionWrapper) data;
-				Document collection = cw.getCollection();
+			if (data instanceof DocumentWrapper) {
+				DocumentWrapper cw = (DocumentWrapper) data;
+				IDocument collection = cw.getDocument();
 				if (collection.isQuantity() && !collection.isIndexed()) {
 					// check if its' a series of timestampes
 					NumberDocument qc = (NumberDocument) collection;
@@ -252,7 +252,7 @@ public class LimpetStackedChartsAdapter implements IStackedDatasetAdapter,
 						if (qc.size() > 0) {
 							ScatterSet scatter = factory.createScatterSet();
 							scatter.setName(qc.getName());
-							final Iterator<Double> times = qc.getIndices();
+							final Iterator<Double> times = qc.getIndex();
               while (times.hasNext())
               {
 								final double time = times.next();
@@ -295,9 +295,9 @@ public class LimpetStackedChartsAdapter implements IStackedDatasetAdapter,
 		boolean res = false;
 
 		// have a look at the type
-		if (data instanceof CollectionWrapper) {
-			CollectionWrapper cw = (CollectionWrapper) data;
-			Document collection = cw.getCollection();
+		if (data instanceof DocumentWrapper) {
+			DocumentWrapper cw = (DocumentWrapper) data;
+			IDocument collection = cw.getDocument();
 			if (collection.isQuantity() && !collection.isIndexed()) {
 				// check if its' a series of timestampes
         NumberDocument qc = (NumberDocument) collection;

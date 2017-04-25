@@ -16,14 +16,15 @@ package info.limpet.operations;
 
 import static javax.measure.unit.SI.METRE;
 import static javax.measure.unit.SI.SECOND;
-import info.limpet.Document;
+import info.limpet.impl.Document;
+import info.limpet.impl.LocationDocument;
+import info.limpet.impl.NumberDocument;
+import info.limpet.impl.Document.InterpMethod;
+import info.limpet.IDocument;
 import info.limpet.ILocations;
 import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
-import info.limpet.NumberDocument;
-import info.limpet.Document.InterpMethod;
 
-import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -69,11 +70,9 @@ public class CollectionComplianceTests
     for (int i = 0; i < selection.size(); i++)
     {
       IStoreItem thisI = selection.get(i);
-      if (thisI instanceof Document)
+      if (thisI instanceof IDocument)
       {
-        Document thisC = (Document) thisI;
-        Class<?> theClass = thisC.storedClass();
-        if (Point2D.class.equals(theClass))
+        if (thisI instanceof LocationDocument)
         {
           allValid = false;
           break;
@@ -129,9 +128,9 @@ public class CollectionComplianceTests
     for (int i = 0; i < selection.size(); i++)
     {
       IStoreItem thisI = selection.get(i);
-      if (thisI instanceof Document)
+      if (thisI instanceof IDocument)
       {
-        Document thisC = (Document) thisI;
+        IDocument thisC = (IDocument) thisI;
         if (thisC.isIndexed())
         {
           // oops, no
@@ -162,9 +161,9 @@ public class CollectionComplianceTests
     for (int i = 0; i < selection.size(); i++)
     {
       IStoreItem thisI = selection.get(i);
-      if (thisI instanceof Document)
+      if (thisI instanceof IDocument)
       {
-        Document thisC = (Document) thisI;
+        IDocument thisC = (IDocument) thisI;
         if (thisC.isQuantity())
         {
           // oops, no
@@ -270,9 +269,9 @@ public class CollectionComplianceTests
     for (int i = 0; i < selection.size(); i++)
     {
       IStoreItem thisI = selection.get(i);
-      if (thisI instanceof Document)
+      if (thisI instanceof IDocument)
       {
-        Document thisC = (Document) thisI;
+        IDocument thisC = (IDocument) thisI;
         if (!thisC.isQuantity())
         {
           // oops, no
@@ -409,9 +408,9 @@ public class CollectionComplianceTests
     for (int i = 0; i < selection.size(); i++)
     {
       IStoreItem thisI = selection.get(i);
-      if (thisI instanceof Document)
+      if (thisI instanceof IDocument)
       {
-        Document thisC = (Document) thisI;
+        IDocument thisC = (IDocument) thisI;
         if (thisC.isIndexed())
         {
           allValid = true;
@@ -436,9 +435,9 @@ public class CollectionComplianceTests
     for (int i = 0; i < selection.size(); i++)
     {
       IStoreItem thisI = selection.get(i);
-      if (thisI instanceof Document)
+      if (thisI instanceof IDocument)
       {
-        Document thisC = (Document) thisI;
+        IDocument thisC = (IDocument) thisI;
         if (!thisC.isIndexed())
         {
           // oops, no
@@ -470,9 +469,9 @@ public class CollectionComplianceTests
     for (int i = 0; i < selection.size(); i++)
     {
       IStoreItem thisI = selection.get(i);
-      if (thisI instanceof Document)
+      if (thisI instanceof IDocument)
       {
-        Document thisC = (Document) thisI;
+        IDocument thisC = (IDocument) thisI;
         if (thisC.isIndexed())
         {
           allValid = true;
@@ -514,9 +513,9 @@ public class CollectionComplianceTests
     {
       IStoreItem thisC = selection.get(i);
 
-      if (thisC instanceof Document)
+      if (thisC instanceof IDocument)
       {
-        Document thisD = (Document) thisC;
+        IDocument thisD = (IDocument) thisC;
         int thisSize = thisD.size();
 
         // valid, check the size
@@ -560,9 +559,9 @@ public class CollectionComplianceTests
     for (int i = 0; i < selection.size(); i++)
     {
       IStoreItem thisI = selection.get(i);
-      if (thisI instanceof Document)
+      if (thisI instanceof IDocument)
       {
-        Document thisC = (Document) thisI;
+        IDocument thisC = (IDocument) thisI;
 
         // valid, check the size
         if (size == -1)
@@ -596,7 +595,7 @@ public class CollectionComplianceTests
     while (iter.hasNext())
     {
       IStoreItem storeItem = iter.next();
-      if (!(storeItem instanceof Document))
+      if (!(storeItem instanceof IDocument))
       {
         res = false;
         break;
@@ -705,9 +704,9 @@ public class CollectionComplianceTests
     while (iter.hasNext())
     {
       final IStoreItem item = iter.next();
-      if (item instanceof Document)
+      if (item instanceof IDocument)
       {
-        final Document doc = (Document) item;
+        final IDocument doc = (IDocument) item;
         if (doc instanceof ILocations && doc.size() == 1)
         {
           res = true;
@@ -826,9 +825,9 @@ public class CollectionComplianceTests
 
     for (IStoreItem sItem : kids)
     {
-      if (sItem instanceof Document)
+      if (sItem instanceof IDocument)
       {
-        Document item = (Document) sItem;
+        IDocument item = (IDocument) sItem;
 
         if (item.isQuantity())
         {
@@ -954,9 +953,9 @@ public class CollectionComplianceTests
    *          dimension we need to be present
    * @return yes/no
    */
-  public Document someHaveLocation(Collection<IStoreItem> kids)
+  public IDocument someHaveLocation(Collection<IStoreItem> kids)
   {
-    Document res = null;
+    IDocument res = null;
 
     Iterator<IStoreItem> iter = kids.iterator();
     while (iter.hasNext())
@@ -973,7 +972,7 @@ public class CollectionComplianceTests
       }
       else if (item instanceof ILocations)
       {
-        res = (Document) item;
+        res = (IDocument) item;
         break;
       }
     }
@@ -989,24 +988,24 @@ public class CollectionComplianceTests
 
     while (iter.hasNext())
     {
-      Document thisC = (Document) iter.next();
+      IDocument thisC = (IDocument) iter.next();
       longest = Math.max(longest, thisC.size());
     }
     return longest;
   }
 
-  public Document getLongestIndexedCollection(List<IStoreItem> selection)
+  public IDocument getLongestIndexedCollection(List<IStoreItem> selection)
   {
     // find the longest time series.
     Iterator<IStoreItem> iter = selection.iterator();
-    Document longest = null;
+    IDocument longest = null;
 
     while (iter.hasNext())
     {
       IStoreItem thisC = (IStoreItem) iter.next();
-      if (thisC instanceof Document)
+      if (thisC instanceof IDocument)
       {
-        Document thisD = (Document) thisC;
+        IDocument thisD = (IDocument) thisC;
         if (thisD.isIndexed()
             && (thisD.isQuantity() || thisC instanceof ILocations))
         {
@@ -1038,9 +1037,9 @@ public class CollectionComplianceTests
     for (int i = 0; i < selection.size(); i++)
     {
       IStoreItem thisI = selection.get(i);
-      if (thisI instanceof Document)
+      if (thisI instanceof IDocument)
       {
-        Document thisC = (Document) thisI;
+        IDocument thisC = (IDocument) thisI;
         if (thisC.size() == 0)
         {
           allValid = false;
@@ -1069,13 +1068,13 @@ public class CollectionComplianceTests
     Iterator<IStoreItem> iter = items.iterator();
     while (iter.hasNext())
     {
-      Document iCollection = (Document) iter.next();
+      IDocument iCollection = (IDocument) iter.next();
 
       // allow for empty value. sometimes our logic allows null objects for some
       // data types
       if (iCollection != null && iCollection.isIndexed())
       {
-        Iterator<Double> lIter = iCollection.getIndices();
+        Iterator<Double> lIter = iCollection.getIndex();
         Double start = null;
         Double end = null;
         while (lIter.hasNext())
@@ -1115,22 +1114,22 @@ public class CollectionComplianceTests
    *          list of datasets we're examining
    * @return most suited collection
    */
-  public Document getOptimalTimes(TimePeriod period,
+  public IDocument getOptimalIndex(TimePeriod period,
       Collection<IStoreItem> items)
   {
-    Document res = null;
+    IDocument res = null;
     long resScore = 0;
 
     Iterator<IStoreItem> iter = items.iterator();
     while (iter.hasNext())
     {
-      Document iCollection = (Document) iter.next();
+      IDocument iCollection = (IDocument) iter.next();
 
       // occasionally we may store a null dataset, since it is optional in some
       // circumstances
       if (iCollection != null && iCollection.isIndexed())
       {
-        Iterator<Double> lIter = iCollection.getIndices();
+        Iterator<Double> lIter = iCollection.getIndex();
         int score = 0;
         while (lIter.hasNext())
         {
@@ -1161,7 +1160,7 @@ public class CollectionComplianceTests
    *          time we're need a location for
    * @return
    */
-  public double valueAt(Document iCollection, long thisTime,
+  public double valueAt(IDocument iCollection, long thisTime,
       Unit<?> requiredUnits)
   {
     Double res = null;
@@ -1280,15 +1279,15 @@ public class CollectionComplianceTests
     }
   }
 
-  public List<Document> getDocumentsIn(Collection<IStoreItem> selection)
+  public List<IDocument> getDocumentsIn(Collection<IStoreItem> selection)
   {
-    List<Document> res = new ArrayList<Document>();
+    List<IDocument> res = new ArrayList<IDocument>();
 
     for (IStoreItem sel : selection)
     {
-      if (sel instanceof Document)
+      if (sel instanceof IDocument)
       {
-        res.add((Document) sel);
+        res.add((IDocument) sel);
       }
       else
       {
@@ -1299,13 +1298,13 @@ public class CollectionComplianceTests
     return res;
   }
 
-  private void processThis(List<Document> target, IStoreGroup selection)
+  private void processThis(List<IDocument> target, IStoreGroup selection)
   {
     for (IStoreItem sel : selection)
     {
-      if (sel instanceof Document)
+      if (sel instanceof IDocument)
       {
-        target.add((Document) sel);
+        target.add((IDocument) sel);
       }
       else
       {

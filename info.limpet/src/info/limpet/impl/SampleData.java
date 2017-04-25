@@ -12,12 +12,16 @@
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  *****************************************************************************/
-package info.limpet;
+package info.limpet.impl;
 
 import static javax.measure.unit.SI.HERTZ;
 import static javax.measure.unit.SI.METRE;
 import static javax.measure.unit.SI.RADIAN;
 import static javax.measure.unit.SI.SECOND;
+import info.limpet.ICommand;
+import info.limpet.IContext;
+import info.limpet.IStoreGroup;
+import info.limpet.IStoreItem;
 import info.limpet.operations.arithmetic.simple.AddQuantityOperation;
 import info.limpet.operations.arithmetic.simple.MultiplyQuantityOperation;
 import info.limpet.operations.spatial.GeoSupport;
@@ -36,6 +40,7 @@ import javax.measure.quantity.Duration;
 import javax.measure.quantity.Frequency;
 import javax.measure.quantity.Length;
 import javax.measure.quantity.Velocity;
+import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 
 import org.eclipse.january.dataset.DatasetFactory;
@@ -43,6 +48,9 @@ import org.eclipse.january.dataset.StringDataset;
 
 public class SampleData
 {
+  public static final Unit<?> M_SEC = SI.MILLI(SI.SECOND)
+      .asType(Duration.class);
+
   public static final String SPEED_DATA_FOLDER = "Speed data";
   public static final String SPEED_THREE_LONGER = "Speed Three (longer)";
   public static final String SPEED_IRREGULAR2 = "Speed two irregular time";
@@ -102,60 +110,63 @@ public class SampleData
 
     // // collate our data series
     NumberDocumentBuilder freq1 =
-        new NumberDocumentBuilder(FREQ_ONE, HERTZ.asType(Frequency.class), null);
+        new NumberDocumentBuilder(FREQ_ONE, HERTZ.asType(Frequency.class),
+            null, null);
     NumberDocumentBuilder angle1 =
         new NumberDocumentBuilder(ANGLE_ONE, DEGREE_ANGLE.asType(Angle.class),
-            null);
+            null, SampleData.M_SEC);
     NumberDocumentBuilder speedSeries1b =
         new NumberDocumentBuilder(SPEED_ONE, METRE.divide(SECOND).asType(
-            Velocity.class), null);
+            Velocity.class), null, SampleData.M_SEC);
     NumberDocumentBuilder speedSeries2b =
         new NumberDocumentBuilder(SPEED_TWO, METRE.divide(SECOND).asType(
-            Velocity.class), null);
+            Velocity.class), null, SampleData.M_SEC);
     NumberDocumentBuilder speedSeries3 =
         new NumberDocumentBuilder(SPEED_THREE_LONGER, METRE.divide(SECOND)
-            .asType(Velocity.class), null);
+            .asType(Velocity.class), null, SampleData.M_SEC);
     NumberDocumentBuilder speedEarly1 =
         new NumberDocumentBuilder(SPEED_EARLY, METRE.divide(SECOND).asType(
-            Velocity.class), null);
+            Velocity.class), null, SampleData.M_SEC);
     NumberDocumentBuilder speedIrregular =
         new NumberDocumentBuilder(SPEED_IRREGULAR2, METRE.divide(SECOND)
-            .asType(Velocity.class), null);
+            .asType(Velocity.class), null, SampleData.M_SEC);
     NumberDocumentBuilder speedSeries4 =
         new NumberDocumentBuilder(SPEED_FOUR, METRE.divide(SECOND).asType(
-            Velocity.class), null);
+            Velocity.class), null, SampleData.M_SEC);
     NumberDocumentBuilder length1 =
-        new NumberDocumentBuilder(LENGTH_ONE, METRE.asType(Length.class), null);
+        new NumberDocumentBuilder(LENGTH_ONE, METRE.asType(Length.class), null,
+            null);
     NumberDocumentBuilder length2 =
-        new NumberDocumentBuilder(LENGTH_TWO, METRE.asType(Length.class), null);
+        new NumberDocumentBuilder(LENGTH_TWO, METRE.asType(Length.class), null,
+            null);
     ObjectColl string1 = new ObjectColl(STRING_ONE, null);
     ObjectColl string2 = new ObjectColl(STRING_TWO, null);
     NumberDocumentBuilder singleton1 =
         new NumberDocumentBuilder(FLOATING_POINT_FACTOR, Dimensionless.UNIT,
-            null);
+            null, null);
     NumberDocumentBuilder singletonRange1b =
         new NumberDocumentBuilder(RANGED_SPEED_SINGLETON, METRE.divide(SECOND)
-            .asType(Velocity.class), null);
+            .asType(Velocity.class), null, null);
     NumberDocumentBuilder singletonLength =
         new NumberDocumentBuilder(LENGTH_SINGLETON, METRE.asType(Length.class),
-            null);
+            null, null);
     NumberDocumentBuilder timeIntervals =
         new NumberDocumentBuilder(TIME_INTERVALS,
-            SECOND.asType(Duration.class), null);
+            SECOND.asType(Duration.class), null, SampleData.M_SEC);
     NumberDocumentBuilder timeStamps_1 =
         new NumberDocumentBuilder(TIME_STAMPS_1, SECOND.asType(Duration.class),
-            null);
+            null, null);
     NumberDocumentBuilder timeStamps_2 =
         new NumberDocumentBuilder(TIME_STAMPS_2, SECOND.asType(Duration.class),
-            null);
+            null, null);
     LocationDocumentBuilder track1 =
-        new LocationDocumentBuilder(TRACK_ONE, null);
+        new LocationDocumentBuilder(TRACK_ONE, null, SampleData.M_SEC);
     LocationDocumentBuilder track2 =
-        new LocationDocumentBuilder(TRACK_TWO, null);
+        new LocationDocumentBuilder(TRACK_TWO, null, SampleData.M_SEC);
     LocationDocumentBuilder singleLoc1 =
-        new LocationDocumentBuilder(SINGLETON_LOC_1, null);
+        new LocationDocumentBuilder(SINGLETON_LOC_1, null, null);
     LocationDocumentBuilder singleLoc2 =
-        new LocationDocumentBuilder(SINGLETON_LOC_2, null);
+        new LocationDocumentBuilder(SINGLETON_LOC_2, null, null);
 
     long thisTime = 0;
 
@@ -222,8 +233,8 @@ public class SampleData
 
       Point2D p2 = calc.calculatePoint(pos2, Math.toRadians(54 + (i * 5)), 133);
 
-      track1.add(p1, thisTime);
-      track2.add(p2, thisTime);
+      track1.add(thisTime, p1);
+      track2.add(thisTime, p2);
 
     }
 
@@ -256,7 +267,7 @@ public class SampleData
 
     NumberDocumentBuilder singletonRange2b =
         new NumberDocumentBuilder(RANGED_SPEED_SINGLETON, METRE.divide(SECOND)
-            .asType(Velocity.class), null);
+            .asType(Velocity.class), null, null);
     double minR1 = 940d;
     double maxR1 = 1050d;
     Range speedRange1 = new Range(minR1, maxR1);
@@ -266,7 +277,7 @@ public class SampleData
     NumberDocument singletonRange2 = singletonRange2b.toDocument();
 
     NumberDocumentBuilder singletonSpeedb =
-        new NumberDocumentBuilder("Ranged Speed", Velocity.UNIT, null);
+        new NumberDocumentBuilder("Ranged Speed", Velocity.UNIT, null, null);
     double min = 0d;
     double max = 100d;
     singletonSpeedb.add(54);
@@ -274,7 +285,7 @@ public class SampleData
     NumberDocument singletonSpeed = singletonSpeedb.toDocument();
 
     NumberDocumentBuilder singletonLength1b =
-        new NumberDocumentBuilder("Ranged Speed", Length.UNIT, null);
+        new NumberDocumentBuilder("Ranged Speed", Length.UNIT, null, null);
     singletonLength1b.add(134);
     singletonLength1b.setRange(new Range(40d, 150d));
 
@@ -305,10 +316,10 @@ public class SampleData
     list.add(timeIntervals.toDocument());
     list.add(timeStamps_1.toDocument());
     list.add(timeStamps_2.toDocument());
-     list.add(track1.toDocument());
-     list.add(track2d);
-     list.add(singleLoc1.toDocument());
-     list.add(singleLoc2.toDocument());
+    list.add(track1.toDocument());
+    list.add(track2d);
+    list.add(singleLoc1.toDocument());
+    list.add(singleLoc2.toDocument());
     list.add(speedSeries3.toDocument());
 
     // res.addAll(list);

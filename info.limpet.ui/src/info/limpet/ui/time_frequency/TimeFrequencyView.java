@@ -14,7 +14,7 @@
  *****************************************************************************/
 package info.limpet.ui.time_frequency;
 
-import info.limpet.Document;
+import info.limpet.IDocument;
 import info.limpet.IStoreItem;
 import info.limpet.analysis.TimeFrequencyBins;
 import info.limpet.analysis.TimeFrequencyBins.Bin;
@@ -115,7 +115,7 @@ public class TimeFrequencyView extends CoreAnalysisView
 
     while (iter.hasNext())
     {
-      Document iCollection = (Document) iter.next();
+      IDocument iCollection = (IDocument) iter.next();
       TimeFrequencyBins.BinnedData bins = null;
       if (iCollection.isIndexed() && iCollection.size() > 1
           && iCollection.size() <= MAX_SIZE)

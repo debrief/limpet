@@ -25,20 +25,21 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import info.limpet.Document;
 import info.limpet.ICommand;
 import info.limpet.IContext;
+import info.limpet.IDocument;
 import info.limpet.IOperation;
 import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
-import info.limpet.MockContext;
-import info.limpet.NumberDocument;
-import info.limpet.NumberDocumentBuilder;
-import info.limpet.Range;
-import info.limpet.SampleData;
-import info.limpet.StoreGroup;
-import info.limpet.StringDocument;
-import info.limpet.StringDocumentBuilder;
+import info.limpet.impl.Document;
+import info.limpet.impl.MockContext;
+import info.limpet.impl.NumberDocument;
+import info.limpet.impl.NumberDocumentBuilder;
+import info.limpet.impl.Range;
+import info.limpet.impl.SampleData;
+import info.limpet.impl.StoreGroup;
+import info.limpet.impl.StringDocument;
+import info.limpet.impl.StringDocumentBuilder;
 import info.limpet.operations.CollectionComplianceTests;
 import info.limpet.operations.OperationsLibrary;
 import info.limpet.operations.admin.AddLayerOperation;
@@ -78,16 +79,18 @@ public class TestOperations
   @Test
   public void testSingletonGenerator()
   {
-    CreateSingletonGenerator op = new CreateSingletonGenerator("Some data",METRE.asType(Length.class) );
+    CreateSingletonGenerator op =
+        new CreateSingletonGenerator("Some data", METRE.asType(Length.class));
     List<IStoreItem> sel = new ArrayList<IStoreItem>();
     IStoreGroup target = new StoreGroup("data");
-    IContext context = new MockContext(){
+    IContext context = new MockContext()
+    {
 
       @Override
       public String getInput(String title, String description,
           String defaultText)
       {
-        if(description.equals("Enter name for variable"))
+        if (description.equals("Enter name for variable"))
         {
           return "output variable name";
         }
@@ -95,7 +98,8 @@ public class TestOperations
         {
           return "1000";
         }
-      }};
+      }
+    };
     List<ICommand> ops = op.actionsFor(sel, target, context);
     assertEquals("operation created", 1, ops.size());
     ICommand firstOp = ops.get(0);
@@ -152,13 +156,13 @@ public class TestOperations
     // prepare some data
     NumberDocumentBuilder speedDatab =
         new NumberDocumentBuilder("speed", METRE.divide(SECOND).asType(
-            Velocity.class), null);
+            Velocity.class), null, null);
     speedDatab.add(100, 23);
     speedDatab.add(200, 44);
     NumberDocument speedData = speedDatab.toDocument();
 
     NumberDocumentBuilder angledataB =
-        new NumberDocumentBuilder("degs", Dimensionless.UNIT, null);
+        new NumberDocumentBuilder("degs", Dimensionless.UNIT, null, null);
     angledataB.add(200d);
     angledataB.add(123d);
 
@@ -166,7 +170,7 @@ public class TestOperations
 
     NumberDocumentBuilder temporalAngleDataB =
         new NumberDocumentBuilder("degs", SampleData.DEGREE_ANGLE
-            .asType(Angle.class), null);
+            .asType(Angle.class), null, SampleData.M_SEC);
     temporalAngleDataB.add(1000, 200d);
     temporalAngleDataB.add(3000, 123d);
     temporalAngleDataB.add(4000, 13d);
@@ -233,7 +237,7 @@ public class TestOperations
     theOp.execute();
 
     assertEquals("has new dataset", 1, store.size());
-    Document output = theOp.getOutputs().iterator().next();
+    IDocument output = theOp.getOutputs().iterator().next();
 
     // check the size
     assertEquals("correct size", 2, output.size());
@@ -273,21 +277,23 @@ public class TestOperations
 
     // the target collection
     NumberDocumentBuilder speedGood1b =
-        new NumberDocumentBuilder("Speed 1", kmh, null);
+        new NumberDocumentBuilder("Speed 1", kmh, null, null);
     NumberDocumentBuilder speedGood2b =
-        new NumberDocumentBuilder("Speed 2", kmh, null);
+        new NumberDocumentBuilder("Speed 2", kmh, null, null);
     NumberDocumentBuilder speedLongerb =
-        new NumberDocumentBuilder("Speed 3", kmh, null);
+        new NumberDocumentBuilder("Speed 3", kmh, null, null);
     NumberDocumentBuilder speedDiffUnitsb =
-        new NumberDocumentBuilder("Speed 4", kmm, null);
+        new NumberDocumentBuilder("Speed 4", kmm, null, null);
     NumberDocumentBuilder len1b =
-        new NumberDocumentBuilder("Length 1", m, null);
+        new NumberDocumentBuilder("Length 1", m, null, null);
     NumberDocumentBuilder temporalSpeed1b =
-        new NumberDocumentBuilder("Speed 5", kmh, null);
+        new NumberDocumentBuilder("Speed 5", kmh, null, null);
     NumberDocumentBuilder temporalSpeed2b =
-        new NumberDocumentBuilder("Speed 6", kmh, null);
-    StringDocumentBuilder string1 = new StringDocumentBuilder("strings 1", null);
-    StringDocumentBuilder string2 = new StringDocumentBuilder("strings 2", null);
+        new NumberDocumentBuilder("Speed 6", kmh, null, null);
+    StringDocumentBuilder string1 =
+        new StringDocumentBuilder("strings 1", null);
+    StringDocumentBuilder string2 =
+        new StringDocumentBuilder("strings 2", null);
 
     for (int i = 1; i <= 10; i++)
     {
@@ -436,7 +442,7 @@ public class TestOperations
 
     assertEquals("new collection added to store", 1, store.size());
 
-    Document firstItem = (Document) store.iterator().next();
+    IDocument firstItem = (IDocument) store.iterator().next();
     ICommand precedent = firstItem.getPrecedent();
     assertNotNull("has precedent", precedent);
     assertEquals("Correct name",
@@ -448,7 +454,7 @@ public class TestOperations
     Iterator<? extends IStoreItem> iIter = inputs.iterator();
     while (iIter.hasNext())
     {
-      Document thisC = (Document) iIter.next();
+      IDocument thisC = (IDocument) iIter.next();
       List<ICommand> deps = thisC.getDependents();
       assertEquals("has a depedent", 1, deps.size());
       Iterator<ICommand> dIter = deps.iterator();
@@ -465,7 +471,7 @@ public class TestOperations
     Iterator<Document> oIter = outputs.iterator();
     while (oIter.hasNext())
     {
-      Document thisC = (Document) oIter.next();
+      IDocument thisC = (IDocument) oIter.next();
       ICommand dep = thisC.getPrecedent();
       assertNotNull("has a depedent", dep);
       assertEquals("Correct dependent", precedent, dep);
@@ -490,7 +496,7 @@ public class TestOperations
         (NumberDocument) store.get(SampleData.SPEED_TWO);
     NumberDocument speedIrregular =
         (NumberDocument) store.get(SampleData.SPEED_IRREGULAR2);
-    Document string1 = (Document) store.get(SampleData.STRING_ONE);
+    IDocument string1 = (IDocument) store.get(SampleData.STRING_ONE);
     NumberDocument len1 = (NumberDocument) store.get(SampleData.LENGTH_ONE);
     NumberDocument factor =
         (NumberDocument) store.get(SampleData.FLOATING_POINT_FACTOR);
@@ -781,7 +787,7 @@ public class TestOperations
     NumberDocument speedGood1 =
         (NumberDocument) store.get(SampleData.SPEED_ONE);
     NumberDocumentBuilder speedSingleb =
-        new NumberDocumentBuilder("singleton", null, null);
+        new NumberDocumentBuilder("singleton", null, null, null);
 
     speedSingleb.add(2d);
     NumberDocument speedSingle = speedSingleb.toDocument();
@@ -819,7 +825,7 @@ public class TestOperations
         (NumberDocument) store.get(SampleData.SPEED_ONE);
     NumberDocumentBuilder speedSingleb =
         new NumberDocumentBuilder("singleton", METRE.divide(SECOND).asType(
-            Velocity.class), null);
+            Velocity.class), null, null);
 
     speedSingleb.add(2d);
 
@@ -866,7 +872,7 @@ public class TestOperations
     selection.clear();
 
     // test not all quantities
-    Document string1 = (Document) store.get(SampleData.STRING_ONE);
+    IDocument string1 = (IDocument) store.get(SampleData.STRING_ONE);
     selection.add(speedGood1);
     selection.add(string1);
     commands =
@@ -1305,9 +1311,9 @@ public class TestOperations
     StoreGroup store = new SampleData().getData(10);
     List<IStoreItem> selection = new ArrayList<IStoreItem>();
 
-    Document speedGood1 = (Document) store.get(SampleData.SPEED_ONE);
-    Document string1 = (Document) store.get(SampleData.TIME_STAMPS_1);
-    Document len1 = (Document) store.get(SampleData.LENGTH_ONE);
+    IDocument speedGood1 = (IDocument) store.get(SampleData.SPEED_ONE);
+    IDocument string1 = (IDocument) store.get(SampleData.TIME_STAMPS_1);
+    IDocument len1 = (IDocument) store.get(SampleData.LENGTH_ONE);
 
     selection.add(speedGood1);
     selection.add(string1);

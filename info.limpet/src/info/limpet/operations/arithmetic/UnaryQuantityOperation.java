@@ -14,13 +14,13 @@
  *****************************************************************************/
 package info.limpet.operations.arithmetic;
 
-import info.limpet.Document;
 import info.limpet.ICommand;
 import info.limpet.IContext;
 import info.limpet.IOperation;
 import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
-import info.limpet.NumberDocument;
+import info.limpet.impl.Document;
+import info.limpet.impl.NumberDocument;
 import info.limpet.operations.CollectionComplianceTests;
 
 import java.util.ArrayList;

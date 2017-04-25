@@ -1,10 +1,16 @@
-package info.limpet;
+package info.limpet.impl;
 
+import info.limpet.IChangeListener;
+import info.limpet.ICommand;
+import info.limpet.IDocument;
+import info.limpet.IStoreGroup;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
+
+import javax.measure.unit.Unit;
 
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.DatasetUtils;
@@ -13,7 +19,7 @@ import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.metadata.AxesMetadata;
 
-abstract public class Document implements IStoreItem
+abstract public class Document implements IDocument
 {
 
   // TODO: long-term, find a better place for this
@@ -33,11 +39,40 @@ abstract public class Document implements IStoreItem
   final private UUID uuid;
   private List<ICommand> dependents = new ArrayList<ICommand>();
 
+  private Unit<?> indexUnits;
+
   public Document(IDataset dataset, ICommand predecessor)
   {
     this.dataset = dataset;
     this.predecessor = predecessor;
     uuid = UUID.randomUUID();
+  }
+
+  @Override
+  @UIProperty(name = "IndexUnits", category = "Label")
+  public Unit<?> getIndexUnits()
+  {
+    if (!isIndexed())
+    {
+      throw new IllegalArgumentException(
+          "Index not present, cannot retrieve index units");
+    }
+    return indexUnits;
+  }
+
+  /**
+   * set the units for the index data
+   * 
+   * @param units
+   */
+  public void setIndexUnits(Unit<?> units)
+  {
+    if (!isIndexed())
+    {
+      throw new IllegalArgumentException(
+          "Index not present, cannot set index units");
+    }
+    indexUnits = units;
   }
 
   public IDataset getDataset()
@@ -50,10 +85,12 @@ abstract public class Document implements IStoreItem
     this.dataset = dataset;
   }
 
-  /**
-   * tell listeners that it's about to be deleted
+  /*
+   * (non-Javadoc)
    * 
+   * @see info.limpet.IDocument#beingDeleted()
    */
+  @Override
   public void beingDeleted()
   {
     if (changeListeners != null)
@@ -74,41 +111,78 @@ abstract public class Document implements IStoreItem
     }
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see info.limpet.IDocument#getName()
+   */
+  @Override
   @UIProperty(name = "Name", category = UIProperty.CATEGORY_LABEL)
   public String getName()
   {
     return dataset.getName();
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see info.limpet.IDocument#setName(java.lang.String)
+   */
+  @Override
   public void setName(String name)
   {
     dataset.setName(name);
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see info.limpet.IDocument#getParent()
+   */
   @Override
   public IStoreGroup getParent()
   {
     return parent;
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see info.limpet.IDocument#setParent(info.limpet.IStoreGroup)
+   */
   @Override
   public void setParent(IStoreGroup parent)
   {
     this.parent = parent;
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see info.limpet.IDocument#addChangeListener(info.limpet.IChangeListener)
+   */
   @Override
   public void addChangeListener(IChangeListener listener)
   {
     changeListeners.add(listener);
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see info.limpet.IDocument#removeChangeListener(info.limpet.IChangeListener)
+   */
   @Override
   public void removeChangeListener(IChangeListener listener)
   {
     changeListeners.remove(listener);
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see info.limpet.IDocument#fireDataChanged()
+   */
   @Override
   public void fireDataChanged()
   {
@@ -116,30 +190,41 @@ abstract public class Document implements IStoreItem
     {
       thisL.dataChanged(this);
     }
-    for(final ICommand thisL: dependents)
+    for (final ICommand thisL : dependents)
     {
       thisL.dataChanged(this);
     }
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see info.limpet.IDocument#getUUID()
+   */
   @Override
   public UUID getUUID()
   {
     return uuid;
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see info.limpet.IDocument#size()
+   */
+  @Override
   @UIProperty(name = "Size", category = UIProperty.CATEGORY_LABEL)
   public int size()
   {
     return dataset.getSize();
   }
 
-  public Class<?> storedClass()
-  {
-    // no, I don't know how we do this :-)
-    return null;
-  }
-  
+  /*
+   * (non-Javadoc)
+   * 
+   * @see info.limpet.IDocument#isIndexed()
+   */
+  @Override
   @UIProperty(name = "Indexed", category = UIProperty.CATEGORY_LABEL)
   public boolean isIndexed()
   {
@@ -182,7 +267,13 @@ abstract public class Document implements IStoreItem
 
   }
 
-  public Iterator<Double> getIndices()
+  /*
+   * (non-Javadoc)
+   * 
+   * @see info.limpet.IDocument#getIndices()
+   */
+  @Override
+  public Iterator<Double> getIndex()
   {
     DoubleIterator res = null;
 
@@ -207,22 +298,46 @@ abstract public class Document implements IStoreItem
     return res;
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see info.limpet.IDocument#isQuantity()
+   */
+  @Override
   @UIProperty(name = "Quantity", category = UIProperty.CATEGORY_LABEL)
   public boolean isQuantity()
   {
     return false;
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see info.limpet.IDocument#getPrecedent()
+   */
+  @Override
   public ICommand getPrecedent()
   {
     return predecessor;
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see info.limpet.IDocument#addDependent(info.limpet.ICommand)
+   */
+  @Override
   public void addDependent(ICommand command)
   {
     dependents.add(command);
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see info.limpet.IDocument#getDependents()
+   */
+  @Override
   public List<ICommand> getDependents()
   {
     return dependents;
@@ -232,6 +347,7 @@ abstract public class Document implements IStoreItem
    * temporarily use this - until we're confident about replacing child Dataset objects
    * 
    */
+  @Override
   public void clearQuiet()
   {
     dataset = null;

@@ -14,11 +14,11 @@
  *****************************************************************************/
 package info.limpet.data.persistence.xml;
 
-import info.limpet.Document;
 import info.limpet.IStoreGroup;
-import info.limpet.LocationDocument;
-import info.limpet.NumberDocument;
-import info.limpet.StoreGroup;
+import info.limpet.impl.Document;
+import info.limpet.impl.LocationDocument;
+import info.limpet.impl.NumberDocument;
+import info.limpet.impl.StoreGroup;
 import info.limpet.operations.AbstractCommand;
 import info.limpet.operations.arithmetic.simple.AddQuantityOperation.AddQuantityValues;
 import info.limpet.operations.arithmetic.simple.MultiplyQuantityOperation.MultiplyQuantityValues;

@@ -25,7 +25,7 @@ import static javax.measure.unit.SI.RADIAN;
 import static javax.measure.unit.SI.SECOND;
 import info.limpet.IOperation;
 import info.limpet.IStoreItem;
-import info.limpet.SampleData;
+import info.limpet.impl.SampleData;
 import info.limpet.operations.admin.AddLayerOperation;
 import info.limpet.operations.admin.CopyCsvToClipboardAction;
 import info.limpet.operations.admin.CreateSingletonGenerator;

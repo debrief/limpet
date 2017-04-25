@@ -1,5 +1,8 @@
-package info.limpet;
+package info.limpet.impl;
 
+import info.limpet.ICommand;
+import info.limpet.ILocations;
+import info.limpet.IObjectDocument;
 import info.limpet.operations.spatial.GeoSupport;
 
 import java.awt.geom.Point2D;
@@ -148,7 +151,7 @@ public class LocationDocument extends Document implements ILocations,
     int beforeIndex = -1, afterIndex = -1;
     double beforeTime = 0, afterTime = 0;
 
-    Iterator<Double> tIter = getIndices();
+    Iterator<Double> tIter = getIndex();
     int ctr = 0;
     while (tIter.hasNext())
     {

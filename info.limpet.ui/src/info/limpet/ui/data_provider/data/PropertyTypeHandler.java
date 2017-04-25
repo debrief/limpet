@@ -1,7 +1,7 @@
 package info.limpet.ui.data_provider.data;
 
-import info.limpet.Range;
-import info.limpet.UIProperty;
+import info.limpet.impl.Range;
+import info.limpet.impl.UIProperty;
 import info.limpet.operations.spatial.GeoSupport;
 import info.limpet.ui.Activator;
 import info.limpet.ui.propertyeditors.SliderPropertyDescriptor;

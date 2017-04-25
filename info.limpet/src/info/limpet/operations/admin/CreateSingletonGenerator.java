@@ -19,9 +19,9 @@ import info.limpet.IContext;
 import info.limpet.IOperation;
 import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
-import info.limpet.NumberDocument;
-import info.limpet.NumberDocumentBuilder;
-import info.limpet.StoreGroup;
+import info.limpet.impl.NumberDocument;
+import info.limpet.impl.NumberDocumentBuilder;
+import info.limpet.impl.StoreGroup;
 import info.limpet.operations.AbstractCommand;
 import info.limpet.operations.CollectionComplianceTests;
 
@@ -178,11 +178,11 @@ public class CreateSingletonGenerator implements IOperation
   protected NumberDocument generate(String name, double value,
       ICommand precedent)
   {
-    NumberDocumentBuilder builder = new NumberDocumentBuilder(name, _unit, precedent);
+    NumberDocumentBuilder builder =
+        new NumberDocumentBuilder(name, _unit, precedent, null);
     builder.add(value);
     return builder.toDocument();
   }
-
 
   public CollectionComplianceTests getATests()
   {

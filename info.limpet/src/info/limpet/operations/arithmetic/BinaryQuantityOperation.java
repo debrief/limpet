@@ -14,13 +14,13 @@
  *****************************************************************************/
 package info.limpet.operations.arithmetic;
 
-import info.limpet.Document;
 import info.limpet.ICommand;
 import info.limpet.IContext;
+import info.limpet.IDocument;
 import info.limpet.IOperation;
 import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
-import info.limpet.NumberDocument;
+import info.limpet.impl.NumberDocument;
 import info.limpet.operations.CollectionComplianceTests;
 import info.limpet.operations.arithmetic.InterpolatedMaths.IOperationPerformer;
 
@@ -84,16 +84,16 @@ public abstract class BinaryQuantityOperation implements IOperation
     return res;
   }
   
-  protected Document getLongestIndexedCollection(List<IStoreItem> selection)
+  protected IDocument getLongestIndexedCollection(List<IStoreItem> selection)
   {
     // find the longest time series.
-    Document longest = null;
+    IDocument longest = null;
 
     for(final IStoreItem sItem: selection)
     {
-      if(sItem instanceof Document)
+      if(sItem instanceof IDocument)
       {
-        final Document doc = (Document) sItem;
+        final IDocument doc = (IDocument) sItem;
         if (doc.isIndexed())
         {
           if (longest == null)
@@ -158,7 +158,7 @@ public abstract class BinaryQuantityOperation implements IOperation
   {
 
     @SuppressWarnings("unused")
-    private final Document timeProvider;
+    private final IDocument timeProvider;
 
     public BinaryQuantityCommand(String title, String description,
         IStoreGroup store, boolean canUndo, boolean canRedo,
@@ -169,7 +169,7 @@ public abstract class BinaryQuantityOperation implements IOperation
 
     public BinaryQuantityCommand(String title, String description,
         IStoreGroup store, boolean canUndo, boolean canRedo,
-        List<IStoreItem> inputs, Document timeProvider, IContext context)
+        List<IStoreItem> inputs, IDocument timeProvider, IContext context)
     {
       super(title, description, store, canUndo, canRedo, inputs, context);
 
@@ -219,9 +219,9 @@ public abstract class BinaryQuantityOperation implements IOperation
       while (iter.hasNext())
       {
         IStoreItem sItem = iter.next();
-        if(sItem instanceof Document)
+        if(sItem instanceof IDocument)
         {
-          Document iCollection = (Document) sItem;
+          IDocument iCollection = (IDocument) sItem;
           iCollection.addDependent(this);          
         }
       }
@@ -396,7 +396,7 @@ public abstract class BinaryQuantityOperation implements IOperation
       }
 
       // and fire out the update
-      for (Document output : getOutputs())
+      for (IDocument output : getOutputs())
       {
         output.fireDataChanged();
       }

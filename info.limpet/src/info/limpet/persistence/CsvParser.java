@@ -22,11 +22,11 @@ import static javax.measure.unit.SI.METRE;
 import static javax.measure.unit.SI.SECOND;
 import info.limpet.IDocumentBuilder;
 import info.limpet.IStoreItem;
-import info.limpet.LocationDocumentBuilder;
-import info.limpet.NumberDocumentBuilder;
-import info.limpet.SampleData;
-import info.limpet.StoreGroup;
-import info.limpet.StringDocumentBuilder;
+import info.limpet.impl.LocationDocumentBuilder;
+import info.limpet.impl.NumberDocumentBuilder;
+import info.limpet.impl.SampleData;
+import info.limpet.impl.StoreGroup;
+import info.limpet.impl.StringDocumentBuilder;
 import info.limpet.operations.spatial.GeoSupport;
 
 import java.awt.geom.Point2D;
@@ -610,7 +610,8 @@ public class CsvParser
      */
     public IDocumentBuilder create(String name)
     {
-      LocationDocumentBuilder res = new LocationDocumentBuilder(name, null);
+      LocationDocumentBuilder res =
+          new LocationDocumentBuilder(name, null, null);
       return res;
     }
 
@@ -624,7 +625,7 @@ public class CsvParser
 
       Point2D point = GeoSupport.getCalculator().createPoint(valLong, valLat);
       LocationDocumentBuilder builder = (LocationDocumentBuilder) series;
-      builder.add(point, thisTime);
+      builder.add(thisTime, point);
     }
 
     public int numCols()
@@ -671,7 +672,8 @@ public class CsvParser
     @Override
     public IDocumentBuilder create(String name)
     {
-      return new NumberDocumentBuilder(name, super._units, null);
+      return new NumberDocumentBuilder(name, super._units, null,
+          SampleData.M_SEC);
     }
   }
 
@@ -714,7 +716,7 @@ public class CsvParser
     public IDocumentBuilder create(String name)
     {
       NumberDocumentBuilder res =
-          new NumberDocumentBuilder(name, super._units, null);
+          new NumberDocumentBuilder(name, super._units, null, SampleData.M_SEC);
       return res;
     }
 
@@ -749,9 +751,9 @@ public class CsvParser
     public IDocumentBuilder create(String name)
     {
       return null;
-//      NumberDocumentBuilder res =
-//          new NumberDocumentBuilder("Dummy", null, null);
-//      return res;
+      // NumberDocumentBuilder res =
+      // new NumberDocumentBuilder("Dummy", null, null);
+      // return res;
     }
 
     @Override

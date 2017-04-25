@@ -14,9 +14,9 @@
  *****************************************************************************/
 package info.limpet.operations.admin;
 
-import info.limpet.Document;
 import info.limpet.ICommand;
 import info.limpet.IContext;
+import info.limpet.IDocument;
 import info.limpet.IOperation;
 import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
@@ -42,7 +42,7 @@ public class CopyCsvToClipboardAction implements IOperation
 
     public static String getCsvString(List<IStoreItem> selection)
     {
-      if (selection.size() == 1 && selection.get(0) instanceof Document)
+      if (selection.size() == 1 && selection.get(0) instanceof IDocument)
       {
         return CsvGenerator.generate(selection.get(0));
       }
@@ -102,7 +102,7 @@ public class CopyCsvToClipboardAction implements IOperation
 
   private boolean appliesTo(List<IStoreItem> selection)
   {
-    return selection.size() == 1 && selection.get(0) instanceof Document;
+    return selection.size() == 1 && selection.get(0) instanceof IDocument;
   }
 
 }

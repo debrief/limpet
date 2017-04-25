@@ -1,8 +1,13 @@
-package info.limpet;
+package info.limpet.impl;
+
+import info.limpet.ICommand;
+import info.limpet.IDocumentBuilder;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.measure.unit.Unit;
 
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DoubleDataset;
@@ -14,28 +19,30 @@ public class LocationDocumentBuilder implements IDocumentBuilder
 {
   final private String _name;
   final private List<Point2D> _values;
-  private ArrayList<Double> _times;
+  private ArrayList<Double> _indices;
   final private ICommand _predecessor;
+  private Unit<?> _indexUnits;
 
-  public LocationDocumentBuilder(String name, ICommand predecessor)
+  public LocationDocumentBuilder(String name, ICommand predecessor, Unit<?> indexUnits)
   {
     _name = name;
     _predecessor = predecessor;
     _values = new ArrayList<Point2D>();
+    _indexUnits = indexUnits;
   }
 
-  public void add(Point2D point, double index)
+  public void add(double index, Point2D point)
   {
     // sort out the observation
     add(point);
 
     // and now the index
-    if (_times == null)
+    if (_indices == null)
     {
-      _times = new ArrayList<Double>();
+      _indices = new ArrayList<Double>();
     }
 
-    _times.add(index);
+    _indices.add(index);
   }
 
   public void add(Point2D point)
@@ -55,18 +62,36 @@ public class LocationDocumentBuilder implements IDocumentBuilder
       dataset.setName(_name);
 
       // do we have any indices to add?
-      if (_times != null)
+      if (_indices != null)
       {
         // sort out the time axis
-        DoubleDataset timeData =
-            (DoubleDataset) DatasetFactory.createFromObject(_times);
-        final AxesMetadata timeAxis = new AxesMetadataImpl();
-        timeAxis.initialize(1);
-        timeAxis.setAxis(0, timeData);
-        dataset.addMetadata(timeAxis);
+        DoubleDataset indexData =
+            (DoubleDataset) DatasetFactory.createFromObject(_indices);
+        final AxesMetadata index = new AxesMetadataImpl();
+        index.initialize(1);
+        index.setAxis(0, indexData);
+        dataset.addMetadata(index);
       }
 
       res = new LocationDocument(dataset, _predecessor);
+      
+      if (_indices != null)
+      {
+        if (_indexUnits == null)
+        {
+          System.err.println("Setting index, but do not have units");
+        }
+
+        // ok, set the index units
+        res.setIndexUnits(_indexUnits);
+      }
+      else
+      {
+        if (_indexUnits != null)
+        {
+          throw new RuntimeException("Have index units, but no index");
+        }
+      }
     }
     else
     {

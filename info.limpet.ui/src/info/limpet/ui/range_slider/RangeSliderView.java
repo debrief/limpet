@@ -14,13 +14,13 @@
  *****************************************************************************/
 package info.limpet.ui.range_slider;
 
-import info.limpet.Document;
 import info.limpet.IChangeListener;
 import info.limpet.ICommand;
+import info.limpet.IDocument;
 import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
-import info.limpet.NumberDocument;
-import info.limpet.Range;
+import info.limpet.impl.NumberDocument;
+import info.limpet.impl.Range;
 import info.limpet.operations.CollectionComplianceTests;
 import info.limpet.operations.arithmetic.SimpleMovingAverageOperation.SimpleMovingAverageCommand;
 import info.limpet.stackedcharts.ui.editor.Activator;
@@ -510,9 +510,9 @@ public class RangeSliderView extends CoreAnalysisView implements
     }
 
     IStoreItem first = res.get(0);
-    if (first instanceof Document)
+    if (first instanceof IDocument)
     {
-      Document newColl = (Document) res.get(0);
+      IDocument newColl = (IDocument) res.get(0);
 
       if (newColl instanceof NumberDocument)
       {
@@ -673,9 +673,9 @@ public class RangeSliderView extends CoreAnalysisView implements
     if (selection.size() == 1)
     {
       IStoreItem item = selection.iterator().next();
-      if (item instanceof Document)
+      if (item instanceof IDocument)
       {
-        Document coll = (Document) item;
+        IDocument coll = (IDocument) item;
 
         if (coll.isQuantity() && coll.size() == 1)
         {

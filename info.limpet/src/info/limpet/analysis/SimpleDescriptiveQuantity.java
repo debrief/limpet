@@ -15,8 +15,8 @@
 package info.limpet.analysis;
 
 import info.limpet.IStoreItem;
-import info.limpet.NumberDocument;
-import info.limpet.Range;
+import info.limpet.impl.NumberDocument;
+import info.limpet.impl.Range;
 import info.limpet.operations.CollectionComplianceTests;
 
 import java.text.DecimalFormat;

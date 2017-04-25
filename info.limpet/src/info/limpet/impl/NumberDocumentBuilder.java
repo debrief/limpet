@@ -1,4 +1,7 @@
-package info.limpet;
+package info.limpet.impl;
+
+import info.limpet.ICommand;
+import info.limpet.IDocumentBuilder;
 
 import java.util.ArrayList;
 
@@ -13,34 +16,37 @@ public class NumberDocumentBuilder implements IDocumentBuilder
 {
   private String _name;
   private Unit<?> _units;
-  private ArrayList<Double> _times;
+  private ArrayList<Double> _indices;
   private ArrayList<Double> _values;
   private ICommand _predecessor;
   private Range _range;
+  private Unit<?> _indexUnits;
 
-  public NumberDocumentBuilder(String name, Unit<?> units, ICommand predecessor)
+  public NumberDocumentBuilder(String name, Unit<?> units,
+      ICommand predecessor, Unit<?> indexUnits)
   {
     _name = name;
     _units = units;
     _predecessor = predecessor;
     _values = new ArrayList<Double>();
+    _indexUnits = indexUnits;
   }
 
   public int size()
   {
     return _values.size();
   }
-  
-  public void add(double time, double value)
+
+  public void add(double index, double value)
   {
     add(value);
 
-    if (_times == null)
+    if (_indices == null)
     {
-      _times = new ArrayList<Double>();
+      _indices = new ArrayList<Double>();
     }
 
-    _times.add(time);
+    _indices.add(index);
   }
 
   public void add(double value)
@@ -61,15 +67,15 @@ public class NumberDocumentBuilder implements IDocumentBuilder
           (DoubleDataset) DatasetFactory.createFromObject(_values);
       dataset.setName(_name);
 
-      if (_times != null)
+      if (_indices != null)
       {
         // sort out the time axis
-        DoubleDataset timeData =
-            (DoubleDataset) DatasetFactory.createFromObject(_times);
-        final AxesMetadata timeAxis = new AxesMetadataImpl();
-        timeAxis.initialize(1);
-        timeAxis.setAxis(0, timeData);
-        dataset.addMetadata(timeAxis);
+        DoubleDataset indexData =
+            (DoubleDataset) DatasetFactory.createFromObject(_indices);
+        final AxesMetadata index = new AxesMetadataImpl();
+        index.initialize(1);
+        index.setAxis(0, indexData);
+        dataset.addMetadata(index);
       }
 
       res = new NumberDocument(dataset, _predecessor, _units);
@@ -78,6 +84,25 @@ public class NumberDocumentBuilder implements IDocumentBuilder
       {
         res.setRange(_range);
       }
+
+      if (_indices != null)
+      {
+        if (_indexUnits == null)
+        {
+          System.err.println("Setting index, but do not have units");
+        }
+
+        // ok, set the index units
+        res.setIndexUnits(_indexUnits);
+      }
+      else
+      {
+        if (_indexUnits != null)
+        {
+          throw new RuntimeException("Have index units, but no index");
+        }
+      }
+
     }
 
     return res;
@@ -86,10 +111,10 @@ public class NumberDocumentBuilder implements IDocumentBuilder
   public void clear()
   {
     _values.clear();
-    if (_times != null)
+    if (_indices != null)
     {
-      _times.clear();
-      _times = null;
+      _indices.clear();
+      _indices = null;
     }
     _range = null;
   }

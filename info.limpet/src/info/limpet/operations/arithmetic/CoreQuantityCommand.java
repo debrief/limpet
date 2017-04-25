@@ -1,9 +1,9 @@
 package info.limpet.operations.arithmetic;
 
-import info.limpet.Document;
 import info.limpet.IContext;
 import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
+import info.limpet.impl.Document;
 import info.limpet.operations.AbstractCommand;
 
 import java.util.Iterator;

@@ -14,9 +14,9 @@
  *****************************************************************************/
 package info.limpet.operations.spatial;
 
-import info.limpet.Document;
 import info.limpet.ICommand;
 import info.limpet.IContext;
+import info.limpet.IDocument;
 import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
 
@@ -33,7 +33,7 @@ public class ProplossBetweenTwoTracksOperation extends TwoTrackOperation
   {
     ProplossBetweenOperation(final List<IStoreItem> selection,
         final IStoreGroup store, final String title, final String description,
-        final Document timeProvider, final IContext context)
+        final IDocument timeProvider, final IContext context)
     {
       super(selection, store, title, description, timeProvider, context,
           NonSI.DECIBEL);
@@ -88,7 +88,7 @@ public class ProplossBetweenTwoTracksOperation extends TwoTrackOperation
       if (getATests().suitableForIndexedInterpolation(collatedTracks))
       {
         // hmm, find the time provider
-        final Document timeProvider =
+        final IDocument timeProvider =
             getATests().getLongestIndexedCollection(collatedTracks);
 
         // ok, provide an interpolated action

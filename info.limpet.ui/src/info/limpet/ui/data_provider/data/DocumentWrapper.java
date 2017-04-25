@@ -14,22 +14,22 @@
  *****************************************************************************/
 package info.limpet.ui.data_provider.data;
 
-import info.limpet.Document;
+import info.limpet.IDocument;
 import info.limpet.IStoreItem;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ui.views.properties.IPropertySource;
 
-public class CollectionWrapper implements IAdaptable, LimpetWrapper
+public class DocumentWrapper implements IAdaptable, LimpetWrapper
 {
-  private final Document _collection;
+  private final IDocument _document;
   private final LimpetWrapper _parent;
 
-  public CollectionWrapper(final LimpetWrapper parent,
-      final Document collection)
+  public DocumentWrapper(final LimpetWrapper parent,
+      final IDocument collection)
   {
     _parent = parent;
-    _collection = collection;
+    _document = collection;
   }
 
   @Override
@@ -38,7 +38,7 @@ public class CollectionWrapper implements IAdaptable, LimpetWrapper
     final int prime = 31;
     int result = 1;
     result =
-        prime * result + ((_collection == null) ? 0 : _collection.hashCode());
+        prime * result + ((_document == null) ? 0 : _document.hashCode());
     return result;
   }
 
@@ -57,15 +57,15 @@ public class CollectionWrapper implements IAdaptable, LimpetWrapper
     {
       return false;
     }
-    CollectionWrapper other = (CollectionWrapper) obj;
-    if (_collection == null)
+    DocumentWrapper other = (DocumentWrapper) obj;
+    if (_document == null)
     {
-      if (other._collection != null)
+      if (other._document != null)
       {
         return false;
       }
     }
-    else if (!_collection.equals(other._collection))
+    else if (!_document.equals(other._document))
     {
       return false;
     }
@@ -77,21 +77,21 @@ public class CollectionWrapper implements IAdaptable, LimpetWrapper
   {
     if (adapter == IPropertySource.class)
     {
-      return new ReflectivePropertySource(_collection);
+      return new ReflectivePropertySource(_document);
     }
     else if (adapter == IStoreItem.class)
     {
-      return _collection;
+      return _document;
     }
-    else if (adapter == Document.class)
+    else if (adapter == IDocument.class)
     {
-      return _collection;
+      return _document;
     }
     return null;
   }
-  public Document getCollection()
+  public IDocument getDocument()
   {
-    return _collection;
+    return _document;
   }
 
   @Override
@@ -103,14 +103,14 @@ public class CollectionWrapper implements IAdaptable, LimpetWrapper
   @Override
   public IStoreItem getSubject()
   {
-    return _collection;
+    return _document;
   }
 
   @Override
   public String toString()
   {
     final String msg;
-    msg = _collection.getName() + " (" + (_collection).size() + " items)";
+    msg = _document.getName() + " (" + (_document).size() + " items)";
     return msg;
   }
 }

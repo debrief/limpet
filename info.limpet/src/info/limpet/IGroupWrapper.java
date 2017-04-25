@@ -1,6 +1,5 @@
-package info.limpet.store;
+package info.limpet;
 
-import info.limpet.IStoreGroup;
 
 public interface IGroupWrapper
 {
