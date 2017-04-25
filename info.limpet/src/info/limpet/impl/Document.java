@@ -35,6 +35,8 @@ abstract public class Document implements IDocument
   final protected ICommand predecessor;
   private List<IChangeListener> changeListeners =
       new ArrayList<IChangeListener>();
+  private transient List<IChangeListener> transientChangeListeners =
+      new ArrayList<IChangeListener>();
   private IStoreGroup parent;
   final private UUID uuid;
   private List<ICommand> dependents = new ArrayList<ICommand>();
@@ -48,8 +50,9 @@ abstract public class Document implements IDocument
     uuid = UUID.randomUUID();
   }
 
+  
+  //   @UIProperty(name = "IndexUnits", category = "Label", visibleWhen = "indexed == false")
   @Override
-  @UIProperty(name = "IndexUnits", category = "Label")
   public Unit<?> getIndexUnits()
   {
     if (!isIndexed())
@@ -170,12 +173,35 @@ abstract public class Document implements IDocument
   /*
    * (non-Javadoc)
    * 
+   * @see info.limpet.IDocument#addChangeListener(info.limpet.IChangeListener)
+   */
+  @Override
+  public void addTransientChangeListener(IChangeListener listener)
+  {
+    // we may need to re-create it, if we've been restored from fime
+    if(transientChangeListeners == null)
+    {
+      transientChangeListeners = new ArrayList<IChangeListener>();
+    }
+    transientChangeListeners.add(listener);
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
    * @see info.limpet.IDocument#removeChangeListener(info.limpet.IChangeListener)
    */
   @Override
   public void removeChangeListener(IChangeListener listener)
   {
     changeListeners.remove(listener);
+  }
+
+  @Override
+  public void removeTransientChangeListener(
+      IChangeListener collectionChangeListener)
+  {
+    transientChangeListeners.remove(collectionChangeListener);
   }
 
   /*

@@ -257,4 +257,5 @@ public class NumberDocument extends Document
     // ok share the good news
     fireDataChanged();
   }
+
 }

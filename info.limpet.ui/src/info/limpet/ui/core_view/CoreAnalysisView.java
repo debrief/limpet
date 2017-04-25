@@ -50,13 +50,13 @@ import org.eclipse.ui.part.ViewPart;
 public abstract class CoreAnalysisView extends ViewPart
 {
 
-  private Action newView;
-  private Action copyToClipboard;
-  private Action followSelection;
-  private ISelectionListener selListener;
-  private final CollectionComplianceTests aTests;
-  private final List<IStoreItem> curList = new ArrayList<IStoreItem>();
-  private IChangeListener changeListener;
+  private transient Action newView;
+  private transient Action copyToClipboard;
+  private transient Action followSelection;
+  private transient ISelectionListener selListener;
+  private transient final CollectionComplianceTests aTests;
+  private transient final List<IStoreItem> curList = new ArrayList<IStoreItem>();
+  private transient IChangeListener changeListener;
   private final String _myId;
   private final String _myTitle;
 
@@ -194,7 +194,7 @@ public abstract class CoreAnalysisView extends ViewPart
       while (iter.hasNext())
       {
         IStoreItem iC = iter.next();
-        iC.addChangeListener(changeListener);
+        iC.addTransientChangeListener(changeListener);
       }
 
       // ok, display them
@@ -215,7 +215,7 @@ public abstract class CoreAnalysisView extends ViewPart
       while (iter.hasNext())
       {
         IStoreItem iC = iter.next();
-        iC.removeChangeListener(changeListener);
+        iC.removeTransientChangeListener(changeListener);
       }
 
       // and forget about them all

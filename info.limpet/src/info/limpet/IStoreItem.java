@@ -23,6 +23,13 @@ public interface IStoreItem
 
 	void removeChangeListener(IChangeListener listener);
 
+
+  /** add a change listener that should not be persisted to file
+   * 
+   * @param listener
+   */
+  void addTransientChangeListener(IChangeListener listener);
+
 	/**
 	 * indicate that the collection has changed Note: both registered listeners
 	 * and dependents are informed of the change
@@ -30,4 +37,6 @@ public interface IStoreItem
 	void fireDataChanged();
 
 	UUID getUUID();
+
+  void removeTransientChangeListener(IChangeListener collectionChangeListener);
 }

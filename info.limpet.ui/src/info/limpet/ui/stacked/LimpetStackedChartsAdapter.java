@@ -37,7 +37,7 @@ public class LimpetStackedChartsAdapter implements IStackedDatasetAdapter,
 				NumberDocument collection, Dataset subject) {
 			_dataset = subject;
 			_collection = collection;
-			_collection.addChangeListener(this);
+			_collection.addTransientChangeListener(this);
 		}
 
 		@Override
@@ -55,7 +55,7 @@ public class LimpetStackedChartsAdapter implements IStackedDatasetAdapter,
 
 		@Override
 		public void collectionDeleted(IStoreItem subject) {
-			_collection.removeChangeListener(this);
+			_collection.removeTransientChangeListener(this);
 		}
 
 	}

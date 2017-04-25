@@ -45,7 +45,7 @@ public class AnalysisView extends CoreAnalysisView
 	 */
 	public static final String ID = "info.limpet.ui.AnalysisView";
 
-	private TableViewer viewer;
+	private transient TableViewer viewer;
 
 	public AnalysisView()
 	{

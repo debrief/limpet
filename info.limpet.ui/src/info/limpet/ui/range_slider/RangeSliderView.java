@@ -166,7 +166,7 @@ public class RangeSliderView extends CoreAnalysisView implements
     @Override
     public void dropListener()
     {
-      _myCommand.removeChangeListener(this);
+      _myCommand.removeTransientChangeListener(this);
     }
 
   }
@@ -323,7 +323,7 @@ public class RangeSliderView extends CoreAnalysisView implements
       _sliderThumb = sliderThumb;
       _name = name;
       _collection = collection;
-      collection.addChangeListener(this);
+      collection.addTransientChangeListener(this);
     }
 
     @Override
@@ -410,7 +410,7 @@ public class RangeSliderView extends CoreAnalysisView implements
     @Override
     public void dropListener()
     {
-      _collection.removeChangeListener(this);
+      _collection.removeTransientChangeListener(this);
     }
 
   }

@@ -47,13 +47,19 @@ import javax.measure.quantity.AngularVelocity;
 import javax.measure.quantity.Duration;
 import javax.measure.quantity.Frequency;
 import javax.measure.quantity.Length;
+import javax.measure.quantity.Mass;
+import javax.measure.quantity.Pressure;
 import javax.measure.quantity.Temperature;
 import javax.measure.quantity.Velocity;
+import javax.measure.quantity.Volume;
+import javax.measure.quantity.VolumetricDensity;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
+
+import si.uom.quantity.Density;
 
 public class CsvParser
 {
@@ -420,13 +426,15 @@ public class CsvParser
         SECOND).asType(AngularVelocity.class), null, "Degs/sec"));
     _candidates.add(new TemporalSeriesSupporter(METRE.asType(Length.class),
         null, "m"));
+    _candidates.add(new TemporalSeriesSupporter(MILLI(BAR).asType(Pressure.class),
+        null, new String[]{"mb", "millibars"}));
     _candidates.add(new TemporalSeriesSupporter(YARD.asType(Length.class),
         null, "yds"));
     _candidates.add(new TemporalSeriesSupporter(SampleData.DEGREE_ANGLE
         .asType(Angle.class), null, new String[]
     {"Degs", "Degr"}));
     _candidates.add(new TemporalSeriesSupporter(GRAM
-        .divide(CENTI(METER).pow(3)), null, "g/cm3"));
+        .divide(CENTI(METER).pow(3)).asType(VolumetricDensity.class), null, new String[]{"g/cm3","g/cm"}));
     _candidates.add(new TemporalSeriesSupporter(NAUTICAL_MILE.divide(
         SECOND.times(3600)).asType(Velocity.class), null, "kts"));
     _candidates.add(new TemporalSeriesSupporter(METRE.divide(SECOND).asType(

@@ -331,7 +331,7 @@ public class DataManagerEditor extends EditorPart
       }
     }
 
-    next.addChangeListener(listener);
+    next.addTransientChangeListener(listener);
   }
 
   @Override

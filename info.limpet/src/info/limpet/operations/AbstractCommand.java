@@ -307,6 +307,23 @@ public abstract class AbstractCommand implements
   {
     // TODO we should add change listener support
   }
+  
+  
+
+  @Override
+  public void addTransientChangeListener(IChangeListener listener)
+  {
+    // TODO Auto-generated method stub
+    
+  }
+
+  @Override
+  public void removeTransientChangeListener(
+      IChangeListener collectionChangeListener)
+  {
+    // TODO Auto-generated method stub
+    
+  }
 
   @Override
   public void fireDataChanged()

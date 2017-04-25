@@ -22,12 +22,12 @@ public class StoreGroup extends ArrayList<IStoreItem> implements IStoreGroup
   private String _name;
   private UUID _uuid;
   private IStoreGroup _parent;
-  
+
   private transient List<StoreChangeListener> _storeListeners;
+  private transient List<IChangeListener> _transientStoreListeners;
   private transient List<IChangeListener> _listeners;
   private transient List<PropertyChangeListener> _timeListeners;
   private Date _currentTime;
-
 
   public StoreGroup(String name)
   {
@@ -37,18 +37,20 @@ public class StoreGroup extends ArrayList<IStoreItem> implements IStoreGroup
 
   private void checkListeners()
   {
-    if(_storeListeners == null)
+    if (_storeListeners == null)
     {
-      _storeListeners =
-          new ArrayList<StoreChangeListener>();
+      _storeListeners = new ArrayList<StoreChangeListener>();
     }
-    if(_listeners == null)
+    if (_listeners == null)
     {
-      _listeners =
-          new ArrayList<IChangeListener>();
+      _listeners = new ArrayList<IChangeListener>();
     }
+    if (_transientStoreListeners == null)
+    {
+      _transientStoreListeners = new ArrayList<IChangeListener>();
+    }
+
   }
-  
 
   public void clear()
   {
@@ -88,21 +90,40 @@ public class StoreGroup extends ArrayList<IStoreItem> implements IStoreGroup
 
     return res;
   }
-  
+
   @Override
   public boolean add(IStoreItem item)
-  {    
+  {
     final boolean res = super.add(item);
-    
+
     item.setParent(this);
-    
+
     item.addChangeListener(this);
 
     fireModified();
 
     return res;
   }
-  
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see info.limpet.IDocument#addChangeListener(info.limpet.IChangeListener)
+   */
+  @Override
+  public void addTransientChangeListener(IChangeListener listener)
+  {
+    checkListeners();
+    _transientStoreListeners.add(listener);
+  }
+
+  @Override
+  public void removeTransientChangeListener(
+      IChangeListener collectionChangeListener)
+  {
+    _transientStoreListeners.remove(collectionChangeListener);
+  }
+
   @Override
   public void addAll(List<IStoreItem> results)
   {
@@ -135,12 +156,11 @@ public class StoreGroup extends ArrayList<IStoreItem> implements IStoreGroup
     return _name;
   }
 
-
   @Override
   public void addChangeListener(IChangeListener listener)
   {
     checkListeners();
-    
+
     _listeners.add(listener);
   }
 
@@ -148,31 +168,30 @@ public class StoreGroup extends ArrayList<IStoreItem> implements IStoreGroup
   public void removeChangeListener(IChangeListener listener)
   {
     checkListeners();
-    
+
     _listeners.add(listener);
   }
-  
+
   public void addChangeListener(StoreChangeListener listener)
   {
     checkListeners();
-    
+
     _storeListeners.add(listener);
   }
 
   public void removeChangeListener(StoreChangeListener listener)
   {
     checkListeners();
-    
+
     _storeListeners.remove(listener);
   }
-
 
   @Override
   public void fireDataChanged()
   {
-    if(_listeners != null)
+    if (_listeners != null)
     {
-      for(IChangeListener listener: _listeners)
+      for (IChangeListener listener : _listeners)
       {
         listener.dataChanged(this);
       }
@@ -189,7 +208,6 @@ public class StoreGroup extends ArrayList<IStoreItem> implements IStoreGroup
     return _uuid;
   }
 
-
   @Override
   public void dataChanged(IStoreItem subject)
   {
@@ -201,7 +219,6 @@ public class StoreGroup extends ArrayList<IStoreItem> implements IStoreGroup
   {
     dataChanged(subject);
   }
-  
 
   protected void fireModified()
   {
@@ -210,8 +227,7 @@ public class StoreGroup extends ArrayList<IStoreItem> implements IStoreGroup
     Iterator<StoreChangeListener> iter = _storeListeners.iterator();
     while (iter.hasNext())
     {
-      StoreChangeListener listener =
-          iter.next();
+      StoreChangeListener listener = iter.next();
       listener.changed();
     }
   }
@@ -220,7 +236,7 @@ public class StoreGroup extends ArrayList<IStoreItem> implements IStoreGroup
   public void collectionDeleted(IStoreItem subject)
   {
   }
-  
+
   @Override
   public IStoreItem get(UUID uuid)
   {
@@ -262,11 +278,11 @@ public class StoreGroup extends ArrayList<IStoreItem> implements IStoreGroup
         // successS
         return item;
       }
-      else if(item instanceof IStoreGroup)
+      else if (item instanceof IStoreGroup)
       {
         IStoreGroup group = (IStoreGroup) item;
         IStoreItem match = group.get(name);
-        if(match != null)
+        if (match != null)
         {
           return match;
         }
@@ -287,10 +303,11 @@ public class StoreGroup extends ArrayList<IStoreItem> implements IStoreGroup
   {
     final Date oldTime = _currentTime;
     _currentTime = time;
-    if(_timeListeners != null)
+    if (_timeListeners != null)
     {
-      PropertyChangeEvent evt = new PropertyChangeEvent(this, "TIME", oldTime, time);
-      for(PropertyChangeListener thisL: _timeListeners)
+      PropertyChangeEvent evt =
+          new PropertyChangeEvent(this, "TIME", oldTime, time);
+      for (PropertyChangeListener thisL : _timeListeners)
       {
         thisL.propertyChange(evt);
       }
@@ -300,7 +317,7 @@ public class StoreGroup extends ArrayList<IStoreItem> implements IStoreGroup
   @Override
   public void addTimeChangeListener(PropertyChangeListener listener)
   {
-    if(_timeListeners == null)
+    if (_timeListeners == null)
     {
       _timeListeners = new ArrayList<PropertyChangeListener>();
     }
@@ -310,7 +327,7 @@ public class StoreGroup extends ArrayList<IStoreItem> implements IStoreGroup
   @Override
   public void removeTimeChangeListener(PropertyChangeListener listener)
   {
-    if(_timeListeners != null)
+    if (_timeListeners != null)
     {
       _timeListeners.remove(listener);
     }

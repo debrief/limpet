@@ -29,6 +29,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 
 import org.eclipse.swt.SWT;
@@ -101,7 +102,7 @@ public class XyPlotView extends CoreAnalysisView
     {
       // transform them to a lsit of documents
       List<IDocument> docList = aTests.getDocumentsIn(res);
-      
+
       // they're all the same type - check the first one
       Iterator<IDocument> iter = docList.iterator();
 
@@ -150,12 +151,10 @@ public class XyPlotView extends CoreAnalysisView
     while (iter.hasNext())
     {
       IDocument coll = (IDocument) iter.next();
-      if (coll.isQuantity() && coll.size() >= 1
-          && coll.size() < MAX_SIZE)
+      if (coll.isQuantity() && coll.size() >= 1 && coll.size() < MAX_SIZE)
       {
 
-        NumberDocument thisQ =
-            (NumberDocument) coll;
+        NumberDocument thisQ = (NumberDocument) coll;
 
         final Unit<?> theseUnits = thisQ.getUnits();
         String seriesName = seriesNameFor(thisQ, theseUnits);
@@ -245,8 +244,7 @@ public class XyPlotView extends CoreAnalysisView
     }
   }
 
-  private String seriesNameFor(NumberDocument thisQ,
-      final Unit<?> theseUnits)
+  private String seriesNameFor(NumberDocument thisQ, final Unit<?> theseUnits)
   {
     String seriesName = thisQ.getName() + " (" + theseUnits + ")";
     return seriesName;
@@ -259,21 +257,29 @@ public class XyPlotView extends CoreAnalysisView
     Unit<?> existingUnits = null;
 
     List<IDocument> docList = aTests.getDocumentsIn(res);
-    
+
     // get the outer time period (used for plotting singletons)
     List<IDocument> safeColl = new ArrayList<IDocument>();
     safeColl.addAll(docList);
     TimePeriod outerPeriod = aTests.getBoundingRange(res);
 
-    for(IDocument coll: docList)
+    for (IDocument coll : docList)
     {
-      if (coll.isQuantity() && coll.size() >= 1
-          && coll.size() < MAX_SIZE)
+      if (coll.isQuantity() && coll.size() >= 1 && coll.size() < MAX_SIZE)
       {
-        NumberDocument thisQ =
-            (NumberDocument) coll;
+        NumberDocument thisQ = (NumberDocument) coll;
 
         final Unit<?> theseUnits = thisQ.getUnits();
+
+        final Unit<?> indexUnits;
+        if (thisQ.isIndexed())
+        {
+          indexUnits = thisQ.getIndexUnits();
+        }
+        else
+        {
+          indexUnits = null;
+        }
 
         String seriesName = seriesNameFor(thisQ, theseUnits);
 
@@ -290,22 +296,43 @@ public class XyPlotView extends CoreAnalysisView
         newSeries.setLineColor(PlottingHelpers.colorFor(seriesName));
 
         final Date[] xTimeData;
+        final double[] xData;
         final double[] yData;
 
         if (coll.isIndexed())
         {
-          xTimeData = new Date[thisQ.size()];
+          // sort out the destination data type
+          final boolean isTemporal =
+              indexUnits.getDimension().equals(SI.SECOND.getDimension());
+          if (isTemporal)
+          {
+            xTimeData = new Date[thisQ.size()];
+            xData = null;
+          }
+          else
+          {
+            xData = new double[thisQ.size()];
+            xTimeData = null;
+          }
+
           yData = new double[thisQ.size()];
 
           // must be temporal
-          Iterator<Double> times = coll.getIndex();
+          Iterator<Double> index = coll.getIndex();
           Iterator<Double> values = thisQ.getIterator();
-          
+
           int ctr = 0;
           while (values.hasNext())
           {
-            double t = times.next();
-            xTimeData[ctr] = new Date((long) t);
+            double t = index.next();
+            if (isTemporal)
+            {
+              xTimeData[ctr] = new Date((long) t);
+            }
+            else
+            {
+              xData[ctr] = t;
+            }
             yData[ctr++] = values.next();
           }
         }
@@ -314,6 +341,7 @@ public class XyPlotView extends CoreAnalysisView
           // non temporal, include it as a marker line
           // must be non temporal
           xTimeData = new Date[2];
+          xData = null;
           yData = new double[2];
 
           // get the singleton value
@@ -324,10 +352,20 @@ public class XyPlotView extends CoreAnalysisView
           yData[0] = theValue;
           xTimeData[1] = new Date((long) outerPeriod.getEndTime());
           yData[1] = theValue;
-
         }
 
-        newSeries.setXDateSeries(xTimeData);
+        if (xTimeData != null)
+        {
+          newSeries.setXDateSeries(xTimeData);
+        }
+        else if (xData != null)
+        {
+          newSeries.setXSeries(xData);
+        }
+        else
+        {
+          System.err.println("We haven't correctly collated data");
+        }
         newSeries.setYSeries(yData);
 
         // ok, do we have existing data, in different units?
@@ -360,7 +398,33 @@ public class XyPlotView extends CoreAnalysisView
           newSeries.setSymbolType(PlotSymbolType.CROSS);
         }
 
-        chart.getAxisSet().getXAxis(0).getTitle().setText("Time");
+        final String xTitle;
+        if (xTimeData != null)
+        {
+          xTitle = "Time";
+        }
+        else
+        {
+          final String titlePrefix;
+          final String theDim = indexUnits.getDimension().toString();
+          switch (theDim)
+          {
+          case "[L]":
+            titlePrefix = "Length";
+            break;
+          case "[M]":
+            titlePrefix = "Mass";
+            break;
+          case "[T]":
+            titlePrefix = "Time";
+            break;
+          default:
+            titlePrefix = theDim;
+          }
+
+          xTitle = titlePrefix + " (" + indexUnits.toString() + ")";
+        }
+        chart.getAxisSet().getXAxis(0).getTitle().setText(xTitle);
 
         // adjust the axis range
         chart.getAxisSet().adjustRange();
@@ -406,8 +470,7 @@ public class XyPlotView extends CoreAnalysisView
     while (iter.hasNext())
     {
       IDocument coll = (IDocument) iter.next();
-      if (!coll.isQuantity() && coll.size() >= 1
-          && coll.size() < MAX_SIZE)
+      if (!coll.isQuantity() && coll.size() >= 1 && coll.size() < MAX_SIZE)
       {
         String seriesName = coll.getName();
         ILineSeries newSeries =
@@ -422,7 +485,7 @@ public class XyPlotView extends CoreAnalysisView
         LocationDocument loc = (LocationDocument) coll;
         Iterator<Point2D> lIter = loc.getLocationIterator();
         int ctr = 0;
-        while(lIter.hasNext())
+        while (lIter.hasNext())
         {
           Point2D geom = lIter.next();
           xData[ctr] = geom.getX();
@@ -457,8 +520,12 @@ public class XyPlotView extends CoreAnalysisView
   protected boolean appliesToMe(List<IStoreItem> res,
       CollectionComplianceTests tests)
   {
-    return tests.allCollections(res) && tests.allQuantity(res)
-        || tests.allNonQuantity(res);
+    final boolean allNonQuantity = tests.allNonQuantity(res);
+    final boolean allCollections = tests.allCollections(res);
+    final boolean allQuantity = tests.allQuantity(res);
+    final boolean suitableIndex =
+        tests.allIndexed(res) || tests.allNonIndexed(res);
+    return allCollections && suitableIndex && (allQuantity || allNonQuantity);
   }
 
   @Override
