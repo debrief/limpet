@@ -6,6 +6,8 @@ import info.limpet.IDocumentBuilder;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.measure.unit.Unit;
+
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.StringDataset;
@@ -16,17 +18,19 @@ public class StringDocumentBuilder implements IDocumentBuilder
 {
   final private String _name;
   final private List<String> _values;
-  private ArrayList<Long> _indices;
+  private ArrayList<Double> _indices;
   final private ICommand _predecessor;
+  private Unit<?> _indexUnits;
 
-  public StringDocumentBuilder(String name, ICommand predecessor)
+  public StringDocumentBuilder(String name, ICommand predecessor, Unit<?> indexUnits)
   {
     _name = name;
     _predecessor = predecessor;
     _values = new ArrayList<String>();
+    _indexUnits = indexUnits;
   }
 
-  public void add(String item, long index)
+  public void add(String item, double index)
   {
     // sort out the observation
     add(item);
@@ -34,7 +38,7 @@ public class StringDocumentBuilder implements IDocumentBuilder
     // and now the index
     if (_indices == null)
     {
-      _indices = new ArrayList<Long>();
+      _indices = new ArrayList<Double>();
     }
 
     _indices.add(index);
@@ -69,6 +73,24 @@ public class StringDocumentBuilder implements IDocumentBuilder
       }
 
       res = new StringDocument(dataset, _predecessor);
+      
+      if (_indices != null)
+      {
+        if (_indexUnits == null)
+        {
+          System.err.println("Setting index, but do not have units");
+        }
+
+        // ok, set the index units
+        res.setIndexUnits(_indexUnits);
+      }
+      else
+      {
+        if (_indexUnits != null)
+        {
+          throw new RuntimeException("Have index units, but no index");
+        }
+      }
     }
     else
     {

@@ -14,12 +14,8 @@
  *****************************************************************************/
 package info.limpet.persistence;
 
-import static javax.measure.unit.NonSI.NAUTICAL_MILE;
-import static javax.measure.unit.NonSI.YARD;
-import static javax.measure.unit.SI.HERTZ;
-import static javax.measure.unit.SI.KELVIN;
-import static javax.measure.unit.SI.METRE;
-import static javax.measure.unit.SI.SECOND;
+import static javax.measure.unit.NonSI.*;
+import static javax.measure.unit.SI.*;
 import info.limpet.IDocumentBuilder;
 import info.limpet.IStoreItem;
 import info.limpet.impl.LocationDocumentBuilder;
@@ -43,6 +39,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.measure.quantity.Angle;
 import javax.measure.quantity.AngularVelocity;
@@ -51,6 +49,7 @@ import javax.measure.quantity.Frequency;
 import javax.measure.quantity.Length;
 import javax.measure.quantity.Temperature;
 import javax.measure.quantity.Velocity;
+import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 
 import org.apache.commons.csv.CSVFormat;
@@ -84,7 +83,7 @@ public class CsvParser
     createImporters();
 
     final DataImporter temporalDimensionless =
-        new TemporalSeriesSupporter(null, null, null);
+        new TemporalSeriesSupporter(null, null, (String) null);
     final DataImporter temporalStrings = new TemporalStringImporter();
     final DataImporter strings = new StringImporter();
     final DataImporter dimensionless = new SeriesSupporter(null, null, null);
@@ -95,37 +94,71 @@ public class CsvParser
     // and store one series per column-set
     List<IDocumentBuilder> builders = new ArrayList<IDocumentBuilder>();
 
-    boolean isTime = false;
+    boolean isIndexed = false;
+    Unit<?> indexUnits = null;
     DateFormat customDateFormat = null;
+    boolean temporalIndex = false;
+
+    Pattern unitMatcher = Pattern.compile("(?:\\()(.*?)(?:\\))");
 
     for (CSVRecord record : records)
     {
       if (first)
       {
         first = false;
-        String time = record.get(0);
+        String colHeader = record.get(0);
         int ctr = 0;
 
-        if (time != null && time.toLowerCase().startsWith("time"))
+        if (colHeader != null && colHeader.toLowerCase().startsWith("time")
+            && !colHeader.contains("(s)"))
         {
           // is it plain time?
-          if (!time.toLowerCase().equals("time"))
+          if (colHeader.toLowerCase().equals("time"))
+          {
+            // ok, we'll have to guess this when we get to it
+          }
+          else
           {
             // ok, see if we have a time format string
-            if (time.contains("(") && time.contains(")"))
+            if (colHeader.contains("(") && colHeader.contains(")"))
             {
               // ok, extract the format string
               String formatStr =
-                  time.substring(time.indexOf("(") + 1, time.indexOf(")"));
+                  colHeader.substring(colHeader.indexOf("(") + 1, colHeader
+                      .indexOf(")"));
               customDateFormat = new SimpleDateFormat(formatStr);
             }
           }
-          isTime = true;
+          isIndexed = true;
+          temporalIndex = true;
+          indexUnits = MILLI(SI.SECOND);
           ctr = 1;
         }
         else
         {
-          ctr = 0;
+          // ok, we'll have to use another number parser
+
+          // get the units
+          Matcher m = unitMatcher.matcher(colHeader);
+          if (m.find())
+          {
+            // ok, get the units
+            final String indexUnitsStr = m.group(1);
+
+            // now find an importer for this type
+            for (DataImporter im : _candidates)
+            {
+              if (im.handleUnits(indexUnitsStr))
+              {
+                indexUnits = im._units;
+                break;
+              }
+            }
+          }
+          // put it here
+          temporalIndex = false;
+          isIndexed = true;
+          ctr = 1;
         }
 
         while (ctr < record.size())
@@ -156,8 +189,8 @@ public class CsvParser
             if (thisI.handleName(colName))
             {
               importers.add(thisI);
-              builders.add(thisI
-                  .create(fileName + "-" + thisI.nameFor(colName)));
+              builders.add(thisI.create(
+                  fileName + "-" + thisI.nameFor(colName), indexUnits));
               handled = true;
               ctr += thisI.numCols();
               break;
@@ -179,7 +212,7 @@ public class CsvParser
                 {
                   importers.add(thisI);
                   builders.add(thisI.create(fileName + "-"
-                      + thisI.nameFor(colName)));
+                      + thisI.nameFor(colName), indexUnits));
                   ctr += thisI.numCols();
                   handled = true;
                   break;
@@ -197,7 +230,8 @@ public class CsvParser
             final DeferredLoadSupporter thisI =
                 new DeferredLoadSupporter(colName);
             importers.add(thisI);
-            builders.add(thisI.create(fileName + "-" + thisI.nameFor(colName)));
+            builders.add(thisI.create(fileName + "-" + thisI.nameFor(colName),
+                indexUnits));
             ctr += 1;
           }
         }
@@ -205,46 +239,54 @@ public class CsvParser
       else
       {
 
-        String firstRow = record.get(0);
-        long theTime = -1;
+        String firstCell = record.get(0);
+        double indexVal = -1d;
         int thisCol = 0;
 
         // ok, we're out of the first row
-        if (isTime)
+        if (isIndexed)
         {
-          // ok, get the time field
           try
           {
-            // do we have a custom date format
-            final DateFormat thisFormat;
-            if (customDateFormat != null)
+            if (temporalIndex)
             {
-              thisFormat = customDateFormat;
-            }
-            else
-            {
-              int len = firstRow.length();
-              if (len < 10)
+              // ok, get the time field
+              // do we have a custom date format
+              final DateFormat thisFormat;
+              if (customDateFormat != null)
               {
-                thisFormat = TIME_FORMAT;
+                thisFormat = customDateFormat;
               }
               else
               {
-                // hmm, are there secs present
-                if (len == 16)
+                int len = firstCell.length();
+                if (len < 10)
                 {
-                  thisFormat = DATE_FORMAT;
+                  thisFormat = TIME_FORMAT;
                 }
                 else
                 {
-                  thisFormat = DATE_SECS_FORMAT;
+                  // hmm, are there secs present
+                  if (len == 16)
+                  {
+                    thisFormat = DATE_FORMAT;
+                  }
+                  else
+                  {
+                    thisFormat = DATE_SECS_FORMAT;
+                  }
                 }
               }
+              Date date = thisFormat.parse(firstCell);
+              indexVal = date.getTime();
+              thisCol = 1;
             }
-            Date date = thisFormat.parse(firstRow);
-            theTime = date.getTime();
-            thisCol = 1;
+            else
+            {
+              indexVal = Double.valueOf(firstCell);
+            }
           }
+
           catch (ParseException e)
           {
             e.printStackTrace();
@@ -274,7 +316,7 @@ public class CsvParser
             // is it numeric?
             DataImporter importer = null;
             // ok, treat it as string data
-            if (isTime)
+            if (isIndexed)
             {
               if (isNumeric(nextVal))
               {
@@ -304,7 +346,8 @@ public class CsvParser
               int index = importers.indexOf(dl);
               importers.set(index, importer);
 
-              builders.set(index, importer.create(fileName + "-" + seriesName));
+              builders.set(index, importer.create(fileName + "-" + seriesName,
+                  indexUnits));
 
               thisI = importer;
             }
@@ -313,7 +356,7 @@ public class CsvParser
 
           IDocumentBuilder thisS = builders.get(i);
 
-          thisI.consume(thisS, theTime, thisCol, record);
+          thisI.consume(thisS, indexVal, thisCol, record);
 
           thisCol += thisI.numCols();
         }
@@ -367,7 +410,10 @@ public class CsvParser
     _candidates = new ArrayList<DataImporter>();
     _candidates.add(new LocationImporter());
     _candidates.add(new TemporalSeriesSupporter(SECOND.asType(Duration.class),
-        null, "secs"));
+        null, new String[]
+        {"secs", "s"}));
+    _candidates.add(new TemporalSeriesSupporter(MILLI(SECOND).asType(
+        Duration.class), null, "ms"));
     _candidates.add(new TemporalSeriesSupporter(HERTZ.asType(Frequency.class),
         null, "Hz"));
     _candidates.add(new TemporalSeriesSupporter(SampleData.DEGREE_ANGLE.divide(
@@ -377,13 +423,18 @@ public class CsvParser
     _candidates.add(new TemporalSeriesSupporter(YARD.asType(Length.class),
         null, "yds"));
     _candidates.add(new TemporalSeriesSupporter(SampleData.DEGREE_ANGLE
-        .asType(Angle.class), null, "Degs"));
+        .asType(Angle.class), null, new String[]
+    {"Degs", "Degr"}));
+    _candidates.add(new TemporalSeriesSupporter(GRAM
+        .divide(CENTI(METER).pow(3)), null, "g/cm3"));
     _candidates.add(new TemporalSeriesSupporter(NAUTICAL_MILE.divide(
         SECOND.times(3600)).asType(Velocity.class), null, "kts"));
     _candidates.add(new TemporalSeriesSupporter(METRE.divide(SECOND).asType(
-        Velocity.class), null, "M/Sec"));
+        Velocity.class), null, new String[]
+    {"M/Sec", "m/s"}));
     _candidates.add(new TemporalSeriesSupporter(KELVIN
-        .asType(Temperature.class), null, "C"));
+        .asType(Temperature.class), null, new String[]
+    {"C", "DegC"}));
   }
 
   public static boolean isNumeric(String str)
@@ -410,7 +461,7 @@ public class CsvParser
   {
     private final Unit<?> _units;
     private final String _colName;
-    private final String _unitsStr;
+    private final String[] _unitsStr;
 
     /**
      * constructor
@@ -424,12 +475,18 @@ public class CsvParser
      */
     protected DataImporter(Unit<?> units, String colName, String unitsStr)
     {
+      this(units, colName, new String[]
+      {unitsStr});
+    }
+
+    protected DataImporter(Unit<?> units, String colName, String[] unitsStr)
+    {
       _units = units;
       _colName = colName;
       _unitsStr = unitsStr;
     }
 
-    abstract public void consume(IDocumentBuilder thisS, long theTime,
+    abstract public void consume(IDocumentBuilder thisS, double theIndex,
         int thisCol, CSVRecord record);
 
     /**
@@ -438,7 +495,7 @@ public class CsvParser
      * @param name
      * @return
      */
-    abstract public IDocumentBuilder create(String name);
+    abstract public IDocumentBuilder create(String name, Unit<?> indexUnits);
 
     // {
     // Document res = null;
@@ -510,7 +567,18 @@ public class CsvParser
       }
       else
       {
-        return _unitsStr.equals(units);
+        // loop through our units
+        for (final String un : _unitsStr)
+        {
+          if (un != null)
+          {
+            if (un.equals(units))
+            {
+              return true;
+            }
+          }
+        }
+        return false;
       }
     }
 
@@ -535,23 +603,24 @@ public class CsvParser
   {
     protected TemporalStringImporter()
     {
-      super(null, null, null);
+      super(null, null, (String) null);
     }
 
     @Override
-    public IDocumentBuilder create(String name)
+    public IDocumentBuilder create(String name, Unit<?> indexUnits)
     {
-      StringDocumentBuilder res = new StringDocumentBuilder(name, null);
+      StringDocumentBuilder res =
+          new StringDocumentBuilder(name, null, indexUnits);
       return res;
     }
 
     @Override
-    public void consume(IDocumentBuilder series, long thisTime, int colStart,
+    public void consume(IDocumentBuilder series, double theIndex, int colStart,
         CSVRecord row)
     {
       String thisVal = row.get(colStart);
       StringDocumentBuilder builder = (StringDocumentBuilder) series;
-      builder.add(thisVal, thisTime);
+      builder.add(thisVal, theIndex);
     }
   }
 
@@ -565,22 +634,23 @@ public class CsvParser
   {
     protected StringImporter()
     {
-      super(null, null, null);
+      super(null, null, (String) null);
     }
 
-    public IDocumentBuilder create(String name)
+    public IDocumentBuilder create(String name, Unit<?> indexUnits)
     {
-      StringDocumentBuilder res = new StringDocumentBuilder(name, null);
+      StringDocumentBuilder res =
+          new StringDocumentBuilder(name, null, indexUnits);
       return res;
     }
 
     @Override
-    public void consume(IDocumentBuilder series, long thisTime, int colStart,
+    public void consume(IDocumentBuilder series, double theIndex, int colStart,
         CSVRecord row)
     {
       String thisVal = row.get(colStart);
       StringDocumentBuilder builder = (StringDocumentBuilder) series;
-      builder.add(thisVal, thisTime);
+      builder.add(thisVal, theIndex);
     }
   }
 
@@ -594,7 +664,7 @@ public class CsvParser
   {
     protected LocationImporter()
     {
-      super(null, "Lat", null);
+      super(null, "Lat", (String) null);
     }
 
     public String nameFor(String colName)
@@ -606,17 +676,18 @@ public class CsvParser
      * create an instance of this series, using the specified name
      * 
      * @param name
+     * @param indexUnits
      * @return
      */
-    public IDocumentBuilder create(String name)
+    public IDocumentBuilder create(String name, Unit<?> indexUnits)
     {
       LocationDocumentBuilder res =
-          new LocationDocumentBuilder(name, null, null);
+          new LocationDocumentBuilder(name, null, indexUnits);
       return res;
     }
 
-    public void consume(IDocumentBuilder series, long thisTime, int colStart,
-        CSVRecord row)
+    public void consume(IDocumentBuilder series, double thisIndex,
+        int colStart, CSVRecord row)
     {
       String latVal = row.get(colStart);
       Double valLat = Double.parseDouble(latVal);
@@ -625,7 +696,7 @@ public class CsvParser
 
       Point2D point = GeoSupport.getCalculator().createPoint(valLong, valLat);
       LocationDocumentBuilder builder = (LocationDocumentBuilder) series;
-      builder.add(thisTime, point);
+      builder.add(thisIndex, point);
     }
 
     public int numCols()
@@ -648,19 +719,19 @@ public class CsvParser
       super(units, colName, unitsStr);
     }
 
-    protected void
-        add(NumberDocumentBuilder series, long time, Number quantity)
+    protected void add(NumberDocumentBuilder series, double index,
+        Number quantity)
     {
       series.add(quantity.doubleValue());
     }
 
-    public void consume(IDocumentBuilder series, long thisTime, int colStart,
-        CSVRecord row)
+    public void consume(IDocumentBuilder series, double thisIndex,
+        int colStart, CSVRecord row)
     {
       String thisVal = row.get(colStart);
       Double val = Double.parseDouble(thisVal);
       NumberDocumentBuilder nm = (NumberDocumentBuilder) series;
-      add(nm, thisTime, val);
+      add(nm, thisIndex, val);
     }
 
     @Override
@@ -670,10 +741,9 @@ public class CsvParser
     }
 
     @Override
-    public IDocumentBuilder create(String name)
+    public IDocumentBuilder create(String name, Unit<?> indexUnits)
     {
-      return new NumberDocumentBuilder(name, super._units, null,
-          SampleData.MILLIS);
+      return new NumberDocumentBuilder(name, super._units, null, indexUnits);
     }
   }
 
@@ -692,13 +762,19 @@ public class CsvParser
       super(units, colName, unitsStr);
     }
 
-    protected void
-        add(NumberDocumentBuilder series, long time, Number quantity)
+    protected TemporalSeriesSupporter(Unit<?> units, String colName,
+        String[] unitsStr)
+    {
+      super(units, colName, unitsStr);
+    }
+
+    protected void add(NumberDocumentBuilder series, double time,
+        Number quantity)
     {
       series.add(time, quantity.doubleValue());
     }
 
-    public void consume(IDocumentBuilder series, long thisTime, int colStart,
+    public void consume(IDocumentBuilder series, double thisTime, int colStart,
         CSVRecord row)
     {
       String thisVal = row.get(colStart);
@@ -711,12 +787,13 @@ public class CsvParser
      * create an instance of this series, using the specified name
      * 
      * @param name
+     * @param indexUnits
      * @return
      */
-    public IDocumentBuilder create(String name)
+    public IDocumentBuilder create(String name, Unit<?> indexUnits)
     {
       NumberDocumentBuilder res =
-          new NumberDocumentBuilder(name, super._units, null, SampleData.MILLIS);
+          new NumberDocumentBuilder(name, super._units, null, indexUnits);
       return res;
     }
 
@@ -739,7 +816,7 @@ public class CsvParser
 
     public DeferredLoadSupporter(String name)
     {
-      super(null, name, null);
+      super(null, name, (String) null);
     }
 
     public String getName()
@@ -748,7 +825,7 @@ public class CsvParser
     }
 
     @Override
-    public IDocumentBuilder create(String name)
+    public IDocumentBuilder create(String name, Unit<?> indexUnits)
     {
       return null;
       // NumberDocumentBuilder res =
@@ -757,7 +834,7 @@ public class CsvParser
     }
 
     @Override
-    public void consume(IDocumentBuilder thisS, long theTime, int thisCol,
+    public void consume(IDocumentBuilder thisS, double theIndex, int thisCol,
         CSVRecord record)
     {
       throw new RuntimeException("Should not get called");

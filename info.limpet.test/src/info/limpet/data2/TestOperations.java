@@ -340,9 +340,9 @@ public class TestOperations
     NumberDocumentBuilder temporalSpeed2b =
         new NumberDocumentBuilder("Speed 6", kmh, null, SampleData.MILLIS);
     StringDocumentBuilder string1 =
-        new StringDocumentBuilder("strings 1", null);
+        new StringDocumentBuilder("strings 1", null, null);
     StringDocumentBuilder string2 =
-        new StringDocumentBuilder("strings 2", null);
+        new StringDocumentBuilder("strings 2", null, null);
 
     for (int i = 1; i <= 10; i++)
     {

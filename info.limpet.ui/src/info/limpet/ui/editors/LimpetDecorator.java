@@ -14,6 +14,8 @@
  *****************************************************************************/
 package info.limpet.ui.editors;
 
+import javax.measure.unit.SI;
+
 import info.limpet.ICommand;
 import info.limpet.IDocument;
 import info.limpet.ui.Activator;
@@ -31,6 +33,8 @@ public class LimpetDecorator implements ILightweightLabelDecorator
 {
 
   private static final ImageDescriptor TIME;
+
+  private static final ImageDescriptor LENGTH;
 
   private static final ImageDescriptor SINGLE;
 
@@ -56,6 +60,9 @@ public class LimpetDecorator implements ILightweightLabelDecorator
     TIME =
         AbstractUIPlugin.imageDescriptorFromPlugin(Activator.PLUGIN_ID,
             "icons/clock.png");
+    LENGTH =
+        AbstractUIPlugin.imageDescriptorFromPlugin(Activator.PLUGIN_ID,
+            "icons/measure_8.png");
     SINGLE =
         AbstractUIPlugin.imageDescriptorFromPlugin(Activator.PLUGIN_ID,
             "icons/singleton.png");
@@ -136,7 +143,14 @@ public class LimpetDecorator implements ILightweightLabelDecorator
 
     if (coll.isIndexed())
     {
-      decoration.addOverlay(TIME, IDecoration.BOTTOM_RIGHT);
+      if(coll.getIndexUnits().getDimension().equals(SI.SECOND.getDimension()))
+      {
+        decoration.addOverlay(TIME, IDecoration.BOTTOM_RIGHT);
+      }
+      else if(coll.getIndexUnits().getDimension().equals(SI.METRE.getDimension()))
+      {
+        decoration.addOverlay(LENGTH, IDecoration.BOTTOM_RIGHT);
+      }
     }
     if (coll.size() == 1)
     {

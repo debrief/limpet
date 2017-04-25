@@ -97,8 +97,8 @@ public class LimpetLabelProvider extends LabelProvider
           {
             res = Activator.getImageDescriptor("icons/volume.png");
           }
-          else if (dim.equals(Dimension.LENGTH.times(Dimension.LENGTH)
-              .times(Dimension.LENGTH).divide(Dimension.MASS)))
+          else if (dim.equals(Dimension.LENGTH.times(Dimension.LENGTH).times(
+              Dimension.LENGTH).divide(Dimension.MASS)))
           {
             res = Activator.getImageDescriptor("icons/density.png");
           }
@@ -117,6 +117,11 @@ public class LimpetLabelProvider extends LabelProvider
           else if (dim.equals(Dimension.LENGTH.divide(Dimension.TIME)))
           {
             res = Activator.getImageDescriptor("icons/speed.png");
+          }
+          else
+          {
+            // default image type
+            res = Activator.getImageDescriptor("icons/frequency.png");
           }
         }
         else if (coll instanceof LocationDocument)
@@ -145,11 +150,10 @@ public class LimpetLabelProvider extends LabelProvider
         else if (name.equals(DataModel.DEPENDENTS))
         {
           res = Activator.getImageDescriptor("icons/r_arrow.png");
-
         }
       }
-      
-      if(res == null)
+
+      if (res == null)
       {
         System.err.println("no icon for:" + item);
       }
