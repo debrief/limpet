@@ -348,18 +348,15 @@ public class InterpolatedMaths extends Maths
         }
         else
         {
-          // an exception was thrown while trying to determine
-          // the
-          // indices. See if the parent class can handle it
+          // no interpolation needed
           operandA = da;
           operandB = db;
         }
       }
       else
       {
-        // no interpolation needed
-        operandA = da;
-        operandB = db;
+        // we couldn't load the dataset
+        throw new RuntimeException("We were unable to load the axis dataset");
       }
     }
 

@@ -190,7 +190,7 @@ public abstract class BinaryQuantityOperation implements IOperation
       IDataset newSet = performCalc();
 
       // store the new dataset
-      getOutputs().get(0).setDataset(newSet);
+      getOutputs().get(0).setDataset(newSet);      
     }
 
     @Override
@@ -211,6 +211,8 @@ public abstract class BinaryQuantityOperation implements IOperation
       // ok, wrap the dataset
       NumberDocument output =
           new NumberDocument((DoubleDataset) dataset, this, unit);
+      
+      tidyOutput(output);
 
       // and fire out the update
       output.fireDataChanged();
@@ -232,6 +234,11 @@ public abstract class BinaryQuantityOperation implements IOperation
 
       // ok, done
       getStore().add(output);
+    }
+
+    protected void tidyOutput(NumberDocument output)
+    {
+      // we don't need to do anything
     }
 
     /**
@@ -381,13 +388,7 @@ public abstract class BinaryQuantityOperation implements IOperation
           res = getOperation().perform(ind1, ind2, null);
 
           // if there are indices, store them
-          if (outputIndices != null)
-          {
-            AxesMetadata am = new AxesMetadataImpl();
-            am.initialize(1);
-            am.setAxis(0, outputIndices);
-            res.addMetadata(am);
-          }
+          assignOutputIndices(res, outputIndices);
         }
         else
         {
@@ -407,6 +408,18 @@ public abstract class BinaryQuantityOperation implements IOperation
 
       // done
       return res;
+    }
+
+    protected void assignOutputIndices(final IDataset output,
+        final Dataset outputIndices)
+    {
+      if (outputIndices != null)
+      {
+        AxesMetadata am = new AxesMetadataImpl();
+        am.initialize(1);
+        am.setAxis(0, outputIndices);
+        output.addMetadata(am);
+      }
     }
 
     /**
