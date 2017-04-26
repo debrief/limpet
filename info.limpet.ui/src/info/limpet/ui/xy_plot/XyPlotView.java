@@ -115,7 +115,7 @@ public class XyPlotView extends CoreAnalysisView
       {
         if (aTests.allIndexedOrSingleton(res))
         {
-          showTemporalQuantity(res);
+          showIndexedQuantity(res);
         }
         else
         {
@@ -252,7 +252,7 @@ public class XyPlotView extends CoreAnalysisView
     return seriesName;
   }
 
-  private void showTemporalQuantity(List<IStoreItem> res)
+  private void showIndexedQuantity(List<IStoreItem> res)
   {
     clearGraph();
 
@@ -399,11 +399,14 @@ public class XyPlotView extends CoreAnalysisView
         {
           newSeries.setSymbolType(PlotSymbolType.CROSS);
         }
-
+        
+        final boolean switchAxes;
+        
         final String xTitle;
         if (xTimeData != null)
-        {
+        {          
           xTitle = "Time";
+          switchAxes =  false;
         }
         else
         {
@@ -413,20 +416,34 @@ public class XyPlotView extends CoreAnalysisView
           {
           case "[L]":
             titlePrefix = "Length";
+            switchAxes =  true;
             break;
           case "[M]":
             titlePrefix = "Mass";
+            switchAxes =  false;
             break;
           case "[T]":
             titlePrefix = "Time";
+            switchAxes =  false;
             break;
           default:
             titlePrefix = theDim;
+            switchAxes =  false;
           }
 
           xTitle = titlePrefix + " (" + indexUnits.toString() + ")";
         }
         chart.getAxisSet().getXAxis(0).getTitle().setText(xTitle);
+        
+        if(switchAxes)
+        {
+          chart.setOrientation(SWT.VERTICAL);
+        }
+        else
+        {
+          chart.setOrientation(SWT.HORIZONTAL);
+        }
+        
 
         // adjust the axis range
         chart.getAxisSet().adjustRange();
