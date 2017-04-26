@@ -50,8 +50,8 @@ abstract public class Document implements IDocument
     uuid = UUID.randomUUID();
   }
 
-  
-  //   @UIProperty(name = "IndexUnits", category = "Label", visibleWhen = "indexed == false")
+  @UIProperty(name = "IndexUnits", category = "Label",
+      visibleWhen = "indexed == true")
   @Override
   public Unit<?> getIndexUnits()
   {
@@ -179,7 +179,7 @@ abstract public class Document implements IDocument
   public void addTransientChangeListener(IChangeListener listener)
   {
     // we may need to re-create it, if we've been restored from fime
-    if(transientChangeListeners == null)
+    if (transientChangeListeners == null)
     {
       transientChangeListeners = new ArrayList<IChangeListener>();
     }

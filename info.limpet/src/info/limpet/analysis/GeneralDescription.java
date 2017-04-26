@@ -51,11 +51,15 @@ public abstract class GeneralDescription extends CoreAnalysis
         values.add(thisC.getName());
         titles.add("Size");
         values.add("" + thisC.size());
-        titles.add("Temporal");
-        values.add("" + thisC.isIndexed());
         titles.add("Quantity");
         values.add("" + thisC.isQuantity());
-
+        titles.add("Indexed");
+        values.add("" + thisC.isIndexed());
+        if(thisC.isIndexed())
+        {
+          titles.add("Index units");
+          values.add("" + thisC.getIndexUnits().toString());
+        }
       }
     }
 

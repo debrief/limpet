@@ -43,14 +43,25 @@ public class NumberDocument extends Document
     return qType;
   }
   
+  @UIProperty(name = "Size", category = UIProperty.CATEGORY_METADATA)
   public int getSize()
   {
     return size();
   }
-//  @UIProperty(name = "Range", category = UIProperty.CATEGORY_METADATA,
-//      visibleWhen = "size == 1")
+  
+  /** we've introduced this method as a workaround.  The "visibleWhen" operator
+   * for getRange doesn't work with "size==1".  Numerical
+   * comparisions don't seem to work. So, we're wrapping the
+   * numberical comparison in this boolean method.
+   * @return
+   */
+  public boolean getShowRange()
+  {
+    return size() == 1;
+  }
 
-  @UIProperty(name = "Range", category = UIProperty.CATEGORY_METADATA)
+  @UIProperty(name = "Range", category = UIProperty.CATEGORY_METADATA,
+      visibleWhen = "showRange == true")
   public Range getRange()
   {
     return range;
@@ -61,6 +72,7 @@ public class NumberDocument extends Document
     this.range = range;
   }
 
+  @UIProperty(name = "Units", category = "Label", visibleWhen = "units != null")
   public Unit<?> getUnits()
   {
     return qType;
