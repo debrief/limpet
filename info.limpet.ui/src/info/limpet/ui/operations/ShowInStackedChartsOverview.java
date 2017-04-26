@@ -46,6 +46,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.measure.unit.SI;
+import javax.measure.unit.Unit;
+
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
@@ -69,11 +72,10 @@ public class ShowInStackedChartsOverview implements IOperation
     return aTests;
   }
 
-  public List<ICommand> actionsFor(
-      List<IStoreItem> selection, IStoreGroup destination, IContext context)
+  public List<ICommand> actionsFor(List<IStoreItem> selection,
+      IStoreGroup destination, IContext context)
   {
-    List<ICommand> res =
-        new ArrayList<ICommand>();
+    List<ICommand> res = new ArrayList<ICommand>();
     if (appliesTo(selection))
     {
       ICommand newC =
@@ -94,8 +96,7 @@ public class ShowInStackedChartsOverview implements IOperation
     return (nonEmpty && allData && allQuantity && allTemporal);
   }
 
-  public static class ShowInStackedChartsOperation extends
-      AbstractCommand
+  public static class ShowInStackedChartsOperation extends AbstractCommand
   {
     public ShowInStackedChartsOperation(String title,
         List<IStoreItem> selection, IContext context)
@@ -104,11 +105,11 @@ public class ShowInStackedChartsOverview implements IOperation
           selection, context);
     }
 
-//    @Override
-//    protected String getOutputName()
-//    {
-//      return null;
-//    }
+    // @Override
+    // protected String getOutputName()
+    // {
+    // return null;
+    // }
 
     @Override
     public void execute()
@@ -299,13 +300,24 @@ public class ShowInStackedChartsOverview implements IOperation
               res.setOrientation(Orientation.VERTICAL);
 
               // get the first item, so we can determine the independent axis
-              NumberDocument firstItem =
-                  getFirstCollectionFor(selection);
+              NumberDocument firstItem = getFirstCollectionFor(selection);
 
               if (firstItem.isIndexed())
               {
                 IndependentAxis ia = factory.createIndependentAxis();
-                ia.setAxisType(factory.createDateAxis());
+
+                // see what the index should look like
+                Unit<?> units = firstItem.getIndexUnits();
+                if (units != null && units.getDimension() != null
+                    && units.getDimension().equals(SI.SECOND.getDimension()))
+                {
+                  ia.setAxisType(factory.createDateAxis());
+                }
+                else
+                {
+                  ia.setAxisType(factory.createNumberAxis());
+                }
+
                 res.setSharedAxis(ia);
               }
               else
