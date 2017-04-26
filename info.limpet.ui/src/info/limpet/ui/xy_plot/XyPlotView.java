@@ -30,6 +30,8 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.measure.converter.UnitConverter;
+import javax.measure.quantity.Duration;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 
@@ -363,12 +365,25 @@ public class XyPlotView extends CoreAnalysisView
           Iterator<Double> values = thisQ.getIterator();
 
           int ctr = 0;
+          final Unit<Duration> millis = SI.SECOND.divide(1000);
           while (values.hasNext())
           {
             double t = index.next();
             if (isTemporal)
             {
-              xTimeData[ctr] = new Date((long) t);
+              final long value;
+              if(indexUnits.equals(millis))
+              {
+                value = (long) t;
+              }
+              else
+              {
+                // do we need to convert to millis?
+                UnitConverter converter = indexUnits.getConverterTo(millis);
+                value = (long) converter.convert(t);
+              }
+              
+              xTimeData[ctr] = new Date((long) value);
             }
             else
             {
