@@ -448,6 +448,7 @@ public class XyPlotView extends CoreAnalysisView
         if (thisQ.size() > 90 || thisQ.size() == 1)
         {
           newSeries.setSymbolType(PlotSymbolType.NONE);
+          newSeries.setLineWidth(2);
         }
         else
         {
