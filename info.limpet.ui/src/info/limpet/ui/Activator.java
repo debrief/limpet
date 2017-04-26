@@ -86,9 +86,7 @@ public class Activator extends AbstractUIPlugin
   /*
    * (non-Javadoc)
    * 
-   * @see
-   * org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext
-   * )
+   * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext )
    */
   public void start(BundleContext context) throws Exception
   {
@@ -102,9 +100,7 @@ public class Activator extends AbstractUIPlugin
   /*
    * (non-Javadoc)
    * 
-   * @see
-   * org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext
-   * )
+   * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext )
    */
   public void stop(BundleContext context) throws Exception
   {
@@ -123,8 +119,7 @@ public class Activator extends AbstractUIPlugin
   }
 
   /**
-   * Returns an image descriptor for the image file at the given plug-in
-   * relative path
+   * Returns an image descriptor for the image file at the given plug-in relative path
    * 
    * @param path
    *          the path
@@ -138,7 +133,17 @@ public class Activator extends AbstractUIPlugin
   public static void logError(int statCode, String message, Exception e)
   {
     IStatus status = new Status(statCode, PLUGIN_ID, message, e);
-    getDefault().getLog().log(status);
+
+    final Activator default1 = getDefault();
+    if (default1 != null)
+    {
+      default1.getLog().log(status);
+    }
+    else
+    {
+      System.err.println("Logger not assigned. Message:" + message);
+      e.printStackTrace();
+    }
   }
 
   public static void log(Exception e)
