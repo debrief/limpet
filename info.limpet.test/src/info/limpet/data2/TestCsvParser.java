@@ -43,7 +43,7 @@ public class TestCsvParser extends TestCase
 	@Test
 	public void testNonTimeIndex() throws Exception
 	{
-    File file = getDataFile("balloon/BalloonAscentData.csv");
+    File file = getDataFile("non_time/BalloonAscentData.csv");
     assertTrue(file.isFile());
     final String absPath = file.getAbsolutePath();
     List<IStoreItem> items = new CsvParser().parse(absPath);
