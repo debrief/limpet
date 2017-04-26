@@ -86,7 +86,10 @@ public abstract class TwoTrackOperation implements IOperation
       // now create the output dataset
       final NumberDocument output =
           new NumberDocument(dataset, this, _outputUnits);
-      output.setIndexUnits(_builder.getIndexUnits());
+      if(output.isIndexed())
+      {
+        output.setIndexUnits(_builder.getIndexUnits());
+      }
 
       // store the output
       super.addOutput(output);
