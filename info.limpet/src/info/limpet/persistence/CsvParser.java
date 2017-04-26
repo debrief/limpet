@@ -62,6 +62,7 @@ import javax.measure.quantity.Pressure;
 import javax.measure.quantity.Temperature;
 import javax.measure.quantity.Velocity;
 import javax.measure.quantity.VolumetricDensity;
+import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 
@@ -434,24 +435,33 @@ public class CsvParser
         SECOND).asType(AngularVelocity.class), null, "Degs/sec"));
     _candidates.add(new TemporalSeriesSupporter(METRE.asType(Length.class),
         null, "m"));
-    _candidates.add(new TemporalSeriesSupporter(MILLI(BAR).asType(Pressure.class),
-        null, new String[]{"mb", "millibars"}));
+    _candidates.add(new TemporalSeriesSupporter(MILLI(BAR).asType(
+        Pressure.class), null, new String[]
+    {"mb", "millibars"}));
     _candidates.add(new TemporalSeriesSupporter(YARD.asType(Length.class),
         null, "yds"));
     _candidates.add(new TemporalSeriesSupporter(SampleData.DEGREE_ANGLE
         .asType(Angle.class), null, new String[]
-    {"Degs", "Degr"}));
+    {"Degs", "Degr", "Deg"}));
     _candidates.add(new TemporalSeriesSupporter(GRAM
-        .divide(CENTI(METER).pow(3)).asType(VolumetricDensity.class), null, new String[]{"g/cm3","g/cm"}));
+        .divide(CENTI(METER).pow(3)).asType(VolumetricDensity.class), null,
+        new String[]
+        {"g/cm3", "g/cm"}));
     _candidates.add(new TemporalSeriesSupporter(NAUTICAL_MILE.divide(
         SECOND.times(3600)).asType(Velocity.class), null, "kts"));
+    _candidates.add(new TemporalSeriesSupporter(NonSI.MILE.divide(SI.SECOND.times(60*60)).asType(
+        Velocity.class), null, new String[]
+    {"mph"}));
+    _candidates.add(new TemporalSeriesSupporter(NonSI.REVOLUTION.divide(SECOND.times(60)), null, new String[]
+    {"rpm"}));
     _candidates.add(new TemporalSeriesSupporter(METRE.divide(SECOND).asType(
         Velocity.class), null, new String[]
     {"M/Sec", "m/s"}));
     _candidates.add(new TemporalSeriesSupporter(KELVIN
         .asType(Temperature.class), null, new String[]
     {"C", "DegC"}));
-    _candidates.add(new TemporalSeriesSupporter(DECIBEL.asType(Dimensionless.class), null, new String[]
+    _candidates.add(new TemporalSeriesSupporter(DECIBEL
+        .asType(Dimensionless.class), null, new String[]
     {"dB"}));
   }
 
@@ -590,7 +600,7 @@ public class CsvParser
         {
           if (un != null)
           {
-            if (un.equals(units))
+            if (un.toLowerCase().equals(units.toLowerCase()))
             {
               return true;
             }
