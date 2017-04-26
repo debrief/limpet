@@ -37,6 +37,11 @@ public class NumberDocumentBuilder implements IDocumentBuilder
     return _values.size();
   }
 
+  public Unit<?> getIndexUnits()
+  {
+    return _indexUnits;
+  }
+  
   public void add(double index, double value)
   {
     // check we have units

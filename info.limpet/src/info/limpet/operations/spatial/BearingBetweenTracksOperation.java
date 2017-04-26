@@ -49,7 +49,7 @@ public class BearingBetweenTracksOperation extends TwoTrackOperation
             getATests().getLongestIndexedCollection(collatedTracks);
 
         ICommand newC =
-            new DistanceOperation(collatedTracks, destination,
+            new TwoTrackCommand(collatedTracks, destination,
                 "Bearing between tracks (interpolated)",
                 "Calculate bearing between two tracks (interpolated)",
                 timeProvider, context, SampleData.DEGREE_ANGLE.asType(Angle.class))
@@ -87,7 +87,7 @@ public class BearingBetweenTracksOperation extends TwoTrackOperation
       if (getATests().allEqualLengthOrSingleton(collatedTracks))
       {
         ICommand newC =
-            new DistanceOperation(collatedTracks, destination,
+            new TwoTrackCommand(collatedTracks, destination,
                 "Bearing between tracks (indexed)",
                 "Calculate bearing between two tracks (indexed)", null, context,
                 SampleData.DEGREE_ANGLE.asType(Angle.class))

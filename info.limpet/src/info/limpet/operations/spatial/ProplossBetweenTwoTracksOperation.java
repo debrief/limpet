@@ -29,7 +29,7 @@ import javax.measure.unit.NonSI;
 public class ProplossBetweenTwoTracksOperation extends TwoTrackOperation
 {
 
-  private final class ProplossBetweenOperation extends DistanceOperation
+  private final class ProplossBetweenOperation extends TwoTrackCommand
   {
     ProplossBetweenOperation(final List<IStoreItem> selection,
         final IStoreGroup store, final String title, final String description,

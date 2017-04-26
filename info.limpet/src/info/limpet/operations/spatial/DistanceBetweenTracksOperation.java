@@ -30,7 +30,7 @@ import javax.measure.quantity.Length;
 public class DistanceBetweenTracksOperation extends TwoTrackOperation
 {
 
-  private final class DistanceBetweenOperation extends DistanceOperation
+  private final class DistanceBetweenOperation extends TwoTrackCommand
   {
     DistanceBetweenOperation(final List<IStoreItem> selection,
         final IStoreGroup store, final String title, final String description,

@@ -49,7 +49,7 @@ import org.eclipse.january.metadata.AxesMetadata;
 public abstract class TwoTrackOperation implements IOperation
 {
 
-  public abstract static class DistanceOperation extends AbstractCommand
+  public abstract static class TwoTrackCommand extends AbstractCommand
   {
     private final IDocument _timeProvider;
     private final CollectionComplianceTests aTests =
@@ -57,7 +57,7 @@ public abstract class TwoTrackOperation implements IOperation
     final protected NumberDocumentBuilder _builder;
     final private Unit<?> _outputUnits;
 
-    public DistanceOperation(final List<IStoreItem> selection,
+    public TwoTrackCommand(final List<IStoreItem> selection,
         final IStoreGroup store, final String title, final String description,
         final IDocument timeProvider, final IContext context,
         Unit<?> outputUnits)
@@ -86,6 +86,7 @@ public abstract class TwoTrackOperation implements IOperation
       // now create the output dataset
       final NumberDocument output =
           new NumberDocument(dataset, this, _outputUnits);
+      output.setIndexUnits(_builder.getIndexUnits());
 
       // store the output
       super.addOutput(output);
