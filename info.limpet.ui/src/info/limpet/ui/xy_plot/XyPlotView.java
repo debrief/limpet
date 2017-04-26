@@ -87,6 +87,8 @@ public class XyPlotView extends CoreAnalysisView
     // adjust the axis range
     chart.getAxisSet().adjustRange();
 
+    chart.getLegend().setPosition(SWT.BOTTOM);
+    
     // register as selection listener
     setupListener();
   }
