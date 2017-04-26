@@ -14,8 +14,18 @@
  *****************************************************************************/
 package info.limpet.persistence;
 
-import static javax.measure.unit.NonSI.*;
-import static javax.measure.unit.SI.*;
+import static javax.measure.unit.NonSI.BAR;
+import static javax.measure.unit.NonSI.NAUTICAL_MILE;
+import static javax.measure.unit.NonSI.YARD;
+import static javax.measure.unit.NonSI.DECIBEL;
+import static javax.measure.unit.SI.CENTI;
+import static javax.measure.unit.SI.GRAM;
+import static javax.measure.unit.SI.HERTZ;
+import static javax.measure.unit.SI.KELVIN;
+import static javax.measure.unit.SI.METER;
+import static javax.measure.unit.SI.METRE;
+import static javax.measure.unit.SI.MILLI;
+import static javax.measure.unit.SI.SECOND;
 import info.limpet.IDocumentBuilder;
 import info.limpet.IStoreItem;
 import info.limpet.impl.LocationDocumentBuilder;
@@ -44,22 +54,19 @@ import java.util.regex.Pattern;
 
 import javax.measure.quantity.Angle;
 import javax.measure.quantity.AngularVelocity;
+import javax.measure.quantity.Dimensionless;
 import javax.measure.quantity.Duration;
 import javax.measure.quantity.Frequency;
 import javax.measure.quantity.Length;
-import javax.measure.quantity.Mass;
 import javax.measure.quantity.Pressure;
 import javax.measure.quantity.Temperature;
 import javax.measure.quantity.Velocity;
-import javax.measure.quantity.Volume;
 import javax.measure.quantity.VolumetricDensity;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
-
-import si.uom.quantity.Density;
 
 public class CsvParser
 {
@@ -290,6 +297,7 @@ public class CsvParser
             else
             {
               indexVal = Double.valueOf(firstCell);
+              thisCol = 1;
             }
           }
 
@@ -443,6 +451,8 @@ public class CsvParser
     _candidates.add(new TemporalSeriesSupporter(KELVIN
         .asType(Temperature.class), null, new String[]
     {"C", "DegC"}));
+    _candidates.add(new TemporalSeriesSupporter(DECIBEL.asType(Dimensionless.class), null, new String[]
+    {"dB"}));
   }
 
   public static boolean isNumeric(String str)
