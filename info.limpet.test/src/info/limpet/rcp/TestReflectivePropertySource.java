@@ -121,6 +121,17 @@ public class TestReflectivePropertySource extends TestCase
     private Unit<?> unit;
     private boolean flag;
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see info.limpet.IDocument#isIndexed()
+     */
+    @Override
+    public boolean isIndexed()
+    {
+      return true;
+    }
+    
     @UIProperty(name = PROP_NAME, category = "category",
         defaultString = "default name")
     public String getName()
