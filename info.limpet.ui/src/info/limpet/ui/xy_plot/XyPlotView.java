@@ -20,6 +20,7 @@ import info.limpet.impl.LocationDocument;
 import info.limpet.impl.NumberDocument;
 import info.limpet.operations.CollectionComplianceTests;
 import info.limpet.operations.CollectionComplianceTests.TimePeriod;
+import info.limpet.ui.Activator;
 import info.limpet.ui.PlottingHelpers;
 import info.limpet.ui.core_view.CoreAnalysisView;
 
@@ -32,8 +33,10 @@ import java.util.List;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 
+import org.eclipse.jface.action.Action;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IActionBars;
 import org.swtchart.Chart;
 import org.swtchart.IAxis;
 import org.swtchart.IAxis.Position;
@@ -63,9 +66,44 @@ public class XyPlotView extends CoreAnalysisView
 
   private Chart chart;
 
+  private Action switchAxes;
+
   public XyPlotView()
   {
     super(ID, "XY plot view");
+  }
+
+  protected void makeActions()
+  {
+    super.makeActions();
+
+    switchAxes = new Action("Switch axes", SWT.TOGGLE)
+    {
+      public void run()
+      {
+        if (switchAxes.isChecked())
+        {
+          chart.setOrientation(SWT.VERTICAL);
+        }
+        else
+        {
+          chart.setOrientation(SWT.HORIZONTAL);
+        }
+      }
+    };
+    switchAxes.setText("Switch axes");
+    switchAxes.setToolTipText("Switch X and Y axes");
+    switchAxes.setImageDescriptor(Activator
+        .getImageDescriptor("icons/angle.png"));
+
+  }
+
+  protected void contributeToActionBars()
+  {
+    super.contributeToActionBars();
+    IActionBars bars = getViewSite().getActionBars();
+    bars.getToolBarManager().add(switchAxes);
+    bars.getMenuManager().add(switchAxes);
   }
 
   /**
@@ -88,7 +126,7 @@ public class XyPlotView extends CoreAnalysisView
     chart.getAxisSet().adjustRange();
 
     chart.getLegend().setPosition(SWT.BOTTOM);
-    
+
     // register as selection listener
     setupListener();
   }
@@ -305,7 +343,8 @@ public class XyPlotView extends CoreAnalysisView
         {
           // sort out the destination data type
           final boolean isTemporal =
-              indexUnits.getDimension().equals(SI.SECOND.getDimension());
+              indexUnits != null && indexUnits.getDimension() != null
+                  && indexUnits.getDimension().equals(SI.SECOND.getDimension());
           if (isTemporal)
           {
             xTimeData = new Date[thisQ.size()];
@@ -399,51 +438,36 @@ public class XyPlotView extends CoreAnalysisView
         {
           newSeries.setSymbolType(PlotSymbolType.CROSS);
         }
-        
-        final boolean switchAxes;
-        
+
         final String xTitle;
         if (xTimeData != null)
-        {          
+        {
           xTitle = "Time";
-          switchAxes =  false;
         }
         else
         {
           final String titlePrefix;
-          final String theDim = indexUnits.getDimension().toString();
+          final String theDim =
+              indexUnits != null ? indexUnits.getDimension().toString() : "N/A";
           switch (theDim)
           {
           case "[L]":
             titlePrefix = "Length";
-            switchAxes =  true;
             break;
           case "[M]":
             titlePrefix = "Mass";
-            switchAxes =  false;
             break;
           case "[T]":
             titlePrefix = "Time";
-            switchAxes =  false;
             break;
           default:
             titlePrefix = theDim;
-            switchAxes =  false;
           }
 
-          xTitle = titlePrefix + " (" + indexUnits.toString() + ")";
+          final String indexText = indexUnits != null ? " (" + indexUnits.toString() + ")" : ""; 
+          xTitle = titlePrefix + indexText;
         }
         chart.getAxisSet().getXAxis(0).getTitle().setText(xTitle);
-        
-        if(switchAxes)
-        {
-          chart.setOrientation(SWT.VERTICAL);
-        }
-        else
-        {
-          chart.setOrientation(SWT.HORIZONTAL);
-        }
-        
 
         // adjust the axis range
         chart.getAxisSet().adjustRange();
