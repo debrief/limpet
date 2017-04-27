@@ -20,6 +20,7 @@ import info.limpet.IDocument;
 import info.limpet.IOperation;
 import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
+import info.limpet.impl.Document;
 import info.limpet.impl.NumberDocument;
 import info.limpet.operations.CollectionComplianceTests;
 import info.limpet.operations.arithmetic.InterpolatedMaths.IOperationPerformer;
@@ -39,6 +40,7 @@ import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.metadata.AxesMetadata;
 import org.eclipse.january.metadata.internal.AxesMetadataImpl;
 
@@ -63,12 +65,11 @@ public abstract class BinaryQuantityOperation implements IOperation
 
       // aah, what about temporal (interpolated) values?
       final boolean allIndexed = getATests().allIndexed(selection);
-      final boolean suitableForIndexedInterpolation = getATests().suitableForIndexedInterpolation(selection);
+      final boolean suitableForIndexedInterpolation =
+          getATests().suitableForIndexedInterpolation(selection);
       final boolean hasIndexed = getATests().hasIndexed(selection);
-      if (allIndexed
-          && suitableForIndexedInterpolation
-          || hasIndexed)
-//          )
+      if (allIndexed && suitableForIndexedInterpolation || hasIndexed)
+      // )
       {
         addInterpolatedCommands(selection, destination, res, context);
       }
@@ -76,7 +77,8 @@ public abstract class BinaryQuantityOperation implements IOperation
     return res;
   }
 
-  /** produce a reversed version of the supplied list
+  /**
+   * produce a reversed version of the supplied list
    * 
    * @param list
    * @return
@@ -87,15 +89,15 @@ public abstract class BinaryQuantityOperation implements IOperation
     Collections.reverse(res);
     return res;
   }
-  
+
   protected IDocument getLongestIndexedCollection(List<IStoreItem> selection)
   {
     // find the longest time series.
     IDocument longest = null;
 
-    for(final IStoreItem sItem: selection)
+    for (final IStoreItem sItem : selection)
     {
-      if(sItem instanceof IDocument)
+      if (sItem instanceof IDocument)
       {
         final IDocument doc = (IDocument) sItem;
         if (doc.isIndexed())
@@ -112,7 +114,7 @@ public abstract class BinaryQuantityOperation implements IOperation
         }
       }
     }
-    
+
     return longest;
   }
 
@@ -190,7 +192,13 @@ public abstract class BinaryQuantityOperation implements IOperation
       IDataset newSet = performCalc();
 
       // store the new dataset
-      getOutputs().get(0).setDataset(newSet);      
+      getOutputs().get(0).setDataset(newSet);
+
+      // and share the good news
+      for (Document s : getOutputs())
+      {
+        s.fireDataChanged();
+      }
     }
 
     @Override
@@ -199,8 +207,8 @@ public abstract class BinaryQuantityOperation implements IOperation
       // sort out the output unit
       Unit<?> unit = getUnits();
 
-      // clear the results sets
-      clearOutputs(getOutputs());
+      // also sort out the output's index units
+      Unit<?> indexUnits = getIndexUnits();
 
       // start adding values.
       IDataset dataset = performCalc();
@@ -211,7 +219,11 @@ public abstract class BinaryQuantityOperation implements IOperation
       // ok, wrap the dataset
       NumberDocument output =
           new NumberDocument((DoubleDataset) dataset, this, unit);
-      
+
+      // and the index units
+      storeIndexUnits(output, indexUnits);
+
+      // do any extra tidying, if necessary
       tidyOutput(output);
 
       // and fire out the update
@@ -225,15 +237,61 @@ public abstract class BinaryQuantityOperation implements IOperation
       while (iter.hasNext())
       {
         IStoreItem sItem = iter.next();
-        if(sItem instanceof IDocument)
+        if (sItem instanceof IDocument)
         {
           IDocument iCollection = (IDocument) sItem;
-          iCollection.addDependent(this);          
+          iCollection.addDependent(this);
         }
       }
 
       // ok, done
       getStore().add(output);
+    }
+
+    private Unit<?> getIndexUnits()
+    {
+      final Unit<?> res;
+
+      // ok. are they both indexed?
+      if (getATests().allIndexed(getInputs()))
+      {
+        // ok, that's easy
+        Document doc = (Document) getInputs().get(0);
+        res = doc.getIndexUnits();
+      }
+      else if (getATests().hasIndexed(getInputs()))
+      {
+        Unit<?> firstIndexed = null;
+        // ok, find the series with an index
+        for (IStoreItem s : getInputs())
+        {
+          Document doc = (Document) s;
+          if (doc.isIndexed())
+          {
+            final Unit<?> thisIndexUnits = doc.getIndexUnits();
+            if (thisIndexUnits != null)
+            {
+              firstIndexed = thisIndexUnits;
+              break;
+            }
+          }
+        }
+        res = firstIndexed;
+      }
+      else
+      {
+        res = null;
+      }
+
+      return res;
+    }
+
+    private void storeIndexUnits(NumberDocument output, Unit<?> indexUnits)
+    {
+      if (output.isIndexed())
+      {
+        output.setIndexUnits(indexUnits);
+      }
     }
 
     protected void tidyOutput(NumberDocument output)
@@ -278,7 +336,41 @@ public abstract class BinaryQuantityOperation implements IOperation
         {
           // ok, not ordered. we can't use it
           doInterp = false;
-          outputIndices = null;
+
+          // see if we have a set of output indices we can use
+          Dataset ds = null;
+          for (IStoreItem inp : getInputs())
+          {
+            Document doc = (Document) inp;
+            if (doc.size() > 1)
+            {
+              if (doc.isIndexed())
+              {
+                IDataset dataset = doc.getDataset();
+                AxesMetadata axes =
+                    dataset.getFirstMetadata(AxesMetadata.class);
+                if (axes != null)
+                {
+                  ILazyDataset am = axes.getAxis(0)[0];
+                  try
+                  {
+                    DoubleDataset ds1 =
+                        (DoubleDataset) DatasetUtils
+                            .sliceAndConvertLazyDataset(am);
+                    ds = ds1;
+                    break;
+                  }
+                  catch (DatasetException e)
+                  {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                  }
+                }
+              }
+            }
+          }
+
+          outputIndices = ds;
         }
         else
         {
@@ -306,7 +398,8 @@ public abstract class BinaryQuantityOperation implements IOperation
             else if (axis2Mono.equals(Monotonicity.NOT_ORDERED))
             {
               // ok, not ordered. we can't use it
-              throw new IllegalArgumentException("Axes must be ordered");
+              throw new IllegalArgumentException(
+                  "Axes must be ordered. Cannot progress");
             }
             else
             {
@@ -332,8 +425,22 @@ public abstract class BinaryQuantityOperation implements IOperation
       }
       else
       {
+        // first dataset doesn't have units. We aren't going to be interpolating.
+        // see if the second axis does have some
         doInterp = false;
-        outputIndices = null;
+
+        axis2 = in2.getFirstMetadata(AxesMetadata.class);
+
+        if (axis2 != null && axis2.getAxes() != null
+            && axis2.getAxes().length != 0)
+        {
+          // we'll use A indices in the output
+          outputIndices = (Dataset) axis2.getAxes()[0];
+        }
+        else
+        {
+          outputIndices = null;
+        }
       }
 
       if (doInterp)
@@ -382,8 +489,8 @@ public abstract class BinaryQuantityOperation implements IOperation
         {
           de.printStackTrace();
         }
-        
-        if(ind2 != null)
+
+        if (ind2 != null)
         {
           res = getOperation().perform(ind1, ind2, null);
 
@@ -398,12 +505,6 @@ public abstract class BinaryQuantityOperation implements IOperation
       else
       {
         res = null;
-      }
-
-      // and fire out the update
-      for (IDocument output : getOutputs())
-      {
-        output.fireDataChanged();
       }
 
       // done

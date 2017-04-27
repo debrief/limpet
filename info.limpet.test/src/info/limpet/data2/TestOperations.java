@@ -266,16 +266,20 @@ public class TestOperations
     assertTrue("isn't temporal", output.isIndexed());
 
   }
-  
+
   @Test
   public void testIndexUnits()
   {
     CollectionComplianceTests testOp = new CollectionComplianceTests();
 
-    NumberDocumentBuilder sec1 = new NumberDocumentBuilder("sec1", null, null, SECOND);
-    NumberDocumentBuilder sec2 = new NumberDocumentBuilder("sec2", null, null, SECOND);
-    NumberDocumentBuilder len1 = new NumberDocumentBuilder("len1", null, null, METRE);
-    NumberDocumentBuilder len2 = new NumberDocumentBuilder("len2", null, null, METRE);
+    NumberDocumentBuilder sec1 =
+        new NumberDocumentBuilder("sec1", null, null, SECOND);
+    NumberDocumentBuilder sec2 =
+        new NumberDocumentBuilder("sec2", null, null, SECOND);
+    NumberDocumentBuilder len1 =
+        new NumberDocumentBuilder("len1", null, null, METRE);
+    NumberDocumentBuilder len2 =
+        new NumberDocumentBuilder("len2", null, null, METRE);
 
     sec1.add(1000, 12d);
     sec1.add(2000, 13d);
@@ -286,11 +290,11 @@ public class TestOperations
     len2.add(1000, 13d);
     len2.add(2000, 13d);
     len2.add(3000, 13d);
-    
+
     List<IStoreItem> sel = new ArrayList<IStoreItem>();
     sel.add(sec1.toDocument());
     sel.add(sec2.toDocument());
-    
+
     assertTrue("all equal", testOp.allIndexed(sel));
 
     AddQuantityOperation adder = new AddQuantityOperation();
@@ -301,7 +305,7 @@ public class TestOperations
     sel.clear();
     sel.add(len1.toDocument());
     sel.add(len2.toDocument());
-    
+
     assertTrue("all equal", testOp.allIndexed(sel));
     ops = adder.actionsFor(sel, destination, context);
     assertEquals("one found", 1, ops.size());
@@ -309,11 +313,11 @@ public class TestOperations
     sel.clear();
     sel.add(sec1.toDocument());
     sel.add(len2.toDocument());
-    
+
     assertFalse("all not equal", testOp.allIndexed(sel));
     ops = adder.actionsFor(sel, destination, context);
     assertEquals("none found", 0, ops.size());
-    
+
   }
 
   @Test
@@ -830,37 +834,142 @@ public class TestOperations
   public void testSubtractionSingleton()
   {
     StoreGroup store = new SampleData().getData(10);
+    StoreGroup target = new StoreGroup("data");
     List<IStoreItem> selection = new ArrayList<IStoreItem>();
+    CollectionComplianceTests testOp = new CollectionComplianceTests();
 
     // test invalid dimensions
     NumberDocument speedGood1 =
         (NumberDocument) store.get(SampleData.SPEED_ONE);
-    NumberDocumentBuilder speedSingleb =
-        new NumberDocumentBuilder("singleton", null, null, null);
-
-    speedSingleb.add(2d);
-    NumberDocument speedSingle = speedSingleb.toDocument();
+    NumberDocument speedSingle =
+        (NumberDocument) store.get(SampleData.RANGED_SPEED_SINGLETON);
 
     // TODO: subtract should offer operations that go both ways.
 
     selection.add(speedGood1);
     selection.add(speedSingle);
-    @SuppressWarnings("unused")
-    Collection<ICommand> commands =
-        new SubtractQuantityOperation().actionsFor(selection, store, context);
 
-    // TODO: reinstate these tests once two-way subtract done
-    // assertEquals("got two commands", 4, commands.size());
-    //
-    // // have a look
-    // ICommand first = commands.iterator().next();
-    // first.execute();
-    // NumberDocument output =
-    // (NumberDocument) first.getOutputs().iterator().next();
-    // assertNotNull("produced output", output);
-    // assertEquals("correct size", speedGood1.size(), output.size());
-    //
-    // assertEquals("correct value", 2.3767, speedGood1.getValue(0) * 2, 0.001);
+    // does the equal dimensions operator work for this?
+    assertTrue("equal dimensions", testOp.allEqualDimensions(selection));
+
+    List<ICommand> commands =
+        new SubtractQuantityOperation().actionsFor(selection, target, context);
+
+    assertEquals("got four commands", 4, commands.size());
+
+    // have a look
+    ICommand first = commands.get(0);
+    first.execute();
+    NumberDocument output =
+        (NumberDocument) first.getOutputs().iterator().next();
+    assertNotNull("produced output", output);
+    assertEquals("correct size", speedGood1.size(), output.size());
+    assertEquals("correct value", speedGood1.getValue(0) - speedSingle.getValue(0), output.getValue(0), 0.001);
+    assertTrue(output.isIndexed());
+    
+    // ok, try the reverse operation
+    target.clear();
+
+    commands =
+        new SubtractQuantityOperation().actionsFor(selection, target, context);
+    first = commands.get(1);
+    first.execute();
+    output =
+        (NumberDocument) first.getOutputs().iterator().next();
+    assertNotNull("produced output", output);
+    assertEquals("correct size", speedGood1.size(), output.size());
+    assertEquals("correct value", speedSingle.getValue(0) - speedGood1.getValue(0) , output.getValue(0), 0.001);
+    assertTrue(output.isIndexed());
+
+    // ok, try the forward indexed operation
+    target.clear();
+
+    commands =
+        new SubtractQuantityOperation().actionsFor(selection, target, context);
+    first = commands.get(2);
+    first.execute();
+    output =
+        (NumberDocument) first.getOutputs().iterator().next();
+    assertNotNull("produced output", output);
+    assertEquals("correct size", speedGood1.size(), output.size());
+    assertEquals("correct value", speedGood1.getValue(0) - speedSingle.getValue(0), output.getValue(0), 0.001);
+    assertTrue(output.isIndexed());
+
+    // ok, try the reverse indexed operation
+    target.clear();
+
+    commands =
+        new SubtractQuantityOperation().actionsFor(selection, target, context);
+    first = commands.get(3);
+    first.execute();
+    output =
+        (NumberDocument) first.getOutputs().iterator().next();
+    assertNotNull("produced output", output);
+    assertEquals("correct size", speedGood1.size(), output.size());
+    assertEquals("correct value", speedSingle.getValue(0) - speedGood1.getValue(0) , output.getValue(0), 0.001);
+    assertTrue(output.isIndexed());
+    
+    // swap them around - so the singleton is first
+    selection.clear();
+    selection.add(speedSingle);
+    selection.add(speedGood1);
+
+     commands =
+        new SubtractQuantityOperation().actionsFor(selection, target, context);
+
+    assertEquals("got four commands", 4, commands.size());
+
+    // have a look
+     first = commands.get(1);
+    first.execute();
+     output =
+        (NumberDocument) first.getOutputs().iterator().next();
+    assertNotNull("produced output", output);
+    assertEquals("correct size", speedGood1.size(), output.size());
+    assertEquals("correct value", speedGood1.getValue(0) - speedSingle.getValue(0), output.getValue(0), 0.001);
+    assertTrue(output.isIndexed());
+    
+    // ok, try the reverse operation
+    target.clear();
+
+    commands =
+        new SubtractQuantityOperation().actionsFor(selection, target, context);
+    first = commands.get(0);
+    first.execute();
+    output =
+        (NumberDocument) first.getOutputs().iterator().next();
+    assertNotNull("produced output", output);
+    assertEquals("correct size", speedGood1.size(), output.size());
+    assertEquals("correct value", speedSingle.getValue(0) - speedGood1.getValue(0) , output.getValue(0), 0.001);
+    assertTrue(output.isIndexed());
+
+    // ok, try the forward indexed operation
+    target.clear();
+
+    commands =
+        new SubtractQuantityOperation().actionsFor(selection, target, context);
+    first = commands.get(3);
+    first.execute();
+    output =
+        (NumberDocument) first.getOutputs().iterator().next();
+    assertNotNull("produced output", output);
+    assertEquals("correct size", speedGood1.size(), output.size());
+    assertEquals("correct value", speedGood1.getValue(0) - speedSingle.getValue(0), output.getValue(0), 0.001);
+    assertTrue(output.isIndexed());
+
+    // ok, try the reverse indexed operation
+    target.clear();
+
+    commands =
+        new SubtractQuantityOperation().actionsFor(selection, target, context);
+    first = commands.get(2);
+    first.execute();
+    output =
+        (NumberDocument) first.getOutputs().iterator().next();
+    assertNotNull("produced output", output);
+    assertEquals("correct size", speedGood1.size(), output.size());
+    assertEquals("correct value", speedSingle.getValue(0) - speedGood1.getValue(0) , output.getValue(0), 0.001);    
+    assertTrue(output.isIndexed());
   }
 
   @Test
@@ -913,7 +1022,7 @@ public class TestOperations
     NumberDocument angle1 = (NumberDocument) store.get(SampleData.ANGLE_ONE);
     selection.add(speedGood1);
     selection.add(angle1);
-    Collection<ICommand> commands =
+    List<ICommand> commands =
         new SubtractQuantityOperation().actionsFor(selection, store, context);
     assertEquals("invalid collections - not same dimensions", 0, commands
         .size());
@@ -936,34 +1045,108 @@ public class TestOperations
     selection.add(speedGood1);
     selection.add(speedGood2);
 
-    // TODO: reinstate this test once subtract provides both-ways commands
-    // commands =
-    // new SubtractQuantityOperation().actionsFor(selection, store, context);
-    // assertEquals("valid command", 4, commands.size());
-    //
-    // ICommand command = commands.iterator().next();
-    // command.execute();
-    //
-    // // test store has a new item in it
-    // assertEquals("store not empty", storeSize + 1, store.size());
-    //
-    // NumberDocument newS =
-    // (NumberDocument) store.get(speedGood2.getName() + " from "
-    // + speedGood1.getName());
-    //
-    // assertNotNull(newS);
-    // assertEquals("correct size", 10, newS.size());
-    //
-    // // assert same unit
-    // assertEquals(newS.getUnits(), speedGood1.getUnits());
-    //
-    // double firstDifference = newS.getValue(0);
-    // double speed1firstValue = speedGood1.getValue(0);
-    // double speed2firstValue = speedGood2.getValue(0);
-    //
-    // assertEquals(firstDifference, speed1firstValue - speed2firstValue, 0);
-    // context.logError(IContext.Status.ERROR, "Error", null);
+    commands =
+        new SubtractQuantityOperation().actionsFor(selection, store, context);
+    assertEquals("valid command", 4, commands.size());
+
+    int storeSize = store.size();
+
+    ICommand command = commands.get(0);
+    command.execute();
+
+    // test store has a new item in it
+    assertEquals("store not empty", storeSize + 1, store.size());
+
+    NumberDocument newS =
+        (NumberDocument) store.get(speedGood1.getName() + " subtracted from "
+            + speedGood2.getName());
+
+    assertNotNull("document produced", newS);
+    assertEquals("correct size", 10, newS.size());
+
+    // assert same unit
+    assertEquals(newS.getUnits(), speedGood1.getUnits());
+
+    double firstDifference = newS.getValue(0);
+    double speed1firstValue = speedGood1.getValue(0);
+    double speed2firstValue = speedGood2.getValue(0);
+
+    assertEquals(firstDifference, speed1firstValue - speed2firstValue, 0);
+
+    // and try the other operation
+    command = commands.get(1);
+    command.execute();
+
+    // test store has a new item in it
+    assertEquals("store not empty", storeSize + 2, store.size());
+
+    newS =
+        (NumberDocument) store.get(speedGood2.getName() + " subtracted from "
+            + speedGood1.getName());
+
+    assertNotNull("document produced", newS);
+    assertEquals("correct size", 10, newS.size());
+
+    // assert same unit
+    assertEquals(newS.getUnits(), speedGood1.getUnits());
+
+    firstDifference = newS.getValue(0);
+    speed1firstValue = speedGood1.getValue(0);
+    speed2firstValue = speedGood2.getValue(0);
+    assertEquals(firstDifference, speed2firstValue - speed1firstValue, 0);
   }
+
+  // @Test
+  // public void testSubtractSingleton() throws RuntimeException
+  // {
+  // StoreGroup store = new SampleData().getData(10);
+  // List<IStoreItem> selection = new ArrayList<IStoreItem>();
+  // NumberDocument speedGood1 =
+  // (NumberDocument) store.get(SampleData.SPEED_ONE);
+  //
+  // // test singleton
+  // NumberDocument speedSingleton =
+  // (NumberDocument) store.get(SampleData.RANGED_SPEED_SINGLETON);
+  // assertEquals("it's a singleton", 1, speedSingleton.getSize());
+  //
+  // selection.clear();
+  // selection.add(speedGood1);
+  // selection.add(speedSingleton);
+  //
+  // List<ICommand> commands = new SubtractQuantityOperation().actionsFor(selection, store,
+  // context);
+  // assertEquals("valid command", 4, commands.size());
+  //
+  // int storeSize = store.size();
+  //
+  // ICommand command = commands.get(0);
+  // command.execute();
+  //
+  // // test store has a new item in it
+  // assertEquals("store not empty", storeSize + 1, store.size());
+  //
+  // String outName = speedGood1.getName() + " subtracted from "
+  // + speedSingleton.getName();
+  // NumberDocument newS = (NumberDocument) store.get(outName);
+  //
+  // assertNotNull("document produced", newS);
+  // assertEquals("correct size", 10, newS.size());
+  //
+  // store.remove(outName);
+  //
+  // // ok, do the reverse
+  // command = commands.get(1);
+  // command.execute();
+  //
+  // outName = speedGood1.getName() + " subtracted from "
+  // + speedSingleton.getName();
+  // newS = (NumberDocument) store.get(outName);
+  //
+  // assertNotNull("document produced", newS);
+  // assertEquals("correct size", 10, newS.size());
+  //
+  //
+  // }
 
   @Test
   public void testAddLayerOperation() throws RuntimeException
@@ -1195,7 +1378,7 @@ public class TestOperations
 
     List<IOperation> adminOperations =
         ops.get(OperationsLibrary.ADMINISTRATION);
-    assertEquals("Creation size", 6, adminOperations.size());
+    assertEquals("Creation size", 7, adminOperations.size());
 
     List<IOperation> topLevel = OperationsLibrary.getTopLevel();
     assertNotNull(topLevel);

@@ -55,10 +55,18 @@ public abstract class GeneralDescription extends CoreAnalysis
         values.add("" + thisC.isQuantity());
         titles.add("Indexed");
         values.add("" + thisC.isIndexed());
-        if(thisC.isIndexed())
+        if (thisC.isIndexed())
         {
           titles.add("Index units");
-          values.add("" + thisC.getIndexUnits().toString());
+          if (thisC.getIndexUnits() == null)
+          {
+            System.err.println(thisC + " is missing index units");
+            values.add("MISSING");
+          }
+          else
+          {
+            values.add("" + thisC.getIndexUnits().toString());
+          }
         }
       }
     }

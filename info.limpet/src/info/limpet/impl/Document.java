@@ -135,6 +135,8 @@ abstract public class Document implements IDocument
   public void setName(String name)
   {
     dataset.setName(name);
+    
+    fireDataChanged();
   }
 
   /*

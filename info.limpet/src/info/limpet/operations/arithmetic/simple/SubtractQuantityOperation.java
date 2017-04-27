@@ -132,7 +132,7 @@ public class SubtractQuantityOperation extends BinaryQuantityOperation
     @Override
     protected String getBinaryNameFor(String name1, String name2)
     {
-      return "Sum of " + name1 + " + " + name2;
+      return name1 + " subtracted from " + name2;
     }
   }
 

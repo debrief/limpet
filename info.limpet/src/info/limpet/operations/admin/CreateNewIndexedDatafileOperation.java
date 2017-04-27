@@ -19,7 +19,6 @@ import info.limpet.IContext;
 import info.limpet.IDocument;
 import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
-import info.limpet.impl.Document;
 import info.limpet.impl.NumberDocument;
 import info.limpet.operations.arithmetic.BinaryQuantityOperation;
 import info.limpet.operations.arithmetic.InterpolatedMaths;
@@ -130,8 +129,8 @@ public class CreateNewIndexedDatafileOperation extends BinaryQuantityOperation
       super.tidyOutput(output);
       
       // ok, now set the index units
-      Document index = (Document) getInputs().get(0);
-      Unit<?> indUnits = index.getIndexUnits();
+      NumberDocument index = (NumberDocument) getInputs().get(0);
+      Unit<?> indUnits = index.getUnits();
       
       // and store them
       output.setIndexUnits(indUnits);
@@ -155,6 +154,10 @@ public class CreateNewIndexedDatafileOperation extends BinaryQuantityOperation
           // so we've just got to set them in a copy of b
           Dataset output = b.clone();
           
+          // clear any existing metadata
+          output.clearMetadata(AxesMetadata.class);
+          
+          // now store the new metadata
           AxesMetadata am = new AxesMetadataImpl();
           am.initialize(1);
           am.setAxis(0, a);
