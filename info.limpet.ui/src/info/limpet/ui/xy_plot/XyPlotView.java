@@ -271,8 +271,19 @@ public class XyPlotView extends CoreAnalysisView
           existingUnits = theseUnits;
         }
 
-        // newSeries.setXSeries(xData);
         newSeries.setYSeries(yData);
+
+        // if it's a monster line, we won't plot
+        // markers
+        if (thisQ.size() > 90)
+        {
+          newSeries.setSymbolType(PlotSymbolType.NONE);
+          newSeries.setLineWidth(2);
+        }
+        else
+        {
+          newSeries.setSymbolType(PlotSymbolType.CROSS);
+        }
 
         chart.getAxisSet().getXAxis(0).getTitle().setText("Count");
 
@@ -372,7 +383,7 @@ public class XyPlotView extends CoreAnalysisView
             if (isTemporal)
             {
               final long value;
-              if(indexUnits.equals(millis))
+              if (indexUnits.equals(millis))
               {
                 value = (long) t;
               }
@@ -382,7 +393,7 @@ public class XyPlotView extends CoreAnalysisView
                 UnitConverter converter = indexUnits.getConverterTo(millis);
                 value = (long) converter.convert(t);
               }
-              
+
               xTimeData[ctr] = new Date((long) value);
             }
             else
@@ -443,9 +454,9 @@ public class XyPlotView extends CoreAnalysisView
           existingUnits = theseUnits;
         }
 
-        // if it's a monster line, or just a singleton value, we won't plot
+        // if it's a monster line, we won't plot
         // markers
-        if (thisQ.size() > 90 || thisQ.size() == 1)
+        if (thisQ.size() > 90)
         {
           newSeries.setSymbolType(PlotSymbolType.NONE);
           newSeries.setLineWidth(2);
@@ -480,7 +491,8 @@ public class XyPlotView extends CoreAnalysisView
             titlePrefix = theDim;
           }
 
-          final String indexText = indexUnits != null ? " (" + indexUnits.toString() + ")" : ""; 
+          final String indexText =
+              indexUnits != null ? " (" + indexUnits.toString() + ")" : "";
           xTitle = titlePrefix + indexText;
         }
         chart.getAxisSet().getXAxis(0).getTitle().setText(xTitle);

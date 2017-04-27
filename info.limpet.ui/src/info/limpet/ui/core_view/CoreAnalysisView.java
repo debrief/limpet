@@ -59,6 +59,7 @@ public abstract class CoreAnalysisView extends ViewPart
   private transient IChangeListener changeListener;
   private final String _myId;
   private final String _myTitle;
+  private ISelection _curSelection;
 
   public CoreAnalysisView(String myId, String myTitle)
   {
@@ -136,6 +137,15 @@ public abstract class CoreAnalysisView extends ViewPart
 
   protected void newSelection(ISelection selection)
   {
+    if(selection == _curSelection)
+    {
+      return;
+    }
+    else
+    {
+      _curSelection = selection;
+    }
+    
     List<IStoreItem> res = new ArrayList<IStoreItem>();
     if (selection instanceof StructuredSelection)
     {
@@ -203,7 +213,7 @@ public abstract class CoreAnalysisView extends ViewPart
     else
     {
       // ok, nothing to display - clear the graph
-      display(new ArrayList<IStoreItem>());
+      // display(new ArrayList<IStoreItem>());
     }
   }
 

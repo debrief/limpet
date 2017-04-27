@@ -47,14 +47,13 @@ public class SubtractQuantityOperation extends BinaryQuantityOperation
 
       ICommand newC =
           new SubtractQuantityValues(
-              "Subtract " + doc1 + " from " + doc2 + "(interpolated)",
+              "Subtract " + doc2 + " from " + doc1 + "(interpolated)",
               selection, destination, longest, context);
       res.add(newC);
       
-      
       newC =
           new SubtractQuantityValues(
-              "Subtract " + doc2 + " from " + doc1 + "(interpolated)",
+              "Subtract " + doc1 + " from " + doc2 + "(interpolated)",
               reverse(selection), destination, longest, context);
       res.add(newC);
       
@@ -70,12 +69,12 @@ public class SubtractQuantityOperation extends BinaryQuantityOperation
 
     ICommand newC =
         new SubtractQuantityValues(
-            "Subtract " + doc1 + " from " + doc2 + "(indexed)", selection,
+            "Subtract " + doc2 + " from " + doc1 + "(indexed)", selection,
             destination, context);
     res.add(newC);
     newC =
         new SubtractQuantityValues(
-            "Subtract " + doc2 + " from " + doc1 + "(indexed)", reverse(selection),
+            "Subtract " + doc1 + " from " + doc2 + "(indexed)", reverse(selection),
             destination, context);
     res.add(newC);
   }
