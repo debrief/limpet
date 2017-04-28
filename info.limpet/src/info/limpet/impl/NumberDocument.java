@@ -210,7 +210,7 @@ public class NumberDocument extends Document
     return res;
   }
 
-  public double getValue(int i)
+  public double getValueAt(int i)
   {
     return  dataset.getDouble(i);
   }
@@ -270,4 +270,20 @@ public class NumberDocument extends Document
     fireDataChanged();
   }
 
+  public void setValue(double value)
+  {
+    DoubleDataset data = (DoubleDataset) getDataset();
+    data.set(value, 0);
+
+    // share the good news
+    fireDataChanged();
+  }
+
+  @UIProperty(name = "Value", category = UIProperty.CATEGORY_VALUE,
+      visibleWhen = "showRange == true")
+  public double getValue()
+  {
+    DoubleDataset data = (DoubleDataset) getDataset();
+    return data.get(0);
+  }
 }

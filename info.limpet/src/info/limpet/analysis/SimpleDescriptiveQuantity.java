@@ -68,7 +68,7 @@ public abstract class SimpleDescriptiveQuantity extends CoreAnalysis
         if (o.size() == 1)
         {
           titles.add("Value");
-          values.add("" + o.getValue(0));
+          values.add("" + o.getValueAt(0));
         }
 
         Range range = o.getRange();

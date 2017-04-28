@@ -685,7 +685,7 @@ public class TestOperations
     NumberDocument inputSpeed = speedGood1;
 
     @SuppressWarnings("unused")
-    double firstInputSpeed = inputSpeed.getValue(0);
+    double firstInputSpeed = inputSpeed.getValueAt(0);
   }
 
   // TODO: reinstate simple moving average
@@ -810,9 +810,9 @@ public class TestOperations
     // assert same unit
     assertEquals(newS.getUnits(), speedGood1.getUnits());
 
-    double firstDifference = newS.getValue(0);
-    double speed1firstValue = speedGood1.getValue(0);
-    double speed2firstValue = speedGood2.getValue(0);
+    double firstDifference = newS.getValueAt(0);
+    double speed1firstValue = speedGood1.getValueAt(0);
+    double speed2firstValue = speedGood2.getValueAt(0);
 
     assertEquals(firstDifference, speed1firstValue + speed2firstValue, 0);
 
@@ -864,7 +864,7 @@ public class TestOperations
         (NumberDocument) first.getOutputs().iterator().next();
     assertNotNull("produced output", output);
     assertEquals("correct size", speedGood1.size(), output.size());
-    assertEquals("correct value", speedGood1.getValue(0) - speedSingle.getValue(0), output.getValue(0), 0.001);
+    assertEquals("correct value", speedGood1.getValueAt(0) - speedSingle.getValueAt(0), output.getValueAt(0), 0.001);
     assertTrue(output.isIndexed());
     
     // ok, try the reverse operation
@@ -878,7 +878,7 @@ public class TestOperations
         (NumberDocument) first.getOutputs().iterator().next();
     assertNotNull("produced output", output);
     assertEquals("correct size", speedGood1.size(), output.size());
-    assertEquals("correct value", speedSingle.getValue(0) - speedGood1.getValue(0) , output.getValue(0), 0.001);
+    assertEquals("correct value", speedSingle.getValueAt(0) - speedGood1.getValueAt(0) , output.getValueAt(0), 0.001);
     assertTrue(output.isIndexed());
 
     // ok, try the forward indexed operation
@@ -892,7 +892,7 @@ public class TestOperations
         (NumberDocument) first.getOutputs().iterator().next();
     assertNotNull("produced output", output);
     assertEquals("correct size", speedGood1.size(), output.size());
-    assertEquals("correct value", speedGood1.getValue(0) - speedSingle.getValue(0), output.getValue(0), 0.001);
+    assertEquals("correct value", speedGood1.getValueAt(0) - speedSingle.getValueAt(0), output.getValueAt(0), 0.001);
     assertTrue(output.isIndexed());
 
     // ok, try the reverse indexed operation
@@ -906,7 +906,7 @@ public class TestOperations
         (NumberDocument) first.getOutputs().iterator().next();
     assertNotNull("produced output", output);
     assertEquals("correct size", speedGood1.size(), output.size());
-    assertEquals("correct value", speedSingle.getValue(0) - speedGood1.getValue(0) , output.getValue(0), 0.001);
+    assertEquals("correct value", speedSingle.getValueAt(0) - speedGood1.getValueAt(0) , output.getValueAt(0), 0.001);
     assertTrue(output.isIndexed());
     
     // swap them around - so the singleton is first
@@ -926,7 +926,7 @@ public class TestOperations
         (NumberDocument) first.getOutputs().iterator().next();
     assertNotNull("produced output", output);
     assertEquals("correct size", speedGood1.size(), output.size());
-    assertEquals("correct value", speedGood1.getValue(0) - speedSingle.getValue(0), output.getValue(0), 0.001);
+    assertEquals("correct value", speedGood1.getValueAt(0) - speedSingle.getValueAt(0), output.getValueAt(0), 0.001);
     assertTrue(output.isIndexed());
     
     // ok, try the reverse operation
@@ -940,7 +940,7 @@ public class TestOperations
         (NumberDocument) first.getOutputs().iterator().next();
     assertNotNull("produced output", output);
     assertEquals("correct size", speedGood1.size(), output.size());
-    assertEquals("correct value", speedSingle.getValue(0) - speedGood1.getValue(0) , output.getValue(0), 0.001);
+    assertEquals("correct value", speedSingle.getValueAt(0) - speedGood1.getValueAt(0) , output.getValueAt(0), 0.001);
     assertTrue(output.isIndexed());
 
     // ok, try the forward indexed operation
@@ -954,7 +954,7 @@ public class TestOperations
         (NumberDocument) first.getOutputs().iterator().next();
     assertNotNull("produced output", output);
     assertEquals("correct size", speedGood1.size(), output.size());
-    assertEquals("correct value", speedGood1.getValue(0) - speedSingle.getValue(0), output.getValue(0), 0.001);
+    assertEquals("correct value", speedGood1.getValueAt(0) - speedSingle.getValueAt(0), output.getValueAt(0), 0.001);
     assertTrue(output.isIndexed());
 
     // ok, try the reverse indexed operation
@@ -968,7 +968,7 @@ public class TestOperations
         (NumberDocument) first.getOutputs().iterator().next();
     assertNotNull("produced output", output);
     assertEquals("correct size", speedGood1.size(), output.size());
-    assertEquals("correct value", speedSingle.getValue(0) - speedGood1.getValue(0) , output.getValue(0), 0.001);    
+    assertEquals("correct value", speedSingle.getValueAt(0) - speedGood1.getValueAt(0) , output.getValueAt(0), 0.001);    
     assertTrue(output.isIndexed());
   }
 
@@ -1006,8 +1006,8 @@ public class TestOperations
     assertTrue("output is temporal", output.isIndexed());
     assertEquals("correct size", speedGood1.size(), output.size());
 
-    assertEquals("correct value", output.getValue(0),
-        speedGood1.getValue(0) + 2, 0.001);
+    assertEquals("correct value", output.getValueAt(0),
+        speedGood1.getValueAt(0) + 2, 0.001);
   }
 
   @Test
@@ -1067,9 +1067,9 @@ public class TestOperations
     // assert same unit
     assertEquals(newS.getUnits(), speedGood1.getUnits());
 
-    double firstDifference = newS.getValue(0);
-    double speed1firstValue = speedGood1.getValue(0);
-    double speed2firstValue = speedGood2.getValue(0);
+    double firstDifference = newS.getValueAt(0);
+    double speed1firstValue = speedGood1.getValueAt(0);
+    double speed2firstValue = speedGood2.getValueAt(0);
 
     assertEquals(firstDifference, speed1firstValue - speed2firstValue, 0);
 
@@ -1090,9 +1090,9 @@ public class TestOperations
     // assert same unit
     assertEquals(newS.getUnits(), speedGood1.getUnits());
 
-    firstDifference = newS.getValue(0);
-    speed1firstValue = speedGood1.getValue(0);
-    speed2firstValue = speedGood2.getValue(0);
+    firstDifference = newS.getValueAt(0);
+    speed1firstValue = speedGood1.getValueAt(0);
+    speed2firstValue = speedGood2.getValueAt(0);
     assertEquals(firstDifference, speed2firstValue - speed1firstValue, 0);
   }
 

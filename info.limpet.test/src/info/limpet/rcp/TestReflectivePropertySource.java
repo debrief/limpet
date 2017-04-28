@@ -188,5 +188,21 @@ public class TestReflectivePropertySource extends TestCase
     {
       this.range = range;
     }
+
+    public void setValue(double value)
+    {
+      DoubleDataset data = (DoubleDataset) getDataset();
+      data.set(value, 0);
+
+      // share the good news
+      fireDataChanged();
+    }
+
+    @UIProperty(name = "Value", category = UIProperty.CATEGORY_VALUE)
+    public double getValue()
+    {
+      DoubleDataset data = (DoubleDataset) getDataset();
+      return data.get(0);
+    }
   }
 }

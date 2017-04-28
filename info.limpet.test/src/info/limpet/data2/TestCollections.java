@@ -247,10 +247,10 @@ public class TestCollections extends TestCase
     assertTrue("quantity", series.isQuantity());
 
     // check some values
-    assertEquals("value correct", 10d, series.getValue(0), 0.001);
-    assertEquals("value correct", 20d, series.getValue(1), 0.001);
-    assertEquals("value correct", 30d, series.getValue(2), 0.001);
-    assertEquals("value correct", 20d, series.getValue(3), 0.001);
+    assertEquals("value correct", 10d, series.getValueAt(0), 0.001);
+    assertEquals("value correct", 20d, series.getValueAt(1), 0.001);
+    assertEquals("value correct", 30d, series.getValueAt(2), 0.001);
+    assertEquals("value correct", 20d, series.getValueAt(3), 0.001);
 
     series = (NumberDocument) firstC.getOutputs().get(1);
     assertTrue("non empty", series.size() > 0);
@@ -259,9 +259,9 @@ public class TestCollections extends TestCase
     assertTrue("quantity", series.isQuantity());
 
     // check some values
-    assertEquals("value correct", 11d, series.getValue(0));
-    assertEquals("value correct", 17d, series.getValue(1));
-    assertEquals("value correct", 22d, series.getValue(2));
+    assertEquals("value correct", 11d, series.getValueAt(0));
+    assertEquals("value correct", 17d, series.getValueAt(1));
+    assertEquals("value correct", 22d, series.getValueAt(2));
 
     // try to clear the units
     UnaryQuantityOperation clearU = new UnaryQuantityOperation("Clear units")
@@ -308,7 +308,7 @@ public class TestCollections extends TestCase
 
     assertEquals("new type:", "", output.getUnits().getDimension().toString());
     assertEquals("same size", output.size(), tq1d.size());
-    assertEquals("first item same value", output.getValue(0), tq1d.getValue(0));
+    assertEquals("first item same value", output.getValueAt(0), tq1d.getValueAt(0));
     // assertEquals("same num times", output.getTimes().size(), tq1.getTimes()
     // .size());
 
@@ -329,8 +329,8 @@ public class TestCollections extends TestCase
 
     assertEquals("new type:", "", output2.getUnits().getDimension().toString());
     assertEquals("same size", output2.size(), nq1d.size());
-    assertEquals("first item same value", output2.getValue(0),
-        nq1d.getValue(0), 0.001);
+    assertEquals("first item same value", output2.getValueAt(0),
+        nq1d.getValueAt(0), 0.001);
   }
 
   public void testMultiplyQuantitySingleton()
@@ -374,7 +374,7 @@ public class TestCollections extends TestCase
     assertEquals("corrent length results", 4, series.size());
     assertTrue("temporal", series.isIndexed());
     assertTrue("quantity", series.isQuantity());
-    assertEquals("correct value", 110d, series.getValue(0));
+    assertEquals("correct value", 110d, series.getValueAt(0));
 
     tq2b.add(11);
 

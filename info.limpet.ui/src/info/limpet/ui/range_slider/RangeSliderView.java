@@ -332,8 +332,7 @@ public class RangeSliderView extends CoreAnalysisView implements
       _curVal = val;
 
       // ok, and store it
-      _collection.replaceSingleton(val);
-      _collection.fireDataChanged();
+      _collection.setValue(val);
     }
 
     @Override
@@ -589,7 +588,7 @@ public class RangeSliderView extends CoreAnalysisView implements
             }
           }
 
-          int curVal = (int) qc.getValue(0);
+          int curVal = (int) qc.getValueAt(0);
 
           _myHelper =
               new NumberHelper(rng, theUnits, curVal, slider.getThumb(), qc

@@ -88,7 +88,7 @@ public abstract class QuantityFrequencyBins extends CoreAnalysis
     int ctr = 0;
     for (int i = 0; i < collection.size(); i++)
     {
-      data[ctr++] = collection.getValue(i);
+      data[ctr++] = collection.getValueAt(i);
     }
 
     // Get a DescriptiveStatistics instance

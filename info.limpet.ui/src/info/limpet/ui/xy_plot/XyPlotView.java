@@ -234,7 +234,7 @@ public class XyPlotView extends CoreAnalysisView
         {
           // singleton = insert it's value at every point
           yData = new double[longestColl];
-          Number thisValue = thisQ.getValue(0);
+          Number thisValue = thisQ.getValueAt(0);
           double dVal = thisValue.doubleValue();
           for (int i = 0; i < longestColl; i++)
           {

@@ -61,7 +61,7 @@ public class TestNewStrategy extends TestCase
         new NumberDocumentBuilder("some data", null, null, null);
     builder.add(1d);
     NumberDocument doc = builder.toDocument();
-    double val = doc.getValue(0);
+    double val = doc.getValueAt(0);
     assertEquals("correct value", 1d, val);
   }
 
