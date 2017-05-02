@@ -42,8 +42,7 @@ Require-Bundle: info.limpet.libs;visibility:=reexport,
  org.geotools;visibility:=reexport,
  org.eclipse.core.resources,
  org.eclipse.core.runtime,
- org.eclipse.core.filesystem,
- org.junit
+ org.eclipse.core.filesystem
 Bundle-Vendor: MWC
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ClassPath: .,
