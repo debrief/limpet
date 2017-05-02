@@ -12,7 +12,7 @@ import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.metadata.AxesMetadata;
 import org.eclipse.january.metadata.internal.AxesMetadataImpl;
 
-public class NumberDocumentBuilder implements IDocumentBuilder
+public class NumberDocumentBuilder implements IDocumentBuilder<Double>
 {
   private String _name;
   private Unit<?> _units;
@@ -42,7 +42,7 @@ public class NumberDocumentBuilder implements IDocumentBuilder
     return _indexUnits;
   }
   
-  public void add(double index, double value)
+  public void add(double index, Double value)
   {
     // check we have units
     if(_indexUnits == null)
@@ -60,7 +60,7 @@ public class NumberDocumentBuilder implements IDocumentBuilder
     _indices.add(index);
   }
 
-  public void add(double value)
+  public void add(Double value)
   {
     _values.add(value);
   }

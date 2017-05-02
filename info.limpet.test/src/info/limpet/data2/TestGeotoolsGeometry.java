@@ -216,12 +216,12 @@ public class TestGeotoolsGeometry extends TestCase
 
     NumberDocumentBuilder numB =
         new NumberDocumentBuilder("times", null, null, SampleData.MILLIS);
-    numB.add(800, 10);
-    numB.add(1200, 10);
-    numB.add(1300, 10);
-    numB.add(1400, 10);
-    numB.add(1500, 10);
-    numB.add(2600, 10);
+    numB.add(800, 10d);
+    numB.add(1200, 10d);
+    numB.add(1300, 10d);
+    numB.add(1400, 10d);
+    numB.add(1500, 10d);
+    numB.add(2600, 10d);
 
     LocationDocument track = locB.toDocument();
     Document times = numB.toDocument();

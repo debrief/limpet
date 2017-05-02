@@ -15,7 +15,7 @@ import org.eclipse.january.dataset.ObjectDataset;
 import org.eclipse.january.metadata.AxesMetadata;
 import org.eclipse.january.metadata.internal.AxesMetadataImpl;
 
-public class LocationDocumentBuilder implements IDocumentBuilder
+public class LocationDocumentBuilder implements IDocumentBuilder<Point2D>
 {
   final private String _name;
   final private List<Point2D> _values;

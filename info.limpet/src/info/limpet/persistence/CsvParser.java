@@ -106,7 +106,7 @@ public class CsvParser
     List<DataImporter> importers = new ArrayList<DataImporter>();
 
     // and store one series per column-set
-    List<IDocumentBuilder> builders = new ArrayList<IDocumentBuilder>();
+    List<IDocumentBuilder<?>> builders = new ArrayList<IDocumentBuilder<?>>();
 
     boolean isIndexed = false;
     Unit<?> indexUnits = null;
@@ -369,7 +369,7 @@ public class CsvParser
 
           }
 
-          IDocumentBuilder thisS = builders.get(i);
+          IDocumentBuilder<?> thisS = builders.get(i);
 
           thisI.consume(thisS, indexVal, thisCol, record);
 
@@ -382,7 +382,7 @@ public class CsvParser
     if (builders.size() > 1)
     {
       StoreGroup target = new StoreGroup(fullFileName);
-      for (IDocumentBuilder builder : builders)
+      for (IDocumentBuilder<?> builder : builders)
       {
         target.add(builder.toDocument());
       }
@@ -390,7 +390,7 @@ public class CsvParser
     }
     else
     {
-      for (IDocumentBuilder builder : builders)
+      for (IDocumentBuilder<?> builder : builders)
       {
         res.add(builder.toDocument());
       }
@@ -514,7 +514,7 @@ public class CsvParser
       _unitsStr = unitsStr;
     }
 
-    abstract public void consume(IDocumentBuilder thisS, double theIndex,
+    abstract public void consume(IDocumentBuilder<?> thisS, double theIndex,
         int thisCol, CSVRecord record);
 
     /**
@@ -523,7 +523,7 @@ public class CsvParser
      * @param name
      * @return
      */
-    abstract public IDocumentBuilder create(String name, Unit<?> indexUnits);
+    abstract public IDocumentBuilder<?> create(String name, Unit<?> indexUnits);
 
     // {
     // Document res = null;
@@ -635,7 +635,7 @@ public class CsvParser
     }
 
     @Override
-    public IDocumentBuilder create(String name, Unit<?> indexUnits)
+    public IDocumentBuilder<?> create(String name, Unit<?> indexUnits)
     {
       StringDocumentBuilder res =
           new StringDocumentBuilder(name, null, indexUnits);
@@ -643,7 +643,7 @@ public class CsvParser
     }
 
     @Override
-    public void consume(IDocumentBuilder series, double theIndex, int colStart,
+    public void consume(IDocumentBuilder<?> series, double theIndex, int colStart,
         CSVRecord row)
     {
       String thisVal = row.get(colStart);
@@ -665,7 +665,7 @@ public class CsvParser
       super(null, null, (String) null);
     }
 
-    public IDocumentBuilder create(String name, Unit<?> indexUnits)
+    public IDocumentBuilder<?> create(String name, Unit<?> indexUnits)
     {
       StringDocumentBuilder res =
           new StringDocumentBuilder(name, null, indexUnits);
@@ -673,7 +673,7 @@ public class CsvParser
     }
 
     @Override
-    public void consume(IDocumentBuilder series, double theIndex, int colStart,
+    public void consume(IDocumentBuilder<?> series, double theIndex, int colStart,
         CSVRecord row)
     {
       String thisVal = row.get(colStart);
@@ -707,14 +707,14 @@ public class CsvParser
      * @param indexUnits
      * @return
      */
-    public IDocumentBuilder create(String name, Unit<?> indexUnits)
+    public IDocumentBuilder<?> create(String name, Unit<?> indexUnits)
     {
       LocationDocumentBuilder res =
           new LocationDocumentBuilder(name, null, indexUnits);
       return res;
     }
 
-    public void consume(IDocumentBuilder series, double thisIndex,
+    public void consume(IDocumentBuilder<?> series, double thisIndex,
         int colStart, CSVRecord row)
     {
       String latVal = row.get(colStart);
@@ -753,7 +753,7 @@ public class CsvParser
       series.add(quantity.doubleValue());
     }
 
-    public void consume(IDocumentBuilder series, double thisIndex,
+    public void consume(IDocumentBuilder<?> series, double thisIndex,
         int colStart, CSVRecord row)
     {
       String thisVal = row.get(colStart);
@@ -769,7 +769,7 @@ public class CsvParser
     }
 
     @Override
-    public IDocumentBuilder create(String name, Unit<?> indexUnits)
+    public IDocumentBuilder<?> create(String name, Unit<?> indexUnits)
     {
       return new NumberDocumentBuilder(name, super._units, null, indexUnits);
     }
@@ -802,7 +802,7 @@ public class CsvParser
       series.add(time, quantity.doubleValue());
     }
 
-    public void consume(IDocumentBuilder series, double thisTime, int colStart,
+    public void consume(IDocumentBuilder<?> series, double thisTime, int colStart,
         CSVRecord row)
     {
       String thisVal = row.get(colStart);
@@ -818,7 +818,7 @@ public class CsvParser
      * @param indexUnits
      * @return
      */
-    public IDocumentBuilder create(String name, Unit<?> indexUnits)
+    public IDocumentBuilder<?> create(String name, Unit<?> indexUnits)
     {
       NumberDocumentBuilder res =
           new NumberDocumentBuilder(name, super._units, null, indexUnits);
@@ -853,7 +853,7 @@ public class CsvParser
     }
 
     @Override
-    public IDocumentBuilder create(String name, Unit<?> indexUnits)
+    public IDocumentBuilder<?> create(String name, Unit<?> indexUnits)
     {
       return null;
       // NumberDocumentBuilder res =
@@ -862,7 +862,7 @@ public class CsvParser
     }
 
     @Override
-    public void consume(IDocumentBuilder thisS, double theIndex, int thisCol,
+    public void consume(IDocumentBuilder<?> thisS, double theIndex, int thisCol,
         CSVRecord record)
     {
       throw new RuntimeException("Should not get called");

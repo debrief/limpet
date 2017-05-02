@@ -79,10 +79,10 @@ public class TestCollections extends TestCase
         new NumberDocumentBuilder("Speeds", METRE.divide(SECOND).asType(
             Velocity.class), null, SampleData.MILLIS);
 
-    speeds.add(100, 10);
-    speeds.add(200, 20);
-    speeds.add(300, 30);
-    speeds.add(400, 40);
+    speeds.add(100, 10d);
+    speeds.add(200, 20d);
+    speeds.add(300, 30d);
+    speeds.add(400, 40d);
 
     NumberDocument tq = (NumberDocument) speeds.toDocument();
 
@@ -110,19 +110,19 @@ public class TestCollections extends TestCase
     NumberDocumentBuilder tqb1 =
         new NumberDocumentBuilder("Some data1", METRE.divide(SECOND).asType(
             Velocity.class), null, SampleData.MILLIS);
-    tqb1.add(100, 10);
-    tqb1.add(230, 23);
-    tqb1.add(270, 27);
-    tqb1.add(300, 30);
-    tqb1.add(320, 32);
-    tqb1.add(400, 40);
+    tqb1.add(100, 10d);
+    tqb1.add(230, 23d);
+    tqb1.add(270, 27d);
+    tqb1.add(300, 30d);
+    tqb1.add(320, 32d);
+    tqb1.add(400, 40d);
 
     NumberDocumentBuilder tqb2 =
         new NumberDocumentBuilder("Some data2", METRE.divide(SECOND).asType(
             Velocity.class), null, SampleData.MILLIS);
-    tqb2.add(220, 22);
-    tqb2.add(340, 34);
-    tqb2.add(440, 44);
+    tqb2.add(220, 22d);
+    tqb2.add(340, 34d);
+    tqb2.add(440, 44d);
 
     NumberDocument tq1 = tqb1.toDocument();
     NumberDocument tq2 = tqb2.toDocument();
@@ -167,29 +167,29 @@ public class TestCollections extends TestCase
     NumberDocumentBuilder tq1 =
         new NumberDocumentBuilder("Some data1", METRE.divide(SECOND).asType(
             Velocity.class), null, SampleData.MILLIS);
-    tq1.add(100, 10);
-    tq1.add(200, -20);
-    tq1.add(300, 30);
-    tq1.add(400, -20);
+    tq1.add(100, 10d);
+    tq1.add(200, -20d);
+    tq1.add(300, 30d);
+    tq1.add(400, -20d);
 
     NumberDocument tq1d = tq1.toDocument();
 
     NumberDocumentBuilder tq2 =
         new NumberDocumentBuilder("Some data2", METRE.divide(SECOND).asType(
             Velocity.class), null, SampleData.MILLIS);
-    tq2.add(220, -11);
-    tq2.add(340, -17);
-    tq2.add(440, -22);
+    tq2.add(220, -11d);
+    tq2.add(340, -17d);
+    tq2.add(440, -22d);
 
     NumberDocument tq2d = tq2.toDocument();
 
     NumberDocumentBuilder nq1 =
         new NumberDocumentBuilder("Some data1", METRE.divide(SECOND).asType(
             Velocity.class), null, null);
-    nq1.add(10);
-    nq1.add(-20);
-    nq1.add(30);
-    nq1.add(-20);
+    nq1.add(10d);
+    nq1.add(-20d);
+    nq1.add(30d);
+    nq1.add(-20d);
 
     NumberDocument nq1d = nq1.toDocument();
 
@@ -339,17 +339,17 @@ public class TestCollections extends TestCase
     NumberDocumentBuilder tq1b =
         new NumberDocumentBuilder("Some data1", METRE.divide(SECOND).asType(
             Velocity.class), null, SampleData.MILLIS);
-    tq1b.add(100, 10);
-    tq1b.add(200, 20);
-    tq1b.add(300, 30);
-    tq1b.add(400, 40);
+    tq1b.add(100, 10d);
+    tq1b.add(200, 20d);
+    tq1b.add(300, 30d);
+    tq1b.add(400, 40d);
 
     NumberDocument tq1 = tq1b.toDocument();
 
     NumberDocumentBuilder tq2b =
         new NumberDocumentBuilder("Some data2", METRE.divide(SECOND).asType(
             Velocity.class), null, null);
-    tq2b.add(11);
+    tq2b.add(11d);
 
     NumberDocument tq2 = tq2b.toDocument();
 
@@ -376,7 +376,7 @@ public class TestCollections extends TestCase
     assertTrue("quantity", series.isQuantity());
     assertEquals("correct value", 110d, series.getValueAt(0));
 
-    tq2b.add(11);
+    tq2b.add(11d);
 
     NumberDocument tq3 = tq2b.toDocument();
 
@@ -395,18 +395,18 @@ public class TestCollections extends TestCase
         new NumberDocumentBuilder("Some data1", METRE.divide(SECOND).asType(
             Velocity.class), null, SampleData.MILLIS);
 
-    tq1b.add(100, 10);
-    tq1b.add(200, 20);
-    tq1b.add(300, 30);
-    tq1b.add(400, 40);
+    tq1b.add(100, 10d);
+    tq1b.add(200, 20d);
+    tq1b.add(300, 30d);
+    tq1b.add(400, 40d);
 
     NumberDocumentBuilder tq2b =
         new NumberDocumentBuilder("Some data1", METRE.divide(SECOND).asType(
             Velocity.class), null, SampleData.MILLIS);
 
-    tq2b.add(220, 11);
-    tq2b.add(340, 17);
-    tq2b.add(440, 22);
+    tq2b.add(220, 11d);
+    tq2b.add(340, 17d);
+    tq2b.add(440, 22d);
 
     NumberDocument tq1 = tq1b.toDocument();
     NumberDocument tq2 = tq2b.toDocument();
@@ -456,9 +456,9 @@ public class TestCollections extends TestCase
 
     // ok, mangle the second array a bit more
     tq2b.clear();
-    tq2b.add(20, 11);
-    tq2b.add(340, 17);
-    tq2b.add(440, 22);
+    tq2b.add(20, 11d);
+    tq2b.add(340, 17d);
+    tq2b.add(440, 22d);
 
     tq2 = tq2b.toDocument();
 
@@ -494,11 +494,11 @@ public class TestCollections extends TestCase
 
     // ok, make the second array longer
     tq2b.clear();
-    tq2b.add(200, 11);
-    tq2b.add(250, 13);
-    tq2b.add(330, 17);
-    tq2b.add(360, 19);
-    tq2b.add(440, 22);
+    tq2b.add(200, 11d);
+    tq2b.add(250, 13d);
+    tq2b.add(330, 17d);
+    tq2b.add(360, 19d);
+    tq2b.add(440, 22d);
 
     tq2 = tq2b.toDocument();
 
@@ -587,19 +587,19 @@ public class TestCollections extends TestCase
     NumberDocumentBuilder tq1b =
         new NumberDocumentBuilder("Some data1", METRE.divide(SECOND).asType(
             Velocity.class), null, SampleData.MILLIS);
-    tq1b.add(100, 10);
-    tq1b.add(200, 20);
-    tq1b.add(300, 30);
-    tq1b.add(400, 40);
+    tq1b.add(100, 10d);
+    tq1b.add(200, 20d);
+    tq1b.add(300, 30d);
+    tq1b.add(400, 40d);
 
     NumberDocument tq1 = tq1b.toDocument();
 
     NumberDocumentBuilder tq2b =
         new NumberDocumentBuilder("Some data2", METRE.divide(SECOND).asType(
             Velocity.class), null, SampleData.MILLIS);
-    tq2b.add(220, 11);
-    tq2b.add(340, 17);
-    tq2b.add(440, 22);
+    tq2b.add(220, 11d);
+    tq2b.add(340, 17d);
+    tq2b.add(440, 22d);
 
     NumberDocument tq2 = tq2b.toDocument();
 
@@ -640,9 +640,9 @@ public class TestCollections extends TestCase
 
     // ok, mangle the second array a bit more
     tq2b.clear();
-    tq2b.add(20, 11);
-    tq2b.add(340, 17);
-    tq2b.add(440, 22);
+    tq2b.add(20, 11d);
+    tq2b.add(340, 17d);
+    tq2b.add(440, 22d);
 
     tq2 = tq2b.toDocument();
 

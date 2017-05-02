@@ -14,7 +14,7 @@ import org.eclipse.january.dataset.StringDataset;
 import org.eclipse.january.metadata.AxesMetadata;
 import org.eclipse.january.metadata.internal.AxesMetadataImpl;
 
-public class StringDocumentBuilder implements IDocumentBuilder
+public class StringDocumentBuilder implements IDocumentBuilder<String>
 {
   final private String _name;
   final private List<String> _values;

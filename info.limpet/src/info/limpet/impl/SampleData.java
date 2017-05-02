@@ -239,16 +239,16 @@ public class SampleData
     }
 
     // add an extra item to speedSeries3
-    speedSeries3.add(thisTime + 12 * 500 * 60, 12);
+    speedSeries3.add(thisTime + 12 * 500 * 60, 12d);
 
     // give the singletons a value
     singleton1.add(4d);
-    singletonRange1b.add(998);
+    singletonRange1b.add(998d);
     double minR = 940d;
     double maxR = 1050d;
     Range speedRange = new Range(minR, maxR);
     singletonRange1b.setRange(speedRange);
-    freq1.add(77);
+    freq1.add(77d);
     singleLoc1.add(calc.createPoint(12, 13));
     singleLoc2.add(calc.createPoint(7, 7));
     singletonLength.add(12d);
@@ -272,7 +272,7 @@ public class SampleData
     double maxR1 = 1050d;
     Range speedRange1 = new Range(minR1, maxR1);
     singletonRange2b.setRange(speedRange1);
-    singletonRange2b.add(998);
+    singletonRange2b.add(998d);
 
     NumberDocument singletonRange2 = singletonRange2b.toDocument();
 
@@ -280,13 +280,13 @@ public class SampleData
         new NumberDocumentBuilder("Ranged Speed", Velocity.UNIT, null, null);
     double min = 0d;
     double max = 100d;
-    singletonSpeedb.add(54);
+    singletonSpeedb.add(54d);
     singletonSpeedb.setRange(new Range(min, max));
     NumberDocument singletonSpeed = singletonSpeedb.toDocument();
 
     NumberDocumentBuilder singletonLength1b =
         new NumberDocumentBuilder("Ranged Speed", Length.UNIT, null, null);
-    singletonLength1b.add(134);
+    singletonLength1b.add(134d);
     singletonLength1b.setRange(new Range(40d, 150d));
 
     NumberDocument singletonLength1 = singletonLength1b.toDocument();

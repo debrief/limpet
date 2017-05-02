@@ -160,8 +160,8 @@ public class TestOperations
     NumberDocumentBuilder speedDatab =
         new NumberDocumentBuilder("speed", METRE.divide(SECOND).asType(
             Velocity.class), null, SampleData.MILLIS);
-    speedDatab.add(100, 23);
-    speedDatab.add(200, 44);
+    speedDatab.add(100, 23d);
+    speedDatab.add(200, 44d);
     NumberDocument speedData = speedDatab.toDocument();
 
     NumberDocumentBuilder angledataB =
@@ -368,7 +368,7 @@ public class TestOperations
       string2.add(i + "a ");
     }
 
-    speedLongerb.add(2);
+    speedLongerb.add(2d);
 
     NumberDocument temporalSpeed1 = temporalSpeed1b.toDocument();
     NumberDocument temporalSpeed2 = temporalSpeed2b.toDocument();
