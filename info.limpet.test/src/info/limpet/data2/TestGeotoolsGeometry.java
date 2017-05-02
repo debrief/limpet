@@ -36,6 +36,7 @@ import info.limpet.operations.spatial.DopplerShiftBetweenTracksOperation.Doppler
 import info.limpet.operations.spatial.GenerateCourseAndSpeedOperation;
 import info.limpet.operations.spatial.GeoSupport;
 import info.limpet.operations.spatial.IGeoCalculator;
+import info.limpet.operations.spatial.ProplossBetweenTwoTracksOperation;
 import info.limpet.operations.spatial.TwoTrackOperation;
 import info.limpet.persistence.CsvParser;
 
@@ -48,6 +49,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.measure.quantity.Length;
+import javax.measure.unit.SI;
 
 import junit.framework.TestCase;
 
@@ -227,23 +229,25 @@ public class TestGeotoolsGeometry extends TestCase
     assertNotNull("doc created", aa);
   }
 
-  //
-  // public void testLocationInterp()
-  // {
-  // TemporalLocation loc1 = new TemporalLocation("loc1");
-  // IGeoCalculator builder = GeoSupport.getCalculator();
-  // loc1.add(1000, builder.createPoint(2, 3));
-  // loc1.add(2000, builder.createPoint(3, 4));
-  //
-  // Point2D geo1 = loc1.interpolateValue(1500, InterpMethod.Linear);
-  // assertEquals("correct value", 2.5, geo1.getX());
-  // assertEquals("correct value", 3.5, geo1.getY());
-  //
-  // geo1 = loc1.interpolateValue(1700, InterpMethod.Linear);
-  // assertEquals("correct value", 2.7, geo1.getX());
-  // assertEquals("correct value", 3.7, geo1.getY());
-  // }
-  //
+  public void testLocationInterp()
+  {
+    LocationDocumentBuilder loc1b =
+        new LocationDocumentBuilder("loc1", null, SI.MILLI(SI.SECOND));
+    IGeoCalculator builder = GeoSupport.getCalculator();
+    loc1b.add(1000, builder.createPoint(2, 3));
+    loc1b.add(2000, builder.createPoint(3, 4));
+
+    LocationDocument loc1 = loc1b.toDocument();
+
+    Point2D geo1 = loc1.locationAt(1500);
+    assertEquals("correct value", 2.5, geo1.getX());
+    assertEquals("correct value", 3.5, geo1.getY());
+
+    geo1 = loc1.locationAt(1700);
+    assertEquals("correct value", 2.7, geo1.getX());
+    assertEquals("correct value", 3.7, geo1.getY());
+  }
+
   public void testInterpolatedLocationCalcNonTemporal()
   {
     LocationDocumentBuilder loc1 =
@@ -422,130 +426,151 @@ public class TestGeotoolsGeometry extends TestCase
 
   }
 
-  //
-  // public void testProplossCalc()
-  // {
-  // TemporalLocation loc1 = new TemporalLocation("loc1");
-  // TemporalLocation loc2 = new TemporalLocation("loc2");
-  // Location loc3 = new Location("loc2");
-  // Temporal.LengthM len1 = new Temporal.LengthM("dummy2", null);
-  //
-  // List<IStoreItem> selection = new ArrayList<IStoreItem>();
-  // selection.add(loc1);
-  //
-  // IStore store = new StoreGroup();
-  //
-  // Collection<ICommand<IStoreItem>> ops =
-  // new ProplossBetweenTwoTracksOperation().actionsFor(selection, store,
-  // context);
-  // assertEquals("empty collection", 0, ops.size());
-  //
-  // selection.add(len1);
-  // ops =
-  // new ProplossBetweenTwoTracksOperation().actionsFor(selection, store,
-  // context);
-  // assertEquals("empty collection", 0, ops.size());
-  //
-  // selection.remove(len1);
-  // selection.add(loc2);
-  // ops =
-  // new ProplossBetweenTwoTracksOperation().actionsFor(selection, store,
-  // context);
-  // assertEquals("empty collection", 0, ops.size());
-  //
-  // // ok, try adding some data
-  // IGeoCalculator builder = GeoSupport.getCalculator();
-  //
-  // loc1.add(1000, builder.createPoint(4, 3));
-  // loc1.add(2000, builder.createPoint(3, 4));
-  // loc2.add(1000, builder.createPoint(5, 3));
-  // loc2.add(1500, builder.createPoint(4, 3));
-  //
-  // loc3.add(builder.createPoint(2, 2));
-  //
-  // ops =
-  // new ProplossBetweenTwoTracksOperation().actionsFor(selection, store,
-  // context);
-  // assertEquals("not empty collection", 2, ops.size());
-  //
-  // // make hte series different lengths
-  // loc2.add(2000, builder.createPoint(3, 4));
-  //
-  // ops =
-  // new ProplossBetweenTwoTracksOperation().actionsFor(selection, store,
-  // context);
-  // assertEquals("not empty collection", 1, ops.size());
-  //
-  // // check how it runs
-  // ICommand<IStoreItem> thisOp = ops.iterator().next();
-  // thisOp.execute();
-  // IStoreItem thisOut = thisOp.getOutputs().iterator().next();
-  // assertNotNull(thisOut);
-  // assertTrue("correct type", thisOut instanceof IQuantityCollection);
-  // IQuantityCollection<?> iQ = (IQuantityCollection<?>) thisOut;
-  // assertEquals("correct length", 3, iQ.getValuesCount());
-  //
-  // // try with a singleton
-  // selection.remove(loc2);
-  // selection.add(loc3);
-  //
-  // ops =
-  // new ProplossBetweenTwoTracksOperation().actionsFor(selection, store,
-  // context);
-  // assertEquals("not empty collection", 2, ops.size());
-  //
-  // // check how it runs
-  // thisOp = ops.iterator().next();
-  // thisOp.execute();
-  // thisOut = thisOp.getOutputs().iterator().next();
-  // assertNotNull(thisOut);
-  // assertTrue("correct type", thisOut instanceof IQuantityCollection);
-  // iQ = (IQuantityCollection<?>) thisOut;
-  // assertEquals("correct length", 2, iQ.getValuesCount());
-  //
-  // }
+  public void testProplossCalc()
+  {
+    LocationDocumentBuilder loc1 = new LocationDocumentBuilder("loc1", null, SI.MILLI(SI.SECOND));
+    LocationDocumentBuilder loc2 = new LocationDocumentBuilder("loc2", null, SI.MILLI(SI.SECOND));
+    LocationDocumentBuilder loc3 = new LocationDocumentBuilder("loc2", null, null);
+    NumberDocumentBuilder len1 = new NumberDocumentBuilder("dummy2", SI.METER, null, null);
+
+    List<IStoreItem> selection = new ArrayList<IStoreItem>();
+    selection.add(loc1.toDocument());
+
+    IStoreGroup store = new StoreGroup("data");
+
+    List<ICommand> ops =
+        new ProplossBetweenTwoTracksOperation().actionsFor(selection, store,
+            context);
+    assertEquals("empty collection", 0, ops.size());
+
+    selection.add(len1.toDocument());
+    ops =
+        new ProplossBetweenTwoTracksOperation().actionsFor(selection, store,
+            context);
+    assertEquals("empty collection", 0, ops.size());
+
+    selection.remove(len1);
+    selection.add(loc2.toDocument());
+    ops =
+        new ProplossBetweenTwoTracksOperation().actionsFor(selection, store,
+            context);
+    assertEquals("empty collection", 0, ops.size());
+
+    // ok, try adding some data
+    IGeoCalculator builder = GeoSupport.getCalculator();
+
+    loc1.add(1000, builder.createPoint(4, 3));
+    loc1.add(2000, builder.createPoint(3, 4));
+    loc2.add(1000, builder.createPoint(5, 3));
+    loc2.add(1500, builder.createPoint(4, 3));
+    loc3.add(builder.createPoint(2, 2));
+    
+    // ok, regenerate the list
+    selection.clear();
+    selection.add(loc1.toDocument());
+    selection.add(loc2.toDocument());
+    selection.add(len1.toDocument());
+    
+
+    ops =
+        new ProplossBetweenTwoTracksOperation().actionsFor(selection, store,
+            context);
+    assertEquals("not empty collection", 2, ops.size());
+
+    // make hte series different lengths
+    loc2.add(2000, builder.createPoint(3, 4));
+    
+    // regenerate the selection
+    selection.clear();
+    selection.add(loc1.toDocument());
+    selection.add(loc2.toDocument());
+    selection.add(len1.toDocument());
+
+    ops =
+        new ProplossBetweenTwoTracksOperation().actionsFor(selection, store,
+            context);
+    assertEquals("not empty collection", 1, ops.size());
+
+    // check how it runs
+    ICommand thisOp = ops.iterator().next();
+    thisOp.execute();
+    IStoreItem thisOut = thisOp.getOutputs().iterator().next();
+    assertNotNull(thisOut);
+    assertTrue("correct type", thisOut instanceof NumberDocument);
+    NumberDocument iQ = (NumberDocument) thisOut;
+    assertEquals("correct length", 3, iQ.size());
+
+    // try with a singleton
+    selection.clear();
+    selection.add(loc1.toDocument());
+    selection.add(len1.toDocument());
+    selection.add(loc3.toDocument());
+
+    ops =
+        new ProplossBetweenTwoTracksOperation().actionsFor(selection, store,
+            context);
+    assertEquals("not empty collection", 2, ops.size());
+
+    // check how it runs
+    thisOp = ops.iterator().next();
+    thisOp.execute();
+    thisOut = thisOp.getOutputs().iterator().next();
+    assertNotNull(thisOut);
+    assertTrue("correct type", thisOut instanceof NumberDocument);
+    iQ = (NumberDocument) thisOut;
+    assertEquals("correct length", 2, iQ.size());
+
+  }
 
   public void testLocationCalc()
   {
-    // LocationDocumentBuilder loc1 = new LocationDocumentBuilder("loc1", null);
-    // LocationDocumentBuilder loc2 = new LocationDocumentBuilder("loc2", null);
-    // NumberDocumentBuilder len1 = new NumberDocumentBuilder("dummy", METRE.asType(Length.class),
-    // null);
-    //
-    // List<IStoreItem> selection = new ArrayList<IStoreItem>();
-    // selection.add(loc1.toDocument());
-    //
-    // StoreGroup store = new StoreGroup("Results");
+     LocationDocumentBuilder loc1 = new LocationDocumentBuilder("loc1", null, SI.MILLI(SI.SECOND));
+     LocationDocumentBuilder loc2 = new LocationDocumentBuilder("loc2", null, SI.MILLI(SI.SECOND));
+     NumberDocumentBuilder len1b = new NumberDocumentBuilder("dummy", METRE.asType(Length.class), null,
+     null);
+    
+     List<IStoreItem> selection = new ArrayList<IStoreItem>();
+     selection.add(loc1.toDocument());
+    
+     StoreGroup store = new StoreGroup("Results");
 
-    // TODO: reintstate distance between tracks operation
-    // Collection<ICommand> ops =
-    // new DistanceBetweenTracksOperation().actionsFor(selection, store,
-    // context);
-    // assertEquals("empty collection", 0, ops.size());
-    //
-    // selection.add(len1);
-    // ops =
-    // new DistanceBetweenTracksOperation().actionsFor(selection, store,
-    // context);
-    // assertEquals("empty collection", 0, ops.size());
-    //
-    // selection.remove(len1);
-    // selection.add(loc2);
-    // ops =
-    // new DistanceBetweenTracksOperation().actionsFor(selection, store,
-    // context);
-    // assertEquals("empty collection", 0, ops.size());
-    //
-    // // ok, try adding some data
-    // IGeoCalculator builder = GeoSupport.getCalculator();
-    //
-    // loc1.add(1000, builder.createPoint(4, 3));
-    // loc2.add(2000, builder.createPoint(3, 4));
-    //
-    // ops =
-    // new DistanceBetweenTracksOperation().actionsFor(selection, store,
-    // context);
-    // assertEquals("not empty collection", 1, ops.size());
+     Collection<ICommand> ops =
+     new DistanceBetweenTracksOperation().actionsFor(selection, store,
+     context);
+     assertEquals("empty collection", 0, ops.size());
+     
+     NumberDocument len1 = len1b.toDocument();
+    
+     selection.add(len1);
+     ops =
+     new DistanceBetweenTracksOperation().actionsFor(selection, store,
+     context);
+     assertEquals("empty collection", 0, ops.size());
+    
+     
+     
+     selection.remove(len1);
+     selection.add(loc2.toDocument());
+     ops =
+     new DistanceBetweenTracksOperation().actionsFor(selection, store,
+     context);
+     assertEquals("empty collection", 0, ops.size());
+    
+     // ok, try adding some data
+     IGeoCalculator builder = GeoSupport.getCalculator();
+    
+     loc1.add(1000, builder.createPoint(4, 3));
+     loc2.add(2000, builder.createPoint(3, 4));
+     
+     // put in the new documents
+     selection.clear();
+     selection.add(loc1.toDocument());
+     selection.add(loc2.toDocument());
+    
+     ops =
+     new DistanceBetweenTracksOperation().actionsFor(selection, store,
+     context);
+     assertEquals("not empty collection", 1, ops.size());
   }
 
   public void testFindingDopplerTracks()

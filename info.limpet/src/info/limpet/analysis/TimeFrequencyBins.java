@@ -16,7 +16,6 @@ package info.limpet.analysis;
 
 import info.limpet.IDocument;
 import info.limpet.IStoreItem;
-import info.limpet.impl.NumberDocument;
 import info.limpet.operations.CollectionComplianceTests;
 
 import java.util.ArrayList;
@@ -150,7 +149,7 @@ public abstract class TimeFrequencyBins extends CoreAnalysis
       // ok, let's go for it.
       for (Iterator<IStoreItem> iter = selection.iterator(); iter.hasNext();)
       {
-        NumberDocument o = (NumberDocument) iter.next();
+        IDocument o = (IDocument) iter.next();
 
         if (o.size() > 1 && o.size() < MAX_SIZE)
         {

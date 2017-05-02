@@ -86,7 +86,7 @@ public abstract class TwoTrackOperation implements IOperation
       // now create the output dataset
       final NumberDocument output =
           new NumberDocument(dataset, this, _outputUnits);
-      if(output.isIndexed())
+      if (output.isIndexed())
       {
         output.setIndexUnits(_builder.getIndexUnits());
       }
@@ -265,45 +265,66 @@ public abstract class TwoTrackOperation implements IOperation
     final DoubleDataset ds =
         (DoubleDataset) DatasetFactory.createFromObject(times);
 
+    final Unit<?> indexUnits = times == null ? null : SampleData.MILLIS;
+    final LocationDocumentBuilder ldb;
+
     // ok, put the lats & longs into arrays
     final ArrayList<Double> latVals = new ArrayList<Double>();
     final ArrayList<Double> longVals = new ArrayList<Double>();
     final ArrayList<Double> timeVals = new ArrayList<Double>();
 
-    final Iterator<Point2D> lIter = track.getLocationIterator();
-    final Iterator<Double> tIter = track.getIndex();
-    while (lIter.hasNext())
+    // special processing. If the document is a singleton, then
+    // we just keep re-using the same position
+    if (track.size() == 1)
     {
-      final double thisT = tIter.next();
-      final Point2D pt = lIter.next();
-
-      latVals.add(pt.getY());
-      longVals.add(pt.getX());
-      timeVals.add(thisT);
+      ldb =
+          new LocationDocumentBuilder("Interpolated locations", null,
+              indexUnits);
+      Point2D pt = track.getLocationIterator().next();
+      for (double t : times)
+      {
+        ldb.add(t, pt);
+      }
     }
-
-    final DoubleDataset latDataset =
-        DatasetFactory.createFromObject(DoubleDataset.class, latVals);
-    final DoubleDataset DoubleDataset =
-        DatasetFactory.createFromObject(DoubleDataset.class, longVals);
-    final DoubleDataset timeDataset =
-        DatasetFactory.createFromObject(DoubleDataset.class, timeVals);
-
-    final DoubleDataset latInterpolated =
-        (DoubleDataset) Maths.interpolate(timeDataset, latDataset, ds, 0, 0);
-    final DoubleDataset longInterpolated =
-        (DoubleDataset) Maths.interpolate(timeDataset, DoubleDataset, ds, 0, 0);
-
-    // ok, now we need to re-create a locations document
-    final Unit<?> indexUnits = times == null ? null : SampleData.MILLIS;
-    final LocationDocumentBuilder ldb =
-        new LocationDocumentBuilder("Interpolated locations", null, indexUnits);
-    for (int i = 0; i < ds.getSize(); i++)
+    else
     {
-      final Point2D pt =
-          GeoSupport.getCalculator().createPoint(longInterpolated.getDouble(i),
-              latInterpolated.getDouble(i));
-      ldb.add(ds.getLong(i), pt);
+
+      final Iterator<Point2D> lIter = track.getLocationIterator();
+      final Iterator<Double> tIter = track.getIndex();
+      while (lIter.hasNext())
+      {
+        final double thisT = tIter.next();
+        final Point2D pt = lIter.next();
+
+        latVals.add(pt.getY());
+        longVals.add(pt.getX());
+        timeVals.add(thisT);
+      }
+
+      final DoubleDataset latDataset =
+          DatasetFactory.createFromObject(DoubleDataset.class, latVals);
+      final DoubleDataset DoubleDataset =
+          DatasetFactory.createFromObject(DoubleDataset.class, longVals);
+      final DoubleDataset timeDataset =
+          DatasetFactory.createFromObject(DoubleDataset.class, timeVals);
+
+      final DoubleDataset latInterpolated =
+          (DoubleDataset) Maths.interpolate(timeDataset, latDataset, ds, 0, 0);
+      final DoubleDataset longInterpolated =
+          (DoubleDataset) Maths.interpolate(timeDataset, DoubleDataset, ds, 0,
+              0);
+
+      // ok, now we need to re-create a locations document
+      ldb =
+          new LocationDocumentBuilder("Interpolated locations", null,
+              indexUnits);
+      for (int i = 0; i < ds.getSize(); i++)
+      {
+        final Point2D pt =
+            GeoSupport.getCalculator().createPoint(
+                longInterpolated.getDouble(i), latInterpolated.getDouble(i));
+        ldb.add(ds.getLong(i), pt);
+      }
     }
 
     return ldb.toDocument();

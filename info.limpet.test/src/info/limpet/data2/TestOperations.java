@@ -43,8 +43,11 @@ import info.limpet.impl.StringDocumentBuilder;
 import info.limpet.operations.CollectionComplianceTests;
 import info.limpet.operations.OperationsLibrary;
 import info.limpet.operations.admin.AddLayerOperation;
+import info.limpet.operations.admin.CopyCsvToClipboardAction;
+import info.limpet.operations.admin.CreateLocationAction;
 import info.limpet.operations.admin.CreateSingletonGenerator;
 import info.limpet.operations.admin.DeleteCollectionOperation;
+import info.limpet.operations.admin.ExportCsvToFileAction;
 import info.limpet.operations.admin.GenerateDummyDataOperation;
 import info.limpet.operations.arithmetic.UnaryQuantityOperation;
 import info.limpet.operations.arithmetic.simple.AddQuantityOperation;
@@ -864,9 +867,10 @@ public class TestOperations
         (NumberDocument) first.getOutputs().iterator().next();
     assertNotNull("produced output", output);
     assertEquals("correct size", speedGood1.size(), output.size());
-    assertEquals("correct value", speedGood1.getValueAt(0) - speedSingle.getValueAt(0), output.getValueAt(0), 0.001);
+    assertEquals("correct value", speedGood1.getValueAt(0)
+        - speedSingle.getValueAt(0), output.getValueAt(0), 0.001);
     assertTrue(output.isIndexed());
-    
+
     // ok, try the reverse operation
     target.clear();
 
@@ -874,11 +878,11 @@ public class TestOperations
         new SubtractQuantityOperation().actionsFor(selection, target, context);
     first = commands.get(1);
     first.execute();
-    output =
-        (NumberDocument) first.getOutputs().iterator().next();
+    output = (NumberDocument) first.getOutputs().iterator().next();
     assertNotNull("produced output", output);
     assertEquals("correct size", speedGood1.size(), output.size());
-    assertEquals("correct value", speedSingle.getValueAt(0) - speedGood1.getValueAt(0) , output.getValueAt(0), 0.001);
+    assertEquals("correct value", speedSingle.getValueAt(0)
+        - speedGood1.getValueAt(0), output.getValueAt(0), 0.001);
     assertTrue(output.isIndexed());
 
     // ok, try the forward indexed operation
@@ -888,11 +892,11 @@ public class TestOperations
         new SubtractQuantityOperation().actionsFor(selection, target, context);
     first = commands.get(2);
     first.execute();
-    output =
-        (NumberDocument) first.getOutputs().iterator().next();
+    output = (NumberDocument) first.getOutputs().iterator().next();
     assertNotNull("produced output", output);
     assertEquals("correct size", speedGood1.size(), output.size());
-    assertEquals("correct value", speedGood1.getValueAt(0) - speedSingle.getValueAt(0), output.getValueAt(0), 0.001);
+    assertEquals("correct value", speedGood1.getValueAt(0)
+        - speedSingle.getValueAt(0), output.getValueAt(0), 0.001);
     assertTrue(output.isIndexed());
 
     // ok, try the reverse indexed operation
@@ -902,33 +906,33 @@ public class TestOperations
         new SubtractQuantityOperation().actionsFor(selection, target, context);
     first = commands.get(3);
     first.execute();
-    output =
-        (NumberDocument) first.getOutputs().iterator().next();
+    output = (NumberDocument) first.getOutputs().iterator().next();
     assertNotNull("produced output", output);
     assertEquals("correct size", speedGood1.size(), output.size());
-    assertEquals("correct value", speedSingle.getValueAt(0) - speedGood1.getValueAt(0) , output.getValueAt(0), 0.001);
+    assertEquals("correct value", speedSingle.getValueAt(0)
+        - speedGood1.getValueAt(0), output.getValueAt(0), 0.001);
     assertTrue(output.isIndexed());
-    
+
     // swap them around - so the singleton is first
     selection.clear();
     selection.add(speedSingle);
     selection.add(speedGood1);
 
-     commands =
+    commands =
         new SubtractQuantityOperation().actionsFor(selection, target, context);
 
     assertEquals("got four commands", 4, commands.size());
 
     // have a look
-     first = commands.get(1);
+    first = commands.get(1);
     first.execute();
-     output =
-        (NumberDocument) first.getOutputs().iterator().next();
+    output = (NumberDocument) first.getOutputs().iterator().next();
     assertNotNull("produced output", output);
     assertEquals("correct size", speedGood1.size(), output.size());
-    assertEquals("correct value", speedGood1.getValueAt(0) - speedSingle.getValueAt(0), output.getValueAt(0), 0.001);
+    assertEquals("correct value", speedGood1.getValueAt(0)
+        - speedSingle.getValueAt(0), output.getValueAt(0), 0.001);
     assertTrue(output.isIndexed());
-    
+
     // ok, try the reverse operation
     target.clear();
 
@@ -936,11 +940,11 @@ public class TestOperations
         new SubtractQuantityOperation().actionsFor(selection, target, context);
     first = commands.get(0);
     first.execute();
-    output =
-        (NumberDocument) first.getOutputs().iterator().next();
+    output = (NumberDocument) first.getOutputs().iterator().next();
     assertNotNull("produced output", output);
     assertEquals("correct size", speedGood1.size(), output.size());
-    assertEquals("correct value", speedSingle.getValueAt(0) - speedGood1.getValueAt(0) , output.getValueAt(0), 0.001);
+    assertEquals("correct value", speedSingle.getValueAt(0)
+        - speedGood1.getValueAt(0), output.getValueAt(0), 0.001);
     assertTrue(output.isIndexed());
 
     // ok, try the forward indexed operation
@@ -950,11 +954,11 @@ public class TestOperations
         new SubtractQuantityOperation().actionsFor(selection, target, context);
     first = commands.get(3);
     first.execute();
-    output =
-        (NumberDocument) first.getOutputs().iterator().next();
+    output = (NumberDocument) first.getOutputs().iterator().next();
     assertNotNull("produced output", output);
     assertEquals("correct size", speedGood1.size(), output.size());
-    assertEquals("correct value", speedGood1.getValueAt(0) - speedSingle.getValueAt(0), output.getValueAt(0), 0.001);
+    assertEquals("correct value", speedGood1.getValueAt(0)
+        - speedSingle.getValueAt(0), output.getValueAt(0), 0.001);
     assertTrue(output.isIndexed());
 
     // ok, try the reverse indexed operation
@@ -964,11 +968,11 @@ public class TestOperations
         new SubtractQuantityOperation().actionsFor(selection, target, context);
     first = commands.get(2);
     first.execute();
-    output =
-        (NumberDocument) first.getOutputs().iterator().next();
+    output = (NumberDocument) first.getOutputs().iterator().next();
     assertNotNull("produced output", output);
     assertEquals("correct size", speedGood1.size(), output.size());
-    assertEquals("correct value", speedSingle.getValueAt(0) - speedGood1.getValueAt(0) , output.getValueAt(0), 0.001);    
+    assertEquals("correct value", speedSingle.getValueAt(0)
+        - speedGood1.getValueAt(0), output.getValueAt(0), 0.001);
     assertTrue(output.isIndexed());
   }
 
@@ -1006,8 +1010,8 @@ public class TestOperations
     assertTrue("output is temporal", output.isIndexed());
     assertEquals("correct size", speedGood1.size(), output.size());
 
-    assertEquals("correct value", output.getValueAt(0),
-        speedGood1.getValueAt(0) + 2, 0.001);
+    assertEquals("correct value", output.getValueAt(0), speedGood1
+        .getValueAt(0) + 2, 0.001);
   }
 
   @Test
@@ -1096,57 +1100,56 @@ public class TestOperations
     assertEquals(firstDifference, speed2firstValue - speed1firstValue, 0);
   }
 
-  // @Test
-  // public void testSubtractSingleton() throws RuntimeException
-  // {
-  // StoreGroup store = new SampleData().getData(10);
-  // List<IStoreItem> selection = new ArrayList<IStoreItem>();
-  // NumberDocument speedGood1 =
-  // (NumberDocument) store.get(SampleData.SPEED_ONE);
-  //
-  // // test singleton
-  // NumberDocument speedSingleton =
-  // (NumberDocument) store.get(SampleData.RANGED_SPEED_SINGLETON);
-  // assertEquals("it's a singleton", 1, speedSingleton.getSize());
-  //
-  // selection.clear();
-  // selection.add(speedGood1);
-  // selection.add(speedSingleton);
-  //
-  // List<ICommand> commands = new SubtractQuantityOperation().actionsFor(selection, store,
-  // context);
-  // assertEquals("valid command", 4, commands.size());
-  //
-  // int storeSize = store.size();
-  //
-  // ICommand command = commands.get(0);
-  // command.execute();
-  //
-  // // test store has a new item in it
-  // assertEquals("store not empty", storeSize + 1, store.size());
-  //
-  // String outName = speedGood1.getName() + " subtracted from "
-  // + speedSingleton.getName();
-  // NumberDocument newS = (NumberDocument) store.get(outName);
-  //
-  // assertNotNull("document produced", newS);
-  // assertEquals("correct size", 10, newS.size());
-  //
-  // store.remove(outName);
-  //
-  // // ok, do the reverse
-  // command = commands.get(1);
-  // command.execute();
-  //
-  // outName = speedGood1.getName() + " subtracted from "
-  // + speedSingleton.getName();
-  // newS = (NumberDocument) store.get(outName);
-  //
-  // assertNotNull("document produced", newS);
-  // assertEquals("correct size", 10, newS.size());
-  //
-  //
-  // }
+  @Test
+  public void testSubtractSingleton() throws RuntimeException
+  {
+    StoreGroup store = new SampleData().getData(10);
+    List<IStoreItem> selection = new ArrayList<IStoreItem>();
+    NumberDocument speedGood1 =
+        (NumberDocument) store.get(SampleData.SPEED_ONE);
+
+    // test singleton
+    NumberDocument speedSingleton =
+        (NumberDocument) store.get(SampleData.RANGED_SPEED_SINGLETON);
+    assertEquals("it's a singleton", 1, speedSingleton.getSize());
+
+    selection.clear();
+    selection.add(speedGood1);
+    selection.add(speedSingleton);
+
+    List<ICommand> commands =
+        new SubtractQuantityOperation().actionsFor(selection, store, context);
+    assertEquals("valid command", 4, commands.size());
+
+    int storeSize = store.size();
+
+    ICommand command = commands.get(0);
+    command.execute();
+
+    // test store has a new item in it
+    assertEquals("store not empty", storeSize + 1, store.size());
+
+    String outName =
+        speedGood1.getName() + " subtracted from " + speedSingleton.getName();
+    NumberDocument newS = (NumberDocument) store.get(outName);
+
+    assertNotNull("document produced", newS);
+    assertEquals("correct size", 10, newS.size());
+
+    store.remove(outName);
+
+    // ok, do the reverse
+    command = commands.get(1);
+    command.execute();
+
+    outName =
+        speedGood1.getName() + " subtracted from " + speedSingleton.getName();
+    newS = (NumberDocument) store.get(outName);
+
+    assertNotNull("document produced", newS);
+    assertEquals("correct size", 10, newS.size());
+
+  }
 
   @Test
   public void testAddLayerOperation() throws RuntimeException
@@ -1280,91 +1283,95 @@ public class TestOperations
 
   }
 
-  // @Test
-  // public void testCreateLocationAction()
-  // {
-  // StoreGroup store = new SampleData().getData(10);
-  // CreateLocationAction createLocationAction = new CreateLocationAction();
-  // assertNotNull("Create Location action is not NULL", createLocationAction);
-  //
-  // List<IStoreItem> selection = new ArrayList<IStoreItem>();
-  // StoreGroup storeGroup = new StoreGroup("Track 1");
-  // selection.add(storeGroup);
-  //
-  // IContext mockContext = EasyMock.createMock(MockContext.class);
-  //
-  // Collection<ICommand<IStoreItem>> actionsFor =
-  // createLocationAction.actionsFor(selection, store, mockContext);
-  // assertEquals("Create location collection size", 1, actionsFor.size());
-  // Iterator<ICommand<IStoreItem>> creationLocIterator = actionsFor.iterator();
-  // ICommand<IStoreItem> command = creationLocIterator.next();
-  //
-  // EasyMock.expect(
-  // mockContext.getInput("New fixed location", "Enter name for location",
-  // "")).andReturn("seriesName").times(1);
-  // EasyMock.expect(
-  // mockContext.getInput("New location",
-  // "Enter initial value for latitude", "")).andReturn("123.23").times(
-  // 1);
-  // EasyMock.expect(
-  // mockContext.getInput("New location",
-  // "Enter initial value for longitude", "")).andReturn("3456.78")
-  // .times(1);
-  // EasyMock.replay(mockContext);
-  //
-  // command.execute();
-  // }
-  //
-  // @Test
-  // public void testExportCsvToFileAction(){
-  // StoreGroup store = new SampleData().getData(10);
-  // ExportCsvToFileAction exportCSVFileAction=new ExportCsvToFileAction();
-  // assertNotNull(exportCSVFileAction);
-  //
-  // List<IStoreItem> selection = new ArrayList<IStoreItem>();
-  // @SuppressWarnings("unchecked")
-  // IQuantityCollection<Velocity> speedGood1 = (IQuantityCollection<Velocity>)
-  // store.get(SampleData.SPEED_ONE);
-  // selection.add(speedGood1);
-  //
-  // IContext mockContext=EasyMock.createMock(MockContext.class);
-  //
-  // Collection<ICommand<IStoreItem>> exportActionfor = exportCSVFileAction.actionsFor(selection,
-  // store, mockContext);
-  // assertEquals("Export CSV file collection size", 1,exportActionfor.size());
-  // Iterator<ICommand<IStoreItem>> iterator=exportActionfor.iterator();
-  // ICommand<IStoreItem> command = iterator.next();
-  //
-  // EasyMock.expect(mockContext.getCsvFilename()).andReturn("ExportCSV.csv").times(1);
-  // EasyMock.expect(mockContext.openQuestion("Overwrite '" + "ExportCSV.csv" + "'?",
-  // "Are you sure you want to overwrite '" + "ExportCSV.csv" + "'?")).andReturn(true).times(1);
-  // EasyMock.replay(mockContext);
-  //
-  // command.execute();
-  // }
-  //
-  // @Test
-  // public void testCopyCsvToClipboardAction(){
-  //
-  // StoreGroup store = new SampleData().getData(10);
-  // CopyCsvToClipboardAction copyCSVToClipAction=new CopyCsvToClipboardAction();
-  // assertNotNull(copyCSVToClipAction);
-  //
-  // List<IStoreItem> selection = new ArrayList<IStoreItem>();
-  // @SuppressWarnings("unchecked")
-  // IQuantityCollection<Velocity> speedGood1 = (IQuantityCollection<Velocity>)
-  // store.get(SampleData.SPEED_ONE);
-  // selection.add(speedGood1);
-  //
-  // IContext mockContext=EasyMock.createMock(MockContext.class);
-  // Collection<ICommand<IStoreItem>> copyCSVActionfor = copyCSVToClipAction.actionsFor(selection,
-  // store, mockContext);
-  // assertEquals("Copy CSV file collection size", 1,copyCSVActionfor.size());
-  //
-  // Iterator<ICommand<IStoreItem>> copyrIterator=copyCSVActionfor.iterator();
-  // ICommand<IStoreItem> copyCommand = copyrIterator.next();
-  // copyCommand.execute();
-  // }
+  @Test
+  public void testCreateLocationAction()
+  {
+    StoreGroup store = new SampleData().getData(10);
+    CreateLocationAction createLocationAction = new CreateLocationAction();
+    assertNotNull("Create Location action is not NULL", createLocationAction);
+
+    List<IStoreItem> selection = new ArrayList<IStoreItem>();
+    StoreGroup storeGroup = new StoreGroup("Track 1");
+    selection.add(storeGroup);
+
+    IContext mockContext = EasyMock.createMock(MockContext.class);
+
+    Collection<ICommand> actionsFor =
+        createLocationAction.actionsFor(selection, store, mockContext);
+    assertEquals("Create location collection size", 1, actionsFor.size());
+    Iterator<ICommand> creationLocIterator = actionsFor.iterator();
+    ICommand command = creationLocIterator.next();
+
+    EasyMock.expect(
+        mockContext.getInput("New fixed location", "Enter name for location",
+            "")).andReturn("seriesName").times(1);
+    EasyMock.expect(
+        mockContext.getInput("New location",
+            "Enter initial value for latitude", "")).andReturn("123.23").times(
+        1);
+    EasyMock.expect(
+        mockContext.getInput("New location",
+            "Enter initial value for longitude", "")).andReturn("3456.78")
+        .times(1);
+    EasyMock.replay(mockContext);
+
+    command.execute();
+  }
+
+  @Test
+  public void testExportCsvToFileAction()
+  {
+    StoreGroup store = new SampleData().getData(10);
+    ExportCsvToFileAction exportCSVFileAction = new ExportCsvToFileAction();
+    assertNotNull(exportCSVFileAction);
+
+    List<IStoreItem> selection = new ArrayList<IStoreItem>();
+    NumberDocument speedGood1 =
+        (NumberDocument) store.get(SampleData.SPEED_ONE);
+    selection.add(speedGood1);
+
+    IContext mockContext = EasyMock.createMock(MockContext.class);
+
+    Collection<ICommand> exportActionfor =
+        exportCSVFileAction.actionsFor(selection, store, mockContext);
+    assertEquals("Export CSV file collection size", 1, exportActionfor.size());
+    Iterator<ICommand> iterator = exportActionfor.iterator();
+    ICommand command = iterator.next();
+
+    EasyMock.expect(mockContext.getCsvFilename()).andReturn("ExportCSV.csv")
+        .times(1);
+    EasyMock.expect(
+        mockContext.openQuestion("Overwrite '" + "ExportCSV.csv" + "'?",
+            "Are you sure you want to overwrite '" + "ExportCSV.csv" + "'?"))
+        .andReturn(true).times(1);
+    EasyMock.replay(mockContext);
+
+    command.execute();
+  }
+
+  @Test
+  public void testCopyCsvToClipboardAction()
+  {
+
+    StoreGroup store = new SampleData().getData(10);
+    CopyCsvToClipboardAction copyCSVToClipAction =
+        new CopyCsvToClipboardAction();
+    assertNotNull(copyCSVToClipAction);
+
+    List<IStoreItem> selection = new ArrayList<IStoreItem>();
+    NumberDocument speedGood1 =
+        (NumberDocument) store.get(SampleData.SPEED_ONE);
+    selection.add(speedGood1);
+
+    IContext mockContext = EasyMock.createMock(MockContext.class);
+    Collection<ICommand> copyCSVActionfor =
+        copyCSVToClipAction.actionsFor(selection, store, mockContext);
+    assertEquals("Copy CSV file collection size", 1, copyCSVActionfor.size());
+
+    Iterator<ICommand> copyrIterator = copyCSVActionfor.iterator();
+    ICommand copyCommand = copyrIterator.next();
+    copyCommand.execute();
+  }
 
   @Test
   public void testOperations()

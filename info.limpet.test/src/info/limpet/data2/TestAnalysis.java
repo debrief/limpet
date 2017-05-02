@@ -18,14 +18,18 @@ import static javax.measure.unit.SI.METRE;
 import info.limpet.IStoreItem;
 import info.limpet.analysis.AnalysisLibrary;
 import info.limpet.analysis.IAnalysis;
+import info.limpet.analysis.TimeFrequencyBins;
 import info.limpet.impl.NumberDocument;
 import info.limpet.impl.NumberDocumentBuilder;
+import info.limpet.impl.StringDocumentBuilder;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
 import javax.measure.quantity.Length;
+import javax.measure.unit.SI;
 
 import junit.framework.TestCase;
 
@@ -77,83 +81,86 @@ public class TestAnalysis extends TestCase
 
   }
 
-  // public void testSingleObjectStats()
-  // {
-  // final List<String> tList = new ArrayList<String>();
-  // final List<String> vList = new ArrayList<String>();
-  //
-  // IAnalysis ia = new AnalysisLibrary()
-  // {
-  //
-  // @Override
-  // protected void presentResults(List<String> titles, List<String> values)
-  // {
-  // tList.addAll(titles);
-  // vList.addAll(values);
-  // }
-  // };
-  //
-  // // collate the data
-  // List<IStoreItem> selection = new ArrayList<IStoreItem>();
-  // ObjectCollection<String> len1 = new ObjectCollection<String>("some strings");
-  // selection.add(len1);
-  //
-  // len1.add("a");
-  // len1.add("b");
-  // len1.add("c");
-  // len1.add("a");
-  // len1.add("b");
-  // len1.add("a");
-  //
-  // // run the analysis
-  // ia.analyse(selection);
-  //
-  // // check the results
-  // // assertEquals("enough titles", 1, tList.size());
-  // // assertEquals("enough values", 1, vList.size());
-  //
-  // outList(tList, vList);
-  // }
+  public void testSingleObjectStats()
+  {
+    final List<String> tList = new ArrayList<String>();
+    final List<String> vList = new ArrayList<String>();
 
-  // TODO: reinstate once we store indexed objects
-  // public void testTimeFrequencyStats()
-  // {
-  // final List<String> tList = new ArrayList<String>();
-  // final List<String> vList = new ArrayList<String>();
-  //
-  // TimeFrequencyBins tBins = new TimeFrequencyBins()
-  // {
-  // @Override
-  // protected void presentResults(List<String> titles, List<String> values)
-  // {
-  // tList.addAll(titles);
-  // vList.addAll(values);
-  // }
-  // };
-  //
-  // // collate the data
-  // List<IStoreItem> selection = new ArrayList<IStoreItem>();
-  // TemporalObjectCollection<String> len1 = new TemporalObjectCollection<String>("some strings");
-  // selection.add(len1);
-  //
-  // long t = new Date().getTime();
-  //
-  // len1.add(t + 10000, "a");
-  // len1.add(t + 20000, "b");
-  // len1.add(t + 60000, "c");
-  // len1.add(t + 120000, "a");
-  // len1.add(t + 130000, "b");
-  // len1.add(t + 180000, "a");
-  //
-  // // run the analysis
-  // tBins.analyse(selection);
-  //
-  // // check the results
-  // // assertEquals("enough titles", 1, tList.size());
-  // // assertEquals("enough values", 1, vList.size());
-  //
-  // outList(tList, vList);
-  // }
+    IAnalysis ia = new AnalysisLibrary()
+    {
+
+      @Override
+      protected void presentResults(List<String> titles, List<String> values)
+      {
+        tList.addAll(titles);
+        vList.addAll(values);
+      }
+    };
+
+    // collate the data
+    List<IStoreItem> selection = new ArrayList<IStoreItem>();
+    StringDocumentBuilder len1 =
+        new StringDocumentBuilder("some strings", null, null);
+
+    len1.add("a");
+    len1.add("b");
+    len1.add("c");
+    len1.add("a");
+    len1.add("b");
+    len1.add("a");
+
+    selection.add(len1.toDocument());
+
+    // run the analysis
+    ia.analyse(selection);
+
+    // check the results
+    assertEquals("enough titles", 10, tList.size());
+    assertEquals("enough values", 10, vList.size());
+
+    outList(tList, vList);
+  }
+
+  public void testTimeFrequencyStats()
+  {
+    final List<String> tList = new ArrayList<String>();
+    final List<String> vList = new ArrayList<String>();
+
+    TimeFrequencyBins tBins = new TimeFrequencyBins()
+    {
+      @Override
+      protected void presentResults(List<String> titles, List<String> values)
+      {
+        tList.addAll(titles);
+        vList.addAll(values);
+      }
+    };
+
+    // collate the data
+    List<IStoreItem> selection = new ArrayList<IStoreItem>();
+    StringDocumentBuilder len1 =
+        new StringDocumentBuilder("some strings", null, SI.SECOND);
+
+    long t = new Date().getTime();
+
+    len1.add(t + 10000, "a");
+    len1.add(t + 20000, "b");
+    len1.add(t + 60000, "c");
+    len1.add(t + 120000, "a");
+    len1.add(t + 130000, "b");
+    len1.add(t + 180000, "a");
+
+    selection.add(len1.toDocument());
+
+    // run the analysis
+    tBins.analyse(selection);
+
+    // check the results
+    assertEquals("enough titles", 1, tList.size());
+    assertEquals("enough values", 1, vList.size());
+
+    outList(tList, vList);
+  }
 
   private void outList(List<String> list, List<String> values)
   {

@@ -71,7 +71,6 @@ public class TestDynamic extends TestCase
 		assertNotNull(resSeries);
 
 		// remember the units
-		@SuppressWarnings("unused")
     final String resUnits = resSeries.getUnits().toString();
 
 		// ok, play about with a change
@@ -100,85 +99,85 @@ public class TestDynamic extends TestCase
 		assertEquals("empty at start", 0, events.size());
 
 		// ok, now make a change in one of hte input collections
-//		speedOne.fireDataChanged();
-//		assertEquals("change received", 1, events.size());
-//
-//		// check the units haven't changed
-//		assertEquals("units still valid", resUnits, resSeries.getUnits().toString());
-//
-//		// ok, now make another change in one of hte input collections
-//		speedOne.fireDataChanged();
-//		assertEquals("second change received", 2, events.size());
-//
-//		selection.clear();
-//		selection.add(speedTwo);
-//		selection.add(resSeries);
-//
-//		// ok - now for a further dependent calculation
-//		actions = new AddQuantityOperation().actionsFor(selection, store, context);
-//		addIter = actions.iterator();
-//		addIter.next();
-//		firstAction = addIter.next();
-//		assertEquals("correct action", "Add numeric values in provided series (interpolated)",
-//				firstAction.getName());
-//
-//		// ok, now create the new series
-//		firstAction.execute();
-//
-//		// now check the output changed again
-//		events.clear();
-//
-//		NumberDocument newResSeries = (NumberDocument) store
-//				.get("Sum of Speed Two Time, Sum of Speed One Time, Speed Two Time");
-//		assertNotNull("found new series");
-//		newResSeries.addChangeListener(listener);
-//
-//		final String resUnits2 = newResSeries.getUnits().toString();
-//
-//		// ok, fire a change in speed one
-//		speedOne.fireDataChanged();
-//		assertEquals("change received", 2, events.size());
-//
-//		speedTwo.fireDataChanged();
-//		assertEquals("change received", 5, events.size());
-//
-//		resSeries.fireDataChanged();
-//		assertEquals("change received", 7, events.size());
-//
-//		// switch off dynamic update
-//		Iterator<ICommand> cIter = resSeries.getDependents().iterator();
-//		while (cIter.hasNext())
-//		{
-//			ICommand comm = (ICommand) cIter.next();
-//			comm.setDynamic(false);
-//		}
-//
-//		// check that only the change listener event gets fired, not
-//		// the depedendent operation event.
-//		resSeries.fireDataChanged();
-//		assertEquals("change received", 8, events.size());
-//
-//		// switch off dynamic update
-//		cIter = resSeries.getDependents().iterator();
-//		while (cIter.hasNext())
-//		{
-//			ICommand comm = (ICommand) cIter.next();
-//			comm.setDynamic(true);
-//		}
-//
-//		// check we get two updates
-//		resSeries.fireDataChanged();
-//		assertEquals("change received", 10, events.size());
-//
-//		// check the data lengths
-//		NumberDocument newResQ = (NumberDocument) newResSeries;
-//		assertEquals("correct elements", 10, newResQ.size());
-//		assertEquals("correct elements", 10, speedTwo.size());
-//		assertEquals("correct elements", 10, resSeries.size());
-//
-//		// check the units haven't changed
-//		assertEquals("units still valid", resUnits, resSeries.getUnits().toString());
-//		assertEquals("units still valid", resUnits2, newResSeries.getUnits().toString());
+		speedOne.fireDataChanged();
+		assertEquals("change received", 1, events.size());
+
+		// check the units haven't changed
+		assertEquals("units still valid", resUnits, resSeries.getUnits().toString());
+
+		// ok, now make another change in one of hte input collections
+		speedOne.fireDataChanged();
+		assertEquals("second change received", 2, events.size());
+
+		selection.clear();
+		selection.add(speedTwo);
+		selection.add(resSeries);
+
+		// ok - now for a further dependent calculation
+		actions = new AddQuantityOperation().actionsFor(selection, store, context);
+		addIter = actions.iterator();
+		addIter.next();
+		firstAction = addIter.next();
+		assertEquals("correct action", "Add numeric values in provided series (interpolated)",
+				firstAction.getName());
+
+		// ok, now create the new series
+		firstAction.execute();
+
+		// now check the output changed again
+		events.clear();
+
+		NumberDocument newResSeries = (NumberDocument) store
+				.get("Sum of Speed Two Time + Speed One Time+Speed Two Time");
+		assertNotNull("found new series", newResSeries);
+		newResSeries.addChangeListener(listener);
+
+		final String resUnits2 = newResSeries.getUnits().toString();
+
+		// ok, fire a change in speed one
+		speedOne.fireDataChanged();
+		assertEquals("change received", 2, events.size());
+
+		speedTwo.fireDataChanged();
+		assertEquals("change received", 5, events.size());
+
+		resSeries.fireDataChanged();
+		assertEquals("change received", 7, events.size());
+
+		// switch off dynamic update
+		Iterator<ICommand> cIter = resSeries.getDependents().iterator();
+		while (cIter.hasNext())
+		{
+			ICommand comm = (ICommand) cIter.next();
+			comm.setDynamic(false);
+		}
+
+		// check that only the change listener event gets fired, not
+		// the depedendent operation event.
+		resSeries.fireDataChanged();
+		assertEquals("change received", 8, events.size());
+
+		// switch off dynamic update
+		cIter = resSeries.getDependents().iterator();
+		while (cIter.hasNext())
+		{
+			ICommand comm = (ICommand) cIter.next();
+			comm.setDynamic(true);
+		}
+
+		// check we get two updates
+		resSeries.fireDataChanged();
+		assertEquals("change received", 10, events.size());
+
+		// check the data lengths
+		NumberDocument newResQ = (NumberDocument) newResSeries;
+		assertEquals("correct elements", 10, newResQ.size());
+		assertEquals("correct elements", 10, speedTwo.size());
+		assertEquals("correct elements", 10, resSeries.size());
+
+		// check the units haven't changed
+		assertEquals("units still valid", resUnits, resSeries.getUnits().toString());
+		assertEquals("units still valid", resUnits2, newResSeries.getUnits().toString());
 
 	}
 }
