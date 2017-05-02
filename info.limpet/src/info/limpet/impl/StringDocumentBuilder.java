@@ -30,7 +30,7 @@ public class StringDocumentBuilder implements IDocumentBuilder
     _indexUnits = indexUnits;
   }
 
-  public void add(String item, double index)
+  public void add(double index, String item)
   {
     // sort out the observation
     add(item);

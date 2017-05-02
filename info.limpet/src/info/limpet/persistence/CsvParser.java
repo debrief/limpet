@@ -648,7 +648,7 @@ public class CsvParser
     {
       String thisVal = row.get(colStart);
       StringDocumentBuilder builder = (StringDocumentBuilder) series;
-      builder.add(thisVal, theIndex);
+      builder.add(theIndex, thisVal);
     }
   }
 
@@ -678,7 +678,7 @@ public class CsvParser
     {
       String thisVal = row.get(colStart);
       StringDocumentBuilder builder = (StringDocumentBuilder) series;
-      builder.add(thisVal, theIndex);
+      builder.add(theIndex, thisVal);
     }
   }
 
