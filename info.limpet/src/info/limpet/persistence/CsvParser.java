@@ -15,9 +15,9 @@
 package info.limpet.persistence;
 
 import static javax.measure.unit.NonSI.BAR;
+import static javax.measure.unit.NonSI.DECIBEL;
 import static javax.measure.unit.NonSI.NAUTICAL_MILE;
 import static javax.measure.unit.NonSI.YARD;
-import static javax.measure.unit.NonSI.DECIBEL;
 import static javax.measure.unit.SI.CENTI;
 import static javax.measure.unit.SI.GRAM;
 import static javax.measure.unit.SI.HERTZ;

@@ -45,7 +45,7 @@ public class BearingBetweenTracksOperation extends TwoTrackOperation
       if (getATests().suitableForIndexedInterpolation(collatedTracks))
       {
         // hmm, find the time provider
-        final IDocument timeProvider =
+        final IDocument<?> timeProvider =
             getATests().getLongestIndexedCollection(collatedTracks);
 
         ICommand newC =

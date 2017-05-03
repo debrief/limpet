@@ -16,7 +16,6 @@ package info.limpet.operations.spatial;
 
 import info.limpet.IContext;
 import info.limpet.IDocument;
-import info.limpet.ILocations;
 import info.limpet.IOperation;
 import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
@@ -51,7 +50,7 @@ public abstract class TwoTrackOperation implements IOperation
 
   public abstract static class TwoTrackCommand extends AbstractCommand
   {
-    private final IDocument _timeProvider;
+    private final IDocument<?> _timeProvider;
     private final CollectionComplianceTests aTests =
         new CollectionComplianceTests();
     final protected NumberDocumentBuilder _builder;
@@ -59,7 +58,7 @@ public abstract class TwoTrackOperation implements IOperation
 
     public TwoTrackCommand(final List<IStoreItem> selection,
         final IStoreGroup store, final String title, final String description,
-        final IDocument timeProvider, final IContext context,
+        final IDocument<?> timeProvider, final IContext context,
         Unit<?> outputUnits)
     {
       super(title, description, store, false, false, selection, context);
@@ -98,7 +97,7 @@ public abstract class TwoTrackOperation implements IOperation
       final Iterator<IStoreItem> iter = getInputs().iterator();
       while (iter.hasNext())
       {
-        final IDocument iCollection = (IDocument) iter.next();
+        final IDocument<?> iCollection = (IDocument<?>) iter.next();
         iCollection.addDependent(this);
       }
 
@@ -155,7 +154,7 @@ public abstract class TwoTrackOperation implements IOperation
 
       final LocationDocument interp1;
       final LocationDocument interp2;
-      final IDocument times;
+      final IDocument<?> times;
 
       if (_timeProvider != null)
       {
@@ -185,8 +184,8 @@ public abstract class TwoTrackOperation implements IOperation
         }
 
         // ok, produce the sets of intepolated positions, at the specified times
-        interp1 = locationsFor(track1, (Document) times);
-        interp2 = locationsFor(track2, (Document) times);
+        interp1 = locationsFor(track1, (Document<?>) times);
+        interp2 = locationsFor(track2, (Document<?>) times);
       }
       else
       {
@@ -230,7 +229,7 @@ public abstract class TwoTrackOperation implements IOperation
     {
       // clear out the lists, first
       final DoubleDataset ds = performCalc();
-      final Document output = getOutputs().get(0);
+      final Document<?> output = getOutputs().get(0);
       output.setDataset(ds);
 
       // and fire updates
@@ -239,7 +238,7 @@ public abstract class TwoTrackOperation implements IOperation
   }
 
   public static LocationDocument locationsFor(final LocationDocument track1,
-      final Document times)
+      final Document<?> times)
   {
     // ok, get the time values
     final AxesMetadata axis =
@@ -377,14 +376,14 @@ public abstract class TwoTrackOperation implements IOperation
         while (kids.hasNext())
         {
           final IStoreItem thisItem = kids.next();
-          if (thisItem instanceof ILocations)
+          if (thisItem instanceof LocationDocument)
           {
             final IStoreItem thisI = thisItem;
             collatedTracks.add(thisI);
           }
         }
       }
-      else if (iStoreItem instanceof ILocations)
+      else if (iStoreItem instanceof LocationDocument)
       {
         collatedTracks.add(iStoreItem);
       }

@@ -21,7 +21,6 @@ import static javax.measure.unit.SI.SECOND;
 import info.limpet.ICommand;
 import info.limpet.IContext;
 import info.limpet.IDocument;
-import info.limpet.ILocations;
 import info.limpet.IOperation;
 import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
@@ -158,7 +157,7 @@ public class DopplerShiftBetweenTracksOperation implements IOperation
                 IStoreItem iStoreItem = (IStoreItem) iter2.next();
                 if (iStoreItem instanceof IDocument)
                 {
-                  Document coll = (Document) iStoreItem;
+                  Document<?> coll = (Document<?>) iStoreItem;
                   if (coll.size() == 1)
                   {
                     if (coll instanceof LocationDocument)
@@ -332,7 +331,7 @@ public class DopplerShiftBetweenTracksOperation implements IOperation
       // tell the inputs that we're a dependent
       for (IStoreItem c : _data.values())
       {
-        IDocument doc = (IDocument) c;
+        IDocument<?> doc = (IDocument<?>) c;
         doc.addDependent(this);
       }
 
@@ -346,7 +345,7 @@ public class DopplerShiftBetweenTracksOperation implements IOperation
       recalculate(null);
 
       // put the outputs into the target
-      for (Document o : getOutputs())
+      for (IDocument<?> o : getOutputs())
       {
         getStore().add(o);
       }
@@ -375,7 +374,7 @@ public class DopplerShiftBetweenTracksOperation implements IOperation
       }
 
       // ok, let's start by finding our time sync
-      final IDocument times = aTests.getOptimalIndex(period, _data.values());
+      final IDocument<?> times = aTests.getOptimalIndex(period, _data.values());
 
       // check we were able to find some times
       if (times == null)
@@ -414,19 +413,19 @@ public class DopplerShiftBetweenTracksOperation implements IOperation
             final Point2D txLoc = txLocDoc.locationAt(thisTime);
 
             final double txCourseRads =
-                aTests.valueAt((IDocument) _data.get(TX + COURSE),
+                aTests.valueAt((IDocument<?>) _data.get(TX + COURSE),
                     (long) thisTime, SI.RADIAN);
 
             final double txSpeedMSec =
-                aTests.valueAt((IDocument) _data.get(TX + SPEED),
+                aTests.valueAt((IDocument<?>) _data.get(TX + SPEED),
                     (long) thisTime, SI.METERS_PER_SECOND);
 
             final double freq =
-                aTests.valueAt((IDocument) _data.get(TX + FREQ),
+                aTests.valueAt((IDocument<?>) _data.get(TX + FREQ),
                     (long) thisTime, SI.HERTZ);
 
             final double soundSpeed =
-                aTests.valueAt((IDocument) _data.get(SOUND_SPEED),
+                aTests.valueAt((IDocument<?>) _data.get(SOUND_SPEED),
                     (long) thisTime, SI.METERS_PER_SECOND);
 
             final Point2D rxLoc = trackProvider.getLocationAt((long) thisTime);
@@ -563,7 +562,7 @@ public class DopplerShiftBetweenTracksOperation implements IOperation
       performCalc();
 
       // share the good news
-      for (Document o : getOutputs())
+      for (Document<?> o : getOutputs())
       {
         o.fireDataChanged();
       }
@@ -571,7 +570,7 @@ public class DopplerShiftBetweenTracksOperation implements IOperation
   }
 
   protected static LocationDocument locationsFor(final LocationDocument track1,
-      final Document times)
+      final Document<?> times)
   {
     // ok, get the time values
     final AxesMetadata axis =
@@ -687,14 +686,14 @@ public class DopplerShiftBetweenTracksOperation implements IOperation
         while (kids.hasNext())
         {
           final IStoreItem thisItem = kids.next();
-          if (thisItem instanceof ILocations)
+          if (thisItem instanceof LocationDocument)
           {
             final IStoreItem thisI = thisItem;
             collatedTracks.add(thisI);
           }
         }
       }
-      else if (iStoreItem instanceof ILocations)
+      else if (iStoreItem instanceof LocationDocument)
       {
         collatedTracks.add(iStoreItem);
       }

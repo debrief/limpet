@@ -90,16 +90,16 @@ public abstract class BinaryQuantityOperation implements IOperation
     return res;
   }
 
-  protected IDocument getLongestIndexedCollection(List<IStoreItem> selection)
+  protected IDocument<?> getLongestIndexedCollection(List<IStoreItem> selection)
   {
     // find the longest time series.
-    IDocument longest = null;
+    IDocument<?> longest = null;
 
     for (final IStoreItem sItem : selection)
     {
       if (sItem instanceof IDocument)
       {
-        final IDocument doc = (IDocument) sItem;
+        final IDocument<?> doc = (IDocument<?>) sItem;
         if (doc.isIndexed())
         {
           if (longest == null)
@@ -164,7 +164,7 @@ public abstract class BinaryQuantityOperation implements IOperation
   {
 
     @SuppressWarnings("unused")
-    private final IDocument timeProvider;
+    private final IDocument<?> timeProvider;
 
     public BinaryQuantityCommand(String title, String description,
         IStoreGroup store, boolean canUndo, boolean canRedo,
@@ -175,7 +175,7 @@ public abstract class BinaryQuantityOperation implements IOperation
 
     public BinaryQuantityCommand(String title, String description,
         IStoreGroup store, boolean canUndo, boolean canRedo,
-        List<IStoreItem> inputs, IDocument timeProvider, IContext context)
+        List<IStoreItem> inputs, IDocument<?> timeProvider, IContext context)
     {
       super(title, description, store, canUndo, canRedo, inputs, context);
 
@@ -195,7 +195,7 @@ public abstract class BinaryQuantityOperation implements IOperation
       getOutputs().get(0).setDataset(newSet);
 
       // and share the good news
-      for (Document s : getOutputs())
+      for (Document<?> s : getOutputs())
       {
         s.fireDataChanged();
       }
@@ -239,7 +239,7 @@ public abstract class BinaryQuantityOperation implements IOperation
         IStoreItem sItem = iter.next();
         if (sItem instanceof IDocument)
         {
-          IDocument iCollection = (IDocument) sItem;
+          IDocument<?> iCollection = (IDocument<?>) sItem;
           iCollection.addDependent(this);
         }
       }
@@ -256,7 +256,7 @@ public abstract class BinaryQuantityOperation implements IOperation
       if (getATests().allIndexed(getInputs()))
       {
         // ok, that's easy
-        Document doc = (Document) getInputs().get(0);
+        Document<?> doc = (Document<?>) getInputs().get(0);
         res = doc.getIndexUnits();
       }
       else if (getATests().hasIndexed(getInputs()))
@@ -265,7 +265,7 @@ public abstract class BinaryQuantityOperation implements IOperation
         // ok, find the series with an index
         for (IStoreItem s : getInputs())
         {
-          Document doc = (Document) s;
+          Document<?> doc = (Document<?>) s;
           if (doc.isIndexed())
           {
             final Unit<?> thisIndexUnits = doc.getIndexUnits();
@@ -341,7 +341,7 @@ public abstract class BinaryQuantityOperation implements IOperation
           Dataset ds = null;
           for (IStoreItem inp : getInputs())
           {
-            Document doc = (Document) inp;
+            Document<?> doc = (Document<?>) inp;
             if (doc.size() > 1)
             {
               if (doc.isIndexed())

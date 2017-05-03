@@ -39,7 +39,7 @@ public abstract class AbstractCommand implements
   private final IStoreGroup store;
 
   private final List<IStoreItem> inputs;
-  private final List<Document> outputs;
+  private final List<Document<?>> outputs;
 
   private IStoreGroup _parent;
 
@@ -62,7 +62,7 @@ public abstract class AbstractCommand implements
     this.context = context;
 
     this.inputs = new ArrayList<IStoreItem>();
-    this.outputs = new ArrayList<Document>();
+    this.outputs = new ArrayList<Document<?>>();
 
     // store any inputs, if we have any
     if (inputs != null)
@@ -143,7 +143,7 @@ public abstract class AbstractCommand implements
     int ctr = 0;
     while (iter.hasNext())
     {
-      IStoreItem storeItem = (IStoreItem) iter.next();
+      IStoreItem storeItem = iter.next();
       if (ctr++ > 0)
       {
         res.append(", ");
@@ -161,7 +161,7 @@ public abstract class AbstractCommand implements
     Iterator<IStoreItem> iter = inputs.iterator();
     while (iter.hasNext())
     {
-      IDocument thisC = (IDocument) iter.next();
+      IDocument<?> thisC = (IDocument<?>) iter.next();
       if (thisC.size() >= 1)
       {
         size = thisC.size();
@@ -241,7 +241,7 @@ public abstract class AbstractCommand implements
     Iterator<IStoreItem> iter = getInputs().iterator();
     while (iter.hasNext())
     {
-      IStoreItem t = (IStoreItem) iter.next();
+      IStoreItem t = iter.next();
       t.addChangeListener(this);
     }
   }
@@ -279,12 +279,12 @@ public abstract class AbstractCommand implements
   }
 
   @Override
-  public final List<Document> getOutputs()
+  public final List<Document<?>> getOutputs()
   {
     return outputs;
   }
 
-  public final void addOutput(Document output)
+  public final void addOutput(Document<?> output)
   {
     getOutputs().add(output);
   }

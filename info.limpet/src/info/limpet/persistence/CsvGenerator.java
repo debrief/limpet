@@ -1,7 +1,6 @@
 package info.limpet.persistence;
 
 import info.limpet.IDocument;
-import info.limpet.ILocations;
 import info.limpet.IStoreItem;
 import info.limpet.impl.LocationDocument;
 import info.limpet.impl.NumberDocument;
@@ -34,13 +33,13 @@ public class CsvGenerator
     {
       return null;
     }
-    IDocument collection = (IDocument) doc;
+    IDocument<?> collection = (IDocument<?>) doc;
     StringBuilder header = new StringBuilder();
     if (collection.isIndexed())
     {
       header.append("Time,");
     }
-    if (collection instanceof ILocations)
+    if (collection instanceof LocationDocument)
     {
       header.append("Lat(Degs),Long(Degs)");
     }
@@ -102,7 +101,7 @@ public class CsvGenerator
     return header.toString();
   }
 
-  private static void addUnit(StringBuilder header, IDocument collection)
+  private static void addUnit(StringBuilder header, IDocument<?> collection)
   {
     if (collection.isQuantity())
     {

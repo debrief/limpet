@@ -33,7 +33,7 @@ public class ProplossBetweenTwoTracksOperation extends TwoTrackOperation
   {
     ProplossBetweenOperation(final List<IStoreItem> selection,
         final IStoreGroup store, final String title, final String description,
-        final IDocument timeProvider, final IContext context)
+        final IDocument<?> timeProvider, final IContext context)
     {
       super(selection, store, title, description, timeProvider, context,
           NonSI.DECIBEL);
@@ -88,7 +88,7 @@ public class ProplossBetweenTwoTracksOperation extends TwoTrackOperation
       if (getATests().suitableForIndexedInterpolation(collatedTracks))
       {
         // hmm, find the time provider
-        final IDocument timeProvider =
+        final IDocument<?> timeProvider =
             getATests().getLongestIndexedCollection(collatedTracks);
 
         // ok, provide an interpolated action

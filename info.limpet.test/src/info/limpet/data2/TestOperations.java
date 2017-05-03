@@ -240,7 +240,7 @@ public class TestOperations
     theOp.execute();
 
     assertEquals("has new dataset", 1, store.size());
-    IDocument output = theOp.getOutputs().iterator().next();
+    IDocument<?> output = theOp.getOutputs().iterator().next();
 
     // check the size
     assertEquals("correct size", 2, output.size());
@@ -498,7 +498,7 @@ public class TestOperations
 
     assertEquals("new collection added to store", 1, store.size());
 
-    IDocument firstItem = (IDocument) store.iterator().next();
+    IDocument<?> firstItem = (IDocument<?>) store.iterator().next();
     ICommand precedent = firstItem.getPrecedent();
     assertNotNull("has precedent", precedent);
     assertEquals("Correct name",
@@ -510,7 +510,7 @@ public class TestOperations
     Iterator<? extends IStoreItem> iIter = inputs.iterator();
     while (iIter.hasNext())
     {
-      IDocument thisC = (IDocument) iIter.next();
+      IDocument<?> thisC = (IDocument<?>) iIter.next();
       List<ICommand> deps = thisC.getDependents();
       assertEquals("has a depedent", 1, deps.size());
       Iterator<ICommand> dIter = deps.iterator();
@@ -521,13 +521,13 @@ public class TestOperations
       }
     }
 
-    List<Document> outputs = precedent.getOutputs();
+    List<Document<?>> outputs = precedent.getOutputs();
     assertEquals("Has both dependents", 1, outputs.size());
 
-    Iterator<Document> oIter = outputs.iterator();
+    Iterator<Document<?>> oIter = outputs.iterator();
     while (oIter.hasNext())
     {
-      IDocument thisC = (IDocument) oIter.next();
+      IDocument<?> thisC = (IDocument<?>) oIter.next();
       ICommand dep = thisC.getPrecedent();
       assertNotNull("has a depedent", dep);
       assertEquals("Correct dependent", precedent, dep);
@@ -552,7 +552,7 @@ public class TestOperations
         (NumberDocument) store.get(SampleData.SPEED_TWO);
     NumberDocument speedIrregular =
         (NumberDocument) store.get(SampleData.SPEED_IRREGULAR2);
-    IDocument string1 = (IDocument) store.get(SampleData.STRING_ONE);
+    IDocument<?> string1 = (IDocument<?>) store.get(SampleData.STRING_ONE);
     NumberDocument len1 = (NumberDocument) store.get(SampleData.LENGTH_ONE);
     NumberDocument factor =
         (NumberDocument) store.get(SampleData.FLOATING_POINT_FACTOR);
@@ -1034,7 +1034,7 @@ public class TestOperations
     selection.clear();
 
     // test not all quantities
-    IDocument string1 = (IDocument) store.get(SampleData.STRING_ONE);
+    IDocument<?> string1 = (IDocument<?>) store.get(SampleData.STRING_ONE);
     selection.add(speedGood1);
     selection.add(string1);
     commands =
@@ -1550,9 +1550,9 @@ public class TestOperations
     StoreGroup store = new SampleData().getData(10);
     List<IStoreItem> selection = new ArrayList<IStoreItem>();
 
-    IDocument speedGood1 = (IDocument) store.get(SampleData.SPEED_ONE);
-    IDocument string1 = (IDocument) store.get(SampleData.TIME_STAMPS_1);
-    IDocument len1 = (IDocument) store.get(SampleData.LENGTH_ONE);
+    IDocument<?> speedGood1 = (IDocument<?>) store.get(SampleData.SPEED_ONE);
+    IDocument<?> string1 = (IDocument<?>) store.get(SampleData.TIME_STAMPS_1);
+    IDocument<?> len1 = (IDocument<?>) store.get(SampleData.LENGTH_ONE);
 
     selection.add(speedGood1);
     selection.add(string1);

@@ -15,7 +15,6 @@
 package info.limpet.ui.data_frequency;
 
 import info.limpet.IDocument;
-import info.limpet.IObjectDocument;
 import info.limpet.IStoreItem;
 import info.limpet.analysis.ObjectFrequencyBins;
 import info.limpet.analysis.ObjectFrequencyBins.BinnedData;
@@ -101,7 +100,7 @@ public class DataFrequencyView extends CoreAnalysisView
     // they're all the same type - check the first one
     Iterator<IStoreItem> iter = res.iterator();
 
-    IDocument first = (IDocument) iter.next();
+    IDocument<?> first = (IDocument<?>) iter.next();
 
     // sort out what type of data this is.
     if (first.isQuantity())
@@ -128,12 +127,11 @@ public class DataFrequencyView extends CoreAnalysisView
 
     while (iter.hasNext())
     {
-      IDocument iCollection = (IDocument) iter.next();
+      IDocument<?> iCollection = (IDocument<?>) iter.next();
       if (iCollection.size() <= MAX_SIZE)
       {
         BinnedData bins = null;
-        IObjectDocument objDoc = (IObjectDocument) iCollection;
-        bins = ObjectFrequencyBins.doBins(objDoc);
+        bins = ObjectFrequencyBins.doBins(iCollection);
 
         String seriesName = iCollection.getName();
         IBarSeries newSeries =

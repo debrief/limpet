@@ -32,7 +32,7 @@ public interface ICommand extends IChangeListener, IStoreItem
 	void redo();
 	boolean canUndo();
 	boolean canRedo();
-	List<Document> getOutputs();
+	List<Document<?>> getOutputs();
 	List<IStoreItem> getInputs();
 	boolean getDynamic();
 	void setDynamic(boolean dynamic);

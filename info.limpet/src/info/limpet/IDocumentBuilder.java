@@ -11,7 +11,7 @@ public interface IDocumentBuilder<T extends Object>
    * 
    * @return
    */
-  IDocument toDocument();
+  IDocument<T> toDocument();
   
 
   /** add an indexed value to this builder

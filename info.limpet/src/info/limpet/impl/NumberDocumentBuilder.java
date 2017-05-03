@@ -1,142 +1,53 @@
 package info.limpet.impl;
 
 import info.limpet.ICommand;
-import info.limpet.IDocumentBuilder;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import javax.measure.unit.Unit;
 
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DoubleDataset;
-import org.eclipse.january.metadata.AxesMetadata;
-import org.eclipse.january.metadata.internal.AxesMetadataImpl;
+import org.eclipse.january.dataset.IDataset;
 
-public class NumberDocumentBuilder implements IDocumentBuilder<Double>
+public class NumberDocumentBuilder extends
+    CoreDocumentBuilder<Double, NumberDocument>
 {
-  private String _name;
-  private Unit<?> _units;
-  private ArrayList<Double> _indices;
-  private ArrayList<Double> _values;
-  private ICommand _predecessor;
+  private final Unit<?> _type;
   private Range _range;
-  private Unit<?> _indexUnits;
 
-  public NumberDocumentBuilder(String name, Unit<?> units,
-      ICommand predecessor, Unit<?> indexUnits)
+  public NumberDocumentBuilder(final String name, final Unit<?> valueUnits,
+      final ICommand predecessor, final Unit<?> indexUnits)
   {
-    _name = name;
-    _units = units;
-    _predecessor = predecessor;
-    _values = new ArrayList<Double>();
-    _indexUnits = indexUnits;
+    super(name, predecessor, indexUnits);
+    _type = valueUnits;
   }
 
-  public int size()
+  @Override
+  protected void finishOff(final NumberDocument res)
   {
-    return _values.size();
+    super.finishOff(res);
+
+    res.setRange(_range);
   }
 
-  public Unit<?> getIndexUnits()
+  @Override
+  protected IDataset getDataset(final List<Double> values)
   {
-    return _indexUnits;
-  }
-  
-  public void add(double index, Double value)
-  {
-    // check we have units
-    if(_indexUnits == null)
-    {
-      throw new IllegalArgumentException("We don't know index units");
-    }
-    
-    add(value);
-
-    if (_indices == null)
-    {
-      _indices = new ArrayList<Double>();
-    }
-
-    _indices.add(index);
+    final Double[] arr = values.toArray(new Double[]
+    {});
+    return DatasetFactory.createFromObject(DoubleDataset.class, arr, null);
   }
 
-  public void add(Double value)
+  @Override
+  protected NumberDocument getDocument(final IDataset dataset,
+      final ICommand _predecessor2)
   {
-    _values.add(value);
+    return new NumberDocument((DoubleDataset) dataset, _predecessor2, _type);
   }
 
-  public NumberDocument toDocument()
-  {
-    final NumberDocument res;
-    if (_values.size() == 0)
-    {
-      res = null;
-    }
-    else
-    {
-      DoubleDataset dataset =
-          (DoubleDataset) DatasetFactory.createFromObject(_values);
-      dataset.setName(_name);
-
-      if (_indices != null)
-      {
-        // sort out the time axis
-        DoubleDataset indexData =
-            (DoubleDataset) DatasetFactory.createFromObject(_indices);
-        final AxesMetadata index = new AxesMetadataImpl();
-        index.initialize(1);
-        index.setAxis(0, indexData);
-        dataset.addMetadata(index);
-      }
-
-      res = new NumberDocument(dataset, _predecessor, _units);
-
-      if (_range != null)
-      {
-        res.setRange(_range);
-      }
-
-      if (_indices != null)
-      {
-        if (_indexUnits == null)
-        {
-          System.err.println("Setting index, but do not have units");
-        }
-
-        // ok, set the index units
-        res.setIndexUnits(_indexUnits);
-      }
-      else
-      {
-        if (_indexUnits != null)
-        {
-          throw new RuntimeException("Have index units, but no index");
-        }
-      }
-
-    }
-
-    return res;
-  }
-
-  public void clear()
-  {
-    _values.clear();
-    if (_indices != null)
-    {
-      _indices.clear();
-      _indices = null;
-    }
-    _range = null;
-  }
-
-  public void setRange(Range range)
+  public void setRange(final Range range)
   {
     _range = range;
-  }
-
-  public Unit<?> getUnits()
-  {
-    return _units;
   }
 }

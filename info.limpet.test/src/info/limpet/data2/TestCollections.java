@@ -67,7 +67,7 @@ public class TestCollections extends TestCase
 
     StringDataset str =
         (StringDataset) DatasetFactory.createFromObject(stringCollection);
-    IDocument strDoc = new StringDocument(str, null);
+    IDocument<?> strDoc = new StringDocument(str, null);
 
     // check it got stored
     assertEquals("correct number of samples", 10, strDoc.size());
@@ -142,7 +142,7 @@ public class TestCollections extends TestCase
 
     assertEquals("new collection created", 1, store.size());
 
-    IDocument series = (IDocument) store.get("Sum of Some data1 + Some data2");
+    IDocument<?> series = (IDocument<?>) store.get("Sum of Some data1 + Some data2");
     assertTrue("non empty", series.size() > 0);
     assertTrue("temporal", series.isIndexed());
     assertTrue("quantity", series.isQuantity());
@@ -401,7 +401,7 @@ public class TestCollections extends TestCase
     tq1b.add(400, 40d);
 
     NumberDocumentBuilder tq2b =
-        new NumberDocumentBuilder("Some data1", METRE.divide(SECOND).asType(
+        new NumberDocumentBuilder("Some data2", METRE.divide(SECOND).asType(
             Velocity.class), null, SampleData.MILLIS);
 
     tq2b.add(220, 11d);

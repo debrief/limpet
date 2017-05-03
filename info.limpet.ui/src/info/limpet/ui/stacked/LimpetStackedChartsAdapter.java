@@ -109,7 +109,7 @@ public class LimpetStackedChartsAdapter implements IStackedDatasetAdapter,
       
       if (data instanceof DocumentWrapper) {
 				DocumentWrapper cw = (DocumentWrapper) data;
-				IDocument collection = cw.getDocument();
+				IDocument<?> collection = cw.getDocument();
 				if (collection.isQuantity() && collection.isIndexed()) {
 
 					NumberDocument qq = (NumberDocument) collection;
@@ -138,7 +138,7 @@ public class LimpetStackedChartsAdapter implements IStackedDatasetAdapter,
 				while (cIter.hasNext()) {
 					IStoreItem thisI = (IStoreItem) cIter.next();
 					if (thisI instanceof IDocument) {
-					  IDocument thisC = (IDocument) thisI;
+					  IDocument<?> thisC = (IDocument<?>) thisI;
 						if (thisC.isQuantity() && thisC.isIndexed()) {
 							List<Dataset> newItems = convertToDataset(thisC);
 
@@ -153,7 +153,7 @@ public class LimpetStackedChartsAdapter implements IStackedDatasetAdapter,
 
 				}
 			} else if (data instanceof IDocument) {
-			  IDocument coll = (IDocument) data;
+			  IDocument<?> coll = (IDocument<?>) data;
 				if (coll.isQuantity() && coll.isIndexed()) {
 					Dataset dataset = factory.createDataset();
 					populateDataset(factory,
@@ -199,7 +199,7 @@ public class LimpetStackedChartsAdapter implements IStackedDatasetAdapter,
 		// have a look at the type
 		if (data instanceof DocumentWrapper) {
 			DocumentWrapper cw = (DocumentWrapper) data;
-			IDocument collection = cw.getDocument();
+			IDocument<?> collection = cw.getDocument();
 			if (collection.isQuantity() && collection.isIndexed()) {
 				res = true;
 			} else if (collection.isQuantity() && !collection.isIndexed()) {
@@ -242,7 +242,7 @@ public class LimpetStackedChartsAdapter implements IStackedDatasetAdapter,
 			// have a look at the type
 			if (data instanceof DocumentWrapper) {
 				DocumentWrapper cw = (DocumentWrapper) data;
-				IDocument collection = cw.getDocument();
+				IDocument<?> collection = cw.getDocument();
 				if (collection.isQuantity() && !collection.isIndexed()) {
 					// check if its' a series of timestampes
 					NumberDocument qc = (NumberDocument) collection;
@@ -297,7 +297,7 @@ public class LimpetStackedChartsAdapter implements IStackedDatasetAdapter,
 		// have a look at the type
 		if (data instanceof DocumentWrapper) {
 			DocumentWrapper cw = (DocumentWrapper) data;
-			IDocument collection = cw.getDocument();
+			IDocument<?> collection = cw.getDocument();
 			if (collection.isQuantity() && !collection.isIndexed()) {
 				// check if its' a series of timestampes
         NumberDocument qc = (NumberDocument) collection;

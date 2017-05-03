@@ -22,11 +22,11 @@ import org.eclipse.ui.views.properties.IPropertySource;
 
 public class DocumentWrapper implements IAdaptable, LimpetWrapper
 {
-  private final IDocument _document;
+  private final IDocument<?> _document;
   private final LimpetWrapper _parent;
 
   public DocumentWrapper(final LimpetWrapper parent,
-      final IDocument collection)
+      final IDocument<?> collection)
   {
     _parent = parent;
     _document = collection;
@@ -89,7 +89,7 @@ public class DocumentWrapper implements IAdaptable, LimpetWrapper
     }
     return null;
   }
-  public IDocument getDocument()
+  public IDocument<?> getDocument()
   {
     return _document;
   }

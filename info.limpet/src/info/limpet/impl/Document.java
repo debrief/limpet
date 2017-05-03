@@ -19,7 +19,7 @@ import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.metadata.AxesMetadata;
 
-abstract public class Document implements IDocument
+abstract public class Document<T extends Object> implements IDocument<T>
 {
 
   // TODO: long-term, find a better place for this

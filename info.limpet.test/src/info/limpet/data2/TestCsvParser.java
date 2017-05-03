@@ -36,7 +36,7 @@ public class TestCsvParser extends TestCase
 		assertTrue(file.isFile());
 		List<IStoreItem> items = new CsvParser().parse(file.getAbsolutePath());
 		assertTrue(items.size() == 1);
-		IDocument firstColl = (IDocument) items.get(0);
+		IDocument<?> firstColl = (IDocument<?>) items.get(0);
 		assertEquals("correct num rows", 69, firstColl.size());
 	}
 
@@ -50,7 +50,7 @@ public class TestCsvParser extends TestCase
     assertEquals("correct group", 1, items.size());
     StoreGroup group = (StoreGroup) items.get(0);
     assertEquals("correct num collections", 9, group.size());
-    IDocument firstColl = (IDocument) group.get(0);
+    IDocument<?> firstColl = (IDocument<?>) group.get(0);
     assertEquals("correct num rows", 185, firstColl.size());
 	}
 	
@@ -62,7 +62,7 @@ public class TestCsvParser extends TestCase
 		final String absolutePath = file.getAbsolutePath();
     List<IStoreItem> items = new CsvParser().parse(absolutePath);
 		assertTrue(items.size() == 1);
-		IDocument firstColl = (IDocument) items.get(0);
+		IDocument<?> firstColl = (IDocument<?>) items.get(0);
 		assertEquals("correct num rows", 11, firstColl.size());
 	}
 
@@ -76,7 +76,7 @@ public class TestCsvParser extends TestCase
 		assertEquals("correct group", 1, items.size());
 		StoreGroup group = (StoreGroup) items.get(0);
 		assertEquals("correct num collections", 6, group.size());
-		IDocument firstColl = (IDocument) group.get(0);
+		IDocument<?> firstColl = (IDocument<?>) group.get(0);
 		assertEquals("correct num rows", 69, firstColl.size());
 	}
 
@@ -90,7 +90,7 @@ public class TestCsvParser extends TestCase
 		assertEquals("correct group", 1, items.size());
 		StoreGroup group = (StoreGroup) items.get(0);
 		assertEquals("correct num collections", 3, group.size());
-		IDocument firstColl = (IDocument) group.get(0);
+		IDocument<?> firstColl = (IDocument<?>) group.get(0);
 		assertEquals("correct num rows", 1708, firstColl.size());
 	}
 	

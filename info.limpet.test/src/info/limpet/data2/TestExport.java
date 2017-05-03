@@ -49,7 +49,7 @@ public class TestExport extends TestCase
 					IStoreItem iStoreItem = (IStoreItem) iter2.next();
 					if (iStoreItem instanceof IDocument)
 					{
-						collections.add((IDocument) iStoreItem);
+						collections.add((IDocument<?>) iStoreItem);
 					}
 				}
 			}
