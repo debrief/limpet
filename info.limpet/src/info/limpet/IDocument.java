@@ -8,9 +8,11 @@ import java.util.UUID;
 
 import javax.measure.unit.Unit;
 
-public interface IDocument extends IStoreItem
+public interface IDocument<T extends Object> extends IStoreItem
 {
 
+  Iterator<T> getIterator();
+  
   /**
    * tell listeners that it's about to be deleted
    * 
@@ -55,5 +57,7 @@ public interface IDocument extends IStoreItem
   public List<ICommand> getDependents();
 
   void clearQuiet();
+  
+  void setIndexUnits(Unit<?> units);
 
 }

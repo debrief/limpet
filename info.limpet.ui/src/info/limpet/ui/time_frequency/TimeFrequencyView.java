@@ -115,7 +115,7 @@ public class TimeFrequencyView extends CoreAnalysisView
 
     while (iter.hasNext())
     {
-      IDocument iCollection = (IDocument) iter.next();
+      IDocument<?> iCollection = (IDocument<?>) iter.next();
       TimeFrequencyBins.BinnedData bins = null;
       if (iCollection.isIndexed() && iCollection.size() > 1
           && iCollection.size() <= MAX_SIZE)

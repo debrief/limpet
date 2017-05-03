@@ -76,7 +76,7 @@ public class LimpetLabelProvider extends LabelProvider
       if (item instanceof IDocument)
       {
         // is it just one, or multiple?
-        IDocument coll = (IDocument) item;
+        IDocument<?> coll = (IDocument<?>) item;
         if (coll.isQuantity())
         {
           NumberDocument q = (NumberDocument) coll;

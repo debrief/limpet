@@ -75,8 +75,8 @@ public class TestNewStrategy extends TestCase
     assertNotNull("found sample data", doc1);
 
     List<IStoreItem> selection = new ArrayList<IStoreItem>();
-    selection.add((IDocument) doc1);
-    selection.add((IDocument) doc2);
+    selection.add((IDocument<?>) doc1);
+    selection.add((IDocument<?>) doc2);
 
     IOperation adder = new AddQuantityOperation();
     IStoreGroup target = new StoreGroup("Destination");
@@ -91,7 +91,7 @@ public class TestNewStrategy extends TestCase
 
     assertEquals("target has data", 1, target.size());
 
-    IDocument output = (IDocument) target.iterator().next();
+    IDocument<?> output = (IDocument<?>) target.iterator().next();
 
     System.out.println(output);
 

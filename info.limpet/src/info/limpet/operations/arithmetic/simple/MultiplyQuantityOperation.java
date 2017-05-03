@@ -38,7 +38,7 @@ public class MultiplyQuantityOperation extends BinaryQuantityOperation
   protected void addInterpolatedCommands(List<IStoreItem> selection,
       IStoreGroup destination, Collection<ICommand> res, IContext context)
   {
-    IDocument longest = getLongestIndexedCollection(selection);
+    IDocument<?> longest = getLongestIndexedCollection(selection);
 
     if (longest != null)
     {
@@ -80,7 +80,7 @@ public class MultiplyQuantityOperation extends BinaryQuantityOperation
     }
 
     public MultiplyQuantityValues(String name, List<IStoreItem> selection,
-        IStoreGroup destination, IDocument timeProvider, IContext context)
+        IStoreGroup destination, IDocument<?> timeProvider, IContext context)
     {
       super(name, "Multiply datasets", destination, false, false, selection,
           timeProvider, context);

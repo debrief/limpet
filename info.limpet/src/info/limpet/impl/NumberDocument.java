@@ -18,7 +18,7 @@ import org.eclipse.january.dataset.IndexIterator;
 import org.eclipse.january.dataset.Maths;
 import org.eclipse.january.metadata.AxesMetadata;
 
-public class NumberDocument extends Document
+public class NumberDocument extends Document<Double>
 {
   private Unit<?> qType;
   private Range range;

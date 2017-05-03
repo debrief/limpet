@@ -38,7 +38,7 @@ public class DivideQuantityOperation extends BinaryQuantityOperation
   protected void addInterpolatedCommands(List<IStoreItem> selection,
       IStoreGroup destination, Collection<ICommand> res, IContext context)
   {
-    IDocument longest = getLongestIndexedCollection(selection);
+    IDocument<?> longest = getLongestIndexedCollection(selection);
 
     if (longest != null)
     {
@@ -98,7 +98,7 @@ public class DivideQuantityOperation extends BinaryQuantityOperation
     }
 
     public DivideQuantityValues(String name, List<IStoreItem> selection,
-        IStoreGroup destination, IDocument timeProvider, IContext context)
+        IStoreGroup destination, IDocument<?> timeProvider, IContext context)
     {
       super(name, "Divide datasets", destination, false, false, selection,
           timeProvider, context);

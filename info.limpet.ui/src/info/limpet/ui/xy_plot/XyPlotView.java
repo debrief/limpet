@@ -143,12 +143,12 @@ public class XyPlotView extends CoreAnalysisView
     else
     {
       // transform them to a lsit of documents
-      List<IDocument> docList = aTests.getDocumentsIn(res);
+      List<IDocument<?>> docList = aTests.getDocumentsIn(res);
 
       // they're all the same type - check the first one
-      Iterator<IDocument> iter = docList.iterator();
+      Iterator<IDocument<?>> iter = docList.iterator();
 
-      IDocument first = iter.next();
+      IDocument<?> first = iter.next();
 
       // sort out what type of data this is.
       if (first.isQuantity())
@@ -192,7 +192,7 @@ public class XyPlotView extends CoreAnalysisView
 
     while (iter.hasNext())
     {
-      IDocument coll = (IDocument) iter.next();
+      IDocument<?> coll = (IDocument<?>) iter.next();
       if (coll.isQuantity() && coll.size() >= 1 && coll.size() < MAX_SIZE)
       {
 
@@ -309,14 +309,14 @@ public class XyPlotView extends CoreAnalysisView
 
     Unit<?> existingUnits = null;
 
-    List<IDocument> docList = aTests.getDocumentsIn(res);
+    List<IDocument<?>> docList = aTests.getDocumentsIn(res);
 
     // get the outer time period (used for plotting singletons)
-    List<IDocument> safeColl = new ArrayList<IDocument>();
+    List<IDocument<?>> safeColl = new ArrayList<IDocument<?>>();
     safeColl.addAll(docList);
     TimePeriod outerPeriod = aTests.getBoundingRange(res);
 
-    for (IDocument coll : docList)
+    for (IDocument<?> coll : docList)
     {
       if (coll.isQuantity() && coll.size() >= 1 && coll.size() < MAX_SIZE)
       {
@@ -540,7 +540,7 @@ public class XyPlotView extends CoreAnalysisView
 
     while (iter.hasNext())
     {
-      IDocument coll = (IDocument) iter.next();
+      IDocument<?> coll = (IDocument<?>) iter.next();
       if (!coll.isQuantity() && coll.size() >= 1 && coll.size() < MAX_SIZE)
       {
         String seriesName = coll.getName();
@@ -609,7 +609,7 @@ public class XyPlotView extends CoreAnalysisView
   protected void datasetDataChanged(IStoreItem subject)
   {
     final String name;
-    IDocument coll = (IDocument) subject;
+    IDocument<?> coll = (IDocument<?>) subject;
     if (coll.isQuantity())
     {
       NumberDocument cq = (NumberDocument) coll;

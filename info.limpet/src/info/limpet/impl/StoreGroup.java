@@ -63,7 +63,7 @@ public class StoreGroup extends ArrayList<IStoreItem> implements IStoreGroup
       IStoreItem iC = iter.next();
       if (iC instanceof IDocument)
       {
-        IDocument coll = (IDocument) iC;
+        IDocument<?> coll = (IDocument<?>) iC;
         coll.removeChangeListener(this);
       }
     }
@@ -79,7 +79,7 @@ public class StoreGroup extends ArrayList<IStoreItem> implements IStoreGroup
     // stop listening to this one
     if (item instanceof IDocument)
     {
-      IDocument collection = (IDocument) item;
+      IDocument<?> collection = (IDocument<?>) item;
       collection.removeChangeListener(this);
 
       // ok, also tell it that it's being deleted

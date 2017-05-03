@@ -1,8 +1,6 @@
 package info.limpet.impl;
 
 import info.limpet.ICommand;
-import info.limpet.ILocations;
-import info.limpet.IObjectDocument;
 import info.limpet.operations.spatial.GeoSupport;
 
 import java.awt.geom.Point2D;
@@ -18,8 +16,7 @@ import org.eclipse.january.dataset.IndexIterator;
 import org.eclipse.january.dataset.ObjectDataset;
 import org.eclipse.january.metadata.AxesMetadata;
 
-public class LocationDocument extends Document implements ILocations,
-    IObjectDocument
+public class LocationDocument extends Document<Point2D>
 {
 
   public LocationDocument(ObjectDataset dataset, ICommand predecessor)
@@ -254,7 +251,6 @@ public class LocationDocument extends Document implements ILocations,
     }
   }
 
-  @Override
   public Iterator<Point2D> getLocationIterator()
   {
     final Iterator<?> oIter = getObjectIterator();
@@ -281,12 +277,17 @@ public class LocationDocument extends Document implements ILocations,
     };
   }
 
-  @Override
   public Iterator<?> getObjectIterator()
   {
     ObjectDataset od = (ObjectDataset) dataset;
     Object[] strings = od.getData();
     Iterable<Object> iterable = Arrays.asList(strings);
     return iterable.iterator();
+  }
+
+  @Override
+  public Iterator<Point2D> getIterator()
+  {
+    return getLocationIterator();
   }
 }

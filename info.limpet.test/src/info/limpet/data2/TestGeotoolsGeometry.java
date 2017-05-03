@@ -78,10 +78,10 @@ public class TestGeotoolsGeometry extends TestCase
     assertEquals("correct group", 1, items.size());
     StoreGroup group = (StoreGroup) items.get(0);
     assertEquals("correct num collections", 3, group.size());
-    IDocument firstColl = (IDocument) group.get(2);
+    IDocument<?> firstColl = (IDocument<?>) group.get(2);
     assertEquals("correct num rows", 1708, firstColl.size());
 
-    IDocument track = firstColl;
+    IDocument<?> track = firstColl;
     GenerateCourseAndSpeedOperation genny =
         new GenerateCourseAndSpeedOperation();
     List<IStoreItem> sel = new ArrayList<IStoreItem>();
@@ -113,14 +113,14 @@ public class TestGeotoolsGeometry extends TestCase
     assertEquals("correct group", 1, items.size());
     StoreGroup group = (StoreGroup) items.get(0);
     assertEquals("correct num collections", 3, group.size());
-    IDocument firstColl = (IDocument) group.get(2);
+    IDocument<?> firstColl = (IDocument<?>) group.get(2);
     assertEquals("correct num rows", 1708, firstColl.size());
 
     List<IStoreItem> items2 = parser.parse(file2.getAbsolutePath());
     assertEquals("correct group", 1, items2.size());
     StoreGroup group2 = (StoreGroup) items2.get(0);
     assertEquals("correct num collections", 3, group2.size());
-    IDocument secondColl = (IDocument) group2.get(2);
+    IDocument<?> secondColl = (IDocument<?>) group2.get(2);
     assertEquals("correct num rows", 1708, secondColl.size());
 
     LocationDocument track1 = (LocationDocument) firstColl;
@@ -140,7 +140,7 @@ public class TestGeotoolsGeometry extends TestCase
     assertEquals("store empty", 0, store.size());
     courseOp.execute();
     assertEquals("new colls created", 2, store.size());
-    IDocument newColl = (IDocument) courseOp.getOutputs().get(0);
+    IDocument<?> newColl = (IDocument<?>) courseOp.getOutputs().get(0);
     assertEquals("correct size", firstColl.size() - 1, newColl.size());
     ICommand speedOp = ops.get(1);
     assertEquals("store empty", 2, store.size());
@@ -224,7 +224,7 @@ public class TestGeotoolsGeometry extends TestCase
     numB.add(2600, 10d);
 
     LocationDocument track = locB.toDocument();
-    Document times = numB.toDocument();
+    Document<?> times = numB.toDocument();
     LocationDocument aa = TwoTrackOperation.locationsFor(track, times);
     assertNotNull("doc created", aa);
   }
@@ -375,7 +375,7 @@ public class TestGeotoolsGeometry extends TestCase
 
     assertEquals("store not empty", 1, store.size());
 
-    IDocument output = ops.get(0).getOutputs().get(0);
+    IDocument<?> output = ops.get(0).getOutputs().get(0);
     assertNotNull("output produced", output);
     assertEquals("correct items", 3, output.size());
     assertNotNull("has indices", output.getIndex());
@@ -657,7 +657,7 @@ public class TestGeotoolsGeometry extends TestCase
     // ok, we have two static sensors, ets them
     ICommand firstOp = ops.iterator().next();
     firstOp.execute();
-    List<Document> outputs = firstOp.getOutputs();
+    List<Document<?>> outputs = firstOp.getOutputs();
     assertEquals("two output datasets", 2, outputs.size());
 
     assertEquals("Loc now has deps", 1, loc1.getDependents().size());
@@ -687,7 +687,7 @@ public class TestGeotoolsGeometry extends TestCase
       }
     };
 
-    Iterator<Document> iter = outputs.iterator();
+    Iterator<Document<?>> iter = outputs.iterator();
     while (iter.hasNext())
     {
       IStoreItem iStoreItem = (IStoreItem) iter.next();

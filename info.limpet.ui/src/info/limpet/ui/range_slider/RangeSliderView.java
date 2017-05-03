@@ -511,7 +511,7 @@ public class RangeSliderView extends CoreAnalysisView implements
     IStoreItem first = res.get(0);
     if (first instanceof IDocument)
     {
-      IDocument newColl = (IDocument) res.get(0);
+      IDocument<?> newColl = (IDocument<?>) res.get(0);
 
       if (newColl instanceof NumberDocument)
       {
@@ -674,7 +674,7 @@ public class RangeSliderView extends CoreAnalysisView implements
       IStoreItem item = selection.iterator().next();
       if (item instanceof IDocument)
       {
-        IDocument coll = (IDocument) item;
+        IDocument<?> coll = (IDocument<?>) item;
 
         if (coll.isQuantity() && coll.size() == 1)
         {

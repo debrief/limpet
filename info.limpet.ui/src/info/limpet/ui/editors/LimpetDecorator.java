@@ -135,7 +135,7 @@ public class LimpetDecorator implements ILightweightLabelDecorator
   protected void decorateWrapper(DocumentWrapper element,
       IDecoration decoration)
   {
-    final IDocument coll = element.getDocument();
+    final IDocument<?> coll = element.getDocument();
     boolean out = coll.getPrecedent() != null;
     boolean in =
         coll.getDependents() != null && coll.getDependents().size() > 0;

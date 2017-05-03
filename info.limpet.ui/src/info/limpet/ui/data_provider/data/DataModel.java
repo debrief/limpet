@@ -41,7 +41,7 @@ public class DataModel implements ITreeContentProvider
   private void addCollectionItems(final List<Object> res,
       final DocumentWrapper cw)
   {
-    final IDocument coll = cw.getDocument();
+    final IDocument<?> coll = cw.getDocument();
 
     final ICommand prec = coll.getPrecedent();
     if (prec != null)
@@ -84,7 +84,7 @@ public class DataModel implements ITreeContentProvider
         final IStoreItem thisI = dIter.next();
         if (thisI instanceof IDocument)
         {
-          dList.add(new DocumentWrapper(dList, (IDocument) thisI));
+          dList.add(new DocumentWrapper(dList, (IDocument<?>) thisI));
         }
         else if (thisI instanceof IStoreGroup)
         {
@@ -109,7 +109,7 @@ public class DataModel implements ITreeContentProvider
         final IStoreItem thisI = dIter.next();
         if (thisI instanceof IDocument)
         {
-          dList.add(new DocumentWrapper(dList, (IDocument) thisI));
+          dList.add(new DocumentWrapper(dList, (IDocument<?>) thisI));
         }
         else if (thisI instanceof IStoreGroup)
         {
@@ -135,7 +135,7 @@ public class DataModel implements ITreeContentProvider
       final IStoreItem thisI = dIter.next();
       if (thisI instanceof IDocument)
       {
-        res.add(new DocumentWrapper(cw, (IDocument) thisI));
+        res.add(new DocumentWrapper(cw, (IDocument<?>) thisI));
       }
       else if (thisI instanceof IStoreGroup)
       {
@@ -237,7 +237,7 @@ public class DataModel implements ITreeContentProvider
         final IStoreItem item = iter.next();
         if (item instanceof IDocument)
         {
-          list.add(new DocumentWrapper(null, (IDocument) item));
+          list.add(new DocumentWrapper(null, (IDocument<?>) item));
         }
         else if (item instanceof IStoreGroup)
         {
@@ -276,7 +276,7 @@ public class DataModel implements ITreeContentProvider
           // see if it has predecessors or successors
           final DocumentWrapper cw = (DocumentWrapper) element;
 
-          final IDocument coll = cw.getDocument();
+          final IDocument<?> coll = cw.getDocument();
           final boolean hasDependents =
               coll.getDependents() != null && coll.getDependents().size() > 0;
           final boolean hasPrecedents = coll.getPrecedent() != null;

@@ -70,7 +70,7 @@ public class GenerateCourseAndSpeedOperation implements IOperation
     public void execute()
     {
       // get the unit
-      List<Document> outputs = new ArrayList<Document>();
+      List<Document<?>> outputs = new ArrayList<Document<?>>();
 
       String prefix = getOutputName();
 
@@ -99,7 +99,7 @@ public class GenerateCourseAndSpeedOperation implements IOperation
       Iterator<IStoreItem> iter = getInputs().iterator();
       while (iter.hasNext())
       {
-        IDocument iCollection = (IDocument) iter.next();
+        IDocument<?> iCollection = (IDocument<?>) iter.next();
         iCollection.addDependent(this);
       }
 
@@ -122,7 +122,7 @@ public class GenerateCourseAndSpeedOperation implements IOperation
       // from this input. So, we will have to regenerate
       // all outputs
 
-      Iterator<Document> oIter = getOutputs().iterator();
+      Iterator<Document<?>> oIter = getOutputs().iterator();
 
       // we may be acting separately on multiple inputs.
       // so, loop through them

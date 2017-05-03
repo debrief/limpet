@@ -34,7 +34,7 @@ public class DistanceBetweenTracksOperation extends TwoTrackOperation
   {
     DistanceBetweenOperation(final List<IStoreItem> selection,
         final IStoreGroup store, final String title, final String description,
-        final IDocument timeProvider, final IContext context)
+        final IDocument<?> timeProvider, final IContext context)
     {
       super(selection, store, title, description, timeProvider, context, METRE.asType(Length.class));
     }
@@ -85,7 +85,7 @@ public class DistanceBetweenTracksOperation extends TwoTrackOperation
       if (getATests().suitableForIndexedInterpolation(collatedTracks))
       {
         // hmm, find the time provider
-        final IDocument timeProvider =
+        final IDocument<?> timeProvider =
             getATests().getLongestIndexedCollection(collatedTracks);
 
         // ok, provide an interpolated action

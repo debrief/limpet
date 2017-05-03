@@ -141,7 +141,7 @@ public abstract class UnaryQuantityOperation implements IOperation
       // from this input.  So, we will have to regenerate
       // all outputs
 
-      Iterator<Document> oIter = getOutputs().iterator();
+      Iterator<Document<?>> oIter = getOutputs().iterator();
       
       // we may be acting separately on multiple inputs.
       // so, loop through them

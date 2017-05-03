@@ -24,13 +24,13 @@ public abstract class CoreQuantityCommand extends AbstractCommand
    * 
    * @param outputs
    */
-  protected void clearOutputs(List<Document> outputs)
+  protected void clearOutputs(List<Document<?>> outputs)
   {
     // clear out the lists, first
-    Iterator<Document> iter = outputs.iterator();
+    Iterator<Document<?>> iter = outputs.iterator();
     while (iter.hasNext())
     {
-      Document qC = (Document) iter.next();
+      Document<?> qC = (Document<?>) iter.next();
       qC.clearQuiet();
     }
   }

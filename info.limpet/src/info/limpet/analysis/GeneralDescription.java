@@ -45,7 +45,7 @@ public abstract class GeneralDescription extends CoreAnalysis
       // ok, let's go for it.
       for (Iterator<IStoreItem> iter = selection.iterator(); iter.hasNext();)
       {
-        IDocument thisC = (IDocument) iter.next();
+        IDocument<?> thisC = (IDocument<?>) iter.next();
 
         titles.add("Collection");
         values.add(thisC.getName());

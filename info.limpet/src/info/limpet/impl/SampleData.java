@@ -20,6 +20,7 @@ import static javax.measure.unit.SI.RADIAN;
 import static javax.measure.unit.SI.SECOND;
 import info.limpet.ICommand;
 import info.limpet.IContext;
+import info.limpet.IDocument;
 import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
 import info.limpet.operations.arithmetic.simple.AddQuantityOperation;
@@ -97,7 +98,7 @@ public class SampleData
       StringDataset dataset =
           (StringDataset) DatasetFactory.createFromObject(this);
       dataset.setName(_name);
-      Document res = new StringDocument(dataset, _predecessor);
+      IDocument<?> res = new StringDocument(dataset, _predecessor);
       return res;
     }
   }

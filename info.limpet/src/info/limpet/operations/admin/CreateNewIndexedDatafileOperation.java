@@ -56,7 +56,7 @@ public class CreateNewIndexedDatafileOperation extends BinaryQuantityOperation
   protected void addInterpolatedCommands(List<IStoreItem> selection,
       IStoreGroup destination, Collection<ICommand> res, IContext context)
   {
-    IDocument longest = getLongestIndexedCollection(selection);
+    IDocument<?> longest = getLongestIndexedCollection(selection);
 
     if (longest != null)
     {
@@ -107,7 +107,7 @@ public class CreateNewIndexedDatafileOperation extends BinaryQuantityOperation
     }
 
     public NewIndexedDatasetCommand(String name, List<IStoreItem> selection,
-        IStoreGroup destination, IDocument timeProvider, IContext context)
+        IStoreGroup destination, IDocument<?> timeProvider, IContext context)
     {
       super(name, "Reindex dataset", destination, false, false, selection,
           timeProvider, context);

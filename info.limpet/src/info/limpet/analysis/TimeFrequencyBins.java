@@ -79,7 +79,7 @@ public abstract class TimeFrequencyBins extends CoreAnalysis
     }
   }
 
-  public static BinnedData doBins(IDocument o)
+  public static BinnedData doBins(IDocument<?> o)
   {
     // collate the values into an array
     double[] data = new double[o.size()];
@@ -149,7 +149,7 @@ public abstract class TimeFrequencyBins extends CoreAnalysis
       // ok, let's go for it.
       for (Iterator<IStoreItem> iter = selection.iterator(); iter.hasNext();)
       {
-        IDocument o = (IDocument) iter.next();
+        IDocument<?> o = (IDocument<?>) iter.next();
 
         if (o.size() > 1 && o.size() < MAX_SIZE)
         {

@@ -245,7 +245,7 @@ public class ShowInStackedChartsOverview implements IOperation
         }
         if (nextItem != null)
         {
-          IDocument coll = (IDocument) nextItem;
+          IDocument<?> coll = (IDocument<?>) nextItem;
           if (coll.isQuantity() && coll.isIndexed())
           {
             res = (NumberDocument) coll;
@@ -255,7 +255,7 @@ public class ShowInStackedChartsOverview implements IOperation
       else if (first instanceof DocumentWrapper)
       {
         DocumentWrapper cw = (DocumentWrapper) first;
-        IDocument collection = cw.getDocument();
+        IDocument<?> collection = cw.getDocument();
         if (collection.isQuantity() && collection.isIndexed())
           res = (NumberDocument) collection;
       }
