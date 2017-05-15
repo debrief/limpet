@@ -13,14 +13,14 @@ import org.eclipse.january.dataset.IDataset;
 public class NumberDocumentBuilder extends
     CoreDocumentBuilder<Double, NumberDocument>
 {
-  private final Unit<?> _type;
+  private final Unit<?> _units;
   private Range _range;
 
   public NumberDocumentBuilder(final String name, final Unit<?> valueUnits,
       final ICommand predecessor, final Unit<?> indexUnits)
   {
     super(name, predecessor, indexUnits);
-    _type = valueUnits;
+    _units = valueUnits;
   }
 
   @Override
@@ -41,9 +41,9 @@ public class NumberDocumentBuilder extends
 
   @Override
   protected NumberDocument getDocument(final IDataset dataset,
-      final ICommand _predecessor2)
+      final ICommand predecessor)
   {
-    return new NumberDocument((DoubleDataset) dataset, _predecessor2, _type);
+    return new NumberDocument((DoubleDataset) dataset, predecessor, _units);
   }
 
   public void setRange(final Range range)
