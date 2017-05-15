@@ -14,7 +14,7 @@
  *****************************************************************************/
 package info.limpet.data.persistence.xml;
 
-import info.limpet.data.operations.spatial.GeoSupport;
+import info.limpet.operations.spatial.GeoSupport;
 
 import java.awt.geom.Point2D;
 

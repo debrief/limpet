@@ -14,15 +14,13 @@
  *****************************************************************************/
 package info.limpet.ui.editors;
 
-import info.limpet.ICollection;
 import info.limpet.ICommand;
-import info.limpet.IQuantityCollection;
+import info.limpet.IDocument;
 import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
-import info.limpet.data.impl.ObjectCollection;
-import info.limpet.data.impl.samples.StockTypes.NonTemporal;
-import info.limpet.data.impl.samples.StockTypes.Temporal.AcousticStrength;
-import info.limpet.data.impl.samples.TemporalLocation;
+import info.limpet.impl.LocationDocument;
+import info.limpet.impl.NumberDocument;
+import info.limpet.impl.StringDocument;
 import info.limpet.ui.Activator;
 import info.limpet.ui.data_provider.data.DataModel;
 import info.limpet.ui.data_provider.data.LimpetWrapper;
@@ -31,6 +29,7 @@ import info.limpet.ui.data_provider.data.NamedList;
 import javax.measure.quantity.Angle;
 import javax.measure.quantity.Dimensionless;
 import javax.measure.unit.Dimension;
+import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
 
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -74,13 +73,13 @@ public class LimpetLabelProvider extends LabelProvider
         // is it just one, or multiple?
         res = Activator.getImageDescriptor("icons/folder.png");
       }
-      if (item instanceof ICollection)
+      if (item instanceof IDocument)
       {
         // is it just one, or multiple?
-        ICollection coll = (ICollection) item;
+        IDocument<?> coll = (IDocument<?>) item;
         if (coll.isQuantity())
         {
-          IQuantityCollection<?> q = (IQuantityCollection<?>) coll;
+          NumberDocument q = (NumberDocument) coll;
           Dimension dim = q.getUnits().getDimension();
           if (dim.equals(Dimension.LENGTH))
           {
@@ -94,12 +93,12 @@ public class LimpetLabelProvider extends LabelProvider
           {
             res = Activator.getImageDescriptor("icons/weight.png");
           }
-          else if (q instanceof AcousticStrength)
+          else if (dim.equals(NonSI.DECIBEL))
           {
             res = Activator.getImageDescriptor("icons/volume.png");
           }
-          else if (dim.equals(Dimension.LENGTH.times(Dimension.LENGTH)
-              .times(Dimension.LENGTH).divide(Dimension.MASS)))
+          else if (dim.equals(Dimension.LENGTH.times(Dimension.LENGTH).times(
+              Dimension.LENGTH).divide(Dimension.MASS)))
           {
             res = Activator.getImageDescriptor("icons/density.png");
           }
@@ -119,18 +118,22 @@ public class LimpetLabelProvider extends LabelProvider
           {
             res = Activator.getImageDescriptor("icons/speed.png");
           }
+          else
+          {
+            // default image type
+            res = Activator.getImageDescriptor("icons/frequency.png");
+          }
         }
-        else if (coll instanceof TemporalLocation
-            || coll instanceof NonTemporal.Location)
+        else if (coll instanceof LocationDocument)
         {
           res = Activator.getImageDescriptor("icons/location.png");
         }
-        else if (coll instanceof ObjectCollection)
+        else if (coll instanceof StringDocument)
         {
           res = Activator.getImageDescriptor("icons/string.png");
         }
       }
-      else if (item instanceof ICommand<?>)
+      else if (item instanceof ICommand)
       {
         res = Activator.getImageDescriptor("icons/interpolate.png");
       }
@@ -147,11 +150,13 @@ public class LimpetLabelProvider extends LabelProvider
         else if (name.equals(DataModel.DEPENDENTS))
         {
           res = Activator.getImageDescriptor("icons/r_arrow.png");
-
         }
-
       }
 
+      if (res == null)
+      {
+        System.err.println("no icon for:" + item);
+      }
     }
 
     return res;

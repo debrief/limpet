@@ -54,8 +54,7 @@ public class AxisContainerEditPolicy extends ContainerEditPolicy implements
   @Override
   protected Command getCreateCommand(CreateRequest request)
   {
-    // TODO Auto-generated method stub
-    return null;
+    throw new RuntimeException("Not implemented");
   }
 
   @Override

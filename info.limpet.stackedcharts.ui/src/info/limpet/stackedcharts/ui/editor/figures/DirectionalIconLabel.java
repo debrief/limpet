@@ -28,13 +28,6 @@ public class DirectionalIconLabel extends DirectionalShape
   }
 
   @Override
-  protected void finalize() throws Throwable
-  {
-    // TODO Auto-generated method stub
-    super.finalize();
-  }
-
-  @Override
   public void setVertical(boolean vertical)
   {
     super.setVertical(vertical);

@@ -14,10 +14,9 @@
  *****************************************************************************/
 package info.limpet.analysis;
 
-import info.limpet.ICollection;
+import info.limpet.IDocument;
 import info.limpet.IStoreItem;
-import info.limpet.data.impl.ObjectCollection;
-import info.limpet.data.operations.CollectionComplianceTests;
+import info.limpet.operations.CollectionComplianceTests;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -48,14 +47,13 @@ public abstract class SimpleDescriptiveObject extends CoreAnalysis
       // ok, let's go for it.
       for (Iterator<IStoreItem> iter = selection.iterator(); iter.hasNext();)
       {
-        ICollection thisC = (ICollection) iter.next();
-        ObjectCollection<?> o = (ObjectCollection<?>) thisC;
+        IDocument<?> thisD = (IDocument<?>) iter.next();
 
         // check it has some data
-        if (o.getValuesCount() > 0)
+        if (thisD.size() > 0)
         {
           titles.add("Content Type");
-          Object nextObject = o.getValues().iterator().next();
+          Object nextObject = thisD.getIterator().next();
           values.add(typeFor(nextObject, nextObject.getClass()));
         }
       }

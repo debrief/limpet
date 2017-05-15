@@ -17,16 +17,43 @@ package info.limpet;
 import java.beans.PropertyChangeListener;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 
 
 public interface IStoreGroup extends IStoreItem, Collection<IStoreItem>,
     IChangeListener
 {
 
-  /** retrieve the current "focus time"
+  public interface StoreChangeListener
+  {
+    void changed();
+  }
+ 
+  public void removeChangeListener(StoreChangeListener listener);
+  
+  public void addChangeListener(StoreChangeListener listener);
+  
+  /**
+   * retrieve the named collection
+   * 
+   * @param name
+   * @return
+   */
+  IStoreItem get(String name);
+
+  /** add this item
    * 
    */
-  Date getTime();
+  boolean add(IStoreItem item);
+
+  /** remove this item
+   * 
+   */
+  boolean remove(Object item);
+
+  IStoreItem get(UUID uuid);
+  
   
   /** set the current "focus time"
    * 
@@ -44,25 +71,9 @@ public interface IStoreGroup extends IStoreItem, Collection<IStoreItem>,
    * @param listener
    */
   void removeTimeChangeListener(PropertyChangeListener listener);
-  
-  /**
-   * retrieve the named collection
-   * 
-   * @param name
-   * @return
-   */
-  IStoreItem get(String name);
-  
-  void setName(String value);
 
-  boolean hasChildren();
+  Date getTime();
 
-  boolean add(IStoreItem item);
-
-  boolean remove(Object item);
-
-  void addChangeListener(IChangeListener listener);
-
-  void removeChangeListener(IChangeListener listener);
+  void addAll(List<IStoreItem> results);
 
 }

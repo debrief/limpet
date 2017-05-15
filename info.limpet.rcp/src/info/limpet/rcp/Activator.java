@@ -14,8 +14,8 @@
  *****************************************************************************/
 package info.limpet.rcp;
 
-import info.limpet.data.operations.spatial.GeoSupport;
-import info.limpet.data.operations.spatial.GeotoolsCalculator;
+import info.limpet.operations.spatial.GeoSupport;
+import info.limpet.operations.spatial.GeotoolsCalculator;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;

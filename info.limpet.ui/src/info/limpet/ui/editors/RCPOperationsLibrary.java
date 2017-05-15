@@ -26,10 +26,10 @@ public class RCPOperationsLibrary
     
   }
   
-  public static HashMap<String, List<IOperation<?>>> getOperations()
+  public static HashMap<String, List<IOperation>> getOperations()
   {
-    HashMap<String, List<IOperation<?>>> res =
-        new HashMap<String, List<IOperation<?>>>();
+    HashMap<String, List<IOperation>> res =
+        new HashMap<String, List<IOperation>>();
 
     res.put("Analysis", getAnalysis());
 
@@ -37,9 +37,9 @@ public class RCPOperationsLibrary
 
   }
 
-  private static List<IOperation<?>> getAnalysis()
+  private static List<IOperation> getAnalysis()
   {
-    List<IOperation<?>> analysis = new ArrayList<IOperation<?>>();
+    List<IOperation> analysis = new ArrayList<IOperation>();
     analysis.add(new ShowInNamedView("Show in XY Plot View", XyPlotView.ID)
     {
       protected boolean appliesTo(List<IStoreItem> selection)
@@ -58,7 +58,8 @@ public class RCPOperationsLibrary
         .add(new ShowInNamedView("Show in Range Slider", RangeSliderView.ID));
     analysis.add(new ShowInTacticalOverview("Show in Tactical Overview"));
     analysis.add(new ShowInStackedChartsOverview("Show in Stacked Charts"));
-    
+// 
+    // TODO: create Limpet2 versions of the above actions
     return analysis;
   }
 }

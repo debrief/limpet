@@ -14,10 +14,9 @@
  *****************************************************************************/
 package info.limpet.analysis;
 
-import info.limpet.ICollection;
-import info.limpet.IObjectCollection;
+import info.limpet.IDocument;
 import info.limpet.IStoreItem;
-import info.limpet.data.operations.CollectionComplianceTests;
+import info.limpet.operations.CollectionComplianceTests;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -70,12 +69,12 @@ public abstract class ObjectFrequencyBins extends CoreAnalysis
     }
   }
 
-  public static BinnedData doBins(IObjectCollection<?> collection)
+  public static BinnedData doBins(IDocument<?> collection)
   {
 
     // build up the histogram
     Frequency freq = new Frequency();
-    Iterator<?> iter2 = collection.getValues().iterator();
+    Iterator<?> iter2 = collection.getIterator();
     while (iter2.hasNext())
     {
       Object object = (Object) iter2.next();
@@ -106,13 +105,11 @@ public abstract class ObjectFrequencyBins extends CoreAnalysis
       // ok, let's go for it.
       for (Iterator<IStoreItem> iter = selection.iterator(); iter.hasNext();)
       {
-        ICollection thisC = (ICollection) iter.next();
+        IDocument<?> thisC = (IDocument<?>) iter.next();
 
-        if (thisC.getValuesCount() <= MAX_SIZE)
+        if (thisC.size() <= MAX_SIZE)
         {
-          IObjectCollection<?> o = (IObjectCollection<?>) thisC;
-
-          BinnedData res = doBins(o);
+          BinnedData res = doBins(thisC);
 
           titles.add("Unique values");
           values.add(res.size() + "");

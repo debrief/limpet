@@ -18,18 +18,17 @@ import info.limpet.IChangeListener;
 import info.limpet.ICommand;
 import info.limpet.IContext;
 import info.limpet.IOperation;
-import info.limpet.IStore;
 import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
-import info.limpet.data.operations.AddLayerOperation;
-import info.limpet.data.operations.GenerateDummyDataOperation;
-import info.limpet.data.operations.admin.OperationsLibrary;
+import info.limpet.IStoreGroup.StoreChangeListener;
 import info.limpet.data.persistence.xml.XStreamHandler;
-import info.limpet.data.store.StoreGroup;
-import info.limpet.data.store.StoreGroup.StoreChangeListener;
+import info.limpet.impl.StoreGroup;
+import info.limpet.operations.OperationsLibrary;
+import info.limpet.operations.admin.AddLayerOperation;
+import info.limpet.operations.admin.GenerateDummyDataOperation;
 import info.limpet.ui.RCPContext;
+import info.limpet.ui.data_provider.data.DataManagerDropAdapter;
 import info.limpet.ui.data_provider.data.DataModel;
-import info.limpet.ui.editors.dnd.DataManagerDropAdapter;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -95,7 +94,7 @@ import org.osgi.framework.Bundle;
 public class DataManagerEditor extends EditorPart
 {
 
-  private IStore _store;
+  private IStoreGroup _store;
   private TreeViewer viewer;
   private IMenuListener _menuListener;
   private Action refreshView;
@@ -300,7 +299,7 @@ public class DataManagerEditor extends EditorPart
         else
         {
           // ok, it was empty. generate an empty store
-          _store = new StoreGroup();
+          _store = new StoreGroup("Store");
         }
       }
       catch (IOException | CoreException e)
@@ -332,7 +331,7 @@ public class DataManagerEditor extends EditorPart
       }
     }
 
-    next.addChangeListener(listener);
+    next.addTransientChangeListener(listener);
   }
 
   @Override
@@ -406,7 +405,7 @@ public class DataManagerEditor extends EditorPart
   {
 
     // our operation wrapper needs to be able to get the selection, help it out
-    final ISelectionProvider provider = new ISelectionProvider()
+    final info.limpet.ui.data_provider.data.ISelectionProvider provider = new info.limpet.ui.data_provider.data.ISelectionProvider()
     {
       public List<IStoreItem> getSelection()
       {
@@ -470,11 +469,11 @@ public class DataManagerEditor extends EditorPart
     menu.add(new Separator());
 
     // get the list of operations
-    HashMap<String, List<IOperation<?>>> ops =
+    HashMap<String, List<IOperation>> ops =
         OperationsLibrary.getOperations();
 
     // and the RCP-specific operations
-    HashMap<String, List<IOperation<?>>> rcpOps =
+    HashMap<String, List<IOperation>> rcpOps =
         RCPOperationsLibrary.getOperations();
     ops.putAll(rcpOps);
 
@@ -491,7 +490,7 @@ public class DataManagerEditor extends EditorPart
       menu.add(newM);
 
       // now loop through this set of operations
-      List<IOperation<?>> values = ops.get(name);
+      List<IOperation> values = ops.get(name);
 
       showThisList(selection, newM, values, _store, _context, null);
     }
@@ -502,20 +501,19 @@ public class DataManagerEditor extends EditorPart
   }
 
   public static void showThisList(List<IStoreItem> selection, IMenuManager newM,
-      List<IOperation<?>> values, final IStore theStore, final IContext context, final Runnable listener)
+      List<IOperation> values, final IStoreGroup theStore, final IContext context, final Runnable listener)
   {
-    Iterator<IOperation<?>> oIter = values.iterator();
+    Iterator<IOperation> oIter = values.iterator();
     while (oIter.hasNext())
     {
-      @SuppressWarnings("unchecked")
-      final IOperation<IStoreItem> op = (IOperation<IStoreItem>) oIter.next();
-      Collection<ICommand<IStoreItem>> matches =
+      final IOperation op = (IOperation) oIter.next();
+      Collection<ICommand> matches =
           op.actionsFor(selection, theStore, context);
 
-      Iterator<ICommand<IStoreItem>> mIter = matches.iterator();
+      Iterator<ICommand> mIter = matches.iterator();
       while (mIter.hasNext())
       {
-        final ICommand<IStoreItem> thisC = (ICommand<IStoreItem>) mIter.next();
+        final ICommand thisC = (ICommand) mIter.next();
         newM.add(new Action(thisC.getName())
         {
           @Override
@@ -681,7 +679,7 @@ public class DataManagerEditor extends EditorPart
     }
   }
 
-  public IStore getStore()
+  public IStoreGroup getStore()
   {
     return _store;
   }

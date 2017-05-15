@@ -14,15 +14,14 @@
  *****************************************************************************/
 package info.limpet.data.persistence.xml;
 
-import info.limpet.IStore;
-import info.limpet.data.commands.AbstractCommand;
-import info.limpet.data.impl.ObjectCollection;
-import info.limpet.data.impl.QuantityCollection;
-import info.limpet.data.impl.TemporalObjectCollection;
-import info.limpet.data.impl.TemporalQuantityCollection;
-import info.limpet.data.operations.arithmetic.AddQuantityOperation.AddQuantityValues;
-import info.limpet.data.operations.arithmetic.MultiplyQuantityOperation.MultiplyQuantityValues;
-import info.limpet.data.store.StoreGroup;
+import info.limpet.IStoreGroup;
+import info.limpet.impl.Document;
+import info.limpet.impl.LocationDocument;
+import info.limpet.impl.NumberDocument;
+import info.limpet.impl.StoreGroup;
+import info.limpet.operations.AbstractCommand;
+import info.limpet.operations.arithmetic.simple.AddQuantityOperation.AddQuantityValues;
+import info.limpet.operations.arithmetic.simple.MultiplyQuantityOperation.MultiplyQuantityValues;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -58,26 +57,28 @@ public class XStreamHandler
     XSTREAM.alias("AlternateUnit", AlternateUnit.class);
     XSTREAM.alias("MultiplyConverter", MultiplyConverter.class);
     XSTREAM.alias("BaseUnit", BaseUnit.class);
-    XSTREAM.alias("Temporal.Speed_MSec",
-        info.limpet.data.impl.samples.StockTypes.Temporal.SpeedMSec.class);
-    XSTREAM.alias("Temporal.Angle_Degs",
-        info.limpet.data.impl.samples.StockTypes.Temporal.AngleDegrees.class);
-    XSTREAM.alias("Temporal.Angle_Rads",
-        info.limpet.data.impl.samples.StockTypes.Temporal.AngleRadians.class);
-    XSTREAM.alias("Temporal.Elapsed_Time",
-        info.limpet.data.impl.samples.StockTypes.Temporal.ElapsedTimeSec.class);
-    XSTREAM.alias("Temporal.Location",
-        info.limpet.data.impl.samples.TemporalLocation.class);
+//    XSTREAM.alias("Temporal.Speed_MSec",
+//        info.limpet.data.impl.samples.StockTypes.Temporal.SpeedMSec.class);
+//    XSTREAM.alias("Temporal.Angle_Degs",
+//        info.limpet.data.impl.samples.StockTypes.Temporal.AngleDegrees.class);
+//    XSTREAM.alias("Temporal.Angle_Rads",
+//        info.limpet.data.impl.samples.StockTypes.Temporal.AngleRadians.class);
+//    XSTREAM.alias("Temporal.Elapsed_Time",
+//        info.limpet.data.impl.samples.StockTypes.Temporal.ElapsedTimeSec.class);
+//    XSTREAM.alias("Temporal.Location",
+//        info.limpet.data.impl.samples.TemporalLocation.class);
 
-    XSTREAM.alias("NonTemporal.Length_m",
-        info.limpet.data.impl.samples.StockTypes.NonTemporal.LengthM.class);
-    XSTREAM.alias("NonTemporal.Speed_msec",
-        info.limpet.data.impl.samples.StockTypes.NonTemporal.SpeedMSec.class);
-    XSTREAM.alias("ObjectCollection", ObjectCollection.class);
-    XSTREAM.alias("TemporalObjectCollection", TemporalObjectCollection.class);
-    XSTREAM.alias("QuantityCollection", QuantityCollection.class);
-    XSTREAM.alias("TemporalQuantityCollection",
-        TemporalQuantityCollection.class);
+//    XSTREAM.alias("NonTemporal.Length_m",
+//        info.limpet.data.impl.samples.StockTypes.NonTemporal.LengthM.class);
+//    XSTREAM.alias("NonTemporal.Speed_msec",
+//        info.limpet.data.impl.samples.StockTypes.NonTemporal.SpeedMSec.class);
+    XSTREAM.alias("Document", Document.class);
+    XSTREAM.alias("NumberDocument", NumberDocument.class);
+    XSTREAM.alias("LocationDocument", LocationDocument.class);
+    
+//    XSTREAM.alias("QuantityCollection", QuantityCollection.class);
+//    XSTREAM.alias("TemporalQuantityCollection",
+//        TemporalQuantityCollection.class);
 
     XSTREAM.alias("Folder", StoreGroup.class);
 
@@ -88,36 +89,38 @@ public class XStreamHandler
     // TODO: KUMAR: create equivalent alias operations (as above) for other defined operations
 
     // and force some objects to be represnted as attributes, rather than child objects
-    XSTREAM.useAttributeFor(ObjectCollection.class, "name");
     XSTREAM.useAttributeFor(AbstractCommand.class, "title");
     XSTREAM.useAttributeFor(AbstractCommand.class, "canUndo");
     XSTREAM.useAttributeFor(AbstractCommand.class, "canRedo");
     XSTREAM.useAttributeFor(AbstractCommand.class, "dynamic");
 
+    // No: Document doesn't have a name attribute, it's stored in the dataset
+    //XSTREAM.useAttributeFor(Document.class, "name");
+
     // setup converter
-    XSTREAM.registerConverter(
-        new LimpetCollectionConverter(XSTREAM.getMapper()),
-        XStream.PRIORITY_NORMAL);
-    XSTREAM.registerConverter(
-        new TimesCollectionConverter(XSTREAM.getMapper()),
-        XStream.PRIORITY_NORMAL);
+//    XSTREAM.registerConverter(
+//        new LimpetCollectionConverter(XSTREAM.getMapper()),
+//        XStream.PRIORITY_NORMAL);
+//    XSTREAM.registerConverter(
+//        new TimesCollectionConverter(XSTREAM.getMapper()),
+//        XStream.PRIORITY_NORMAL);
     XSTREAM.registerConverter(new PointConverter(), XStream.PRIORITY_NORMAL);
     XSTREAM.setMode(XStream.ID_REFERENCES);
   }
 
-  public IStore load(String fileName)
+  public IStoreGroup load(String fileName)
   {
-    IStore store = (IStore) XSTREAM.fromXML(new File(fileName));
+    IStoreGroup store = (IStoreGroup) XSTREAM.fromXML(new File(fileName));
     return store;
   }
 
-  public void save(IStore store, String fileName) throws FileNotFoundException,
+  public void save(IStoreGroup store, String fileName) throws FileNotFoundException,
       IOException
   {
     save(store, new File(fileName));
   }
 
-  private void save(IStore store, File file) throws FileNotFoundException,
+  private void save(IStoreGroup store, File file) throws FileNotFoundException,
       IOException
   {
     try (OutputStream out = new FileOutputStream(file))
@@ -126,10 +129,10 @@ public class XStreamHandler
     }
   }
 
-  public IStore load(IFile iFile) throws CoreException
+  public IStoreGroup load(IFile iFile) throws CoreException
   {
     File file = getFile(iFile);
-    IStore store = (IStore) XSTREAM.fromXML(file);
+    IStoreGroup store = (IStoreGroup) XSTREAM.fromXML(file);
     return store;
   }
 
@@ -144,19 +147,19 @@ public class XStreamHandler
     return file;
   }
 
-  public void save(IStore store, IFile iFile) throws CoreException,
+  public void save(IStoreGroup store, IFile iFile) throws CoreException,
       FileNotFoundException, IOException
   {
     File file = getFile(iFile);
     save(store, file);
   }
 
-  public IStore fromXML(String xml)
+  public IStoreGroup fromXML(String xml)
   {
-    return (IStore) XSTREAM.fromXML(xml);
+    return (IStoreGroup) XSTREAM.fromXML(xml);
   }
 
-  public String toXML(IStore store)
+  public String toXML(IStoreGroup store)
   {
     return XSTREAM.toXML(store);
   }

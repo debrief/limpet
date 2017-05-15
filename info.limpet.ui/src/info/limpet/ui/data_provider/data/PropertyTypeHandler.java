@@ -1,21 +1,20 @@
 package info.limpet.ui.data_provider.data;
 
-import java.awt.geom.Point2D;
-
-import info.limpet.IBaseQuantityCollection;
-import info.limpet.QuantityRange;
-import info.limpet.UIProperty;
-import info.limpet.data.operations.spatial.GeoSupport;
+import info.limpet.impl.Range;
+import info.limpet.impl.UIProperty;
+import info.limpet.operations.spatial.GeoSupport;
 import info.limpet.ui.Activator;
 import info.limpet.ui.propertyeditors.SliderPropertyDescriptor;
 
-import javax.measure.Measure;
-import javax.measure.quantity.Quantity;
+import java.awt.geom.Point2D;
+
 import javax.measure.unit.Unit;
 
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
 import org.eclipse.ui.views.properties.TextPropertyDescriptor;
+import org.opengis.geometry.Geometry;
 
 /**
  * A helper class that encapsulates some logic about certain property types. Each subclass handles
@@ -269,19 +268,15 @@ public abstract class PropertyTypeHandler
         @Override
         public boolean canHandle(Class<?> propertyType)
         {
-          return propertyType == QuantityRange.class;
+          return propertyType == Range.class;
         }
 
-        @SuppressWarnings(
-        {"unchecked", "rawtypes"})
         public Object
             toModelValue(Object cellEditorValue, Object propertyOwner)
         {
 
-          QuantityRange newR = null;
+          Range newR = null;
 
-          IBaseQuantityCollection<?> tt =
-              (IBaseQuantityCollection<?>) propertyOwner;
           // try to get a range from the string
           String str = (String) cellEditorValue;
           if (str.length() > 0)
@@ -298,10 +293,8 @@ public abstract class PropertyTypeHandler
                 double maxV = Double.parseDouble(max);
                 if (maxV > minV)
                 {
-                  Unit<?> collUnits = tt.getUnits();
                   newR =
-                      new QuantityRange(Measure.valueOf(minV, collUnits),
-                          Measure.valueOf(maxV, collUnits));
+                      new Range(minV, maxV);
                 }
               }
               catch (NumberFormatException fe)
@@ -321,19 +314,16 @@ public abstract class PropertyTypeHandler
           return newR;
         };
 
-        @SuppressWarnings("unchecked")
         public Object
             toCellEditorValue(Object modelValue, Object propertyOwner)
         {
           final String str;
-          QuantityRange<Quantity> range = (QuantityRange<Quantity>) modelValue;
-          IBaseQuantityCollection<Quantity> qc =
-              (IBaseQuantityCollection<Quantity>) propertyOwner;
+          Range range = (Range) modelValue;
           if (range != null)
           {
             str =
-                "" + range.getMinimum().longValue(qc.getUnits()) + " : "
-                    + range.getMaximum().longValue(qc.getUnits());
+                "" + range.getMinimum() + " : "
+                    + range.getMaximum();
           }
           else
           {

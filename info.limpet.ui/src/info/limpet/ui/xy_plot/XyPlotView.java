@@ -14,29 +14,31 @@
  *****************************************************************************/
 package info.limpet.ui.xy_plot;
 
-import info.limpet.ICollection;
-import info.limpet.IQuantityCollection;
+import info.limpet.IDocument;
 import info.limpet.IStoreItem;
-import info.limpet.ITemporalQuantityCollection;
-import info.limpet.data.impl.samples.TemporalLocation;
-import info.limpet.data.operations.CollectionComplianceTests;
-import info.limpet.data.operations.CollectionComplianceTests.TimePeriod;
+import info.limpet.impl.LocationDocument;
+import info.limpet.impl.NumberDocument;
+import info.limpet.operations.CollectionComplianceTests;
+import info.limpet.operations.CollectionComplianceTests.TimePeriod;
+import info.limpet.ui.Activator;
 import info.limpet.ui.PlottingHelpers;
 import info.limpet.ui.core_view.CoreAnalysisView;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.measure.Measurable;
-import javax.measure.quantity.Quantity;
+import javax.measure.converter.UnitConverter;
+import javax.measure.quantity.Duration;
+import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 
+import org.eclipse.jface.action.Action;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IActionBars;
 import org.swtchart.Chart;
 import org.swtchart.IAxis;
 import org.swtchart.IAxis.Position;
@@ -66,9 +68,44 @@ public class XyPlotView extends CoreAnalysisView
 
   private Chart chart;
 
+  private Action switchAxes;
+
   public XyPlotView()
   {
     super(ID, "XY plot view");
+  }
+
+  protected void makeActions()
+  {
+    super.makeActions();
+
+    switchAxes = new Action("Switch axes", SWT.TOGGLE)
+    {
+      public void run()
+      {
+        if (switchAxes.isChecked())
+        {
+          chart.setOrientation(SWT.VERTICAL);
+        }
+        else
+        {
+          chart.setOrientation(SWT.HORIZONTAL);
+        }
+      }
+    };
+    switchAxes.setText("Switch axes");
+    switchAxes.setToolTipText("Switch X and Y axes");
+    switchAxes.setImageDescriptor(Activator
+        .getImageDescriptor("icons/angle.png"));
+
+  }
+
+  protected void contributeToActionBars()
+  {
+    super.contributeToActionBars();
+    IActionBars bars = getViewSite().getActionBars();
+    bars.getToolBarManager().add(switchAxes);
+    bars.getMenuManager().add(switchAxes);
   }
 
   /**
@@ -90,6 +127,8 @@ public class XyPlotView extends CoreAnalysisView
     // adjust the axis range
     chart.getAxisSet().adjustRange();
 
+    chart.getLegend().setPosition(SWT.BOTTOM);
+
     // register as selection listener
     setupListener();
   }
@@ -103,18 +142,20 @@ public class XyPlotView extends CoreAnalysisView
     }
     else
     {
+      // transform them to a lsit of documents
+      List<IDocument<?>> docList = aTests.getDocumentsIn(res);
 
       // they're all the same type - check the first one
-      Iterator<IStoreItem> iter = res.iterator();
+      Iterator<IDocument<?>> iter = docList.iterator();
 
-      ICollection first = (ICollection) iter.next();
+      IDocument<?> first = iter.next();
 
       // sort out what type of data this is.
       if (first.isQuantity())
       {
-        if (aTests.allTemporalOrSingleton(res))
+        if (aTests.allIndexedOrSingleton(res))
         {
-          showTemporalQuantity(res);
+          showIndexedQuantity(res);
         }
         else
         {
@@ -138,29 +179,26 @@ public class XyPlotView extends CoreAnalysisView
     }
   }
 
-  @SuppressWarnings("unchecked")
   private void showQuantity(List<IStoreItem> res)
   {
     Iterator<IStoreItem> iter = res.iterator();
 
     clearGraph();
 
-    Unit<Quantity> existingUnits = null;
+    Unit<?> existingUnits = null;
 
     // get the longest collection length (used for plotting singletons)
     int longestColl = aTests.getLongestCollectionLength(res);
 
     while (iter.hasNext())
     {
-      ICollection coll = (ICollection) iter.next();
-      if (coll.isQuantity() && coll.getValuesCount() >= 1
-          && coll.getValuesCount() < MAX_SIZE)
+      IDocument<?> coll = (IDocument<?>) iter.next();
+      if (coll.isQuantity() && coll.size() >= 1 && coll.size() < MAX_SIZE)
       {
 
-        IQuantityCollection<Quantity> thisQ =
-            (IQuantityCollection<Quantity>) coll;
+        NumberDocument thisQ = (NumberDocument) coll;
 
-        final Unit<Quantity> theseUnits = thisQ.getUnits();
+        final Unit<?> theseUnits = thisQ.getUnits();
         String seriesName = seriesNameFor(thisQ, theseUnits);
 
         // do we need to create this series
@@ -177,7 +215,7 @@ public class XyPlotView extends CoreAnalysisView
         final PlotSymbolType theSym;
         // if it's a singleton, show the symbol
         // markers
-        if (thisQ.getValuesCount() > 100 || thisQ.getValuesCount() == 1)
+        if (thisQ.size() > 100 || thisQ.size() == 1)
         {
           theSym = PlotSymbolType.NONE;
         }
@@ -192,12 +230,12 @@ public class XyPlotView extends CoreAnalysisView
 
         final double[] yData;
 
-        if (coll.getValuesCount() == 1)
+        if (coll.size() == 1)
         {
           // singleton = insert it's value at every point
           yData = new double[longestColl];
-          Measurable<Quantity> thisValue = thisQ.getValues().iterator().next();
-          double dVal = thisValue.doubleValue(thisQ.getUnits());
+          Number thisValue = thisQ.getValueAt(0);
+          double dVal = thisValue.doubleValue();
           for (int i = 0; i < longestColl; i++)
           {
             yData[i] = dVal;
@@ -205,13 +243,12 @@ public class XyPlotView extends CoreAnalysisView
         }
         else
         {
-          yData = new double[thisQ.getValuesCount()];
-          Iterator<?> values = thisQ.getValues().iterator();
+          yData = new double[thisQ.size()];
+          Iterator<Double> values = thisQ.getIterator();
           int ctr = 0;
           while (values.hasNext())
           {
-            Measurable<Quantity> tQ = (Measurable<Quantity>) values.next();
-            yData[ctr++] = tQ.doubleValue(thisQ.getUnits());
+            yData[ctr++] = values.next();
           }
         }
 
@@ -234,8 +271,19 @@ public class XyPlotView extends CoreAnalysisView
           existingUnits = theseUnits;
         }
 
-        // newSeries.setXSeries(xData);
         newSeries.setYSeries(yData);
+
+        // if it's a monster line, we won't plot
+        // markers
+        if (thisQ.size() > 90)
+        {
+          newSeries.setSymbolType(PlotSymbolType.NONE);
+          newSeries.setLineWidth(2);
+        }
+        else
+        {
+          newSeries.setSymbolType(PlotSymbolType.CROSS);
+        }
 
         chart.getAxisSet().getXAxis(0).getTitle().setText("Count");
 
@@ -249,38 +297,42 @@ public class XyPlotView extends CoreAnalysisView
     }
   }
 
-  private String seriesNameFor(IQuantityCollection<Quantity> thisQ,
-      final Unit<Quantity> theseUnits)
+  private String seriesNameFor(NumberDocument thisQ, final Unit<?> theseUnits)
   {
     String seriesName = thisQ.getName() + " (" + theseUnits + ")";
     return seriesName;
   }
 
-  @SuppressWarnings("unchecked")
-  private void showTemporalQuantity(List<IStoreItem> res)
+  private void showIndexedQuantity(List<IStoreItem> res)
   {
-    Iterator<IStoreItem> iter = res.iterator();
-
     clearGraph();
 
-    Unit<Quantity> existingUnits = null;
+    Unit<?> existingUnits = null;
+
+    List<IDocument<?>> docList = aTests.getDocumentsIn(res);
 
     // get the outer time period (used for plotting singletons)
-    List<ICollection> safeColl = new ArrayList<ICollection>();
-    safeColl.addAll((Collection<? extends ICollection>) res);
-    TimePeriod outerPeriod = aTests.getBoundingTime(safeColl);
+    List<IDocument<?>> safeColl = new ArrayList<IDocument<?>>();
+    safeColl.addAll(docList);
+    TimePeriod outerPeriod = aTests.getBoundingRange(res);
 
-    while (iter.hasNext())
+    for (IDocument<?> coll : docList)
     {
-      ICollection coll = (ICollection) iter.next();
-
-      if (coll.isQuantity() && coll.getValuesCount() >= 1
-          && coll.getValuesCount() < MAX_SIZE)
+      if (coll.isQuantity() && coll.size() >= 1 && coll.size() < MAX_SIZE)
       {
-        IQuantityCollection<Quantity> thisQ =
-            (IQuantityCollection<Quantity>) coll;
+        NumberDocument thisQ = (NumberDocument) coll;
 
-        final Unit<Quantity> theseUnits = thisQ.getUnits();
+        final Unit<?> theseUnits = thisQ.getUnits();
+
+        final Unit<?> indexUnits;
+        if (thisQ.isIndexed())
+        {
+          indexUnits = thisQ.getIndexUnits();
+        }
+        else
+        {
+          indexUnits = null;
+        }
 
         String seriesName = seriesNameFor(thisQ, theseUnits);
 
@@ -297,26 +349,58 @@ public class XyPlotView extends CoreAnalysisView
         newSeries.setLineColor(PlottingHelpers.colorFor(seriesName));
 
         final Date[] xTimeData;
+        final double[] xData;
         final double[] yData;
 
-        if (coll.isTemporal())
+        if (coll.isIndexed())
         {
+          // sort out the destination data type
+          final boolean isTemporal =
+              indexUnits != null && indexUnits.getDimension() != null
+                  && indexUnits.getDimension().equals(SI.SECOND.getDimension());
+          if (isTemporal)
+          {
+            xTimeData = new Date[thisQ.size()];
+            xData = null;
+          }
+          else
+          {
+            xData = new double[thisQ.size()];
+            xTimeData = null;
+          }
+
+          yData = new double[thisQ.size()];
+
           // must be temporal
-          ITemporalQuantityCollection<Quantity> thisTQ =
-              (ITemporalQuantityCollection<Quantity>) coll;
+          Iterator<Double> index = coll.getIndex();
+          Iterator<Double> values = thisQ.getIterator();
 
-          xTimeData = new Date[thisQ.getValuesCount()];
-          yData = new double[thisQ.getValuesCount()];
-
-          Iterator<?> values = thisTQ.getValues().iterator();
-          Iterator<Long> times = thisTQ.getTimes().iterator();
           int ctr = 0;
+          final Unit<Duration> millis = SI.SECOND.divide(1000);
           while (values.hasNext())
           {
-            Measurable<Quantity> tQ = (Measurable<Quantity>) values.next();
-            long t = times.next();
-            xTimeData[ctr] = new Date(t);
-            yData[ctr++] = tQ.doubleValue(thisQ.getUnits());
+            double t = index.next();
+            if (isTemporal)
+            {
+              final long value;
+              if (indexUnits.equals(millis))
+              {
+                value = (long) t;
+              }
+              else
+              {
+                // do we need to convert to millis?
+                UnitConverter converter = indexUnits.getConverterTo(millis);
+                value = (long) converter.convert(t);
+              }
+
+              xTimeData[ctr] = new Date((long) value);
+            }
+            else
+            {
+              xData[ctr] = t;
+            }
+            yData[ctr++] = values.next();
           }
         }
         else
@@ -324,20 +408,31 @@ public class XyPlotView extends CoreAnalysisView
           // non temporal, include it as a marker line
           // must be non temporal
           xTimeData = new Date[2];
+          xData = null;
           yData = new double[2];
 
           // get the singleton value
-          Measurable<Quantity> theValue = thisQ.getValues().iterator().next();
+          Double theValue = thisQ.getIterator().next();
 
           // create the marker line
-          xTimeData[0] = new Date(outerPeriod.getStartTime());
-          yData[0] = theValue.doubleValue(thisQ.getUnits());
-          xTimeData[1] = new Date(outerPeriod.getEndTime());
-          yData[1] = theValue.doubleValue(thisQ.getUnits());
-
+          xTimeData[0] = new Date((long) outerPeriod.getStartTime());
+          yData[0] = theValue;
+          xTimeData[1] = new Date((long) outerPeriod.getEndTime());
+          yData[1] = theValue;
         }
 
-        newSeries.setXDateSeries(xTimeData);
+        if (xTimeData != null)
+        {
+          newSeries.setXDateSeries(xTimeData);
+        }
+        else if (xData != null)
+        {
+          newSeries.setXSeries(xData);
+        }
+        else
+        {
+          System.err.println("We haven't correctly collated data");
+        }
         newSeries.setYSeries(yData);
 
         // ok, do we have existing data, in different units?
@@ -359,18 +454,48 @@ public class XyPlotView extends CoreAnalysisView
           existingUnits = theseUnits;
         }
 
-        // if it's a monster line, or just a singleton value, we won't plot
+        // if it's a monster line, we won't plot
         // markers
-        if (thisQ.getValuesCount() > 90 || thisQ.getValuesCount() == 1)
+        if (thisQ.size() > 90)
         {
           newSeries.setSymbolType(PlotSymbolType.NONE);
+          newSeries.setLineWidth(2);
         }
         else
         {
           newSeries.setSymbolType(PlotSymbolType.CROSS);
         }
 
-        chart.getAxisSet().getXAxis(0).getTitle().setText("Time");
+        final String xTitle;
+        if (xTimeData != null)
+        {
+          xTitle = "Time";
+        }
+        else
+        {
+          final String titlePrefix;
+          final String theDim =
+              indexUnits != null ? indexUnits.getDimension().toString() : "N/A";
+          switch (theDim)
+          {
+          case "[L]":
+            titlePrefix = "Length";
+            break;
+          case "[M]":
+            titlePrefix = "Mass";
+            break;
+          case "[T]":
+            titlePrefix = "Time";
+            break;
+          default:
+            titlePrefix = theDim;
+          }
+
+          final String indexText =
+              indexUnits != null ? " (" + indexUnits.toString() + ")" : "";
+          xTitle = titlePrefix + indexText;
+        }
+        chart.getAxisSet().getXAxis(0).getTitle().setText(xTitle);
 
         // adjust the axis range
         chart.getAxisSet().adjustRange();
@@ -415,24 +540,9 @@ public class XyPlotView extends CoreAnalysisView
 
     while (iter.hasNext())
     {
-      ICollection coll = (ICollection) iter.next();
-      if (!coll.isQuantity() && coll.getValuesCount() >= 1
-          && coll.getValuesCount() < MAX_SIZE)
+      IDocument<?> coll = (IDocument<?>) iter.next();
+      if (!coll.isQuantity() && coll.size() >= 1 && coll.size() < MAX_SIZE)
       {
-        final List<Point2D> values;
-
-        if (coll.isTemporal())
-        {
-          TemporalLocation loc = (TemporalLocation) coll;
-          values = loc.getValues();
-        }
-        else
-        {
-          info.limpet.data.impl.samples.StockTypes.NonTemporal.Location loc =
-              (info.limpet.data.impl.samples.StockTypes.NonTemporal.Location) coll;
-          values = loc.getValues();
-        }
-
         String seriesName = coll.getName();
         ILineSeries newSeries =
             (ILineSeries) chart.getSeriesSet().createSeries(SeriesType.LINE,
@@ -440,15 +550,15 @@ public class XyPlotView extends CoreAnalysisView
         newSeries.setSymbolType(PlotSymbolType.NONE);
         newSeries.setLineColor(PlottingHelpers.colorFor(seriesName));
 
-        double[] xData = new double[values.size()];
-        double[] yData = new double[values.size()];
+        double[] xData = new double[coll.size()];
+        double[] yData = new double[coll.size()];
 
-        Iterator<Point2D> vIter = values.iterator();
-
+        LocationDocument loc = (LocationDocument) coll;
+        Iterator<Point2D> lIter = loc.getLocationIterator();
         int ctr = 0;
-        while (vIter.hasNext())
+        while (lIter.hasNext())
         {
-          Point2D geom = vIter.next();
+          Point2D geom = lIter.next();
           xData[ctr] = geom.getX();
           yData[ctr++] = geom.getY();
         }
@@ -481,8 +591,12 @@ public class XyPlotView extends CoreAnalysisView
   protected boolean appliesToMe(List<IStoreItem> res,
       CollectionComplianceTests tests)
   {
-    return tests.allCollections(res) && tests.allQuantity(res)
-        || tests.allNonQuantity(res);
+    final boolean allNonQuantity = tests.allNonQuantity(res);
+    final boolean allCollections = tests.allCollections(res);
+    final boolean allQuantity = tests.allQuantity(res);
+    final boolean suitableIndex =
+        tests.allIndexed(res) || tests.allNonIndexed(res);
+    return allCollections && suitableIndex && (allQuantity || allNonQuantity);
   }
 
   @Override
@@ -491,16 +605,15 @@ public class XyPlotView extends CoreAnalysisView
     return "Pending";
   }
 
-  @SuppressWarnings("unchecked")
   @Override
   protected void datasetDataChanged(IStoreItem subject)
   {
     final String name;
-    ICollection coll = (ICollection) subject;
+    IDocument<?> coll = (IDocument<?>) subject;
     if (coll.isQuantity())
     {
-      IQuantityCollection<Quantity> cq = (IQuantityCollection<Quantity>) coll;
-      Unit<Quantity> units = cq.getUnits();
+      NumberDocument cq = (NumberDocument) coll;
+      Unit<?> units = cq.getUnits();
       name = seriesNameFor(cq, units);
     }
     else

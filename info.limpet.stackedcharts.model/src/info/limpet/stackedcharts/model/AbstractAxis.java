@@ -3,7 +3,6 @@
 package info.limpet.stackedcharts.model;
 
 import java.awt.Color;
-import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EObject;
 

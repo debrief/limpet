@@ -14,18 +14,18 @@
  *******************************************************************************/
 package info.limpet.ui.data_provider.data;
 
+import info.limpet.ICommand;
+import info.limpet.IDocument;
+import info.limpet.IStoreGroup;
+import info.limpet.IStoreItem;
+import info.limpet.impl.StoreGroup;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
-
-import info.limpet.ICollection;
-import info.limpet.ICommand;
-import info.limpet.IStoreGroup;
-import info.limpet.IStoreItem;
-import info.limpet.data.store.StoreGroup;
 
 /**
  * make the Limpet data store suitable for displaying in a tree control
@@ -39,11 +39,11 @@ public class DataModel implements ITreeContentProvider
   public static final String PRECEDENTS = "Precedents";
 
   private void addCollectionItems(final List<Object> res,
-      final CollectionWrapper cw)
+      final DocumentWrapper cw)
   {
-    final ICollection coll = cw.getCollection();
+    final IDocument<?> coll = cw.getDocument();
 
-    final ICommand<?> prec = coll.getPrecedent();
+    final ICommand prec = coll.getPrecedent();
     if (prec != null)
     {
       final NamedList dList = new NamedList(cw, PRECEDENTS);
@@ -51,14 +51,14 @@ public class DataModel implements ITreeContentProvider
       res.add(dList);
     }
 
-    final List<ICommand<?>> dep = coll.getDependents();
+    final List<ICommand> dep = coll.getDependents();
     if (dep != null)
     {
       final NamedList dList = new NamedList(cw, DEPENDENTS);
-      final Iterator<ICommand<?>> dIter = dep.iterator();
+      final Iterator<ICommand> dIter = dep.iterator();
       while (dIter.hasNext())
       {
-        final ICommand<?> thisI = dIter.next();
+        final ICommand thisI = dIter.next();
         dList.add(new CommandWrapper(dList, thisI));
       }
 
@@ -72,7 +72,7 @@ public class DataModel implements ITreeContentProvider
 
   private void addCommandItems(final List<Object> res, final CommandWrapper cw)
   {
-    final ICommand<?> coll = cw.getCommand();
+    final ICommand coll = cw.getCommand();
 
     final List<? extends IStoreItem> inp = coll.getInputs();
     if (inp != null)
@@ -82,9 +82,9 @@ public class DataModel implements ITreeContentProvider
       while (dIter.hasNext())
       {
         final IStoreItem thisI = dIter.next();
-        if (thisI instanceof ICollection)
+        if (thisI instanceof IDocument)
         {
-          dList.add(new CollectionWrapper(dList, (ICollection) thisI));
+          dList.add(new DocumentWrapper(dList, (IDocument<?>) thisI));
         }
         else if (thisI instanceof IStoreGroup)
         {
@@ -107,9 +107,9 @@ public class DataModel implements ITreeContentProvider
       while (dIter.hasNext())
       {
         final IStoreItem thisI = dIter.next();
-        if (thisI instanceof ICollection)
+        if (thisI instanceof IDocument)
         {
-          dList.add(new CollectionWrapper(dList, (ICollection) thisI));
+          dList.add(new DocumentWrapper(dList, (IDocument<?>) thisI));
         }
         else if (thisI instanceof IStoreGroup)
         {
@@ -133,9 +133,9 @@ public class DataModel implements ITreeContentProvider
     while (dIter.hasNext())
     {
       final IStoreItem thisI = dIter.next();
-      if (thisI instanceof ICollection)
+      if (thisI instanceof IDocument)
       {
-        res.add(new CollectionWrapper(cw, (ICollection) thisI));
+        res.add(new DocumentWrapper(cw, (IDocument<?>) thisI));
       }
       else if (thisI instanceof IStoreGroup)
       {
@@ -193,10 +193,10 @@ public class DataModel implements ITreeContentProvider
   {
     final List<Object> res = new ArrayList<Object>();
 
-    if (parentElement instanceof CollectionWrapper)
+    if (parentElement instanceof DocumentWrapper)
     {
       // see if it has predecessors or successors
-      addCollectionItems(res, (CollectionWrapper) parentElement);
+      addCollectionItems(res, (DocumentWrapper) parentElement);
     }
     else if (parentElement instanceof CommandWrapper)
     {
@@ -235,9 +235,9 @@ public class DataModel implements ITreeContentProvider
       while (iter.hasNext())
       {
         final IStoreItem item = iter.next();
-        if (item instanceof ICollection)
+        if (item instanceof IDocument)
         {
-          list.add(new CollectionWrapper(null, (ICollection) item));
+          list.add(new DocumentWrapper(null, (IDocument<?>) item));
         }
         else if (item instanceof IStoreGroup)
         {
@@ -271,12 +271,12 @@ public class DataModel implements ITreeContentProvider
       // has it already been shown?
       if (!alreadyShown(core))
       {
-        if (element instanceof CollectionWrapper)
+        if (element instanceof DocumentWrapper)
         {
           // see if it has predecessors or successors
-          final CollectionWrapper cw = (CollectionWrapper) element;
+          final DocumentWrapper cw = (DocumentWrapper) element;
 
-          final ICollection coll = cw.getCollection();
+          final IDocument<?> coll = cw.getDocument();
           final boolean hasDependents =
               coll.getDependents() != null && coll.getDependents().size() > 0;
           final boolean hasPrecedents = coll.getPrecedent() != null;
@@ -286,7 +286,7 @@ public class DataModel implements ITreeContentProvider
         {
           // see if it has predecessors or successors
           final CommandWrapper cw = (CommandWrapper) element;
-          final ICommand<?> comm = cw.getCommand();
+          final ICommand comm = cw.getCommand();
 
           res = comm.getInputs().size() > 0 || comm.getOutputs().size() > 0;
         }

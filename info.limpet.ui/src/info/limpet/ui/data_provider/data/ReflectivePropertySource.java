@@ -3,6 +3,7 @@ package info.limpet.ui.data_provider.data;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -20,7 +21,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
 
-import info.limpet.UIProperty;
+import info.limpet.impl.UIProperty;
 import info.limpet.ui.Activator;
 
 /**
@@ -93,43 +94,52 @@ public class ReflectivePropertySource implements IPropertySource
           Introspector.getBeanInfo(object.getClass()).getPropertyDescriptors();
       for (PropertyDescriptor beanPropertyDescriptor : beanPropertyDescriptors)
       {
-        UIProperty annotation =
-            beanPropertyDescriptor.getReadMethod().getAnnotation(
-                UIProperty.class);
-        if (annotation != null)
+        final Method readMethod = beanPropertyDescriptor.getReadMethod();
+        if(readMethod == null)
         {
-
-          // skip descriptor if not visible
-          if (!annotation.visibleWhen().isEmpty()
-              && !evaluateVisibility(object, beanPropertyDescriptors,
-                  annotation.visibleWhen()))
+          // don't need to report this, it's now expected behaviour
+          // System.out.println("Can't find read method for:" + beanPropertyDescriptor.getDisplayName());
+        }
+        if (readMethod != null)
+        {
+          UIProperty annotation = readMethod.getAnnotation(UIProperty.class);
+          if (annotation != null)
           {
-            continue;
+
+            // skip descriptor if not visible
+            if (!annotation.visibleWhen().isEmpty()
+                && !evaluateVisibility(object, beanPropertyDescriptors,
+                    annotation.visibleWhen()))
+            {
+              continue;
+            }
+
+            org.eclipse.ui.views.properties.PropertyDescriptor descriptor =
+                null;
+
+            String propId = beanPropertyDescriptor.getName();
+            if (beanPropertyDescriptor.getWriteMethod() != null)
+            {
+              PropertyTypeHandler propertyTypeHandler =
+                  getPropertyTypeHandler(beanPropertyDescriptor
+                      .getPropertyType());
+              descriptor =
+                  propertyTypeHandler.createPropertyDescriptor(propId,
+                      annotation);
+            }
+            else
+            {
+              // read only descriptor
+              descriptor =
+                  new org.eclipse.ui.views.properties.PropertyDescriptor(
+                      propId, annotation.name());
+              descriptor.setCategory(annotation.category());
+            }
+
+            result.add(descriptor);
+
+            descriptorPerProperty.put(propId, beanPropertyDescriptor);
           }
-
-          org.eclipse.ui.views.properties.PropertyDescriptor descriptor = null;
-
-          String propId = beanPropertyDescriptor.getName();
-          if (beanPropertyDescriptor.getWriteMethod() != null)
-          {
-            PropertyTypeHandler propertyTypeHandler =
-                getPropertyTypeHandler(beanPropertyDescriptor.getPropertyType());
-            descriptor =
-                propertyTypeHandler
-                    .createPropertyDescriptor(propId, annotation);
-          }
-          else
-          {
-            // read only descriptor
-            descriptor =
-                new org.eclipse.ui.views.properties.PropertyDescriptor(propId,
-                    annotation.name());
-            descriptor.setCategory(annotation.category());
-          }
-
-          result.add(descriptor);
-
-          descriptorPerProperty.put(propId, beanPropertyDescriptor);
         }
       }
     }

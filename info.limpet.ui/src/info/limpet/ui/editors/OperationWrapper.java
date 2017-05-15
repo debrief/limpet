@@ -17,8 +17,8 @@ package info.limpet.ui.editors;
 import info.limpet.ICommand;
 import info.limpet.IContext;
 import info.limpet.IOperation;
-import info.limpet.IStore;
-import info.limpet.IStoreItem;
+import info.limpet.IStoreGroup;
+import info.limpet.ui.data_provider.data.ISelectionProvider;
 
 import java.util.Collection;
 
@@ -27,13 +27,13 @@ import org.eclipse.jface.resource.ImageDescriptor;
 
 public class OperationWrapper extends Action
 {
-	private final IOperation<IStoreItem> limpetAction;
+	private final IOperation limpetAction;
 	private final IContext context;
-	private final IStore store;
+	private final IStoreGroup store;
 	private final ISelectionProvider provider;
 
-	public OperationWrapper(IOperation<IStoreItem> limpetAction, String title,
-			ImageDescriptor imageDescriptor, IContext context, IStore store,
+	public OperationWrapper(IOperation limpetAction, String title,
+			ImageDescriptor imageDescriptor, IContext context, IStoreGroup store,
 			ISelectionProvider provider)
 	{
 		this.limpetAction = limpetAction;
@@ -47,11 +47,11 @@ public class OperationWrapper extends Action
 	@Override
 	public void run()
 	{
-		Collection<ICommand<IStoreItem>> ops = limpetAction.actionsFor(
+		Collection<ICommand> ops = limpetAction.actionsFor(
 				provider.getSelection(), store, context);
 		if (ops != null && ops.size() == 1)
 		{
-			ICommand<IStoreItem> first = ops.iterator().next();
+			ICommand first = ops.iterator().next();
 			first.execute();
 		}
 		else

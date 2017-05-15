@@ -16,7 +16,7 @@ package info.limpet.ui.analysis_view;
 
 import info.limpet.IStoreItem;
 import info.limpet.analysis.AnalysisLibrary;
-import info.limpet.data.operations.CollectionComplianceTests;
+import info.limpet.operations.CollectionComplianceTests;
 import info.limpet.ui.core_view.CoreAnalysisView;
 
 import java.util.ArrayList;
@@ -45,7 +45,7 @@ public class AnalysisView extends CoreAnalysisView
 	 */
 	public static final String ID = "info.limpet.ui.AnalysisView";
 
-	private TableViewer viewer;
+	private transient TableViewer viewer;
 
 	public AnalysisView()
 	{

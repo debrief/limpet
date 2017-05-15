@@ -17,14 +17,12 @@ package info.limpet.ui.operations;
 import info.limpet.ICommand;
 import info.limpet.IContext;
 import info.limpet.IOperation;
-import info.limpet.IStore;
 import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
-import info.limpet.ITemporalObjectCollection;
-import info.limpet.ITemporalQuantityCollection;
-import info.limpet.data.commands.AbstractCommand;
-import info.limpet.data.operations.CollectionComplianceTests;
-import info.limpet.data.store.StoreGroup;
+import info.limpet.impl.NumberDocument;
+import info.limpet.impl.StoreGroup;
+import info.limpet.operations.AbstractCommand;
+import info.limpet.operations.CollectionComplianceTests;
 import info.limpet.stackedcharts.model.AngleAxis;
 import info.limpet.stackedcharts.model.Chart;
 import info.limpet.stackedcharts.model.ChartSet;
@@ -46,14 +44,9 @@ import java.awt.Color;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-
-import javax.measure.Measurable;
-import javax.measure.quantity.Quantity;
-import javax.measure.unit.Unit;
 
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
@@ -62,7 +55,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 
-public class ShowInTacticalOverview implements IOperation<IStoreItem>
+public class ShowInTacticalOverview implements IOperation
 {
   private final CollectionComplianceTests aTests =
       new CollectionComplianceTests();
@@ -78,14 +71,14 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
     return aTests;
   }
 
-  public Collection<ICommand<IStoreItem>> actionsFor(
-      List<IStoreItem> selection, IStore destination, IContext context)
+  public List<ICommand> actionsFor(
+      List<IStoreItem> selection, IStoreGroup destination, IContext context)
   {
-    Collection<ICommand<IStoreItem>> res =
-        new ArrayList<ICommand<IStoreItem>>();
+    List<ICommand> res =
+        new ArrayList<ICommand>();
     if (appliesTo(selection))
     {
-      ICommand<IStoreItem> newC =
+      ICommand newC =
           new ShowInTacticalOverviewOperation(_title, selection, context);
       res.add(newC);
     }
@@ -167,7 +160,7 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
   }
 
   public static class ShowInTacticalOverviewOperation extends
-      AbstractCommand<IStoreItem>
+      AbstractCommand
   {
     public ShowInTacticalOverviewOperation(String title,
         List<IStoreItem> selection, IContext context)
@@ -176,11 +169,11 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
           selection, context);
     }
 
-    @Override
-    protected String getOutputName()
-    {
-      return null;
-    }
+//    @Override
+//    protected String getOutputName()
+//    {
+//      return null;
+//    }
 
     @Override
     public void execute()
@@ -424,17 +417,16 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
           for (IStoreItem coll : sensor)
           {
             ScatterSet scatter = factory.createScatterSet();
-            @SuppressWarnings("unchecked")
-            ITemporalObjectCollection<Object> cuts =
-                (ITemporalObjectCollection<Object>) coll;
+            NumberDocument cuts =
+                (NumberDocument) coll;
 
             // name the scatter set
             scatter.setName(cuts.getName());
 
-            Iterator<Long> times = cuts.getTimes().iterator();
-            while (times.hasNext())
-            {
-              Long long1 = (Long) times.next();
+            Iterator<Double> lIter = cuts.getIndex();
+            while(lIter.hasNext())
+            {            
+              Double long1 = (Double) lIter.next();
               Datum item = factory.createDatum();
               item.setVal(long1);
               scatter.getDatums().add(item);
@@ -489,10 +481,10 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
       ChartSet chartSet, java.awt.Color color, MarkerStyle marker,
       boolean showInLegend)
   {
-    ITemporalQuantityCollection<?> it =
-        (ITemporalQuantityCollection<?>) iStoreItem;
-    List<Long> times = it.getTimes();
-    List<?> values = it.getValues();
+    NumberDocument it =
+        (NumberDocument) iStoreItem;
+    Iterator<Double> times = it.getIndex();
+    Iterator<Double> values = it.getIterator();
 
     Dataset newD = factory.createDataset();
     newD.setName(name);
@@ -504,14 +496,10 @@ public class ShowInTacticalOverview implements IOperation<IStoreItem>
     styling.setLineThickness(2d);
     newD.setStyling(styling);
 
-    for (int i = 0; i < times.size(); i++)
+    while(times.hasNext())
     {
-      double time = times.get(i);
-
-      @SuppressWarnings("unchecked")
-      Measurable<Quantity> quantity = (Measurable<Quantity>) values.get(i);
-      @SuppressWarnings("unchecked")
-      double value = quantity.doubleValue((Unit<Quantity>) it.getUnits());
+      double time = times.next();
+      double value = values.next();
       DataItem newI = factory.createDataItem();
       newI.setDependentVal(value);
       newI.setIndependentVal(time);

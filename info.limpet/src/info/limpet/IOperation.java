@@ -16,11 +16,11 @@ package info.limpet;
 
 
 
-import java.util.Collection;
+
 import java.util.List;
 
 
-public interface IOperation<T extends IStoreItem>
+public interface IOperation
 {
-	Collection<ICommand<T>> actionsFor(List<T> selection, IStore destination, IContext context);
+	List<ICommand> actionsFor(List<IStoreItem> selection, IStoreGroup destination, IContext context);
 }

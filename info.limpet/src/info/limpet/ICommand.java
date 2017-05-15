@@ -14,6 +14,7 @@
  *****************************************************************************/
 package info.limpet;
 
+import info.limpet.impl.Document;
 
 import java.util.List;
 
@@ -23,7 +24,7 @@ import java.util.List;
  * @author ian
  *
  */
-public interface ICommand<T extends IStoreItem> extends IChangeListener, IStoreItem
+public interface ICommand extends IChangeListener, IStoreItem
 {
 	String getDescription();
 	void execute();
@@ -31,8 +32,8 @@ public interface ICommand<T extends IStoreItem> extends IChangeListener, IStoreI
 	void redo();
 	boolean canUndo();
 	boolean canRedo();
-	List<T> getOutputs();
-	List<T> getInputs();
+	List<Document<?>> getOutputs();
+	List<IStoreItem> getInputs();
 	boolean getDynamic();
 	void setDynamic(boolean dynamic);
 	

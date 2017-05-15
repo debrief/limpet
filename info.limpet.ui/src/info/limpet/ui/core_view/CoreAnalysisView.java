@@ -16,7 +16,7 @@ package info.limpet.ui.core_view;
 
 import info.limpet.IChangeListener;
 import info.limpet.IStoreItem;
-import info.limpet.data.operations.CollectionComplianceTests;
+import info.limpet.operations.CollectionComplianceTests;
 import info.limpet.ui.Activator;
 
 import java.util.ArrayList;
@@ -50,15 +50,16 @@ import org.eclipse.ui.part.ViewPart;
 public abstract class CoreAnalysisView extends ViewPart
 {
 
-  private Action newView;
-  private Action copyToClipboard;
-  private Action followSelection;
-  private ISelectionListener selListener;
-  private final CollectionComplianceTests aTests;
-  private final List<IStoreItem> curList = new ArrayList<IStoreItem>();
-  private IChangeListener changeListener;
+  private transient Action newView;
+  private transient Action copyToClipboard;
+  private transient Action followSelection;
+  private transient ISelectionListener selListener;
+  private transient final CollectionComplianceTests aTests;
+  private transient final List<IStoreItem> curList = new ArrayList<IStoreItem>();
+  private transient IChangeListener changeListener;
   private final String _myId;
   private final String _myTitle;
+  private ISelection _curSelection;
 
   public CoreAnalysisView(String myId, String myTitle)
   {
@@ -136,6 +137,15 @@ public abstract class CoreAnalysisView extends ViewPart
 
   protected void newSelection(ISelection selection)
   {
+    if(selection == _curSelection)
+    {
+      return;
+    }
+    else
+    {
+      _curSelection = selection;
+    }
+    
     List<IStoreItem> res = new ArrayList<IStoreItem>();
     if (selection instanceof StructuredSelection)
     {
@@ -194,7 +204,7 @@ public abstract class CoreAnalysisView extends ViewPart
       while (iter.hasNext())
       {
         IStoreItem iC = iter.next();
-        iC.addChangeListener(changeListener);
+        iC.addTransientChangeListener(changeListener);
       }
 
       // ok, display them
@@ -203,7 +213,7 @@ public abstract class CoreAnalysisView extends ViewPart
     else
     {
       // ok, nothing to display - clear the graph
-      display(new ArrayList<IStoreItem>());
+      // display(new ArrayList<IStoreItem>());
     }
   }
 
@@ -215,7 +225,7 @@ public abstract class CoreAnalysisView extends ViewPart
       while (iter.hasNext())
       {
         IStoreItem iC = iter.next();
-        iC.removeChangeListener(changeListener);
+        iC.removeTransientChangeListener(changeListener);
       }
 
       // and forget about them all

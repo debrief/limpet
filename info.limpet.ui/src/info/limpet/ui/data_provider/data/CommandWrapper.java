@@ -22,10 +22,10 @@ import org.eclipse.ui.views.properties.IPropertySource;
 
 public class CommandWrapper implements IAdaptable, LimpetWrapper
 {
-  private final ICommand<?> _command;
+  private final ICommand _command;
   private final LimpetWrapper _parent;
 
-  public CommandWrapper(final LimpetWrapper parent, final ICommand<?> prec)
+  public CommandWrapper(final LimpetWrapper parent, final ICommand prec)
   {
     _parent = parent;
     _command = prec;
@@ -84,7 +84,7 @@ public class CommandWrapper implements IAdaptable, LimpetWrapper
     return true;
   }
 
-  public ICommand<?> getCommand()
+  public ICommand getCommand()
   {
     return _command;
   }

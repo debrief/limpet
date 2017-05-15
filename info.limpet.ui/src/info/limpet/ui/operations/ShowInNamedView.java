@@ -17,14 +17,13 @@ package info.limpet.ui.operations;
 import info.limpet.ICommand;
 import info.limpet.IContext;
 import info.limpet.IOperation;
-import info.limpet.IStore;
+import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
-import info.limpet.data.commands.AbstractCommand;
-import info.limpet.data.operations.CollectionComplianceTests;
+import info.limpet.operations.AbstractCommand;
+import info.limpet.operations.CollectionComplianceTests;
 import info.limpet.ui.core_view.CoreAnalysisView;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.ui.IViewPart;
@@ -34,7 +33,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 
-public class ShowInNamedView implements IOperation<IStoreItem>
+public class ShowInNamedView implements IOperation
 {
   private final CollectionComplianceTests aTests =
       new CollectionComplianceTests();
@@ -52,14 +51,14 @@ public class ShowInNamedView implements IOperation<IStoreItem>
     return aTests;
   }
 
-  public Collection<ICommand<IStoreItem>> actionsFor(
-      List<IStoreItem> selection, IStore destination, IContext context)
+  public List<ICommand> actionsFor(
+      List<IStoreItem> selection, IStoreGroup destination, IContext context)
   {
-    Collection<ICommand<IStoreItem>> res =
-        new ArrayList<ICommand<IStoreItem>>();
+    List<ICommand> res =
+        new ArrayList<ICommand>();
     if (appliesTo(selection))
     {
-      ICommand<IStoreItem> newC =
+      ICommand newC =
           new ShowInViewOperation(_title, selection, theId, context);
       res.add(newC);
     }
@@ -72,7 +71,7 @@ public class ShowInNamedView implements IOperation<IStoreItem>
     return aTests.allCollections(selection) && aTests.nonEmpty(selection);
   }
 
-  public static class ShowInViewOperation extends AbstractCommand<IStoreItem>
+  public static class ShowInViewOperation extends AbstractCommand
   {
 
     private final String _id;
@@ -85,11 +84,11 @@ public class ShowInNamedView implements IOperation<IStoreItem>
       _id = id;
     }
 
-    @Override
-    protected String getOutputName()
-    {
-      return null;
-    }
+//    @Override
+//    protected String getOutputName()
+//    {
+//      return null;
+//    }
 
     @Override
     public void execute()

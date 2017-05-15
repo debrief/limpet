@@ -14,11 +14,11 @@
  *****************************************************************************/
 package info.limpet.ui.editors;
 
+import info.limpet.ui.data_provider.data.DataModel;
+
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IPersistableElement;
-
-import info.limpet.ui.data_provider.data.DataModel;
 
 /**
  * 

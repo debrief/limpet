@@ -14,9 +14,9 @@
  *****************************************************************************/
 package info.limpet.analysis;
 
-import info.limpet.ICollection;
+import info.limpet.IDocument;
 import info.limpet.IStoreItem;
-import info.limpet.data.operations.CollectionComplianceTests;
+import info.limpet.operations.CollectionComplianceTests;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -45,17 +45,29 @@ public abstract class GeneralDescription extends CoreAnalysis
       // ok, let's go for it.
       for (Iterator<IStoreItem> iter = selection.iterator(); iter.hasNext();)
       {
-        ICollection thisC = (ICollection) iter.next();
+        IDocument<?> thisC = (IDocument<?>) iter.next();
 
         titles.add("Collection");
         values.add(thisC.getName());
         titles.add("Size");
-        values.add("" + thisC.getValuesCount());
-        titles.add("Temporal");
-        values.add("" + thisC.isTemporal());
+        values.add("" + thisC.size());
         titles.add("Quantity");
         values.add("" + thisC.isQuantity());
-
+        titles.add("Indexed");
+        values.add("" + thisC.isIndexed());
+        if (thisC.isIndexed())
+        {
+          titles.add("Index units");
+          if (thisC.getIndexUnits() == null)
+          {
+            System.err.println(thisC + " is missing index units");
+            values.add("MISSING");
+          }
+          else
+          {
+            values.add("" + thisC.getIndexUnits().toString());
+          }
+        }
       }
     }
 
