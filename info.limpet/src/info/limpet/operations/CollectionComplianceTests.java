@@ -85,7 +85,27 @@ public class CollectionComplianceTests
     }
     return allValid;
   }
-
+  
+  /**
+   * get the first location dataset
+   * 
+   * @param selection
+   * @return true/false
+   */
+  public LocationDocument getFirstLocation(IStoreGroup track)
+  {
+    Iterator<IStoreItem> iter = track.iterator();
+    while (iter.hasNext())
+    {
+      IStoreItem thisI = (IStoreItem) iter.next();
+      
+      if (thisI instanceof LocationDocument)
+      {
+        return (LocationDocument) thisI;
+      }
+    }
+    return null;
+  }
   /**
    * check if the series are all non locations
    * 
@@ -760,16 +780,28 @@ public class CollectionComplianceTests
    */
   public boolean isATrack(IStoreGroup group)
   {
+    return isATrack(group, true, true);
+  }
+  
+  /**
+   * test for if a group contains enough data for us to treat it as a track
+   * 
+   * @param group
+   *          the group of tracks
+   * @return yes/no
+   */
+  public boolean isATrack(final IStoreGroup group, final boolean needsSpeed, final boolean needsCourse)
+  {
     boolean res = true;
 
     // ok, keep looping through, to check we have the right types
-    if (!isPresent(group, METRE.divide(SECOND).getDimension()))
+    if(needsSpeed && !isPresent(group, METRE.divide(SECOND).getDimension()))
     {
       return false;
     }
 
     // ok, keep looping through, to check we have the right types
-    if (!isPresent(group, SI.RADIAN.getDimension()))
+    if(needsCourse && !isPresent(group, SI.RADIAN.getDimension()))
     {
       return false;
     }
@@ -781,6 +813,8 @@ public class CollectionComplianceTests
 
     return res;
   }
+  
+  
 
   /**
    * convenience test to verify if children of the supplied item can all be treated as tracks
