@@ -85,7 +85,7 @@ public class CollectionComplianceTests
     }
     return allValid;
   }
-  
+
   /**
    * get the first location dataset
    * 
@@ -98,7 +98,7 @@ public class CollectionComplianceTests
     while (iter.hasNext())
     {
       IStoreItem thisI = (IStoreItem) iter.next();
-      
+
       if (thisI instanceof LocationDocument)
       {
         return (LocationDocument) thisI;
@@ -106,6 +106,7 @@ public class CollectionComplianceTests
     }
     return null;
   }
+
   /**
    * check if the series are all non locations
    * 
@@ -200,8 +201,8 @@ public class CollectionComplianceTests
   }
 
   /**
-   * determine if these datasets are suited to an indexed
-   * operation - where we interpolate time values
+   * determine if these datasets are suited to an indexed operation - where we interpolate time
+   * values
    * 
    * @param selection
    * @return
@@ -226,21 +227,21 @@ public class CollectionComplianceTests
           if (thisC.isIndexed())
           {
             Unit<?> thisUnit = thisC.getIndexUnits();
-            
-            if(units == null)
+
+            if (units == null)
             {
               units = thisUnit;
             }
             else
             {
-              if(!units.equals(thisUnit))
+              if (!units.equals(thisUnit))
               {
                 // incompatible units, don't bother
                 suitable = false;
                 break;
               }
             }
-            
+
             // NumberDocument nd = (NumberDocument) thisC;
             AxesMetadata axes =
                 thisC.getDataset().getFirstMetadata(AxesMetadata.class);
@@ -782,7 +783,7 @@ public class CollectionComplianceTests
   {
     return isATrack(group, true, true);
   }
-  
+
   /**
    * test for if a group contains enough data for us to treat it as a track
    * 
@@ -790,18 +791,19 @@ public class CollectionComplianceTests
    *          the group of tracks
    * @return yes/no
    */
-  public boolean isATrack(final IStoreGroup group, final boolean needsSpeed, final boolean needsCourse)
+  public boolean isATrack(final IStoreGroup group, final boolean needsSpeed,
+      final boolean needsCourse)
   {
     boolean res = true;
 
     // ok, keep looping through, to check we have the right types
-    if(needsSpeed && !isPresent(group, METRE.divide(SECOND).getDimension()))
+    if (needsSpeed && !isPresent(group, METRE.divide(SECOND).getDimension()))
     {
       return false;
     }
 
     // ok, keep looping through, to check we have the right types
-    if(needsCourse && !isPresent(group, SI.RADIAN.getDimension()))
+    if (needsCourse && !isPresent(group, SI.RADIAN.getDimension()))
     {
       return false;
     }
@@ -813,8 +815,6 @@ public class CollectionComplianceTests
 
     return res;
   }
-  
-  
 
   /**
    * convenience test to verify if children of the supplied item can all be treated as tracks
@@ -1141,33 +1141,55 @@ public class CollectionComplianceTests
       // data types
       if (iCollection != null && iCollection.isIndexed())
       {
-        Iterator<Double> lIter = iCollection.getIndex();
-        Double start = null;
-        Double end = null;
-        while (lIter.hasNext())
-        {
-          double thisT = lIter.next();
-          if (start == null)
-          {
-            start = thisT;
-          }
-
-          // remember the last item
-          end = thisT;
-        }
+        TimePeriod hisPeriod = getBoundsFor(iCollection);
 
         if (res == null)
         {
-          res = new TimePeriod(start, end);
+          res = hisPeriod;
         }
         else
         {
-          res.setStartTime(Math.max(res.getStartTime(), start));
-          res.setEndTime(Math.min(res.getEndTime(), end));
+          if (res.overlaps(hisPeriod))
+          {
+            // ok, constrain to the overlap
+            res.setStartTime(Math.max(res.getStartTime(), hisPeriod.startTime));
+            res.setEndTime(Math.min(res.getEndTime(), hisPeriod.endTime));
+          }
+          else
+          {
+            // they don't overlap. fail
+            return null;
+          }
         }
       }
     }
 
+    return res;
+  }
+
+  public TimePeriod getBoundsFor(IDocument<?> iCollection)
+  {
+    TimePeriod res = null;
+
+    if (iCollection.isIndexed())
+    {
+      Iterator<Double> lIter = iCollection.getIndex();
+      Double start = null;
+      Double end = null;
+      while (lIter.hasNext())
+      {
+        double thisT = lIter.next();
+        if (start == null)
+        {
+          start = thisT;
+        }
+
+        // remember the last item
+        end = thisT;
+      }
+
+      res = new TimePeriod(start, end);
+    }
     return res;
   }
 
@@ -1343,6 +1365,11 @@ public class CollectionComplianceTests
     public void setEndTime(double endTime)
     {
       this.endTime = endTime;
+    }
+
+    public boolean overlaps(TimePeriod his)
+    {
+      return this.endTime > his.startTime && this.startTime < his.endTime;
     }
   }
 
