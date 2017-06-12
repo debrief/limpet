@@ -38,7 +38,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.measure.quantity.Angle;
+import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 
 import org.eclipse.january.DatasetException;
@@ -59,26 +59,31 @@ public class BistaticAngleOperation implements IOperation
         new CollectionComplianceTests();
     final protected NumberDocumentBuilder _builder;
     final private Unit<?> _outputUnits;
+    private List<IStoreGroup> _subjects;
+    private IStoreGroup _target;
 
     public BistaticAngleCommand(final List<IStoreItem> selection,
+        final List<IStoreGroup> subjects, final IStoreGroup target,
         final IStoreGroup store, final IDocument<?> timeProvider,
-        final IContext context, Unit<?> outputUnits)
+        final IContext context)
     {
-      super("Bistatic angle at:" + selection.get(1).getName(),
-          "Calculate bistatic angle from " + selection.get(0).getName()
-              + " to:" + selection.get(1).getName(), store, false, false,
+      super("Bistatic angle at:" + target.getName(),
+          "Calculate bistatic angle at:" + target.getName() + " from " + subjects.get(0).getName()
+              + " to:" + subjects.get(1).getName(), store, false, false,
           selection, context);
       _timeProvider = timeProvider;
-      _outputUnits = outputUnits;
+      _subjects = subjects;
+      _target = target;
+      _outputUnits = SampleData.DEGREE_ANGLE;
       final Unit<?> indexUnits =
           _timeProvider == null ? null : SampleData.MILLIS;
       _builder =
           new NumberDocumentBuilder("Bistatic angle at:"
-              + selection.get(1).getName(), _outputUnits, null, indexUnits);
+              + target.getName(), _outputUnits, null, indexUnits);
     }
 
     protected void calcAndStore(final IGeoCalculator calc, final Point2D tx,
-        final Point2D target, Double heading, Double time)
+        final Point2D target, final Point2D rx, Double heading, Double time)
     {
       // now find the range between them
       final double thisDist = calc.getAngleBetween(tx, target);
@@ -175,17 +180,18 @@ public class BistaticAngleOperation implements IOperation
       init();
 
       // get the tracks
-      final IStoreGroup tx = (IStoreGroup) getInputs().get(0);
-      final IStoreGroup target = (IStoreGroup) getInputs().get(1);
+      final IStoreGroup tx = _subjects.get(0);
+      final IStoreGroup target = _target;
+      final IStoreGroup rx = _subjects.get(1);
 
       // get the location datasets
       final LocationDocument tx_track = aTests.getFirstLocation(tx);
       final LocationDocument tgt_track = aTests.getFirstLocation(target);
+      final LocationDocument rx_track = aTests.getFirstLocation(rx);
       final List<IStoreItem> tgtDocs = new ArrayList<IStoreItem>();
       tgtDocs.addAll(target);
       final NumberDocument tgt_hdg =
-          aTests.findCollectionWith(tgtDocs, SampleData.DEGREE_ANGLE.asType(
-              Angle.class).getDimension(), true);
+          aTests.findCollectionWith(tgtDocs, SI.RADIAN.getDimension(), true);
 
       // get a calculator to use
       final IGeoCalculator calc = GeoSupport.getCalculator();
@@ -225,21 +231,25 @@ public class BistaticAngleOperation implements IOperation
           locationsFor(tx_track, (Document<?>) times);
       final LocationDocument interp_tgt =
           locationsFor(tgt_track, (Document<?>) times);
+      final LocationDocument interp_rx =
+          locationsFor(rx_track, (Document<?>) times);
       final NumberDocument interp_headings =
           headingsFor(tgt_hdg, (Document<?>) times);
 
-      final Iterator<Point2D> t1Iter = interp_tx.getLocationIterator();
-      final Iterator<Point2D> t2Iter = interp_tgt.getLocationIterator();
+      final Iterator<Point2D> txIter = interp_tx.getLocationIterator();
+      final Iterator<Point2D> tgtIter = interp_tgt.getLocationIterator();
+      final Iterator<Point2D> rxIter = interp_rx.getLocationIterator();
       final Iterator<Double> hdgIter = interp_headings.getIterator();
       final Iterator<Double> timeIter = times.getIndex();
 
-      while (t1Iter.hasNext())
+      while (txIter.hasNext())
       {
-        final Point2D p1 = t1Iter.next();
-        final Point2D p2 = t2Iter.next();
+        final Point2D txP = txIter.next();
+        final Point2D targetP = tgtIter.next();
+        final Point2D rxP = rxIter.next();
         final double heading = hdgIter.next();
         final Double time = timeIter.next();
-        calcAndStore(calc, p1, p2, heading, time);
+        calcAndStore(calc, txP, targetP, rxP, heading, time);
       }
 
       return getOutputDocument();
@@ -458,6 +468,84 @@ public class BistaticAngleOperation implements IOperation
 
   protected boolean appliesTo(final List<IStoreItem> datasets)
   {
+    // ok, check we have three tracks
+    Iterator<IStoreItem> iter = datasets.iterator();
+    List<IStoreItem> tracks = new ArrayList<IStoreItem>();
+    while (iter.hasNext())
+    {
+      IStoreItem next = (IStoreItem) iter.next();
+      if (next instanceof IStoreGroup)
+      {
+        IStoreGroup group = (IStoreGroup) next;
+        LocationDocument locDoc = null;
+        Iterator<IStoreItem> docs = group.iterator();
+
+        while (docs.hasNext())
+        {
+          IStoreItem doc = (IStoreItem) docs.next();
+          if (doc instanceof LocationDocument)
+          {
+            locDoc = (LocationDocument) doc;
+          }
+        }
+
+        // did we find one in this track?
+        if (locDoc != null)
+        {
+          tracks.add(locDoc);
+        }
+      }
+    }
+
+    if (tracks.size() != 3)
+    {
+      // wrong num of tracks
+      return false;
+    }
+
+    // what's the time range?
+    final TimePeriod range = aTests.getBoundingRange(tracks);
+
+    // now pass through again, to see if we have heading data for the correct period
+    int hdgCtr = 0;
+    iter = datasets.iterator();
+    while (iter.hasNext())
+    {
+      IStoreItem next = (IStoreItem) iter.next();
+      if (next instanceof IStoreGroup)
+      {
+        IStoreGroup group = (IStoreGroup) next;
+        Iterator<IStoreItem> docs = group.iterator();
+        while (docs.hasNext())
+        {
+          IStoreItem doc = (IStoreItem) docs.next();
+          if (doc instanceof NumberDocument)
+          {
+            NumberDocument nd = (NumberDocument) doc;
+            // check units
+            if (nd.isQuantity() && nd.isIndexed() && nd.getUnits() != null
+                && nd.getUnits().equals(SampleData.DEGREE_ANGLE))
+            {
+              // ok, check it's in range
+              List<IStoreItem> tmpList = new ArrayList<IStoreItem>();
+              tmpList.add(nd);
+              TimePeriod hdgRange = aTests.getBoundingRange(tmpList);
+
+              if (range.overlaps(hdgRange))
+              {
+                hdgCtr++;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    if (hdgCtr <= 1)
+    {
+      return false;
+    }
+
     // ok, now check they overlap
     final boolean nonEmpty = getATests().nonEmpty(datasets);
     final boolean equalLength = getATests().allEqualLengthOrSingleton(datasets);
@@ -482,8 +570,8 @@ public class BistaticAngleOperation implements IOperation
    * @param selection
    * @return
    */
-  protected List<IStoreGroup>
-      getSuitableTracks(final List<IStoreItem> selection)
+  protected List<IStoreGroup> getSuitableTracks(
+      final List<IStoreItem> selection, final boolean needCourse)
   {
     final List<IStoreGroup> collatedTracks = new ArrayList<IStoreGroup>();
 
@@ -495,7 +583,7 @@ public class BistaticAngleOperation implements IOperation
       if (iStoreItem instanceof IStoreGroup)
       {
         final IStoreGroup group = (IStoreGroup) iStoreItem;
-        if (aTests.isATrack(group, false, true))
+        if (aTests.isATrack(group, false, needCourse))
         {
           collatedTracks.add(group);
         }
@@ -509,61 +597,114 @@ public class BistaticAngleOperation implements IOperation
   {
     List<ICommand> res = new ArrayList<ICommand>();
 
-    // get some tracks
-    List<IStoreGroup> collatedTracks = getSuitableTracks(rawSelection);
-    List<IStoreItem> datasets = getAsList(collatedTracks);
-
-    if (appliesTo(datasets))
+    // check we have three items selected, for the three tracks
+    if (rawSelection.size() == 3)
     {
-      // hmm, find the time provider
-      final IDocument<?> timeProvider =
-          getATests().getLongestIndexedCollection(datasets);
+      // ok, get the location datasets
+      List<IStoreGroup> allTracks = getSuitableTracks(rawSelection, false);
+      List<IStoreGroup> tracksWithHeading =
+          getSuitableTracks(rawSelection, true);
 
-      final IStoreGroup item1 = collatedTracks.get(0);
-      final IStoreGroup item2 = collatedTracks.get(1);
+      if (allTracks.size() != 3 && tracksWithHeading.size() < 1)
+      {
+        return res;
+      }
 
-      final ArrayList<IStoreItem> perm1 = new ArrayList<IStoreItem>();
-      perm1.add(item1);
-      perm1.add(item2);
+      // now move onto see if the track periods overlap
+      final TimePeriod tracksPeriod = trackIntersectionFor(allTracks);
 
-      final ArrayList<IStoreItem> perm2 = new ArrayList<IStoreItem>();
-      perm2.add(item2);
-      perm2.add(item1);
+      if (tracksPeriod == null)
+      {
+        return res;
+      }
 
-      ICommand comm1 =
-          new BistaticAngleCommand(perm1, destination, timeProvider, context,
-              SampleData.DEGREE_ANGLE.asType(Angle.class))
+      // ok, now run through the ones with heading
+      Iterator<IStoreGroup> cIter = tracksWithHeading.iterator();
+      while (cIter.hasNext())
+      {
+        IStoreGroup thisTarget = (IStoreGroup) cIter.next();
+
+        // ok, get the location
+        LocationDocument targetTrack = aTests.getFirstLocation(thisTarget);
+
+        // now the hearing
+        NumberDocument heading =
+            aTests.findCollectionWith(thisTarget, SampleData.DEGREE_ANGLE
+                .getDimension(), true);
+
+        // check it's indexed
+        if (heading.isIndexed())
+        {
+          // ok, check it's in the relevant time period
+          TimePeriod hdgBounds = aTests.getBoundsFor(heading);
+
+          //
+          if (!tracksPeriod.overlaps(hdgBounds))
           {
+            return res;
+          }
+          else
+          {
+            // ok, we can create a command for this permutation
 
-            @Override
-            protected String getOutputName()
+            // loop through all the tracks, so find the rx/tx
+            List<IStoreGroup> subjects = new ArrayList<IStoreGroup>();
+            Iterator<IStoreGroup> lIter = allTracks.iterator();
+            while (lIter.hasNext())
             {
-              return getContext().getInput("Generate bearing",
-                  NEW_DATASET_MESSAGE,
-                  "Bearing between " + super.getSubjectList());
+              IStoreGroup track = (IStoreGroup) lIter.next();
+
+              // check it's not us.
+              if (track.equals(thisTarget))
+              {
+                // ok, it's us. skip it
+              }
+              else
+              {
+                subjects.add(track);
+              }
             }
 
-          };
+            // ok, and the command
+            ICommand command =
+                new BistaticAngleCommand(rawSelection, subjects, thisTarget,
+                    destination, targetTrack, context)
+                {
 
-      ICommand comm2 =
-          new BistaticAngleCommand(perm2, destination, timeProvider, context,
-              SampleData.DEGREE_ANGLE.asType(Angle.class))
-          {
+                  @Override
+                  protected String getOutputName()
+                  {
+                    return getContext().getInput("Generate bearing",
+                        NEW_DATASET_MESSAGE,
+                        "Bearing between " + super.getSubjectList());
+                  }
 
-            @Override
-            protected String getOutputName()
-            {
-              return getContext().getInput("Generate bearing",
-                  NEW_DATASET_MESSAGE,
-                  "Bearing between " + super.getSubjectList());
-            }
-          };
-
-      res.add(comm1);
-      res.add(comm2);
-
+                };
+            res.add(command);
+          }
+        }
+        else
+        {
+          // ok, carry on with the next one
+          continue;
+        }
+      }
     }
-
     return res;
+  }
+
+  private TimePeriod trackIntersectionFor(List<IStoreGroup> allTracks)
+  {
+    Iterator<IStoreGroup> iter = allTracks.iterator();
+    List<IStoreItem> tracks = new ArrayList<IStoreItem>();
+    while (iter.hasNext())
+    {
+      IStoreGroup track = (IStoreGroup) iter.next();
+      // ok, get the tarck
+      LocationDocument doc = aTests.getFirstLocation(track);
+      tracks.add(doc);
+    }
+    TimePeriod period = aTests.getBoundingRange(tracks);
+    return period;
   }
 }
