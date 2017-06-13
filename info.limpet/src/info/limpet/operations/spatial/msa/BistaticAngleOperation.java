@@ -92,22 +92,18 @@ public class BistaticAngleOperation implements IOperation
     @Override
     public void execute()
     {
-      // get the output
-      final DoubleDataset dataset = performCalc();
+      // perform the calculation
+      performCalc();
 
-      // name the output
-      dataset.setName(getOutputName());
+      // get the output documents
+      NumberDocument biDataset = _bistaticBuilder.toDocument();
+      NumberDocument biADataset = _bistaticAspectBuilder.toDocument();
 
       // now create the output dataset
-      final NumberDocument output =
-          new NumberDocument(dataset, this, _outputUnits);
-      if (output.isIndexed())
-      {
-        output.setIndexUnits(_bistaticBuilder.getIndexUnits());
-      }
 
       // store the output
-      super.addOutput(output);
+      super.addOutput(biDataset);
+      super.addOutput(biADataset);
 
       // tell each series that we're a dependent
       final Iterator<IStoreItem> iter = getInputs().iterator();
@@ -123,21 +119,13 @@ public class BistaticAngleOperation implements IOperation
       }
 
       // ok, done
-      getStore().add(output);
+      getStore().add(biDataset);
+      getStore().add(biADataset);
 
       // tell the output it's been updated (by now it should
       // have a full set of listeners
-      output.fireDataChanged();
-    }
-
-    /**
-     * convert the output to a document
-     * 
-     * @return
-     */
-    private DoubleDataset getOutputDocument()
-    {
-      return (DoubleDataset) _bistaticBuilder.toDocument().getDataset();
+      biDataset.fireDataChanged();
+      biADataset.fireDataChanged();
     }
 
     /**
@@ -157,6 +145,7 @@ public class BistaticAngleOperation implements IOperation
     private void init()
     {
       _bistaticBuilder.clear();
+      _bistaticAspectBuilder.clear();
     }
 
     /**
@@ -165,7 +154,7 @@ public class BistaticAngleOperation implements IOperation
      * 
      * @param unit
      */
-    private DoubleDataset performCalc()
+    private void performCalc()
     {
       // clear the output data
       init();
@@ -191,7 +180,7 @@ public class BistaticAngleOperation implements IOperation
 
       if (_timeProvider == null)
       {
-        return null;
+        return;
       }
 
       // and the bounding period
@@ -242,20 +231,28 @@ public class BistaticAngleOperation implements IOperation
         final Double time = timeIter.next();
         calcAndStore(calc, txP, targetP, rxP, heading, time, _bistaticBuilder, _bistaticAspectBuilder);
       }
-
-      return getOutputDocument();
     }
 
     @Override
     protected void recalculate(final IStoreItem subject)
     {
       // clear out the lists, first
-      final DoubleDataset ds = performCalc();
-      final Document<?> output = getOutputs().get(0);
-      output.setDataset(ds);
+      performCalc();
+      
+      // get the output documents
+      final NumberDocument biDataset = _bistaticBuilder.toDocument();
+      final NumberDocument biADataset = _bistaticAspectBuilder.toDocument();
 
+      // get the existing outputs
+      NumberDocument realBi = (NumberDocument) getOutputs().get(0);
+      NumberDocument realBiA = (NumberDocument) getOutputs().get(1);
+      
+      realBi.copy(biDataset);
+      realBiA.copy(biADataset);
+      
       // and fire updates
-      output.fireDataChanged();
+      realBi.fireDataChanged();
+      realBiA.fireDataChanged();
     }
   }
 
@@ -713,9 +710,6 @@ public class BistaticAngleOperation implements IOperation
   public static void calcAndStore(final IGeoCalculator calc, final Point2D tx,
       final Point2D target, final Point2D rx, Double heading, Double time, NumberDocumentBuilder bistaticBuilder, NumberDocumentBuilder bistaticAspectBuilder)
   {
-  //  System.out.println("examining:" + tx + ", " + target + "," + rx + ", " + heading + ", " + time);
-    
-    
     // ok start with two angles
     double toSource = calc.getAngleBetween(target, tx);
     double toReceiver = calc.getAngleBetween(target, rx);
@@ -736,6 +730,9 @@ public class BistaticAngleOperation implements IOperation
     {
       biAspectAngle += 360d;
     }
+    
+    // and make sure it's positive
+    biAspectAngle = Math.abs(biAspectAngle);
     
     bistaticBuilder.add(time, biAngle);
     bistaticAspectBuilder.add(time, biAspectAngle);
