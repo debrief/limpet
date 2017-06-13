@@ -10,16 +10,22 @@ import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
 import info.limpet.impl.MockContext;
 import info.limpet.impl.NumberDocument;
+import info.limpet.impl.NumberDocumentBuilder;
 import info.limpet.impl.SampleData;
 import info.limpet.impl.StoreGroup;
+import info.limpet.operations.spatial.GeoSupport;
+import info.limpet.operations.spatial.IGeoCalculator;
 import info.limpet.operations.spatial.msa.BistaticAngleOperation;
 import info.limpet.persistence.CsvParser;
 
+import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.measure.unit.SI;
 
 import org.junit.Test;
 
@@ -118,6 +124,86 @@ public class TestBistaticAngleCalculations
 
     // check the store contents
     assertEquals("correct datasets", 4, store.size());
+
+  }
+
+  @Test
+  public void testCalculation()
+  {
+    NumberDocumentBuilder bi =
+        new NumberDocumentBuilder("Bi angle", SampleData.DEGREE_ANGLE, null,
+            SI.SECOND);
+    NumberDocumentBuilder biA =
+        new NumberDocumentBuilder("Bi Aspect angle", SampleData.DEGREE_ANGLE,
+            null, SI.SECOND);
+
+    double heading = 15;
+    Point2D tx = new Point2D.Double(2, 1);
+    Point2D tgt = new Point2D.Double(1, 1);
+    Point2D rx = new Point2D.Double(1.1, 0);
+    final double time = 1000d;
+
+    final IGeoCalculator calc = GeoSupport.getCalculator();
+    BistaticAngleOperation.calcAndStore(calc, tx, tgt, rx, heading, time, bi,
+        biA);
+
+    // look at hte results
+    assertEquals("correct bi angle", 85, bi.getValues().get(0), 1);
+    assertEquals("correct bi A angle", 117, biA.getValues().get(0), 1);
+
+    bi.clear();
+    biA.clear();
+
+    // try another permutation
+    rx = new Point2D.Double(2, 1.5);
+
+    BistaticAngleOperation.calcAndStore(calc, tx, tgt, rx, heading, time, bi,
+        biA);
+
+    // look at the results
+    assertEquals("correct bi angle", 26, bi.getValues().get(0), 1);
+    assertEquals("correct bi A angle", 61, biA.getValues().get(0), 1);
+
+    heading = 326;
+    bi.clear();
+    biA.clear();
+
+    BistaticAngleOperation.calcAndStore(calc, tx, tgt, rx, heading, time, bi,
+        biA);
+
+    // look at the results
+    assertEquals("correct bi angle", 26, bi.getValues().get(0), 1);
+    assertEquals("correct bi A angle", 110, biA.getValues().get(0), 1);
+
+    tx.setLocation(1.4, 1.1);
+    rx.setLocation(1.3, 1.3);
+    tgt.setLocation(1, 1);
+    heading = 0;
+
+    bi.clear();
+    biA.clear();
+
+    BistaticAngleOperation.calcAndStore(calc, tx, tgt, rx, heading, time, bi,
+        biA);
+
+    // look at the results
+    assertEquals("correct bi angle", 30, bi.getValues().get(0), 1);
+    assertEquals("correct bi A angle", 60, biA.getValues().get(0), 1);
+
+    tx.setLocation(1.2, 1.05);
+    rx.setLocation(1.1, 1.17);
+    tgt.setLocation(1, 1);
+    heading = 356;
+
+    bi.clear();
+    biA.clear();
+
+    BistaticAngleOperation.calcAndStore(calc, tx, tgt, rx, heading, time, bi,
+        biA);
+
+    // look at the results
+    assertEquals("correct bi angle", 45, bi.getValues().get(0), 1);
+    assertEquals("correct bi A angle", 57, biA.getValues().get(0), 1);
 
   }
 }

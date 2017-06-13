@@ -57,7 +57,8 @@ public class BistaticAngleOperation implements IOperation
     private final IDocument<?> _timeProvider;
     private final CollectionComplianceTests aTests =
         new CollectionComplianceTests();
-    final protected NumberDocumentBuilder _builder;
+    final protected NumberDocumentBuilder _bistaticBuilder;
+    final protected NumberDocumentBuilder _bistaticAspectBuilder;
     final private Unit<?> _outputUnits;
     private List<IStoreGroup> _subjects;
     private IStoreGroup _target;
@@ -71,31 +72,21 @@ public class BistaticAngleOperation implements IOperation
           "Calculate bistatic angle at:" + target.getName() + " from " + subjects.get(0).getName()
               + " to:" + subjects.get(1).getName(), store, false, false,
           selection, context);
+      
+      System.out.println("tgt:" + target.getName() + " tx:" + subjects.get(0).getName() + " rx:" + subjects.get(1).getName());
+      
       _timeProvider = timeProvider;
       _subjects = subjects;
       _target = target;
       _outputUnits = SampleData.DEGREE_ANGLE;
       final Unit<?> indexUnits =
           _timeProvider == null ? null : SampleData.MILLIS;
-      _builder =
-          new NumberDocumentBuilder("Bistatic angle at:"
+      _bistaticBuilder =
+          new NumberDocumentBuilder("Bistatic Angle at:"
               + target.getName(), _outputUnits, null, indexUnits);
-    }
-
-    protected void calcAndStore(final IGeoCalculator calc, final Point2D tx,
-        final Point2D target, final Point2D rx, Double heading, Double time)
-    {
-      // now find the range between them
-      final double thisDist = calc.getAngleBetween(tx, target);
-
-      if (time != null)
-      {
-        _builder.add(time, thisDist);
-      }
-      else
-      {
-        _builder.add(thisDist);
-      }
+      _bistaticAspectBuilder =
+          new NumberDocumentBuilder("Bistatic Aspect Angle at:"
+              + target.getName(), _outputUnits, null, indexUnits);
     }
 
     @Override
@@ -112,7 +103,7 @@ public class BistaticAngleOperation implements IOperation
           new NumberDocument(dataset, this, _outputUnits);
       if (output.isIndexed())
       {
-        output.setIndexUnits(_builder.getIndexUnits());
+        output.setIndexUnits(_bistaticBuilder.getIndexUnits());
       }
 
       // store the output
@@ -146,7 +137,7 @@ public class BistaticAngleOperation implements IOperation
      */
     private DoubleDataset getOutputDocument()
     {
-      return (DoubleDataset) _builder.toDocument().getDataset();
+      return (DoubleDataset) _bistaticBuilder.toDocument().getDataset();
     }
 
     /**
@@ -165,7 +156,7 @@ public class BistaticAngleOperation implements IOperation
      */
     private void init()
     {
-      _builder.clear();
+      _bistaticBuilder.clear();
     }
 
     /**
@@ -249,7 +240,7 @@ public class BistaticAngleOperation implements IOperation
         final Point2D rxP = rxIter.next();
         final double heading = hdgIter.next();
         final Double time = timeIter.next();
-        calcAndStore(calc, txP, targetP, rxP, heading, time);
+        calcAndStore(calc, txP, targetP, rxP, heading, time, _bistaticBuilder, _bistaticAspectBuilder);
       }
 
       return getOutputDocument();
@@ -647,7 +638,7 @@ public class BistaticAngleOperation implements IOperation
           {
             // ok, we can create a command for this permutation
 
-            // loop through all the tracks, so find the rx/tx
+            // loop through all the tracks, to find the rx/tx
             List<IStoreGroup> subjects = new ArrayList<IStoreGroup>();
             Iterator<IStoreGroup> lIter = allTracks.iterator();
             while (lIter.hasNext())
@@ -707,4 +698,48 @@ public class BistaticAngleOperation implements IOperation
     TimePeriod period = aTests.getBoundingRange(tracks);
     return period;
   }
+  
+  /** make this method more visible, for testing
+   * 
+   * @param calc utility calculator
+   * @param tx location of transmitter
+   * @param target location of target
+   * @param rx location of receiver
+   * @param heading heading of target
+   * @param time time of observation
+   * @param bistaticBuilder where to store the bistatic angle
+   * @param bistaticAspectBuilder where to store the bistatic aspect angle
+   */
+  public static void calcAndStore(final IGeoCalculator calc, final Point2D tx,
+      final Point2D target, final Point2D rx, Double heading, Double time, NumberDocumentBuilder bistaticBuilder, NumberDocumentBuilder bistaticAspectBuilder)
+  {
+  //  System.out.println("examining:" + tx + ", " + target + "," + rx + ", " + heading + ", " + time);
+    
+    
+    // ok start with two angles
+    double toSource = calc.getAngleBetween(target, tx);
+    double toReceiver = calc.getAngleBetween(target, rx);
+    
+    // make them relative
+    double relToSource = toSource - heading;
+    double relToReceiver = toReceiver - heading;
+    
+    // and the bistatic angle
+    double biAngle = Math.abs(relToReceiver - relToSource);
+    
+    // which angle to we add the bisector to?
+    double baseAngle = Math.min(relToSource, relToReceiver);
+    
+    double biAspectAngle = baseAngle + biAngle / 2d;
+    
+    if(biAspectAngle < -180d)
+    {
+      biAspectAngle += 360d;
+    }
+    
+    bistaticBuilder.add(time, biAngle);
+    bistaticAspectBuilder.add(time, biAspectAngle);
+  }
+
+
 }
