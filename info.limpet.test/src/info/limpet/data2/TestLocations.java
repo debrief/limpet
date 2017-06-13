@@ -32,6 +32,9 @@ public class TestLocations extends TestCase
     assertEquals("has points", 10, res.getDataset().getSize());
     assertNull("doesn't have indices", res.getDataset().getFirstMetadata(
         AxesMetadata.class));
+    
+    String listing = res.toListing();
+    assertNotNull(listing);
   }
 
   public void testIndexedData()
@@ -50,6 +53,9 @@ public class TestLocations extends TestCase
     assertEquals("has points", 10, res.getDataset().getSize());
     assertNotNull("has indices", res.getDataset().getFirstMetadata(
         AxesMetadata.class));
+    
+    String listing = res.toListing();
+    assertNotNull(listing);
   }
 
 }

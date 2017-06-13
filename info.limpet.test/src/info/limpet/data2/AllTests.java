@@ -45,7 +45,9 @@ import junit.framework.TestSuite;
 	TestCsvParser.class,
 	TestLocations.class,
 	TestGeotoolsGeometry.class,
-	TestExport.class
+	TestExport.class,
+	TestBistaticAngleCalculations.class,
+	TestPersistence.class
 })
 
 @RunWith(Suite.class)
