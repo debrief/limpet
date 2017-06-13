@@ -43,6 +43,11 @@ public class NumberDocument extends Document<Double>
     return qType;
   }
   
+  public void copy(final NumberDocument other)
+  {
+    this.dataset = other.dataset;
+  }
+  
   @UIProperty(name = "Size", category = UIProperty.CATEGORY_METADATA)
   public int getSize()
   {

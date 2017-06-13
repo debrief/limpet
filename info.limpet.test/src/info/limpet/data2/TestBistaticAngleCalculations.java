@@ -123,7 +123,7 @@ public class TestBistaticAngleCalculations
     actions.get(0).execute();
 
     // check the store contents
-    assertEquals("correct datasets", 4, store.size());
+    assertEquals("correct datasets", 5, store.size());
 
   }
 
