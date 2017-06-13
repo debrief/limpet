@@ -549,6 +549,7 @@ public class XyPlotView extends CoreAnalysisView
                 seriesName);
         newSeries.setSymbolType(PlotSymbolType.NONE);
         newSeries.setLineColor(PlottingHelpers.colorFor(seriesName));
+        newSeries.setSymbolColor(PlottingHelpers.colorFor(seriesName));
 
         double[] xData = new double[coll.size()];
         double[] yData = new double[coll.size()];
