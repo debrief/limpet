@@ -87,6 +87,7 @@ public class StoreGroup extends ArrayList<IStoreItem> implements IStoreGroup
     }
 
     fireModified();
+    fireDataChanged();
 
     return res;
   }
@@ -186,17 +187,6 @@ public class StoreGroup extends ArrayList<IStoreItem> implements IStoreGroup
     _storeListeners.remove(listener);
   }
 
-  @Override
-  public void fireDataChanged()
-  {
-    if (_listeners != null)
-    {
-      for (IChangeListener listener : _listeners)
-      {
-        listener.dataChanged(this);
-      }
-    }
-  }
 
   @Override
   public UUID getUUID()
@@ -219,16 +209,27 @@ public class StoreGroup extends ArrayList<IStoreItem> implements IStoreGroup
   {
     dataChanged(subject);
   }
+  
+  @Override
+  public void fireDataChanged()
+  {
+    if (_listeners != null)
+    {
+      for (IChangeListener listener : _listeners)
+      {
+        listener.dataChanged(this);
+      }
+    }
+  }
 
   protected void fireModified()
   {
-    checkListeners();
-
-    Iterator<StoreChangeListener> iter = _storeListeners.iterator();
-    while (iter.hasNext())
+    if(_storeListeners != null)
     {
-      StoreChangeListener listener = iter.next();
-      listener.changed();
+      for(StoreChangeListener listener: _storeListeners)
+      {
+        listener.changed();
+      }
     }
   }
 
