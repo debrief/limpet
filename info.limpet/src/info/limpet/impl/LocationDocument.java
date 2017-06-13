@@ -72,7 +72,7 @@ public class LocationDocument extends Document<Point2D>
         indexVal = "N/A";
       }
 
-      res.append(indexVal + " : " + dataset.getElementDoubleAbs(iterator.index));
+      res.append(indexVal + " : " + dataset.get(iterator.index));
       res.append(";");
     }
     res.append("\n");

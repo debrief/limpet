@@ -387,4 +387,9 @@ abstract public class Document<T extends Object> implements IDocument<T>
     return getName();
   }
 
+  /** produce this document as a listing
+   * 
+   * @return
+   */
+  abstract public String toListing();
 }

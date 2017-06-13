@@ -30,6 +30,12 @@ public class StringDocument extends Document<String>
   @Override
   public String toString()
   {
+    return getName();
+  }
+  
+  @Override
+  public String toListing()
+  {
     StringBuffer res = new StringBuffer();
     
     StringDataset dataset = (StringDataset) this.getDataset();
