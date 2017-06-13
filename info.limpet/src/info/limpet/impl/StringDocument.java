@@ -26,12 +26,6 @@ public class StringDocument extends Document<String>
   {
     return false;
   }
-
-  @Override
-  public String toString()
-  {
-    return getName();
-  }
   
   @Override
   public String toListing()
