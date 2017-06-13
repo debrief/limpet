@@ -381,7 +381,7 @@ public class CsvParser
     // ok, store the series
     if (builders.size() > 1)
     {
-      StoreGroup target = new StoreGroup(fullFileName);
+      StoreGroup target = new StoreGroup(fileName);
       for (IDocumentBuilder<?> builder : builders)
       {
         target.add(builder.toDocument());
