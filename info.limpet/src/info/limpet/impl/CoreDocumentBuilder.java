@@ -32,7 +32,17 @@ abstract class CoreDocumentBuilder<T extends Object, D extends IDocument<T>>
     _predecessor = predecessor;
     _indexUnits = indexUnits;
   }
+  
+  public List<T> getValues()
+  {
+    return _values;
+  }
 
+  public ArrayList<Double> getIndices()
+  {
+    return _indices;
+  }
+  
   @Override
   public void add(final double index, final T value)
   {
