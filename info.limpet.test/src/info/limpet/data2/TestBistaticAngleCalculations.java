@@ -104,12 +104,9 @@ public class TestBistaticAngleCalculations
       if (thisDoc instanceof NumberDocument)
       {
         NumberDocument nd = (NumberDocument) thisDoc;
-        if (nd.isQuantity())
+        if (nd.isQuantity() && nd.getUnits().equals(SampleData.DEGREE_ANGLE))
         {
-          if (nd.getUnits().equals(SampleData.DEGREE_ANGLE))
-          {
-            toDelete = nd;
-          }
+          toDelete = nd;
         }
       }
     }

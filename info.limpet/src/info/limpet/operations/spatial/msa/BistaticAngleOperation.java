@@ -51,30 +51,32 @@ import org.eclipse.january.metadata.AxesMetadata;
 
 public class BistaticAngleOperation implements IOperation
 {
+  
+  private final CollectionComplianceTests aTests =
+      new CollectionComplianceTests();
 
-  public abstract static class BistaticAngleCommand extends AbstractCommand
+  public abstract class BistaticAngleCommand extends AbstractCommand
   {
     private final IDocument<?> _timeProvider;
-    private final CollectionComplianceTests aTests =
-        new CollectionComplianceTests();
     final protected NumberDocumentBuilder _bistaticBuilder;
     final protected NumberDocumentBuilder _bistaticAspectBuilder;
     final private Unit<?> _outputUnits;
-    private List<IStoreGroup> _subjects;
-    private IStoreGroup _target;
-
+    final private List<IStoreGroup> _subjects;
+    final private IStoreGroup _target;
+    
     public BistaticAngleCommand(final List<IStoreItem> selection,
         final List<IStoreGroup> subjects, final IStoreGroup target,
         final IStoreGroup store, final IDocument<?> timeProvider,
         final IContext context)
     {
       super("Bistatic angle at:" + target.getName(),
-          "Calculate bistatic angle at:" + target.getName() + " from " + subjects.get(0).getName()
-              + " to:" + subjects.get(1).getName(), store, false, false,
-          selection, context);
-      
-      System.out.println("tgt:" + target.getName() + " tx:" + subjects.get(0).getName() + " rx:" + subjects.get(1).getName());
-      
+          "Calculate bistatic angle at:" + target.getName() + " from "
+              + subjects.get(0).getName() + " to:" + subjects.get(1).getName(),
+          store, false, false, null, context);
+
+      System.out.println("tgt:" + target.getName() + " tx:"
+          + subjects.get(0).getName() + " rx:" + subjects.get(1).getName());
+
       _timeProvider = timeProvider;
       _subjects = subjects;
       _target = target;
@@ -82,8 +84,8 @@ public class BistaticAngleOperation implements IOperation
       final Unit<?> indexUnits =
           _timeProvider == null ? null : SampleData.MILLIS;
       _bistaticBuilder =
-          new NumberDocumentBuilder("Bistatic Angle at:"
-              + target.getName(), _outputUnits, null, indexUnits);
+          new NumberDocumentBuilder("Bistatic Angle at:" + target.getName(),
+              _outputUnits, null, indexUnits);
       _bistaticAspectBuilder =
           new NumberDocumentBuilder("Bistatic Aspect Angle at:"
               + target.getName(), _outputUnits, null, indexUnits);
@@ -106,16 +108,10 @@ public class BistaticAngleOperation implements IOperation
       super.addOutput(biADataset);
 
       // tell each series that we're a dependent
-      final Iterator<IStoreItem> iter = getInputs().iterator();
-      while (iter.hasNext())
+      for(IStoreItem doc: getInputs())
       {
-        final IStoreGroup group = (IStoreGroup) iter.next();
-        Iterator<IStoreItem> iter2 = group.iterator();
-        while (iter2.hasNext())
-        {
-          final IDocument<?> iCollection = (IDocument<?>) iter2.next();
-          iCollection.addDependent(this);
-        }
+        IDocument<?> idoc = (IDocument<?>) doc;
+        idoc.addDependent(this);
       }
 
       // ok, done
@@ -165,13 +161,22 @@ public class BistaticAngleOperation implements IOperation
       final IStoreGroup rx = _subjects.get(1);
 
       // get the location datasets
-      final LocationDocument tx_track = aTests.getFirstLocation(tx);
-      final LocationDocument tgt_track = aTests.getFirstLocation(target);
-      final LocationDocument rx_track = aTests.getFirstLocation(rx);
       final List<IStoreItem> tgtDocs = new ArrayList<IStoreItem>();
       tgtDocs.addAll(target);
       final NumberDocument tgt_hdg =
           aTests.findCollectionWith(tgtDocs, SI.RADIAN.getDimension(), true);
+      final LocationDocument tx_track = aTests.getFirstLocation(tx);
+      final LocationDocument tgt_track = aTests.getFirstLocation(target);
+      final LocationDocument rx_track = aTests.getFirstLocation(rx);
+
+      // ok, if this is the first pass, store these documents as the inputs
+      if (getInputs().size() == 0)
+      {
+        getInputs().add(tgt_hdg);
+        getInputs().add(tx_track);
+        getInputs().add(rx_track);
+        getInputs().add(tgt_track);
+      }
 
       // get a calculator to use
       final IGeoCalculator calc = GeoSupport.getCalculator();
@@ -229,7 +234,8 @@ public class BistaticAngleOperation implements IOperation
         final Point2D rxP = rxIter.next();
         final double heading = hdgIter.next();
         final Double time = timeIter.next();
-        calcAndStore(calc, txP, targetP, rxP, heading, time, _bistaticBuilder, _bistaticAspectBuilder);
+        calcAndStore(calc, txP, targetP, rxP, heading, time, _bistaticBuilder,
+            _bistaticAspectBuilder);
       }
     }
 
@@ -238,7 +244,7 @@ public class BistaticAngleOperation implements IOperation
     {
       // clear out the lists, first
       performCalc();
-      
+
       // get the output documents
       final NumberDocument biDataset = _bistaticBuilder.toDocument();
       final NumberDocument biADataset = _bistaticAspectBuilder.toDocument();
@@ -246,17 +252,17 @@ public class BistaticAngleOperation implements IOperation
       // get the existing outputs
       NumberDocument realBi = (NumberDocument) getOutputs().get(0);
       NumberDocument realBiA = (NumberDocument) getOutputs().get(1);
-      
+
       realBi.copy(biDataset);
       realBiA.copy(biADataset);
-      
+
       // and fire updates
       realBi.fireDataChanged();
       realBiA.fireDataChanged();
     }
   }
 
-  public static NumberDocument headingsFor(final NumberDocument document,
+  private static NumberDocument headingsFor(final NumberDocument document,
       final Document<?> times)
   {
     // ok, get the time values
@@ -270,14 +276,14 @@ public class BistaticAngleOperation implements IOperation
     }
     catch (final DatasetException e)
     {
-      throw new RuntimeException(e);
+      throw new IllegalArgumentException(e);
     }
 
     double[] data = ds.getData();
     return headingsFor(document, data);
   }
 
-  public static LocationDocument locationsFor(final LocationDocument track1,
+  private static LocationDocument locationsFor(final LocationDocument track1,
       final Document<?> times)
   {
     // ok, get the time values
@@ -298,7 +304,7 @@ public class BistaticAngleOperation implements IOperation
     return locationsFor(track1, data);
   }
 
-  public static LocationDocument locationsFor(final LocationDocument track,
+  private static LocationDocument locationsFor(final LocationDocument track,
       final double[] times)
   {
     final DoubleDataset ds =
@@ -369,7 +375,7 @@ public class BistaticAngleOperation implements IOperation
     return ldb.toDocument();
   }
 
-  public static NumberDocument headingsFor(final NumberDocument document,
+  private static NumberDocument headingsFor(final NumberDocument document,
       final double[] times)
   {
     final DoubleDataset ds =
@@ -432,108 +438,9 @@ public class BistaticAngleOperation implements IOperation
     return ldb.toDocument();
   }
 
-  private final CollectionComplianceTests aTests =
-      new CollectionComplianceTests();
-
-  protected List<IStoreItem> getAsList(Collection<IStoreGroup> selection)
+  @SuppressWarnings("unused")
+  private boolean appliesTo(final List<IStoreItem> datasets)
   {
-    // check the datasets overlap.
-    final Iterator<IStoreGroup> iter = selection.iterator();
-    final List<IStoreItem> datasets = new ArrayList<IStoreItem>();
-    while (iter.hasNext())
-    {
-      final IStoreGroup track = iter.next();
-      final Iterator<IStoreItem> iter2 = track.iterator();
-      while (iter2.hasNext())
-      {
-        final IStoreItem iStoreItem = (IStoreItem) iter2.next();
-        datasets.add(iStoreItem);
-      }
-    }
-
-    return datasets;
-  }
-
-  protected boolean appliesTo(final List<IStoreItem> datasets)
-  {
-    // ok, check we have three tracks
-    Iterator<IStoreItem> iter = datasets.iterator();
-    List<IStoreItem> tracks = new ArrayList<IStoreItem>();
-    while (iter.hasNext())
-    {
-      IStoreItem next = (IStoreItem) iter.next();
-      if (next instanceof IStoreGroup)
-      {
-        IStoreGroup group = (IStoreGroup) next;
-        LocationDocument locDoc = null;
-        Iterator<IStoreItem> docs = group.iterator();
-
-        while (docs.hasNext())
-        {
-          IStoreItem doc = (IStoreItem) docs.next();
-          if (doc instanceof LocationDocument)
-          {
-            locDoc = (LocationDocument) doc;
-          }
-        }
-
-        // did we find one in this track?
-        if (locDoc != null)
-        {
-          tracks.add(locDoc);
-        }
-      }
-    }
-
-    if (tracks.size() != 3)
-    {
-      // wrong num of tracks
-      return false;
-    }
-
-    // what's the time range?
-    final TimePeriod range = aTests.getBoundingRange(tracks);
-
-    // now pass through again, to see if we have heading data for the correct period
-    int hdgCtr = 0;
-    iter = datasets.iterator();
-    while (iter.hasNext())
-    {
-      IStoreItem next = (IStoreItem) iter.next();
-      if (next instanceof IStoreGroup)
-      {
-        IStoreGroup group = (IStoreGroup) next;
-        Iterator<IStoreItem> docs = group.iterator();
-        while (docs.hasNext())
-        {
-          IStoreItem doc = (IStoreItem) docs.next();
-          if (doc instanceof NumberDocument)
-          {
-            NumberDocument nd = (NumberDocument) doc;
-            // check units
-            if (nd.isQuantity() && nd.isIndexed() && nd.getUnits() != null
-                && nd.getUnits().equals(SampleData.DEGREE_ANGLE))
-            {
-              // ok, check it's in range
-              List<IStoreItem> tmpList = new ArrayList<IStoreItem>();
-              tmpList.add(nd);
-              TimePeriod hdgRange = aTests.getBoundingRange(tmpList);
-
-              if (range.overlaps(hdgRange))
-              {
-                hdgCtr++;
-              }
-            }
-          }
-        }
-      }
-    }
-
-    if (hdgCtr <= 1)
-    {
-      return false;
-    }
-
     // ok, now check they overlap
     final boolean nonEmpty = getATests().nonEmpty(datasets);
     final boolean equalLength = getATests().allEqualLengthOrSingleton(datasets);
@@ -558,8 +465,8 @@ public class BistaticAngleOperation implements IOperation
    * @param selection
    * @return
    */
-  protected List<IStoreGroup> getSuitableTracks(
-      final List<IStoreItem> selection, final boolean needCourse)
+  private List<IStoreGroup> getSuitableTracks(final List<IStoreItem> selection,
+      final boolean needCourse)
   {
     final List<IStoreGroup> collatedTracks = new ArrayList<IStoreGroup>();
 
@@ -695,48 +602,58 @@ public class BistaticAngleOperation implements IOperation
     TimePeriod period = aTests.getBoundingRange(tracks);
     return period;
   }
-  
-  /** make this method more visible, for testing
+
+  /**
+   * make this method more visible, for testing
    * 
-   * @param calc utility calculator
-   * @param tx location of transmitter
-   * @param target location of target
-   * @param rx location of receiver
-   * @param heading heading of target
-   * @param time time of observation
-   * @param bistaticBuilder where to store the bistatic angle
-   * @param bistaticAspectBuilder where to store the bistatic aspect angle
+   * @param calc
+   *          utility calculator
+   * @param tx
+   *          location of transmitter
+   * @param target
+   *          location of target
+   * @param rx
+   *          location of receiver
+   * @param heading
+   *          heading of target
+   * @param time
+   *          time of observation
+   * @param bistaticBuilder
+   *          where to store the bistatic angle
+   * @param bistaticAspectBuilder
+   *          where to store the bistatic aspect angle
    */
   public static void calcAndStore(final IGeoCalculator calc, final Point2D tx,
-      final Point2D target, final Point2D rx, Double heading, Double time, NumberDocumentBuilder bistaticBuilder, NumberDocumentBuilder bistaticAspectBuilder)
+      final Point2D target, final Point2D rx, Double heading, Double time,
+      NumberDocumentBuilder bistaticBuilder,
+      NumberDocumentBuilder bistaticAspectBuilder)
   {
     // ok start with two angles
     double toSource = calc.getAngleBetween(target, tx);
     double toReceiver = calc.getAngleBetween(target, rx);
-    
+
     // make them relative
     double relToSource = toSource - heading;
     double relToReceiver = toReceiver - heading;
-    
+
     // and the bistatic angle
     double biAngle = Math.abs(relToReceiver - relToSource);
-    
+
     // which angle to we add the bisector to?
     double baseAngle = Math.min(relToSource, relToReceiver);
-    
+
     double biAspectAngle = baseAngle + biAngle / 2d;
-    
-    if(biAspectAngle < -180d)
+
+    if (biAspectAngle < -180d)
     {
       biAspectAngle += 360d;
     }
-    
+
     // and make sure it's positive
     biAspectAngle = Math.abs(biAspectAngle);
-    
+
     bistaticBuilder.add(time, biAngle);
     bistaticAspectBuilder.add(time, biAspectAngle);
   }
-
 
 }
