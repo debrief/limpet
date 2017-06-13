@@ -382,7 +382,7 @@ abstract public class Document<T extends Object> implements IDocument<T>
   }
 
   @Override
-  public String toString()
+  final public String toString()
   {
     return getName();
   }
