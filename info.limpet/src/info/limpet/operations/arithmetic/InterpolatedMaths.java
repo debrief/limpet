@@ -356,7 +356,7 @@ public class InterpolatedMaths extends Maths
       else
       {
         // we couldn't load the dataset
-        throw new RuntimeException("We were unable to load the axis dataset");
+        throw new IllegalArgumentException("We were unable to load the axis dataset");
       }
     }
 
