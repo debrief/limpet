@@ -34,63 +34,35 @@ import org.eclipse.january.dataset.Maths;
 public class AddLogQuantityOperation extends BinaryQuantityOperation
 {
 
-  @Override
-  protected void addInterpolatedCommands(List<IStoreItem> selection,
-      IStoreGroup destination, Collection<ICommand> res, IContext context)
-  {
-    IDocument<?> longest = getLongestIndexedCollection(selection);
-
-    if (longest != null)
-    {
-      ICommand newC =
-          new AddQuantityValues(
-              "Add logarithmic values in provided series (interpolated)",
-              selection, destination, longest, context);
-      res.add(newC);
-    }
-  }
-
-  protected void addIndexedCommands(List<IStoreItem> selection,
-      IStoreGroup destination, Collection<ICommand> res, IContext context)
-  {
-    ICommand newC =
-        new AddQuantityValues(
-            "Add logarithmic values in provided series (indexed)", selection,
-            destination, context);
-    res.add(newC);
-  }
-
-  protected boolean appliesTo(List<IStoreItem> selection)
-  {
-    boolean nonEmpty = getATests().nonEmpty(selection);
-    boolean allQuantity = getATests().allQuantity(selection);
-    boolean suitableLength =
-        getATests().allIndexed(selection)
-            || getATests().allEqualLengthOrSingleton(selection);
-    boolean equalDimensions = getATests().allEqualDimensions(selection);
-    boolean equalUnits = getATests().allEqualUnits(selection);
-    
-    // lastly, check they're not logarithmic
-    boolean hasLog = hasLogData(selection);
-
-    return nonEmpty && allQuantity && suitableLength && equalDimensions
-        && equalUnits && hasLog;
-  }
-
-
   public class AddQuantityValues extends BinaryQuantityCommand
   {
-    public AddQuantityValues(String name, List<IStoreItem> selection,
-        IStoreGroup store, IContext context)
+    public AddQuantityValues(final String name,
+        final List<IStoreItem> selection, final IStoreGroup store,
+        final IContext context)
     {
       this(name, selection, store, null, context);
     }
 
-    public AddQuantityValues(String name, List<IStoreItem> selection,
-        IStoreGroup destination, IDocument<?> timeProvider, IContext context)
+    public AddQuantityValues(final String name,
+        final List<IStoreItem> selection, final IStoreGroup destination,
+        final IDocument<?> timeProvider, final IContext context)
     {
       super(name, "Add datasets", destination, false, false, selection,
           timeProvider, context);
+    }
+
+    @Override
+    protected String getBinaryNameFor(final String name1, final String name2)
+    {
+      return "Sum of " + name1 + " + " + name2;
+    }
+
+    @Override
+    protected Unit<?> getBinaryOutputUnit(final Unit<?> first,
+        final Unit<?> second)
+    {
+      // addition doesn't modify units, just use first ones
+      return first;
     }
 
     @Override
@@ -99,48 +71,83 @@ public class AddLogQuantityOperation extends BinaryQuantityOperation
       return new InterpolatedMaths.IOperationPerformer()
       {
         @Override
-        public Dataset perform(Dataset a, Dataset b, Dataset o)
+        public Dataset
+            perform(final Dataset a, final Dataset b, final Dataset o)
         {
           // ok, convert them to alog
-          Dataset aNon = toNonLog(a);
-          Dataset bNon = toNonLog(b);
-          
-          Dataset sum = Maths.add(aNon, bNon);
-          
-          Dataset res = toLog(sum);
-          
+          final Dataset aNon = toNonLog(a);
+          final Dataset bNon = toNonLog(b);
+
+          final Dataset sum = Maths.add(aNon, bNon);
+
+          final Dataset res = toLog(sum);
+
           return res;
-          
+
         }
-        
-        private Dataset toLog(Dataset sum)
+
+        private Dataset toLog(final Dataset sum)
         {
-          Dataset log10 = Maths.log10(sum);
-          Dataset times10 = Maths.multiply(log10, 10);
+          final Dataset log10 = Maths.log10(sum);
+          final Dataset times10 = Maths.multiply(log10, 10);
           return times10;
         }
 
-        private Dataset toNonLog(Dataset d)
+        private Dataset toNonLog(final Dataset d)
         {
-          Dataset div10 = Maths.divide(d, 10);
-          Dataset raised = Maths.power(10, div10);
-          return raised;                      
+          final Dataset div10 = Maths.divide(d, 10);
+          final Dataset raised = Maths.power(10, div10);
+          return raised;
         }
       };
     }
+  }
 
-    @Override
-    protected Unit<?> getBinaryOutputUnit(Unit<?> first, Unit<?> second)
-    {
-      // addition doesn't modify units, just use first ones
-      return first;
-    }
+  @Override
+  protected void addIndexedCommands(final List<IStoreItem> selection,
+      final IStoreGroup destination, final Collection<ICommand> res,
+      final IContext context)
+  {
+    final ICommand newC =
+        new AddQuantityValues(
+            "Add logarithmic values in provided series (indexed)", selection,
+            destination, context);
+    res.add(newC);
+  }
 
-    @Override
-    protected String getBinaryNameFor(String name1, String name2)
+  @Override
+  protected void addInterpolatedCommands(final List<IStoreItem> selection,
+      final IStoreGroup destination, final Collection<ICommand> res,
+      final IContext context)
+  {
+    final IDocument<?> longest = getLongestIndexedCollection(selection);
+
+    if (longest != null)
     {
-      return "Sum of " + name1 + " + " + name2;
+      final ICommand newC =
+          new AddQuantityValues(
+              "Add logarithmic values in provided series (interpolated)",
+              selection, destination, longest, context);
+      res.add(newC);
     }
+  }
+
+  @Override
+  protected boolean appliesTo(final List<IStoreItem> selection)
+  {
+    final boolean nonEmpty = getATests().nonEmpty(selection);
+    final boolean allQuantity = getATests().allQuantity(selection);
+    final boolean suitableLength =
+        getATests().allIndexed(selection)
+            || getATests().allEqualLengthOrSingleton(selection);
+    final boolean equalDimensions = getATests().allEqualDimensions(selection);
+    final boolean equalUnits = getATests().allEqualUnits(selection);
+
+    // lastly, check they're not logarithmic
+    final boolean hasLog = hasLogData(selection);
+
+    return nonEmpty && allQuantity && suitableLength && equalDimensions
+        && equalUnits && hasLog;
   }
 
 }
