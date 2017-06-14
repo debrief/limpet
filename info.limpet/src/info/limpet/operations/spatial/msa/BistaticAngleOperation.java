@@ -63,10 +63,11 @@ public class BistaticAngleOperation implements IOperation
       super("Bistatic angle at:" + target.getName(),
           "Calculate bistatic angle at:" + target.getName() + " from "
               + subjects.get(0).getName() + " to:" + subjects.get(1).getName(),
-          store, false, false, null, context);
+          store, false, false, selection, context);
 
-      System.out.println("tgt:" + target.getName() + " tx:"
-          + subjects.get(0).getName() + " rx:" + subjects.get(1).getName());
+      // special processing.
+      // we generate our own list of inputs, so clear the existing list
+      getInputs().clear();
 
       _timeProvider = timeProvider;
       _subjects = subjects;

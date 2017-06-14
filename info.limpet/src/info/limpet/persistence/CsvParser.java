@@ -96,12 +96,6 @@ public class CsvParser
     // generate our list of importers
     createImporters();
 
-    final DataImporter temporalDimensionless =
-        new TemporalSeriesSupporter(null, null, (String) null);
-    final DataImporter temporalStrings = new TemporalStringImporter();
-    final DataImporter strings = new StringImporter();
-    final DataImporter dimensionless = new SeriesSupporter(null, null, null);
-
     // store one importer per column-set
     List<DataImporter> importers = new ArrayList<DataImporter>();
 
@@ -128,13 +122,9 @@ public class CsvParser
             && !colHeader.contains("(s)"))
         {
           // is it plain time?
-          if (colHeader.toLowerCase().equals("time"))
+          if (!colHeader.equalsIgnoreCase("time"))
           {
-            // ok, we'll have to guess this when we get to it
-          }
-          else
-          {
-            // ok, see if we have a time format string
+            // nope, see if we have a time format string
             if (colHeader.contains("(") && colHeader.contains(")"))
             {
               // ok, extract the format string
@@ -146,7 +136,7 @@ public class CsvParser
           }
           isIndexed = true;
           temporalIndex = true;
-          indexUnits = MILLI(SI.SECOND);
+          indexUnits = MILLI(SECOND);
           ctr = 1;
         }
         else
@@ -291,7 +281,7 @@ public class CsvParser
           // not temporal, use this field
           thisCol = 0;
         }
-        
+
         // now move through the other cols
         int numImporters = importers.size();
         for (int i = 0; i < numImporters; i++)
@@ -301,12 +291,12 @@ public class CsvParser
           // ok, just check if this is a deferred importer
           if (thisI instanceof DeferredLoadSupporter)
           {
+            DeferredLoadSupporter dImp = (DeferredLoadSupporter) thisI;
             // ok, see if we have enough data to be able to replace
             // the deferred importer with a concrete instance
             thisI =
-                handleDeferredLoader(fileName, temporalDimensionless,
-                    temporalStrings, strings, dimensionless, importers,
-                    builders, isIndexed, indexUnits, record, thisCol, thisI);
+                handleDeferredLoader(fileName, importers, builders, isIndexed,
+                    indexUnits, record, thisCol, dImp);
           }
 
           IDocumentBuilder<?> thisS = builders.get(i);
@@ -340,14 +330,13 @@ public class CsvParser
   }
 
   private DataImporter handleDeferredLoader(final String fileName,
-      final DataImporter temporalDimensionless,
-      final DataImporter temporalStrings, final DataImporter strings,
-      final DataImporter dimensionless, final List<DataImporter> importers,
+      final List<DataImporter> importers,
       final List<IDocumentBuilder<?>> builders, final boolean isIndexed,
-      final Unit<?> indexUnits, final CSVRecord record, final int thisCol, DataImporter thisI)
+      final Unit<?> indexUnits, final CSVRecord record, final int thisCol,
+      final DeferredLoadSupporter existingImporter)
   {
-    DeferredLoadSupporter dl = (DeferredLoadSupporter) thisI;
-    String seriesName = dl.getName();
+    DataImporter res = existingImporter;
+    String seriesName = existingImporter.getName();
 
     // ok, have a look at the next field
     String nextVal = record.get(thisCol);
@@ -360,11 +349,11 @@ public class CsvParser
       if (isNumeric(nextVal))
       {
         // ok, we've got dimensionless quantity data
-        importer = temporalDimensionless;
+        importer = new TemporalSeriesSupporter(null, null, (String) null);
       }
       else
       {
-        importer = temporalStrings;
+        importer = new TemporalStringImporter();;
       }
     }
     else
@@ -372,25 +361,25 @@ public class CsvParser
       if (isNumeric(nextVal))
       {
         // ok, we've got dimensionless quantity data
-        importer = dimensionless;
+        importer = new SeriesSupporter(null, null, null);;
       }
       else
       {
-        importer = strings;
+        importer = new StringImporter();;
       }
     }
 
     if (importer != null)
     {
-      int index = importers.indexOf(dl);
+      int index = importers.indexOf(existingImporter);
       importers.set(index, importer);
 
       builders.set(index, importer.create(fileName + "-" + seriesName,
           indexUnits));
 
-      thisI = importer;
+      res = importer;
     }
-    return thisI;
+    return res;
   }
 
   private DateFormat getDateThisFormat(final DateFormat customDateFormat,
@@ -624,12 +613,9 @@ public class CsvParser
         // loop through our units
         for (final String un : _unitsStr)
         {
-          if (un != null)
+          if (un != null && un.equalsIgnoreCase(units))
           {
-            if (un.toLowerCase().equals(units.toLowerCase()))
-            {
-              return true;
-            }
+            return true;
           }
         }
         return false;
@@ -891,7 +877,7 @@ public class CsvParser
     public void consume(IDocumentBuilder<?> thisS, double theIndex,
         int thisCol, CSVRecord record)
     {
-      throw new RuntimeException("Should not get called");
+      throw new IllegalArgumentException("Should not get called");
     }
   }
 }
