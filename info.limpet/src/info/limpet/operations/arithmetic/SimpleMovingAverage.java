@@ -27,20 +27,10 @@ public class SimpleMovingAverage
   private final int period;
   private double sum;
 
-  public SimpleMovingAverage(int period)
+  public SimpleMovingAverage(final int period)
   {
     assert period > 0 : "Period must be a positive integer";
     this.period = period;
-  }
-
-  public void newNum(double num)
-  {
-    sum += num;
-    window.add(num);
-    if (window.size() > period)
-    {
-      sum -= window.remove();
-    }
   }
 
   public double getAvg()
@@ -52,6 +42,16 @@ public class SimpleMovingAverage
     else
     {
       return sum / window.size();
+    }
+  }
+
+  public void newNum(final double num)
+  {
+    sum += num;
+    window.add(num);
+    if (window.size() > period)
+    {
+      sum -= window.remove();
     }
   }
 

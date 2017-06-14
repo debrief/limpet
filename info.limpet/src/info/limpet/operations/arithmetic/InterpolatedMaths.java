@@ -112,7 +112,7 @@ public class InterpolatedMaths extends Maths
         bIndices = DatasetUtils.sliceAndConvertLazyDataset(bLazyIndices);
         datasetLoaded = true;
       }
-      catch (DatasetException e)
+      catch (final DatasetException e)
       {
         throw new IllegalArgumentException("Axis values not present");
       }
@@ -308,7 +308,7 @@ public class InterpolatedMaths extends Maths
 
               // remember the output axes, since we'll put them
               // into the results
-              AxesMetadata newAxis = new AxesMetadataImpl();
+              final AxesMetadata newAxis = new AxesMetadataImpl();
               newAxis.initialize(1);
               newAxis.setAxis(0, aIndicesTrimmed);
               interpolatedValues.addMetadata(newAxis);
@@ -333,7 +333,7 @@ public class InterpolatedMaths extends Maths
 
               // remember the output axes, since we'll put them
               // into the results
-              AxesMetadata newAxis = new AxesMetadataImpl();
+              final AxesMetadata newAxis = new AxesMetadataImpl();
               newAxis.initialize(1);
               newAxis.setAxis(0, bIndicesTrimmed);
               interpolatedValues.addMetadata(newAxis);
@@ -366,7 +366,7 @@ public class InterpolatedMaths extends Maths
     // ok, inject the axes back into the result, if we can
     if (operandA instanceof IDataset)
     {
-      final IDataset ds = (IDataset) operandA;
+      final IDataset ds = operandA;
       final AxesMetadata targetAxes = ds.getFirstMetadata(AxesMetadata.class);
       if (targetAxes != null)
       {
