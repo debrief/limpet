@@ -31,6 +31,7 @@ import info.limpet.impl.SampleData;
 import info.limpet.impl.StoreGroup;
 import info.limpet.operations.AbstractCommand;
 import info.limpet.operations.CollectionComplianceTests;
+import info.limpet.operations.spatial.BearingBetweenTracksOperation;
 import info.limpet.operations.spatial.DistanceBetweenTracksOperation;
 import info.limpet.operations.spatial.DopplerShiftBetweenTracksOperation;
 import info.limpet.operations.spatial.DopplerShiftBetweenTracksOperation.DopplerShiftOperation.TrackProvider;
@@ -545,6 +546,123 @@ public class TestGeotoolsGeometry extends TestCase
     assertEquals("correct length", 2, iQ.size());
 
   }
+  
+  public void testLocationSingletonCalc()
+  {
+     LocationDocumentBuilder loc1 = new LocationDocumentBuilder("loc1", null, SI.MILLI(SI.SECOND));
+     LocationDocumentBuilder singletonLoc = new LocationDocumentBuilder("loc2", null, SI.MILLI(SI.SECOND));
+     NumberDocumentBuilder len1b = new NumberDocumentBuilder("dummy", METRE.asType(Length.class), null,
+     null);
+    
+     List<IStoreItem> selection = new ArrayList<IStoreItem>();
+     selection.add(loc1.toDocument());
+    
+     StoreGroup store = new StoreGroup("Results");
+
+     List<ICommand> ops =
+     new DistanceBetweenTracksOperation().actionsFor(selection, store,
+     context);
+     assertEquals("empty collection", 0, ops.size());
+     
+     NumberDocument len1 = len1b.toDocument();
+    
+     selection.add(len1);
+     ops =
+     new DistanceBetweenTracksOperation().actionsFor(selection, store,
+     context);
+     assertEquals("empty collection", 0, ops.size());
+         
+     
+     selection.remove(len1);
+     selection.add(singletonLoc.toDocument());
+     ops =
+     new DistanceBetweenTracksOperation().actionsFor(selection, store,
+     context);
+     assertEquals("empty collection", 0, ops.size());
+    
+     // ok, try adding some data
+     IGeoCalculator builder = GeoSupport.getCalculator();
+    
+     loc1.add(1000, builder.createPoint(4, 3));
+     singletonLoc.add(2000, builder.createPoint(3, 4));
+     
+     // put in the new documents
+     selection.clear();
+     selection.add(loc1.toDocument());
+     selection.add(singletonLoc.toDocument());
+    
+     ops =
+     new DistanceBetweenTracksOperation().actionsFor(selection, store,
+     context);
+     assertEquals("not empty collection", 1, ops.size());
+     
+     assertEquals("store empty", 0, store.size());
+     
+     ops.get(0).execute();
+
+     assertEquals("store no longer empty", 1, store.size());
+     
+     // try the bearing operation
+     ops = new BearingBetweenTracksOperation().actionsFor(selection, store, context);
+
+     assertEquals("not empty collection", 1, ops.size());
+
+     store.clear();
+     assertEquals("store empty", 0, store.size());
+     
+     ops.get(0).execute();
+
+     assertEquals("store no longer empty", 1, store.size());
+     
+
+     // try the bearing operation
+     ops = new BearingBetweenTracksOperation().actionsFor(selection, store, context);
+
+     assertEquals("not empty collection", 1, ops.size());
+
+     store.clear();
+     assertEquals("store empty", 0, store.size());
+     
+     ops.get(0).execute();
+
+     assertEquals("store no longer empty", 1, store.size());     
+     
+
+     // add some more entries to loc1
+     loc1.add(2000, builder.createPoint(4, 3));
+     loc1.add(3000, builder.createPoint(4, 3));
+     loc1.add(4000, builder.createPoint(4, 3));
+
+     // put in the new documents
+     selection.clear();
+     selection.add(loc1.toDocument());
+     selection.add(singletonLoc.toDocument());
+
+     ops =
+     new DistanceBetweenTracksOperation().actionsFor(selection, store,
+     context);
+     assertEquals("not empty collection", 2, ops.size());
+     
+     // run the interpolation command
+     store.clear();
+     ops.get(0).execute();
+     assertEquals("store has other collection", 1, store.size());   
+
+
+     // try the bearing operation
+     ops = new BearingBetweenTracksOperation().actionsFor(selection, store, context);
+
+     assertEquals("not empty collection", 2, ops.size());
+
+     store.clear();
+     assertEquals("store empty", 0, store.size());
+     
+     ops.get(0).execute();
+
+     assertEquals("store no longer empty", 1, store.size());
+     
+  }
+
 
   public void testLocationCalc()
   {
@@ -570,8 +688,7 @@ public class TestGeotoolsGeometry extends TestCase
      new DistanceBetweenTracksOperation().actionsFor(selection, store,
      context);
      assertEquals("empty collection", 0, ops.size());
-    
-     
+         
      
      selection.remove(len1);
      selection.add(loc2.toDocument());

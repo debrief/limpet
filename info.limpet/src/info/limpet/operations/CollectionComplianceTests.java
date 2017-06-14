@@ -797,7 +797,8 @@ public class CollectionComplianceTests
     boolean res = true;
 
     // ok, keep looping through, to check we have the right types
-    if (needsSpeed && !isDimensionPresent(group, METRE.divide(SECOND).getDimension()))
+    if (needsSpeed
+        && !isDimensionPresent(group, METRE.divide(SECOND).getDimension()))
     {
       return false;
     }
@@ -1172,24 +1173,31 @@ public class CollectionComplianceTests
       // data types
       if (iCollection != null && iCollection.isIndexed())
       {
-        TimePeriod hisPeriod = getBoundsFor(iCollection);
+        // special case - check it's not a singleton, in which case we ignore it's time value
+        int thisSize = iCollection.size();
 
-        if (res == null)
+        if (thisSize != 1)
         {
-          res = hisPeriod;
-        }
-        else
-        {
-          if (res.overlaps(hisPeriod))
+          TimePeriod hisPeriod = getBoundsFor(iCollection);
+
+          if (res == null)
           {
-            // ok, constrain to the overlap
-            res.setStartTime(Math.max(res.getStartTime(), hisPeriod.startTime));
-            res.setEndTime(Math.min(res.getEndTime(), hisPeriod.endTime));
+            res = hisPeriod;
           }
           else
           {
-            // they don't overlap. fail
-            return null;
+            if (res.overlaps(hisPeriod))
+            {
+              // ok, constrain to the overlap
+              res.setStartTime(Math
+                  .max(res.getStartTime(), hisPeriod.startTime));
+              res.setEndTime(Math.min(res.getEndTime(), hisPeriod.endTime));
+            }
+            else
+            {
+              // they don't overlap. fail
+              return null;
+            }
           }
         }
       }
@@ -1400,7 +1408,7 @@ public class CollectionComplianceTests
 
     public boolean overlaps(TimePeriod his)
     {
-      return this.endTime > his.startTime && this.startTime < his.endTime;
+      return this.endTime >= his.startTime && this.startTime <= his.endTime;
     }
   }
 
