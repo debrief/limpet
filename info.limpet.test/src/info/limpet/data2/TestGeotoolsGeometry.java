@@ -484,8 +484,8 @@ public class TestGeotoolsGeometry extends TestCase
     // ok, try adding some data
     IGeoCalculator builder = GeoSupport.getCalculator();
 
+    // start with a singleton
     loc1.add(1000, builder.createPoint(4, 3));
-    loc1.add(2000, builder.createPoint(3, 4));
     loc2.add(1000, builder.createPoint(5, 3));
     loc2.add(1500, builder.createPoint(4, 3));
     loc3.add(builder.createPoint(2, 2));
@@ -494,14 +494,28 @@ public class TestGeotoolsGeometry extends TestCase
     selection.clear();
     selection.add(loc1.toDocument());
     selection.add(loc2.toDocument());
-    selection.add(len1.toDocument());
-    
+    selection.add(len1.toDocument());    
 
     ops =
         new ProplossBetweenTwoTracksOperation().actionsFor(selection, store,
             context);
     assertEquals("not empty collection", 2, ops.size());
 
+    // now balance the tracks
+    // start with a singleton
+    loc1.add(2000, builder.createPoint(3, 4));
+    
+    // ok, regenerate the list
+    selection.clear();
+    selection.add(loc1.toDocument());
+    selection.add(loc2.toDocument());
+    selection.add(len1.toDocument());
+    
+    ops =
+        new ProplossBetweenTwoTracksOperation().actionsFor(selection, store,
+            context);
+    assertEquals("not empty collection", 2, ops.size());
+    
     // make hte series different lengths
     loc2.add(2000, builder.createPoint(3, 4));
     
