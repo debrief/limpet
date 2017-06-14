@@ -412,14 +412,14 @@ public class XyPlotView extends CoreAnalysisView
       yData = new double[thisQ.size()];
 
       // must be temporal
-      Iterator<Double> index = coll.getIndex();
-      Iterator<Double> values = thisQ.getIterator();
+      final Iterator<Double> index = coll.getIndex();
+      final Iterator<Double> values = thisQ.getIterator();
 
       int ctr = 0;
       final Unit<Duration> millis = SI.SECOND.divide(1000);
       while (values.hasNext())
       {
-        double t = index.next();
+        final double t = index.next();
         if (isTemporal)
         {
           final long value;
@@ -430,7 +430,7 @@ public class XyPlotView extends CoreAnalysisView
           else
           {
             // do we need to convert to millis?
-            UnitConverter converter = indexUnits.getConverterTo(millis);
+            final UnitConverter converter = indexUnits.getConverterTo(millis);
             value = (long) converter.convert(t);
           }
 
@@ -452,7 +452,7 @@ public class XyPlotView extends CoreAnalysisView
       yData = new double[2];
 
       // get the singleton value
-      Double theValue = thisQ.getIterator().next();
+      final Double theValue = thisQ.getIterator().next();
 
       // create the marker line
       xTimeData[0] = new Date((long) outerPeriod.getStartTime());
@@ -479,10 +479,10 @@ public class XyPlotView extends CoreAnalysisView
     if (existingUnits != null && !existingUnits.equals(theseUnits))
     {
       // create second Y axis
-      int axisId = chart.getAxisSet().createYAxis();
+      final int axisId = chart.getAxisSet().createYAxis();
 
       // set the properties of second Y axis
-      IAxis yAxis2 = chart.getAxisSet().getYAxis(axisId);
+      final IAxis yAxis2 = chart.getAxisSet().getYAxis(axisId);
       yAxis2.getTitle().setText(theseUnits.toString());
       yAxis2.setPosition(Position.Secondary);
       newSeries.setYAxisId(axisId);

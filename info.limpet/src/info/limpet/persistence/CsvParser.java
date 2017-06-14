@@ -353,7 +353,7 @@ public class CsvParser
       }
       else
       {
-        importer = new TemporalStringImporter();;
+        importer = new TemporalStringImporter();
       }
     }
     else
@@ -361,11 +361,11 @@ public class CsvParser
       if (isNumeric(nextVal))
       {
         // ok, we've got dimensionless quantity data
-        importer = new SeriesSupporter(null, null, null);;
+        importer = new SeriesSupporter(null, null, null);
       }
       else
       {
-        importer = new StringImporter();;
+        importer = new StringImporter();
       }
     }
 
