@@ -31,38 +31,38 @@ import javax.measure.unit.Unit;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.Maths;
 
-public class MultiplyQuantityOperation extends BinaryQuantityOperation
+public class SubtractLogQuantityOperation extends BinaryQuantityOperation
 {
 
-  public class MultiplyQuantityValues extends BinaryQuantityCommand
+  public class SubtractQuantityValues extends BinaryQuantityCommand
   {
-    public MultiplyQuantityValues(final String name,
+    public SubtractQuantityValues(final String name,
         final List<IStoreItem> selection, final IStoreGroup store,
         final IContext context)
     {
       this(name, selection, store, null, context);
     }
 
-    public MultiplyQuantityValues(final String name,
+    public SubtractQuantityValues(final String name,
         final List<IStoreItem> selection, final IStoreGroup destination,
         final IDocument<?> timeProvider, final IContext context)
     {
-      super(name, "Multiply datasets", destination, false, false, selection,
+      super(name, "Subtract datasets", destination, false, false, selection,
           timeProvider, context);
     }
 
     @Override
     protected String getBinaryNameFor(final String name1, final String name2)
     {
-      return "Product of " + name1 + " + " + name2;
+      return name1 + " subtracted from " + name2;
     }
 
     @Override
     protected Unit<?> getBinaryOutputUnit(final Unit<?> first,
         final Unit<?> second)
     {
-      // return product of units
-      return first.times(second);
+      // Subtraction doesn't modify units, just use first ones
+      return first;
     }
 
     @Override
@@ -74,7 +74,30 @@ public class MultiplyQuantityOperation extends BinaryQuantityOperation
         public Dataset
             perform(final Dataset a, final Dataset b, final Dataset o)
         {
-          return Maths.multiply(a, b, o);
+          // ok, convert them to alog
+          final Dataset aNon = toNonLog(a);
+          final Dataset bNon = toNonLog(b);
+
+          final Dataset sum = Maths.subtract(aNon, bNon);
+
+          final Dataset res = toLog(sum);
+
+          return res;
+
+        }
+
+        private Dataset toLog(final Dataset sum)
+        {
+          final Dataset log10 = Maths.log10(sum);
+          final Dataset times10 = Maths.multiply(log10, 10);
+          return times10;
+        }
+
+        private Dataset toNonLog(final Dataset d)
+        {
+          final Dataset div10 = Maths.divide(d, 10);
+          final Dataset raised = Maths.power(10, div10);
+          return raised;
         }
       };
     }
@@ -85,10 +108,16 @@ public class MultiplyQuantityOperation extends BinaryQuantityOperation
       final IStoreGroup destination, final Collection<ICommand> res,
       final IContext context)
   {
-    final ICommand newC =
-        new MultiplyQuantityValues(
-            "Multiply numeric values in provided series (indexed)", selection,
-            destination, context);
+    final IStoreItem doc1 = selection.get(0);
+    final IStoreItem doc2 = selection.get(1);
+
+    ICommand newC =
+        new SubtractQuantityValues("Subtract logarithmic " + doc2 + " from "
+            + doc1 + "(indexed)", selection, destination, context);
+    res.add(newC);
+    newC =
+        new SubtractQuantityValues("Subtract logarithmic " + doc1 + " from "
+            + doc2 + "(indexed)", reverse(selection), destination, context);
     res.add(newC);
   }
 
@@ -101,11 +130,21 @@ public class MultiplyQuantityOperation extends BinaryQuantityOperation
 
     if (longest != null)
     {
-      final ICommand newC =
-          new MultiplyQuantityValues(
-              "Multiply numeric values in provided series (interpolated)",
-              selection, destination, longest, context);
+      final IStoreItem doc1 = selection.get(0);
+      final IStoreItem doc2 = selection.get(1);
+
+      ICommand newC =
+          new SubtractQuantityValues("Subtract logarithmic " + doc2 + " from "
+              + doc1 + "(interpolated)", selection, destination, longest,
+              context);
       res.add(newC);
+
+      newC =
+          new SubtractQuantityValues("Subtract logarithmic " + doc1 + " from "
+              + doc2 + "(interpolated)", reverse(selection), destination,
+              longest, context);
+      res.add(newC);
+
     }
   }
 
@@ -117,8 +156,14 @@ public class MultiplyQuantityOperation extends BinaryQuantityOperation
     final boolean suitableLength =
         getATests().allIndexed(selection)
             || getATests().allEqualLengthOrSingleton(selection);
+    final boolean equalDimensions = getATests().allEqualDimensions(selection);
+    final boolean equalUnits = getATests().allEqualUnits(selection);
 
-    return nonEmpty && allQuantity && suitableLength;
+    // lastly, check they're not logarithmic
+    final boolean hasLog = hasLogData(selection);
+
+    return nonEmpty && allQuantity && suitableLength && equalDimensions
+        && equalUnits && hasLog;
   }
 
 }

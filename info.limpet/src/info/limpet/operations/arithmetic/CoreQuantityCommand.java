@@ -12,25 +12,25 @@ import java.util.List;
 public abstract class CoreQuantityCommand extends AbstractCommand
 {
 
-  public CoreQuantityCommand(String title, String description,
-      IStoreGroup store, boolean canUndo, boolean canRedo,
-      List<IStoreItem> inputs, IContext context)
+  public CoreQuantityCommand(final String title, final String description,
+      final IStoreGroup store, final boolean canUndo, final boolean canRedo,
+      final List<IStoreItem> inputs, final IContext context)
   {
     super(title, description, store, canUndo, canRedo, inputs, context);
   }
-  
+
   /**
    * empty the contents of any results collections
    * 
    * @param outputs
    */
-  protected void clearOutputs(List<Document<?>> outputs)
+  protected void clearOutputs(final List<Document<?>> outputs)
   {
     // clear out the lists, first
-    Iterator<Document<?>> iter = outputs.iterator();
+    final Iterator<Document<?>> iter = outputs.iterator();
     while (iter.hasNext())
     {
-      Document<?> qC = (Document<?>) iter.next();
+      final Document<?> qC = iter.next();
       qC.clearQuiet();
     }
   }

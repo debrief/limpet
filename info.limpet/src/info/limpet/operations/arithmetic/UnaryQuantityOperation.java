@@ -40,79 +40,6 @@ import org.eclipse.january.metadata.internal.AxesMetadataImpl;
 
 public abstract class UnaryQuantityOperation implements IOperation
 {
-  private final String _opName;
-
-  public UnaryQuantityOperation(String opName)
-  {
-    _opName = opName;
-  }
-
-  public String getName()
-  {
-    return _opName;
-  }
-
-  protected final CollectionComplianceTests aTests =
-      new CollectionComplianceTests();
-
-  public List<ICommand> actionsFor(List<IStoreItem> selection,
-      IStoreGroup destination, IContext context)
-  {
-    List<ICommand> res = new ArrayList<ICommand>();
-    if (appliesTo(selection))
-    {
-      ICommand newC =
-          new UnaryQuantityCommand("Math - " + _opName, "description here",
-              destination, selection, context);
-
-      res.add(newC);
-    }
-
-    return res;
-  }
-
-  /**
-   * determine if this dataset is suitable
-   * 
-   * @param selection
-   * @return
-   */
-  protected abstract boolean appliesTo(List<IStoreItem> selection);
-
-  /**
-   * determine the units of the product
-   * 
-   * @param first
-   * @param second
-   * @return
-   */
-  abstract protected Unit<?> getUnaryOutputUnit(Unit<?> first);
-
-  /**
-   * provide the name for the product dataset
-   * 
-   * @param name
-   * @param name2
-   * @return
-   */
-  protected String getUnaryNameFor(String name)
-  {
-    return name + ": " + _opName;
-  }
-
-  public CollectionComplianceTests getATests()
-  {
-    return aTests;
-  }
-
-  /**
-   * perform the operation on the subject dataset
-   * 
-   * @param input
-   * @return
-   */
-  abstract public Dataset calculate(Dataset input);
-
   /**
    * the command that actually produces data
    * 
@@ -122,58 +49,11 @@ public abstract class UnaryQuantityOperation implements IOperation
   public class UnaryQuantityCommand extends CoreQuantityCommand
   {
 
-    public UnaryQuantityCommand(String title, String description,
-        IStoreGroup store, List<IStoreItem> inputs, IContext context)
+    public UnaryQuantityCommand(final String title, final String description,
+        final IStoreGroup store, final List<IStoreItem> inputs,
+        final IContext context)
     {
       super(title, description, store, true, true, inputs, context);
-    }
-
-    /**
-     * for unitary operations we only act on a single input. We may be acting on an number of
-     * datasets, so find the relevant one, and re-calculate it
-     */
-    protected void recalculate(IStoreItem subject)
-    {
-      // TODO: change logic, we should only re-generate the
-      // single output
-      
-      // workaround: we don't know which output derives
-      // from this input.  So, we will have to regenerate
-      // all outputs
-
-      Iterator<Document<?>> oIter = getOutputs().iterator();
-      
-      // we may be acting separately on multiple inputs.
-      // so, loop through them
-      for (final IStoreItem input : getInputs())
-      {
-        final NumberDocument inputDoc = (NumberDocument) input;
-        final NumberDocument outputDoc = (NumberDocument) oIter.next();
-
-        // ok, process this one.
-        Unit<?> unit = getUnits(inputDoc);
-        
-        // update the units
-        if(outputDoc.getUnits() != unit)
-        {
-          outputDoc.setUnits(unit);
-        }
-
-        // clear the results sets
-        clearOutputs(getOutputs());
-
-        // start adding values.
-        IDataset dataset = performCalc(inputDoc);
-
-        // update the name
-        dataset.setName(generateName(inputDoc));
-        
-        // store the data
-        outputDoc.setDataset(dataset);
-
-        // and fire out the update
-        outputDoc.fireDataChanged();
-      }
     }
 
     @Override
@@ -190,16 +70,16 @@ public abstract class UnaryQuantityOperation implements IOperation
 
         // ok, process this one.
         // sort out the output unit
-        Unit<?> unit = getUnits(inputDoc);
+        final Unit<?> unit = getUnits(inputDoc);
 
         // start adding values.
-        IDataset dataset = performCalc(inputDoc);
+        final IDataset dataset = performCalc(inputDoc);
 
         // store the name
         dataset.setName(generateName(inputDoc));
 
         // ok, wrap the dataset
-        NumberDocument output =
+        final NumberDocument output =
             new NumberDocument((DoubleDataset) dataset, this, unit);
 
         // and fire out the update
@@ -218,6 +98,18 @@ public abstract class UnaryQuantityOperation implements IOperation
 
     }
 
+    protected String generateName(final NumberDocument inputDoc)
+    {
+      // get the name
+      return getUnaryNameFor(inputDoc.getName());
+    }
+
+    protected Unit<?> getUnits(final NumberDocument inputDoc)
+    {
+      // get the unit
+      return getUnaryOutputUnit(inputDoc.getUnits());
+    }
+
     /**
      * wrap the actual operation. We're doing this since we need to separate it from the core
      * "execute" operation in order to support dynamic updates
@@ -229,7 +121,7 @@ public abstract class UnaryQuantityOperation implements IOperation
      * @param outputs
      *          the list of output series
      */
-    protected IDataset performCalc(NumberDocument nd)
+    protected IDataset performCalc(final NumberDocument nd)
     {
       final IDataset ids = nd.getDataset();
       Dataset res = null;
@@ -246,7 +138,7 @@ public abstract class UnaryQuantityOperation implements IOperation
         // if there are indices, store them
         if (axis1 != null)
         {
-          AxesMetadata am = new AxesMetadataImpl();
+          final AxesMetadata am = new AxesMetadataImpl();
           // keep track of the indices to use in the output
           final ILazyDataset outputIndicesLazy = axis1.getAxes()[0];
           Dataset outputIndices = null;
@@ -255,7 +147,7 @@ public abstract class UnaryQuantityOperation implements IOperation
             outputIndices =
                 DatasetUtils.sliceAndConvertLazyDataset(outputIndicesLazy);
           }
-          catch (DatasetException e)
+          catch (final DatasetException e)
           {
             throw new IllegalArgumentException(
                 "Unable to load axis for dataset:" + ds.getName());
@@ -265,7 +157,7 @@ public abstract class UnaryQuantityOperation implements IOperation
           res.addMetadata(am);
         }
       }
-      catch (DatasetException e)
+      catch (final DatasetException e)
       {
         throw new RuntimeException(e);
       }
@@ -274,18 +166,129 @@ public abstract class UnaryQuantityOperation implements IOperation
       return res;
     }
 
-    protected Unit<?> getUnits(NumberDocument inputDoc)
+    /**
+     * for unitary operations we only act on a single input. We may be acting on an number of
+     * datasets, so find the relevant one, and re-calculate it
+     */
+    @Override
+    protected void recalculate(final IStoreItem subject)
     {
-      // get the unit
-      return getUnaryOutputUnit(inputDoc.getUnits());
-    }
+      // TODO: change logic, we should only re-generate the
+      // single output
 
-    protected String generateName(NumberDocument inputDoc)
-    {
-      // get the name
-      return getUnaryNameFor(inputDoc.getName());
+      // workaround: we don't know which output derives
+      // from this input. So, we will have to regenerate
+      // all outputs
+
+      final Iterator<Document<?>> oIter = getOutputs().iterator();
+
+      // we may be acting separately on multiple inputs.
+      // so, loop through them
+      for (final IStoreItem input : getInputs())
+      {
+        final NumberDocument inputDoc = (NumberDocument) input;
+        final NumberDocument outputDoc = (NumberDocument) oIter.next();
+
+        // ok, process this one.
+        final Unit<?> unit = getUnits(inputDoc);
+
+        // update the units
+        if (outputDoc.getUnits() != unit)
+        {
+          outputDoc.setUnits(unit);
+        }
+
+        // clear the results sets
+        clearOutputs(getOutputs());
+
+        // start adding values.
+        final IDataset dataset = performCalc(inputDoc);
+
+        // update the name
+        dataset.setName(generateName(inputDoc));
+
+        // store the data
+        outputDoc.setDataset(dataset);
+
+        // and fire out the update
+        outputDoc.fireDataChanged();
+      }
     }
 
   }
+
+  private final String _opName;
+
+  protected final CollectionComplianceTests aTests =
+      new CollectionComplianceTests();
+
+  public UnaryQuantityOperation(final String opName)
+  {
+    _opName = opName;
+  }
+
+  @Override
+  public List<ICommand> actionsFor(final List<IStoreItem> selection,
+      final IStoreGroup destination, final IContext context)
+  {
+    final List<ICommand> res = new ArrayList<ICommand>();
+    if (appliesTo(selection))
+    {
+      final ICommand newC =
+          new UnaryQuantityCommand("Math - " + _opName, "description here",
+              destination, selection, context);
+
+      res.add(newC);
+    }
+
+    return res;
+  }
+
+  /**
+   * determine if this dataset is suitable
+   * 
+   * @param selection
+   * @return
+   */
+  protected abstract boolean appliesTo(List<IStoreItem> selection);
+
+  /**
+   * perform the operation on the subject dataset
+   * 
+   * @param input
+   * @return
+   */
+  abstract public Dataset calculate(Dataset input);
+
+  public CollectionComplianceTests getATests()
+  {
+    return aTests;
+  }
+
+  public String getName()
+  {
+    return _opName;
+  }
+
+  /**
+   * provide the name for the product dataset
+   * 
+   * @param name
+   * @param name2
+   * @return
+   */
+  protected String getUnaryNameFor(final String name)
+  {
+    return name + ": " + _opName;
+  }
+
+  /**
+   * determine the units of the product
+   * 
+   * @param first
+   * @param second
+   * @return
+   */
+  abstract protected Unit<?> getUnaryOutputUnit(Unit<?> first);
 
 }

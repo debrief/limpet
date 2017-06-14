@@ -797,13 +797,13 @@ public class CollectionComplianceTests
     boolean res = true;
 
     // ok, keep looping through, to check we have the right types
-    if (needsSpeed && !isPresent(group, METRE.divide(SECOND).getDimension()))
+    if (needsSpeed && !isDimensionPresent(group, METRE.divide(SECOND).getDimension()))
     {
       return false;
     }
 
     // ok, keep looping through, to check we have the right types
-    if (needsCourse && !isPresent(group, SI.RADIAN.getDimension()))
+    if (needsCourse && !isDimensionPresent(group, SI.RADIAN.getDimension()))
     {
       return false;
     }
@@ -920,7 +920,7 @@ public class CollectionComplianceTests
    *          we're looking for
    * @return yes/no
    */
-  private boolean isPresent(Collection<IStoreItem> kids, Dimension dim)
+  public boolean isDimensionPresent(Collection<IStoreItem> kids, Dimension dim)
   {
     boolean res = false;
 
@@ -932,6 +932,37 @@ public class CollectionComplianceTests
       {
         NumberDocument coll = (NumberDocument) item;
         if (coll.getUnits().getDimension().equals(dim))
+        {
+          res = true;
+          break;
+        }
+      }
+    }
+
+    return res;
+  }
+
+  /**
+   * see if a collection of the specified units is present
+   * 
+   * @param items
+   *          to check
+   * @param units
+   *          we're looking for
+   * @return yes/no
+   */
+  public boolean isUnitPresent(Collection<IStoreItem> kids, Unit<?> dim)
+  {
+    boolean res = false;
+
+    Iterator<IStoreItem> iter = kids.iterator();
+    while (iter.hasNext())
+    {
+      IStoreItem item = iter.next();
+      if (item instanceof NumberDocument)
+      {
+        NumberDocument coll = (NumberDocument) item;
+        if (coll.getUnits().equals(dim))
         {
           res = true;
           break;

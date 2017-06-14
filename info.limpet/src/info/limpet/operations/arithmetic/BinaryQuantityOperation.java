@@ -31,6 +31,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.measure.unit.NonSI;
 import javax.measure.unit.Unit;
 
 import org.eclipse.january.DatasetException;
@@ -46,113 +47,9 @@ import org.eclipse.january.metadata.internal.AxesMetadataImpl;
 
 public abstract class BinaryQuantityOperation implements IOperation
 {
-
   private final CollectionComplianceTests aTests =
       new CollectionComplianceTests();
 
-  @Override
-  public List<ICommand> actionsFor(List<IStoreItem> selection,
-      IStoreGroup destination, IContext context)
-  {
-    List<ICommand> res = new ArrayList<ICommand>();
-    if (appliesTo(selection))
-    {
-      // so, do we do our indexed commands?
-      if (getATests().allEqualLengthOrSingleton(selection))
-      {
-        addIndexedCommands(selection, destination, res, context);
-      }
-
-      // aah, what about temporal (interpolated) values?
-      final boolean allIndexed = getATests().allIndexed(selection);
-      final boolean suitableForIndexedInterpolation =
-          getATests().suitableForIndexedInterpolation(selection);
-      final boolean hasIndexed = getATests().hasIndexed(selection);
-      if (allIndexed && suitableForIndexedInterpolation || hasIndexed)
-      // )
-      {
-        addInterpolatedCommands(selection, destination, res, context);
-      }
-    }
-    return res;
-  }
-
-  /**
-   * produce a reversed version of the supplied list
-   * 
-   * @param list
-   * @return
-   */
-  protected List<IStoreItem> reverse(List<IStoreItem> list)
-  {
-    ArrayList<IStoreItem> res = new ArrayList<IStoreItem>(list);
-    Collections.reverse(res);
-    return res;
-  }
-
-  protected IDocument<?> getLongestIndexedCollection(List<IStoreItem> selection)
-  {
-    // find the longest time series.
-    IDocument<?> longest = null;
-
-    for (final IStoreItem sItem : selection)
-    {
-      if (sItem instanceof IDocument)
-      {
-        final IDocument<?> doc = (IDocument<?>) sItem;
-        if (doc.isIndexed())
-        {
-          if (longest == null)
-          {
-            longest = doc;
-          }
-          else
-          {
-            // store the longest one
-            longest = doc.size() > longest.size() ? doc : longest;
-          }
-        }
-      }
-    }
-
-    return longest;
-  }
-
-  /**
-   * determine if this dataset is suitable
-   * 
-   * @param selection
-   * @return
-   */
-  protected abstract boolean appliesTo(List<IStoreItem> selection);
-
-  /**
-   * produce any new commands for this s election
-   * 
-   * @param selection
-   *          current selection
-   * @param destination
-   *          where the results will end up
-   * @param commands
-   *          the list of commands
-   */
-  protected abstract void addIndexedCommands(List<IStoreItem> selection,
-      IStoreGroup destination, Collection<ICommand> commands, IContext context);
-
-  /**
-   * add any commands that require temporal interpolation
-   * 
-   * @param selection
-   * @param destination
-   * @param res
-   */
-  protected abstract void addInterpolatedCommands(List<IStoreItem> selection,
-      IStoreGroup destination, Collection<ICommand> res, IContext context);
-
-  public CollectionComplianceTests getATests()
-  {
-    return aTests;
-  }
 
   /**
    * the command that actually produces data
@@ -166,38 +63,32 @@ public abstract class BinaryQuantityOperation implements IOperation
     @SuppressWarnings("unused")
     private final IDocument<?> timeProvider;
 
-    public BinaryQuantityCommand(String title, String description,
-        IStoreGroup store, boolean canUndo, boolean canRedo,
-        List<IStoreItem> inputs, IContext context)
+    public BinaryQuantityCommand(final String title, final String description,
+        final IStoreGroup store, final boolean canUndo, final boolean canRedo,
+        final List<IStoreItem> inputs, final IContext context)
     {
       this(title, description, store, canUndo, canRedo, inputs, null, context);
     }
 
-    public BinaryQuantityCommand(String title, String description,
-        IStoreGroup store, boolean canUndo, boolean canRedo,
-        List<IStoreItem> inputs, IDocument<?> timeProvider, IContext context)
+    public BinaryQuantityCommand(final String title, final String description,
+        final IStoreGroup store, final boolean canUndo, final boolean canRedo,
+        final List<IStoreItem> inputs, final IDocument<?> timeProvider,
+        final IContext context)
     {
       super(title, description, store, canUndo, canRedo, inputs, context);
 
       this.timeProvider = timeProvider;
     }
 
-    /**
-     * for binary operations we act on a set of inputs, so, if one has changed then we will
-     * recalculate all of them.
-     */
-    protected void recalculate(IStoreItem subject)
+    protected void assignOutputIndices(final IDataset output,
+        final Dataset outputIndices)
     {
-      // calculate the results
-      IDataset newSet = performCalc();
-
-      // store the new dataset
-      getOutputs().get(0).setDataset(newSet);
-
-      // and share the good news
-      for (Document<?> s : getOutputs())
+      if (outputIndices != null)
       {
-        s.fireDataChanged();
+        final AxesMetadata am = new AxesMetadataImpl();
+        am.initialize(1);
+        am.setAxis(0, outputIndices);
+        output.addMetadata(am);
       }
     }
 
@@ -205,19 +96,19 @@ public abstract class BinaryQuantityOperation implements IOperation
     public void execute()
     {
       // sort out the output unit
-      Unit<?> unit = getUnits();
+      final Unit<?> unit = getUnits();
 
       // also sort out the output's index units
-      Unit<?> indexUnits = getIndexUnits();
+      final Unit<?> indexUnits = getIndexUnits();
 
       // start adding values.
-      IDataset dataset = performCalc();
+      final IDataset dataset = performCalc();
 
       // store the name
       dataset.setName(generateName());
 
       // ok, wrap the dataset
-      NumberDocument output =
+      final NumberDocument output =
           new NumberDocument((DoubleDataset) dataset, this, unit);
 
       // and the index units
@@ -233,13 +124,13 @@ public abstract class BinaryQuantityOperation implements IOperation
       super.addOutput(output);
 
       // tell each series that we're a dependent
-      Iterator<IStoreItem> iter = getInputs().iterator();
+      final Iterator<IStoreItem> iter = getInputs().iterator();
       while (iter.hasNext())
       {
-        IStoreItem sItem = iter.next();
+        final IStoreItem sItem = iter.next();
         if (sItem instanceof IDocument)
         {
-          IDocument<?> iCollection = (IDocument<?>) sItem;
+          final IDocument<?> iCollection = (IDocument<?>) sItem;
           iCollection.addDependent(this);
         }
       }
@@ -247,6 +138,67 @@ public abstract class BinaryQuantityOperation implements IOperation
       // ok, done
       getStore().add(output);
     }
+
+    private Dataset findIndexDataset()
+    {
+      Dataset ds = null;
+      for (final IStoreItem inp : getInputs())
+      {
+        final Document<?> doc = (Document<?>) inp;
+        if (doc.size() > 1 && doc.isIndexed())
+        {
+          final IDataset dataset = doc.getDataset();
+          final AxesMetadata axes =
+              dataset.getFirstMetadata(AxesMetadata.class);
+          if (axes != null)
+          {
+            final ILazyDataset am = axes.getAxis(0)[0];
+            try
+            {
+              final DoubleDataset ds1 =
+                  (DoubleDataset) DatasetUtils.sliceAndConvertLazyDataset(am);
+              ds = ds1;
+              break;
+            }
+            catch (final DatasetException e)
+            {
+              // TODO Auto-generated catch block
+              e.printStackTrace();
+            }
+          }
+        }
+      }
+
+      return ds;
+    }
+
+    protected String generateName()
+    {
+      // get the unit
+      final NumberDocument first = (NumberDocument) getInputs().get(0);
+      final NumberDocument second = (NumberDocument) getInputs().get(1);
+
+      return getBinaryNameFor(first.getName(), second.getName());
+    }
+
+    /**
+     * provide the name for the product dataset
+     * 
+     * @param name
+     * @param name2
+     * @return
+     */
+    abstract protected String getBinaryNameFor(String name, String name2);
+
+    /**
+     * determine the units of the product
+     * 
+     * @param first
+     * @param second
+     * @return
+     */
+    abstract protected Unit<?>
+        getBinaryOutputUnit(Unit<?> first, Unit<?> second);
 
     private Unit<?> getIndexUnits()
     {
@@ -256,16 +208,16 @@ public abstract class BinaryQuantityOperation implements IOperation
       if (getATests().allIndexed(getInputs()))
       {
         // ok, that's easy
-        Document<?> doc = (Document<?>) getInputs().get(0);
+        final Document<?> doc = (Document<?>) getInputs().get(0);
         res = doc.getIndexUnits();
       }
       else if (getATests().hasIndexed(getInputs()))
       {
         Unit<?> firstIndexed = null;
         // ok, find the series with an index
-        for (IStoreItem s : getInputs())
+        for (final IStoreItem s : getInputs())
         {
-          Document<?> doc = (Document<?>) s;
+          final Document<?> doc = (Document<?>) s;
           if (doc.isIndexed())
           {
             final Unit<?> thisIndexUnits = doc.getIndexUnits();
@@ -286,17 +238,20 @@ public abstract class BinaryQuantityOperation implements IOperation
       return res;
     }
 
-    private void storeIndexUnits(NumberDocument output, Unit<?> indexUnits)
-    {
-      if (output.isIndexed())
-      {
-        output.setIndexUnits(indexUnits);
-      }
-    }
+    /**
+     * provide class that can perform required operation
+     * 
+     * @return
+     */
+    abstract protected IOperationPerformer getOperation();
 
-    protected void tidyOutput(NumberDocument output)
+    protected Unit<?> getUnits()
     {
-      // we don't need to do anything
+      // get the unit
+      final NumberDocument first = (NumberDocument) getInputs().get(0);
+      final NumberDocument second = (NumberDocument) getInputs().get(1);
+
+      return getBinaryOutputUnit(first.getUnits(), second.getUnits());
     }
 
     /**
@@ -338,39 +293,7 @@ public abstract class BinaryQuantityOperation implements IOperation
           doInterp = false;
 
           // see if we have a set of output indices we can use
-          Dataset ds = null;
-          for (IStoreItem inp : getInputs())
-          {
-            Document<?> doc = (Document<?>) inp;
-            if (doc.size() > 1)
-            {
-              if (doc.isIndexed())
-              {
-                IDataset dataset = doc.getDataset();
-                AxesMetadata axes =
-                    dataset.getFirstMetadata(AxesMetadata.class);
-                if (axes != null)
-                {
-                  ILazyDataset am = axes.getAxis(0)[0];
-                  try
-                  {
-                    DoubleDataset ds1 =
-                        (DoubleDataset) DatasetUtils
-                            .sliceAndConvertLazyDataset(am);
-                    ds = ds1;
-                    break;
-                  }
-                  catch (DatasetException e)
-                  {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                  }
-                }
-              }
-            }
-          }
-
-          outputIndices = ds;
+          outputIndices = findIndexDataset();
         }
         else
         {
@@ -456,7 +379,7 @@ public abstract class BinaryQuantityOperation implements IOperation
           ind1 = DatasetUtils.sliceAndConvertLazyDataset(in1);
           ind2 = DatasetUtils.sliceAndConvertLazyDataset(in2);
         }
-        catch (DatasetException e)
+        catch (final DatasetException e)
         {
           e.printStackTrace();
         }
@@ -485,7 +408,7 @@ public abstract class BinaryQuantityOperation implements IOperation
           ind1 = DatasetUtils.sliceAndConvertLazyDataset(in1);
           ind2 = DatasetUtils.sliceAndConvertLazyDataset(in2);
         }
-        catch (DatasetException de)
+        catch (final DatasetException de)
         {
           de.printStackTrace();
         }
@@ -511,61 +434,152 @@ public abstract class BinaryQuantityOperation implements IOperation
       return res;
     }
 
-    protected void assignOutputIndices(final IDataset output,
-        final Dataset outputIndices)
+    /**
+     * for binary operations we act on a set of inputs, so, if one has changed then we will
+     * recalculate all of them.
+     */
+    @Override
+    protected void recalculate(final IStoreItem subject)
     {
-      if (outputIndices != null)
+      // calculate the results
+      final IDataset newSet = performCalc();
+
+      // store the new dataset
+      getOutputs().get(0).setDataset(newSet);
+
+      // and share the good news
+      for (final Document<?> s : getOutputs())
       {
-        AxesMetadata am = new AxesMetadataImpl();
-        am.initialize(1);
-        am.setAxis(0, outputIndices);
-        output.addMetadata(am);
+        s.fireDataChanged();
       }
     }
 
-    /**
-     * provide class that can perform required operation
-     * 
-     * @return
-     */
-    abstract protected IOperationPerformer getOperation();
-
-    protected Unit<?> getUnits()
+    private void storeIndexUnits(final NumberDocument output,
+        final Unit<?> indexUnits)
     {
-      // get the unit
-      NumberDocument first = (NumberDocument) getInputs().get(0);
-      NumberDocument second = (NumberDocument) getInputs().get(1);
-
-      return getBinaryOutputUnit(first.getUnits(), second.getUnits());
+      if (output.isIndexed())
+      {
+        output.setIndexUnits(indexUnits);
+      }
     }
 
-    protected String generateName()
+    protected void tidyOutput(final NumberDocument output)
     {
-      // get the unit
-      NumberDocument first = (NumberDocument) getInputs().get(0);
-      NumberDocument second = (NumberDocument) getInputs().get(1);
+      // we don't need to do anything
+    }
+  }
 
-      return getBinaryNameFor(first.getName(), second.getName());
+  @Override
+  public List<ICommand> actionsFor(final List<IStoreItem> selection,
+      final IStoreGroup destination, final IContext context)
+  {
+    final List<ICommand> res = new ArrayList<ICommand>();
+    if (appliesTo(selection))
+    {
+      // so, do we do our indexed commands?
+      if (getATests().allEqualLengthOrSingleton(selection))
+      {
+        addIndexedCommands(selection, destination, res, context);
+      }
+
+      // aah, what about temporal (interpolated) values?
+      final boolean allIndexed = getATests().allIndexed(selection);
+      final boolean suitableForIndexedInterpolation =
+          getATests().suitableForIndexedInterpolation(selection);
+      final boolean hasIndexed = getATests().hasIndexed(selection);
+      if (allIndexed && suitableForIndexedInterpolation || hasIndexed)
+      // )
+      {
+        addInterpolatedCommands(selection, destination, res, context);
+      }
+    }
+    return res;
+  }
+
+  /**
+   * produce any new commands for this s election
+   * 
+   * @param selection
+   *          current selection
+   * @param destination
+   *          where the results will end up
+   * @param commands
+   *          the list of commands
+   */
+  protected abstract void addIndexedCommands(List<IStoreItem> selection,
+      IStoreGroup destination, Collection<ICommand> commands, IContext context);
+
+  /**
+   * add any commands that require temporal interpolation
+   * 
+   * @param selection
+   * @param destination
+   * @param res
+   */
+  protected abstract void addInterpolatedCommands(List<IStoreItem> selection,
+      IStoreGroup destination, Collection<ICommand> res, IContext context);
+
+  /**
+   * determine if this dataset is suitable
+   * 
+   * @param selection
+   * @return
+   */
+  protected abstract boolean appliesTo(List<IStoreItem> selection);
+
+  public CollectionComplianceTests getATests()
+  {
+    return aTests;
+  }
+
+  protected IDocument<?> getLongestIndexedCollection(
+      final List<IStoreItem> selection)
+  {
+    // find the longest time series.
+    IDocument<?> longest = null;
+
+    for (final IStoreItem sItem : selection)
+    {
+      if (sItem instanceof IDocument)
+      {
+        final IDocument<?> doc = (IDocument<?>) sItem;
+        if (doc.isIndexed() || longest == null)
+        {
+          longest = doc;
+        }
+        else
+        {
+          // store the longest one
+          longest = doc.size() > longest.size() ? doc : longest;
+        }
+      }
     }
 
-    /**
-     * determine the units of the product
-     * 
-     * @param first
-     * @param second
-     * @return
-     */
-    abstract protected Unit<?>
-        getBinaryOutputUnit(Unit<?> first, Unit<?> second);
+    return longest;
+  }
 
-    /**
-     * provide the name for the product dataset
-     * 
-     * @param name
-     * @param name2
-     * @return
-     */
-    abstract protected String getBinaryNameFor(String name, String name2);
+  /**
+   * check if any of the data is decibels - since we can't do traditional add/subtract to them
+   * 
+   * @param selection
+   * @return yes/no
+   */
+  protected boolean hasLogData(final List<IStoreItem> selection)
+  {
+    return aTests.isUnitPresent(selection, NonSI.DECIBEL);
+  }
+
+  /**
+   * produce a reversed version of the supplied list
+   * 
+   * @param list
+   * @return
+   */
+  protected List<IStoreItem> reverse(final List<IStoreItem> list)
+  {
+    final ArrayList<IStoreItem> res = new ArrayList<IStoreItem>(list);
+    Collections.reverse(res);
+    return res;
   }
 
 }
