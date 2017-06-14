@@ -18,7 +18,7 @@ public abstract class CoreQuantityCommand extends AbstractCommand
   {
     super(title, description, store, canUndo, canRedo, inputs, context);
   }
-  
+
   /**
    * empty the contents of any results collections
    * 

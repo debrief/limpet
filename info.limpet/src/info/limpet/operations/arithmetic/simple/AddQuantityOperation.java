@@ -69,10 +69,14 @@ public class AddQuantityOperation extends BinaryQuantityOperation
             || getATests().allEqualLengthOrSingleton(selection);
     boolean equalDimensions = getATests().allEqualDimensions(selection);
     boolean equalUnits = getATests().allEqualUnits(selection);
+    
+    // lastly, check they're not logarithmic
+    boolean hasLog = hasLogData(selection);
 
     return nonEmpty && allQuantity && suitableLength && equalDimensions
-        && equalUnits;
+        && equalUnits && !hasLog;
   }
+
 
   public class AddQuantityValues extends BinaryQuantityCommand
   {

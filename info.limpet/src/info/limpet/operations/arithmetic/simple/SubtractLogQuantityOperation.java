@@ -31,7 +31,7 @@ import javax.measure.unit.Unit;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.Maths;
 
-public class SubtractQuantityOperation extends BinaryQuantityOperation
+public class SubtractLogQuantityOperation extends BinaryQuantityOperation
 {
 
   @Override
@@ -47,13 +47,13 @@ public class SubtractQuantityOperation extends BinaryQuantityOperation
 
       ICommand newC =
           new SubtractQuantityValues(
-              "Subtract " + doc2 + " from " + doc1 + "(interpolated)",
+              "Subtract logarithmic " + doc2 + " from " + doc1 + "(interpolated)",
               selection, destination, longest, context);
       res.add(newC);
       
       newC =
           new SubtractQuantityValues(
-              "Subtract " + doc1 + " from " + doc2 + "(interpolated)",
+              "Subtract logarithmic " + doc1 + " from " + doc2 + "(interpolated)",
               reverse(selection), destination, longest, context);
       res.add(newC);
       
@@ -69,12 +69,12 @@ public class SubtractQuantityOperation extends BinaryQuantityOperation
 
     ICommand newC =
         new SubtractQuantityValues(
-            "Subtract " + doc2 + " from " + doc1 + "(indexed)", selection,
+            "Subtract logarithmic " + doc2 + " from " + doc1 + "(indexed)", selection,
             destination, context);
     res.add(newC);
     newC =
         new SubtractQuantityValues(
-            "Subtract " + doc1 + " from " + doc2 + "(indexed)", reverse(selection),
+            "Subtract logarithmic " + doc1 + " from " + doc2 + "(indexed)", reverse(selection),
             destination, context);
     res.add(newC);
   }
@@ -92,9 +92,8 @@ public class SubtractQuantityOperation extends BinaryQuantityOperation
     // lastly, check they're not logarithmic
     boolean hasLog = hasLogData(selection);
 
-
     return nonEmpty && allQuantity && suitableLength && equalDimensions
-        && equalUnits && !hasLog;
+        && equalUnits && hasLog;
   }
 
   public class SubtractQuantityValues extends BinaryQuantityCommand
@@ -120,10 +119,34 @@ public class SubtractQuantityOperation extends BinaryQuantityOperation
         @Override
         public Dataset perform(Dataset a, Dataset b, Dataset o)
         {
-          return Maths.subtract(a, b, o);
+          // ok, convert them to alog
+          Dataset aNon = toNonLog(a);
+          Dataset bNon = toNonLog(b);
+          
+          Dataset sum = Maths.subtract(aNon, bNon);
+          
+          Dataset res = toLog(sum);
+          
+          return res;
+          
+        }
+        
+        private Dataset toLog(Dataset sum)
+        {
+          Dataset log10 = Maths.log10(sum);
+          Dataset times10 = Maths.multiply(log10, 10);
+          return times10;
+        }
+
+        private Dataset toNonLog(Dataset d)
+        {
+          Dataset div10 = Maths.divide(d, 10);
+          Dataset raised = Maths.power(10, div10);
+          return raised;                      
         }
       };
     }
+
 
     @Override
     protected Unit<?> getBinaryOutputUnit(Unit<?> first, Unit<?> second)

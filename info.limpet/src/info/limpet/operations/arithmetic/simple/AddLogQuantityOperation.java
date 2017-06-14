@@ -31,7 +31,7 @@ import javax.measure.unit.Unit;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.Maths;
 
-public class SubtractQuantityOperation extends BinaryQuantityOperation
+public class AddLogQuantityOperation extends BinaryQuantityOperation
 {
 
   @Override
@@ -42,39 +42,20 @@ public class SubtractQuantityOperation extends BinaryQuantityOperation
 
     if (longest != null)
     {
-      IStoreItem doc1 = selection.get(0);
-      IStoreItem doc2 = selection.get(1);
-
       ICommand newC =
-          new SubtractQuantityValues(
-              "Subtract " + doc2 + " from " + doc1 + "(interpolated)",
+          new AddQuantityValues(
+              "Add logarithmic values in provided series (interpolated)",
               selection, destination, longest, context);
       res.add(newC);
-      
-      newC =
-          new SubtractQuantityValues(
-              "Subtract " + doc1 + " from " + doc2 + "(interpolated)",
-              reverse(selection), destination, longest, context);
-      res.add(newC);
-      
-      
     }
   }
 
   protected void addIndexedCommands(List<IStoreItem> selection,
       IStoreGroup destination, Collection<ICommand> res, IContext context)
   {
-    IStoreItem doc1 = selection.get(0);
-    IStoreItem doc2 = selection.get(1);
-
     ICommand newC =
-        new SubtractQuantityValues(
-            "Subtract " + doc2 + " from " + doc1 + "(indexed)", selection,
-            destination, context);
-    res.add(newC);
-    newC =
-        new SubtractQuantityValues(
-            "Subtract " + doc1 + " from " + doc2 + "(indexed)", reverse(selection),
+        new AddQuantityValues(
+            "Add logarithmic values in provided series (indexed)", selection,
             destination, context);
     res.add(newC);
   }
@@ -92,23 +73,23 @@ public class SubtractQuantityOperation extends BinaryQuantityOperation
     // lastly, check they're not logarithmic
     boolean hasLog = hasLogData(selection);
 
-
     return nonEmpty && allQuantity && suitableLength && equalDimensions
-        && equalUnits && !hasLog;
+        && equalUnits && hasLog;
   }
 
-  public class SubtractQuantityValues extends BinaryQuantityCommand
+
+  public class AddQuantityValues extends BinaryQuantityCommand
   {
-    public SubtractQuantityValues(String name, List<IStoreItem> selection,
+    public AddQuantityValues(String name, List<IStoreItem> selection,
         IStoreGroup store, IContext context)
     {
       this(name, selection, store, null, context);
     }
 
-    public SubtractQuantityValues(String name, List<IStoreItem> selection,
+    public AddQuantityValues(String name, List<IStoreItem> selection,
         IStoreGroup destination, IDocument<?> timeProvider, IContext context)
     {
-      super(name, "Subtract datasets", destination, false, false, selection,
+      super(name, "Add datasets", destination, false, false, selection,
           timeProvider, context);
     }
 
@@ -120,7 +101,30 @@ public class SubtractQuantityOperation extends BinaryQuantityOperation
         @Override
         public Dataset perform(Dataset a, Dataset b, Dataset o)
         {
-          return Maths.subtract(a, b, o);
+          // ok, convert them to alog
+          Dataset aNon = toNonLog(a);
+          Dataset bNon = toNonLog(b);
+          
+          Dataset sum = Maths.add(aNon, bNon);
+          
+          Dataset res = toLog(sum);
+          
+          return res;
+          
+        }
+        
+        private Dataset toLog(Dataset sum)
+        {
+          Dataset log10 = Maths.log10(sum);
+          Dataset times10 = Maths.multiply(log10, 10);
+          return times10;
+        }
+
+        private Dataset toNonLog(Dataset d)
+        {
+          Dataset div10 = Maths.divide(d, 10);
+          Dataset raised = Maths.power(10, div10);
+          return raised;                      
         }
       };
     }
@@ -128,14 +132,14 @@ public class SubtractQuantityOperation extends BinaryQuantityOperation
     @Override
     protected Unit<?> getBinaryOutputUnit(Unit<?> first, Unit<?> second)
     {
-      // Subtraction doesn't modify units, just use first ones
+      // addition doesn't modify units, just use first ones
       return first;
     }
 
     @Override
     protected String getBinaryNameFor(String name1, String name2)
     {
-      return name1 + " subtracted from " + name2;
+      return "Sum of " + name1 + " + " + name2;
     }
   }
 

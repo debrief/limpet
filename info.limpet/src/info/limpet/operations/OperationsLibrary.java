@@ -34,6 +34,7 @@ import info.limpet.operations.admin.DeleteCollectionOperation;
 import info.limpet.operations.admin.ExportCsvToFileAction;
 import info.limpet.operations.admin.GenerateDummyDataOperation;
 import info.limpet.operations.arithmetic.UnaryQuantityOperation;
+import info.limpet.operations.arithmetic.simple.AddLogQuantityOperation;
 import info.limpet.operations.arithmetic.simple.AddQuantityOperation;
 import info.limpet.operations.arithmetic.simple.MultiplyQuantityOperation;
 import info.limpet.operations.arithmetic.simple.SubtractQuantityOperation;
@@ -158,8 +159,9 @@ public class OperationsLibrary
   {
     List<IOperation> arithmetic = new ArrayList<IOperation>();
     arithmetic.add(new MultiplyQuantityOperation());
-    arithmetic.add(new AddQuantityOperation());
+    arithmetic.add(new AddQuantityOperation());    
     arithmetic.add(new SubtractQuantityOperation());
+    arithmetic.add(new AddLogQuantityOperation());
     // arithmetic.add(new DivideQuantityOperation());
     // arithmetic.add(new SimpleMovingAverageOperation(3));
 

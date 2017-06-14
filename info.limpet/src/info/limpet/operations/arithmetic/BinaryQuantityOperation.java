@@ -31,6 +31,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.measure.unit.NonSI;
 import javax.measure.unit.Unit;
 
 import org.eclipse.january.DatasetException;
@@ -75,6 +76,16 @@ public abstract class BinaryQuantityOperation implements IOperation
       }
     }
     return res;
+  }
+
+  /** check if any of the data is decibels - since we can't do traditional
+   * add/subtract to them
+   * @param selection
+   * @return yes/no
+   */
+  protected boolean hasLogData(List<IStoreItem> selection)
+  {
+    return aTests.isUnitPresent(selection, NonSI.DECIBEL);
   }
 
   /**

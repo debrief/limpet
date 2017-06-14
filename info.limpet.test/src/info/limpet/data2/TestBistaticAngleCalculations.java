@@ -6,15 +6,22 @@ import static org.junit.Assert.assertTrue;
 import info.limpet.ICommand;
 import info.limpet.IContext;
 import info.limpet.IDocument;
+import info.limpet.IOperation;
 import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
+import info.limpet.impl.Document;
 import info.limpet.impl.MockContext;
 import info.limpet.impl.NumberDocument;
 import info.limpet.impl.NumberDocumentBuilder;
 import info.limpet.impl.SampleData;
 import info.limpet.impl.StoreGroup;
+import info.limpet.operations.arithmetic.simple.AddLogQuantityOperation;
+import info.limpet.operations.arithmetic.simple.AddQuantityOperation;
+import info.limpet.operations.arithmetic.simple.SubtractLogQuantityOperation;
+import info.limpet.operations.arithmetic.simple.SubtractQuantityOperation;
 import info.limpet.operations.spatial.GeoSupport;
 import info.limpet.operations.spatial.IGeoCalculator;
+import info.limpet.operations.spatial.ProplossBetweenTwoTracksOperation;
 import info.limpet.operations.spatial.msa.BistaticAngleOperation;
 import info.limpet.persistence.CsvParser;
 
@@ -45,6 +52,117 @@ public class TestBistaticAngleCalculations
     assertEquals("correct num collections", 3, group.size());
     IDocument<?> firstColl = (IDocument<?>) group.get(0);
     assertEquals("correct num rows", 541, firstColl.size());
+  }
+  
+  @Test
+  public void testAddLogData() throws IOException
+  {
+    IStoreGroup store = new StoreGroup("data");
+
+    // now get our tracks
+    File file = TestCsvParser.getDataFile("multistatics/tx1_stat.csv");
+    assertTrue(file.isFile());
+    CsvParser parser = new CsvParser();
+    List<IStoreItem> tx1 = parser.parse(file.getAbsolutePath());
+    store.addAll(tx1);
+
+    file = TestCsvParser.getDataFile("multistatics/rx1_stat.csv");
+    assertTrue(file.isFile());
+    List<IStoreItem> rx1 = parser.parse(file.getAbsolutePath());
+    store.addAll(rx1);
+
+    file = TestCsvParser.getDataFile("multistatics/ssn_stat.csv");
+    assertTrue(file.isFile());
+    List<IStoreItem> ssn = parser.parse(file.getAbsolutePath());
+    store.addAll(ssn);
+    
+    IOperation pDiff = new ProplossBetweenTwoTracksOperation();
+    List<IStoreItem> selection = new ArrayList<IStoreItem>();
+    selection.add(tx1.get(0));
+    selection.add(ssn.get(0));
+    List<ICommand> actions = pDiff.actionsFor(selection , store, context);
+    
+    assertNotNull("found actions");
+    assertEquals("got actions", 2, actions.size());
+    assertEquals("store has original data", 3, store.size());
+    
+    // run it
+    actions.get(0).execute();
+    assertEquals("has new data", 4, store.size());
+    
+    Document<?> txProp = actions.get(0).getOutputs().get(0);
+    txProp.setName("txProp");
+    
+    // now the other proploss file
+    selection.clear();
+    selection.add(rx1.get(0));
+    selection.add(ssn.get(0));
+
+    actions = pDiff.actionsFor(selection , store, context);
+    
+    assertNotNull("found actions");
+    assertEquals("got actions", 2, actions.size());
+    assertEquals("store has original data", 4, store.size());
+    
+    // run it
+    actions.get(0).execute();
+    assertEquals("has new data", 5, store.size());
+    
+    Document<?> rxProp = actions.get(0).getOutputs().get(0);
+    rxProp.setName("rxProp");
+    
+    // ok, now we can try to add them
+    IOperation addL = new AddLogQuantityOperation();
+    IOperation add = new AddQuantityOperation();
+    selection.clear();
+    selection.add(txProp);
+    selection.add(rxProp);
+    
+    // check the normal adder drops out
+    actions = add.actionsFor(selection, store, context);
+    assertEquals("no actions returned", 0, actions.size());
+    
+    // now the log adder
+    actions = addL.actionsFor(selection, store, context);
+    assertEquals("actions returned", 2, actions.size());
+    
+    // ok, run the first action
+    actions.get(0).execute();
+    assertEquals("has new data", 6, store.size());
+    
+    // check the outputs
+    NumberDocument propSum = (NumberDocument) actions.get(0).getOutputs().get(0);
+    propSum.setName("propSum");
+    
+    System.out.println(txProp.toListing());
+    System.out.println(rxProp.toListing());
+    System.out.println(propSum.toListing());
+    
+    // ok, change the selection so we can do the reverse of the add
+    selection.clear();
+    selection.add(propSum);
+    selection.add(rxProp);
+    
+    // hmm, go for the subtract
+    IOperation sub = new SubtractQuantityOperation();
+    IOperation subL = new SubtractLogQuantityOperation();
+    
+    actions = sub.actionsFor(selection, store, context);
+    assertEquals("none returned", 0, actions.size());
+    
+    actions = subL.actionsFor(selection, store, context);
+    assertEquals("actions returned", 4, actions.size());
+    
+    // ok, run it
+    actions.get(0).execute();
+    assertEquals("has new data", 7, store.size());
+    
+    // check the results
+    NumberDocument propDiff = (NumberDocument) actions.get(0).getOutputs().get(0);
+    propDiff.setName("propDiff");
+    System.out.println(propDiff.toListing());
+    
+    
   }
 
   @Test
