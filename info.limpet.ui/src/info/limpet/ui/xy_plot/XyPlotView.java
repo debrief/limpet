@@ -75,12 +75,14 @@ public class XyPlotView extends CoreAnalysisView
     super(ID, "XY plot view");
   }
 
+  @Override
   protected void makeActions()
   {
     super.makeActions();
 
     switchAxes = new Action("Switch axes", SWT.TOGGLE)
     {
+      @Override
       public void run()
       {
         if (switchAxes.isChecked())
@@ -100,6 +102,7 @@ public class XyPlotView extends CoreAnalysisView
 
   }
 
+  @Override
   protected void contributeToActionBars()
   {
     super.contributeToActionBars();
@@ -111,6 +114,7 @@ public class XyPlotView extends CoreAnalysisView
   /**
    * This is a callback that will allow us to create the viewer and initialize it.
    */
+  @Override
   public void createPartControl(Composite parent)
   {
     makeActions();
@@ -179,36 +183,36 @@ public class XyPlotView extends CoreAnalysisView
     }
   }
 
-  private void showQuantity(List<IStoreItem> res)
+  private void showQuantity(List<IStoreItem> items)
   {
-    Iterator<IStoreItem> iter = res.iterator();
-
     clearGraph();
 
     Unit<?> existingUnits = null;
 
     // get the longest collection length (used for plotting singletons)
-    int longestColl = aTests.getLongestCollectionLength(res);
+    final int longestColl = aTests.getLongestCollectionLength(items);
 
-    while (iter.hasNext())
-    {
-      IDocument<?> coll = (IDocument<?>) iter.next();
+    boolean chartUpdated = false;
+    
+    for(IStoreItem item: items)
+    {      
+      final IDocument<?> coll = (IDocument<?>) item;
       if (coll.isQuantity() && coll.size() >= 1 && coll.size() < MAX_SIZE)
       {
 
-        NumberDocument thisQ = (NumberDocument) coll;
+        final NumberDocument thisQ = (NumberDocument) coll;
 
         final Unit<?> theseUnits = thisQ.getUnits();
-        String seriesName = seriesNameFor(thisQ, theseUnits);
+        final String seriesName = seriesNameFor(thisQ, theseUnits);
 
         // do we need to create this series
-        ISeries match = chart.getSeriesSet().getSeries(seriesName);
+        final ISeries match = chart.getSeriesSet().getSeries(seriesName);
         if (match != null)
         {
           continue;
         }
 
-        ILineSeries newSeries =
+        final ILineSeries newSeries =
             (ILineSeries) chart.getSeriesSet().createSeries(SeriesType.LINE,
                 seriesName);
 
@@ -228,38 +232,17 @@ public class XyPlotView extends CoreAnalysisView
         newSeries.setLineColor(PlottingHelpers.colorFor(seriesName));
         newSeries.setSymbolColor(PlottingHelpers.colorFor(seriesName));
 
-        final double[] yData;
-
-        if (coll.size() == 1)
-        {
-          // singleton = insert it's value at every point
-          yData = new double[longestColl];
-          Number thisValue = thisQ.getValueAt(0);
-          double dVal = thisValue.doubleValue();
-          for (int i = 0; i < longestColl; i++)
-          {
-            yData[i] = dVal;
-          }
-        }
-        else
-        {
-          yData = new double[thisQ.size()];
-          Iterator<Double> values = thisQ.getIterator();
-          int ctr = 0;
-          while (values.hasNext())
-          {
-            yData[ctr++] = values.next();
-          }
-        }
+        // get the data, depending on if it's a singleton or not
+        final double[] yData = getYData(longestColl, coll, thisQ);
 
         // ok, do we have existing data?
         if (existingUnits != null && !existingUnits.equals(theseUnits))
         {
           // create second Y axis
-          int axisId = chart.getAxisSet().createYAxis();
+          final int axisId = chart.getAxisSet().createYAxis();
 
           // set the properties of second Y axis
-          IAxis yAxis2 = chart.getAxisSet().getYAxis(axisId);
+          final IAxis yAxis2 = chart.getAxisSet().getYAxis(axisId);
           yAxis2.getTitle().setText(theseUnits.toString());
           yAxis2.setPosition(Position.Secondary);
           newSeries.setYAxisId(axisId);
@@ -292,9 +275,43 @@ public class XyPlotView extends CoreAnalysisView
         IAxis xAxis = chart.getAxisSet().getXAxis(0);
         xAxis.enableCategory(false);
 
-        chart.redraw();
+        chartUpdated = true;
       }
     }
+    
+    if(chartUpdated)
+    {
+      chart.redraw();
+    }
+  }
+
+  private double[] getYData(final int longestColl, final IDocument<?> coll,
+      final NumberDocument thisQ)
+  {
+    final double[] yData;
+
+    if (coll.size() == 1)
+    {
+      // singleton = insert it's value at every point
+      yData = new double[longestColl];
+      final Number thisValue = thisQ.getValueAt(0);
+      final double dVal = thisValue.doubleValue();
+      for (int i = 0; i < longestColl; i++)
+      {
+        yData[i] = dVal;
+      }
+    }
+    else
+    {
+      yData = new double[thisQ.size()];
+      final Iterator<Double> values = thisQ.getIterator();
+      int ctr = 0;
+      while (values.hasNext())
+      {
+        yData[ctr++] = values.next();
+      }
+    }
+    return yData;
   }
 
   private String seriesNameFor(NumberDocument thisQ, final Unit<?> theseUnits)
@@ -417,7 +434,7 @@ public class XyPlotView extends CoreAnalysisView
             value = (long) converter.convert(t);
           }
 
-          xTimeData[ctr] = new Date((long) value);
+          xTimeData[ctr] = new Date(value);
         }
         else
         {
@@ -559,8 +576,6 @@ public class XyPlotView extends CoreAnalysisView
 
   private void showLocations(List<IStoreItem> res)
   {
-    Iterator<IStoreItem> iter = res.iterator();
-
     // clear the graph
     ISeries[] series = chart.getSeriesSet().getSeries();
     for (int i = 0; i < series.length; i++)
@@ -569,28 +584,30 @@ public class XyPlotView extends CoreAnalysisView
       chart.getSeriesSet().deleteSeries(iSeries.getId());
     }
 
-    while (iter.hasNext())
+    // now loop through
+    boolean chartUpdated = false;
+    for(final IStoreItem document: res)
     {
-      IDocument<?> coll = (IDocument<?>) iter.next();
+      final IDocument<?> coll = (IDocument<?>) document;
       if (!coll.isQuantity() && coll.size() >= 1 && coll.size() < MAX_SIZE)
       {
-        String seriesName = coll.getName();
-        ILineSeries newSeries =
+        final String seriesName = coll.getName();
+        final ILineSeries newSeries =
             (ILineSeries) chart.getSeriesSet().createSeries(SeriesType.LINE,
                 seriesName);
         newSeries.setSymbolType(PlotSymbolType.NONE);
         newSeries.setLineColor(PlottingHelpers.colorFor(seriesName));
         newSeries.setSymbolColor(PlottingHelpers.colorFor(seriesName));
 
-        double[] xData = new double[coll.size()];
-        double[] yData = new double[coll.size()];
+        final double[] xData = new double[coll.size()];
+        final double[] yData = new double[coll.size()];
 
-        LocationDocument loc = (LocationDocument) coll;
-        Iterator<Point2D> lIter = loc.getLocationIterator();
+        final LocationDocument loc = (LocationDocument) coll;
         int ctr = 0;
+        final Iterator<Point2D> lIter = loc.getLocationIterator();
         while (lIter.hasNext())
         {
-          Point2D geom = lIter.next();
+          final Point2D geom = lIter.next();
           xData[ctr] = geom.getX();
           yData[ctr++] = geom.getY();
         }
@@ -606,10 +623,12 @@ public class XyPlotView extends CoreAnalysisView
 
         // adjust the axis range
         chart.getAxisSet().adjustRange();
-
-        chart.redraw();
-
+        chartUpdated = true;
       }
+    }
+    if(chartUpdated)
+    {
+      chart.redraw();
     }
   }
 
