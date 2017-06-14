@@ -466,35 +466,8 @@ public class XyPlotView extends CoreAnalysisView
           newSeries.setSymbolType(PlotSymbolType.CROSS);
         }
 
-        final String xTitle;
-        if (xTimeData != null)
-        {
-          xTitle = "Time";
-        }
-        else
-        {
-          final String titlePrefix;
-          final String theDim =
-              indexUnits != null ? indexUnits.getDimension().toString() : "N/A";
-          switch (theDim)
-          {
-          case "[L]":
-            titlePrefix = "Length";
-            break;
-          case "[M]":
-            titlePrefix = "Mass";
-            break;
-          case "[T]":
-            titlePrefix = "Time";
-            break;
-          default:
-            titlePrefix = theDim;
-          }
+        final String xTitle = getTitleFor(xTimeData, indexUnits);
 
-          final String indexText =
-              indexUnits != null ? " (" + indexUnits.toString() + ")" : "";
-          xTitle = titlePrefix + indexText;
-        }
         chart.getAxisSet().getXAxis(0).getTitle().setText(xTitle);
 
         // adjust the axis range
@@ -505,6 +478,49 @@ public class XyPlotView extends CoreAnalysisView
         chart.redraw();
       }
     }
+  }
+
+  /** produce the graph's title text
+   * 
+   * @param xTimeData
+   * @param indexUnits
+   * @return
+   */
+  private String getTitleFor(final Date[] xTimeData, final Unit<?> indexUnits)
+  {
+    String xTitle = null;
+
+    if (xTimeData != null)
+    {
+      xTitle = "Time";
+    }
+    else
+    {
+      final String titlePrefix;
+      final String theDim =
+          indexUnits != null ? indexUnits.getDimension().toString() : "N/A";
+      switch (theDim)
+      {
+      case "[L]":
+        titlePrefix = "Length";
+        break;
+      case "[M]":
+        titlePrefix = "Mass";
+        break;
+      case "[T]":
+        titlePrefix = "Time";
+        break;
+      default:
+        titlePrefix = theDim;
+        break;
+      }
+
+      final String indexText =
+          indexUnits != null ? " (" + indexUnits.toString() + ")" : "";
+      xTitle = titlePrefix + indexText;
+
+    }
+    return xTitle;
   }
 
   private void clearGraph()

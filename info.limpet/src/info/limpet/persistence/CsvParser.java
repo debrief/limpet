@@ -120,6 +120,7 @@ public class CsvParser
       if (first)
       {
         first = false;
+
         String colHeader = record.get(0);
         int ctr = 0;
 
@@ -266,31 +267,9 @@ public class CsvParser
             {
               // ok, get the time field
               // do we have a custom date format
-              final DateFormat thisFormat;
-              if (customDateFormat != null)
-              {
-                thisFormat = customDateFormat;
-              }
-              else
-              {
-                int len = firstCell.length();
-                if (len < 10)
-                {
-                  thisFormat = TIME_FORMAT;
-                }
-                else
-                {
-                  // hmm, are there secs present
-                  if (len == 16)
-                  {
-                    thisFormat = DATE_FORMAT;
-                  }
-                  else
-                  {
-                    thisFormat = DATE_SECS_FORMAT;
-                  }
-                }
-              }
+              DateFormat thisFormat =
+                  getDateThisFormat(customDateFormat, firstCell);
+
               Date date = thisFormat.parse(firstCell);
               indexVal = date.getTime();
               thisCol = 1;
@@ -312,7 +291,7 @@ public class CsvParser
           // not temporal, use this field
           thisCol = 0;
         }
-
+        
         // now move through the other cols
         int numImporters = importers.size();
         for (int i = 0; i < numImporters; i++)
@@ -322,51 +301,12 @@ public class CsvParser
           // ok, just check if this is a deferred importer
           if (thisI instanceof DeferredLoadSupporter)
           {
-            DeferredLoadSupporter dl = (DeferredLoadSupporter) thisI;
-            String seriesName = dl.getName();
-
-            // ok, have a look at the next field
-            String nextVal = record.get(thisCol);
-
-            // is it numeric?
-            DataImporter importer = null;
-            // ok, treat it as string data
-            if (isIndexed)
-            {
-              if (isNumeric(nextVal))
-              {
-                // ok, we've got dimensionless quantity data
-                importer = temporalDimensionless;
-              }
-              else
-              {
-                importer = temporalStrings;
-              }
-            }
-            else
-            {
-              if (isNumeric(nextVal))
-              {
-                // ok, we've got dimensionless quantity data
-                importer = dimensionless;
-              }
-              else
-              {
-                importer = strings;
-              }
-            }
-
-            if (importer != null)
-            {
-              int index = importers.indexOf(dl);
-              importers.set(index, importer);
-
-              builders.set(index, importer.create(fileName + "-" + seriesName,
-                  indexUnits));
-
-              thisI = importer;
-            }
-
+            // ok, see if we have enough data to be able to replace
+            // the deferred importer with a concrete instance
+            thisI =
+                handleDeferredLoader(fileName, temporalDimensionless,
+                    temporalStrings, strings, dimensionless, importers,
+                    builders, isIndexed, indexUnits, record, thisCol, thisI);
           }
 
           IDocumentBuilder<?> thisS = builders.get(i);
@@ -397,6 +337,91 @@ public class CsvParser
     }
 
     return res;
+  }
+
+  private DataImporter handleDeferredLoader(final String fileName,
+      final DataImporter temporalDimensionless,
+      final DataImporter temporalStrings, final DataImporter strings,
+      final DataImporter dimensionless, final List<DataImporter> importers,
+      final List<IDocumentBuilder<?>> builders, final boolean isIndexed,
+      final Unit<?> indexUnits, final CSVRecord record, final int thisCol, DataImporter thisI)
+  {
+    DeferredLoadSupporter dl = (DeferredLoadSupporter) thisI;
+    String seriesName = dl.getName();
+
+    // ok, have a look at the next field
+    String nextVal = record.get(thisCol);
+
+    // is it numeric?
+    DataImporter importer = null;
+    // ok, treat it as string data
+    if (isIndexed)
+    {
+      if (isNumeric(nextVal))
+      {
+        // ok, we've got dimensionless quantity data
+        importer = temporalDimensionless;
+      }
+      else
+      {
+        importer = temporalStrings;
+      }
+    }
+    else
+    {
+      if (isNumeric(nextVal))
+      {
+        // ok, we've got dimensionless quantity data
+        importer = dimensionless;
+      }
+      else
+      {
+        importer = strings;
+      }
+    }
+
+    if (importer != null)
+    {
+      int index = importers.indexOf(dl);
+      importers.set(index, importer);
+
+      builders.set(index, importer.create(fileName + "-" + seriesName,
+          indexUnits));
+
+      thisI = importer;
+    }
+    return thisI;
+  }
+
+  private DateFormat getDateThisFormat(final DateFormat customDateFormat,
+      final String firstCell)
+  {
+    final DateFormat thisFormat;
+    if (customDateFormat != null)
+    {
+      thisFormat = customDateFormat;
+    }
+    else
+    {
+      int len = firstCell.length();
+      if (len < 10)
+      {
+        thisFormat = TIME_FORMAT;
+      }
+      else
+      {
+        // hmm, are there secs present
+        if (len == 16)
+        {
+          thisFormat = DATE_FORMAT;
+        }
+        else
+        {
+          thisFormat = DATE_SECS_FORMAT;
+        }
+      }
+    }
+    return thisFormat;
   }
 
   public static DateFormat getDateFormat()
@@ -449,10 +474,11 @@ public class CsvParser
         {"g/cm3", "g/cm"}));
     _candidates.add(new TemporalSeriesSupporter(NAUTICAL_MILE.divide(
         SECOND.times(3600)).asType(Velocity.class), null, "kts"));
-    _candidates.add(new TemporalSeriesSupporter(NonSI.MILE.divide(SI.SECOND.times(60*60)).asType(
-        Velocity.class), null, new String[]
+    _candidates.add(new TemporalSeriesSupporter(NonSI.MILE.divide(
+        SI.SECOND.times(60 * 60)).asType(Velocity.class), null, new String[]
     {"mph"}));
-    _candidates.add(new TemporalSeriesSupporter(NonSI.REVOLUTION.divide(SECOND.times(60)), null, new String[]
+    _candidates.add(new TemporalSeriesSupporter(NonSI.REVOLUTION.divide(SECOND
+        .times(60)), null, new String[]
     {"rpm"}));
     _candidates.add(new TemporalSeriesSupporter(METRE.divide(SECOND).asType(
         Velocity.class), null, new String[]
@@ -643,8 +669,8 @@ public class CsvParser
     }
 
     @Override
-    public void consume(IDocumentBuilder<?> series, double theIndex, int colStart,
-        CSVRecord row)
+    public void consume(IDocumentBuilder<?> series, double theIndex,
+        int colStart, CSVRecord row)
     {
       String thisVal = row.get(colStart);
       StringDocumentBuilder builder = (StringDocumentBuilder) series;
@@ -673,8 +699,8 @@ public class CsvParser
     }
 
     @Override
-    public void consume(IDocumentBuilder<?> series, double theIndex, int colStart,
-        CSVRecord row)
+    public void consume(IDocumentBuilder<?> series, double theIndex,
+        int colStart, CSVRecord row)
     {
       String thisVal = row.get(colStart);
       StringDocumentBuilder builder = (StringDocumentBuilder) series;
@@ -802,8 +828,8 @@ public class CsvParser
       series.add(time, quantity.doubleValue());
     }
 
-    public void consume(IDocumentBuilder<?> series, double thisTime, int colStart,
-        CSVRecord row)
+    public void consume(IDocumentBuilder<?> series, double thisTime,
+        int colStart, CSVRecord row)
     {
       String thisVal = row.get(colStart);
       Double val = Double.parseDouble(thisVal);
@@ -862,8 +888,8 @@ public class CsvParser
     }
 
     @Override
-    public void consume(IDocumentBuilder<?> thisS, double theIndex, int thisCol,
-        CSVRecord record)
+    public void consume(IDocumentBuilder<?> thisS, double theIndex,
+        int thisCol, CSVRecord record)
     {
       throw new RuntimeException("Should not get called");
     }

@@ -45,8 +45,7 @@ import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.Maths;
 import org.eclipse.january.metadata.AxesMetadata;
 
-public abstract class AbstractCommand implements
-    ICommand
+public abstract class AbstractCommand implements ICommand
 {
 
   private final String title;
@@ -69,7 +68,8 @@ public abstract class AbstractCommand implements
   private final transient IContext context;
 
   public AbstractCommand(String title, String description, IStoreGroup store,
-      boolean canUndo, boolean canRedo, List<IStoreItem> inputs, IContext context)
+      boolean canUndo, boolean canRedo, List<IStoreItem> inputs,
+      IContext context)
   {
     this.title = title;
     this.description = description;
@@ -133,19 +133,8 @@ public abstract class AbstractCommand implements
       return false;
     }
     AbstractCommand other = (AbstractCommand) obj;
-    if (!getUUID().equals(other.getUUID()))
-    {
-      return false;
-    }
-    return true;
+    return getUUID().equals(other.getUUID());
   }
-
-  /**
-   * provide a name for the single output dataset
-   * 
-   * @return a string to use, or null to cancel the operation
-   */
-//  protected abstract String getOutputName();
 
   /**
    * convenience function, to return the datasets as a comma separated list
@@ -237,6 +226,7 @@ public abstract class AbstractCommand implements
   @Override
   public void collectionDeleted(IStoreItem subject)
   {
+    // N/A
   }
 
   public final IStoreGroup getStore()
@@ -324,14 +314,12 @@ public abstract class AbstractCommand implements
   {
     // TODO we should add change listener support
   }
-  
-  
 
   @Override
   public void addTransientChangeListener(IChangeListener listener)
   {
     // TODO Auto-generated method stub
-    
+
   }
 
   @Override
@@ -339,17 +327,16 @@ public abstract class AbstractCommand implements
       IChangeListener collectionChangeListener)
   {
     // TODO Auto-generated method stub
-    
+
   }
 
   @Override
   public void fireDataChanged()
   {
-    // hmm, we don't really implement this, because apps listen to the 
+    // hmm, we don't really implement this, because apps listen to the
     // results collections, not the command.
-    throw new RuntimeException("Not implemented");
+    throw new IllegalArgumentException("Not implemented");
   }
-  
 
   final protected LocationDocument locationsFor(final LocationDocument track1,
       final Document<?> times)
@@ -365,7 +352,7 @@ public abstract class AbstractCommand implements
     }
     catch (final DatasetException e)
     {
-      throw new RuntimeException(e);
+      throw new IllegalArgumentException(e);
     }
 
     double[] data = ds.getData();
@@ -463,7 +450,6 @@ public abstract class AbstractCommand implements
     double[] data = ds.getData();
     return numbersFor(document, data);
   }
-
 
   final protected NumberDocument numbersFor(final NumberDocument document,
       final double[] times)

@@ -109,7 +109,8 @@ public class NumberDocument extends Document<Double>
     @Override
     public void remove()
     {
-      throw new RuntimeException("Remove operation not provided for this iterator");
+      throw new IllegalArgumentException(
+          "Remove operation not provided for this iterator");
     }
     
   }

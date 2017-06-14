@@ -38,7 +38,6 @@ import info.limpet.operations.spatial.GenerateCourseAndSpeedOperation;
 import info.limpet.operations.spatial.GeoSupport;
 import info.limpet.operations.spatial.IGeoCalculator;
 import info.limpet.operations.spatial.ProplossBetweenTwoTracksOperation;
-import info.limpet.operations.spatial.TwoTrackOperation;
 import info.limpet.persistence.CsvParser;
 
 import java.awt.geom.Point2D;
@@ -245,6 +244,7 @@ public class TestGeotoolsGeometry extends TestCase
     @Override
     protected void recalculate(IStoreItem subject)
     {
+      // n/a
     }
     
     public LocationDocument getTestLocations(LocationDocument track, Document<?> times)

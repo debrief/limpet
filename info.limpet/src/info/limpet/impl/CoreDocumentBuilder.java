@@ -92,6 +92,7 @@ abstract class CoreDocumentBuilder<T extends Object, D extends IDocument<T>>
    */
   protected void finishOff(final D res)
   {
+    // no default processing required
   }
 
   /**
@@ -161,7 +162,7 @@ abstract class CoreDocumentBuilder<T extends Object, D extends IDocument<T>>
       {
         if (_indexUnits != null)
         {
-          throw new RuntimeException("Have index units, but no index");
+          throw new IllegalArgumentException("Have index units, but no index");
         }
       }
 

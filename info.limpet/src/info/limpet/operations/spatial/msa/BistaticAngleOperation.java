@@ -366,12 +366,9 @@ public class BistaticAngleOperation implements IOperation
               IStoreGroup track = (IStoreGroup) lIter.next();
 
               // check it's not us.
-              if (track.equals(thisTarget))
+              if (!track.equals(thisTarget))
               {
-                // ok, it's us. skip it
-              }
-              else
-              {
+                // ok, it's one of the others, add it
                 subjects.add(track);
               }
             }
