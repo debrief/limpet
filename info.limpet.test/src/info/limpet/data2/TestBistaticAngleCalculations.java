@@ -134,6 +134,14 @@ public class TestBistaticAngleCalculations
     NumberDocument propSum = (NumberDocument) actions.get(0).getOutputs().get(0);
     propSum.setName("propSum");
     
+    // ok, check the values
+    double valA = txProp.getDataset().getDouble(0);
+    double valB = rxProp.getDataset().getDouble(0);
+    double addRes = propSum.getDataset().getDouble(0);
+    
+    double testSum = doLogAdd(valA, valB);
+    assertEquals("correct log sum", testSum, addRes, 0.0001);
+    
     // ok, change the selection so we can do the reverse of the add
     selection.clear();
     selection.add(propSum);
@@ -157,8 +165,33 @@ public class TestBistaticAngleCalculations
     NumberDocument propDiff = (NumberDocument) actions.get(0).getOutputs().get(0);
     propDiff.setName("propDiff");  
     
+    
+    double subRes = propDiff.getDataset().getDouble(0);
+    
+    double testSubtract = doLogSubtract(addRes, valB);
+    assertEquals("correct log sum", testSubtract, subRes, 0.0001);
+    
   }
 
+  private double doLogAdd(double valA, double valB)
+  {
+    double aN = Math.pow(10d, valA/10d);
+    double bN = Math.pow(10d, valB/10d);
+    double sum = aN + bN;
+    double toLog = Math.log10(sum) * 10d;
+    return toLog;
+  }
+
+
+  private double doLogSubtract(double valA, double valB)
+  {
+    double aN = Math.pow(10d, valA/10d);
+    double bN = Math.pow(10d, valB/10d);
+    double sum = aN - bN;
+    double toLog = Math.log10(sum) * 10d;
+    return toLog;
+  }
+  
   @Test
   public void testCreateActions() throws IOException
   {
