@@ -134,10 +134,6 @@ public class TestBistaticAngleCalculations
     NumberDocument propSum = (NumberDocument) actions.get(0).getOutputs().get(0);
     propSum.setName("propSum");
     
-    System.out.println(txProp.toListing());
-    System.out.println(rxProp.toListing());
-    System.out.println(propSum.toListing());
-    
     // ok, change the selection so we can do the reverse of the add
     selection.clear();
     selection.add(propSum);
@@ -159,9 +155,7 @@ public class TestBistaticAngleCalculations
     
     // check the results
     NumberDocument propDiff = (NumberDocument) actions.get(0).getOutputs().get(0);
-    propDiff.setName("propDiff");
-    System.out.println(propDiff.toListing());
-    
+    propDiff.setName("propDiff");  
     
   }
 
