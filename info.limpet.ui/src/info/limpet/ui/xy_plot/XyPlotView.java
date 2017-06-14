@@ -425,37 +425,8 @@ public class XyPlotView extends CoreAnalysisView
 
       yData = new double[thisQ.size()];
 
-      // must be temporal
-      final Iterator<Double> index = coll.getIndex();
-      final Iterator<Double> values = thisQ.getIterator();
-
-      int ctr = 0;
-      final Unit<Duration> millis = SI.SECOND.divide(1000);
-      while (values.hasNext())
-      {
-        final double t = index.next();
-        if (isTemporal)
-        {
-          final long value;
-          if (indexUnits.equals(millis))
-          {
-            value = (long) t;
-          }
-          else
-          {
-            // do we need to convert to millis?
-            final UnitConverter converter = indexUnits.getConverterTo(millis);
-            value = (long) converter.convert(t);
-          }
-
-          xTimeData[ctr] = new Date(value);
-        }
-        else
-        {
-          xData[ctr] = t;
-        }
-        yData[ctr++] = values.next();
-      }
+      storeListOfIndexedData(coll, thisQ, indexUnits, xTimeData, xData, yData,
+          isTemporal);
     }
     else
     {
@@ -524,6 +495,44 @@ public class XyPlotView extends CoreAnalysisView
     chart.getAxisSet().getXAxis(0).getTitle().setText(xTitle);
 
     return newUnits;
+  }
+
+  private void storeListOfIndexedData(final IDocument<?> coll,
+      final NumberDocument thisQ, final Unit<?> indexUnits,
+      final Date[] xTimeData, final double[] xData, final double[] yData,
+      final boolean isTemporal)
+  {
+    // must be temporal
+    final Iterator<Double> index = coll.getIndex();
+    final Iterator<Double> values = thisQ.getIterator();
+
+    int ctr = 0;
+    final Unit<Duration> millis = SI.SECOND.divide(1000);
+    while (values.hasNext())
+    {
+      final double t = index.next();
+      if (isTemporal)
+      {
+        final long value;
+        if (indexUnits.equals(millis))
+        {
+          value = (long) t;
+        }
+        else
+        {
+          // do we need to convert to millis?
+          final UnitConverter converter = indexUnits.getConverterTo(millis);
+          value = (long) converter.convert(t);
+        }
+
+        xTimeData[ctr] = new Date(value);
+      }
+      else
+      {
+        xData[ctr] = t;
+      }
+      yData[ctr++] = values.next();
+    }
   }
 
   /**

@@ -71,6 +71,17 @@ import org.apache.commons.csv.CSVRecord;
 
 public class CsvParser
 {
+  private static final DateFormat DATE_SECS_FORMAT = new SimpleDateFormat(
+      "dd/MM/yyyy hh:mm:ss");
+
+  private static final DateFormat DATE_FORMAT = new SimpleDateFormat(
+      "dd/MM/yyyy hh:mm");
+
+  private static final DateFormat TIME_FORMAT =
+      new SimpleDateFormat("hh:mm:ss");
+
+  private ArrayList<DataImporter> _candidates;
+  
 
   /**
    * base helper class, to help importing series of data
@@ -477,16 +488,6 @@ public class CsvParser
     }
   }
 
-  // 21/09/2015 07:00:31
-  private static final DateFormat DATE_SECS_FORMAT = new SimpleDateFormat(
-      "dd/MM/yyyy hh:mm:ss");
-
-  private static final DateFormat DATE_FORMAT = new SimpleDateFormat(
-      "dd/MM/yyyy hh:mm");
-
-  private static final DateFormat TIME_FORMAT =
-      new SimpleDateFormat("hh:mm:ss");
-
   public static DateFormat getDateFormat()
   {
     return DATE_FORMAT;
@@ -511,7 +512,6 @@ public class CsvParser
     return true;
   }
 
-  private ArrayList<DataImporter> _candidates;
 
   private void createImporters()
   {
