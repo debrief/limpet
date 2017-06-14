@@ -289,7 +289,7 @@ abstract public class Document<T extends Object> implements IDocument<T>
     @Override
     public void remove()
     {
-      throw new RuntimeException(
+      throw new IllegalArgumentException(
           "Remove operation not provided for this iterator");
     }
 
@@ -319,7 +319,7 @@ abstract public class Document<T extends Object> implements IDocument<T>
       }
       catch (DatasetException e)
       {
-        throw new RuntimeException(e);
+        throw new IllegalArgumentException(e);
       }
     }
 
@@ -382,9 +382,14 @@ abstract public class Document<T extends Object> implements IDocument<T>
   }
 
   @Override
-  public String toString()
+  final public String toString()
   {
     return getName();
   }
 
+  /** produce this document as a listing
+   * 
+   * @return
+   */
+  abstract public String toListing();
 }

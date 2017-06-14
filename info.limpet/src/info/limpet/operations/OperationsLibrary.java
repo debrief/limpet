@@ -43,6 +43,7 @@ import info.limpet.operations.spatial.DistanceBetweenTracksOperation;
 import info.limpet.operations.spatial.DopplerShiftBetweenTracksOperation;
 import info.limpet.operations.spatial.GenerateCourseAndSpeedOperation;
 import info.limpet.operations.spatial.ProplossBetweenTwoTracksOperation;
+import info.limpet.operations.spatial.msa.BistaticAngleOperation;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -317,6 +318,7 @@ public class OperationsLibrary
     spatial.add(new GenerateCourseAndSpeedOperation());
     spatial.add(new DopplerShiftBetweenTracksOperation());
     spatial.add(new ProplossBetweenTwoTracksOperation());
+    spatial.add(new BistaticAngleOperation());
     return spatial;
   }
 

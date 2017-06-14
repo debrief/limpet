@@ -26,9 +26,9 @@ public class StringDocument extends Document<String>
   {
     return false;
   }
-
+  
   @Override
-  public String toString()
+  public String toListing()
   {
     StringBuffer res = new StringBuffer();
     

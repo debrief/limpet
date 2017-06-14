@@ -32,7 +32,17 @@ abstract class CoreDocumentBuilder<T extends Object, D extends IDocument<T>>
     _predecessor = predecessor;
     _indexUnits = indexUnits;
   }
+  
+  public List<T> getValues()
+  {
+    return _values;
+  }
 
+  public ArrayList<Double> getIndices()
+  {
+    return _indices;
+  }
+  
   @Override
   public void add(final double index, final T value)
   {
@@ -82,6 +92,7 @@ abstract class CoreDocumentBuilder<T extends Object, D extends IDocument<T>>
    */
   protected void finishOff(final D res)
   {
+    // no default processing required
   }
 
   /**
@@ -151,7 +162,7 @@ abstract class CoreDocumentBuilder<T extends Object, D extends IDocument<T>>
       {
         if (_indexUnits != null)
         {
-          throw new RuntimeException("Have index units, but no index");
+          throw new IllegalArgumentException("Have index units, but no index");
         }
       }
 

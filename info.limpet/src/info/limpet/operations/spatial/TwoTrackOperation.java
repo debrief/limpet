@@ -21,7 +21,6 @@ import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
 import info.limpet.impl.Document;
 import info.limpet.impl.LocationDocument;
-import info.limpet.impl.LocationDocumentBuilder;
 import info.limpet.impl.NumberDocument;
 import info.limpet.impl.NumberDocumentBuilder;
 import info.limpet.impl.SampleData;
@@ -37,16 +36,12 @@ import java.util.List;
 
 import javax.measure.unit.Unit;
 
-import org.eclipse.january.DatasetException;
-import org.eclipse.january.dataset.DatasetFactory;
-import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.DoubleDataset;
-import org.eclipse.january.dataset.ILazyDataset;
-import org.eclipse.january.dataset.Maths;
-import org.eclipse.january.metadata.AxesMetadata;
 
 public abstract class TwoTrackOperation implements IOperation
 {
+  private final CollectionComplianceTests aTests =
+      new CollectionComplianceTests();
 
   public abstract static class TwoTrackCommand extends AbstractCommand
   {
@@ -237,101 +232,6 @@ public abstract class TwoTrackOperation implements IOperation
     }
   }
 
-  public static LocationDocument locationsFor(final LocationDocument track1,
-      final Document<?> times)
-  {
-    // ok, get the time values
-    final AxesMetadata axis =
-        times.getDataset().getFirstMetadata(AxesMetadata.class);
-    final ILazyDataset lazyds = axis.getAxes()[0];
-    DoubleDataset ds = null;
-    try
-    {
-      ds = (DoubleDataset) DatasetUtils.sliceAndConvertLazyDataset(lazyds);
-    }
-    catch (final DatasetException e)
-    {
-      throw new RuntimeException(e);
-    }
-
-    double[] data = ds.getData();
-    return locationsFor(track1, data);
-  }
-
-  public static LocationDocument locationsFor(final LocationDocument track,
-      final double[] times)
-  {
-    final DoubleDataset ds =
-        (DoubleDataset) DatasetFactory.createFromObject(times);
-
-    final Unit<?> indexUnits = times == null ? null : SampleData.MILLIS;
-    final LocationDocumentBuilder ldb;
-
-    // ok, put the lats & longs into arrays
-    final ArrayList<Double> latVals = new ArrayList<Double>();
-    final ArrayList<Double> longVals = new ArrayList<Double>();
-    final ArrayList<Double> timeVals = new ArrayList<Double>();
-
-    // special processing. If the document is a singleton, then
-    // we just keep re-using the same position
-    if (track.size() == 1)
-    {
-      ldb =
-          new LocationDocumentBuilder("Interpolated locations", null,
-              indexUnits);
-      Point2D pt = track.getLocationIterator().next();
-      for (double t : times)
-      {
-        ldb.add(t, pt);
-      }
-    }
-    else
-    {
-
-      final Iterator<Point2D> lIter = track.getLocationIterator();
-      final Iterator<Double> tIter = track.getIndex();
-      while (lIter.hasNext())
-      {
-        final double thisT = tIter.next();
-        final Point2D pt = lIter.next();
-
-        latVals.add(pt.getY());
-        longVals.add(pt.getX());
-        timeVals.add(thisT);
-      }
-
-      final DoubleDataset latDataset =
-          DatasetFactory.createFromObject(DoubleDataset.class, latVals);
-      final DoubleDataset DoubleDataset =
-          DatasetFactory.createFromObject(DoubleDataset.class, longVals);
-      final DoubleDataset timeDataset =
-          DatasetFactory.createFromObject(DoubleDataset.class, timeVals);
-
-      final DoubleDataset latInterpolated =
-          (DoubleDataset) Maths.interpolate(timeDataset, latDataset, ds, 0, 0);
-      final DoubleDataset longInterpolated =
-          (DoubleDataset) Maths.interpolate(timeDataset, DoubleDataset, ds, 0,
-              0);
-
-      // ok, now we need to re-create a locations document
-      ldb =
-          new LocationDocumentBuilder("Interpolated locations", null,
-              indexUnits);
-      for (int i = 0; i < ds.getSize(); i++)
-      {
-        final Point2D pt =
-            GeoSupport.getCalculator().createPoint(
-                longInterpolated.getDouble(i), latInterpolated.getDouble(i));
-        ldb.add(ds.getLong(i), pt);
-      }
-    }
-
-    return ldb.toDocument();
-  }
-
-  private final CollectionComplianceTests aTests =
-      new CollectionComplianceTests();
-
   protected boolean appliesTo(final List<IStoreItem> selection)
   {
     final boolean nonEmpty = getATests().nonEmpty(selection);
@@ -390,5 +290,4 @@ public abstract class TwoTrackOperation implements IOperation
     }
     return collatedTracks;
   }
-
 }

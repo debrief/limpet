@@ -21,15 +21,31 @@ import info.limpet.IDocument;
 import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
 import info.limpet.impl.Document;
+import info.limpet.impl.LocationDocument;
+import info.limpet.impl.LocationDocumentBuilder;
+import info.limpet.impl.NumberDocument;
+import info.limpet.impl.NumberDocumentBuilder;
+import info.limpet.impl.SampleData;
 import info.limpet.impl.UIProperty;
+import info.limpet.operations.spatial.GeoSupport;
 
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
-public abstract class AbstractCommand implements
-    ICommand
+import javax.measure.unit.Unit;
+
+import org.eclipse.january.DatasetException;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.ILazyDataset;
+import org.eclipse.january.dataset.Maths;
+import org.eclipse.january.metadata.AxesMetadata;
+
+public abstract class AbstractCommand implements ICommand
 {
 
   private final String title;
@@ -52,7 +68,8 @@ public abstract class AbstractCommand implements
   private final transient IContext context;
 
   public AbstractCommand(String title, String description, IStoreGroup store,
-      boolean canUndo, boolean canRedo, List<IStoreItem> inputs, IContext context)
+      boolean canUndo, boolean canRedo, List<IStoreItem> inputs,
+      IContext context)
   {
     this.title = title;
     this.description = description;
@@ -116,19 +133,8 @@ public abstract class AbstractCommand implements
       return false;
     }
     AbstractCommand other = (AbstractCommand) obj;
-    if (!getUUID().equals(other.getUUID()))
-    {
-      return false;
-    }
-    return true;
+    return getUUID().equals(other.getUUID());
   }
-
-  /**
-   * provide a name for the single output dataset
-   * 
-   * @return a string to use, or null to cancel the operation
-   */
-//  protected abstract String getOutputName();
 
   /**
    * convenience function, to return the datasets as a comma separated list
@@ -220,6 +226,7 @@ public abstract class AbstractCommand implements
   @Override
   public void collectionDeleted(IStoreItem subject)
   {
+    // N/A
   }
 
   public final IStoreGroup getStore()
@@ -307,14 +314,12 @@ public abstract class AbstractCommand implements
   {
     // TODO we should add change listener support
   }
-  
-  
 
   @Override
   public void addTransientChangeListener(IChangeListener listener)
   {
     // TODO Auto-generated method stub
-    
+
   }
 
   @Override
@@ -322,14 +327,190 @@ public abstract class AbstractCommand implements
       IChangeListener collectionChangeListener)
   {
     // TODO Auto-generated method stub
-    
+
   }
 
   @Override
   public void fireDataChanged()
   {
-    // hmm, we don't really implement this, because apps listen to the 
+    // hmm, we don't really implement this, because apps listen to the
     // results collections, not the command.
-    throw new RuntimeException("Not implemented");
+    throw new IllegalArgumentException("Not implemented");
+  }
+
+  final protected LocationDocument locationsFor(final LocationDocument track1,
+      final Document<?> times)
+  {
+    // ok, get the time values
+    final AxesMetadata axis =
+        times.getDataset().getFirstMetadata(AxesMetadata.class);
+    final ILazyDataset lazyds = axis.getAxes()[0];
+    DoubleDataset ds = null;
+    try
+    {
+      ds = (DoubleDataset) DatasetUtils.sliceAndConvertLazyDataset(lazyds);
+    }
+    catch (final DatasetException e)
+    {
+      throw new IllegalArgumentException(e);
+    }
+
+    double[] data = ds.getData();
+    return locationsFor(track1, data);
+  }
+
+  final protected LocationDocument locationsFor(final LocationDocument track,
+      final double[] times)
+  {
+    final DoubleDataset ds =
+        (DoubleDataset) DatasetFactory.createFromObject(times);
+
+    final Unit<?> indexUnits = times == null ? null : SampleData.MILLIS;
+    final LocationDocumentBuilder ldb;
+
+    // ok, put the lats & longs into arrays
+    final ArrayList<Double> latVals = new ArrayList<Double>();
+    final ArrayList<Double> longVals = new ArrayList<Double>();
+    final ArrayList<Double> timeVals = new ArrayList<Double>();
+
+    // special processing. If the document is a singleton, then
+    // we just keep re-using the same position
+    if (track.size() == 1)
+    {
+      ldb =
+          new LocationDocumentBuilder("Interpolated locations", null,
+              indexUnits);
+      Point2D pt = track.getLocationIterator().next();
+      for (double t : times)
+      {
+        ldb.add(t, pt);
+      }
+    }
+    else
+    {
+
+      final Iterator<Point2D> lIter = track.getLocationIterator();
+      final Iterator<Double> tIter = track.getIndex();
+      while (lIter.hasNext())
+      {
+        final double thisT = tIter.next();
+        final Point2D pt = lIter.next();
+
+        latVals.add(pt.getY());
+        longVals.add(pt.getX());
+        timeVals.add(thisT);
+      }
+
+      final DoubleDataset latDataset =
+          DatasetFactory.createFromObject(DoubleDataset.class, latVals);
+      final DoubleDataset DoubleDataset =
+          DatasetFactory.createFromObject(DoubleDataset.class, longVals);
+      final DoubleDataset timeDataset =
+          DatasetFactory.createFromObject(DoubleDataset.class, timeVals);
+
+      final DoubleDataset latInterpolated =
+          (DoubleDataset) Maths.interpolate(timeDataset, latDataset, ds, 0, 0);
+      final DoubleDataset longInterpolated =
+          (DoubleDataset) Maths.interpolate(timeDataset, DoubleDataset, ds, 0,
+              0);
+
+      // ok, now we need to re-create a locations document
+      ldb =
+          new LocationDocumentBuilder("Interpolated locations", null,
+              indexUnits);
+      for (int i = 0; i < ds.getSize(); i++)
+      {
+        final Point2D pt =
+            GeoSupport.getCalculator().createPoint(
+                longInterpolated.getDouble(i), latInterpolated.getDouble(i));
+        ldb.add(ds.getLong(i), pt);
+      }
+    }
+
+    return ldb.toDocument();
+  }
+
+  final protected NumberDocument numbersFor(final NumberDocument document,
+      final Document<?> times)
+  {
+    // ok, get the time values
+    final AxesMetadata axis =
+        times.getDataset().getFirstMetadata(AxesMetadata.class);
+    final ILazyDataset lazyds = axis.getAxes()[0];
+    DoubleDataset ds = null;
+    try
+    {
+      ds = (DoubleDataset) DatasetUtils.sliceAndConvertLazyDataset(lazyds);
+    }
+    catch (final DatasetException e)
+    {
+      throw new IllegalArgumentException(e);
+    }
+
+    double[] data = ds.getData();
+    return numbersFor(document, data);
+  }
+
+  final protected NumberDocument numbersFor(final NumberDocument document,
+      final double[] times)
+  {
+    final DoubleDataset ds =
+        (DoubleDataset) DatasetFactory.createFromObject(times);
+
+    final Unit<?> indexUnits = times == null ? null : SampleData.MILLIS;
+    final NumberDocumentBuilder ldb;
+
+    // ok, put the lats & longs into arrays
+    final ArrayList<Double> headings = new ArrayList<Double>();
+    final ArrayList<Double> timeVals = new ArrayList<Double>();
+
+    // special processing. If the document is a singleton, then
+    // we just keep re-using the same position
+    if (headings.size() == 1)
+    {
+      ldb =
+          new NumberDocumentBuilder("Interpolated headings", document
+              .getUnits(), null, indexUnits);
+      double pt = document.getIterator().next();
+      for (double t : times)
+      {
+        ldb.add(t, pt);
+      }
+    }
+    else
+    {
+
+      final Iterator<Double> lIter = document.getIterator();
+      final Iterator<Double> tIter = document.getIndex();
+      while (lIter.hasNext())
+      {
+        final double thisT = tIter.next();
+        final double pt = lIter.next();
+
+        headings.add(pt);
+        timeVals.add(thisT);
+      }
+
+      final DoubleDataset hdgDataset =
+          DatasetFactory.createFromObject(DoubleDataset.class, headings);
+      final DoubleDataset timeDataset =
+          DatasetFactory.createFromObject(DoubleDataset.class, timeVals);
+
+      final DoubleDataset hdgInterpolated =
+          (DoubleDataset) Maths.interpolate(timeDataset, hdgDataset, ds, 0, 0);
+      final DoubleDataset timeInterpolated =
+          (DoubleDataset) Maths.interpolate(timeDataset, timeDataset, ds, 0, 0);
+
+      // ok, now we need to re-create a locations document
+      ldb =
+          new NumberDocumentBuilder("Interpolated locations", document
+              .getUnits(), null, indexUnits);
+      for (int i = 0; i < ds.getSize(); i++)
+      {
+        ldb.add(timeInterpolated.getDouble(i), hdgInterpolated.getDouble(i));
+      }
+    }
+
+    return ldb.toDocument();
   }
 }

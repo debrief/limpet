@@ -43,6 +43,11 @@ public class NumberDocument extends Document<Double>
     return qType;
   }
   
+  public void copy(final NumberDocument other)
+  {
+    this.dataset = other.dataset;
+  }
+  
   @UIProperty(name = "Size", category = UIProperty.CATEGORY_METADATA)
   public int getSize()
   {
@@ -104,7 +109,8 @@ public class NumberDocument extends Document<Double>
     @Override
     public void remove()
     {
-      throw new RuntimeException("Remove operation not provided for this iterator");
+      throw new IllegalArgumentException(
+          "Remove operation not provided for this iterator");
     }
     
   }
@@ -122,6 +128,7 @@ public class NumberDocument extends Document<Double>
     return true;
   }
 
+  @Override
   public String toListing()
   {
     StringBuffer res = new StringBuffer();

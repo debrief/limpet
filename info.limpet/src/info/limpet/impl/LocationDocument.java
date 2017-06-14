@@ -29,8 +29,7 @@ public class LocationDocument extends Document<Point2D>
     return false;
   }
 
-  @Override
-  public String toString()
+  public String toListing()
   {
     StringBuffer res = new StringBuffer();
 
@@ -73,7 +72,7 @@ public class LocationDocument extends Document<Point2D>
         indexVal = "N/A";
       }
 
-      res.append(indexVal + " : " + dataset.getElementDoubleAbs(iterator.index));
+      res.append(indexVal + " : " + dataset.get(iterator.index));
       res.append(";");
     }
     res.append("\n");

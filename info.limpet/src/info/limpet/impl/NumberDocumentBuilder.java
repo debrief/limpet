@@ -26,9 +26,10 @@ public class NumberDocumentBuilder extends
   @Override
   protected void finishOff(final NumberDocument res)
   {
-    super.finishOff(res);
-
     res.setRange(_range);
+    
+    // let the parent clear itself
+    super.finishOff(res);
   }
 
   @Override

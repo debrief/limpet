@@ -29,6 +29,7 @@ import info.limpet.impl.NumberDocument;
 import info.limpet.impl.NumberDocumentBuilder;
 import info.limpet.impl.SampleData;
 import info.limpet.impl.StoreGroup;
+import info.limpet.operations.AbstractCommand;
 import info.limpet.operations.CollectionComplianceTests;
 import info.limpet.operations.spatial.DistanceBetweenTracksOperation;
 import info.limpet.operations.spatial.DopplerShiftBetweenTracksOperation;
@@ -37,7 +38,6 @@ import info.limpet.operations.spatial.GenerateCourseAndSpeedOperation;
 import info.limpet.operations.spatial.GeoSupport;
 import info.limpet.operations.spatial.IGeoCalculator;
 import info.limpet.operations.spatial.ProplossBetweenTwoTracksOperation;
-import info.limpet.operations.spatial.TwoTrackOperation;
 import info.limpet.persistence.CsvParser;
 
 import java.awt.geom.Point2D;
@@ -225,8 +225,32 @@ public class TestGeotoolsGeometry extends TestCase
 
     LocationDocument track = locB.toDocument();
     Document<?> times = numB.toDocument();
-    LocationDocument aa = TwoTrackOperation.locationsFor(track, times);
+    LocationDocument aa = new GetLocationsHelper().getTestLocations(track, times);
     assertNotNull("doc created", aa);
+  }
+  
+  public static class GetLocationsHelper extends AbstractCommand
+  {
+
+//    String title, String description,
+//    IStoreGroup store, boolean canUndo, boolean canRedo,
+//    List<IStoreItem> inputs, IContext context
+    
+    public GetLocationsHelper()
+    {
+      super(null, null, null, false, false, null, null);
+    }
+
+    @Override
+    protected void recalculate(IStoreItem subject)
+    {
+      // n/a
+    }
+    
+    public LocationDocument getTestLocations(LocationDocument track, Document<?> times)
+    {
+      return locationsFor(track, times);
+    }
   }
 
   public void testLocationInterp()
