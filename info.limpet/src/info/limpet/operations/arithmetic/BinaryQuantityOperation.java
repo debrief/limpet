@@ -47,6 +47,9 @@ import org.eclipse.january.metadata.internal.AxesMetadataImpl;
 
 public abstract class BinaryQuantityOperation implements IOperation
 {
+  private final CollectionComplianceTests aTests =
+      new CollectionComplianceTests();
+
 
   /**
    * the command that actually produces data
@@ -142,32 +145,30 @@ public abstract class BinaryQuantityOperation implements IOperation
       for (final IStoreItem inp : getInputs())
       {
         final Document<?> doc = (Document<?>) inp;
-        if (doc.size() > 1)
+        if (doc.size() > 1 && doc.isIndexed())
         {
-          if (doc.isIndexed())
+          final IDataset dataset = doc.getDataset();
+          final AxesMetadata axes =
+              dataset.getFirstMetadata(AxesMetadata.class);
+          if (axes != null)
           {
-            final IDataset dataset = doc.getDataset();
-            final AxesMetadata axes =
-                dataset.getFirstMetadata(AxesMetadata.class);
-            if (axes != null)
+            final ILazyDataset am = axes.getAxis(0)[0];
+            try
             {
-              final ILazyDataset am = axes.getAxis(0)[0];
-              try
-              {
-                final DoubleDataset ds1 =
-                    (DoubleDataset) DatasetUtils.sliceAndConvertLazyDataset(am);
-                ds = ds1;
-                break;
-              }
-              catch (final DatasetException e)
-              {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-              }
+              final DoubleDataset ds1 =
+                  (DoubleDataset) DatasetUtils.sliceAndConvertLazyDataset(am);
+              ds = ds1;
+              break;
+            }
+            catch (final DatasetException e)
+            {
+              // TODO Auto-generated catch block
+              e.printStackTrace();
             }
           }
         }
       }
+
       return ds;
     }
 
@@ -468,9 +469,6 @@ public abstract class BinaryQuantityOperation implements IOperation
     }
   }
 
-  private final CollectionComplianceTests aTests =
-      new CollectionComplianceTests();
-
   @Override
   public List<ICommand> actionsFor(final List<IStoreItem> selection,
       final IStoreGroup destination, final IContext context)
@@ -545,7 +543,7 @@ public abstract class BinaryQuantityOperation implements IOperation
       if (sItem instanceof IDocument)
       {
         final IDocument<?> doc = (IDocument<?>) sItem;
-        if (doc.isIndexed() && longest == null)
+        if (doc.isIndexed() || longest == null)
         {
           longest = doc;
         }
