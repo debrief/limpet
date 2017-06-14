@@ -72,346 +72,420 @@ import org.apache.commons.csv.CSVRecord;
 public class CsvParser
 {
 
+  /**
+   * base helper class, to help importing series of data
+   * 
+   * @author ian
+   * 
+   */
+  public abstract static class DataImporter
+  {
+    private final Unit<?> _units;
+    private final String _colName;
+    private final String[] _unitsStr;
+
+    /**
+     * constructor
+     * 
+     * @param units
+     *          name of the units we store
+     * @param colName
+     *          name of the column we store
+     * @param classType
+     *          the type of series we represent (used for default constructor)
+     */
+    protected DataImporter(final Unit<?> units, final String colName,
+        final String unitsStr)
+    {
+      this(units, colName, new String[]
+      {unitsStr});
+    }
+
+    protected DataImporter(final Unit<?> units, final String colName,
+        final String[] unitsStr)
+    {
+      _units = units;
+      _colName = colName;
+      _unitsStr = unitsStr;
+    }
+
+    abstract public void consume(IDocumentBuilder<?> thisS, double theIndex,
+        int thisCol, CSVRecord record);
+
+    /**
+     * create an instance of this series, using the specified name
+     * 
+     * @param name
+     * @return
+     */
+    abstract public IDocumentBuilder<?> create(String name, Unit<?> indexUnits);
+
+    // {
+    // Document res = null;
+    // try
+    // {
+    // res = (Document) _classType.newInstance();
+    // res.setName(name);
+    // }
+    // catch (InstantiationException | IllegalAccessException e)
+    // {
+    // e.printStackTrace();
+    // }
+    // return res;
+    // }
+
+    /**
+     * can we handle this column name?
+     * 
+     * @param colName
+     * @return
+     */
+    public final boolean handleName(final String colName)
+    {
+      if (_colName == null)
+      {
+        return false;
+      }
+      else
+      {
+        return _colName.equals(colName);
+      }
+    }
+
+    /**
+     * read some data from this record
+     * 
+     * @param series
+     *          target series
+     * @param thisTime
+     *          this time stamp
+     * @param colStart
+     *          column to start reading from
+     * @param row
+     *          current row of data
+     */
+    // public abstract void consume(Document series, long thisTime,
+    // int colStart, CSVRecord row);
+
+    /**
+     * can we handle this units type?
+     * 
+     * @param units
+     * @return
+     */
+    public final boolean handleUnits(final String units)
+    {
+      if (_unitsStr == null)
+      {
+        return false;
+      }
+      else
+      {
+        // loop through our units
+        for (final String un : _unitsStr)
+        {
+          if (un != null && un.equalsIgnoreCase(units))
+          {
+            return true;
+          }
+        }
+        return false;
+      }
+    }
+
+    /**
+     * what should this series be called, if the supplied column name is found
+     * 
+     */
+    public String nameFor(final String colName)
+    {
+      return colName;
+    }
+
+    /**
+     * how many columns do we consume?
+     * 
+     * @return
+     */
+    public int numCols()
+    {
+      return 1;
+    }
+  }
+
+  /**
+   * if we don't know the units, or data-type for a column, we'll defer creating the importer until
+   * we've actually read in some data
+   * 
+   * @author Ian
+   * 
+   */
+  final protected static class DeferredLoadSupporter extends DataImporter
+  {
+
+    public DeferredLoadSupporter(final String name)
+    {
+      super(null, name, (String) null);
+    }
+
+    @Override
+    public void consume(final IDocumentBuilder<?> thisS, final double theIndex,
+        final int thisCol, final CSVRecord record)
+    {
+      throw new IllegalArgumentException("Should not get called");
+    }
+
+    @Override
+    public IDocumentBuilder<?> create(final String name,
+        final Unit<?> indexUnits)
+    {
+      return null;
+      // NumberDocumentBuilder res =
+      // new NumberDocumentBuilder("Dummy", null, null);
+      // return res;
+    }
+
+    public String getName()
+    {
+      return super._colName;
+    }
+  }
+
+  // /**
+  // * class to handle importing two columns of location data
+  // *
+  // * @author ian
+  // *
+  // */
+  protected static class LocationImporter extends DataImporter
+  {
+    protected LocationImporter()
+    {
+      super(null, "Lat", (String) null);
+    }
+
+    @Override
+    public void consume(final IDocumentBuilder<?> series,
+        final double thisIndex, final int colStart, final CSVRecord row)
+    {
+      final String latVal = row.get(colStart);
+      final Double valLat = Double.parseDouble(latVal);
+      final String longVal = row.get(colStart + 1);
+      final Double valLong = Double.parseDouble(longVal);
+
+      final Point2D point =
+          GeoSupport.getCalculator().createPoint(valLong, valLat);
+      final LocationDocumentBuilder builder = (LocationDocumentBuilder) series;
+      builder.add(thisIndex, point);
+    }
+
+    /**
+     * create an instance of this series, using the specified name
+     * 
+     * @param name
+     * @param indexUnits
+     * @return
+     */
+    @Override
+    public IDocumentBuilder<?> create(final String name,
+        final Unit<?> indexUnits)
+    {
+      final LocationDocumentBuilder res =
+          new LocationDocumentBuilder(name, null, indexUnits);
+      return res;
+    }
+
+    @Override
+    public String nameFor(final String colName)
+    {
+      return "Location";
+    }
+
+    @Override
+    public int numCols()
+    {
+      return 2;
+    }
+  }
+
+  /**
+   * generic class to handle importing series of data
+   * 
+   * @author ian
+   * 
+   * @param <T>
+   */
+  protected static class SeriesSupporter extends DataImporter
+  {
+    protected SeriesSupporter(final Unit<?> units, final String colName,
+        final String unitsStr)
+    {
+      super(units, colName, unitsStr);
+    }
+
+    protected void add(final NumberDocumentBuilder series, final double index,
+        final Number quantity)
+    {
+      series.add(quantity.doubleValue());
+    }
+
+    @Override
+    public void consume(final IDocumentBuilder<?> series,
+        final double thisIndex, final int colStart, final CSVRecord row)
+    {
+      final String thisVal = row.get(colStart);
+      final Double val = Double.parseDouble(thisVal);
+      final NumberDocumentBuilder nm = (NumberDocumentBuilder) series;
+      add(nm, thisIndex, val);
+    }
+
+    @Override
+    public IDocumentBuilder<?> create(final String name,
+        final Unit<?> indexUnits)
+    {
+      return new NumberDocumentBuilder(name, super._units, null, indexUnits);
+    }
+
+    @Override
+    public int numCols()
+    {
+      return 1;
+    }
+  }
+
+  /**
+   * class to handle importing time-related strings
+   * 
+   * @author ian
+   * 
+   */
+  protected static class StringImporter extends DataImporter
+  {
+    protected StringImporter()
+    {
+      super(null, null, (String) null);
+    }
+
+    @Override
+    public void consume(final IDocumentBuilder<?> series,
+        final double theIndex, final int colStart, final CSVRecord row)
+    {
+      final String thisVal = row.get(colStart);
+      final StringDocumentBuilder builder = (StringDocumentBuilder) series;
+      builder.add(theIndex, thisVal);
+    }
+
+    @Override
+    public IDocumentBuilder<?> create(final String name,
+        final Unit<?> indexUnits)
+    {
+      final StringDocumentBuilder res =
+          new StringDocumentBuilder(name, null, indexUnits);
+      return res;
+    }
+  }
+
+  /**
+   * generic class to handle importing series of data
+   * 
+   * @author ian
+   * 
+   * @param <T>
+   */
+  protected static class TemporalSeriesSupporter extends DataImporter
+  {
+    protected TemporalSeriesSupporter(final Unit<?> units,
+        final String colName, final String unitsStr)
+    {
+      super(units, colName, unitsStr);
+    }
+
+    protected TemporalSeriesSupporter(final Unit<?> units,
+        final String colName, final String[] unitsStr)
+    {
+      super(units, colName, unitsStr);
+    }
+
+    protected void add(final NumberDocumentBuilder series, final double time,
+        final Number quantity)
+    {
+      series.add(time, quantity.doubleValue());
+    }
+
+    @Override
+    public void consume(final IDocumentBuilder<?> series,
+        final double thisTime, final int colStart, final CSVRecord row)
+    {
+      final String thisVal = row.get(colStart);
+      final Double val = Double.parseDouble(thisVal);
+      final NumberDocumentBuilder inm = (NumberDocumentBuilder) series;
+      add(inm, thisTime, val);
+    }
+
+    /**
+     * create an instance of this series, using the specified name
+     * 
+     * @param name
+     * @param indexUnits
+     * @return
+     */
+    @Override
+    public IDocumentBuilder<?> create(final String name,
+        final Unit<?> indexUnits)
+    {
+      final NumberDocumentBuilder res =
+          new NumberDocumentBuilder(name, super._units, null, indexUnits);
+      return res;
+    }
+
+    @Override
+    public int numCols()
+    {
+      return 1;
+    }
+  }
+
+  /**
+   * class to handle importing time-related strings
+   * 
+   * @author ian
+   * 
+   */
+  protected static class TemporalStringImporter extends DataImporter
+  {
+    protected TemporalStringImporter()
+    {
+      super(null, null, (String) null);
+    }
+
+    @Override
+    public void consume(final IDocumentBuilder<?> series,
+        final double theIndex, final int colStart, final CSVRecord row)
+    {
+      final String thisVal = row.get(colStart);
+      final StringDocumentBuilder builder = (StringDocumentBuilder) series;
+      builder.add(theIndex, thisVal);
+    }
+
+    @Override
+    public IDocumentBuilder<?> create(final String name,
+        final Unit<?> indexUnits)
+    {
+      final StringDocumentBuilder res =
+          new StringDocumentBuilder(name, null, indexUnits);
+      return res;
+    }
+  }
+
   // 21/09/2015 07:00:31
   private static final DateFormat DATE_SECS_FORMAT = new SimpleDateFormat(
       "dd/MM/yyyy hh:mm:ss");
+
   private static final DateFormat DATE_FORMAT = new SimpleDateFormat(
       "dd/MM/yyyy hh:mm");
+
   private static final DateFormat TIME_FORMAT =
       new SimpleDateFormat("hh:mm:ss");
-  private ArrayList<DataImporter> _candidates;
-
-  public List<IStoreItem> parse(String filePath) throws IOException
-  {
-    final List<IStoreItem> res = new ArrayList<IStoreItem>();
-    final File inFile = new File(filePath);
-    final Reader in =
-        new InputStreamReader(new FileInputStream(inFile), Charset
-            .forName("UTF-8"));
-    final String fullFileName = inFile.getName();
-    final String fileName = filePrefix(fullFileName);
-    final Iterable<CSVRecord> records = CSVFormat.DEFAULT.parse(in);
-    boolean first = true;
-
-    // generate our list of importers
-    createImporters();
-
-    // store one importer per column-set
-    List<DataImporter> importers = new ArrayList<DataImporter>();
-
-    // and store one series per column-set
-    List<IDocumentBuilder<?>> builders = new ArrayList<IDocumentBuilder<?>>();
-
-    boolean isIndexed = false;
-    Unit<?> indexUnits = null;
-    DateFormat customDateFormat = null;
-    boolean temporalIndex = false;
-
-    Pattern unitMatcher = Pattern.compile("(?:\\()(.*?)(?:\\))");
-
-    for (CSVRecord record : records)
-    {
-      if (first)
-      {
-        first = false;
-
-        String colHeader = record.get(0);
-        int ctr = 0;
-
-        if (colHeader != null && colHeader.toLowerCase().startsWith("time")
-            && !colHeader.contains("(s)"))
-        {
-          // is it plain time?
-          if (!colHeader.equalsIgnoreCase("time"))
-          {
-            // nope, see if we have a time format string
-            if (colHeader.contains("(") && colHeader.contains(")"))
-            {
-              // ok, extract the format string
-              String formatStr =
-                  colHeader.substring(colHeader.indexOf("(") + 1, colHeader
-                      .indexOf(")"));
-              customDateFormat = new SimpleDateFormat(formatStr);
-            }
-          }
-          isIndexed = true;
-          temporalIndex = true;
-          indexUnits = MILLI(SECOND);
-          ctr = 1;
-        }
-        else
-        {
-          // ok, we'll have to use another number parser
-
-          // get the units
-          Matcher m = unitMatcher.matcher(colHeader);
-          if (m.find())
-          {
-            // ok, get the units
-            final String indexUnitsStr = m.group(1);
-
-            // now find an importer for this type
-            for (DataImporter im : _candidates)
-            {
-              if (im.handleUnits(indexUnitsStr))
-              {
-                indexUnits = im._units;
-                break;
-              }
-            }
-          }
-          // put it here
-          temporalIndex = false;
-          isIndexed = true;
-          ctr = 1;
-        }
-
-        while (ctr < record.size())
-        {
-          String nextVal = record.get(ctr);
-          // have a look at it.
-          int i1 = nextVal.indexOf("(");
-
-          String colName;
-
-          if (i1 > 0)
-          {
-            // ok, we have units
-            colName = nextVal.substring(0, i1).trim();
-          }
-          else
-          {
-            // no, no units
-            colName = nextVal.trim();
-          }
-
-          // see if anybody can handle this name
-          boolean handled = false;
-          Iterator<DataImporter> cIter = _candidates.iterator();
-          while (cIter.hasNext())
-          {
-            DataImporter thisI = cIter.next();
-            if (thisI.handleName(colName))
-            {
-              importers.add(thisI);
-              builders.add(thisI.create(
-                  fileName + "-" + thisI.nameFor(colName), indexUnits));
-              handled = true;
-              ctr += thisI.numCols();
-              break;
-            }
-          }
-
-          if (!handled)
-          {
-            int i2 = nextVal.indexOf(")");
-            if (i2 > 0 && i2 > i1 + 1)
-            {
-              final String units = nextVal.substring(i1 + 1, i2).trim();
-
-              Iterator<DataImporter> cIter2 = _candidates.iterator();
-              while (cIter2.hasNext())
-              {
-                DataImporter thisI = cIter2.next();
-                if (thisI.handleUnits(units))
-                {
-                  importers.add(thisI);
-                  builders.add(thisI.create(fileName + "-"
-                      + thisI.nameFor(colName), indexUnits));
-                  ctr += thisI.numCols();
-                  handled = true;
-                  break;
-                }
-              }
-            }
-          }
-
-          // have we managed it?
-          if (!handled)
-          {
-            // ok, in that case we don't know. Let's introduce a deferred
-            // decision
-            // maker, so we can make a decision once we've read in some data
-            final DeferredLoadSupporter thisI =
-                new DeferredLoadSupporter(colName);
-            importers.add(thisI);
-            builders.add(thisI.create(fileName + "-" + thisI.nameFor(colName),
-                indexUnits));
-            ctr += 1;
-          }
-        }
-      }
-      else
-      {
-
-        String firstCell = record.get(0);
-        double indexVal = -1d;
-        int thisCol = 0;
-
-        // ok, we're out of the first row
-        if (isIndexed)
-        {
-          try
-          {
-            if (temporalIndex)
-            {
-              // ok, get the time field
-              // do we have a custom date format
-              DateFormat thisFormat =
-                  getDateThisFormat(customDateFormat, firstCell);
-
-              Date date = thisFormat.parse(firstCell);
-              indexVal = date.getTime();
-              thisCol = 1;
-            }
-            else
-            {
-              indexVal = Double.valueOf(firstCell);
-              thisCol = 1;
-            }
-          }
-
-          catch (ParseException e)
-          {
-            e.printStackTrace();
-          }
-        }
-        else
-        {
-          // not temporal, use this field
-          thisCol = 0;
-        }
-
-        // now move through the other cols
-        int numImporters = importers.size();
-        for (int i = 0; i < numImporters; i++)
-        {
-          DataImporter thisI = importers.get(i);
-
-          // ok, just check if this is a deferred importer
-          if (thisI instanceof DeferredLoadSupporter)
-          {
-            DeferredLoadSupporter dImp = (DeferredLoadSupporter) thisI;
-            // ok, see if we have enough data to be able to replace
-            // the deferred importer with a concrete instance
-            thisI =
-                handleDeferredLoader(fileName, importers, builders, isIndexed,
-                    indexUnits, record, thisCol, dImp);
-          }
-
-          IDocumentBuilder<?> thisS = builders.get(i);
-
-          thisI.consume(thisS, indexVal, thisCol, record);
-
-          thisCol += thisI.numCols();
-        }
-      }
-    }
-
-    // ok, store the series
-    if (builders.size() > 1)
-    {
-      StoreGroup target = new StoreGroup(fileName);
-      for (IDocumentBuilder<?> builder : builders)
-      {
-        target.add(builder.toDocument());
-      }
-      res.add(target);
-    }
-    else
-    {
-      for (IDocumentBuilder<?> builder : builders)
-      {
-        res.add(builder.toDocument());
-      }
-    }
-
-    return res;
-  }
-
-  private DataImporter handleDeferredLoader(final String fileName,
-      final List<DataImporter> importers,
-      final List<IDocumentBuilder<?>> builders, final boolean isIndexed,
-      final Unit<?> indexUnits, final CSVRecord record, final int thisCol,
-      final DeferredLoadSupporter existingImporter)
-  {
-    DataImporter res = existingImporter;
-    String seriesName = existingImporter.getName();
-
-    // ok, have a look at the next field
-    String nextVal = record.get(thisCol);
-
-    // is it numeric?
-    DataImporter importer = null;
-    // ok, treat it as string data
-    if (isIndexed)
-    {
-      if (isNumeric(nextVal))
-      {
-        // ok, we've got dimensionless quantity data
-        importer = new TemporalSeriesSupporter(null, null, (String) null);
-      }
-      else
-      {
-        importer = new TemporalStringImporter();
-      }
-    }
-    else
-    {
-      if (isNumeric(nextVal))
-      {
-        // ok, we've got dimensionless quantity data
-        importer = new SeriesSupporter(null, null, null);
-      }
-      else
-      {
-        importer = new StringImporter();
-      }
-    }
-
-    if (importer != null)
-    {
-      int index = importers.indexOf(existingImporter);
-      importers.set(index, importer);
-
-      builders.set(index, importer.create(fileName + "-" + seriesName,
-          indexUnits));
-
-      res = importer;
-    }
-    return res;
-  }
-
-  private DateFormat getDateThisFormat(final DateFormat customDateFormat,
-      final String firstCell)
-  {
-    final DateFormat thisFormat;
-    if (customDateFormat != null)
-    {
-      thisFormat = customDateFormat;
-    }
-    else
-    {
-      int len = firstCell.length();
-      if (len < 10)
-      {
-        thisFormat = TIME_FORMAT;
-      }
-      else
-      {
-        // hmm, are there secs present
-        if (len == 16)
-        {
-          thisFormat = DATE_FORMAT;
-        }
-        else
-        {
-          thisFormat = DATE_SECS_FORMAT;
-        }
-      }
-    }
-    return thisFormat;
-  }
 
   public static DateFormat getDateFormat()
   {
@@ -423,11 +497,21 @@ public class CsvParser
     return TIME_FORMAT;
   }
 
-  private String filePrefix(String fullPath)
+  public static boolean isNumeric(final String str)
   {
-    // gets filename without extension
-    return fullPath.split("\\.(?=[^\\.]+$)")[0];
+    try
+    {
+      @SuppressWarnings("unused")
+      final double d = Double.parseDouble(str);
+    }
+    catch (final NumberFormatException nfe)
+    {
+      return false;
+    }
+    return true;
   }
+
+  private ArrayList<DataImporter> _candidates;
 
   private void createImporters()
   {
@@ -480,404 +564,339 @@ public class CsvParser
     {"dB"}));
   }
 
-  public static boolean isNumeric(String str)
+  private String filePrefix(final String fullPath)
   {
-    try
-    {
-      @SuppressWarnings("unused")
-      double d = Double.parseDouble(str);
-    }
-    catch (NumberFormatException nfe)
-    {
-      return false;
-    }
-    return true;
+    // gets filename without extension
+    return fullPath.split("\\.(?=[^\\.]+$)")[0];
   }
 
-  /**
-   * base helper class, to help importing series of data
-   * 
-   * @author ian
-   * 
-   */
-  public abstract static class DataImporter
+  private DateFormat getDateThisFormat(final DateFormat customDateFormat,
+      final String firstCell)
   {
-    private final Unit<?> _units;
-    private final String _colName;
-    private final String[] _unitsStr;
-
-    /**
-     * constructor
-     * 
-     * @param units
-     *          name of the units we store
-     * @param colName
-     *          name of the column we store
-     * @param classType
-     *          the type of series we represent (used for default constructor)
-     */
-    protected DataImporter(Unit<?> units, String colName, String unitsStr)
+    final DateFormat thisFormat;
+    if (customDateFormat != null)
     {
-      this(units, colName, new String[]
-      {unitsStr});
+      thisFormat = customDateFormat;
     }
-
-    protected DataImporter(Unit<?> units, String colName, String[] unitsStr)
+    else
     {
-      _units = units;
-      _colName = colName;
-      _unitsStr = unitsStr;
-    }
-
-    abstract public void consume(IDocumentBuilder<?> thisS, double theIndex,
-        int thisCol, CSVRecord record);
-
-    /**
-     * create an instance of this series, using the specified name
-     * 
-     * @param name
-     * @return
-     */
-    abstract public IDocumentBuilder<?> create(String name, Unit<?> indexUnits);
-
-    // {
-    // Document res = null;
-    // try
-    // {
-    // res = (Document) _classType.newInstance();
-    // res.setName(name);
-    // }
-    // catch (InstantiationException | IllegalAccessException e)
-    // {
-    // e.printStackTrace();
-    // }
-    // return res;
-    // }
-
-    /**
-     * what should this series be called, if the supplied column name is found
-     * 
-     */
-    public String nameFor(String colName)
-    {
-      return colName;
-    }
-
-    /**
-     * read some data from this record
-     * 
-     * @param series
-     *          target series
-     * @param thisTime
-     *          this time stamp
-     * @param colStart
-     *          column to start reading from
-     * @param row
-     *          current row of data
-     */
-    // public abstract void consume(Document series, long thisTime,
-    // int colStart, CSVRecord row);
-
-    /**
-     * can we handle this column name?
-     * 
-     * @param colName
-     * @return
-     */
-    public final boolean handleName(String colName)
-    {
-      if (_colName == null)
+      final int len = firstCell.length();
+      if (len < 10)
       {
-        return false;
+        thisFormat = TIME_FORMAT;
       }
       else
       {
-        return _colName.equals(colName);
-      }
-    }
-
-    /**
-     * can we handle this units type?
-     * 
-     * @param units
-     * @return
-     */
-    public final boolean handleUnits(String units)
-    {
-      if (_unitsStr == null)
-      {
-        return false;
-      }
-      else
-      {
-        // loop through our units
-        for (final String un : _unitsStr)
+        // hmm, are there secs present
+        if (len == 16)
         {
-          if (un != null && un.equalsIgnoreCase(units))
+          thisFormat = DATE_FORMAT;
+        }
+        else
+        {
+          thisFormat = DATE_SECS_FORMAT;
+        }
+      }
+    }
+    return thisFormat;
+  }
+
+  private DataImporter handleDeferredLoader(final String fileName,
+      final List<DataImporter> importers,
+      final List<IDocumentBuilder<?>> builders, final boolean isIndexed,
+      final Unit<?> indexUnits, final CSVRecord record, final int thisCol,
+      final DeferredLoadSupporter existingImporter)
+  {
+    DataImporter res = existingImporter;
+    final String seriesName = existingImporter.getName();
+
+    // ok, have a look at the next field
+    final String nextVal = record.get(thisCol);
+
+    // is it numeric?
+    DataImporter importer = null;
+    // ok, treat it as string data
+    if (isIndexed)
+    {
+      if (isNumeric(nextVal))
+      {
+        // ok, we've got dimensionless quantity data
+        importer = new TemporalSeriesSupporter(null, null, (String) null);
+      }
+      else
+      {
+        importer = new TemporalStringImporter();
+      }
+    }
+    else
+    {
+      if (isNumeric(nextVal))
+      {
+        // ok, we've got dimensionless quantity data
+        importer = new SeriesSupporter(null, null, null);
+      }
+      else
+      {
+        importer = new StringImporter();
+      }
+    }
+
+    if (importer != null)
+    {
+      final int index = importers.indexOf(existingImporter);
+      importers.set(index, importer);
+
+      builders.set(index, importer.create(fileName + "-" + seriesName,
+          indexUnits));
+
+      res = importer;
+    }
+    return res;
+  }
+
+  public List<IStoreItem> parse(final String filePath) throws IOException
+  {
+    final List<IStoreItem> res = new ArrayList<IStoreItem>();
+    final File inFile = new File(filePath);
+    final Reader in =
+        new InputStreamReader(new FileInputStream(inFile), Charset
+            .forName("UTF-8"));
+    final String fullFileName = inFile.getName();
+    final String fileName = filePrefix(fullFileName);
+    final Iterable<CSVRecord> records = CSVFormat.DEFAULT.parse(in);
+    boolean first = true;
+
+    // generate our list of importers
+    createImporters();
+
+    // store one importer per column-set
+    final List<DataImporter> importers = new ArrayList<DataImporter>();
+
+    // and store one series per column-set
+    final List<IDocumentBuilder<?>> builders =
+        new ArrayList<IDocumentBuilder<?>>();
+
+    boolean isIndexed = false;
+    Unit<?> indexUnits = null;
+    DateFormat customDateFormat = null;
+    boolean temporalIndex = false;
+
+    final Pattern unitMatcher = Pattern.compile("(?:\\()(.*?)(?:\\))");
+
+    for (final CSVRecord record : records)
+    {
+      if (first)
+      {
+        first = false;
+
+        final String colHeader = record.get(0);
+        int ctr = 0;
+
+        if (colHeader != null && colHeader.toLowerCase().startsWith("time")
+            && !colHeader.contains("(s)"))
+        {
+          // is it something other than plain time, and does it contain date format?
+          if (!colHeader.equalsIgnoreCase("time") && colHeader.contains("(")
+              && colHeader.contains(")"))
           {
-            return true;
+            // ok, extract the format string
+            final String formatStr =
+                colHeader.substring(colHeader.indexOf("(") + 1, colHeader
+                    .indexOf(")"));
+            customDateFormat = new SimpleDateFormat(formatStr);
+          }
+
+          isIndexed = true;
+          temporalIndex = true;
+          indexUnits = MILLI(SECOND);
+          ctr = 1;
+        }
+        else
+        {
+          // ok, we'll have to use another number parser
+
+          // get the units
+          final Matcher m = unitMatcher.matcher(colHeader);
+          if (m.find())
+          {
+            // ok, get the units
+            final String indexUnitsStr = m.group(1);
+
+            // now find an importer for this type
+            for (final DataImporter im : _candidates)
+            {
+              if (im.handleUnits(indexUnitsStr))
+              {
+                indexUnits = im._units;
+                break;
+              }
+            }
+          }
+          // put it here
+          temporalIndex = false;
+          isIndexed = true;
+          ctr = 1;
+        }
+
+        while (ctr < record.size())
+        {
+          final String nextVal = record.get(ctr);
+          // have a look at it.
+          final int i1 = nextVal.indexOf("(");
+
+          final String colName;
+          if (i1 > 0)
+          {
+            // ok, we have units
+            colName = nextVal.substring(0, i1).trim();
+          }
+          else
+          {
+            // no, no units
+            colName = nextVal.trim();
+          }
+
+          // see if anybody can handle this name
+          boolean handled = false;
+          final Iterator<DataImporter> cIter = _candidates.iterator();
+          while (cIter.hasNext())
+          {
+            final DataImporter thisI = cIter.next();
+            if (thisI.handleName(colName))
+            {
+              importers.add(thisI);
+              builders.add(thisI.create(
+                  fileName + "-" + thisI.nameFor(colName), indexUnits));
+              handled = true;
+              ctr += thisI.numCols();
+              break;
+            }
+          }
+
+          if (!handled)
+          {
+            final int i2 = nextVal.indexOf(")");
+            if (i2 > 0 && i2 > i1 + 1)
+            {
+              final String units = nextVal.substring(i1 + 1, i2).trim();
+
+              final Iterator<DataImporter> cIter2 = _candidates.iterator();
+              while (cIter2.hasNext())
+              {
+                final DataImporter thisI = cIter2.next();
+                if (thisI.handleUnits(units))
+                {
+                  importers.add(thisI);
+                  builders.add(thisI.create(fileName + "-"
+                      + thisI.nameFor(colName), indexUnits));
+                  ctr += thisI.numCols();
+                  handled = true;
+                  break;
+                }
+              }
+            }
+          }
+
+          // have we managed it?
+          if (!handled)
+          {
+            // ok, in that case we don't know. Let's introduce a deferred
+            // decision
+            // maker, so we can make a decision once we've read in some data
+            final DeferredLoadSupporter thisI =
+                new DeferredLoadSupporter(colName);
+            importers.add(thisI);
+            builders.add(thisI.create(fileName + "-" + thisI.nameFor(colName),
+                indexUnits));
+            ctr += 1;
           }
         }
-        return false;
+      }
+      else
+      {
+
+        final String firstCell = record.get(0);
+        double indexVal = -1d;
+        int thisCol = 0;
+
+        // ok, we're out of the first row
+        if (isIndexed)
+        {
+          try
+          {
+            if (temporalIndex)
+            {
+              // ok, get the time field
+              // do we have a custom date format
+              final DateFormat thisFormat =
+                  getDateThisFormat(customDateFormat, firstCell);
+
+              final Date date = thisFormat.parse(firstCell);
+              indexVal = date.getTime();
+              thisCol = 1;
+            }
+            else
+            {
+              indexVal = Double.valueOf(firstCell);
+              thisCol = 1;
+            }
+          }
+
+          catch (final ParseException e)
+          {
+            e.printStackTrace();
+          }
+        }
+        else
+        {
+          // not temporal, use this field
+          thisCol = 0;
+        }
+
+        // now move through the other cols
+        final int numImporters = importers.size();
+        for (int i = 0; i < numImporters; i++)
+        {
+          DataImporter thisI = importers.get(i);
+
+          // ok, just check if this is a deferred importer
+          if (thisI instanceof DeferredLoadSupporter)
+          {
+            final DeferredLoadSupporter dImp = (DeferredLoadSupporter) thisI;
+            // ok, see if we have enough data to be able to replace
+            // the deferred importer with a concrete instance
+            thisI =
+                handleDeferredLoader(fileName, importers, builders, isIndexed,
+                    indexUnits, record, thisCol, dImp);
+          }
+
+          final IDocumentBuilder<?> thisS = builders.get(i);
+
+          thisI.consume(thisS, indexVal, thisCol, record);
+
+          thisCol += thisI.numCols();
+        }
       }
     }
 
-    /**
-     * how many columns do we consume?
-     * 
-     * @return
-     */
-    public int numCols()
+    // ok, store the series
+    if (builders.size() > 1)
     {
-      return 1;
+      final StoreGroup target = new StoreGroup(fileName);
+      for (final IDocumentBuilder<?> builder : builders)
+      {
+        target.add(builder.toDocument());
+      }
+      res.add(target);
     }
-  }
-
-  /**
-   * class to handle importing time-related strings
-   * 
-   * @author ian
-   * 
-   */
-  protected static class TemporalStringImporter extends DataImporter
-  {
-    protected TemporalStringImporter()
+    else
     {
-      super(null, null, (String) null);
+      for (final IDocumentBuilder<?> builder : builders)
+      {
+        res.add(builder.toDocument());
+      }
     }
 
-    @Override
-    public IDocumentBuilder<?> create(String name, Unit<?> indexUnits)
-    {
-      StringDocumentBuilder res =
-          new StringDocumentBuilder(name, null, indexUnits);
-      return res;
-    }
-
-    @Override
-    public void consume(IDocumentBuilder<?> series, double theIndex,
-        int colStart, CSVRecord row)
-    {
-      String thisVal = row.get(colStart);
-      StringDocumentBuilder builder = (StringDocumentBuilder) series;
-      builder.add(theIndex, thisVal);
-    }
-  }
-
-  /**
-   * class to handle importing time-related strings
-   * 
-   * @author ian
-   * 
-   */
-  protected static class StringImporter extends DataImporter
-  {
-    protected StringImporter()
-    {
-      super(null, null, (String) null);
-    }
-
-    public IDocumentBuilder<?> create(String name, Unit<?> indexUnits)
-    {
-      StringDocumentBuilder res =
-          new StringDocumentBuilder(name, null, indexUnits);
-      return res;
-    }
-
-    @Override
-    public void consume(IDocumentBuilder<?> series, double theIndex,
-        int colStart, CSVRecord row)
-    {
-      String thisVal = row.get(colStart);
-      StringDocumentBuilder builder = (StringDocumentBuilder) series;
-      builder.add(theIndex, thisVal);
-    }
-  }
-
-  // /**
-  // * class to handle importing two columns of location data
-  // *
-  // * @author ian
-  // *
-  // */
-  protected static class LocationImporter extends DataImporter
-  {
-    protected LocationImporter()
-    {
-      super(null, "Lat", (String) null);
-    }
-
-    public String nameFor(String colName)
-    {
-      return "Location";
-    }
-
-    /**
-     * create an instance of this series, using the specified name
-     * 
-     * @param name
-     * @param indexUnits
-     * @return
-     */
-    public IDocumentBuilder<?> create(String name, Unit<?> indexUnits)
-    {
-      LocationDocumentBuilder res =
-          new LocationDocumentBuilder(name, null, indexUnits);
-      return res;
-    }
-
-    public void consume(IDocumentBuilder<?> series, double thisIndex,
-        int colStart, CSVRecord row)
-    {
-      String latVal = row.get(colStart);
-      Double valLat = Double.parseDouble(latVal);
-      String longVal = row.get(colStart + 1);
-      Double valLong = Double.parseDouble(longVal);
-
-      Point2D point = GeoSupport.getCalculator().createPoint(valLong, valLat);
-      LocationDocumentBuilder builder = (LocationDocumentBuilder) series;
-      builder.add(thisIndex, point);
-    }
-
-    public int numCols()
-    {
-      return 2;
-    }
-  }
-
-  /**
-   * generic class to handle importing series of data
-   * 
-   * @author ian
-   * 
-   * @param <T>
-   */
-  protected static class SeriesSupporter extends DataImporter
-  {
-    protected SeriesSupporter(Unit<?> units, String colName, String unitsStr)
-    {
-      super(units, colName, unitsStr);
-    }
-
-    protected void add(NumberDocumentBuilder series, double index,
-        Number quantity)
-    {
-      series.add(quantity.doubleValue());
-    }
-
-    public void consume(IDocumentBuilder<?> series, double thisIndex,
-        int colStart, CSVRecord row)
-    {
-      String thisVal = row.get(colStart);
-      Double val = Double.parseDouble(thisVal);
-      NumberDocumentBuilder nm = (NumberDocumentBuilder) series;
-      add(nm, thisIndex, val);
-    }
-
-    @Override
-    public int numCols()
-    {
-      return 1;
-    }
-
-    @Override
-    public IDocumentBuilder<?> create(String name, Unit<?> indexUnits)
-    {
-      return new NumberDocumentBuilder(name, super._units, null, indexUnits);
-    }
-  }
-
-  /**
-   * generic class to handle importing series of data
-   * 
-   * @author ian
-   * 
-   * @param <T>
-   */
-  protected static class TemporalSeriesSupporter extends DataImporter
-  {
-    protected TemporalSeriesSupporter(Unit<?> units, String colName,
-        String unitsStr)
-    {
-      super(units, colName, unitsStr);
-    }
-
-    protected TemporalSeriesSupporter(Unit<?> units, String colName,
-        String[] unitsStr)
-    {
-      super(units, colName, unitsStr);
-    }
-
-    protected void add(NumberDocumentBuilder series, double time,
-        Number quantity)
-    {
-      series.add(time, quantity.doubleValue());
-    }
-
-    public void consume(IDocumentBuilder<?> series, double thisTime,
-        int colStart, CSVRecord row)
-    {
-      String thisVal = row.get(colStart);
-      Double val = Double.parseDouble(thisVal);
-      NumberDocumentBuilder inm = (NumberDocumentBuilder) series;
-      add(inm, thisTime, val);
-    }
-
-    /**
-     * create an instance of this series, using the specified name
-     * 
-     * @param name
-     * @param indexUnits
-     * @return
-     */
-    public IDocumentBuilder<?> create(String name, Unit<?> indexUnits)
-    {
-      NumberDocumentBuilder res =
-          new NumberDocumentBuilder(name, super._units, null, indexUnits);
-      return res;
-    }
-
-    @Override
-    public int numCols()
-    {
-      return 1;
-    }
-  }
-
-  /**
-   * if we don't know the units, or data-type for a column, we'll defer creating the importer until
-   * we've actually read in some data
-   * 
-   * @author Ian
-   * 
-   */
-  final protected static class DeferredLoadSupporter extends DataImporter
-  {
-
-    public DeferredLoadSupporter(String name)
-    {
-      super(null, name, (String) null);
-    }
-
-    public String getName()
-    {
-      return super._colName;
-    }
-
-    @Override
-    public IDocumentBuilder<?> create(String name, Unit<?> indexUnits)
-    {
-      return null;
-      // NumberDocumentBuilder res =
-      // new NumberDocumentBuilder("Dummy", null, null);
-      // return res;
-    }
-
-    @Override
-    public void consume(IDocumentBuilder<?> thisS, double theIndex,
-        int thisCol, CSVRecord record)
-    {
-      throw new IllegalArgumentException("Should not get called");
-    }
+    return res;
   }
 }

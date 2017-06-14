@@ -193,9 +193,9 @@ public class XyPlotView extends CoreAnalysisView
     final int longestColl = aTests.getLongestCollectionLength(items);
 
     boolean chartUpdated = false;
-    
-    for(IStoreItem item: items)
-    {      
+
+    for (IStoreItem item : items)
+    {
       final IDocument<?> coll = (IDocument<?>) item;
       if (coll.isQuantity() && coll.size() >= 1 && coll.size() < MAX_SIZE)
       {
@@ -212,77 +212,91 @@ public class XyPlotView extends CoreAnalysisView
           continue;
         }
 
-        final ILineSeries newSeries =
-            (ILineSeries) chart.getSeriesSet().createSeries(SeriesType.LINE,
-                seriesName);
-
-        final PlotSymbolType theSym;
-        // if it's a singleton, show the symbol
-        // markers
-        if (thisQ.size() > 100 || thisQ.size() == 1)
-        {
-          theSym = PlotSymbolType.NONE;
-        }
-        else
-        {
-          theSym = PlotSymbolType.CIRCLE;
-        }
-
-        newSeries.setSymbolType(theSym);
-        newSeries.setLineColor(PlottingHelpers.colorFor(seriesName));
-        newSeries.setSymbolColor(PlottingHelpers.colorFor(seriesName));
-
-        // get the data, depending on if it's a singleton or not
-        final double[] yData = getYData(longestColl, coll, thisQ);
-
-        // ok, do we have existing data?
-        if (existingUnits != null && !existingUnits.equals(theseUnits))
-        {
-          // create second Y axis
-          final int axisId = chart.getAxisSet().createYAxis();
-
-          // set the properties of second Y axis
-          final IAxis yAxis2 = chart.getAxisSet().getYAxis(axisId);
-          yAxis2.getTitle().setText(theseUnits.toString());
-          yAxis2.setPosition(Position.Secondary);
-          newSeries.setYAxisId(axisId);
-        }
-        else
-        {
-          chart.getAxisSet().getYAxes()[0].getTitle().setText(
-              theseUnits.toString());
-          existingUnits = theseUnits;
-        }
-
-        newSeries.setYSeries(yData);
-
-        // if it's a monster line, we won't plot
-        // markers
-        if (thisQ.size() > 90)
-        {
-          newSeries.setSymbolType(PlotSymbolType.NONE);
-          newSeries.setLineWidth(2);
-        }
-        else
-        {
-          newSeries.setSymbolType(PlotSymbolType.CROSS);
-        }
-
-        chart.getAxisSet().getXAxis(0).getTitle().setText("Count");
-
-        // adjust the axis range
-        chart.getAxisSet().adjustRange();
-        IAxis xAxis = chart.getAxisSet().getXAxis(0);
-        xAxis.enableCategory(false);
+        existingUnits =
+            showThisNumberDocument(existingUnits, longestColl, coll, thisQ,
+                theseUnits, seriesName);
 
         chartUpdated = true;
       }
     }
-    
-    if(chartUpdated)
+
+    if (chartUpdated)
     {
       chart.redraw();
     }
+  }
+
+  private Unit<?> showThisNumberDocument(final Unit<?> existingUnits,
+      final int longestColl, final IDocument<?> coll,
+      final NumberDocument thisQ, final Unit<?> theseUnits,
+      final String seriesName)
+  {
+    Unit<?> NewUnits = existingUnits;
+
+    final ILineSeries newSeries =
+        (ILineSeries) chart.getSeriesSet().createSeries(SeriesType.LINE,
+            seriesName);
+
+    final PlotSymbolType theSym;
+    // if it's a singleton, show the symbol
+    // markers
+    if (thisQ.size() > 100 || thisQ.size() == 1)
+    {
+      theSym = PlotSymbolType.NONE;
+    }
+    else
+    {
+      theSym = PlotSymbolType.CIRCLE;
+    }
+
+    newSeries.setSymbolType(theSym);
+    newSeries.setLineColor(PlottingHelpers.colorFor(seriesName));
+    newSeries.setSymbolColor(PlottingHelpers.colorFor(seriesName));
+
+    // get the data, depending on if it's a singleton or not
+    final double[] yData = getYData(longestColl, coll, thisQ);
+
+    // ok, do we have existing data?
+    if (existingUnits != null && !existingUnits.equals(theseUnits))
+    {
+      // create second Y axis
+      final int axisId = chart.getAxisSet().createYAxis();
+
+      // set the properties of second Y axis
+      final IAxis yAxis2 = chart.getAxisSet().getYAxis(axisId);
+      yAxis2.getTitle().setText(theseUnits.toString());
+      yAxis2.setPosition(Position.Secondary);
+      newSeries.setYAxisId(axisId);
+    }
+    else
+    {
+      chart.getAxisSet().getYAxes()[0].getTitle()
+          .setText(theseUnits.toString());
+      NewUnits = theseUnits;
+    }
+
+    newSeries.setYSeries(yData);
+
+    // if it's a monster line, we won't plot
+    // markers
+    if (thisQ.size() > 90)
+    {
+      newSeries.setSymbolType(PlotSymbolType.NONE);
+      newSeries.setLineWidth(2);
+    }
+    else
+    {
+      newSeries.setSymbolType(PlotSymbolType.CROSS);
+    }
+
+    chart.getAxisSet().getXAxis(0).getTitle().setText("Count");
+
+    // adjust the axis range
+    chart.getAxisSet().adjustRange();
+    final IAxis xAxis = chart.getAxisSet().getXAxis(0);
+    xAxis.enableCategory(false);
+
+    return NewUnits;
   }
 
   private double[] getYData(final int longestColl, final IDocument<?> coll,
@@ -365,11 +379,11 @@ public class XyPlotView extends CoreAnalysisView
                 seriesName);
         newSeries.setLineColor(PlottingHelpers.colorFor(seriesName));
 
-        // extract & store the data, but track any change to the units 
+        // extract & store the data, but track any change to the units
         existingUnits =
             storeIndexedData(existingUnits, outerPeriod, coll, thisQ,
                 theseUnits, indexUnits, newSeries);
-        
+
         // adjust the axis range
         chart.getAxisSet().adjustRange();
         IAxis xAxis = chart.getAxisSet().getXAxis(0);
@@ -385,9 +399,9 @@ public class XyPlotView extends CoreAnalysisView
       final NumberDocument thisQ, final Unit<?> theseUnits,
       final Unit<?> indexUnits, final ILineSeries newSeries)
   {
-    
+
     Unit<?> newUnits = existingUnits;
-    
+
     final Date[] xTimeData;
     final double[] xData;
     final double[] yData;
@@ -476,7 +490,7 @@ public class XyPlotView extends CoreAnalysisView
     newSeries.setYSeries(yData);
 
     // ok, do we have existing data, in different units?
-    if (existingUnits != null && !existingUnits.equals(theseUnits))
+    if (newUnits != null && !newUnits.equals(theseUnits))
     {
       // create second Y axis
       final int axisId = chart.getAxisSet().createYAxis();
@@ -489,8 +503,8 @@ public class XyPlotView extends CoreAnalysisView
     }
     else
     {
-      chart.getAxisSet().getYAxes()[0].getTitle().setText(
-          theseUnits.toString());
+      chart.getAxisSet().getYAxes()[0].getTitle()
+          .setText(theseUnits.toString());
       newUnits = theseUnits;
     }
 
@@ -508,11 +522,12 @@ public class XyPlotView extends CoreAnalysisView
 
     final String xTitle = getTitleFor(xTimeData, indexUnits);
     chart.getAxisSet().getXAxis(0).getTitle().setText(xTitle);
-    
+
     return newUnits;
   }
 
-  /** produce the graph's title text
+  /**
+   * produce the graph's title text
    * 
    * @param xTimeData
    * @param indexUnits
@@ -586,7 +601,7 @@ public class XyPlotView extends CoreAnalysisView
 
     // now loop through
     boolean chartUpdated = false;
-    for(final IStoreItem document: res)
+    for (final IStoreItem document : res)
     {
       final IDocument<?> coll = (IDocument<?>) document;
       if (!coll.isQuantity() && coll.size() >= 1 && coll.size() < MAX_SIZE)
@@ -626,7 +641,7 @@ public class XyPlotView extends CoreAnalysisView
         chartUpdated = true;
       }
     }
-    if(chartUpdated)
+    if (chartUpdated)
     {
       chart.redraw();
     }
