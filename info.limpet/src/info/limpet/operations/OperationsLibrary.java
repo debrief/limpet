@@ -37,6 +37,7 @@ import info.limpet.operations.arithmetic.UnaryQuantityOperation;
 import info.limpet.operations.arithmetic.simple.AddLogQuantityOperation;
 import info.limpet.operations.arithmetic.simple.AddQuantityOperation;
 import info.limpet.operations.arithmetic.simple.MultiplyQuantityOperation;
+import info.limpet.operations.arithmetic.simple.SubtractLogQuantityOperation;
 import info.limpet.operations.arithmetic.simple.SubtractQuantityOperation;
 import info.limpet.operations.arithmetic.simple.UnitConversionOperation;
 import info.limpet.operations.spatial.BearingBetweenTracksOperation;
@@ -162,6 +163,7 @@ public class OperationsLibrary
     arithmetic.add(new AddQuantityOperation());    
     arithmetic.add(new SubtractQuantityOperation());
     arithmetic.add(new AddLogQuantityOperation());
+    arithmetic.add(new SubtractLogQuantityOperation());
     // arithmetic.add(new DivideQuantityOperation());
     // arithmetic.add(new SimpleMovingAverageOperation(3));
 
