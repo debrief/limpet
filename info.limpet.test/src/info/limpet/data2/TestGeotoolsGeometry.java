@@ -1064,7 +1064,7 @@ public class TestGeotoolsGeometry extends TestCase
     assertEquals("correct value", 3.7, geo1.getY());
   }
 
-  public void testLocationSingletonCalc()
+  public void testLocationSingletonCalcDistance()
   {
     final LocationDocumentBuilder loc1 =
         new LocationDocumentBuilder("loc1", null, SI.MILLI(SI.SECOND));
@@ -1075,7 +1075,6 @@ public class TestGeotoolsGeometry extends TestCase
             null);
 
     final IOperation distanceOp = new DistanceBetweenTracksOperation();
-    final IOperation bearingOp = new BearingBetweenTracksOperation();
     final IGeoCalculator builder = GeoSupport.getCalculator();
 
     final List<IStoreItem> selection = new ArrayList<IStoreItem>();
@@ -1114,9 +1113,49 @@ public class TestGeotoolsGeometry extends TestCase
     ops.get(0).execute();
 
     assertEquals("store no longer empty", 1, store.size());
+    // add some more entries to loc1
+    loc1.add(2000, builder.createPoint(4, 3));
+    loc1.add(3000, builder.createPoint(4, 3));
+    loc1.add(4000, builder.createPoint(4, 3));
+
+    // put in the new documents
+    selection.clear();
+    selection.add(loc1.toDocument());
+    selection.add(singletonLoc.toDocument());
+
+    ops = distanceOp.actionsFor(selection, store, context);
+    assertEquals("not empty collection", 2, ops.size());
+
+    // run the interpolation command
+    store.clear();
+    ops.get(0).execute();
+    assertEquals("store has other collection", 1, store.size());
+  }
+  
+
+  public void testLocationSingletonCalcBearing()
+  {
+    final LocationDocumentBuilder loc1 =
+        new LocationDocumentBuilder("loc1", null, SI.MILLI(SI.SECOND));
+    final LocationDocumentBuilder singletonLoc =
+        new LocationDocumentBuilder("loc2", null, SI.MILLI(SI.SECOND));
+
+    final IOperation bearingOp = new BearingBetweenTracksOperation();
+    final IGeoCalculator builder = GeoSupport.getCalculator();
+
+    final List<IStoreItem> selection = new ArrayList<IStoreItem>();
+
+    final StoreGroup store = new StoreGroup("Results");
+
+    // ok, try adding some data
+    loc1.add(1000, builder.createPoint(4, 3));
+    singletonLoc.add(2000, builder.createPoint(3, 4));
+    
+    selection.add(loc1.toDocument());
+    selection.add(singletonLoc.toDocument());   
 
     // try the bearing operation
-    ops = bearingOp.actionsFor(selection, store, context);
+    List<ICommand> ops = bearingOp.actionsFor(selection, store, context);
 
     assertEquals("not empty collection", 1, ops.size());
 
@@ -1148,9 +1187,6 @@ public class TestGeotoolsGeometry extends TestCase
     selection.clear();
     selection.add(loc1.toDocument());
     selection.add(singletonLoc.toDocument());
-
-    ops = distanceOp.actionsFor(selection, store, context);
-    assertEquals("not empty collection", 2, ops.size());
 
     // run the interpolation command
     store.clear();
