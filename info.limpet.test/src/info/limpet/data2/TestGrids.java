@@ -27,11 +27,11 @@ public class TestGrids extends TestCase
   @Test
   public void testBinning()
   {
-    GenerateGridCommand gen =
-        new GenerateGrid.GenerateGridCommand("title", "desc", null, null,
-            context, null);
     double[] bins = new double[]
     {20, 40, 60, 80, 100};
+    GenerateGridCommand gen =
+        new GenerateGrid.GenerateGridCommand("title", "desc", null, null,
+            context, null, bins);
     assertEquals("correct bin", 1, gen.binFor(bins, 25));
     assertEquals("correct bin", 0, gen.binFor(bins, 15));
     assertEquals("correct bin", 2, gen.binFor(bins, 60));

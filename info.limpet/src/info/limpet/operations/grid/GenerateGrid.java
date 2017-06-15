@@ -27,14 +27,16 @@ public class GenerateGrid implements IOperation
   public static class GenerateGridCommand extends AbstractCommand
   {
 
-    private Triplet triplet;
+    final private Triplet triplet;
+    final private double[] bins;
 
     public GenerateGridCommand(String title, String description,
         IStoreGroup store, List<IStoreItem> inputs, IContext context,
-        Triplet triplet)
+        Triplet triplet, double[] bins)
     {
       super(title, description, store, true, true, inputs, context);
       this.triplet = triplet;
+      this.bins = bins;
     }
 
     @Override
@@ -48,8 +50,18 @@ public class GenerateGrid implements IOperation
     public void execute()
     {
       // ok, generate the bins.
-      double[] oneBins = binsFor(triplet.axisOne);
-      double[] twoBins = binsFor(triplet.axisTwo);
+      final double[] oneBins;
+      final double[] twoBins;
+      if(bins != null)
+      {
+        oneBins = bins;
+        twoBins = bins;        
+      }
+      else
+      {
+        oneBins = binsFor(triplet.axisOne);
+        twoBins = binsFor(triplet.axisTwo);        
+      }
 
       // output dataset
       @SuppressWarnings("unchecked")
@@ -195,16 +207,37 @@ public class GenerateGrid implements IOperation
       // ok, put them into actions
       for (Triplet thisP : perms)
       {
-        // produce the title
-        String title = "Collate grid of " + thisP.measurements;
+        // special case. check the units of the axes
+        final Unit<?> aUnits = thisP.axisOne.getUnits();
+        if(aUnits.equals(SampleData.DEGREE_ANGLE))
+        {
+          // ok, we'll do the fancy degree grid
+          String title = "Collate 360 deg grid of " + thisP.measurements;
 
-        // produce the description
-        String description =
-            "Collate grid of " + thisP.measurements + " based on "
-                + thisP.axisOne + " and " + thisP.axisTwo;
+          // produce the description
+          String description =
+              "Collate grid of " + thisP.measurements + " based on "
+                  + thisP.axisOne + " and " + thisP.axisTwo;
 
-        res.add(new GenerateGridCommand(title, description, destination,
-            selection, context, thisP));
+          double[] bins = new double[]
+              {45, 90, 135, 180, 225, 270, 315, 360};
+          
+          res.add(new GenerateGridCommand(title, description, destination,
+              selection, context, thisP, bins));
+        }
+        else
+        {
+          // produce the title
+          String title = "Collate grid of " + thisP.measurements;
+
+          // produce the description
+          String description =
+              "Collate grid of " + thisP.measurements + " based on "
+                  + thisP.axisOne + " and " + thisP.axisTwo;
+
+          res.add(new GenerateGridCommand(title, description, destination,
+              selection, context, thisP, null));
+        }
       }
     }
     return res;
