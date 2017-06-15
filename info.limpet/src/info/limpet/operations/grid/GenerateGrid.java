@@ -1,25 +1,27 @@
 package info.limpet.operations.grid;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.measure.unit.Unit;
-
 import info.limpet.ICommand;
 import info.limpet.IContext;
 import info.limpet.IOperation;
 import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
 import info.limpet.impl.NumberDocument;
+import info.limpet.impl.SampleData;
 import info.limpet.operations.AbstractCommand;
 import info.limpet.operations.CollectionComplianceTests;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import javax.measure.unit.Unit;
 
 public class GenerateGrid implements IOperation
 {
 
-  private class GenerateGridCommand extends AbstractCommand
+  public class GenerateGridCommand extends AbstractCommand
   {
 
     private Triplet triplet;
@@ -35,8 +37,97 @@ public class GenerateGrid implements IOperation
     @Override
     protected void recalculate(IStoreItem subject)
     {
-      System.out.println("gridding on " + triplet.measurements);
+      // TODO Auto-generated method stub
+      
     }
+
+    @Override
+    public void execute()
+    {
+      // ok, generate the bins.      
+      double[] oneBins = binsFor(triplet.axisOne);
+      double[] twoBins = binsFor(triplet.axisTwo);
+      
+      // output dataset
+      @SuppressWarnings("unchecked")
+      List<Double>[][] grid = new List[oneBins.length][twoBins.length];
+      
+      // ok, loop through the data
+      Iterator<Double> oneIter = triplet.axisOne.getIterator();
+      Iterator<Double> twoIter = triplet.axisTwo.getIterator();
+      Iterator<Double> valIter = triplet.measurements.getIterator();
+          
+      while(oneIter.hasNext())
+      {
+        double vOne = oneIter.next();
+        double vTwo = twoIter.next();
+        double vVal = valIter.next();
+        
+        // work out the x axis
+        final int i = binFor(oneBins, vOne);
+        
+        // work out the y axis
+        final int j = binFor(twoBins, vTwo);
+        
+        // store the variable
+        if(grid[i][j] == null)
+        {
+          grid[i][j] = new ArrayList<Double>();
+        }
+        grid[i][j].add(vVal);
+        
+      }
+      
+      super.execute();
+    }
+
+    public int binFor(double[] oneBins, double vOne)
+    {
+      // find the bin for this value
+      
+      // TODO: implement
+      return 0;
+    }
+
+    @Override
+    public void undo()
+    {
+      // TODO Auto-generated method stub
+      super.undo();
+    }
+
+    @Override
+    public void redo()
+    {
+      // TODO Auto-generated method stub
+      super.redo();
+    }
+
+
+    public double[] binsFor(final NumberDocument axis)
+    {
+      // collate the values into an array
+//      DoubleDataset dd = (DoubleDataset) axis.getDataset();;
+//      double[] data = dd.getData();
+//      
+//      // Get a DescriptiveStatistics instance
+//      DescriptiveStatistics stats = new DescriptiveStatistics(data);
+
+      final double[] res;
+      
+      // are these degrees?
+      if(axis.getUnits().equals(SampleData.DEGREE_ANGLE))
+      {
+        res = new double[]{0, 45, 90, 135, 180, 225, 270, 315};       
+      }
+      else
+      {
+        res = null;
+      }
+      
+      return res;
+    }
+    
 
   }
 
