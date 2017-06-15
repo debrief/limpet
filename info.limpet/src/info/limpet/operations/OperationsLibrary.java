@@ -40,6 +40,7 @@ import info.limpet.operations.arithmetic.simple.MultiplyQuantityOperation;
 import info.limpet.operations.arithmetic.simple.SubtractLogQuantityOperation;
 import info.limpet.operations.arithmetic.simple.SubtractQuantityOperation;
 import info.limpet.operations.arithmetic.simple.UnitConversionOperation;
+import info.limpet.operations.grid.GenerateGrid;
 import info.limpet.operations.spatial.BearingBetweenTracksOperation;
 import info.limpet.operations.spatial.DistanceBetweenTracksOperation;
 import info.limpet.operations.spatial.DopplerShiftBetweenTracksOperation;
@@ -374,7 +375,8 @@ public class OperationsLibrary
     create.add(new CreateSingletonGenerator("course (degs)",
         SampleData.DEGREE_ANGLE.asType(Angle.class)));
     // create.add(new CreateLocationAction());
-
+    create.add(new GenerateGrid());
+    
     return create;
   }
 }
