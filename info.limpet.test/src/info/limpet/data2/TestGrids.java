@@ -25,6 +25,20 @@ public class TestGrids extends TestCase
   private IContext context = new MockContext();
 
   @Test
+  public void testBinning()
+  {
+    GenerateGridCommand gen =
+        new GenerateGrid.GenerateGridCommand("title", "desc", null, null,
+            context, null);
+    double[] bins = new double[]
+    {20, 40, 60, 80, 100};
+    assertEquals("correct bin", 1, gen.binFor(bins, 25));
+    assertEquals("correct bin", 0, gen.binFor(bins, 15));
+    assertEquals("correct bin", 2, gen.binFor(bins, 60));
+    assertEquals("correct bin", -1, gen.binFor(bins, 105));
+  }
+
+  @Test
   public void testOperations()
   {
     GenerateGrid gen = new GenerateGrid();
@@ -42,17 +56,16 @@ public class TestGrids extends TestCase
         new NumberDocumentBuilder("ang_2", SampleData.DEGREE_ANGLE, null,
             SI.SECOND);
     NumberDocumentBuilder other1 =
-        new NumberDocumentBuilder("other1", SI.METER, null,
-            SI.SECOND);
+        new NumberDocumentBuilder("other1", SI.METER, null, SI.SECOND);
 
     // put some data into them
-    for (int i = 0; i < 5; i++)
+    for (int i = 0; i < 25; i++)
     {
-      ang1.add(i * 10000, i * 3d);
-      ang2.add(i * 10000, i * 2d);
-      other1.add(i * 10000, Math.sin(i));
+      ang1.add(i * 10000, i * 13d);
+      ang2.add(i * 10000, i * 12d);
+      other1.add(i * 10000, 100 * Math.sin(i));
     }
-    
+
     selection.clear();
     selection.add(ang1.toDocument());
     selection.add(ang2.toDocument());
@@ -60,21 +73,19 @@ public class TestGrids extends TestCase
 
     ops = gen.actionsFor(selection, store, context);
     assertEquals("Perm created", 1, ops.size());
-    
+
     // ok, now execute it
     final GenerateGridCommand thisOp = (GenerateGridCommand) ops.get(0);
     thisOp.execute();
 
     double[] bins = thisOp.binsFor(ang1.toDocument());
     assertEquals("correct num bins", 8, bins.length);
-    
-    
-    
-//    assertEquals("output produced", 1, thisOp.getOutputs().size());
-//    Document<?> output = thisOp.getOutputs().get(0);
-//    assertNotNull("Output produced", output);
+
+    assertEquals("output produced", 1, thisOp.getOutputs().size());
+    Document<?> output = thisOp.getOutputs().get(0);
+    assertNotNull("Output produced", output);
   }
-  
+
   @Test
   public void testGenActionsSameDims()
   {
@@ -131,7 +142,7 @@ public class TestGrids extends TestCase
 
     // make the third dataset the correct length
     ang3.add(4 * 10000, Math.sin(4));
-    
+
     selection.clear();
     selection.add(ang1.toDocument());
     selection.add(ang2.toDocument());
@@ -141,7 +152,6 @@ public class TestGrids extends TestCase
     assertEquals("3 perms created", 3, ops.size());
 
   }
-
 
   @Test
   public void testGenActionsDiffDims()
@@ -161,8 +171,7 @@ public class TestGrids extends TestCase
         new NumberDocumentBuilder("ang_2", SampleData.DEGREE_ANGLE, null,
             SI.SECOND);
     NumberDocumentBuilder other1 =
-        new NumberDocumentBuilder("other1", SI.METER, null,
-            SI.SECOND);
+        new NumberDocumentBuilder("other1", SI.METER, null, SI.SECOND);
 
     selection.add(ang1.toDocument());
     selection.add(ang2.toDocument());
@@ -199,7 +208,7 @@ public class TestGrids extends TestCase
 
     // make the third dataset the correct length
     other1.add(4 * 10000, Math.sin(4));
-    
+
     selection.clear();
     selection.add(ang1.toDocument());
     selection.add(ang2.toDocument());
@@ -207,6 +216,6 @@ public class TestGrids extends TestCase
 
     ops = gen.actionsFor(selection, store, context);
     assertEquals("Perm created", 1, ops.size());
-  }  
-  
+  }
+
 }
