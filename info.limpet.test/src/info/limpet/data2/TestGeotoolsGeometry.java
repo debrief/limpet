@@ -1131,7 +1131,6 @@ public class TestGeotoolsGeometry extends TestCase
     ops.get(0).execute();
     assertEquals("store has other collection", 1, store.size());
   }
-  
 
   public void testLocationSingletonCalcBearing()
   {
@@ -1150,9 +1149,9 @@ public class TestGeotoolsGeometry extends TestCase
     // ok, try adding some data
     loc1.add(1000, builder.createPoint(4, 3));
     singletonLoc.add(2000, builder.createPoint(3, 4));
-    
+
     selection.add(loc1.toDocument());
-    selection.add(singletonLoc.toDocument());   
+    selection.add(singletonLoc.toDocument());
 
     // try the bearing operation
     List<ICommand> ops = bearingOp.actionsFor(selection, store, context);
@@ -1218,27 +1217,23 @@ public class TestGeotoolsGeometry extends TestCase
         new NumberDocumentBuilder("dummy2", SI.METER, null, null);
 
     final List<IStoreItem> selection = new ArrayList<IStoreItem>();
+    final IStoreGroup store = new StoreGroup("data");
+    final IOperation pLossOp = new ProplossBetweenTwoTracksOperation();
+
     selection.add(loc1.toDocument());
 
-    final IStoreGroup store = new StoreGroup("data");
-
-    List<ICommand> ops =
-        new ProplossBetweenTwoTracksOperation().actionsFor(selection, store,
-            context);
-    assertEquals("empty collection", 0, ops.size());
+    List<ICommand> ops;
+    assertEquals("empty collection", 0, pLossOp.actionsFor(selection, store,
+        context).size());
 
     selection.add(len1.toDocument());
-    ops =
-        new ProplossBetweenTwoTracksOperation().actionsFor(selection, store,
-            context);
-    assertEquals("empty collection", 0, ops.size());
+    assertEquals("empty collection", 0, pLossOp.actionsFor(selection, store,
+        context).size());
 
     selection.remove(len1);
     selection.add(loc2.toDocument());
-    ops =
-        new ProplossBetweenTwoTracksOperation().actionsFor(selection, store,
-            context);
-    assertEquals("empty collection", 0, ops.size());
+    assertEquals("empty collection", 0, pLossOp.actionsFor(selection, store,
+        context).size());
 
     // ok, try adding some data
     final IGeoCalculator builder = GeoSupport.getCalculator();
@@ -1255,10 +1250,8 @@ public class TestGeotoolsGeometry extends TestCase
     selection.add(loc2.toDocument());
     selection.add(len1.toDocument());
 
-    ops =
-        new ProplossBetweenTwoTracksOperation().actionsFor(selection, store,
-            context);
-    assertEquals("not empty collection", 2, ops.size());
+    assertEquals("not empty collection", 2, pLossOp.actionsFor(selection,
+        store, context).size());
 
     // try adding an element to the length collection (it's ok,
     // these location operations ignore number documents and still work)
@@ -1274,10 +1267,8 @@ public class TestGeotoolsGeometry extends TestCase
     selection.add(loc2.toDocument());
     selection.add(len1.toDocument());
 
-    ops =
-        new ProplossBetweenTwoTracksOperation().actionsFor(selection, store,
-            context);
-    assertEquals("not empty collection", 2, ops.size());
+    assertEquals("not empty collection", 2, pLossOp.actionsFor(selection,
+        store, context).size());
 
     // make hte series different lengths
     loc2.add(2000, builder.createPoint(3, 4));
@@ -1288,19 +1279,15 @@ public class TestGeotoolsGeometry extends TestCase
     selection.add(loc2.toDocument());
     selection.add(len1.toDocument());
 
-    ops =
-        new ProplossBetweenTwoTracksOperation().actionsFor(selection, store,
-            context);
+    ops = pLossOp.actionsFor(selection, store, context);
     assertEquals("not empty collection", 1, ops.size());
 
     // check how it runs
     ICommand thisOp = ops.iterator().next();
     thisOp.execute();
     IStoreItem thisOut = thisOp.getOutputs().iterator().next();
-    assertNotNull(thisOut);
     assertTrue("correct type", thisOut instanceof NumberDocument);
-    NumberDocument iQ = (NumberDocument) thisOut;
-    assertEquals("correct length", 3, iQ.size());
+    assertEquals("correct length", 3, ((NumberDocument) thisOut).size());
 
     // try with a singleton
     selection.clear();
@@ -1308,20 +1295,15 @@ public class TestGeotoolsGeometry extends TestCase
     selection.add(len1.toDocument());
     selection.add(loc3.toDocument());
 
-    ops =
-        new ProplossBetweenTwoTracksOperation().actionsFor(selection, store,
-            context);
+    ops = pLossOp.actionsFor(selection, store, context);
     assertEquals("not empty collection", 2, ops.size());
 
     // check how it runs
     thisOp = ops.iterator().next();
     thisOp.execute();
     thisOut = thisOp.getOutputs().iterator().next();
-    assertNotNull(thisOut);
     assertTrue("correct type", thisOut instanceof NumberDocument);
-    iQ = (NumberDocument) thisOut;
-    assertEquals("correct length", 2, iQ.size());
-
+    assertEquals("correct length", 2, ((NumberDocument) thisOut).size());
   }
 
   public void testRangeCalc()
