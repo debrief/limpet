@@ -120,14 +120,14 @@ public class DoubleListDocument extends Document<List<Double>>
   public Iterator<?> getObjectIterator()
   {
     ObjectDataset od = (ObjectDataset) dataset;
-    Object[] strings = od.getData();
-    Iterable<Object> iterable = Arrays.asList(strings);
+    Object[] lists = od.getData();
+    Iterable<Object> iterable = Arrays.asList(lists);
     return iterable.iterator();
   }
 
   @Override
   public Iterator<List<Double>> getIterator()
   {
-    return null;
+    throw new IllegalArgumentException("We can't just iterate through a 2-D dataset");
   }
 }

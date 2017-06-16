@@ -63,7 +63,6 @@ public abstract class SimpleDescriptiveObject extends CoreAnalysis
     {
       presentResults(titles, values);
     }
-
   }
 
   public String typeFor(Object subject, Object oClass)

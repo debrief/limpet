@@ -157,15 +157,24 @@ public class XyPlotView extends CoreAnalysisView
       // sort out what type of data this is.
       if (first.isQuantity())
       {
-        if (aTests.allIndexedOrSingleton(res))
+        // check dimensions
+        if (aTests.allOneDim(res))
         {
-          showIndexedQuantity(res);
+          if (aTests.allIndexedOrSingleton(res))
+          {
+            showIndexedQuantity(res);
+          }
+          else
+          {
+            showQuantity(res);
+          }
+          chart.setVisible(true);
         }
-        else
+        else if(aTests.allTwoDim(res))
         {
-          showQuantity(res);
+          // ok, are they all two dim?
+          show2D(res);
         }
-        chart.setVisible(true);
       }
       else
       {
@@ -181,6 +190,12 @@ public class XyPlotView extends CoreAnalysisView
         }
       }
     }
+  }
+
+  private void show2D(List<IStoreItem> res)
+  {
+    System.out.println("SHOWING 2-d data!");
+    
   }
 
   private void showQuantity(List<IStoreItem> items)

@@ -911,7 +911,7 @@ public class CollectionComplianceTests
 
     return res;
   }
-
+  
   /**
    * see if a collection of the specified dimension is present
    * 
@@ -1444,5 +1444,51 @@ public class CollectionComplianceTests
         processThis(target, (IStoreGroup) sel);
       }
     }
+  }
+
+  /** are all the datasets 1-D?
+   * 
+   * @param selection
+   * @return
+   */
+  public boolean allOneDim(List<IStoreItem> selection)
+  {
+    return checkDims(selection, 1);
+  }
+
+  private boolean checkDims(List<IStoreItem> selection, int requiredDims)
+  {
+    // are they all non location?
+    boolean allValid = true;
+
+    for(final IStoreItem thisI: selection)
+    {
+      if (thisI instanceof Document)
+      {
+        Document<?> thisC = (Document<?>) thisI;
+        Dataset d = (Dataset) thisC.getDataset();
+        int[] dims = d.getShape();
+        if(dims.length != requiredDims)
+        {
+          allValid = false;
+        }
+      }
+      else
+      {
+        allValid = false;
+        break;
+      }
+    }
+    return allValid;
+  }
+
+  /** are all the dataset 2-d?
+   * 
+   * @param selection
+   * @return
+   */
+  public boolean allTwoDim(List<IStoreItem> selection)
+  {
+    return checkDims(selection, 2);
   }
 }
