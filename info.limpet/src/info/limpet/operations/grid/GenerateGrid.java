@@ -198,9 +198,9 @@ public class GenerateGrid implements IOperation
 
   private static class Triplet
   {
-    NumberDocument axisOne;
-    NumberDocument axisTwo;
-    NumberDocument measurements;
+    private NumberDocument axisOne;
+    private NumberDocument axisTwo;
+    private NumberDocument measurements;
   }
 
   private final CollectionComplianceTests aTests =
