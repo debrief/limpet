@@ -186,7 +186,7 @@ public abstract class QuantityFrequencyBins extends CoreAnalysis
   private boolean appliesTo(List<IStoreItem> selection)
   {
     return aTests.allCollections(selection) && aTests.allQuantity(selection)
-        && aTests.allEqualUnits(selection);
+        && aTests.allEqualUnits(selection)  && aTests.allOneDim(selection);
   }
 
   protected abstract void presentResults(List<String> titles,

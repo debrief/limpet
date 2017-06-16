@@ -240,7 +240,11 @@ public class DataFrequencyView extends CoreAnalysisView
       CollectionComplianceTests tests)
   {
     final boolean res;
-    if (tests.allQuantity(selection))
+    if(!tests.allOneDim(selection))
+    {
+      res = false;
+    }
+    else if (tests.allQuantity(selection))
     {
       // ok, all quantities - that's easy
       res = true;

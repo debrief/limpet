@@ -142,7 +142,7 @@ public abstract class ObjectFrequencyBins extends CoreAnalysis
   private boolean appliesTo(List<IStoreItem> selection)
   {
     return aTests.allCollections(selection) && aTests.allNonQuantity(selection)
-        && aTests.allNonLocation(selection);
+        && aTests.allNonLocation(selection) && aTests.allOneDim(selection);
   }
 
   protected abstract void presentResults(List<String> titles,

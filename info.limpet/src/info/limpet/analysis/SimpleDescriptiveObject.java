@@ -83,7 +83,8 @@ public abstract class SimpleDescriptiveObject extends CoreAnalysis
 
   private boolean appliesTo(List<IStoreItem> selection)
   {
-    return aTests.allCollections(selection) && aTests.allNonQuantity(selection);
+    return aTests.allCollections(selection) && aTests.allNonQuantity(selection)
+        && aTests.allOneDim(selection);
   }
 
   protected abstract void presentResults(List<String> titles,
