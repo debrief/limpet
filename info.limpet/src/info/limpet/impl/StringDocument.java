@@ -9,8 +9,10 @@ import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.IndexIterator;
+import org.eclipse.january.dataset.ObjectDataset;
 import org.eclipse.january.dataset.StringDataset;
 import org.eclipse.january.metadata.AxesMetadata;
 
@@ -27,6 +29,19 @@ public class StringDocument extends Document<String>
     return false;
   }
   
+  @Override
+  public void setDataset(IDataset dataset)
+  {
+    if (dataset instanceof ObjectDataset)
+    {
+      super.setDataset(dataset);
+    }
+    else
+    {
+      throw new IllegalArgumentException("We only store object datasets");
+    }
+  }
+
   @Override
   public String toListing()
   {

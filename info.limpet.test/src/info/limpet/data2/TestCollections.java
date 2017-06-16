@@ -51,6 +51,7 @@ import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.Maths;
 import org.eclipse.january.dataset.ObjectDataset;
@@ -104,7 +105,59 @@ public class TestCollections extends TestCase
     }
     assertTrue("the expected exception got caught", thrown);
   }
+  
+  public void testStoreWrongLocationType()
+  {
+    NumberDocumentBuilder ldb =
+        new NumberDocumentBuilder("name", null, null, SI.METER);
+    ldb.add(12, 213d);
+    ldb.add(14, 413d);
 
+    NumberDocument locDoc = ldb.toDocument();
+    IDataset oData = locDoc.getDataset();
+    assertTrue("we're expecting an object dataset",
+        oData instanceof DoubleDataset);
+
+    // ok, now check an error is thrown if we put it into a nubmer document
+    LocationDocument nd = new LocationDocument(null, null);
+    boolean thrown = false;
+    try
+    {
+      nd.setDataset(oData);
+    }
+    catch (IllegalArgumentException ee)
+    {
+      thrown = true;
+    }
+    assertTrue("the expected exception got caught", thrown);
+  }
+
+  public void testStoreWrongStringType()
+  {
+    NumberDocumentBuilder ldb =
+        new NumberDocumentBuilder("name", null, null, SI.METER);
+    ldb.add(12, 213d);
+    ldb.add(14, 413d);
+
+    NumberDocument locDoc = ldb.toDocument();
+    IDataset oData = locDoc.getDataset();
+    assertTrue("we're expecting an object dataset",
+        oData instanceof DoubleDataset);
+
+    // ok, now check an error is thrown if we put it into a nubmer document
+    StringDocument nd = new StringDocument(null, null);
+    boolean thrown = false;
+    try
+    {
+      nd.setDataset(oData);
+    }
+    catch (IllegalArgumentException ee)
+    {
+      thrown = true;
+    }
+    assertTrue("the expected exception got caught", thrown);
+  }
+  
   public void testTemporalQuantityInterp()
   {
     NumberDocumentBuilder speeds =
