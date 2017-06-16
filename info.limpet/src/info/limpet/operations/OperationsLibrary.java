@@ -86,7 +86,8 @@ public class OperationsLibrary
     protected final boolean appliesTo(List<IStoreItem> selection)
     {
       return selection.size() > 0
-          && getATests().allHaveDimension(selection, SI.RADIAN.getDimension());
+          && getATests().allHaveDimension(selection, SI.RADIAN.getDimension())
+          && getATests().allOneDim(selection);
     }
   }
 
@@ -161,7 +162,7 @@ public class OperationsLibrary
   {
     List<IOperation> arithmetic = new ArrayList<IOperation>();
     arithmetic.add(new MultiplyQuantityOperation());
-    arithmetic.add(new AddQuantityOperation());    
+    arithmetic.add(new AddQuantityOperation());
     arithmetic.add(new SubtractQuantityOperation());
     arithmetic.add(new AddLogQuantityOperation());
     arithmetic.add(new SubtractLogQuantityOperation());
@@ -174,7 +175,8 @@ public class OperationsLibrary
       @Override
       protected boolean appliesTo(List<IStoreItem> selection)
       {
-        return getATests().allQuantity(selection);
+        return getATests().allQuantity(selection)
+            && getATests().allOneDim(selection);
       }
 
       @Override
@@ -236,7 +238,8 @@ public class OperationsLibrary
       @Override
       protected boolean appliesTo(List<IStoreItem> selection)
       {
-        return getATests().allQuantity(selection);
+        return getATests().allQuantity(selection)
+            && getATests().allOneDim(selection);
       }
 
       @Override
@@ -256,7 +259,8 @@ public class OperationsLibrary
       @Override
       protected boolean appliesTo(List<IStoreItem> selection)
       {
-        return getATests().allQuantity(selection);
+        return getATests().allQuantity(selection)
+            && getATests().allOneDim(selection);
       }
 
       @Override
@@ -276,7 +280,8 @@ public class OperationsLibrary
       @Override
       protected boolean appliesTo(List<IStoreItem> selection)
       {
-        return getATests().allQuantity(selection);
+        return getATests().allQuantity(selection)
+            && getATests().allOneDim(selection);
       }
 
       @Override
@@ -296,7 +301,8 @@ public class OperationsLibrary
       @Override
       protected boolean appliesTo(List<IStoreItem> selection)
       {
-        return getATests().allQuantity(selection);
+        return getATests().allQuantity(selection)
+            && getATests().allOneDim(selection);
       }
 
       @Override
@@ -376,7 +382,7 @@ public class OperationsLibrary
         SampleData.DEGREE_ANGLE.asType(Angle.class)));
     // create.add(new CreateLocationAction());
     create.add(new GenerateGrid());
-    
+
     return create;
   }
 }
