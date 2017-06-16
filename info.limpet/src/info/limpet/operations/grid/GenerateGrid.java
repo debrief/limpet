@@ -35,6 +35,8 @@ public class GenerateGrid implements IOperation
     Document<?> getOutputDocument(final ICommand predecessor,
         final Unit<?> units);
 
+    String outName();
+
     Dataset processGrid(final List<Double>[][] grid, final double[] oneBins,
         final double[] twoBins);
   }
@@ -103,11 +105,17 @@ public class GenerateGrid implements IOperation
       // create the output document
       final Document<?> nd =
           helper.getOutputDocument(this, triplet.measurements.getUnits());
-
+      
       super.getOutputs().add(nd);
 
       performCalc();
 
+      // set the name
+      nd.setName(helper.outName() + " of " + triplet.measurements.getName());
+
+      // also set the index units
+      nd.setIndexUnits(triplet.axisOne.getUnits());
+      
       super.getStore().add(nd);
 
       super.execute(); // listens to the inputs
@@ -232,6 +240,13 @@ public class GenerateGrid implements IOperation
         {
           return doMeanGrid(grid, oneBins, twoBins);
         }
+        
+        @Override
+        public String outName()
+        {
+          return "Calculated mean of";
+        }
+
       };
 
       final DataProcessor sampleHelper = new DataProcessor()
@@ -249,6 +264,12 @@ public class GenerateGrid implements IOperation
             final double[] oneBins, final double[] twoBins)
         {
           return doSampleGrid(grid, oneBins, twoBins);
+        }
+        
+        @Override
+        public String outName()
+        {
+          return "Collated samples of";
         }
       };
 
