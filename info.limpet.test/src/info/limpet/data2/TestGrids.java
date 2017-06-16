@@ -31,7 +31,7 @@ public class TestGrids extends TestCase
     {20, 40, 60, 80, 100};
     GenerateGridCommand gen =
         new GenerateGrid.GenerateGridCommand("title", "desc", null, null,
-            context, null, bins);
+            context, null, bins, null);
     assertEquals("correct bin", 1, gen.binFor(bins, 25));
     assertEquals("correct bin", 0, gen.binFor(bins, 15));
     assertEquals("correct bin", 2, gen.binFor(bins, 60));
@@ -72,7 +72,7 @@ public class TestGrids extends TestCase
     selection.add(other1.toDocument());
 
     ops = gen.actionsFor(selection, store, context);
-    assertEquals("Perm created", 1, ops.size());
+    assertEquals("Perm created", 2, ops.size());
 
     // ok, now execute it
     final GenerateGridCommand thisOp = (GenerateGridCommand) ops.get(0);
@@ -84,6 +84,15 @@ public class TestGrids extends TestCase
     assertEquals("output produced", 1, thisOp.getOutputs().size());
     Document<?> output = thisOp.getOutputs().get(0);
     assertNotNull("Output produced", output);
+    System.out.println(output.toListing());
+    
+    store.clear();
+    final GenerateGridCommand thisOp2 = (GenerateGridCommand) ops.get(1);
+    thisOp2.execute();
+    assertEquals("output produced", 1, thisOp2.getOutputs().size());
+    output = thisOp2.getOutputs().get(0);
+    assertNotNull("Output produced", output);
+    System.out.println(output.toListing());
   }
 
   @Test
@@ -149,7 +158,7 @@ public class TestGrids extends TestCase
     selection.add(ang3.toDocument());
 
     ops = gen.actionsFor(selection, store, context);
-    assertEquals("3 perms created", 3, ops.size());
+    assertEquals("3 perms created", 6, ops.size());
 
   }
 
@@ -215,7 +224,7 @@ public class TestGrids extends TestCase
     selection.add(other1.toDocument());
 
     ops = gen.actionsFor(selection, store, context);
-    assertEquals("Perm created", 1, ops.size());
+    assertEquals("Perm created", 2, ops.size());
   }
 
 }
