@@ -20,6 +20,8 @@ import info.limpet.ICommand;
 import info.limpet.IContext;
 import info.limpet.IDocument;
 import info.limpet.IStoreItem;
+import info.limpet.impl.LocationDocument;
+import info.limpet.impl.LocationDocumentBuilder;
 import info.limpet.impl.MockContext;
 import info.limpet.impl.NumberDocument;
 import info.limpet.impl.NumberDocumentBuilder;
@@ -33,12 +35,14 @@ import info.limpet.operations.arithmetic.simple.AddQuantityOperation;
 import info.limpet.operations.arithmetic.simple.MultiplyQuantityOperation;
 import info.limpet.operations.arithmetic.simple.SubtractQuantityOperation;
 
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import javax.measure.quantity.Dimensionless;
 import javax.measure.quantity.Velocity;
+import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 
 import junit.framework.TestCase;
@@ -47,7 +51,9 @@ import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.Maths;
+import org.eclipse.january.dataset.ObjectDataset;
 import org.eclipse.january.dataset.StringDataset;
 
 public class TestCollections extends TestCase
@@ -71,6 +77,32 @@ public class TestCollections extends TestCase
 
     // check it got stored
     assertEquals("correct number of samples", 10, strDoc.size());
+  }
+
+  public void testStoreWrongNumberType()
+  {
+    LocationDocumentBuilder ldb =
+        new LocationDocumentBuilder("name", null, SI.METER);
+    ldb.add(12, new Point2D.Double(12, 13));
+    ldb.add(14, new Point2D.Double(15, 23));
+
+    LocationDocument locDoc = ldb.toDocument();
+    IDataset oData = locDoc.getDataset();
+    assertTrue("we're expecting an object dataset",
+        oData instanceof ObjectDataset);
+
+    // ok, now check an error is thrown if we put it into a nubmer document
+    NumberDocument nd = new NumberDocument(null, null, null);
+    boolean thrown = false;
+    try
+    {
+      nd.setDataset(oData);
+    }
+    catch (IllegalArgumentException ee)
+    {
+      thrown = true;
+    }
+    assertTrue("the expected exception got caught", thrown);
   }
 
   public void testTemporalQuantityInterp()
@@ -142,7 +174,8 @@ public class TestCollections extends TestCase
 
     assertEquals("new collection created", 1, store.size());
 
-    IDocument<?> series = (IDocument<?>) store.get("Sum of Some data1 + Some data2");
+    IDocument<?> series =
+        (IDocument<?>) store.get("Sum of Some data1 + Some data2");
     assertTrue("non empty", series.size() > 0);
     assertTrue("temporal", series.isIndexed());
     assertTrue("quantity", series.isQuantity());
@@ -308,7 +341,8 @@ public class TestCollections extends TestCase
 
     assertEquals("new type:", "", output.getUnits().getDimension().toString());
     assertEquals("same size", output.size(), tq1d.size());
-    assertEquals("first item same value", output.getValueAt(0), tq1d.getValueAt(0));
+    assertEquals("first item same value", output.getValueAt(0), tq1d
+        .getValueAt(0));
     // assertEquals("same num times", output.getTimes().size(), tq1.getTimes()
     // .size());
 
@@ -329,8 +363,8 @@ public class TestCollections extends TestCase
 
     assertEquals("new type:", "", output2.getUnits().getDimension().toString());
     assertEquals("same size", output2.size(), nq1d.size());
-    assertEquals("first item same value", output2.getValueAt(0),
-        nq1d.getValueAt(0), 0.001);
+    assertEquals("first item same value", output2.getValueAt(0), nq1d
+        .getValueAt(0), 0.001);
   }
 
   public void testMultiplyQuantitySingleton()

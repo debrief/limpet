@@ -1,8 +1,9 @@
 package info.limpet.impl;
 
-
 import info.limpet.ICommand;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.Iterator;
 
 import javax.measure.quantity.Dimensionless;
@@ -13,6 +14,7 @@ import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.IndexIterator;
 import org.eclipse.january.dataset.Maths;
@@ -23,18 +25,18 @@ public class NumberDocument extends Document<Double>
   private Unit<?> qType;
   private Range range;
 
-  public NumberDocument(final DoubleDataset dataset, final ICommand predecessor,
-      final Unit<?> qType)
+  public NumberDocument(final DoubleDataset dataset,
+      final ICommand predecessor, final Unit<?> qType)
   {
     super(dataset, predecessor);
-    
-    if(qType == null)
+
+    if (qType == null)
     {
-     this.qType = Dimensionless.UNIT; 
+      this.qType = Dimensionless.UNIT;
     }
     else
     {
-    this.qType = qType;
+      this.qType = qType;
     }
   }
 
@@ -42,22 +44,23 @@ public class NumberDocument extends Document<Double>
   {
     return qType;
   }
-  
+
   public void copy(final NumberDocument other)
   {
     this.dataset = other.dataset;
   }
-  
+
   @UIProperty(name = "Size", category = UIProperty.CATEGORY_METADATA)
   public int getSize()
   {
     return size();
   }
-  
-  /** we've introduced this method as a workaround.  The "visibleWhen" operator
-   * for getRange doesn't work with "size==1".  Numerical
-   * comparisions don't seem to work. So, we're wrapping the
+
+  /**
+   * we've introduced this method as a workaround. The "visibleWhen" operator for getRange doesn't
+   * work with "size==1". Numerical comparisions don't seem to work. So, we're wrapping the
    * numberical comparison in this boolean method.
+   * 
    * @return
    */
   public boolean getShowRange()
@@ -78,11 +81,12 @@ public class NumberDocument extends Document<Double>
   }
 
   @UIProperty(name = "Units", category = "Label", visibleWhen = "units != null")
-  public Unit<?> getUnits()
+  public
+      Unit<?> getUnits()
   {
     return qType;
   }
-  
+
   private static class DoubleIterator implements Iterator<Double>
   {
     private double[] _data;
@@ -112,9 +116,9 @@ public class NumberDocument extends Document<Double>
       throw new IllegalArgumentException(
           "Remove operation not provided for this iterator");
     }
-    
+
   }
-  
+
   public Iterator<Double> getIterator()
   {
     DoubleDataset od = (DoubleDataset) dataset;
@@ -129,10 +133,23 @@ public class NumberDocument extends Document<Double>
   }
 
   @Override
+  public void setDataset(IDataset dataset)
+  {
+    if (dataset instanceof DoubleDataset)
+    {
+      super.setDataset(dataset);
+    }
+    else
+    {
+      throw new IllegalArgumentException("We only store double datasets");
+    }
+  }
+
+  @Override
   public String toListing()
   {
     StringBuffer res = new StringBuffer();
-    
+
     DoubleDataset dataset = (DoubleDataset) this.getDataset();
     final AxesMetadata axesMetadata =
         dataset.getFirstMetadata(AxesMetadata.class);
@@ -159,52 +176,119 @@ public class NumberDocument extends Document<Double>
       axisDataset = null;
     }
 
-    res.append(dataset.getName() + ":\n");
-    while (iterator.hasNext())
+    int[] dims = dataset.getShape();
+    if (dims.length == 1)
     {
-      final String indexVal;
-      if (axisDataset != null)
+
+      res.append(dataset.getName() + ":\n");
+      while (iterator.hasNext())
       {
-        indexVal = "" + axisDataset.getElementDoubleAbs(iterator.index);
+        final String indexVal;
+        if (axisDataset != null)
+        {
+          indexVal = "" + axisDataset.getElementDoubleAbs(iterator.index);
+        }
+        else
+        {
+          indexVal = "N/A";
+        }
+
+        res.append(indexVal + " : "
+            + dataset.getElementDoubleAbs(iterator.index));
+        res.append(";");
       }
-      else
+      res.append("\n");
+    }
+    else if (dims.length == 2)
+    {
+      DoubleDataset axisOne = null;
+      DoubleDataset axisTwo = null;
+      if (axesMetadata != null && axesMetadata.getAxes().length > 0)
       {
-        indexVal = "N/A";
+        try
+        {
+          axisOne = extractThis(axesMetadata.getAxes()[0]);
+          axisTwo = extractThis(axesMetadata.getAxes()[1]);
+        }
+        catch (DatasetException e)
+        {
+          e.printStackTrace();
+        }
       }
 
-      res.append(indexVal + " : "
-          + dataset.getElementDoubleAbs(iterator.index));
-      res.append(";");
+      res.append(dataset.getName() + "\n");
+
+      int xDim = dims[0];
+      int yDim = dims[1];
+
+      NumberFormat nf = new DecimalFormat(" 000.0;-000.0");
+      
+      res.append("        ");
+      for (int j = 0; j < yDim; j++)
+      {
+        res.append(nf.format(axisTwo.get(0, j)) + " ");
+      }
+      res.append("\n");
+
+      for (int i = 0; i < xDim; i++)
+      {
+        res.append(nf.format(axisOne.get(i, 0)) + ": ");
+        for (int j = 0; j < yDim; j++)
+        {
+          Double val = dataset.get(i, j);
+          if (val.equals(Double.NaN))
+          {
+            res.append("       ");
+          }
+          else
+          {
+            res.append(nf.format(val) + " ");
+          }
+        }
+        res.append("\n");
+      }
+
+      res.append("\n");
+
     }
-    res.append("\n");
-    
+
     return res.toString();
+  }
+
+  private DoubleDataset extractThis(final ILazyDataset axis)
+      throws DatasetException
+  {
+    Dataset sliceOne = DatasetUtils.sliceAndConvertLazyDataset(axis);
+    return DatasetUtils.cast(DoubleDataset.class, sliceOne);
   }
 
   public Double interpolateValue(double i, InterpMethod linear)
   {
     Double res = null;
-    
+
     // do we have axes?
     AxesMetadata index = dataset.getFirstMetadata(AxesMetadata.class);
     ILazyDataset indexDataLazy = index.getAxes()[0];
     try
     {
-      Dataset indexData = DatasetUtils.sliceAndConvertLazyDataset(indexDataLazy);
-      
-      // check the target index is within the range      
+      Dataset indexData =
+          DatasetUtils.sliceAndConvertLazyDataset(indexDataLazy);
+
+      // check the target index is within the range
       double lowerIndex = indexData.getDouble(0);
       int indexSize = indexData.getSize();
       double upperVal = indexData.getDouble(indexSize - 1);
-      if(i >= lowerIndex && i <= upperVal)
+      if (i >= lowerIndex && i <= upperVal)
       {
         // ok, in range
         DoubleDataset ds = (DoubleDataset) dataset;
-        DoubleDataset indexes = (DoubleDataset) DatasetFactory.createFromObject(new Double[]{i});
-        
+        DoubleDataset indexes =
+            (DoubleDataset) DatasetFactory.createFromObject(new Double[]
+            {i});
+
         // perform the interpolation
         Dataset dOut = Maths.interpolate(indexData, ds, indexes, 0, 0);
-        
+
         // get the single matching value out
         res = dOut.getDouble(0);
       }
@@ -213,20 +297,19 @@ public class NumberDocument extends Document<Double>
     {
       e.printStackTrace();
     }
-    
+
     return res;
   }
 
   public double getValueAt(int i)
   {
-    return  dataset.getDouble(i);
+    return dataset.getDouble(i);
   }
 
   public void setUnits(Unit<?> unit)
   {
     qType = unit;
   }
-
 
   public MyStats stats()
   {
@@ -245,7 +328,7 @@ public class NumberDocument extends Document<Double>
     {
       DoubleDataset ds = (DoubleDataset) dataset;
       return (Double) ds.max();
-      
+
     }
 
     public double mean()
@@ -264,15 +347,17 @@ public class NumberDocument extends Document<Double>
     {
       DoubleDataset ds = (DoubleDataset) dataset;
       return (Double) ds.stdDeviation(true);
-    }    
+    }
   }
 
   public void replaceSingleton(double val)
   {
-    DoubleDataset ds = (DoubleDataset) DatasetFactory.createFromObject(new double[]{val});
+    DoubleDataset ds =
+        (DoubleDataset) DatasetFactory.createFromObject(new double[]
+        {val});
     ds.setName(getName());
     setDataset(ds);
-    
+
     // ok share the good news
     fireDataChanged();
   }
