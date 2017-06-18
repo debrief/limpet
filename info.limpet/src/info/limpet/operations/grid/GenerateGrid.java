@@ -105,7 +105,7 @@ public class GenerateGrid implements IOperation
       // create the output document
       final Document<?> nd =
           helper.getOutputDocument(this, triplet.measurements.getUnits());
-      
+
       super.getOutputs().add(nd);
 
       performCalc();
@@ -115,7 +115,7 @@ public class GenerateGrid implements IOperation
 
       // also set the index units
       nd.setIndexUnits(triplet.axisOne.getUnits());
-      
+
       super.getStore().add(nd);
 
       super.execute(); // listens to the inputs
@@ -221,7 +221,7 @@ public class GenerateGrid implements IOperation
     final List<ICommand> res = new ArrayList<ICommand>();
 
     // check the data
-    final List<Triplet> perms = findPermutations(selection);
+    final List<Triplet> perms = findPermutations(selection, aTests);
     if (perms != null && perms.size() > 0)
     {
       final DataProcessor meanHelper = new DataProcessor()
@@ -240,7 +240,7 @@ public class GenerateGrid implements IOperation
         {
           return doMeanGrid(grid, oneBins, twoBins);
         }
-        
+
         @Override
         public String outName()
         {
@@ -265,7 +265,7 @@ public class GenerateGrid implements IOperation
         {
           return doSampleGrid(grid, oneBins, twoBins);
         }
-        
+
         @Override
         public String outName()
         {
@@ -380,7 +380,8 @@ public class GenerateGrid implements IOperation
 
   }
 
-  private List<Triplet> findPermutations(final List<IStoreItem> selection)
+  public static List<Triplet> findPermutations(
+      final List<IStoreItem> selection, CollectionComplianceTests aTests)
   {
     final List<Triplet> res = new ArrayList<Triplet>();
 
@@ -389,7 +390,7 @@ public class GenerateGrid implements IOperation
       final Map<Unit<?>, ArrayList<NumberDocument>> matches =
           new HashMap<Unit<?>, ArrayList<NumberDocument>>();
 
-      Unit<?> commonUnit = null;
+      Unit<?> unitA = null;
 
       // do the binning
       for (final IStoreItem item : selection)
@@ -400,13 +401,13 @@ public class GenerateGrid implements IOperation
 
           // check the index units
           final Unit<?> index = doc.getIndexUnits();
-          if (commonUnit == null)
+          if (unitA == null)
           {
-            commonUnit = index;
+            unitA = index;
           }
           else
           {
-            if (!index.equals(commonUnit))
+            if (!index.equals(unitA))
             {
               return null;
             }
@@ -476,7 +477,7 @@ public class GenerateGrid implements IOperation
     return res;
   }
 
-  private Triplet tripletFor(final ArrayList<NumberDocument> list)
+  private static Triplet tripletFor(final ArrayList<NumberDocument> list)
   {
     final Triplet res = new Triplet();
     res.axisOne = list.get(0);
