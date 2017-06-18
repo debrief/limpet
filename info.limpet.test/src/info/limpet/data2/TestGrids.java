@@ -37,7 +37,7 @@ public class TestGrids extends TestCase
     assertEquals("correct bin", 2, gen.binFor(bins, 60));
     assertEquals("correct bin", -1, gen.binFor(bins, 105));
   }
-
+  
   @Test
   public void testOperations()
   {
@@ -66,6 +66,14 @@ public class TestGrids extends TestCase
       other1.add(i * 10000, 100 * Math.sin(i));
     }
 
+    selection.clear();
+    selection.add(other1.toDocument());
+    selection.add(ang1.toDocument());
+    selection.add(ang2.toDocument());
+
+    ops = gen.actionsFor(selection, store, context);
+    assertEquals("Perm created", 2, ops.size());
+    
     selection.clear();
     selection.add(ang1.toDocument());
     selection.add(ang2.toDocument());
