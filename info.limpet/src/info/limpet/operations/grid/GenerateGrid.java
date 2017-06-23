@@ -180,8 +180,12 @@ public class GenerateGrid implements IOperation
       // insert the metadata
       final AxesMetadata am = new AxesMetadataImpl();
       am.initialize(2);
-      am.setAxis(0, DatasetFactory.createFromObject(oneBins));
-      am.setAxis(1, DatasetFactory.createFromObject(twoBins));
+      final Dataset xAxis = DatasetFactory.createFromObject(oneBins);
+      xAxis.setName(triplet.axisOne.getName());
+      final Dataset yAxis = DatasetFactory.createFromObject(twoBins);
+      yAxis.setName(triplet.axisTwo.getName());
+      am.setAxis(0, xAxis);
+      am.setAxis(1, yAxis);
       processed.addMetadata(am);
 
       // get the output doc
