@@ -47,7 +47,8 @@ import junit.framework.TestSuite;
 	TestGeotoolsGeometry.class,
 	TestExport.class,
 	TestBistaticAngleCalculations.class,
-	TestPersistence.class
+	TestPersistence.class,
+	TestGrids.class
 })
 
 @RunWith(Suite.class)

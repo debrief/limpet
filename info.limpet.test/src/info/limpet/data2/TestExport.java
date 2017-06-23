@@ -22,7 +22,6 @@ public class TestExport extends TestCase
 		List<IStoreItem> collections = getCollections();
 		for (IStoreItem collection:collections)
 		{
-			System.out.println("Generate csv for " + collection.getName());
 			generate(collection);
 		}
 	}

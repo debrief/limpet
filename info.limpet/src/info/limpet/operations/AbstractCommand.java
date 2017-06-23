@@ -302,6 +302,14 @@ public abstract class AbstractCommand implements ICommand
   {
     return title;
   }
+  
+  
+
+  @Override
+  public String toString()
+  {
+    return getName();
+  }
 
   @Override
   public final void addChangeListener(IChangeListener listener)
