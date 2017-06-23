@@ -35,9 +35,7 @@ import javax.measure.quantity.Duration;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 
-import org.eclipse.january.DatasetException;
-import org.eclipse.january.dataset.Dataset;
-import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.MetadataException;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.metadata.AxesMetadata;
@@ -52,6 +50,7 @@ import org.swtchart.ILineSeries;
 import org.swtchart.ILineSeries.PlotSymbolType;
 import org.swtchart.ISeries;
 import org.swtchart.ISeries.SeriesType;
+import org.swtchart.LineStyle;
 import org.swtchart.ext.InteractiveChart;
 
 /**
@@ -152,135 +151,143 @@ public class XyPlotView extends CoreAnalysisView
     }
     else
     {
-      // transform them to a lsit of documents
-      List<IDocument<?>> docList = aTests.getDocumentsIn(res);
-
-      // they're all the same type - check the first one
-      Iterator<IDocument<?>> iter = docList.iterator();
-
-      IDocument<?> first = iter.next();
-
-      // do separate processing for 1D & 2D
+      // check they're all one dim
       if (aTests.allOneDim(res))
       {
-        // sort out what type of data this is.
-        if (first.isQuantity())
+        showOneDim(res);
+      }
+      else if (aTests.allTwoDim(res) && res.size() == 1)
+      {
+        // ok, it's a single two-dim dataset
+        showTwoDim(res.get(0));
+      }
+    }
+  }
+
+  private void showTwoDim(IStoreItem item)
+  {
+    NumberDocument thisQ = (NumberDocument) item;
+
+    clearGraph();
+
+    String seriesName = thisQ.getName();
+    final ILineSeries newSeries =
+        (ILineSeries) chart.getSeriesSet().createSeries(SeriesType.LINE,
+            seriesName);
+
+    final PlotSymbolType theSym;
+    // if it's a singleton, show the symbol
+    // markers
+    if (thisQ.size() > 100 || thisQ.size() == 1)
+    {
+      theSym = PlotSymbolType.NONE;
+    }
+    else
+    {
+      theSym = PlotSymbolType.CIRCLE;
+    }
+
+    newSeries.setSymbolType(theSym);
+    newSeries.setLineStyle(LineStyle.NONE);
+    newSeries.setSymbolColor(PlottingHelpers.colorFor(seriesName));
+
+    // ok, show this 2d dataset
+    NumberDocument nd = (NumberDocument) item;
+
+    try
+    {
+      // sort out the axes
+      final List<AxesMetadata> amList =
+          nd.getDataset().getMetadata(AxesMetadata.class);
+      AxesMetadata am = amList.get(0);
+      ILazyDataset[] axes = am.getAxes();
+      if (axes.length == 2)
+      {
+        DoubleDataset aOne = (DoubleDataset) axes[0];
+        DoubleDataset aTwo = (DoubleDataset) axes[1];
+
+        double[] aIndices = aOne.getData();
+        double[] bIndices = aTwo.getData();
+
+        // loop through the data
+        List<Double> xValues = new ArrayList<Double>();
+        List<Double> yValues = new ArrayList<Double>();
+
+        final DoubleDataset dataset = (DoubleDataset) nd.getDataset();
+
+        // process the data
+        for (int i = 0; i < aIndices.length; i++)
         {
-          if (aTests.allIndexedOrSingleton(res))
+          for (int j = 0; j < bIndices.length; j++)
           {
-            showIndexedQuantity(res);
-          }
-          else
-          {
-            showQuantity(res);
-          }
-          chart.setVisible(true);
-        }
-        else
-        {
-          // exception - show locations
-          if (aTests.allLocation(res))
-          {
-            showLocations(res);
-            chart.setVisible(true);
-          }
-          else
-          {
-            chart.setVisible(false);
+            Double thisVal = dataset.get(i, j);
+            if (!thisVal.equals(Double.NaN))
+            {
+              xValues.add(aIndices[i]);
+              yValues.add(bIndices[j]);
+            }
           }
         }
+
+        final double[] xArr = toArray(xValues);
+        final double[] yArr = toArray(yValues);
+
+        newSeries.setXSeries(xArr);
+        newSeries.setYSeries(yArr);
+
+        chart.getAxisSet().getYAxes()[0].getTitle().setText(
+            "" + nd.getIndexUnits());
+        chart.getAxisSet().getXAxes()[0].getTitle().setText(
+            "" + nd.getIndexUnits());
+
+        // adjust the axis range
+        chart.getAxisSet().adjustRange();
+
+      }
+    }
+    catch (MetadataException e)
+    {
+      e.printStackTrace();
+      // ok, just drop out
+    }
+  }
+
+  private void showOneDim(List<IStoreItem> res)
+  {
+    // transform them to a lsit of documents
+    List<IDocument<?>> docList = aTests.getDocumentsIn(res);
+
+    // they're all the same type - check the first one
+    Iterator<IDocument<?>> iter = docList.iterator();
+
+    IDocument<?> first = iter.next();
+
+    // sort out what type of data this is.
+    if (first.isQuantity())
+    {
+      if (aTests.allIndexedOrSingleton(res))
+      {
+        showIndexedQuantity(res);
       }
       else
       {
-        // two dim processing
-
-        // only plot if single series
-        if (res.size() == 1)
-        {
-          IStoreItem item = res.get(0);
-          if (item instanceof NumberDocument)
-          {
-            NumberDocument nd = (NumberDocument) item;
-            show2DNumberDocument(nd);
-          }
-        }
+        showQuantity(res);
       }
+      chart.setVisible(true);
     }
-
-  }
-
-  private DoubleDataset extractThis(final ILazyDataset axis)
-      throws DatasetException
-  {
-    final Dataset sliceOne = DatasetUtils.sliceAndConvertLazyDataset(axis);
-    return DatasetUtils.cast(DoubleDataset.class, sliceOne);
-  }
-
-  private void show2DNumberDocument(NumberDocument nd)
-  {
-    // clear the chart
-    clearChart();
-
-    final DoubleDataset dataset = (DoubleDataset) nd.getDataset();
-    final AxesMetadata axesMetadata =
-        dataset.getFirstMetadata(AxesMetadata.class);
-
-    DoubleDataset axisOne = null;
-    DoubleDataset axisTwo = null;
-    if (axesMetadata != null && axesMetadata.getAxes().length > 0)
+    else
     {
-      try
+      // exception - show locations
+      if (aTests.allLocation(res))
       {
-        axisOne = extractThis(axesMetadata.getAxes()[0]);
-        axisTwo = extractThis(axesMetadata.getAxes()[1]);
+        showLocations(res);
+        chart.setVisible(true);
       }
-      catch (final DatasetException e)
+      else
       {
-        e.printStackTrace();
-      }
-    }
-
-    final int[] dims = dataset.getShape();
-    final int xDim = dims[0];
-    final int yDim = dims[1];
-
-    final ILineSeries newSeries =
-        (ILineSeries) chart.getSeriesSet().createSeries(SeriesType.LINE,
-            nd.getName());
-    List<Double> xData = new ArrayList<Double>();
-    List<Double> yData = new ArrayList<Double>();
-
-    for (int i = 0; i < xDim; i++)
-    {
-      for (int j = 0; j < yDim; j++)
-      {
-        final Double val = dataset.get(i, j);
-        if (val.equals(Double.NaN))
-        {
-        }
-        else
-        {
-          // ok, add a marker at this point
-          double xVal = axisOne.get(i, 0);
-          double yVal = axisTwo.get(0, j);
-          xData.add(xVal);
-          yData.add(yVal);
-        }
+        chart.setVisible(false);
       }
     }
-
-    // put hte lists into arrays
-    double[] xArr = toArray(xData);
-    double[] yArr = toArray(yData);
-
-    newSeries.setXSeries(xArr);
-    newSeries.setYSeries(yArr);
-
-    newSeries.setSymbolType(PlotSymbolType.CROSS);
-
-    // adjust the axis range
-    chart.getAxisSet().adjustRange();
-
   }
 
   private double[] toArray(List<Double> xData)
@@ -667,18 +674,18 @@ public class XyPlotView extends CoreAnalysisView
           indexUnits != null ? indexUnits.getDimension().toString() : "N/A";
       switch (theDim)
       {
-        case "[L]":
-          titlePrefix = "Length";
-          break;
-        case "[M]":
-          titlePrefix = "Mass";
-          break;
-        case "[T]":
-          titlePrefix = "Time";
-          break;
-        default:
-          titlePrefix = theDim;
-          break;
+      case "[L]":
+        titlePrefix = "Length";
+        break;
+      case "[M]":
+        titlePrefix = "Mass";
+        break;
+      case "[T]":
+        titlePrefix = "Time";
+        break;
+      default:
+        titlePrefix = theDim;
+        break;
       }
 
       final String indexText =
