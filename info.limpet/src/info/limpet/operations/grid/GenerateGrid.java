@@ -227,6 +227,54 @@ public class GenerateGrid implements IOperation
   private final CollectionComplianceTests aTests =
       new CollectionComplianceTests();
 
+  private class SampleHelper implements DataProcessor
+  {
+    @Override
+    public Document<?> getOutputDocument(final ICommand predecessor,
+        final Unit<?> units)
+    {
+      return new DoubleListDocument(null, predecessor, units);
+    }
+
+    @Override
+    public Dataset processGrid(final List<Double>[][] grid,
+        final double[] oneBins, final double[] twoBins)
+    {
+      return doSampleGrid(grid, oneBins, twoBins);
+    }
+
+    @Override
+    public String outName()
+    {
+      return "Collated samples of";
+    }
+  }
+  
+  private class MeanHelper implements DataProcessor 
+  {
+
+    @Override
+    public Document<?> getOutputDocument(final ICommand predecessor,
+        final Unit<?> units)
+    {
+      return new NumberDocument(null, predecessor, units);
+    }
+
+    @Override
+    public Dataset processGrid(final List<Double>[][] grid,
+        final double[] oneBins, final double[] twoBins)
+    {
+      return doMeanGrid(grid, oneBins, twoBins);
+    }
+
+    @Override
+    public String outName()
+    {
+      return "Calculated mean of";
+    }
+
+  };
+  
   @Override
   public List<ICommand> actionsFor(final List<IStoreItem> selection,
       final IStoreGroup destination, final IContext context)
@@ -237,54 +285,8 @@ public class GenerateGrid implements IOperation
     final List<Triplet> perms = findPermutations(selection, aTests);
     if (perms != null && perms.size() > 0)
     {
-      final DataProcessor meanHelper = new DataProcessor()
-      {
-
-        @Override
-        public Document<?> getOutputDocument(final ICommand predecessor,
-            final Unit<?> units)
-        {
-          return new NumberDocument(null, predecessor, units);
-        }
-
-        @Override
-        public Dataset processGrid(final List<Double>[][] grid,
-            final double[] oneBins, final double[] twoBins)
-        {
-          return doMeanGrid(grid, oneBins, twoBins);
-        }
-
-        @Override
-        public String outName()
-        {
-          return "Calculated mean of";
-        }
-
-      };
-
-      final DataProcessor sampleHelper = new DataProcessor()
-      {
-
-        @Override
-        public Document<?> getOutputDocument(final ICommand predecessor,
-            final Unit<?> units)
-        {
-          return new DoubleListDocument(null, predecessor, units);
-        }
-
-        @Override
-        public Dataset processGrid(final List<Double>[][] grid,
-            final double[] oneBins, final double[] twoBins)
-        {
-          return doSampleGrid(grid, oneBins, twoBins);
-        }
-
-        @Override
-        public String outName()
-        {
-          return "Collated samples of";
-        }
-      };
+      final DataProcessor meanHelper = new MeanHelper();
+      final DataProcessor sampleHelper = new SampleHelper();
 
       // ok, put them into actions
       for (final Triplet thisP : perms)
