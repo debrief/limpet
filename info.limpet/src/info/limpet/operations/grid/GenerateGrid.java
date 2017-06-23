@@ -5,6 +5,9 @@ import info.limpet.IContext;
 import info.limpet.IOperation;
 import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
+import info.limpet.analysis.QuantityFrequencyBins;
+import info.limpet.analysis.QuantityFrequencyBins.Bin;
+import info.limpet.analysis.QuantityFrequencyBins.BinnedData;
 import info.limpet.impl.Document;
 import info.limpet.impl.DoubleListDocument;
 import info.limpet.impl.NumberDocument;
@@ -71,18 +74,11 @@ public class GenerateGrid implements IOperation
         }
       }
 
-      return -1;
+      return bins.length-1;
     }
 
-    public double[] binsFor(final NumberDocument axis)
+    public static double[] binsFor(final NumberDocument axis)
     {
-      // collate the values into an array
-      // DoubleDataset dd = (DoubleDataset) axis.getDataset();;
-      // double[] data = dd.getData();
-      //
-      // // Get a DescriptiveStatistics instance
-      // DescriptiveStatistics stats = new DescriptiveStatistics(data);
-
       final double[] res;
 
       // are these degrees?
@@ -93,7 +89,20 @@ public class GenerateGrid implements IOperation
       }
       else
       {
-        res = null;
+        // collate the values into an array
+        DoubleDataset dd = (DoubleDataset) axis.getDataset();
+        double[] data = dd.getData();
+
+        // ok, now bin the data
+        BinnedData binnedData = QuantityFrequencyBins.binTheseValues(data);
+
+        // convert to array
+        res = new double[binnedData.size()];
+        int ctr = 0;
+        for (Bin d : binnedData)
+        {
+          res[ctr++] = d.getLowerVal();
+        }
       }
 
       return res;

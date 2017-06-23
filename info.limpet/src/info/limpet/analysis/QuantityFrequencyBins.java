@@ -28,6 +28,8 @@ import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
 public abstract class QuantityFrequencyBins extends CoreAnalysis
 {
+  public static final int DEFAULT_NUM_BINS = 10;
+  public static final int MIN_NUM_BINS = 4;
   private static final int MAX_SIZE = 10000;
   private static final double THRESHOLD_VALUE = 0.001;
   private final CollectionComplianceTests aTests;
@@ -91,6 +93,11 @@ public abstract class QuantityFrequencyBins extends CoreAnalysis
       data[ctr++] = collection.getValueAt(i);
     }
 
+    return binTheseValues(data);
+  }
+
+  public static BinnedData binTheseValues(double[] data)
+  {
     // Get a DescriptiveStatistics instance
     DescriptiveStatistics stats = new DescriptiveStatistics(data);
 
@@ -99,13 +106,17 @@ public abstract class QuantityFrequencyBins extends CoreAnalysis
 
     // aah, double-check we don't have zero range
     final int binCount;
-    if (range > 10)
+    if (range > DEFAULT_NUM_BINS)
     {
-      binCount = 10;
+      binCount = DEFAULT_NUM_BINS;
     }
-    else
+    else if(range > MIN_NUM_BINS)
     {
-      binCount = (int) Math.max(2, range);
+      binCount = (int) range;
+    }
+    else 
+    {
+      binCount = MIN_NUM_BINS;
     }
 
     BinnedData res = new BinnedData();
