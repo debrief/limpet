@@ -31,6 +31,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.measure.unit.Unit;
 
+import org.eclipse.draw2d.Figure;
 import org.eclipse.draw2d.LightweightSystem;
 import org.eclipse.january.MetadataException;
 import org.eclipse.january.dataset.DoubleDataset;
@@ -42,9 +43,9 @@ import org.eclipse.nebula.visualization.widgets.datadefinition.ColorMap.Predefin
 import org.eclipse.nebula.visualization.widgets.figures.IntensityGraphFigure;
 import org.eclipse.nebula.visualization.widgets.figures.IntensityGraphFigure.IROIListener;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.swtchart.Chart;
 import org.swtchart.IAxis;
@@ -154,6 +155,11 @@ public class HeatmapView extends CoreAnalysisView
     final int DataHeight = 1024;
     final int DataWidth = 1280;
 
+    Figure ff = new Figure(){};
+    System.out.println(ff);
+
+    Canvas canv = new Canvas(parent, SWT.NULL);
+    
     //Create Intensity Graph
     final IntensityGraphFigure intensityGraph = new IntensityGraphFigure();
     
@@ -185,13 +191,9 @@ public class HeatmapView extends CoreAnalysisView
             +", " + width +", " + height +")");
       }
     }, null);
-    
-    final Shell shell = new Shell();
-    shell.setSize(300, 250);
-    shell.open();
-    
+       
     // use LightweightSystem to create the bridge between SWT and draw2D
-    final LightweightSystem lws = new LightweightSystem(shell);
+    final LightweightSystem lws = new LightweightSystem(canv);
     
     lws.setContents(intensityGraph);
 
@@ -215,13 +217,6 @@ public class HeatmapView extends CoreAnalysisView
           }
         }, 100, 10, TimeUnit.MILLISECONDS);
 
-    Display display = Display.getDefault();
-    while (!shell.isDisposed()) {
-      if (!display.readAndDispatch())
-        display.sleep();
-    }
-    future.cancel(true);
-    scheduler.shutdown();
   }
   
 
