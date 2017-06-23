@@ -43,6 +43,14 @@
       <view
             allowMultiple="true"
             category="info.limpet.ui"
+            class="info.limpet.ui.xy_plot.HeatmapView"
+            icon="icons/line-chart.png"
+            id="info.limpet.ui.HeatMapView"
+            name="Heatmap Plot">
+      </view>
+      <view
+            allowMultiple="true"
+            category="info.limpet.ui"
             class="info.limpet.ui.range_slider.RangeSliderView"
             icon="icons/properties.png"
             id="info.limpet.ui.RangeSliderView"
