@@ -18,6 +18,7 @@ import info.limpet.ICommand;
 import info.limpet.IDocument;
 import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
+import info.limpet.impl.DoubleListDocument;
 import info.limpet.impl.LocationDocument;
 import info.limpet.impl.NumberDocument;
 import info.limpet.impl.StringDocument;
@@ -129,6 +130,10 @@ public class LimpetLabelProvider extends LabelProvider
           res = Activator.getImageDescriptor("icons/location.png");
         }
         else if (coll instanceof StringDocument)
+        {
+          res = Activator.getImageDescriptor("icons/string.png");
+        }
+        else if (coll instanceof DoubleListDocument)
         {
           res = Activator.getImageDescriptor("icons/string.png");
         }

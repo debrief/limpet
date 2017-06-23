@@ -35,6 +35,10 @@ import javax.measure.quantity.Duration;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 
+import org.eclipse.january.MetadataException;
+import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.ILazyDataset;
+import org.eclipse.january.metadata.AxesMetadata;
 import org.eclipse.jface.action.Action;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -46,6 +50,7 @@ import org.swtchart.ILineSeries;
 import org.swtchart.ILineSeries.PlotSymbolType;
 import org.swtchart.ISeries;
 import org.swtchart.ISeries.SeriesType;
+import org.swtchart.LineStyle;
 import org.swtchart.ext.InteractiveChart;
 
 /**
@@ -146,41 +151,153 @@ public class XyPlotView extends CoreAnalysisView
     }
     else
     {
-      // transform them to a lsit of documents
-      List<IDocument<?>> docList = aTests.getDocumentsIn(res);
-
-      // they're all the same type - check the first one
-      Iterator<IDocument<?>> iter = docList.iterator();
-
-      IDocument<?> first = iter.next();
-
-      // sort out what type of data this is.
-      if (first.isQuantity())
+      // check they're all one dim
+      if (aTests.allOneDim(res))
       {
-        if (aTests.allIndexedOrSingleton(res))
+        showOneDim(res);
+      }
+      else if (aTests.allTwoDim(res) && res.size() == 1)
+      {
+        // ok, it's a single two-dim dataset
+        showTwoDim(res.get(0));
+      }
+    }
+  }
+
+  private void showTwoDim(IStoreItem item)
+  {
+    NumberDocument thisQ = (NumberDocument) item;
+
+    clearGraph();
+
+    String seriesName = thisQ.getName();
+    final ILineSeries newSeries =
+        (ILineSeries) chart.getSeriesSet().createSeries(SeriesType.LINE,
+            seriesName);
+
+    final PlotSymbolType theSym;
+    // if it's a singleton, show the symbol
+    // markers
+    if (thisQ.size() > 100 || thisQ.size() == 1)
+    {
+      theSym = PlotSymbolType.NONE;
+    }
+    else
+    {
+      theSym = PlotSymbolType.CIRCLE;
+    }
+
+    newSeries.setSymbolType(theSym);
+    newSeries.setLineStyle(LineStyle.NONE);
+    newSeries.setSymbolColor(PlottingHelpers.colorFor(seriesName));
+
+    // ok, show this 2d dataset
+    NumberDocument nd = (NumberDocument) item;
+
+    try
+    {
+      // sort out the axes
+      final List<AxesMetadata> amList =
+          nd.getDataset().getMetadata(AxesMetadata.class);
+      AxesMetadata am = amList.get(0);
+      ILazyDataset[] axes = am.getAxes();
+      if (axes.length == 2)
+      {
+        DoubleDataset aOne = (DoubleDataset) axes[0];
+        DoubleDataset aTwo = (DoubleDataset) axes[1];
+
+        double[] aIndices = aOne.getData();
+        double[] bIndices = aTwo.getData();
+
+        // loop through the data
+        List<Double> xValues = new ArrayList<Double>();
+        List<Double> yValues = new ArrayList<Double>();
+
+        final DoubleDataset dataset = (DoubleDataset) nd.getDataset();
+
+        // process the data
+        for (int i = 0; i < aIndices.length; i++)
         {
-          showIndexedQuantity(res);
+          for (int j = 0; j < bIndices.length; j++)
+          {
+            Double thisVal = dataset.get(i, j);
+            if (!thisVal.equals(Double.NaN))
+            {
+              xValues.add(aIndices[i]);
+              yValues.add(bIndices[j]);
+            }
+          }
         }
-        else
-        {
-          showQuantity(res);
-        }
+
+        final double[] xArr = toArray(xValues);
+        final double[] yArr = toArray(yValues);
+
+        newSeries.setXSeries(xArr);
+        newSeries.setYSeries(yArr);
+
+        chart.getAxisSet().getYAxes()[0].getTitle().setText(
+            "" + nd.getIndexUnits());
+        chart.getAxisSet().getXAxes()[0].getTitle().setText(
+            "" + nd.getIndexUnits());
+
+        // adjust the axis range
+        chart.getAxisSet().adjustRange();
+
+      }
+    }
+    catch (MetadataException e)
+    {
+      e.printStackTrace();
+      // ok, just drop out
+    }
+  }
+
+  private void showOneDim(List<IStoreItem> res)
+  {
+    // transform them to a lsit of documents
+    List<IDocument<?>> docList = aTests.getDocumentsIn(res);
+
+    // they're all the same type - check the first one
+    Iterator<IDocument<?>> iter = docList.iterator();
+
+    IDocument<?> first = iter.next();
+
+    // sort out what type of data this is.
+    if (first.isQuantity())
+    {
+      if (aTests.allIndexedOrSingleton(res))
+      {
+        showIndexedQuantity(res);
+      }
+      else
+      {
+        showQuantity(res);
+      }
+      chart.setVisible(true);
+    }
+    else
+    {
+      // exception - show locations
+      if (aTests.allLocation(res))
+      {
+        showLocations(res);
         chart.setVisible(true);
       }
       else
       {
-        // exception - show locations
-        if (aTests.allLocation(res))
-        {
-          showLocations(res);
-          chart.setVisible(true);
-        }
-        else
-        {
-          chart.setVisible(false);
-        }
+        chart.setVisible(false);
       }
     }
+  }
+
+  private double[] toArray(List<Double> xData)
+  {
+    double[] res = new double[xData.size()];
+    for (int i = 0; i < xData.size(); i++)
+    {
+      res[i] = xData.get(i);
+    }
+    return res;
   }
 
   private void showQuantity(List<IStoreItem> items)
@@ -600,13 +717,7 @@ public class XyPlotView extends CoreAnalysisView
 
   private void showLocations(List<IStoreItem> res)
   {
-    // clear the graph
-    ISeries[] series = chart.getSeriesSet().getSeries();
-    for (int i = 0; i < series.length; i++)
-    {
-      ISeries iSeries = series[i];
-      chart.getSeriesSet().deleteSeries(iSeries.getId());
-    }
+    clearChart();
 
     // now loop through
     boolean chartUpdated = false;
@@ -653,6 +764,17 @@ public class XyPlotView extends CoreAnalysisView
     if (chartUpdated)
     {
       chart.redraw();
+    }
+  }
+
+  private void clearChart()
+  {
+    // clear the graph
+    ISeries[] series = chart.getSeriesSet().getSeries();
+    for (int i = 0; i < series.length; i++)
+    {
+      ISeries iSeries = series[i];
+      chart.getSeriesSet().deleteSeries(iSeries.getId());
     }
   }
 
@@ -703,13 +825,7 @@ public class XyPlotView extends CoreAnalysisView
     }
     else
     {
-      // clear all of the series
-      ISeries[] allSeries = chart.getSeriesSet().getSeries();
-      for (int i = 0; i < allSeries.length; i++)
-      {
-        ISeries iSeries = allSeries[i];
-        chart.getSeriesSet().deleteSeries(iSeries.getId());
-      }
+      clearChart();
     }
   }
 

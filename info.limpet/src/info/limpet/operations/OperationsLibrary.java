@@ -33,13 +33,16 @@ import info.limpet.operations.admin.CreateSingletonGenerator;
 import info.limpet.operations.admin.DeleteCollectionOperation;
 import info.limpet.operations.admin.ExportCsvToFileAction;
 import info.limpet.operations.admin.GenerateDummyDataOperation;
+import info.limpet.operations.arithmetic.SimpleMovingAverageOperation;
 import info.limpet.operations.arithmetic.UnaryQuantityOperation;
 import info.limpet.operations.arithmetic.simple.AddLogQuantityOperation;
 import info.limpet.operations.arithmetic.simple.AddQuantityOperation;
+import info.limpet.operations.arithmetic.simple.DivideQuantityOperation;
 import info.limpet.operations.arithmetic.simple.MultiplyQuantityOperation;
 import info.limpet.operations.arithmetic.simple.SubtractLogQuantityOperation;
 import info.limpet.operations.arithmetic.simple.SubtractQuantityOperation;
 import info.limpet.operations.arithmetic.simple.UnitConversionOperation;
+import info.limpet.operations.grid.GenerateGrid;
 import info.limpet.operations.spatial.BearingBetweenTracksOperation;
 import info.limpet.operations.spatial.DistanceBetweenTracksOperation;
 import info.limpet.operations.spatial.DopplerShiftBetweenTracksOperation;
@@ -85,7 +88,8 @@ public class OperationsLibrary
     protected final boolean appliesTo(List<IStoreItem> selection)
     {
       return selection.size() > 0
-          && getATests().allHaveDimension(selection, SI.RADIAN.getDimension());
+          && getATests().allHaveDimension(selection, SI.RADIAN.getDimension())
+          && getATests().allOneDim(selection);
     }
   }
 
@@ -160,12 +164,12 @@ public class OperationsLibrary
   {
     List<IOperation> arithmetic = new ArrayList<IOperation>();
     arithmetic.add(new MultiplyQuantityOperation());
-    arithmetic.add(new AddQuantityOperation());    
+    arithmetic.add(new AddQuantityOperation());
     arithmetic.add(new SubtractQuantityOperation());
     arithmetic.add(new AddLogQuantityOperation());
     arithmetic.add(new SubtractLogQuantityOperation());
-    // arithmetic.add(new DivideQuantityOperation());
-    // arithmetic.add(new SimpleMovingAverageOperation(3));
+    arithmetic.add(new DivideQuantityOperation());
+    arithmetic.add(new SimpleMovingAverageOperation(3));
 
     // also our generic maths operators
     arithmetic.add(new UnaryQuantityOperation("Abs")
@@ -173,7 +177,8 @@ public class OperationsLibrary
       @Override
       protected boolean appliesTo(List<IStoreItem> selection)
       {
-        return getATests().allQuantity(selection);
+        return getATests().allQuantity(selection)
+            && getATests().allOneDim(selection);
       }
 
       @Override
@@ -235,7 +240,8 @@ public class OperationsLibrary
       @Override
       protected boolean appliesTo(List<IStoreItem> selection)
       {
-        return getATests().allQuantity(selection);
+        return getATests().allQuantity(selection)
+            && getATests().allOneDim(selection);
       }
 
       @Override
@@ -255,7 +261,8 @@ public class OperationsLibrary
       @Override
       protected boolean appliesTo(List<IStoreItem> selection)
       {
-        return getATests().allQuantity(selection);
+        return getATests().allQuantity(selection)
+            && getATests().allOneDim(selection);
       }
 
       @Override
@@ -275,7 +282,8 @@ public class OperationsLibrary
       @Override
       protected boolean appliesTo(List<IStoreItem> selection)
       {
-        return getATests().allQuantity(selection);
+        return getATests().allQuantity(selection)
+            && getATests().allOneDim(selection);
       }
 
       @Override
@@ -295,7 +303,8 @@ public class OperationsLibrary
       @Override
       protected boolean appliesTo(List<IStoreItem> selection)
       {
-        return getATests().allQuantity(selection);
+        return getATests().allQuantity(selection)
+            && getATests().allOneDim(selection);
       }
 
       @Override
@@ -374,6 +383,7 @@ public class OperationsLibrary
     create.add(new CreateSingletonGenerator("course (degs)",
         SampleData.DEGREE_ANGLE.asType(Angle.class)));
     // create.add(new CreateLocationAction());
+    create.add(new GenerateGrid());
 
     return create;
   }

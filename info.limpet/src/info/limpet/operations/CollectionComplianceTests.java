@@ -216,78 +216,87 @@ public class CollectionComplianceTests
     Long endT = null;
     Unit<?> units = null;
 
-    for (int i = 0; i < selection.size(); i++)
+    // check they're all 1D
+    if (allOneDim(selection))
     {
-      IStoreItem thisI = selection.get(i);
-      if (thisI instanceof Document)
+      for (int i = 0; i < selection.size(); i++)
       {
-        Document<?> thisC = (Document<?>) thisI;
-        if (thisC.isQuantity() || thisC instanceof LocationDocument)
+        IStoreItem thisI = selection.get(i);
+        if (thisI instanceof Document)
         {
-          if (thisC.isIndexed())
+          Document<?> thisC = (Document<?>) thisI;
+          if (thisC.isQuantity() || thisC instanceof LocationDocument)
           {
-            Unit<?> thisUnit = thisC.getIndexUnits();
+            if (thisC.isIndexed())
+            {
+              Unit<?> thisUnit = thisC.getIndexUnits();
 
-            if (units == null)
-            {
-              units = thisUnit;
-            }
-            else
-            {
-              if (!units.equals(thisUnit))
+              if (units == null)
               {
-                // incompatible units, don't bother
-                suitable = false;
-                break;
-              }
-            }
-
-            // NumberDocument nd = (NumberDocument) thisC;
-            AxesMetadata axes =
-                thisC.getDataset().getFirstMetadata(AxesMetadata.class);
-            ILazyDataset axesDatasetLazy = axes.getAxes()[0];
-            Dataset axesDataset;
-            try
-            {
-              axesDataset =
-                  DatasetUtils.sliceAndConvertLazyDataset(axesDatasetLazy);
-              long thisStart = axesDataset.getLong(0);
-              long thisEnd = axesDataset.getLong(axesDataset.getSize() - 1);
-
-              if (startT == null)
-              {
-                startT = thisStart;
-                endT = thisEnd;
+                units = thisUnit;
               }
               else
               {
-                // check the overlap
-                if (thisStart > endT || thisEnd < startT)
+                if (!units.equals(thisUnit))
                 {
+                  // incompatible units, don't bother
                   suitable = false;
                   break;
                 }
               }
+
+              // NumberDocument nd = (NumberDocument) thisC;
+              AxesMetadata axes =
+                  thisC.getDataset().getFirstMetadata(AxesMetadata.class);
+              ILazyDataset axesDatasetLazy = axes.getAxes()[0];
+              Dataset axesDataset;
+              try
+              {
+                axesDataset =
+                    DatasetUtils.sliceAndConvertLazyDataset(axesDatasetLazy);
+                long thisStart = axesDataset.getLong(0);
+                long thisEnd = axesDataset.getLong(axesDataset.getSize() - 1);
+
+                if (startT == null)
+                {
+                  startT = thisStart;
+                  endT = thisEnd;
+                }
+                else
+                {
+                  // check the overlap
+                  if (thisStart > endT || thisEnd < startT)
+                  {
+                    suitable = false;
+                    break;
+                  }
+                }
+              }
+              catch (DatasetException e)
+              {
+                throw new RuntimeException(e);
+              }
             }
-            catch (DatasetException e)
-            {
-              throw new RuntimeException(e);
-            }
+          }
+          else
+          {
+            // oops, no
+            suitable = false;
+            break;
           }
         }
         else
         {
-          // oops, no
           suitable = false;
           break;
         }
-      }
-      else
-      {
-        suitable = false;
-        break;
-      }
 
+      }
+    }
+    else
+    {
+      // two dim
+      suitable = false;
     }
     return suitable && startT != null;
   }
@@ -1444,5 +1453,53 @@ public class CollectionComplianceTests
         processThis(target, (IStoreGroup) sel);
       }
     }
+  }
+
+  /**
+   * are all the datasets 1-D?
+   * 
+   * @param selection
+   * @return
+   */
+  public boolean allOneDim(List<IStoreItem> selection)
+  {
+    return checkDims(selection, 1);
+  }
+
+  private boolean checkDims(List<IStoreItem> selection, int requiredDims)
+  {
+    // are they all non location?
+    boolean allValid = true;
+
+    for (final IStoreItem thisI : selection)
+    {
+      if (thisI instanceof Document)
+      {
+        Document<?> thisC = (Document<?>) thisI;
+        Dataset d = (Dataset) thisC.getDataset();
+        int[] dims = d.getShape();
+        if (dims.length != requiredDims)
+        {
+          allValid = false;
+        }
+      }
+      else
+      {
+        allValid = false;
+        break;
+      }
+    }
+    return allValid;
+  }
+
+  /**
+   * are all the dataset 2-d?
+   * 
+   * @param selection
+   * @return
+   */
+  public boolean allTwoDim(List<IStoreItem> selection)
+  {
+    return checkDims(selection, 2);
   }
 }

@@ -317,7 +317,7 @@ public class BistaticAngleOperation implements IOperation
       List<IStoreGroup> tracksWithHeading =
           getSuitableTracks(rawSelection, true);
 
-      if (allTracks.size() != 3 && tracksWithHeading.size() < 1)
+      if (allTracks.size() != 3 || tracksWithHeading.size() < 1)
       {
         return res;
       }

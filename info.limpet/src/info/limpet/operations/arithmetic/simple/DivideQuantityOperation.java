@@ -131,11 +131,12 @@ public class DivideQuantityOperation extends BinaryQuantityOperation
   {
     final boolean nonEmpty = getATests().nonEmpty(selection);
     final boolean allQuantity = getATests().allQuantity(selection);
+    final boolean twoItems = selection.size() == 2;
     final boolean suitableLength =
         getATests().allIndexed(selection)
             || getATests().allEqualLengthOrSingleton(selection);
 
-    return nonEmpty && allQuantity && suitableLength;
+    return nonEmpty && allQuantity && suitableLength && twoItems;
   }
 
 }
