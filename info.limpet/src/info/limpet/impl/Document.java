@@ -33,13 +33,13 @@ abstract public class Document<T extends Object> implements IDocument<T>
    */
   protected IDataset dataset;
   final protected ICommand predecessor;
-  private List<IChangeListener> changeListeners =
+  final private List<IChangeListener> changeListeners =
       new ArrayList<IChangeListener>();
   private transient List<IChangeListener> transientChangeListeners =
       new ArrayList<IChangeListener>();
   private IStoreGroup parent;
   final private UUID uuid;
-  private List<ICommand> dependents = new ArrayList<ICommand>();
+  final private List<ICommand> dependents = new ArrayList<ICommand>();
 
   private Unit<?> indexUnits;
 
@@ -112,6 +112,14 @@ abstract public class Document<T extends Object> implements IDocument<T>
       ICommand iC = (ICommand) iter.next();
       iC.collectionDeleted(this);
     }
+
+    if (transientChangeListeners != null)
+    {
+      for (IChangeListener thisL : transientChangeListeners)
+      {
+        thisL.collectionDeleted(this);
+      }
+    }
   }
 
   /*
@@ -135,7 +143,7 @@ abstract public class Document<T extends Object> implements IDocument<T>
   public void setName(String name)
   {
     dataset.setName(name);
-    
+
     fireDataChanged();
   }
 
@@ -180,7 +188,7 @@ abstract public class Document<T extends Object> implements IDocument<T>
   @Override
   public void addTransientChangeListener(IChangeListener listener)
   {
-    // we may need to re-create it, if we've been restored from fime
+    // we may need to re-create it, if we've been restored from file
     if (transientChangeListeners == null)
     {
       transientChangeListeners = new ArrayList<IChangeListener>();
@@ -221,6 +229,15 @@ abstract public class Document<T extends Object> implements IDocument<T>
     for (final ICommand thisL : dependents)
     {
       thisL.dataChanged(this);
+    }
+    // since the TCLs are (by definition) transient, we may not have any 
+    // (such as after file restore). So, first check that they're present
+    if (transientChangeListeners != null)
+    {
+      for (final IChangeListener thisL : transientChangeListeners)
+      {
+        thisL.dataChanged(this);
+      }
     }
   }
 
@@ -387,7 +404,8 @@ abstract public class Document<T extends Object> implements IDocument<T>
     return getName();
   }
 
-  /** produce this document as a listing
+  /**
+   * produce this document as a listing
    * 
    * @return
    */
