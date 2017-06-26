@@ -50,6 +50,7 @@ import org.swtchart.ILineSeries;
 import org.swtchart.ILineSeries.PlotSymbolType;
 import org.swtchart.ISeries;
 import org.swtchart.ISeries.SeriesType;
+import org.swtchart.ITitle;
 import org.swtchart.LineStyle;
 import org.swtchart.ext.InteractiveChart;
 
@@ -585,14 +586,27 @@ public class XyPlotView extends CoreAnalysisView
 
       // set the properties of second Y axis
       final IAxis yAxis2 = chart.getAxisSet().getYAxis(axisId);
-      yAxis2.getTitle().setText(theseUnits.toString());
+
+      final String newTitle = theseUnits.toString();
+      if (!newTitle.equals(yAxis2.getTitle().getText()))
+      {
+        yAxis2.getTitle().setText(theseUnits.toString());
+      }
+
       yAxis2.setPosition(Position.Secondary);
       newSeries.setYAxisId(axisId);
     }
     else
     {
-      chart.getAxisSet().getYAxes()[0].getTitle()
-          .setText(theseUnits.toString());
+      // check the current title
+
+      final ITitle theTitle = chart.getAxisSet().getYAxes()[0].getTitle();
+      final String oldTitle = theTitle.getText();
+      final String newTitle = theseUnits.toString();
+      if (!newTitle.equals(oldTitle))
+      {
+        theTitle.setText(theseUnits.toString());
+      }
       newUnits = theseUnits;
     }
 
@@ -608,8 +622,13 @@ public class XyPlotView extends CoreAnalysisView
       newSeries.setSymbolType(PlotSymbolType.CROSS);
     }
 
-    final String xTitle = getTitleFor(xTimeData, indexUnits);
-    chart.getAxisSet().getXAxis(0).getTitle().setText(xTitle);
+    // and the x axis title
+    final String xTitleStr = getTitleFor(xTimeData, indexUnits);
+    final ITitle xTitle = chart.getAxisSet().getXAxis(0).getTitle();
+    if (!xTitleStr.equals(xTitle.getText()))
+    {
+      xTitle.setText(xTitleStr);
+    }
 
     return newUnits;
   }

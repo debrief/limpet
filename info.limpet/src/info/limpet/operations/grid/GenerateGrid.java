@@ -190,9 +190,12 @@ public class GenerateGrid implements IOperation
 
       // get the output doc
       final Document<?> nd = (Document<?>) super.getOutputs().get(0);
-
+      
       // store the results object in it
       nd.setDataset(processed);
+      
+      // restore the name
+      nd.setName(helper.outName() + " of " + triplet.measurements.getName());
     }
 
     @Override
