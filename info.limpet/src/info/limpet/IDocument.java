@@ -34,6 +34,8 @@ public interface IDocument<T extends Object> extends IStoreItem
 
   public void fireDataChanged();
 
+  public void fireMetadataChanged();
+
   public UUID getUUID();
 
   @UIProperty(name = "Size", category = UIProperty.CATEGORY_LABEL)
