@@ -83,7 +83,7 @@ public class TestCollections extends TestCase
     // check it got stored
     assertEquals("correct number of samples", 10, strDoc.size());
   }
-  
+
   public void testDocumentListeners()
   {
     LocationDocumentBuilder ldb =
@@ -92,202 +92,49 @@ public class TestCollections extends TestCase
     ldb.add(14, new Point2D.Double(15, 23));
 
     LocationDocument locDoc = ldb.toDocument();
-    
+
     final List<String> dataChangedMsgs = new ArrayList<String>();
     final List<String> metadataChangedMsgs = new ArrayList<String>();
     final List<String> deletedMsgs = new ArrayList<String>();
-    
+
     IChangeListener listOne = new IChangeListener()
     {
-      
+
       @Override
       public void metadataChanged(IStoreItem subject)
       {
         metadataChangedMsgs.add("listOne");
       }
-      
+
       @Override
       public void dataChanged(IStoreItem subject)
       {
         dataChangedMsgs.add("listOne");
       }
-      
+
       @Override
       public void collectionDeleted(IStoreItem subject)
       {
         deletedMsgs.add("listOne");
       }
     };
-    ICommand command = new ICommand()
-    {
-      
-      @Override
-      public void setParent(IStoreGroup parent)
-      {
-        // TODO Auto-generated method stub
-        
-      }
-      
-      @Override
-      public void removeTransientChangeListener(
-          IChangeListener collectionChangeListener)
-      {
-        // TODO Auto-generated method stub
-        
-      }
-      
-      @Override
-      public void removeChangeListener(IChangeListener listener)
-      {
-        // TODO Auto-generated method stub
-        
-      }
-      
-      @Override
-      public UUID getUUID()
-      {
-        // TODO Auto-generated method stub
-        return null;
-      }
-      
-      @Override
-      public IStoreGroup getParent()
-      {
-        // TODO Auto-generated method stub
-        return null;
-      }
-      
-      @Override
-      public String getName()
-      {
-        // TODO Auto-generated method stub
-        return null;
-      }
-      
-      @Override
-      public void fireDataChanged()
-      {
-        // TODO Auto-generated method stub
-        
-      }
-      
-      @Override
-      public void addTransientChangeListener(IChangeListener listener)
-      {
-        // TODO Auto-generated method stub
-        
-      }
-      
-      @Override
-      public void addChangeListener(IChangeListener listener)
-      {
-        // TODO Auto-generated method stub
-        
-      }
-      
-      @Override
-      public void metadataChanged(IStoreItem subject)
-      {
-        metadataChangedMsgs.add("command");
-      }
-      
-      @Override
-      public void dataChanged(IStoreItem subject)
-      {
-        dataChangedMsgs.add("command");
-      }
-      
-      @Override
-      public void collectionDeleted(IStoreItem subject)
-      {
-        deletedMsgs.add("command");
-      }
-      
-      @Override
-      public void undo()
-      {
-        // TODO Auto-generated method stub
-        
-      }
-      
-      @Override
-      public void setDynamic(boolean dynamic)
-      {
-        // TODO Auto-generated method stub
-        
-      }
-      
-      @Override
-      public void redo()
-      {
-        // TODO Auto-generated method stub
-        
-      }
-      
-      @Override
-      public List<Document<?>> getOutputs()
-      {
-        // TODO Auto-generated method stub
-        return null;
-      }
-      
-      @Override
-      public List<IStoreItem> getInputs()
-      {
-        // TODO Auto-generated method stub
-        return null;
-      }
-      
-      @Override
-      public boolean getDynamic()
-      {
-        // TODO Auto-generated method stub
-        return false;
-      }
-      
-      @Override
-      public String getDescription()
-      {
-        // TODO Auto-generated method stub
-        return null;
-      }
-      
-      @Override
-      public void execute()
-      {
-        // TODO Auto-generated method stub
-        
-      }
-      
-      @Override
-      public boolean canUndo()
-      {
-        // TODO Auto-generated method stub
-        return false;
-      }
-      
-      @Override
-      public boolean canRedo()
-      {
-        // TODO Auto-generated method stub
-        return false;
-      }
-    };
+    ICommand command =
+        new DummyCommand(metadataChangedMsgs, dataChangedMsgs, deletedMsgs);
     IChangeListener transientL = new IChangeListener()
     {
-      
+
       @Override
       public void metadataChanged(IStoreItem subject)
       {
         metadataChangedMsgs.add("tList");
       }
-      
+
       @Override
       public void dataChanged(IStoreItem subject)
       {
         dataChangedMsgs.add("listOne");
       }
-      
+
       @Override
       public void collectionDeleted(IStoreItem subject)
       {
@@ -297,10 +144,10 @@ public class TestCollections extends TestCase
     locDoc.addDependent(command);
     locDoc.addTransientChangeListener(transientL);
     locDoc.addChangeListener(listOne);
-    
+
     // ok, check the updates happen
     locDoc.fireDataChanged();
-    
+
     assertEquals(3, dataChangedMsgs.size());
     assertEquals(0, deletedMsgs.size());
     assertEquals(0, metadataChangedMsgs.size());
@@ -313,13 +160,11 @@ public class TestCollections extends TestCase
 
     // lastly, check delete
     locDoc.beingDeleted();
-    
+
     assertEquals(3, dataChangedMsgs.size());
     assertEquals(3, deletedMsgs.size());
     assertEquals(3, metadataChangedMsgs.size());
 
-    
-    
   }
 
   public void testStoreWrongNumberType()
@@ -347,7 +192,7 @@ public class TestCollections extends TestCase
     }
     assertTrue("the expected exception got caught", thrown);
   }
-  
+
   public void testStoreWrongLocationType()
   {
     NumberDocumentBuilder ldb =
@@ -399,7 +244,7 @@ public class TestCollections extends TestCase
     }
     assertTrue("the expected exception got caught", thrown);
   }
-  
+
   public void testTemporalQuantityInterp()
   {
     NumberDocumentBuilder speeds =
@@ -488,6 +333,174 @@ public class TestCollections extends TestCase
         InterpMethod.Linear), 0.001);
     assertNull("returned null for out of intersection", tq.interpolateValue(
         420, InterpMethod.Linear));
+  }
+
+  private static class DummyCommand implements ICommand
+  {
+
+    final private List<String> metadataChangedMsgs;
+    final private List<String> dataChangedMsgs;
+    final private List<String> deletedMsgs;
+
+    public DummyCommand(List<String> meta, List<String> data,
+        List<String> deleted)
+    {
+      metadataChangedMsgs = meta;
+      dataChangedMsgs = data;
+      deletedMsgs = deleted;
+    }
+
+    @Override
+    public void setParent(IStoreGroup parent)
+    {
+      // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void removeTransientChangeListener(
+        IChangeListener collectionChangeListener)
+    {
+      // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void removeChangeListener(IChangeListener listener)
+    {
+      // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public UUID getUUID()
+    {
+      // TODO Auto-generated method stub
+      return null;
+    }
+
+    @Override
+    public IStoreGroup getParent()
+    {
+      // TODO Auto-generated method stub
+      return null;
+    }
+
+    @Override
+    public String getName()
+    {
+      // TODO Auto-generated method stub
+      return null;
+    }
+
+    @Override
+    public void fireDataChanged()
+    {
+      // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void addTransientChangeListener(IChangeListener listener)
+    {
+      // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void addChangeListener(IChangeListener listener)
+    {
+      // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void metadataChanged(IStoreItem subject)
+    {
+      metadataChangedMsgs.add("command");
+    }
+
+    @Override
+    public void dataChanged(IStoreItem subject)
+    {
+      dataChangedMsgs.add("command");
+    }
+
+    @Override
+    public void collectionDeleted(IStoreItem subject)
+    {
+      deletedMsgs.add("command");
+    }
+
+    @Override
+    public void undo()
+    {
+      // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void setDynamic(boolean dynamic)
+    {
+      // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void redo()
+    {
+      // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public List<Document<?>> getOutputs()
+    {
+      // TODO Auto-generated method stub
+      return null;
+    }
+
+    @Override
+    public List<IStoreItem> getInputs()
+    {
+      // TODO Auto-generated method stub
+      return null;
+    }
+
+    @Override
+    public boolean getDynamic()
+    {
+      // TODO Auto-generated method stub
+      return false;
+    }
+
+    @Override
+    public String getDescription()
+    {
+      // TODO Auto-generated method stub
+      return null;
+    }
+
+    @Override
+    public void execute()
+    {
+      // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public boolean canUndo()
+    {
+      // TODO Auto-generated method stub
+      return false;
+    }
+
+    @Override
+    public boolean canRedo()
+    {
+      // TODO Auto-generated method stub
+      return false;
+    }
   }
 
   public void testMathOperators()
