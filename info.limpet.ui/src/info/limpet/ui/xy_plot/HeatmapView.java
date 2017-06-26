@@ -148,7 +148,7 @@ public class HeatmapView extends CoreAnalysisView
   //  IntensityGraphExample.main(new String[]{""});
     
   }
-  int count = 0;
+  private int count = 0;
  
   private void doTest(Composite parent)
   {
@@ -199,6 +199,7 @@ public class HeatmapView extends CoreAnalysisView
 
     // Update the graph in another thread.
     ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+
     ScheduledFuture<?> future = scheduler.scheduleAtFixedRate(
         new Runnable() {
 
@@ -216,7 +217,14 @@ public class HeatmapView extends CoreAnalysisView
             });
           }
         }, 100, 10, TimeUnit.MILLISECONDS);
-
+    
+    Display display = Display.getDefault();
+    while (!canv.isDisposed()) {
+      if (!display.readAndDispatch())
+        display.sleep();
+    }
+    future.cancel(true);
+    scheduler.shutdown();
   }
   
 
