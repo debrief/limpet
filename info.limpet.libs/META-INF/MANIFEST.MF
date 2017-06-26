@@ -108,3 +108,5 @@ Export-Package: org.apache.commons.csv,
  systems.uom.common,
  systems.uom.quantity,
  tec.units.ri.internal.format
+Require-Bundle: org.eclipse.draw2d,
+ org.eclipse.jface
