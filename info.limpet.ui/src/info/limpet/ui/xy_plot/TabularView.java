@@ -19,17 +19,13 @@ import info.limpet.impl.NumberDocument;
 import info.limpet.operations.CollectionComplianceTests;
 import info.limpet.ui.Activator;
 import info.limpet.ui.core_view.CoreAnalysisView;
+import info.limpet.ui.xy_plot.Helper2D.HContainer;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-import org.eclipse.january.MetadataException;
 import org.eclipse.january.dataset.DoubleDataset;
-import org.eclipse.january.dataset.IDataset;
-import org.eclipse.january.dataset.ILazyDataset;
-import org.eclipse.january.dataset.Slice;
-import org.eclipse.january.metadata.AxesMetadata;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
@@ -169,6 +165,13 @@ public class TabularView extends CoreAnalysisView
   private static class MyLabelProvider implements ITableLabelProvider
   {
 
+    private DecimalFormat _formatter;
+
+    public MyLabelProvider()
+    {
+      _formatter = new DecimalFormat("000.0");
+    }
+    
     @Override
     public void addListener(ILabelProviderListener listener)
     {
@@ -199,7 +202,30 @@ public class TabularView extends CoreAnalysisView
     @Override
     public String getColumnText(Object element, int columnIndex)
     {
-      return "asa" + new Date();
+      @SuppressWarnings("unchecked")
+      List<Double> items = (List<Double>) element;
+      final String res;
+
+      Double thisD = items.get(columnIndex);
+
+      if (columnIndex == 0)
+      {
+        res = thisD.intValue() + ":";
+      }
+      else
+      {
+
+        if ((thisD != null) && !thisD.equals(Double.NaN))
+        {
+          res = _formatter.format(thisD);
+        }
+        else
+        {
+
+          res = " ";
+        }
+      }
+      return res;
     }
   }
 
@@ -209,82 +235,25 @@ public class TabularView extends CoreAnalysisView
     @Override
     public Object[] getElements(Object inputElement)
     {
-      if (inputElement instanceof NumberDocument)
+      if (inputElement instanceof HContainer)
       {
-        NumberDocument nd = (NumberDocument) inputElement;
-        IDataset dataset = nd.getDataset();
-        if (dataset instanceof DoubleDataset)
+        HContainer nd = (HContainer) inputElement;
+        Object[] data = new Object[nd.rowTitles.length];
+
+        for (int i = 0; i < nd.rowTitles.length; i++)
         {
-          DoubleDataset ds = (DoubleDataset) dataset;
+          List<Double> thisR = new ArrayList<Double>();
+          // start off with the row title
+          thisR.add(nd.rowTitles[i]);
 
-          Slice xSlice = null;
-          List<Slice> slices = new ArrayList<Slice>();
-          double[] aIndices = null;
-          double[] bIndices = null;
-
-          // ok, start by changing the table columns to the correct size
-          // sort out the axes
-          List<AxesMetadata> amList;
-          try
+          for (int j = 0; j < nd.colTitles.length; j++)
           {
-            amList = ds.getMetadata(AxesMetadata.class);
-            AxesMetadata am = amList.get(0);
-            ILazyDataset[] axes = am.getAxes();
-            if (axes.length != 2)
-            {
-              return null;
-            }
-            DoubleDataset aOne = (DoubleDataset) axes[0];
-            DoubleDataset aTwo = (DoubleDataset) axes[1];
-
-            aIndices = aOne.getData();
-            bIndices = aTwo.getData();
-
-            // ok, define this slice that represents the row
-            xSlice = new Slice(0, aIndices.length);
-
-            int ctr = 0;
-            for (@SuppressWarnings("unused") double y : bIndices)
-            {
-              Slice ySlice = new Slice(ctr++, ctr);
-              slices.add(ySlice);
-            }
-
-            // ok, now the rows
-            ds.getSliceView(xSlice);
-
+            thisR.add(nd.values[i][j]);
           }
-          catch (MetadataException e)
-          {
-            e.printStackTrace();
-          }
-
-          String[][] res = new String[aIndices.length + 1][bIndices.length + 1];
-
-          // start with the header row
-          String[] header = new String[aIndices.length + 1];
-          header[0] = "aa";
-          for (int i = 0; i < aIndices.length; i++)
-          {
-            header[i + 1] = "" + (int) aIndices[i];
-          }
-
-          res[0] = header;
-
-          // now the other rows
-          for (int i = 0; i < bIndices.length; i++)
-          {
-            String[] thisR = new String[bIndices.length + 1];
-            thisR[0] = "" + (int) bIndices[i];
-            for (int j = 0; j < aIndices.length; j++)
-            {
-              thisR[j + 1] = "" + (int) ds.getInt(j, i);
-            }
-            res[i + 1] = thisR;
-          }
-
-          return res;
+          data[i] = thisR;
         }
+
+        return data;
       }
 
       return null;
@@ -307,11 +276,24 @@ public class TabularView extends CoreAnalysisView
         // ok, it's a single two-dim dataset
         showTwoDim(res.get(0));
       }
+      else
+      {
+        clearTable();
+      }
     }
   }
 
   private void clearTable()
   {
+    // clear the columns
+    Table ctrl = table.getTable();
+    TableColumn[] cols = ctrl.getColumns();
+    for (final TableColumn thisC : cols)
+    {
+      thisC.dispose();
+    }
+    
+    table.setInput(null);
   }
 
   private void showTwoDim(IStoreItem item)
@@ -326,51 +308,41 @@ public class TabularView extends CoreAnalysisView
 
     final NumberDocument nd = (NumberDocument) item;
 
-    try
+    // sort out the columns
+    HContainer data = Helper2D.convert((DoubleDataset) nd.getDataset());
+
+    double[] aIndices = data.colTitles;
+
+    // clear the columns
+    Table ctrl = table.getTable();
+    TableColumn[] cols = ctrl.getColumns();
+    for (final TableColumn thisC : cols)
     {
-      // ok, start by changing the table columns to the correct size
-      // sort out the axes
-      final List<AxesMetadata> amList =
-          nd.getDataset().getMetadata(AxesMetadata.class);
-      AxesMetadata am = amList.get(0);
-      ILazyDataset[] axes = am.getAxes();
-      if (axes.length == 2)
-      {
-        DoubleDataset aOne = (DoubleDataset) axes[0];
-        DoubleDataset aTwo = (DoubleDataset) axes[1];
-
-        double[] aIndices = aOne.getData();
-        @SuppressWarnings("unused")
-        double[] bIndices = aTwo.getData();
-
-        // clear the columns
-        Table ctrl = table.getTable();
-        TableColumn[] cols = ctrl.getColumns();
-        for (final TableColumn thisC : cols)
-        {
-          thisC.dispose();
-        }
-
-        // ok. the columns
-        TableColumn header = new TableColumn(ctrl, SWT.LEFT);
-        header.setText("Angle");
-        header.pack();
-        for (double a : aIndices)
-        {
-          TableColumn tc = new TableColumn(ctrl, SWT.LEFT);
-          tc.setText("" + (int) a);
-          tc.pack();
-        }
-      }
+      thisC.dispose();
     }
-    catch (MetadataException e)
+
+    // ok. the columns
+    TableColumn header = new TableColumn(ctrl, SWT.RIGHT);
+    header.setText("Angle");
+    header.pack();
+    for (double a : aIndices)
     {
-      e.printStackTrace();
-      // ok, just drop out
+      TableColumn tc = new TableColumn(ctrl, SWT.LEFT);
+      tc.setText("" + (int) a);
+      tc.pack();
     }
 
     // finally get the data displayed
-    table.setInput(nd);
+    table.setInput(data);
+    
+    // lastly, pack the columns
+    cols = ctrl.getColumns();
+    for (final TableColumn thisC : cols)
+    {
+      thisC.pack();
+    }    
+    
+    title.pack();
   }
 
   @Override

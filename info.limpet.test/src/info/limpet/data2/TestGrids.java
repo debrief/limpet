@@ -326,9 +326,9 @@ public class TestGrids extends TestCase
     // put some data into them
     for (int i = 0; i < 25; i++)
     {
-      ang1.add(i * 10000, i * 13d);
-      ang2.add(i * 10000, i * 12d);
-      other1.add(i * 10000, 100 * Math.sin(i));
+      ang1.add(i * 10000, 10d * i);
+      ang2.add(i * 10000, 20d * i);
+      other1.add(i * 10000, 100d * i);
     }
     
     selection.clear();
@@ -350,7 +350,9 @@ public class TestGrids extends TestCase
     
     // and check it
     assertNotNull("Got object", res);
-//    assertNotNull("Has row titles", res.rowTitles);
+    assertNotNull("Has row titles", res.rowTitles);
+    assertNotNull("Has col titles", res.colTitles);
+    assertNotNull("Has data", res.values);
     
   }
   
