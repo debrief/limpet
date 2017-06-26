@@ -163,6 +163,8 @@ public class HeatmapView extends CoreAnalysisView
     //Create Intensity Graph
     final IntensityGraphFigure intensityGraph = new IntensityGraphFigure();
     
+    
+    
     //Create Simulation Data
     final short[] simuData = new short[DataWidth * DataHeight * 2];
     final short[] data = new short[DataWidth * DataHeight];
@@ -191,11 +193,17 @@ public class HeatmapView extends CoreAnalysisView
             +", " + width +", " + height +")");
       }
     }, null);
+    
+   
        
     // use LightweightSystem to create the bridge between SWT and draw2D
     final LightweightSystem lws = new LightweightSystem(canv);
     
     lws.setContents(intensityGraph);
+    
+    if(true)
+      return;
+     //folllwing code stop load app please review
 
     // Update the graph in another thread.
     ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
