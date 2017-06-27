@@ -24,6 +24,7 @@ import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.nebula.visualization.widgets.datadefinition.ColorMap;
 import org.eclipse.nebula.visualization.widgets.datadefinition.ColorMap.PredefinedColorMap;
 import org.eclipse.nebula.visualization.widgets.figures.IntensityGraphFigure;
+import org.eclipse.nebula.visualization.xygraph.linearscale.Range;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -122,11 +123,8 @@ public class HeatmapView extends CommonGridView
     final int rows = hData.rowTitles.length;
     final int cols = hData.colTitles.length;
 
-    final int DataHeight = 1024;
-    final int DataWidth = 1024;
-
-    final double rowStep = DataHeight / rows;
-    final double colStep = DataWidth / cols;
+    final int DataHeight = rows;
+    final int DataWidth = cols;
 
     final double[] data = new double[DataWidth * DataHeight];
 
@@ -134,9 +132,7 @@ public class HeatmapView extends CommonGridView
     {
       for (int j = 0; j < DataWidth; j++)
       {
-        final int thisI = (int) (i / rowStep);
-        final int thisJ = (int) (j / colStep);
-        final double thisVal = hData.values[thisI][thisJ];
+        final double thisVal = hData.values[i][j];
         data[i + j * DataHeight] = thisVal;
       }
     }
@@ -157,6 +153,14 @@ public class HeatmapView extends CommonGridView
     intensityGraph
         .setColorMap(new ColorMap(PredefinedColorMap.JET, true, true));
     intensityGraph.setDataArray(data);
+
+    // sort out the axis ranges
+    intensityGraph.getXAxis().setRange(
+        new Range(hData.rowTitles[0],
+            hData.rowTitles[hData.rowTitles.length - 1]));
+    intensityGraph.getYAxis().setRange(
+        new Range(hData.colTitles[0],
+            hData.colTitles[hData.colTitles.length - 1]));
 
     // parentCanvas.pack();
     titleLbl.pack();
