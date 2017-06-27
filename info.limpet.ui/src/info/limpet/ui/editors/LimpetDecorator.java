@@ -14,15 +14,17 @@
  *****************************************************************************/
 package info.limpet.ui.editors;
 
-import javax.measure.unit.SI;
-
 import info.limpet.ICommand;
 import info.limpet.IDocument;
+import info.limpet.impl.Document;
 import info.limpet.ui.Activator;
-import info.limpet.ui.data_provider.data.DocumentWrapper;
 import info.limpet.ui.data_provider.data.CommandWrapper;
+import info.limpet.ui.data_provider.data.DocumentWrapper;
 import info.limpet.ui.data_provider.data.GroupWrapper;
 
+import javax.measure.unit.SI;
+
+import org.eclipse.january.dataset.Dataset;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.jface.viewers.ILabelProviderListener;
@@ -123,7 +125,7 @@ public class LimpetDecorator implements ILightweightLabelDecorator
 
     boolean in = coll.getInputs() != null && coll.getInputs().size() > 0;
     boolean out = coll.getOutputs() != null && coll.getOutputs().size() > 0;
-    decorateInOut(decoration, in, out);
+    decorateInOut(decoration, in, out, IDecoration.TOP_RIGHT);
 
     // also apply a decoration to indicate that the symbol is dynamically updating
     if (coll.getDynamic())
@@ -132,22 +134,38 @@ public class LimpetDecorator implements ILightweightLabelDecorator
     }
   }
 
-  protected void decorateWrapper(DocumentWrapper element,
-      IDecoration decoration)
+  private int dimensionsFor(IDocument<?> doc)
+  {
+    int res = 0;
+
+    if (doc instanceof Document)
+    {
+      Document<?> thisC = (Document<?>) doc;
+      Dataset d = (Dataset) thisC.getDataset();
+      int[] dims = d.getShape();
+      res = dims.length;
+    }
+
+    return res;
+  }
+
+  protected void
+      decorateWrapper(DocumentWrapper element, IDecoration decoration)
   {
     final IDocument<?> coll = element.getDocument();
     boolean out = coll.getPrecedent() != null;
     boolean in =
         coll.getDependents() != null && coll.getDependents().size() > 0;
-    decorateInOut(decoration, in, out);
+    decorateInOut(decoration, in, out, IDecoration.TOP_RIGHT);
 
     if (coll.isIndexed())
     {
-      if(coll.getIndexUnits().getDimension().equals(SI.SECOND.getDimension()))
+      if (coll.getIndexUnits().getDimension().equals(SI.SECOND.getDimension()))
       {
         decoration.addOverlay(TIME, IDecoration.BOTTOM_RIGHT);
       }
-      else if(coll.getIndexUnits().getDimension().equals(SI.METRE.getDimension()))
+      else if (coll.getIndexUnits().getDimension().equals(
+          SI.METRE.getDimension()))
       {
         decoration.addOverlay(LENGTH, IDecoration.BOTTOM_RIGHT);
       }
@@ -156,21 +174,43 @@ public class LimpetDecorator implements ILightweightLabelDecorator
     {
       decoration.addOverlay(SINGLE, IDecoration.BOTTOM_LEFT);
     }
+
+    // see if multi-dimensional
+    decorateDims(decoration, dimensionsFor(coll), IDecoration.TOP_LEFT);
+
   }
 
-  private void decorateInOut(IDecoration decoration, boolean in, boolean out)
+  /**
+   * indicate if this is a multi-dimensional dataset
+   * 
+   * @param decoration
+   * @param dims
+   *          how many dims there are
+   * @param quadrant
+   *          where to put the icon
+   */
+  private void decorateDims(IDecoration decoration, int dims, int quadrant)
+  {
+    if (dims > 1)
+    {
+      decoration.addOverlay(TWO_WAY_ARROW, quadrant);
+    }
+  }
+
+  private void decorateInOut(IDecoration decoration, boolean in, boolean out,
+      int quadrant)
   {
     if (in && out)
     {
-      decoration.addOverlay(TWO_WAY_ARROW, IDecoration.TOP_RIGHT);
+      decoration.addOverlay(TWO_WAY_ARROW, quadrant);
     }
     else if (out)
     {
-      decoration.addOverlay(LEFT_ARROW, IDecoration.TOP_RIGHT);
+      decoration.addOverlay(LEFT_ARROW, quadrant);
     }
     else if (in)
     {
-      decoration.addOverlay(RIGHT_ARROW, IDecoration.TOP_RIGHT);
+      decoration.addOverlay(RIGHT_ARROW, quadrant);
     }
   }
 }

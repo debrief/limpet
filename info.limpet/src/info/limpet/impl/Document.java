@@ -33,13 +33,13 @@ abstract public class Document<T extends Object> implements IDocument<T>
    */
   protected IDataset dataset;
   final protected ICommand predecessor;
-  private List<IChangeListener> changeListeners =
+  final private List<IChangeListener> changeListeners =
       new ArrayList<IChangeListener>();
   private transient List<IChangeListener> transientChangeListeners =
       new ArrayList<IChangeListener>();
   private IStoreGroup parent;
   final private UUID uuid;
-  private List<ICommand> dependents = new ArrayList<ICommand>();
+  final private List<ICommand> dependents = new ArrayList<ICommand>();
 
   private Unit<?> indexUnits;
 
@@ -87,6 +87,8 @@ abstract public class Document<T extends Object> implements IDocument<T>
   {
     this.dataset = dataset;
   }
+  
+  
 
   /*
    * (non-Javadoc)
@@ -96,22 +98,30 @@ abstract public class Document<T extends Object> implements IDocument<T>
   @Override
   public void beingDeleted()
   {
-    if (changeListeners != null)
+    final List<IChangeListener> listeners = getListeners();
+    
+    for(final IChangeListener s: listeners)
     {
-      // tell any standard listeners
-      for (IChangeListener thisL : changeListeners)
-      {
-        thisL.collectionDeleted(this);
-      }
+      s.collectionDeleted(this);
     }
+  }
 
-    // now tell the dependents
-    Iterator<ICommand> iter = dependents.iterator();
-    while (iter.hasNext())
+  /** collate a list of the listeners for this document
+   * 
+   * @return
+   */
+  private List<IChangeListener> getListeners()
+  {
+    final List<IChangeListener> listeners = new ArrayList<IChangeListener>();
+    listeners.addAll(changeListeners);
+    listeners.addAll(dependents);
+    // since the TCLs are (by definition) transient, we may not have any 
+    // (such as after file restore). So, first check that they're present
+    if(transientChangeListeners != null)
     {
-      ICommand iC = (ICommand) iter.next();
-      iC.collectionDeleted(this);
+      listeners.addAll(transientChangeListeners);
     }
+    return listeners;
   }
 
   /*
@@ -135,7 +145,7 @@ abstract public class Document<T extends Object> implements IDocument<T>
   public void setName(String name)
   {
     dataset.setName(name);
-    
+
     fireDataChanged();
   }
 
@@ -180,7 +190,7 @@ abstract public class Document<T extends Object> implements IDocument<T>
   @Override
   public void addTransientChangeListener(IChangeListener listener)
   {
-    // we may need to re-create it, if we've been restored from fime
+    // we may need to re-create it, if we've been restored from file
     if (transientChangeListeners == null)
     {
       transientChangeListeners = new ArrayList<IChangeListener>();
@@ -214,13 +224,22 @@ abstract public class Document<T extends Object> implements IDocument<T>
   @Override
   public void fireDataChanged()
   {
-    for (final IChangeListener thisL : changeListeners)
+    final List<IChangeListener> listeners = getListeners();    
+    for(final IChangeListener s: listeners)
     {
-      thisL.dataChanged(this);
+      s.dataChanged(this);
     }
-    for (final ICommand thisL : dependents)
+  }
+
+  
+  
+  @Override
+  public void fireMetadataChanged()
+  {
+    final List<IChangeListener> listeners = getListeners();
+    for(final IChangeListener s: listeners)
     {
-      thisL.dataChanged(this);
+      s.metadataChanged(this);
     }
   }
 
@@ -387,7 +406,8 @@ abstract public class Document<T extends Object> implements IDocument<T>
     return getName();
   }
 
-  /** produce this document as a listing
+  /**
+   * produce this document as a listing
    * 
    * @return
    */

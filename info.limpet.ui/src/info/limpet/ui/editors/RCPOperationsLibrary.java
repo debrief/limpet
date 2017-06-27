@@ -9,6 +9,7 @@ import info.limpet.ui.operations.ShowInStackedChartsOverview;
 import info.limpet.ui.operations.ShowInTacticalOverview;
 import info.limpet.ui.range_slider.RangeSliderView;
 import info.limpet.ui.time_frequency.TimeFrequencyView;
+import info.limpet.ui.xy_plot.HeatmapView;
 import info.limpet.ui.xy_plot.XyPlotView;
 
 import java.util.ArrayList;
@@ -17,15 +18,16 @@ import java.util.List;
 
 public class RCPOperationsLibrary
 {
-  
-  /** protected constructor, to prevent accidental initialisation
+
+  /**
+   * protected constructor, to prevent accidental initialisation
    * 
    */
   protected RCPOperationsLibrary()
   {
-    
+
   }
-  
+
   public static HashMap<String, List<IOperation>> getOperations()
   {
     HashMap<String, List<IOperation>> res =
@@ -49,6 +51,15 @@ public class RCPOperationsLibrary
                 selection));
       }
     });
+    analysis.add(new ShowInNamedView("Show in Heatmap View", HeatmapView.ID)
+    {
+      protected boolean appliesTo(List<IStoreItem> selection)
+      {
+        return getTests().nonEmpty(selection)
+            && (getTests().allQuantity(selection))
+            && getTests().allTwoDim(selection) && selection.size() == 1;
+      }
+    });
     analysis.add(new ShowInNamedView("Show in Time Frequency View",
         TimeFrequencyView.ID));
     analysis.add(new ShowInNamedView("Show in Data Frequency View",
@@ -58,7 +69,7 @@ public class RCPOperationsLibrary
         .add(new ShowInNamedView("Show in Range Slider", RangeSliderView.ID));
     analysis.add(new ShowInTacticalOverview("Show in Tactical Overview"));
     analysis.add(new ShowInStackedChartsOverview("Show in Stacked Charts"));
-// 
+    //
     // TODO: create Limpet2 versions of the above actions
     return analysis;
   }

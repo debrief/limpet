@@ -16,10 +16,13 @@ package info.limpet.data2;
 
 import static javax.measure.unit.SI.METRE;
 import static javax.measure.unit.SI.SECOND;
+import info.limpet.IChangeListener;
 import info.limpet.ICommand;
 import info.limpet.IContext;
 import info.limpet.IDocument;
+import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
+import info.limpet.impl.Document;
 import info.limpet.impl.LocationDocument;
 import info.limpet.impl.LocationDocumentBuilder;
 import info.limpet.impl.MockContext;
@@ -39,6 +42,7 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 import javax.measure.quantity.Dimensionless;
 import javax.measure.quantity.Velocity;
@@ -80,6 +84,89 @@ public class TestCollections extends TestCase
     assertEquals("correct number of samples", 10, strDoc.size());
   }
 
+  public void testDocumentListeners()
+  {
+    LocationDocumentBuilder ldb =
+        new LocationDocumentBuilder("name", null, SI.METER);
+    ldb.add(12, new Point2D.Double(12, 13));
+    ldb.add(14, new Point2D.Double(15, 23));
+
+    LocationDocument locDoc = ldb.toDocument();
+
+    final List<String> dataChangedMsgs = new ArrayList<String>();
+    final List<String> metadataChangedMsgs = new ArrayList<String>();
+    final List<String> deletedMsgs = new ArrayList<String>();
+
+    IChangeListener listOne = new IChangeListener()
+    {
+
+      @Override
+      public void metadataChanged(IStoreItem subject)
+      {
+        metadataChangedMsgs.add("listOne");
+      }
+
+      @Override
+      public void dataChanged(IStoreItem subject)
+      {
+        dataChangedMsgs.add("listOne");
+      }
+
+      @Override
+      public void collectionDeleted(IStoreItem subject)
+      {
+        deletedMsgs.add("listOne");
+      }
+    };
+    ICommand command =
+        new DummyCommand(metadataChangedMsgs, dataChangedMsgs, deletedMsgs);
+    IChangeListener transientL = new IChangeListener()
+    {
+
+      @Override
+      public void metadataChanged(IStoreItem subject)
+      {
+        metadataChangedMsgs.add("tList");
+      }
+
+      @Override
+      public void dataChanged(IStoreItem subject)
+      {
+        dataChangedMsgs.add("listOne");
+      }
+
+      @Override
+      public void collectionDeleted(IStoreItem subject)
+      {
+        deletedMsgs.add("listOne");
+      }
+    };
+    locDoc.addDependent(command);
+    locDoc.addTransientChangeListener(transientL);
+    locDoc.addChangeListener(listOne);
+
+    // ok, check the updates happen
+    locDoc.fireDataChanged();
+
+    assertEquals(3, dataChangedMsgs.size());
+    assertEquals(0, deletedMsgs.size());
+    assertEquals(0, metadataChangedMsgs.size());
+
+    // and the metadata change - oops, we don't have an event for it.
+    locDoc.fireMetadataChanged();
+    assertEquals(3, dataChangedMsgs.size());
+    assertEquals(0, deletedMsgs.size());
+    assertEquals(3, metadataChangedMsgs.size());
+
+    // lastly, check delete
+    locDoc.beingDeleted();
+
+    assertEquals(3, dataChangedMsgs.size());
+    assertEquals(3, deletedMsgs.size());
+    assertEquals(3, metadataChangedMsgs.size());
+
+  }
+
   public void testStoreWrongNumberType()
   {
     LocationDocumentBuilder ldb =
@@ -105,7 +192,7 @@ public class TestCollections extends TestCase
     }
     assertTrue("the expected exception got caught", thrown);
   }
-  
+
   public void testStoreWrongLocationType()
   {
     NumberDocumentBuilder ldb =
@@ -157,7 +244,7 @@ public class TestCollections extends TestCase
     }
     assertTrue("the expected exception got caught", thrown);
   }
-  
+
   public void testTemporalQuantityInterp()
   {
     NumberDocumentBuilder speeds =
@@ -246,6 +333,174 @@ public class TestCollections extends TestCase
         InterpMethod.Linear), 0.001);
     assertNull("returned null for out of intersection", tq.interpolateValue(
         420, InterpMethod.Linear));
+  }
+
+  private static class DummyCommand implements ICommand
+  {
+
+    final private List<String> metadataChangedMsgs;
+    final private List<String> dataChangedMsgs;
+    final private List<String> deletedMsgs;
+
+    public DummyCommand(List<String> meta, List<String> data,
+        List<String> deleted)
+    {
+      metadataChangedMsgs = meta;
+      dataChangedMsgs = data;
+      deletedMsgs = deleted;
+    }
+
+    @Override
+    public void setParent(IStoreGroup parent)
+    {
+      // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void removeTransientChangeListener(
+        IChangeListener collectionChangeListener)
+    {
+      // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void removeChangeListener(IChangeListener listener)
+    {
+      // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public UUID getUUID()
+    {
+      // TODO Auto-generated method stub
+      return null;
+    }
+
+    @Override
+    public IStoreGroup getParent()
+    {
+      // TODO Auto-generated method stub
+      return null;
+    }
+
+    @Override
+    public String getName()
+    {
+      // TODO Auto-generated method stub
+      return null;
+    }
+
+    @Override
+    public void fireDataChanged()
+    {
+      // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void addTransientChangeListener(IChangeListener listener)
+    {
+      // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void addChangeListener(IChangeListener listener)
+    {
+      // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void metadataChanged(IStoreItem subject)
+    {
+      metadataChangedMsgs.add("command");
+    }
+
+    @Override
+    public void dataChanged(IStoreItem subject)
+    {
+      dataChangedMsgs.add("command");
+    }
+
+    @Override
+    public void collectionDeleted(IStoreItem subject)
+    {
+      deletedMsgs.add("command");
+    }
+
+    @Override
+    public void undo()
+    {
+      // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void setDynamic(boolean dynamic)
+    {
+      // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void redo()
+    {
+      // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public List<Document<?>> getOutputs()
+    {
+      // TODO Auto-generated method stub
+      return null;
+    }
+
+    @Override
+    public List<IStoreItem> getInputs()
+    {
+      // TODO Auto-generated method stub
+      return null;
+    }
+
+    @Override
+    public boolean getDynamic()
+    {
+      // TODO Auto-generated method stub
+      return false;
+    }
+
+    @Override
+    public String getDescription()
+    {
+      // TODO Auto-generated method stub
+      return null;
+    }
+
+    @Override
+    public void execute()
+    {
+      // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public boolean canUndo()
+    {
+      // TODO Auto-generated method stub
+      return false;
+    }
+
+    @Override
+    public boolean canRedo()
+    {
+      // TODO Auto-generated method stub
+      return false;
+    }
   }
 
   public void testMathOperators()
