@@ -14,46 +14,27 @@
  *****************************************************************************/
 package info.limpet.ui.xy_plot;
 
-import info.limpet.IDocument;
 import info.limpet.IStoreItem;
 import info.limpet.impl.NumberDocument;
 import info.limpet.operations.CollectionComplianceTests;
-import info.limpet.ui.Activator;
-import info.limpet.ui.PlottingHelpers;
 import info.limpet.ui.core_view.CoreAnalysisView;
+import info.limpet.ui.xy_plot.Helper2D.HContainer;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
 
-import javax.measure.unit.Unit;
-
-import org.eclipse.draw2d.Figure;
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.eclipse.draw2d.LightweightSystem;
-import org.eclipse.january.MetadataException;
 import org.eclipse.january.dataset.DoubleDataset;
-import org.eclipse.january.dataset.ILazyDataset;
-import org.eclipse.january.metadata.AxesMetadata;
-import org.eclipse.jface.action.Action;
 import org.eclipse.nebula.visualization.widgets.datadefinition.ColorMap;
 import org.eclipse.nebula.visualization.widgets.datadefinition.ColorMap.PredefinedColorMap;
 import org.eclipse.nebula.visualization.widgets.figures.IntensityGraphFigure;
-import org.eclipse.nebula.visualization.widgets.figures.IntensityGraphFigure.IROIListener;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IActionBars;
-import org.swtchart.Chart;
-import org.swtchart.IAxis;
-import org.swtchart.ILineSeries;
-import org.swtchart.ILineSeries.PlotSymbolType;
-import org.swtchart.ISeries;
-import org.swtchart.ISeries.SeriesType;
-import org.swtchart.LineStyle;
 
 /**
  * display analysis overview of selection
@@ -71,9 +52,9 @@ public class HeatmapView extends CoreAnalysisView
   private final CollectionComplianceTests aTests =
       new CollectionComplianceTests();
 
-  private Chart chart;
-
-  private Action switchAxes;
+  private IntensityGraphFigure intensityGraph;
+  private Canvas parentCanvas;
+  private Text title;
 
   public HeatmapView()
   {
@@ -81,322 +62,8 @@ public class HeatmapView extends CoreAnalysisView
   }
 
   @Override
-  protected void makeActions()
-  {
-    super.makeActions();
-
-    switchAxes = new Action("Switch axes", SWT.TOGGLE)
-    {
-      @Override
-      public void run()
-      {
-        if (switchAxes.isChecked())
-        {
-          chart.setOrientation(SWT.VERTICAL);
-        }
-        else
-        {
-          chart.setOrientation(SWT.HORIZONTAL);
-        }
-      }
-    };
-    switchAxes.setText("Switch axes");
-    switchAxes.setToolTipText("Switch X and Y axes");
-    switchAxes.setImageDescriptor(Activator
-        .getImageDescriptor("icons/angle.png"));
-
-  }
-
-  @Override
-  protected void contributeToActionBars()
-  {
-    super.contributeToActionBars();
-    IActionBars bars = getViewSite().getActionBars();
-    bars.getToolBarManager().add(switchAxes);
-    bars.getMenuManager().add(switchAxes);
-  }
-
-  /**
-   * This is a callback that will allow us to create the viewer and initialize it.
-   */
-  @Override
-  public void createPartControl(Composite parent)
-  {
-    makeActions();
-    contributeToActionBars();
-//
-//    // create a chart
-//    chart = new InteractiveChart(parent, SWT.NONE);
-//
-//    // set titles
-//    chart.getAxisSet().getXAxis(0).getTitle().setText("Value");
-//    chart.getAxisSet().getYAxis(0).getTitle().setText("Value");
-//    chart.getTitle().setVisible(false);
-//
-//    // adjust the axis range
-//    chart.getAxisSet().adjustRange();
-//
-//    chart.getLegend().setPosition(SWT.BOTTOM);
-//
-//    // register as selection listener
-//    setupListener();
-//
-//    Canvas can = new Canvas(parent, SWT.NONE);
-//    
-    doTest(parent);
-
-  //  IntensityGraphExample.main(new String[]{""});
-    
-  }
-  private int count = 0;
- 
-  private void doTest(Composite parent)
-  {
-    final int DataHeight = 1024;
-    final int DataWidth = 1280;
-
-    Figure ff = new Figure(){};
-    System.out.println(ff);
-
-    Canvas canv = new Canvas(parent, SWT.NULL);
-    
-    //Create Intensity Graph
-    final IntensityGraphFigure intensityGraph = new IntensityGraphFigure();
-    
-    
-    
-    //Create Simulation Data
-    final short[] simuData = new short[DataWidth * DataHeight * 2];
-    final short[] data = new short[DataWidth * DataHeight];
-    int seed = count++;
-    for (int i = 0; i < DataHeight; i++) {
-      for (int j = 0; j < DataWidth; j++) {
-        int x = j - DataWidth;
-        int y = i - DataHeight;
-        int p = (int) Math.sqrt(x * x + y * y);
-        simuData[i * DataWidth + j] = (short) (Math.sin(p * 2 * Math.PI
-            / DataWidth + seed * Math.PI / 100) * 100);
-      }
-    }
-
-    //Configure
-    intensityGraph.setMax(100);
-    intensityGraph.setMin(-100);
-    intensityGraph.setDataHeight(DataHeight);
-    intensityGraph.setDataWidth(DataWidth);
-    intensityGraph.setColorMap(new ColorMap(PredefinedColorMap.JET, true,true));
-    intensityGraph.addROI("ROI 1",  new IROIListener() {
-      
-      @Override
-      public void roiUpdated(int xIndex, int yIndex, int width, int height) {
-        System.out.println("Region of Interest: (" + xIndex + ", " + yIndex 
-            +", " + width +", " + height +")");
-      }
-    }, null);
-    
-   
-       
-    // use LightweightSystem to create the bridge between SWT and draw2D
-    final LightweightSystem lws = new LightweightSystem(canv);
-    
-    lws.setContents(intensityGraph);
-    
-    if(true)
-      return;
-     //folllwing code stop load app please review
-
-    // Update the graph in another thread.
-    ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-
-    ScheduledFuture<?> future = scheduler.scheduleAtFixedRate(
-        new Runnable() {
-
-          @Override
-          public void run() {
-            System.arraycopy(simuData, count % DataWidth, data, 0,
-                DataWidth * DataHeight);
-
-            Display.getDefault().asyncExec(new Runnable() {
-
-              public void run() {
-                count++;
-                intensityGraph.setDataArray(simuData);
-              }
-            });
-          }
-        }, 100, 10, TimeUnit.MILLISECONDS);
-    
-    Display display = Display.getDefault();
-    while (!canv.isDisposed()) {
-      if (!display.readAndDispatch())
-        display.sleep();
-    }
-    future.cancel(true);
-    scheduler.shutdown();
-  }
-  
-
-  @Override
-  public void display(List<IStoreItem> res)
-  {
-    if (res.size() == 0)
-    {
-      chart.setVisible(false);
-    }
-    else
-    {
-      // check they're all one dim
-      if(aTests.allTwoDim(res) && res.size() == 1)
-      {
-        // ok, it's a single two-dim dataset
-        showTwoDim(res.get(0));
-      }
-    }
-  }
-
-  private void showTwoDim(IStoreItem item)
-  {
-    NumberDocument thisQ = (NumberDocument) item;
-
-    clearGraph();
-
-    String seriesName = thisQ.getName();
-    final ILineSeries newSeries =
-        (ILineSeries) chart.getSeriesSet().createSeries(SeriesType.LINE,
-            seriesName);
-
-    final PlotSymbolType theSym;
-    // if it's a singleton, show the symbol
-    // markers
-    if (thisQ.size() > 100 || thisQ.size() == 1)
-    {
-      theSym = PlotSymbolType.NONE;
-    }
-    else
-    {
-      theSym = PlotSymbolType.CIRCLE;
-    }
-
-    newSeries.setSymbolType(theSym);
-    newSeries.setLineStyle(LineStyle.NONE);
-    newSeries.setSymbolColor(PlottingHelpers.colorFor(seriesName));
-
-    // ok, show this 2d dataset
-    NumberDocument nd = (NumberDocument) item;
-
-    try
-    {
-      // sort out the axes
-      final List<AxesMetadata> amList =
-          nd.getDataset().getMetadata(AxesMetadata.class);
-      AxesMetadata am = amList.get(0);
-      ILazyDataset[] axes = am.getAxes();
-      if (axes.length == 2)
-      {
-        DoubleDataset aOne = (DoubleDataset) axes[0];
-        DoubleDataset aTwo = (DoubleDataset) axes[1];
-
-        double[] aIndices = aOne.getData();
-        double[] bIndices = aTwo.getData();
-
-        // loop through the data
-        List<Double> xValues = new ArrayList<Double>();
-        List<Double> yValues = new ArrayList<Double>();
-
-        final DoubleDataset dataset = (DoubleDataset) nd.getDataset();
-
-        // process the data
-        for (int i = 0; i < aIndices.length; i++)
-        {
-          for (int j = 0; j < bIndices.length; j++)
-          {
-            Double thisVal = dataset.get(i, j);
-            if (!thisVal.equals(Double.NaN))
-            {
-              xValues.add(aIndices[i]);
-              yValues.add(bIndices[j]);
-            }
-          }
-        }
-
-        final double[] xArr = toArray(xValues);
-        final double[] yArr = toArray(yValues);
-
-        newSeries.setXSeries(xArr);
-        newSeries.setYSeries(yArr);
-
-        chart.getAxisSet().getYAxes()[0].getTitle().setText(
-            "" + nd.getIndexUnits());
-        chart.getAxisSet().getXAxes()[0].getTitle().setText(
-            "" + nd.getIndexUnits());
-
-        // adjust the axis range
-        chart.getAxisSet().adjustRange();
-
-      }
-    }
-    catch (MetadataException e)
-    {
-      e.printStackTrace();
-      // ok, just drop out
-    }
-  }
-
-  private double[] toArray(List<Double> xData)
-  {
-    double[] res = new double[xData.size()];
-    for (int i = 0; i < xData.size(); i++)
-    {
-      res[i] = xData.get(i);
-    }
-    return res;
-  }
-
-  private String seriesNameFor(NumberDocument thisQ, final Unit<?> theseUnits)
-  {
-    String seriesName = thisQ.getName() + " (" + theseUnits + ")";
-    return seriesName;
-  }
-
-  private void clearGraph()
-  {
-    // clear the graph
-    ISeries[] series = chart.getSeriesSet().getSeries();
-    for (int i = 0; i < series.length; i++)
-    {
-      ISeries iSeries = series[i];
-      chart.getSeriesSet().deleteSeries(iSeries.getId());
-
-      // and clear any series
-      IAxis[] yA = chart.getAxisSet().getYAxes();
-      for (int j = 1; j < yA.length; j++)
-      {
-        IAxis iAxis = yA[j];
-        chart.getAxisSet().deleteYAxis(iAxis.getId());
-      }
-    }
-  }
-
-  private void clearChart()
-  {
-    // clear the graph
-    ISeries[] series = chart.getSeriesSet().getSeries();
-    for (int i = 0; i < series.length; i++)
-    {
-      ISeries iSeries = series[i];
-      chart.getSeriesSet().deleteSeries(iSeries.getId());
-    }
-  }
-
-  @Override
-  public void setFocus()
-  {
-    chart.setFocus();
-  }
-
-  @Override
-  protected boolean appliesToMe(List<IStoreItem> res,
-      CollectionComplianceTests tests)
+  protected boolean appliesToMe(final List<IStoreItem> res,
+      final CollectionComplianceTests tests)
   {
     final boolean allNonQuantity = tests.allNonQuantity(res);
     final boolean allCollections = tests.allCollections(res);
@@ -406,6 +73,85 @@ public class HeatmapView extends CoreAnalysisView
     return allCollections && suitableIndex && (allQuantity || allNonQuantity);
   }
 
+  private void clearChart()
+  {
+    intensityGraph.setDataArray(new double[]
+    {});
+  }
+
+  @Override
+  protected void contributeToActionBars()
+  {
+    super.contributeToActionBars();
+    @SuppressWarnings("unused")
+    final IActionBars bars = getViewSite().getActionBars();
+  }
+
+  /**
+   * This is a callback that will allow us to create the viewer and initialize it.
+   */
+  @Override
+  public void createPartControl(final Composite parent)
+  {
+    // Create the composite to hold the controls
+    final Composite composite = new Composite(parent, SWT.NONE);
+    composite.setLayout(new GridLayout(1, false));
+
+    // Create the combo to hold the team names
+    title = new Text(composite, SWT.NONE);
+    title.setText(" ");
+
+    // insert the holder for the heatmap
+    parentCanvas = new Canvas(composite, SWT.NULL);
+    parentCanvas.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+    // Create Intensity Graph
+    intensityGraph = new IntensityGraphFigure();
+
+    // use LightweightSystem to create the bridge between SWT and draw2D
+    final LightweightSystem lws = new LightweightSystem(parentCanvas);
+    lws.setContents(intensityGraph);
+
+    // ok, layout the panel
+    parentCanvas.pack();
+
+    makeActions();
+    contributeToActionBars();
+
+    // register as selection listener
+    setupListener();
+  }
+
+  @Override
+  protected void datasetDataChanged(final IStoreItem subject)
+  {
+    showTwoDim(subject);
+  }
+
+  @Override
+  public void display(final List<IStoreItem> res)
+  {
+    // anything selected?
+    if (res.size() == 0)
+    {
+      clearChart();
+    }
+    else
+    {
+      // check they're all one dim
+      if (aTests.allTwoDim(res) && res.size() == 1)
+      {
+        // ok, it's a single two-dim dataset
+        showTwoDim(res.get(0));
+      }
+      else
+      {
+        // nope, clear it
+        clearChart();
+      }
+    }
+  }
+
   @Override
   protected String getTextForClipboard()
   {
@@ -413,30 +159,71 @@ public class HeatmapView extends CoreAnalysisView
   }
 
   @Override
-  protected void datasetDataChanged(IStoreItem subject)
+  protected void makeActions()
   {
-    final String name;
-    IDocument<?> coll = (IDocument<?>) subject;
-    if (coll.isQuantity())
+    super.makeActions();
+  }
+
+  @Override
+  public void setFocus()
+  {
+    parentCanvas.setFocus();
+  }
+
+  private void showTwoDim(final IStoreItem item)
+  {
+    final NumberDocument thisQ = (NumberDocument) item;
+
+    clearChart();
+
+    final String seriesName = thisQ.getName();
+    title.setText(seriesName + " (" + thisQ.getUnits().toString() + ")");
+
+    // get the data
+    final HContainer hData =
+        Helper2D.convert((DoubleDataset) thisQ.getDataset());
+
+    final int rows = hData.rowTitles.length;
+    final int cols = hData.colTitles.length;
+
+    final int DataHeight = 1024;
+    final int DataWidth = 1024;
+
+    final double rowStep = DataHeight / rows;
+    final double colStep = DataWidth / cols;
+
+    final double[] data = new double[DataWidth * DataHeight];
+
+    for (int i = 0; i < DataHeight; i++)
     {
-      NumberDocument cq = (NumberDocument) coll;
-      Unit<?> units = cq.getUnits();
-      name = seriesNameFor(cq, units);
-    }
-    else
-    {
-      name = coll.getName();
+      for (int j = 0; j < DataWidth; j++)
+      {
+        final int thisI = (int) (i / rowStep);
+        final int thisJ = (int) (j / colStep);
+        final double thisVal = hData.values[thisI][thisJ];
+        data[i + j * DataHeight] = thisVal;
+      }
     }
 
-    ISeries match = chart.getSeriesSet().getSeries(name);
-    if (match != null)
+    final DescriptiveStatistics stats = new DescriptiveStatistics(data);
+
+    if(Double.isNaN(stats.getMax()))
     {
-      chart.getSeriesSet().deleteSeries(name);
+      // ok, drop out, we haven't got any data
+      return;
     }
-    else
-    {
-      clearChart();
-    }
+    
+    // Configure
+    intensityGraph.setMax(stats.getMax());
+    intensityGraph.setMin(stats.getMin());
+    intensityGraph.setDataHeight(DataHeight);
+    intensityGraph.setDataWidth(DataWidth);
+    intensityGraph
+        .setColorMap(new ColorMap(PredefinedColorMap.JET, true, true));
+    intensityGraph.setDataArray(data);
+
+    // parentCanvas.pack();
+    title.pack();
   }
 
 }
