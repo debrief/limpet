@@ -84,11 +84,13 @@ public class TabularView extends CommonGridView
     @Override
     public void addListener(final ILabelProviderListener listener)
     {
+      // don't bother
     }
 
     @Override
     public void dispose()
     {
+      // don't bother
     }
 
     @Override
@@ -133,6 +135,7 @@ public class TabularView extends CommonGridView
     @Override
     public void removeListener(final ILabelProviderListener listener)
     {
+      // don't bother
     }
   }
 
