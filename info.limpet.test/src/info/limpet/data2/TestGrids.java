@@ -6,11 +6,14 @@ import info.limpet.IStoreItem;
 import info.limpet.analysis.QuantityFrequencyBins;
 import info.limpet.impl.Document;
 import info.limpet.impl.MockContext;
+import info.limpet.impl.NumberDocument;
 import info.limpet.impl.NumberDocumentBuilder;
 import info.limpet.impl.SampleData;
 import info.limpet.impl.StoreGroup;
 import info.limpet.operations.grid.GenerateGrid;
 import info.limpet.operations.grid.GenerateGrid.GenerateGridCommand;
+import info.limpet.ui.xy_plot.Helper2D;
+import info.limpet.ui.xy_plot.Helper2D.HContainer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +22,7 @@ import javax.measure.unit.SI;
 
 import junit.framework.TestCase;
 
+import org.eclipse.january.dataset.DoubleDataset;
 import org.junit.Test;
 
 public class TestGrids extends TestCase
@@ -297,4 +301,59 @@ public class TestGrids extends TestCase
     assertEquals("Perm created", 2, ops.size());
   }
 
+  @Test
+  public void testHelper()
+  {
+    // do the test document
+    
+    GenerateGrid gen = new GenerateGrid();
+    StoreGroup store = new StoreGroup("Store");
+    List<IStoreItem> selection = new ArrayList<IStoreItem>();
+
+    List<ICommand> ops = gen.actionsFor(selection, store, context);
+    assertEquals("empty ops", 0, ops.size());
+
+    // ok, create some real docs
+    NumberDocumentBuilder ang1 =
+        new NumberDocumentBuilder("ang_1", SampleData.DEGREE_ANGLE, null,
+            SI.SECOND);
+    NumberDocumentBuilder ang2 =
+        new NumberDocumentBuilder("ang_2", SampleData.DEGREE_ANGLE, null,
+            SI.SECOND);
+    NumberDocumentBuilder other1 =
+        new NumberDocumentBuilder("other1", SI.METER, null, SI.SECOND);
+
+    // put some data into them
+    for (int i = 0; i < 25; i++)
+    {
+      ang1.add(i * 10000, 10d * i);
+      ang2.add(i * 10000, 20d * i);
+      other1.add(i * 10000, 100d * i);
+    }
+    
+    selection.clear();
+    selection.add(ang1.toDocument());
+    selection.add(ang2.toDocument());
+    selection.add(other1.toDocument());
+
+    ops = gen.actionsFor(selection, store, context);
+    assertEquals("Perm created", 2, ops.size());
+
+    // ok, now execute it
+    final GenerateGridCommand thisOp2 = (GenerateGridCommand) ops.get(0);
+    thisOp2.execute();
+    assertEquals("output produced", 1, thisOp2.getOutputs().size());
+    Document<?> output = thisOp2.getOutputs().get(0);
+    
+    NumberDocument nd = (NumberDocument) output;
+    HContainer res = Helper2D.convert((DoubleDataset) nd.getDataset());
+    
+    // and check it
+    assertNotNull("Got object", res);
+    assertNotNull("Has row titles", res.rowTitles);
+    assertNotNull("Has col titles", res.colTitles);
+    assertNotNull("Has data", res.values);
+    
+  }
+  
 }
