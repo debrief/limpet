@@ -61,10 +61,14 @@ public class TabularView extends CoreAnalysisView
   private Action switchAxes;
   private TableViewer table;
   private Text title;
+  
+  private DecimalFormat _formatter;
 
   public TabularView()
   {
     super(ID, "Tabular view");
+    _formatter = new DecimalFormat("0.00");
+
   }
 
   @Override
@@ -115,12 +119,12 @@ public class TabularView extends CoreAnalysisView
     composite.setLayout(new GridLayout(1, false));
 
     // Create the combo to hold the team names
-    title = new Text(composite, SWT.BORDER);
-    title.setText("document name");
+    title = new Text(composite, SWT.NONE);
+    title.setText(" ");
 
     // Create the table viewer
     table =
-        new TableViewer(composite, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
+        new TableViewer(composite, SWT.H_SCROLL | SWT.V_SCROLL | SWT.NONE);
 
     final Table tableCtrl = table.getTable();
     tableCtrl.setHeaderVisible(true);
@@ -133,44 +137,16 @@ public class TabularView extends CoreAnalysisView
     table.setLabelProvider(labeller);
 
     tableCtrl.setLayoutData(new GridData(GridData.FILL_BOTH));
-
-    // define layout for the viewer
-    // GridData gridData = new GridData();
-    // gridData.verticalAlignment = GridData.FILL;
-    // gridData.horizontalSpan = 1;
-    // gridData.grabExcessHorizontalSpace = true;
-    // gridData.grabExcessVerticalSpace = true;
-    // gridData.horizontalAlignment = GridData.FILL;
-    // table.getControl().setLayoutData(gridData);
-
-    TableColumn tc = new TableColumn(tableCtrl, SWT.LEFT);
-    tc.setText("Angle");
-
-    tc = new TableColumn(tableCtrl, SWT.LEFT);
-    tc.setText("0 degs");
-
-    composite.pack();
-    // Pack the columns
-    for (int i = 0, n = tableCtrl.getColumnCount(); i < n; i++)
-    {
-      tableCtrl.getColumn(i).pack();
-    }
+    
     makeActions();
     contributeToActionBars();
+    
     // register as selection listener
     setupListener();
-
   }
 
-  private static class MyLabelProvider implements ITableLabelProvider
+  private class MyLabelProvider implements ITableLabelProvider
   {
-
-    private DecimalFormat _formatter;
-
-    public MyLabelProvider()
-    {
-      _formatter = new DecimalFormat("000.0");
-    }
     
     @Override
     public void addListener(ILabelProviderListener listener)
@@ -210,7 +186,7 @@ public class TabularView extends CoreAnalysisView
 
       if (columnIndex == 0)
       {
-        res = thisD.intValue() + ":";
+        res = _formatter.format(thisD) + ":";
       }
       else
       {
@@ -302,11 +278,12 @@ public class TabularView extends CoreAnalysisView
 
     clearTable();
 
+    final NumberDocument nd = (NumberDocument) item;
+
     String seriesName = thisQ.getName();
 
-    title.setText(seriesName);
+    title.setText(seriesName + " (" + nd.getUnits().toString() + ")");
 
-    final NumberDocument nd = (NumberDocument) item;
 
     // sort out the columns
     HContainer data = Helper2D.convert((DoubleDataset) nd.getDataset());
@@ -323,19 +300,18 @@ public class TabularView extends CoreAnalysisView
 
     // ok. the columns
     TableColumn header = new TableColumn(ctrl, SWT.RIGHT);
-    header.setText("Angle");
-    header.pack();
+    header.setText(nd.getIndexUnits().toString());
+    
     for (double a : aIndices)
     {
-      TableColumn tc = new TableColumn(ctrl, SWT.LEFT);
-      tc.setText("" + (int) a);
-      tc.pack();
+      TableColumn tc = new TableColumn(ctrl, SWT.RIGHT);
+      tc.setText("" +  _formatter.format(a));
     }
 
     // finally get the data displayed
     table.setInput(data);
     
-    // lastly, pack the columns
+    // lastly, pack the columns (now that we've loaded the data)
     cols = ctrl.getColumns();
     for (final TableColumn thisC : cols)
     {
