@@ -32,6 +32,7 @@ import javax.measure.quantity.Dimensionless;
 import javax.measure.unit.Dimension;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
+import javax.measure.unit.Unit;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -45,7 +46,7 @@ public class LimpetLabelProvider extends LabelProvider
 
     ImageDescriptor res = null;
 
-    IStoreItem item = null;
+    final IStoreItem item;
 
     if (obj2 instanceof LimpetWrapper)
     {
@@ -57,13 +58,22 @@ public class LimpetLabelProvider extends LabelProvider
       }
       else if (obj instanceof NamedList)
       {
+        item = null;
         // is it just one, or multiple?
         res = Activator.getImageDescriptor("icons/folder.png");
+      }
+      else
+      {
+        item = null;
       }
     }
     else if (obj2 instanceof IStoreItem)
     {
       item = (IStoreItem) obj2;
+    }
+    else
+    {
+      item = null;
     }
 
     if (item != null)
@@ -81,12 +91,14 @@ public class LimpetLabelProvider extends LabelProvider
         if (coll.isQuantity())
         {
           NumberDocument q = (NumberDocument) coll;
+          Unit<?> unit = q.getUnits();
           Dimension dim = q.getUnits().getDimension();
+                    
           if (dim.equals(Dimension.LENGTH))
           {
             res = Activator.getImageDescriptor("icons/measure.png");
           }
-          else if (dim.equals(Angle.UNIT.getDimension()))
+          if(Angle.UNIT.equals(unit.getStandardUnit()))
           {
             res = Activator.getImageDescriptor("icons/angle.png");
           }
@@ -94,7 +106,7 @@ public class LimpetLabelProvider extends LabelProvider
           {
             res = Activator.getImageDescriptor("icons/weight.png");
           }
-          else if (dim.equals(NonSI.DECIBEL))
+          else if (unit.equals(NonSI.DECIBEL))
           {
             res = Activator.getImageDescriptor("icons/volume.png");
           }
