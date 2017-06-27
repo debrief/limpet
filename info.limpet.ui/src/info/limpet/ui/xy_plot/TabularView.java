@@ -17,8 +17,6 @@ package info.limpet.ui.xy_plot;
 import info.limpet.IStoreItem;
 import info.limpet.impl.NumberDocument;
 import info.limpet.operations.CollectionComplianceTests;
-import info.limpet.ui.Activator;
-import info.limpet.ui.core_view.CoreAnalysisView;
 import info.limpet.ui.xy_plot.Helper2D.HContainer;
 
 import java.text.DecimalFormat;
@@ -26,7 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.january.dataset.DoubleDataset;
-import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
@@ -40,7 +37,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.IActionBars;
 
 /**
  * display analysis overview of selection
@@ -48,19 +44,15 @@ import org.eclipse.ui.IActionBars;
  * @author ian
  * 
  */
-public class TabularView extends CoreAnalysisView
+public class TabularView extends CommonGridView
 {
 
   /**
    * The ID of the view as specified by the extension.
    */
   public static final String ID = "info.limpet.ui.TabularView";
-  private final CollectionComplianceTests aTests =
-      new CollectionComplianceTests();
 
-  private Action switchAxes;
   private TableViewer table;
-  private Text title;
   
   private DecimalFormat _formatter;
 
@@ -69,42 +61,6 @@ public class TabularView extends CoreAnalysisView
     super(ID, "Tabular view");
     _formatter = new DecimalFormat("0.00");
 
-  }
-
-  @Override
-  protected void makeActions()
-  {
-    super.makeActions();
-
-    switchAxes = new Action("Switch axes", SWT.TOGGLE)
-    {
-      @Override
-      public void run()
-      {
-        if (switchAxes.isChecked())
-        {
-          // chart.setOrientation(SWT.VERTICAL);
-        }
-        else
-        {
-          // chart.setOrientation(SWT.HORIZONTAL);
-        }
-      }
-    };
-    switchAxes.setText("Switch axes");
-    switchAxes.setToolTipText("Switch X and Y axes");
-    switchAxes.setImageDescriptor(Activator
-        .getImageDescriptor("icons/angle.png"));
-
-  }
-
-  @Override
-  protected void contributeToActionBars()
-  {
-    super.contributeToActionBars();
-    IActionBars bars = getViewSite().getActionBars();
-    bars.getToolBarManager().add(switchAxes);
-    bars.getMenuManager().add(switchAxes);
   }
 
   /**
@@ -119,8 +75,8 @@ public class TabularView extends CoreAnalysisView
     composite.setLayout(new GridLayout(1, false));
 
     // Create the combo to hold the team names
-    title = new Text(composite, SWT.NONE);
-    title.setText(" ");
+    titleLbl = new Text(composite, SWT.NONE);
+    titleLbl.setText(" ");
 
     // Create the table viewer
     table =
@@ -236,30 +192,7 @@ public class TabularView extends CoreAnalysisView
     }
   }
 
-  @Override
-  public void display(List<IStoreItem> res)
-  {
-    if (res.size() == 0)
-    {
-      // ok, clear the table
-      clearTable();
-    }
-    else
-    {
-      // check they're all one dim
-      if (aTests.allTwoDim(res) && res.size() == 1)
-      {
-        // ok, it's a single two-dim dataset
-        showTwoDim(res.get(0));
-      }
-      else
-      {
-        clearTable();
-      }
-    }
-  }
-
-  private void clearTable()
+  protected void clearChart()
   {
     // clear the columns
     Table ctrl = table.getTable();
@@ -272,17 +205,17 @@ public class TabularView extends CoreAnalysisView
     table.setInput(null);
   }
 
-  private void showTwoDim(IStoreItem item)
+  protected void show(IStoreItem item)
   {
     NumberDocument thisQ = (NumberDocument) item;
 
-    clearTable();
+    clearChart();
 
     final NumberDocument nd = (NumberDocument) item;
 
     String seriesName = thisQ.getName();
 
-    title.setText(seriesName + " (" + nd.getUnits().toString() + ")");
+    titleLbl.setText(seriesName + " (" + nd.getUnits().toString() + ")");
 
 
     // sort out the columns
@@ -318,7 +251,7 @@ public class TabularView extends CoreAnalysisView
       thisC.pack();
     }    
     
-    title.pack();
+    titleLbl.pack();
   }
 
   @Override

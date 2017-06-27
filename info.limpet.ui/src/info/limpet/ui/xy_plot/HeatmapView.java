@@ -16,11 +16,7 @@ package info.limpet.ui.xy_plot;
 
 import info.limpet.IStoreItem;
 import info.limpet.impl.NumberDocument;
-import info.limpet.operations.CollectionComplianceTests;
-import info.limpet.ui.core_view.CoreAnalysisView;
 import info.limpet.ui.xy_plot.Helper2D.HContainer;
-
-import java.util.List;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.eclipse.draw2d.LightweightSystem;
@@ -34,7 +30,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.IActionBars;
 
 /**
  * display analysis overview of selection
@@ -42,49 +37,26 @@ import org.eclipse.ui.IActionBars;
  * @author ian
  * 
  */
-public class HeatmapView extends CoreAnalysisView
+public class HeatmapView extends CommonGridView
 {
 
   /**
    * The ID of the view as specified by the extension.
    */
   public static final String ID = "info.limpet.ui.HeatMapView";
-  private final CollectionComplianceTests aTests =
-      new CollectionComplianceTests();
 
   private IntensityGraphFigure intensityGraph;
   private Canvas parentCanvas;
-  private Text title;
 
   public HeatmapView()
   {
     super(ID, "Heatmap view");
   }
 
-  @Override
-  protected boolean appliesToMe(final List<IStoreItem> res,
-      final CollectionComplianceTests tests)
-  {
-    final boolean allNonQuantity = tests.allNonQuantity(res);
-    final boolean allCollections = tests.allCollections(res);
-    final boolean allQuantity = tests.allQuantity(res);
-    final boolean suitableIndex =
-        tests.allIndexed(res) || tests.allNonIndexed(res);
-    return allCollections && suitableIndex && (allQuantity || allNonQuantity);
-  }
-
-  private void clearChart()
+  protected void clearChart()
   {
     intensityGraph.setDataArray(new double[]
     {});
-  }
-
-  @Override
-  protected void contributeToActionBars()
-  {
-    super.contributeToActionBars();
-    @SuppressWarnings("unused")
-    final IActionBars bars = getViewSite().getActionBars();
   }
 
   /**
@@ -98,8 +70,8 @@ public class HeatmapView extends CoreAnalysisView
     composite.setLayout(new GridLayout(1, false));
 
     // Create the combo to hold the team names
-    title = new Text(composite, SWT.NONE);
-    title.setText(" ");
+    titleLbl = new Text(composite, SWT.NONE);
+    titleLbl.setText(" ");
 
     // insert the holder for the heatmap
     parentCanvas = new Canvas(composite, SWT.NULL);
@@ -123,45 +95,9 @@ public class HeatmapView extends CoreAnalysisView
   }
 
   @Override
-  protected void datasetDataChanged(final IStoreItem subject)
-  {
-    showTwoDim(subject);
-  }
-
-  @Override
-  public void display(final List<IStoreItem> res)
-  {
-    // anything selected?
-    if (res.size() == 0)
-    {
-      clearChart();
-    }
-    else
-    {
-      // check they're all one dim
-      if (aTests.allTwoDim(res) && res.size() == 1)
-      {
-        // ok, it's a single two-dim dataset
-        showTwoDim(res.get(0));
-      }
-      else
-      {
-        // nope, clear it
-        clearChart();
-      }
-    }
-  }
-
-  @Override
   protected String getTextForClipboard()
   {
     return "Pending";
-  }
-
-  @Override
-  protected void makeActions()
-  {
-    super.makeActions();
   }
 
   @Override
@@ -170,14 +106,14 @@ public class HeatmapView extends CoreAnalysisView
     parentCanvas.setFocus();
   }
 
-  private void showTwoDim(final IStoreItem item)
+  protected void show(final IStoreItem item)
   {
     final NumberDocument thisQ = (NumberDocument) item;
 
     clearChart();
 
     final String seriesName = thisQ.getName();
-    title.setText(seriesName + " (" + thisQ.getUnits().toString() + ")");
+    titleLbl.setText(seriesName + " (" + thisQ.getUnits().toString() + ")");
 
     // get the data
     final HContainer hData =
@@ -207,12 +143,12 @@ public class HeatmapView extends CoreAnalysisView
 
     final DescriptiveStatistics stats = new DescriptiveStatistics(data);
 
-    if(Double.isNaN(stats.getMax()))
+    if (Double.isNaN(stats.getMax()))
     {
       // ok, drop out, we haven't got any data
       return;
     }
-    
+
     // Configure
     intensityGraph.setMax(stats.getMax());
     intensityGraph.setMin(stats.getMin());
@@ -223,7 +159,7 @@ public class HeatmapView extends CoreAnalysisView
     intensityGraph.setDataArray(data);
 
     // parentCanvas.pack();
-    title.pack();
+    titleLbl.pack();
   }
 
 }
