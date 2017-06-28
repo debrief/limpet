@@ -70,15 +70,17 @@ public class TestGrids extends TestCase
       other1.add(i * 1000, thisZ);      
     }
     
-    double[] bins1 = GenerateGridCommand.binsFor(len1.toDocument());
+    GenerateGridCommand comm = new GenerateGridCommand(null, null, null, null, null, null, null, null);
+    
+    double[] bins1 = comm.binsFor(len1.toDocument());
     assertNotNull("bins generated", bins1);
     assertEquals("right length for array of size larger than cut-off", QuantityFrequencyBins.DEFAULT_NUM_BINS, bins1.length);
     
-    double[] bins2 = GenerateGridCommand.binsFor(len2.toDocument());
+    double[] bins2 = comm.binsFor(len2.toDocument());
     assertNotNull("bins generated", bins2);
     assertEquals("right length for array smaller than cut-off (but larger than min)", 7, bins2.length);
 
-    double[] bins3 = GenerateGridCommand.binsFor(len3.toDocument());
+    double[] bins3 = comm.binsFor(len3.toDocument());
     assertNotNull("bins generated", bins3);
     assertEquals("right length for tiny array", QuantityFrequencyBins.MIN_NUM_BINS, bins3.length);
 
@@ -152,8 +154,8 @@ public class TestGrids extends TestCase
     final GenerateGridCommand thisOp = (GenerateGridCommand) ops.get(0);
     thisOp.execute();
 
-    double[] bins = GenerateGridCommand.binsFor(ang1.toDocument());
-    assertEquals("correct num bins", 8, bins.length);
+    double[] bins = thisOp.binsFor(ang1.toDocument());
+    assertEquals("correct num bins", 360 / thisOp.getAngleBinSize(), bins.length);
 
     assertEquals("output produced", 1, thisOp.getOutputs().size());
     Document<?> output = thisOp.getOutputs().get(0);

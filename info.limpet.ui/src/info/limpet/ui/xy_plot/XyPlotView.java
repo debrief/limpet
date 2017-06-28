@@ -179,7 +179,7 @@ public class XyPlotView extends CoreAnalysisView
     final PlotSymbolType theSym;
     // if it's a singleton, show the symbol
     // markers
-    if (thisQ.size() > 100 || thisQ.size() == 1)
+    if (thisQ.size() > 500 || thisQ.size() == 1)
     {
       theSym = PlotSymbolType.NONE;
     }
