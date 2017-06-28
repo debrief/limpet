@@ -87,8 +87,6 @@ abstract public class Document<T extends Object> implements IDocument<T>
   {
     this.dataset = dataset;
   }
-  
-  
 
   /*
    * (non-Javadoc)
@@ -99,14 +97,15 @@ abstract public class Document<T extends Object> implements IDocument<T>
   public void beingDeleted()
   {
     final List<IChangeListener> listeners = getListeners();
-    
-    for(final IChangeListener s: listeners)
+
+    for (final IChangeListener s : listeners)
     {
       s.collectionDeleted(this);
     }
   }
 
-  /** collate a list of the listeners for this document
+  /**
+   * collate a list of the listeners for this document
    * 
    * @return
    */
@@ -115,9 +114,9 @@ abstract public class Document<T extends Object> implements IDocument<T>
     final List<IChangeListener> listeners = new ArrayList<IChangeListener>();
     listeners.addAll(changeListeners);
     listeners.addAll(dependents);
-    // since the TCLs are (by definition) transient, we may not have any 
+    // since the TCLs are (by definition) transient, we may not have any
     // (such as after file restore). So, first check that they're present
-    if(transientChangeListeners != null)
+    if (transientChangeListeners != null)
     {
       listeners.addAll(transientChangeListeners);
     }
@@ -134,7 +133,7 @@ abstract public class Document<T extends Object> implements IDocument<T>
   public String getName()
   {
     final String res;
-    if(dataset != null)
+    if (dataset != null)
     {
       res = dataset.getName();
     }
@@ -233,20 +232,18 @@ abstract public class Document<T extends Object> implements IDocument<T>
   @Override
   public void fireDataChanged()
   {
-    final List<IChangeListener> listeners = getListeners();    
-    for(final IChangeListener s: listeners)
+    final List<IChangeListener> listeners = getListeners();
+    for (final IChangeListener s : listeners)
     {
       s.dataChanged(this);
     }
   }
 
-  
-  
   @Override
   public void fireMetadataChanged()
   {
     final List<IChangeListener> listeners = getListeners();
-    for(final IChangeListener s: listeners)
+    for (final IChangeListener s : listeners)
     {
       s.metadataChanged(this);
     }
