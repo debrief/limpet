@@ -49,6 +49,7 @@ public class GenerateGrid implements IOperation
     final private Triplet triplet;
     final private double[] bins;
     final private DataProcessor helper;
+    protected int angleBinSize = 20;
 
     public GenerateGridCommand(final String title, final String description,
         final IStoreGroup store, final List<IStoreItem> inputs,
@@ -59,6 +60,11 @@ public class GenerateGrid implements IOperation
       this.triplet = triplet;
       this.bins = bins;
       this.helper = helper;
+    }
+    
+    public int getAngleBinSize()
+    {
+      return angleBinSize;
     }
 
     public int binFor(final double[] bins, final double vOne)
@@ -74,18 +80,23 @@ public class GenerateGrid implements IOperation
         }
       }
 
-      return bins.length-1;
+      return bins.length - 1;
     }
 
-    public static double[] binsFor(final NumberDocument axis)
+    public double[] binsFor(final NumberDocument axis)
     {
       final double[] res;
 
       // are these degrees?
       if (axis.getUnits().equals(SampleData.DEGREE_ANGLE))
       {
-        res = new double[]
-        {45, 90, 135, 180, 225, 270, 315, 360};
+        final int step = angleBinSize;
+        final int numSteps = 360 / step;
+        res = new double[360 / step];
+        for (int i = 1; i <= numSteps; i++)
+        {
+          res[i - 1] = i * step;
+        }
       }
       else
       {
@@ -111,6 +122,11 @@ public class GenerateGrid implements IOperation
     @Override
     public void execute()
     {
+      // listen to the inputs
+      triplet.axisOne.addDependent(this);
+      triplet.axisTwo.addDependent(this);
+      triplet.measurements.addDependent(this);
+      
       // create the output document
       final Document<?> nd =
           helper.getOutputDocument(this, triplet.measurements.getUnits());
@@ -190,12 +206,16 @@ public class GenerateGrid implements IOperation
 
       // get the output doc
       final Document<?> nd = (Document<?>) super.getOutputs().get(0);
-      
+
+      // do we have a name?
+      final String outName = nd.getName();
+      if (outName != null)
+      {
+        processed.setName(nd.getName());
+      }
+
       // store the results object in it
       nd.setDataset(processed);
-      
-      // restore the name
-      nd.setName(helper.outName() + " of " + triplet.measurements.getName());
     }
 
     @Override
@@ -252,8 +272,8 @@ public class GenerateGrid implements IOperation
       return "Collated samples of";
     }
   }
-  
-  private class MeanHelper implements DataProcessor 
+
+  private class MeanHelper implements DataProcessor
   {
 
     @Override
@@ -277,7 +297,7 @@ public class GenerateGrid implements IOperation
     }
 
   };
-  
+
   @Override
   public List<ICommand> actionsFor(final List<IStoreItem> selection,
       final IStoreGroup destination, final IContext context)
@@ -310,14 +330,11 @@ public class GenerateGrid implements IOperation
               "Collate 360 degree grid of " + thisP.measurements + " based on "
                   + thisP.axisOne + " and " + thisP.axisTwo;
 
-          final double[] bins = new double[]
-          {45, 90, 135, 180, 225, 270, 315, 360};
-
           res.add(new GenerateGridCommand(meanTitle, description, destination,
-              selection, context, thisP, bins, meanHelper));
+              selection, context, thisP, null, meanHelper));
 
           res.add(new GenerateGridCommand(sampleTitle, description,
-              destination, selection, context, thisP, bins, sampleHelper));
+              destination, selection, context, thisP, null, sampleHelper));
         }
         else
         {
@@ -382,7 +399,7 @@ public class GenerateGrid implements IOperation
   {
     final ObjectDataset ds =
         DatasetFactory.zeros(ObjectDataset.class, new int[]
-        {8, 8});
+        {oneBins.length, twoBins.length});
 
     // ok, populate it
     for (int i = 0; i < oneBins.length; i++)
