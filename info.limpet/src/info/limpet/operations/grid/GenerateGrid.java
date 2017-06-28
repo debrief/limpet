@@ -12,6 +12,7 @@ import info.limpet.impl.Document;
 import info.limpet.impl.DoubleListDocument;
 import info.limpet.impl.NumberDocument;
 import info.limpet.impl.SampleData;
+import info.limpet.impl.UIProperty;
 import info.limpet.operations.AbstractCommand;
 import info.limpet.operations.CollectionComplianceTests;
 
@@ -62,11 +63,21 @@ public class GenerateGrid implements IOperation
       this.helper = helper;
     }
     
+    @UIProperty(name = "BinSize", category = UIProperty.CATEGORY_CALCULATION,
+        min = 1, max = 45)
     public int getAngleBinSize()
     {
       return angleBinSize;
     }
 
+    public void setAngleBinSize(int val)
+    {
+      angleBinSize = val;
+      
+      // ok, fire update
+      this.recalculate(null);         
+    }
+    
     public int binFor(final double[] bins, final double vOne)
     {
       // find the bin for this value
@@ -222,6 +233,9 @@ public class GenerateGrid implements IOperation
     protected void recalculate(final IStoreItem subject)
     {
       performCalc();
+      
+      // share the good news
+      super.getOutputs().get(0).fireDataChanged();
     }
 
     @Override
@@ -412,7 +426,6 @@ public class GenerateGrid implements IOperation
     }
 
     return ds;
-
   }
 
   public static List<Triplet> findPermutations(
