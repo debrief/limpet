@@ -32,6 +32,7 @@ import javax.measure.quantity.Dimensionless;
 import javax.measure.unit.Dimension;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
+import javax.measure.unit.TransformedUnit;
 import javax.measure.unit.Unit;
 
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -93,12 +94,15 @@ public class LimpetLabelProvider extends LabelProvider
           NumberDocument q = (NumberDocument) coll;
           Unit<?> unit = q.getUnits();
           Dimension dim = q.getUnits().getDimension();
-                    
+
+          // ok - workaround to tidy the decibels data
+          checkDecibels(q, unit);
+
           if (dim.equals(Dimension.LENGTH))
           {
             res = Activator.getImageDescriptor("icons/measure.png");
           }
-          if(Angle.UNIT.equals(unit.getStandardUnit()))
+          if (Angle.UNIT.equals(unit.getStandardUnit()))
           {
             res = Activator.getImageDescriptor("icons/angle.png");
           }
@@ -106,22 +110,14 @@ public class LimpetLabelProvider extends LabelProvider
           {
             res = Activator.getImageDescriptor("icons/weight.png");
           }
-          else if (unit.equals(NonSI.DECIBEL))
-          {
-            res = Activator.getImageDescriptor("icons/volume.png");
-          }
-          else if (dim.equals(Dimension.LENGTH.times(Dimension.LENGTH).times(
-              Dimension.LENGTH).divide(Dimension.MASS)))
+          else if (dim.equals(Dimension.MASS.divide(Dimension.LENGTH.times(
+              Dimension.LENGTH).times(Dimension.LENGTH))))
           {
             res = Activator.getImageDescriptor("icons/density.png");
           }
           else if (dim.equals(Dimension.TIME))
           {
             res = Activator.getImageDescriptor("icons/time.png");
-          }
-          else if (dim.equals(Dimensionless.UNIT.getDimension()))
-          {
-            res = Activator.getImageDescriptor("icons/numbers.png");
           }
           else if (dim.equals(SI.HERTZ.getDimension()))
           {
@@ -131,10 +127,20 @@ public class LimpetLabelProvider extends LabelProvider
           {
             res = Activator.getImageDescriptor("icons/speed.png");
           }
+          else if (unit.equals(NonSI.DECIBEL))
+          {
+            // TODO: this test relies on the decibel data being corrected
+            // in the checkDecibels call
+            res = Activator.getImageDescriptor("icons/volume.png");
+          }
+          else if (dim.equals(Dimensionless.UNIT.getDimension()))
+          {
+            res = Activator.getImageDescriptor("icons/numbers.png");
+          }
           else
           {
             // default image type
-            res = Activator.getImageDescriptor("icons/frequency.png");
+            res = Activator.getImageDescriptor("icons/numbers.png");
           }
         }
         else if (coll instanceof LocationDocument)
@@ -177,6 +183,45 @@ public class LimpetLabelProvider extends LabelProvider
     }
 
     return res;
+  }
+
+  /**
+   * special case. Decibel units are losing their type once restored. Do a check for if they should
+   * be decibels, and override the units, if we have to
+   * 
+   * @param document
+   * @param currentUnits
+   */
+  private void checkDecibels(final NumberDocument document,
+      final Unit<?> currentUnits)
+  {
+    if (!currentUnits.equals(NonSI.DECIBEL) && isDecibels(currentUnits))
+    {
+      // ok, replace the units with decibels
+      document.setUnits(NonSI.DECIBEL);
+    }
+  }
+
+  /**
+   * special case. Once a decibels unit has been restored from file, the equals comparison no longer
+   * works. So, we've copied the below content from the original sources. The original sources also
+   * includes a comparison of db.converter, but we've omitted that, since it's not visible. If we
+   * start getting false positives, we'll have to consider using the derived converter object.
+   * 
+   * @param that
+   *          object we're considering
+   * @return if it's the units of decibels
+   */
+  private boolean isDecibels(Object that)
+  {
+    final TransformedUnit<Dimensionless> db =
+        (TransformedUnit<Dimensionless>) NonSI.DECIBEL;
+    if (this == that)
+      return true;
+    if (!(that instanceof TransformedUnit))
+      return false;
+    TransformedUnit<?> thatUnit = (TransformedUnit<?>) that;
+    return db.getParentUnit().equals(thatUnit.getParentUnit());
   }
 
   @Override

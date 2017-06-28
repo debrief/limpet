@@ -21,7 +21,6 @@ import static javax.measure.unit.NonSI.YARD;
 import static javax.measure.unit.SI.CENTI;
 import static javax.measure.unit.SI.GRAM;
 import static javax.measure.unit.SI.HERTZ;
-import static javax.measure.unit.SI.KELVIN;
 import static javax.measure.unit.SI.METER;
 import static javax.measure.unit.SI.METRE;
 import static javax.measure.unit.SI.MILLI;
@@ -81,7 +80,6 @@ public class CsvParser
       new SimpleDateFormat("hh:mm:ss");
 
   private ArrayList<DataImporter> _candidates;
-  
 
   /**
    * base helper class, to help importing series of data
@@ -512,7 +510,6 @@ public class CsvParser
     return true;
   }
 
-
   private void createImporters()
   {
     if (_candidates != null)
@@ -556,7 +553,7 @@ public class CsvParser
     _candidates.add(new TemporalSeriesSupporter(METRE.divide(SECOND).asType(
         Velocity.class), null, new String[]
     {"M/Sec", "m/s"}));
-    _candidates.add(new TemporalSeriesSupporter(KELVIN
+    _candidates.add(new TemporalSeriesSupporter(SI.CELSIUS
         .asType(Temperature.class), null, new String[]
     {"C", "DegC"}));
     _candidates.add(new TemporalSeriesSupporter(DECIBEL
