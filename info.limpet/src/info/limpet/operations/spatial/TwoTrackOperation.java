@@ -224,11 +224,18 @@ public abstract class TwoTrackOperation implements IOperation
     {
       // clear out the lists, first
       final DoubleDataset ds = performCalc();
-      final Document<?> output = getOutputs().get(0);
-      output.setDataset(ds);
+      if (!getOutputs().isEmpty())
+      {
+        final Document<?> output = getOutputs().get(0);
+        output.setDataset(ds);
 
-      // and fire updates
-      output.fireDataChanged();
+        // and fire updates
+        output.fireDataChanged();
+      }
+      else
+      {
+        System.err.println("no outputs");
+      }
     }
   }
 
