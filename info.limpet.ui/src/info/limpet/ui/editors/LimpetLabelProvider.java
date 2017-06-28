@@ -95,6 +95,9 @@ public class LimpetLabelProvider extends LabelProvider
           Unit<?> unit = q.getUnits();
           Dimension dim = q.getUnits().getDimension();
 
+          // ok - workaround to tidy the decibels data
+          checkDecibels(q, unit);
+
           if (dim.equals(Dimension.LENGTH))
           {
             res = Activator.getImageDescriptor("icons/measure.png");
@@ -126,14 +129,8 @@ public class LimpetLabelProvider extends LabelProvider
           }
           else if (unit.equals(NonSI.DECIBEL))
           {
-            // TODO: the above comparison fails for persisted datasets
-            // the .equals method needs to be investigated, since the
-            // two objects are the same object
-            res = Activator.getImageDescriptor("icons/volume.png");
-          }
-          else if (isDecibels(unit))
-          {
-            // special handling, while decibel equals isn't working
+            // TODO: this test relies on the decibel data being corrected
+            // in the checkDecibels call
             res = Activator.getImageDescriptor("icons/volume.png");
           }
           else if (dim.equals(Dimensionless.UNIT.getDimension()))
@@ -188,15 +185,31 @@ public class LimpetLabelProvider extends LabelProvider
     return res;
   }
 
-  /** special case. Once a decibels unit has
-   * been restored from file, the equals comparison
-   * no longer works.  So, we've copied the below content
-   * from the original sources.
-   * The original sources also includes a comparison of
-   * db.converter, but we've omitted that, since it's not
-   * visible.  If we start getting false positives, we'll
-   * have to consider using the derived converter object.
-   * @param that object we're considering
+  /**
+   * special case. Decibel units are losing their type once restored. Do a check for if they should
+   * be decibels, and override the units, if we have to
+   * 
+   * @param document
+   * @param currentUnits
+   */
+  private void checkDecibels(final NumberDocument document,
+      final Unit<?> currentUnits)
+  {
+    if (!currentUnits.equals(NonSI.DECIBEL) && isDecibels(currentUnits))
+    {
+      // ok, replace the units with decibels
+      document.setUnits(NonSI.DECIBEL);
+    }
+  }
+
+  /**
+   * special case. Once a decibels unit has been restored from file, the equals comparison no longer
+   * works. So, we've copied the below content from the original sources. The original sources also
+   * includes a comparison of db.converter, but we've omitted that, since it's not visible. If we
+   * start getting false positives, we'll have to consider using the derived converter object.
+   * 
+   * @param that
+   *          object we're considering
    * @return if it's the units of decibels
    */
   private boolean isDecibels(Object that)
