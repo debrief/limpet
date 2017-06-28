@@ -83,6 +83,67 @@ public class TestCollections extends TestCase
     // check it got stored
     assertEquals("correct number of samples", 10, strDoc.size());
   }
+  
+  public void testDelete()
+  {
+    NumberDocumentBuilder tq1b =
+        new NumberDocumentBuilder("Some data1", METRE.divide(SECOND).asType(
+            Velocity.class), null, SampleData.MILLIS);
+    tq1b.add(100, 10d);
+    tq1b.add(200, 20d);
+    tq1b.add(300, 30d);
+    tq1b.add(400, 40d);
+
+    NumberDocument tq1 = tq1b.toDocument();
+
+    NumberDocumentBuilder tq2b =
+        new NumberDocumentBuilder("Some data2", METRE.divide(SECOND).asType(
+            Velocity.class), null, null);
+    tq2b.add(11d);
+
+    NumberDocument tq2 = tq2b.toDocument();
+
+    List<IStoreItem> selection = new ArrayList<IStoreItem>();
+    selection.add(tq1);
+    selection.add(tq2);
+
+    StoreGroup store = new StoreGroup("Store");
+    Collection<ICommand> commands =
+        new MultiplyQuantityOperation().actionsFor(selection, store, context);
+    ICommand firstC = commands.iterator().next();
+
+    firstC.execute();
+    
+    // check deleting the output document
+    Document<?> out = firstC.getOutputs().get(0);
+    assertNotNull("found output", out);
+    
+    // ok, check inputs have 
+    assertEquals("has output", 1, firstC.getOutputs().size());
+    
+    // ok, now delete the output 
+    store.remove(out);
+
+    // ok, check inputs have 
+    assertEquals("output removed", 0, firstC.getOutputs().size());
+    
+    // try to re-run
+    firstC.execute();
+
+    // ok, check inputs have 
+    assertEquals("has output", 1, firstC.getOutputs().size());
+
+    // check the command is registered as dependent on the input
+    assertTrue("command registered as dependent", tq1.getDependents().contains(firstC));
+    
+    // now try to remove an input
+    store.remove(tq1);
+    
+    // what's happened to the command?
+    assertFalse("input should be deleted",firstC.getInputs().contains(tq1));
+    
+    // check the 
+  }
 
   public void testDocumentListeners()
   {

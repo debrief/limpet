@@ -26,6 +26,7 @@ import info.limpet.impl.LocationDocumentBuilder;
 import info.limpet.impl.NumberDocument;
 import info.limpet.impl.NumberDocumentBuilder;
 import info.limpet.impl.SampleData;
+import info.limpet.impl.StoreGroup;
 import info.limpet.impl.UIProperty;
 import info.limpet.operations.spatial.GeoSupport;
 
@@ -216,8 +217,35 @@ public abstract class AbstractCommand implements ICommand
     // are we doing live updates?
     if (dynamic)
     {
-      // do the recalc
-      recalculate(subject);
+      // ok, walk the tree, to see if this is
+      // one of our inputs
+      boolean requiresChange = false;
+      for (IStoreItem d : getInputs())
+      {
+        if (d instanceof StoreGroup)
+        {
+          StoreGroup sg = (StoreGroup) d;
+          if (sg.contains(subject))
+          {
+            requiresChange = true;
+            break;
+          }
+        }
+        else
+        {
+          if (d.equals(subject))
+          {
+            requiresChange = true;
+            break;
+          }
+        }
+      }
+      // is this an input to us?
+      if (requiresChange)
+      {
+        // do the recalc
+        recalculate(subject);
+      }
     }
   }
 
@@ -226,7 +254,64 @@ public abstract class AbstractCommand implements ICommand
   @Override
   public void collectionDeleted(IStoreItem subject)
   {
-    // N/A
+    // ok, is this an output?
+    // yes, clear it
+    List<Document<?>> toDelete = new ArrayList<Document<?>>();
+    for (Document<?> t : getOutputs())
+    {
+      if (t.equals(subject))
+      {
+        // ok, delete this output
+        toDelete.add(t);
+      }
+    }
+
+    if (!toDelete.isEmpty())
+    {
+      for (Document<?> t : toDelete)
+      {
+        this.getOutputs().remove(t);
+      }
+    }
+
+    // now, is it an input?
+    toDelete.clear();
+    boolean selfDestruct = false;
+    for (IStoreItem t : getInputs())
+    {
+      if (t.equals(subject))
+      {
+        // bugger, self-destruct
+        selfDestruct = true;
+        break;
+      }
+    }
+
+    if (selfDestruct)
+    {
+      // ok, remove from listeners
+      for (IStoreItem t : getInputs())
+      {
+        t.removeChangeListener(this);
+      }
+      
+      getInputs().clear();
+
+      // and remove from otuputs
+      for (Document<?> t : getOutputs())
+      {
+        t.removeChangeListener(this);
+      }
+      
+      getOutputs().clear();
+
+      // remove from parent
+      if (getParent() != null)
+      {
+        getParent().remove(this);
+      }
+    }
+
   }
 
   public final IStoreGroup getStore()
@@ -294,6 +379,9 @@ public abstract class AbstractCommand implements ICommand
   public final void addOutput(Document<?> output)
   {
     getOutputs().add(output);
+
+    // also register as a listener (esp for if it's being deleted)
+    output.addDependent(this);
   }
 
   @UIProperty(name = "Name", category = UIProperty.CATEGORY_LABEL)
@@ -302,8 +390,6 @@ public abstract class AbstractCommand implements ICommand
   {
     return title;
   }
-  
-  
 
   @Override
   public String toString()
