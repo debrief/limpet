@@ -29,7 +29,18 @@ public class LocationDocument extends Document<Point2D>
   {
     return false;
   }
-  
+
+  /**
+   * we've introduced this method as a workaround. The "visibleWhen" operator for getRange doesn't
+   * work with "size==1". Numerical comparisions don't seem to work. So, we're wrapping the
+   * numberical comparison in this boolean method.
+   * 
+   * @return
+   */
+  public boolean getShowRange()
+  {
+    return size() == 1;
+  }
 
   @Override
   public void setDataset(IDataset dataset)
@@ -42,6 +53,41 @@ public class LocationDocument extends Document<Point2D>
     {
       throw new IllegalArgumentException("We only store object datasets");
     }
+  }
+
+  @UIProperty(name = "Value", category = UIProperty.CATEGORY_VALUE,
+      visibleWhen = "showRange == true")
+  public String getValue()
+  {
+    ObjectDataset data = (ObjectDataset) getDataset();
+    Point2D point = (Point2D) data.get();
+    return point.getY() + "," + point.getX();
+  }
+
+  public void setValue(String val)
+  {
+    // try to parse it
+    String[] items = val.split(",");
+    if (items.length == 2)
+    {
+      try
+      {
+        double y = Double.parseDouble(items[0]);
+        double x = Double.parseDouble(items[1]);
+        ObjectDataset data = (ObjectDataset) getDataset();
+        Point2D point = (Point2D) data.get();
+        point.setLocation(x, y);
+        
+        // successful, fire modified
+        this.fireDataChanged();
+
+      }
+      catch (NumberFormatException dd)
+      {
+        dd.printStackTrace();
+      }
+    }
+    
   }
 
   public String toListing()
