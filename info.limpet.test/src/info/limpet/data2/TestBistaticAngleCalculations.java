@@ -5,11 +5,11 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import info.limpet.ICommand;
 import info.limpet.IContext;
-import info.limpet.IDocument;
 import info.limpet.IOperation;
 import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
 import info.limpet.impl.Document;
+import info.limpet.impl.LocationDocument;
 import info.limpet.impl.MockContext;
 import info.limpet.impl.NumberDocument;
 import info.limpet.impl.NumberDocumentBuilder;
@@ -29,7 +29,6 @@ import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.measure.unit.SI;
@@ -48,12 +47,10 @@ public class TestBistaticAngleCalculations
     CsvParser parser = new CsvParser();
     List<IStoreItem> items = parser.parse(file.getAbsolutePath());
     assertEquals("correct group", 1, items.size());
-    StoreGroup group = (StoreGroup) items.get(0);
-    assertEquals("correct num collections", 3, group.size());
-    IDocument<?> firstColl = (IDocument<?>) group.get(0);
-    assertEquals("correct num rows", 541, firstColl.size());
+    LocationDocument doc = (LocationDocument) items.get(0);
+    assertEquals("singleton", 1, doc.size());
   }
-  
+
   @Test
   public void testAddLogData() throws IOException
   {
@@ -75,123 +72,123 @@ public class TestBistaticAngleCalculations
     assertTrue(file.isFile());
     List<IStoreItem> ssn = parser.parse(file.getAbsolutePath());
     store.addAll(ssn);
-    
+
     IOperation pDiff = new ProplossBetweenTwoTracksOperation();
     List<IStoreItem> selection = new ArrayList<IStoreItem>();
     selection.add(tx1.get(0));
     selection.add(ssn.get(0));
-    List<ICommand> actions = pDiff.actionsFor(selection , store, context);
-    
+    List<ICommand> actions = pDiff.actionsFor(selection, store, context);
+
     assertNotNull("found actions");
     assertEquals("got actions", 2, actions.size());
     assertEquals("store has original data", 3, store.size());
-    
+
     // run it
     actions.get(0).execute();
     assertEquals("has new data", 4, store.size());
-    
+
     Document<?> txProp = actions.get(0).getOutputs().get(0);
     txProp.setName("txProp");
-    
+
     // now the other proploss file
     selection.clear();
     selection.add(rx1.get(0));
     selection.add(ssn.get(0));
 
-    actions = pDiff.actionsFor(selection , store, context);
-    
+    actions = pDiff.actionsFor(selection, store, context);
+
     assertNotNull("found actions");
     assertEquals("got actions", 2, actions.size());
     assertEquals("store has original data", 4, store.size());
-    
+
     // run it
     actions.get(0).execute();
     assertEquals("has new data", 5, store.size());
-    
+
     Document<?> rxProp = actions.get(0).getOutputs().get(0);
     rxProp.setName("rxProp");
-    
+
     // ok, now we can try to add them
     IOperation addL = new AddLogQuantityOperation();
     IOperation add = new AddQuantityOperation();
     selection.clear();
     selection.add(txProp);
     selection.add(rxProp);
-    
+
     // check the normal adder drops out
     actions = add.actionsFor(selection, store, context);
     assertEquals("no actions returned", 0, actions.size());
-    
+
     // now the log adder
     actions = addL.actionsFor(selection, store, context);
     assertEquals("actions returned", 2, actions.size());
-    
+
     // ok, run the first action
     actions.get(0).execute();
     assertEquals("has new data", 6, store.size());
-    
+
     // check the outputs
-    NumberDocument propSum = (NumberDocument) actions.get(0).getOutputs().get(0);
+    NumberDocument propSum =
+        (NumberDocument) actions.get(0).getOutputs().get(0);
     propSum.setName("propSum");
-    
+
     // ok, check the values
     double valA = txProp.getDataset().getDouble(0);
     double valB = rxProp.getDataset().getDouble(0);
     double addRes = propSum.getDataset().getDouble(0);
-    
+
     double testSum = doLogAdd(valA, valB);
     assertEquals("correct log sum", testSum, addRes, 0.0001);
-    
+
     // ok, change the selection so we can do the reverse of the add
     selection.clear();
     selection.add(propSum);
     selection.add(rxProp);
-    
+
     // hmm, go for the subtract
     IOperation sub = new SubtractQuantityOperation();
     IOperation subL = new SubtractLogQuantityOperation();
-    
+
     actions = sub.actionsFor(selection, store, context);
     assertEquals("none returned", 0, actions.size());
-    
+
     actions = subL.actionsFor(selection, store, context);
     assertEquals("actions returned", 4, actions.size());
-    
+
     // ok, run it
     actions.get(0).execute();
     assertEquals("has new data", 7, store.size());
-    
+
     // check the results
-    NumberDocument propDiff = (NumberDocument) actions.get(0).getOutputs().get(0);
-    propDiff.setName("propDiff");  
-    
-    
+    NumberDocument propDiff =
+        (NumberDocument) actions.get(0).getOutputs().get(0);
+    propDiff.setName("propDiff");
+
     double subRes = propDiff.getDataset().getDouble(0);
-    
+
     double testSubtract = doLogSubtract(addRes, valB);
     assertEquals("correct log sum", testSubtract, subRes, 0.0001);
-    
+
   }
 
   private double doLogAdd(double valA, double valB)
   {
-    double aN = Math.pow(10d, valA/10d);
-    double bN = Math.pow(10d, valB/10d);
+    double aN = Math.pow(10d, valA / 10d);
+    double bN = Math.pow(10d, valB / 10d);
     double sum = aN + bN;
     double toLog = Math.log10(sum) * 10d;
     return toLog;
   }
 
-
   private double doLogSubtract(double valA, double valB)
   {
-    double aN = Math.pow(10d, valA/10d);
-    double bN = Math.pow(10d, valB/10d);
+    double aN = Math.pow(10d, valA / 10d);
+    double bN = Math.pow(10d, valB / 10d);
     double sum = aN - bN;
     double toLog = Math.log10(sum) * 10d;
     return toLog;
   }
-  
+
   @Test
   public void testCreateActions() throws IOException
   {
@@ -234,39 +231,10 @@ public class TestBistaticAngleCalculations
     selection.add(rx1.get(0));
 
     actions = generator.actionsFor(selection, store, context);
-    assertEquals("correct actions", 3, actions.size());
+    assertEquals("correct actions", 1, actions.size());
 
     // check the store contents
     assertEquals("correct datasets", 3, store.size());
-
-    // remove the course from one track, check it doesn't get offered
-    IStoreGroup txGroup = (IStoreGroup) store.iterator().next();
-    Iterator<IStoreItem> t1Iter = txGroup.iterator();
-    IStoreItem toDelete = null;
-    while (t1Iter.hasNext())
-    {
-      IStoreItem thisDoc = (IStoreItem) t1Iter.next();
-      if (thisDoc instanceof NumberDocument)
-      {
-        NumberDocument nd = (NumberDocument) thisDoc;
-        if (nd.isQuantity() && nd.getUnits().equals(SampleData.DEGREE_ANGLE))
-        {
-          toDelete = nd;
-        }
-      }
-    }
-    assertNotNull("found course data", toDelete);
-    txGroup.remove(toDelete);
-
-    actions = generator.actionsFor(selection, store, context);
-    assertEquals("correct actions", 2, actions.size());
-
-    // ok, have a go at running it.
-    actions.get(0).execute();
-
-    // check the store contents
-    assertEquals("correct datasets", 5, store.size());
-
   }
 
   @Test

@@ -54,7 +54,8 @@ public class AddLogQuantityOperation extends BinaryQuantityOperation
     @Override
     protected String getBinaryNameFor(final String name1, final String name2)
     {
-      return "Sum of " + name1 + " + " + name2;
+      return getContext().getInput("Logarithmic Add",
+          NEW_DATASET_MESSAGE, "Sum of " + name1 + " + " + name2);
     }
 
     @Override
