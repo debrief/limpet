@@ -126,7 +126,12 @@ public class TestCollections extends TestCase
 
     // ok, check inputs have 
     assertEquals("output removed", 0, firstC.getOutputs().size());
-    
+
+    // ok, we need to generate a new set of options
+    commands =
+        new MultiplyQuantityOperation().actionsFor(selection, store, context);
+    firstC = commands.iterator().next();
+
     // try to re-run
     firstC.execute();
 
@@ -138,6 +143,9 @@ public class TestCollections extends TestCase
     
     // now try to remove an input
     store.remove(tq1);
+    
+    // check we're no longer a dependent of the input
+    assertFalse("no longer a dependent", tq1.getDependents().contains(firstC));
     
     // what's happened to the command?
     assertFalse("input should be deleted",firstC.getInputs().contains(tq1));

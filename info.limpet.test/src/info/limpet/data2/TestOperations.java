@@ -32,6 +32,7 @@ import info.limpet.IOperation;
 import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
 import info.limpet.impl.Document;
+import info.limpet.impl.LocationDocument;
 import info.limpet.impl.MockContext;
 import info.limpet.impl.NumberDocument;
 import info.limpet.impl.NumberDocumentBuilder;
@@ -54,7 +55,11 @@ import info.limpet.operations.arithmetic.simple.AddQuantityOperation;
 import info.limpet.operations.arithmetic.simple.MultiplyQuantityOperation;
 import info.limpet.operations.arithmetic.simple.SubtractQuantityOperation;
 import info.limpet.operations.arithmetic.simple.UnitConversionOperation;
+import info.limpet.operations.spatial.BearingBetweenTracksOperation;
+import info.limpet.persistence.CsvParser;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -1569,55 +1574,60 @@ public class TestOperations
     assertEquals("Delete collection operation", 1, commands.size());
     ICommand command = commands.iterator().next();
     command.execute();
+    
+    // how many do we expect to lose? This will be the number of documents deleted,
+    // plus any output documents that depend on them
+    int expectedToDelete = 4;
 
-    assertEquals("store smaller", storeLen - 2, store.size());
+    assertEquals("store smaller", storeLen - expectedToDelete, store.size());
     assertEquals("speeds smaller", factorLen - 1, speedParent.size());
   }
 
   // TODO: reinstate this test, once we have location structures
-  // @Test
-  // public void testBearingBetweenTracksOperation() throws IOException{
-  // StoreGroup store = new SampleData().getData(10);
-  // List<IStoreItem> selection = new ArrayList<IStoreItem>();
-  //
-  // File file = TestCsvParser.getDataFile("americas_cup/usa.csv");
-  // assertTrue(file.isFile());
-  // File file2 = TestCsvParser.getDataFile("americas_cup/nzl.csv");
-  // assertTrue(file2.isFile());
-  // CsvParser parser = new CsvParser();
-  // List<IStoreItem> items = parser.parse(file.getAbsolutePath());
-  // assertEquals("correct group", 1, items.size());
-  // StoreGroup group = (StoreGroup) items.get(0);
-  // assertEquals("correct num collections", 3, group.size());
-  // ICollection firstColl = (ICollection) group.get(2);
-  // assertEquals("correct num rows", 1708, firstColl.getValuesCount());
-  //
-  // List<IStoreItem> items2 = parser.parse(file2.getAbsolutePath());
-  // assertEquals("correct group", 1, items2.size());
-  // StoreGroup group2 = (StoreGroup) items2.get(0);
-  // assertEquals("correct num collections", 3, group2.size());
-  // ICollection secondColl = (ICollection) group2.get(2);
-  // assertEquals("correct num rows", 1708, secondColl.getValuesCount());
-  //
-  // TemporalLocation track1 = (TemporalLocation) firstColl;
-  // TemporalLocation track2 = (TemporalLocation) secondColl;
-  // selection.add(track1);
-  // selection.add(track2);
-  //
-  // Collection<ICommand<IStoreItem>> commands =
-  // new BearingBetweenTracksOperation().actionsFor(selection, store, context);
-  // assertEquals("Bearing Between Tracks operation", 2, commands.size());
-  // Iterator<ICommand<IStoreItem>> iterator = commands.iterator();
-  // ICommand<IStoreItem> command = iterator.next();
-  // command.execute();
-  //
-  // command = iterator.next();
-  // command.execute();
-  //
-  // boolean numeric = CsvParser.isNumeric("123");
-  // assertTrue(numeric);
-  // numeric = CsvParser.isNumeric("NAN");
-  // assertTrue(!numeric);
-  // }
+  @Test
+  public void testBearingBetweenTracksOperation() throws IOException
+  {
+    StoreGroup store = new SampleData().getData(10);
+    List<IStoreItem> selection = new ArrayList<IStoreItem>();
+
+    File file = TestCsvParser.getDataFile("americas_cup/usa.csv");
+    assertTrue(file.isFile());
+    File file2 = TestCsvParser.getDataFile("americas_cup/nzl.csv");
+    assertTrue(file2.isFile());
+    CsvParser parser = new CsvParser();
+    List<IStoreItem> items = parser.parse(file.getAbsolutePath());
+    assertEquals("correct group", 1, items.size());
+    StoreGroup group = (StoreGroup) items.get(0);
+    assertEquals("correct num collections", 3, group.size());
+    Document<?> firstColl = (Document<?>) group.get(2);
+    assertEquals("correct num rows", 1708, firstColl.size());
+
+    List<IStoreItem> items2 = parser.parse(file2.getAbsolutePath());
+    assertEquals("correct group", 1, items2.size());
+    StoreGroup group2 = (StoreGroup) items2.get(0);
+    assertEquals("correct num collections", 3, group2.size());
+    Document<?> secondColl = (Document<?>) group2.get(2);
+    assertEquals("correct num rows", 1708, secondColl.size());
+
+    LocationDocument track1 = (LocationDocument) firstColl;
+    LocationDocument track2 = (LocationDocument) secondColl;
+    selection.add(track1);
+    selection.add(track2);
+
+    List<ICommand> commands = new BearingBetweenTracksOperation().actionsFor(selection, store,
+        context);
+    assertEquals("Bearing Between Tracks operation", 2, commands.size());
+    Iterator<ICommand> iterator = commands.iterator();
+    ICommand command = iterator.next();
+    command.execute();
+
+    command = iterator.next();
+    command.execute();
+
+    boolean numeric = CsvParser.isNumeric("123");
+    assertTrue(numeric);
+    numeric = CsvParser.isNumeric("NAN");
+    assertTrue(!numeric);
+  }
 
 }
