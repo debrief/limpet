@@ -35,6 +35,7 @@ public class SliderCellEditor extends CellEditor
   private Composite _myControl = null;
   private Label _myLabel;
   private Slider _theSlider;
+  private Object _storedValue;
   private int minValue;
   private int maxValue;
 
@@ -72,6 +73,7 @@ public class SliderCellEditor extends CellEditor
     _myControl.setLayout(rl);
     _myLabel = new Label(_myControl, SWT.NONE);
     _myLabel.setText("000");
+    _myLabel.pack();
     _myLabel.setBackground(bg);
     final GridData gd1 = new GridData(GridData.FILL_HORIZONTAL);
     _myLabel.setLayoutData(gd1);
@@ -103,7 +105,16 @@ public class SliderCellEditor extends CellEditor
     Object res = null;
     if (_theSlider != null)
     {
-      res = _theSlider.getSelection() + "";
+      // see what the stored type is
+      if (_storedValue instanceof String)
+      {
+        res = _theSlider.getSelection() + "";
+      }
+      else if (_storedValue instanceof Integer)
+      {
+        res = _theSlider.getSelection();
+      }
+
     }
     return res;
   }
@@ -127,10 +138,10 @@ public class SliderCellEditor extends CellEditor
 
   protected void doSetValue(final Object value)
   {
-    final String curr = (String) value;
+    _storedValue = value;
     if (_myLabel != null)
     {
-      _myLabel.setText(curr);
+      _myLabel.setText("" + value);
     }
     if (_theSlider != null)
     {
@@ -138,7 +149,23 @@ public class SliderCellEditor extends CellEditor
       _theSlider.setMinimum(minValue);
       _theSlider.setIncrement(1);
       _theSlider.setPageIncrement(5);
-      _theSlider.setSelection(new Double(curr).intValue());
+      final Integer selection;
+      if (value instanceof Integer)
+      {
+        selection = new Double((Integer) value).intValue();
+      }
+      else if (value instanceof String)
+      {
+        selection = new Double((String) value).intValue();
+      }
+      else
+      {
+        selection = null;
+      }
+      if (selection != null)
+      {
+        _theSlider.setSelection(selection);
+      }
       _theSlider.setThumb(1);
     }
   }
