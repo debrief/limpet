@@ -56,6 +56,8 @@ public interface IDocument<T extends Object> extends IStoreItem
 
   public void addDependent(ICommand command);
 
+  public void removeDependent(ICommand command);
+
   public List<ICommand> getDependents();
 
   void clearQuiet();

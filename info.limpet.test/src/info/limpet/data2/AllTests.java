@@ -37,6 +37,7 @@ import junit.framework.TestSuite;
 @Suite.SuiteClasses(
 { 
 	TestCollections.class,
+	TestArithmeticCollections.class,
 	TestDynamic.class,
 	TestExport.class,
 	TestReflectivePropertySource.class,
