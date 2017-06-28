@@ -87,13 +87,13 @@ public class TestCsvParser extends TestCase
 
     thisN = (NumberDocument) group.get(ctr++);
     assertTrue("correct data type", thisN instanceof NumberDocument);
-    assertEquals("correct units",SI.KELVIN, thisN.getUnits());
+    assertEquals("correct units",SI.CELSIUS, thisN.getUnits());
     assertEquals("correct name", "BalloonAscentData-Air Temperature", thisN.getName());
     assertEquals("correct index units", SI.METER, thisN.getIndexUnits());
 
     thisN = (NumberDocument) group.get(ctr++);
     assertTrue("correct data type", thisN instanceof NumberDocument);
-    assertEquals("correct units",SI.KELVIN, thisN.getUnits());
+    assertEquals("correct units",SI.CELSIUS, thisN.getUnits());
     assertEquals("correct name", "BalloonAscentData-Dewpoint", thisN.getName());
     assertEquals("correct index units", SI.METER, thisN.getIndexUnits());
 
