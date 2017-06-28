@@ -133,7 +133,16 @@ abstract public class Document<T extends Object> implements IDocument<T>
   @UIProperty(name = "Name", category = UIProperty.CATEGORY_LABEL)
   public String getName()
   {
-    return dataset.getName();
+    final String res;
+    if(dataset != null)
+    {
+      res = dataset.getName();
+    }
+    else
+    {
+      res = null;
+    }
+    return res;
   }
 
   /*
