@@ -50,7 +50,6 @@ public abstract class BinaryQuantityOperation implements IOperation
   private final CollectionComplianceTests aTests =
       new CollectionComplianceTests();
 
-
   /**
    * the command that actually produces data
    * 
@@ -441,17 +440,21 @@ public abstract class BinaryQuantityOperation implements IOperation
     @Override
     protected void recalculate(final IStoreItem subject)
     {
+      // get the existing name
+      final Document<?> outDoc = getOutputs().get(0);
+      final String oldName = outDoc.getName();
+
       // calculate the results
       final IDataset newSet = performCalc();
 
+      // and restore the name
+      newSet.setName(oldName);
+
       // store the new dataset
-      getOutputs().get(0).setDataset(newSet);
+      outDoc.setDataset(newSet);
 
       // and share the good news
-      for (final Document<?> s : getOutputs())
-      {
-        s.fireDataChanged();
-      }
+      outDoc.fireDataChanged();
     }
 
     private void storeIndexUnits(final NumberDocument output,
