@@ -250,6 +250,13 @@ public abstract class AbstractCommand implements ICommand
     {
       IStoreItem t = iter.next();
       t.addChangeListener(this);
+      
+      if(t instanceof Document<?>)
+      {
+        Document<?> doc = (Document<?>) t;
+        doc.addDependent(this);
+      }
+      
     }
   }
 

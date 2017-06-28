@@ -190,12 +190,12 @@ public abstract class CoreAnalysisView extends ViewPart
       }
     }
 
-    // ok, stop listening to the old list
-    clearChangeListeners();
-
     // have we found any, and are they suitable for us?
     if ((res.size()) > 0 && appliesToMe(res, getATests()))
     {
+      // ok, stop listening to the old list
+      clearChangeListeners();
+
       // store the new list
       curList.addAll(res);
 

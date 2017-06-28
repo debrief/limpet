@@ -128,7 +128,7 @@ public class TestDynamic extends TestCase
 		events.clear();
 
 		NumberDocument newResSeries = (NumberDocument) store
-				.get("Sum of Speed Two Time + Speed One Time+Speed Two Time");
+				.get("Sum of Speed Two Time + Sum of Speed One Time + Speed Two Time");
 		assertNotNull("found new series", newResSeries);
 		newResSeries.addChangeListener(listener);
 
