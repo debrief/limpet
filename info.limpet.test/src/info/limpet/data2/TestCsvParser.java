@@ -15,6 +15,7 @@
 package info.limpet.data2;
 
 import static javax.measure.unit.NonSI.BAR;
+import static javax.measure.unit.SI.CELSIUS;
 import static javax.measure.unit.SI.CENTI;
 import static javax.measure.unit.SI.GRAM;
 import static javax.measure.unit.SI.METER;
@@ -37,11 +38,10 @@ import javax.measure.quantity.Dimensionless;
 import javax.measure.quantity.Pressure;
 import javax.measure.quantity.Velocity;
 import javax.measure.quantity.VolumetricDensity;
-import javax.measure.unit.SI;
-
-import org.junit.Test;
 
 import junit.framework.TestCase;
+
+import org.junit.Test;
 
 public class TestCsvParser extends TestCase
 {
@@ -74,59 +74,59 @@ public class TestCsvParser extends TestCase
     int ctr = 0;
     NumberDocument thisN = (NumberDocument) group.get(ctr++);
     assertTrue("correct data type", thisN instanceof NumberDocument);
-    assertEquals("correct units", SI.SECOND, thisN.getUnits());
+    assertEquals("correct units", SECOND, thisN.getUnits());
     assertEquals("correct name", "BalloonAscentData-Time", thisN.getName());
-    assertEquals("correct index units", SI.METER, thisN.getIndexUnits());
+    assertEquals("correct index units", METER, thisN.getIndexUnits());
 
     thisN = (NumberDocument) group.get(ctr++);
     assertTrue("correct data type", thisN instanceof NumberDocument);
     assertEquals("correct units",MILLI(BAR).asType(
         Pressure.class), thisN.getUnits());
     assertEquals("correct name", "BalloonAscentData-Pressure", thisN.getName());
-    assertEquals("correct index units", SI.METER, thisN.getIndexUnits());
+    assertEquals("correct index units", METER, thisN.getIndexUnits());
 
     thisN = (NumberDocument) group.get(ctr++);
     assertTrue("correct data type", thisN instanceof NumberDocument);
-    assertEquals("correct units",SI.CELSIUS, thisN.getUnits());
+    assertEquals("correct units",CELSIUS, thisN.getUnits());
     assertEquals("correct name", "BalloonAscentData-Air Temperature", thisN.getName());
-    assertEquals("correct index units", SI.METER, thisN.getIndexUnits());
+    assertEquals("correct index units", METER, thisN.getIndexUnits());
 
     thisN = (NumberDocument) group.get(ctr++);
     assertTrue("correct data type", thisN instanceof NumberDocument);
-    assertEquals("correct units",SI.CELSIUS, thisN.getUnits());
+    assertEquals("correct units",CELSIUS, thisN.getUnits());
     assertEquals("correct name", "BalloonAscentData-Dewpoint", thisN.getName());
-    assertEquals("correct index units", SI.METER, thisN.getIndexUnits());
+    assertEquals("correct index units", METER, thisN.getIndexUnits());
 
     thisN = (NumberDocument) group.get(ctr++);
     assertTrue("correct data type", thisN instanceof NumberDocument);
     assertEquals("correct units",GRAM
         .divide(CENTI(METER).pow(3)).asType(VolumetricDensity.class), thisN.getUnits());
     assertEquals("correct name", "BalloonAscentData-Water density", thisN.getName());
-    assertEquals("correct index units", SI.METER, thisN.getIndexUnits());
+    assertEquals("correct index units", METER, thisN.getIndexUnits());
 
     thisN = (NumberDocument) group.get(ctr++);
     assertTrue("correct data type", thisN instanceof NumberDocument);
     assertEquals("correct units",Dimensionless.UNIT, thisN.getUnits());
     assertEquals("correct name", "BalloonAscentData-Humidity", thisN.getName());
-    assertEquals("correct index units", SI.METER, thisN.getIndexUnits());
+    assertEquals("correct index units", METER, thisN.getIndexUnits());
 
     thisN = (NumberDocument) group.get(ctr++);
     assertTrue("correct data type", thisN instanceof NumberDocument);
     assertEquals("correct units",METRE.divide(SECOND).asType(
         Velocity.class), thisN.getUnits());
     assertEquals("correct name", "BalloonAscentData-Wind speed", thisN.getName());
-    assertEquals("correct index units", SI.METER, thisN.getIndexUnits());
+    assertEquals("correct index units", METER, thisN.getIndexUnits());
 
     thisN = (NumberDocument) group.get(ctr++);
     assertTrue("correct data type", thisN instanceof NumberDocument);
     assertEquals("correct units",SampleData.DEGREE_ANGLE
         .asType(Angle.class), thisN.getUnits());
     assertEquals("correct name", "BalloonAscentData-Wind direction", thisN.getName());
-    assertEquals("correct index units", SI.METER, thisN.getIndexUnits());
+    assertEquals("correct index units", METER, thisN.getIndexUnits());
 
     StringDocument thisS = (StringDocument) group.get(8);
     assertTrue("correct data type", thisS instanceof StringDocument);
-    assertEquals("correct index units", SI.METER, thisS.getIndexUnits());
+    assertEquals("correct index units", METER, thisS.getIndexUnits());
   }
 
   @Test
