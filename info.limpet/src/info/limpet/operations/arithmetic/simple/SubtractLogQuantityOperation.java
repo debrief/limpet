@@ -54,7 +54,8 @@ public class SubtractLogQuantityOperation extends BinaryQuantityOperation
     @Override
     protected String getBinaryNameFor(final String name1, final String name2)
     {
-      return name2 + " subtracted from " + name1;
+      return getContext().getInput("Logarithmic Subtract",
+          NEW_DATASET_MESSAGE, name2 + " subtracted from " + name1);
     }
 
     @Override

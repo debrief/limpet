@@ -25,6 +25,7 @@ import info.limpet.impl.LocationDocument;
 import info.limpet.impl.NumberDocument;
 import info.limpet.impl.NumberDocumentBuilder;
 import info.limpet.impl.SampleData;
+import info.limpet.impl.StoreGroup;
 import info.limpet.operations.AbstractCommand;
 import info.limpet.operations.CollectionComplianceTests;
 import info.limpet.operations.CollectionComplianceTests.TimePeriod;
@@ -42,7 +43,7 @@ import javax.measure.unit.Unit;
 
 public class BistaticAngleOperation implements IOperation
 {
-  
+
   private final CollectionComplianceTests aTests =
       new CollectionComplianceTests();
 
@@ -52,25 +53,27 @@ public class BistaticAngleOperation implements IOperation
     final protected NumberDocumentBuilder _bistaticBuilder;
     final protected NumberDocumentBuilder _bistaticAspectBuilder;
     final private Unit<?> _outputUnits;
-    final private List<IStoreGroup> _subjects;
+    final private LocationDocument _transmitter;
+    final private LocationDocument _receiver;
     final private IStoreGroup _target;
-    
+
     public BistaticAngleCommand(final List<IStoreItem> selection,
-        final List<IStoreGroup> subjects, final IStoreGroup target,
-        final IStoreGroup store, final IDocument<?> timeProvider,
-        final IContext context)
+        final IStoreGroup target, final LocationDocument tx,
+        final LocationDocument rx, final IStoreGroup store,
+        final IDocument<?> timeProvider, final IContext context)
     {
       super("Bistatic angle at:" + target.getName(),
           "Calculate bistatic angle at:" + target.getName() + " from "
-              + subjects.get(0).getName() + " to:" + subjects.get(1).getName(),
-          store, false, false, selection, context);
+              + tx.getName() + " to:" + rx.getName(), store, false, false,
+          selection, context);
 
       // special processing.
       // we generate our own list of inputs, so clear the existing list
       getInputs().clear();
 
       _timeProvider = timeProvider;
-      _subjects = subjects;
+      _transmitter = tx;
+      _receiver = rx;
       _target = target;
       _outputUnits = SampleData.DEGREE_ANGLE;
       final Unit<?> indexUnits =
@@ -100,7 +103,7 @@ public class BistaticAngleOperation implements IOperation
       super.addOutput(biADataset);
 
       // tell each series that we're a dependent
-      for(IStoreItem doc: getInputs())
+      for (IStoreItem doc : getInputs())
       {
         IDocument<?> idoc = (IDocument<?>) doc;
         idoc.addDependent(this);
@@ -148,18 +151,16 @@ public class BistaticAngleOperation implements IOperation
       init();
 
       // get the tracks
-      final IStoreGroup tx = _subjects.get(0);
       final IStoreGroup target = _target;
-      final IStoreGroup rx = _subjects.get(1);
 
       // get the location datasets
       final List<IStoreItem> tgtDocs = new ArrayList<IStoreItem>();
       tgtDocs.addAll(target);
       final NumberDocument tgt_hdg =
           aTests.findCollectionWith(tgtDocs, SI.RADIAN.getDimension(), true);
-      final LocationDocument tx_track = aTests.getFirstLocation(tx);
+      final LocationDocument tx_track = _transmitter;
       final LocationDocument tgt_track = aTests.getFirstLocation(target);
-      final LocationDocument rx_track = aTests.getFirstLocation(rx);
+      final LocationDocument rx_track = _receiver;
 
       // ok, if this is the first pass, store these documents as the inputs
       if (getInputs().size() == 0)
@@ -254,7 +255,6 @@ public class BistaticAngleOperation implements IOperation
     }
   }
 
-
   @SuppressWarnings("unused")
   private boolean appliesTo(final List<IStoreItem> datasets)
   {
@@ -312,23 +312,9 @@ public class BistaticAngleOperation implements IOperation
     // check we have three items selected, for the three tracks
     if (rawSelection.size() == 3)
     {
-      // ok, get the location datasets
-      List<IStoreGroup> allTracks = getSuitableTracks(rawSelection, false);
+      // find which ones have heading
       List<IStoreGroup> tracksWithHeading =
           getSuitableTracks(rawSelection, true);
-
-      if (allTracks.size() != 3 || tracksWithHeading.size() < 1)
-      {
-        return res;
-      }
-
-      // now move onto see if the track periods overlap
-      final TimePeriod tracksPeriod = trackIntersectionFor(allTracks);
-
-      if (tracksPeriod == null)
-      {
-        return res;
-      }
 
       // ok, now run through the ones with heading
       Iterator<IStoreGroup> cIter = tracksWithHeading.iterator();
@@ -339,10 +325,12 @@ public class BistaticAngleOperation implements IOperation
         // ok, get the location
         LocationDocument targetTrack = aTests.getFirstLocation(thisTarget);
 
-        // now the hearing
+        // now the heading
         NumberDocument heading =
             aTests.findCollectionWith(thisTarget, SampleData.DEGREE_ANGLE
                 .getDimension(), true);
+
+        final TimePeriod tracksPeriod = trackIntersectionFor(rawSelection);
 
         // check it's indexed
         if (heading.isIndexed())
@@ -360,23 +348,39 @@ public class BistaticAngleOperation implements IOperation
             // ok, we can create a command for this permutation
 
             // loop through all the tracks, to find the rx/tx
-            List<IStoreGroup> subjects = new ArrayList<IStoreGroup>();
-            Iterator<IStoreGroup> lIter = allTracks.iterator();
+            List<LocationDocument> subjects = new ArrayList<LocationDocument>();
+            Iterator<IStoreItem> lIter = rawSelection.iterator();
+
             while (lIter.hasNext())
             {
-              IStoreGroup track = (IStoreGroup) lIter.next();
+              IStoreItem item = lIter.next();
 
               // check it's not us.
-              if (!track.equals(thisTarget))
+              if (!item.equals(thisTarget))
               {
-                // ok, it's one of the others, add it
-                subjects.add(track);
+                if (item instanceof StoreGroup)
+                {
+                  StoreGroup group = (StoreGroup) item;
+                  subjects.add(aTests.getFirstLocation(group));
+                }
+                else if (item instanceof LocationDocument)
+                {
+                  // ok, it's one of the others, add it
+                  subjects.add((LocationDocument) item);
+                }
               }
             }
+            
+            if(subjects.size() != 2)
+            {
+              return res;
+            }
+            LocationDocument tx = subjects.get(0);
+            LocationDocument rx = subjects.get(1);
 
             // ok, and the command
             ICommand command =
-                new BistaticAngleCommand(rawSelection, subjects, thisTarget,
+                new BistaticAngleCommand(rawSelection, thisTarget, tx, rx,
                     destination, targetTrack, context)
                 {
 
@@ -402,16 +406,24 @@ public class BistaticAngleOperation implements IOperation
     return res;
   }
 
-  private TimePeriod trackIntersectionFor(List<IStoreGroup> allTracks)
+  private TimePeriod trackIntersectionFor(List<IStoreItem> allTracks)
   {
-    Iterator<IStoreGroup> iter = allTracks.iterator();
     List<IStoreItem> tracks = new ArrayList<IStoreItem>();
+    Iterator<IStoreItem> iter = allTracks.iterator();
     while (iter.hasNext())
     {
-      IStoreGroup track = (IStoreGroup) iter.next();
-      // ok, get the tarck
-      LocationDocument doc = aTests.getFirstLocation(track);
-      tracks.add(doc);
+      IStoreItem next = iter.next();
+      if (next instanceof StoreGroup)
+      {
+        IStoreGroup track = (IStoreGroup) next;
+        // ok, get the tarck
+        LocationDocument doc = aTests.getFirstLocation(track);
+        tracks.add(doc);
+      }
+      else if (next instanceof LocationDocument)
+      {
+        tracks.add(next);
+      }
     }
     TimePeriod period = aTests.getBoundingRange(tracks);
     return period;
