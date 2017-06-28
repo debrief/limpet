@@ -379,6 +379,18 @@ abstract public class Document<T extends Object> implements IDocument<T>
     dependents.add(command);
   }
 
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see info.limpet.IDocument#removeDependent(info.limpet.ICommand)
+   */
+  @Override
+  public void removeDependent(ICommand command)
+  {
+    dependents.remove(command);
+  }
+
   /*
    * (non-Javadoc)
    * 
