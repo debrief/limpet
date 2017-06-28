@@ -68,9 +68,9 @@ public abstract class AbstractCommand implements ICommand
   private transient UUID uuid;
   private final transient IContext context;
 
-  public AbstractCommand(String title, String description, IStoreGroup store,
-      boolean canUndo, boolean canRedo, List<IStoreItem> inputs,
-      IContext context)
+  public AbstractCommand(final String title, final String description,
+      final IStoreGroup store, final boolean canUndo, final boolean canRedo,
+      final List<IStoreItem> inputs, final IContext context)
   {
     this.title = title;
     this.description = description;
@@ -89,130 +89,85 @@ public abstract class AbstractCommand implements ICommand
     }
   }
 
-  /**
-   * provide access to the context object
-   * 
-   * @return the context object
-   */
-  protected final IContext getContext()
+  @Override
+  public final void addChangeListener(final IChangeListener listener)
   {
-    return context;
+    // TODO we should add change listener support
+  }
+
+  public final void addOutput(final Document<?> output)
+  {
+    getOutputs().add(output);
+
+    // also register as a listener (esp for if it's being deleted)
+    output.addDependent(this);
   }
 
   @Override
-  public UUID getUUID()
+  public void addTransientChangeListener(final IChangeListener listener)
   {
-    if (uuid == null)
-    {
-      uuid = UUID.randomUUID();
-    }
-    return uuid;
+    // TODO Auto-generated method stub
+
   }
 
   @Override
-  public int hashCode()
+  public final boolean canRedo()
   {
-    final int prime = 31;
-    int result = 1;
-    result = prime * result + getUUID().hashCode();
-    return result;
+    return canRedo;
   }
 
   @Override
-  public final boolean equals(Object obj)
+  public final boolean canUndo()
   {
-    if (this == obj)
-    {
-      return true;
-    }
-    if (obj == null)
-    {
-      return false;
-    }
-    if (getClass() != obj.getClass())
-    {
-      return false;
-    }
-    AbstractCommand other = (AbstractCommand) obj;
-    return getUUID().equals(other.getUUID());
+    return canUndo;
   }
 
-  /**
-   * convenience function, to return the datasets as a comma separated list
-   * 
-   * @return
-   */
-  protected String getSubjectList()
+  @Override
+  public void collectionDeleted(final IStoreItem subject)
   {
-    StringBuffer res = new StringBuffer();
-
-    Iterator<IStoreItem> iter = (Iterator<IStoreItem>) getInputs().iterator();
-    int ctr = 0;
-    while (iter.hasNext())
+    // ok, is this an output?
+    // yes, clear it
+    final List<Document<?>> toDelete = new ArrayList<Document<?>>();
+    for (final Document<?> t : getOutputs())
     {
-      IStoreItem storeItem = iter.next();
-      if (ctr++ > 0)
+      if (t.equals(subject))
       {
-        res.append(", ");
+        // ok, delete this output
+        toDelete.add(t);
       }
-      res.append(storeItem.getName());
     }
 
-    return res.toString();
-  }
-
-  protected int getNonSingletonArrayLength(List<IStoreItem> inputs)
-  {
-    int size = 0;
-
-    Iterator<IStoreItem> iter = inputs.iterator();
-    while (iter.hasNext())
+    if (!toDelete.isEmpty())
     {
-      IDocument<?> thisC = (IDocument<?>) iter.next();
-      if (thisC.size() >= 1)
+      for (final Document<?> t : toDelete)
       {
-        size = thisC.size();
+        this.getOutputs().remove(t);
+      }
+    }
+
+    // now, is it an input?
+    toDelete.clear();
+    boolean selfDestruct = false;
+    for (final IStoreItem t : getInputs())
+    {
+      if (t.equals(subject))
+      {
+        // bugger, self-destruct
+        selfDestruct = true;
         break;
       }
     }
 
-    return size;
-  }
+    if (selfDestruct)
+    {
+      // ok, self destruct
+      selfDestruct(subject, toDelete);
+    }
 
-  @UIProperty(name = "Dynamic updates", category = UIProperty.CATEGORY_LABEL)
-  @Override
-  public boolean getDynamic()
-  {
-    return dynamic;
-  }
-
-  @Override
-  public void setDynamic(boolean dynamic)
-  {
-    this.dynamic = dynamic;
   }
 
   @Override
-  public void metadataChanged(IStoreItem subject)
-  {
-    // TODO: do a more intelligent/informed processing of metadata changed
-    dataChanged(subject);
-  }
-
-  @Override
-  public IStoreGroup getParent()
-  {
-    return _parent;
-  }
-
-  @Override
-  public final void setParent(IStoreGroup parent)
-  {
-    _parent = parent;
-  }
-
-  @Override
-  public final void dataChanged(IStoreItem subject)
+  public final void dataChanged(final IStoreItem subject)
   {
     // are we doing live updates?
     if (dynamic)
@@ -220,11 +175,11 @@ public abstract class AbstractCommand implements ICommand
       // ok, walk the tree, to see if this is
       // one of our inputs
       boolean requiresChange = false;
-      for (IStoreItem d : getInputs())
+      for (final IStoreItem d : getInputs())
       {
         if (d instanceof StoreGroup)
         {
-          StoreGroup sg = (StoreGroup) d;
+          final StoreGroup sg = (StoreGroup) d;
           if (sg.contains(subject))
           {
             requiresChange = true;
@@ -249,74 +204,61 @@ public abstract class AbstractCommand implements ICommand
     }
   }
 
-  protected abstract void recalculate(IStoreItem subject);
-
   @Override
-  public void collectionDeleted(IStoreItem subject)
+  public final boolean equals(final Object obj)
   {
-    // ok, is this an output?
-    // yes, clear it
-    List<Document<?>> toDelete = new ArrayList<Document<?>>();
-    for (Document<?> t : getOutputs())
+    if (this == obj)
     {
-      if (t.equals(subject))
-      {
-        // ok, delete this output
-        toDelete.add(t);
-      }
+      return true;
     }
-
-    if (!toDelete.isEmpty())
+    if (obj == null)
     {
-      for (Document<?> t : toDelete)
-      {
-        this.getOutputs().remove(t);
-      }
+      return false;
     }
-
-    // now, is it an input?
-    toDelete.clear();
-    boolean selfDestruct = false;
-    for (IStoreItem t : getInputs())
+    if (getClass() != obj.getClass())
     {
-      if (t.equals(subject))
-      {
-        // bugger, self-destruct
-        selfDestruct = true;
-        break;
-      }
+      return false;
     }
-
-    if (selfDestruct)
-    {
-      // ok, remove from listeners
-      for (IStoreItem t : getInputs())
-      {
-        t.removeChangeListener(this);
-      }
-      
-      getInputs().clear();
-
-      // and remove from otuputs
-      for (Document<?> t : getOutputs())
-      {
-        t.removeChangeListener(this);
-      }
-      
-      getOutputs().clear();
-
-      // remove from parent
-      if (getParent() != null)
-      {
-        getParent().remove(this);
-      }
-    }
-
+    final AbstractCommand other = (AbstractCommand) obj;
+    return getUUID().equals(other.getUUID());
   }
 
-  public final IStoreGroup getStore()
+  @Override
+  public void execute()
   {
-    return store;
+    // ok, register as a listener with the input files
+    final Iterator<IStoreItem> iter = getInputs().iterator();
+    while (iter.hasNext())
+    {
+      final IStoreItem t = iter.next();
+      if (t instanceof Document<?>)
+      {
+        final Document<?> doc = (Document<?>) t;
+        doc.addDependent(this);
+      }
+      else
+      {
+        t.addChangeListener(this);
+      }
+    }
+  }
+
+  @Override
+  public void fireDataChanged()
+  {
+    // hmm, we don't really implement this, because apps listen to the
+    // results collections, not the command.
+    throw new IllegalArgumentException("Not implemented");
+  }
+
+  /**
+   * provide access to the context object
+   * 
+   * @return the context object
+   */
+  protected final IContext getContext()
+  {
+    return context;
   }
 
   @UIProperty(name = "Description", category = UIProperty.CATEGORY_LABEL)
@@ -326,62 +268,17 @@ public abstract class AbstractCommand implements ICommand
     return description;
   }
 
+  @UIProperty(name = "Dynamic updates", category = UIProperty.CATEGORY_LABEL)
   @Override
-  public void execute()
+  public boolean getDynamic()
   {
-    // ok, register as a listener with the input files
-    Iterator<IStoreItem> iter = getInputs().iterator();
-    while (iter.hasNext())
-    {
-      IStoreItem t = iter.next();
-      t.addChangeListener(this);
-    }
-  }
-
-  @Override
-  public void undo()
-  {
-    throw new UnsupportedOperationException(
-        "Should not be called, undo not provided");
-  }
-
-  @Override
-  public void redo()
-  {
-    throw new UnsupportedOperationException(
-        "Should not be called, redo not provided");
-  }
-
-  @Override
-  public final boolean canUndo()
-  {
-    return canUndo;
-  }
-
-  @Override
-  public final boolean canRedo()
-  {
-    return canRedo;
+    return dynamic;
   }
 
   @Override
   public final List<IStoreItem> getInputs()
   {
     return inputs;
-  }
-
-  @Override
-  public final List<Document<?>> getOutputs()
-  {
-    return outputs;
-  }
-
-  public final void addOutput(Document<?> output)
-  {
-    getOutputs().add(output);
-
-    // also register as a listener (esp for if it's being deleted)
-    output.addDependent(this);
   }
 
   @UIProperty(name = "Name", category = UIProperty.CATEGORY_LABEL)
@@ -391,45 +288,82 @@ public abstract class AbstractCommand implements ICommand
     return title;
   }
 
-  @Override
-  public String toString()
+  protected int getNonSingletonArrayLength(final List<IStoreItem> inputs)
   {
-    return getName();
+    int size = 0;
+
+    final Iterator<IStoreItem> iter = inputs.iterator();
+    while (iter.hasNext())
+    {
+      final IDocument<?> thisC = (IDocument<?>) iter.next();
+      if (thisC.size() >= 1)
+      {
+        size = thisC.size();
+        break;
+      }
+    }
+
+    return size;
   }
 
   @Override
-  public final void addChangeListener(IChangeListener listener)
+  public final List<Document<?>> getOutputs()
   {
-    // TODO we should add change listener support
+    return outputs;
   }
 
   @Override
-  public final void removeChangeListener(IChangeListener listener)
+  public IStoreGroup getParent()
   {
-    // TODO we should add change listener support
+    return _parent;
+  }
+
+  public final IStoreGroup getStore()
+  {
+    return store;
+  }
+
+  /**
+   * convenience function, to return the datasets as a comma separated list
+   * 
+   * @return
+   */
+  protected String getSubjectList()
+  {
+    final StringBuffer res = new StringBuffer();
+
+    final Iterator<IStoreItem> iter = getInputs().iterator();
+    int ctr = 0;
+    while (iter.hasNext())
+    {
+      final IStoreItem storeItem = iter.next();
+      if (ctr++ > 0)
+      {
+        res.append(", ");
+      }
+      res.append(storeItem.getName());
+    }
+
+    return res.toString();
   }
 
   @Override
-  public void addTransientChangeListener(IChangeListener listener)
+  public UUID getUUID()
   {
-    // TODO Auto-generated method stub
-
+    if (uuid == null)
+    {
+      uuid = UUID.randomUUID();
+    }
+    return uuid;
   }
 
   @Override
-  public void removeTransientChangeListener(
-      IChangeListener collectionChangeListener)
+  public int hashCode()
   {
-    // TODO Auto-generated method stub
-
-  }
-
-  @Override
-  public void fireDataChanged()
-  {
-    // hmm, we don't really implement this, because apps listen to the
-    // results collections, not the command.
-    throw new IllegalArgumentException("Not implemented");
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + getUUID().hashCode();
+    return result;
   }
 
   final protected LocationDocument locationsFor(final LocationDocument track1,
@@ -449,7 +383,7 @@ public abstract class AbstractCommand implements ICommand
       throw new IllegalArgumentException(e);
     }
 
-    double[] data = ds.getData();
+    final double[] data = ds.getData();
     return locationsFor(track1, data);
   }
 
@@ -474,8 +408,8 @@ public abstract class AbstractCommand implements ICommand
       ldb =
           new LocationDocumentBuilder("Interpolated locations", null,
               indexUnits);
-      Point2D pt = track.getLocationIterator().next();
-      for (double t : times)
+      final Point2D pt = track.getLocationIterator().next();
+      for (final double t : times)
       {
         ldb.add(t, pt);
       }
@@ -524,6 +458,13 @@ public abstract class AbstractCommand implements ICommand
     return ldb.toDocument();
   }
 
+  @Override
+  public void metadataChanged(final IStoreItem subject)
+  {
+    // TODO: do a more intelligent/informed processing of metadata changed
+    dataChanged(subject);
+  }
+
   final protected NumberDocument numbersFor(final NumberDocument document,
       final Document<?> times)
   {
@@ -541,7 +482,7 @@ public abstract class AbstractCommand implements ICommand
       throw new IllegalArgumentException(e);
     }
 
-    double[] data = ds.getData();
+    final double[] data = ds.getData();
     return numbersFor(document, data);
   }
 
@@ -565,8 +506,8 @@ public abstract class AbstractCommand implements ICommand
       ldb =
           new NumberDocumentBuilder("Interpolated headings", document
               .getUnits(), null, indexUnits);
-      double pt = document.getIterator().next();
-      for (double t : times)
+      final double pt = document.getIterator().next();
+      for (final double t : times)
       {
         ldb.add(t, pt);
       }
@@ -606,5 +547,111 @@ public abstract class AbstractCommand implements ICommand
     }
 
     return ldb.toDocument();
+  }
+
+  protected abstract void recalculate(IStoreItem subject);
+
+  @Override
+  public void redo()
+  {
+    throw new UnsupportedOperationException(
+        "Should not be called, redo not provided");
+  }
+
+  @Override
+  public final void removeChangeListener(final IChangeListener listener)
+  {
+    // TODO we should add change listener support
+  }
+
+  @Override
+  public void removeTransientChangeListener(
+      final IChangeListener collectionChangeListener)
+  {
+    // TODO Auto-generated method stub
+
+  }
+
+  /**
+   * clear all listeners, ditch outputs
+   * 
+   * @param subject
+   * @param toDelete
+   */
+  private void selfDestruct(final IStoreItem subject,
+      final List<Document<?>> toDelete)
+  {
+    // ok, remove from listeners
+    for (final IStoreItem t : getInputs())
+    {
+      if (t instanceof Document<?>)
+      {
+        final Document<?> doc = (Document<?>) t;
+        doc.removeDependent(this);
+      }
+      else
+      {
+        t.removeChangeListener(this);
+      }
+    }
+
+    getInputs().clear();
+
+    // and remove from outputs
+    for (final Document<?> t : getOutputs())
+    {
+      // stop listening to it
+      t.removeChangeListener(this);
+    }
+
+    // also, get the outputs to delete themselves
+    toDelete.clear();
+    toDelete.addAll(getOutputs());
+    for (final Document<?> t : toDelete)
+    {
+      if (t.equals(subject))
+      {
+        // ok, ignore it - it's already being deleted
+      }
+      else
+      {
+        // drop it from it's parent
+        t.getParent().remove(t);
+      }
+    }
+
+    // clear the list of outputs
+    getOutputs().clear();
+
+    // remove from parent
+    if (getParent() != null)
+    {
+      getParent().remove(this);
+    }
+  }
+
+  @Override
+  public void setDynamic(final boolean dynamic)
+  {
+    this.dynamic = dynamic;
+  }
+
+  @Override
+  public final void setParent(final IStoreGroup parent)
+  {
+    _parent = parent;
+  }
+
+  @Override
+  public String toString()
+  {
+    return getName();
+  }
+
+  @Override
+  public void undo()
+  {
+    throw new UnsupportedOperationException(
+        "Should not be called, undo not provided");
   }
 }
