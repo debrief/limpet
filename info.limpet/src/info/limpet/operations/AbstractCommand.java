@@ -609,13 +609,10 @@ public abstract class AbstractCommand implements ICommand
     toDelete.addAll(getOutputs());
     for (final Document<?> t : toDelete)
     {
-      if (t.equals(subject))
+      if (!t.equals(subject))
       {
-        // ok, ignore it - it's already being deleted
-      }
-      else
-      {
-        // drop it from it's parent
+        // ok. it's not the document that's 
+        // already being deleted. drop it.
         t.getParent().remove(t);
       }
     }

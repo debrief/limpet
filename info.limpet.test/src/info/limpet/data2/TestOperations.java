@@ -1627,7 +1627,7 @@ public class TestOperations
     boolean numeric = CsvParser.isNumeric("123");
     assertTrue(numeric);
     numeric = CsvParser.isNumeric("NAN");
-    assertTrue(!numeric);
+    assertFalse(numeric);
   }
 
 }
