@@ -40,6 +40,8 @@ public class LimpetDecorator implements ILightweightLabelDecorator
 
   private static final ImageDescriptor SINGLE;
 
+  private static final ImageDescriptor TWO_DIM;
+
   private static final ImageDescriptor LEFT_ARROW;
 
   private static final ImageDescriptor RIGHT_ARROW;
@@ -68,6 +70,9 @@ public class LimpetDecorator implements ILightweightLabelDecorator
     SINGLE =
         AbstractUIPlugin.imageDescriptorFromPlugin(Activator.PLUGIN_ID,
             "icons/singleton.png");
+    TWO_DIM =
+        AbstractUIPlugin.imageDescriptorFromPlugin(Activator.PLUGIN_ID,
+            "icons/2.png");
 
     // TODO: switch to better "dynamic/connected" icon.
     DYNAMIC =
@@ -193,7 +198,7 @@ public class LimpetDecorator implements ILightweightLabelDecorator
   {
     if (dims > 1)
     {
-      decoration.addOverlay(TWO_WAY_ARROW, quadrant);
+      decoration.addOverlay(TWO_DIM, quadrant);
     }
   }
 
