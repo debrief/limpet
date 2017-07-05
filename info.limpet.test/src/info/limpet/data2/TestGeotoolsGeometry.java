@@ -1205,6 +1205,12 @@ public class TestGeotoolsGeometry extends TestCase
     assertEquals("store no longer empty", 1, store.size());
   }
 
+  public void testProplossLog()
+  {
+    assertEquals("correct loss for 1000m", 60d,
+        ProplossBetweenTwoTracksOperation.calcDopplerFor(1000d));
+  }
+
   public void testProplossCalc()
   {
     final LocationDocumentBuilder loc1 =

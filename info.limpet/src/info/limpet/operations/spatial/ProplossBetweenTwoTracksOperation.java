@@ -29,6 +29,16 @@ import javax.measure.unit.NonSI;
 public class ProplossBetweenTwoTracksOperation extends TwoTrackOperation
 {
 
+  /** make the actual calc more accessible, for testing
+   * 
+   * @param thisDistMetres range in metres
+   * @return doppler loss over this distance
+   */
+  public static double calcDopplerFor(final double thisDistMetres)
+  {
+    return   20d * Math.log10(thisDistMetres);
+  }
+  
   private final class ProplossBetweenOperation extends TwoTrackCommand
   {
     ProplossBetweenOperation(final List<IStoreItem> selection,
@@ -54,8 +64,8 @@ public class ProplossBetweenTwoTracksOperation extends TwoTrackOperation
       final double thisDistMetres = calc.getDistanceBetween(locA, locB);
 
       // ok, we've got to do 20 log R
-      final double thisLoss = 20d * Math.log(thisDistMetres);
-
+      final double thisLoss = calcDopplerFor(thisDistMetres);
+      
       if (time != null)
       {
         _builder.add(time, thisLoss);
