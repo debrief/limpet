@@ -96,7 +96,8 @@ abstract public class Document<T extends Object> implements IDocument<T>
   @Override
   public void beingDeleted()
   {
-    final List<IChangeListener> listeners = getListeners();
+    final List<IChangeListener> listeners = new ArrayList<IChangeListener>();
+    listeners.addAll(getListeners());
 
     for (final IChangeListener s : listeners)
     {
