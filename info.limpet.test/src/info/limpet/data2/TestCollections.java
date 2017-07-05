@@ -98,26 +98,46 @@ public class TestCollections extends TestCase
     selection.add(tq2);
 
     StoreGroup store = new StoreGroup("Store");
+    store.add(tq1);
+    store.add(tq2);
     Collection<ICommand> commands =
         new MultiplyQuantityOperation().actionsFor(selection, store, context);
     ICommand firstC = commands.iterator().next();
 
-    firstC.execute();
+    assertEquals("store size before", 2, store.size());
     
+    firstC.execute();
+
+    assertEquals("store size after", 3, store.size());
+
     // check deleting the output document
     Document<?> out = firstC.getOutputs().get(0);
     assertNotNull("found output", out);
     
-    // ok, check inputs have 
+    // ok, check output there
     assertEquals("has output", 1, firstC.getOutputs().size());
+    
+    // check the input contains the output
+    assertTrue("registered with input", tq1.getDependents().contains(firstC));
     
     // ok, now delete the output 
     store.remove(out);
 
-    // ok, check inputs have 
+    // ok, check outputs deleted
     assertEquals("output removed", 0, firstC.getOutputs().size());
+    
+    // and check the inputs were deleted 
+    assertEquals("input removed", 0, firstC.getInputs().size());
+    
+    // check the input contains the output
+    assertFalse("not registered with input", tq1.getDependents().contains(firstC));
 
-    // ok, we need to generate a new set of options
+    assertEquals("store size after output deleted", 2, store.size());
+
+    // check the store shrunk
+
+    // ok, we need to generate a new set of options, so we can
+    // DELETE AN INPUT
     commands =
         new MultiplyQuantityOperation().actionsFor(selection, store, context);
     firstC = commands.iterator().next();
