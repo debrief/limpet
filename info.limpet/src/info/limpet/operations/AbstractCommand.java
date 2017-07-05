@@ -100,7 +100,7 @@ public abstract class AbstractCommand implements ICommand
     getOutputs().add(output);
 
     // also register as a listener (esp for if it's being deleted)
-    output.addDependent(this);
+    output.addChangeListener(this);
   }
 
   @Override
@@ -125,45 +125,57 @@ public abstract class AbstractCommand implements ICommand
   @Override
   public void collectionDeleted(final IStoreItem subject)
   {
+
+    // ok, we rely on all of our inputs and outputs.
+    // if any of them change, then we will self-destruct
+
     // ok, is this an output?
     // yes, clear it
     final List<Document<?>> toDelete = new ArrayList<Document<?>>();
-    for (final Document<?> t : getOutputs())
+    toDelete.addAll(getOutputs());
+
+    // ok, we have a list of outputs. clear the outputs,
+    // so we won't get any more
+    outputs.clear();
+
+    for (final Document<?> t : toDelete)
     {
-      if (t.equals(subject))
+      // stop listening to it, so we don't get a delete message
+      t.removeChangeListener(this);
+
+      // and now delete it
+      if (!t.equals(subject) && t.getParent() != null)
       {
-        // ok, delete this output
-        toDelete.add(t);
+        t.getParent().remove(t);
       }
     }
 
-    if (!toDelete.isEmpty())
+    ArrayList<IStoreItem> toDelete2 = new ArrayList<IStoreItem>();
+    toDelete2.addAll(getInputs());
+    
+    // have safe list of inputs, now clear them
+    getInputs().clear();
+    
+    for (final IStoreItem t : toDelete2)
     {
-      for (final Document<?> t : toDelete)
+      if (t instanceof Document<?>)
       {
-        this.getOutputs().remove(t);
+        Document<?> doc = (Document<?>) t;
+
+        // ok, stop listening to it
+        doc.removeDependent(this);
+      }
+      else
+      {
+        t.removeChangeListener(this);
       }
     }
-
-    // now, is it an input?
-    toDelete.clear();
-    boolean selfDestruct = false;
-    for (final IStoreItem t : getInputs())
+    
+    // finally remove ourselves from parent
+    if (getParent() != null)
     {
-      if (t.equals(subject))
-      {
-        // bugger, self-destruct
-        selfDestruct = true;
-        break;
-      }
+      getParent().remove(this);
     }
-
-    if (selfDestruct)
-    {
-      // ok, self destruct
-      selfDestruct(subject, toDelete);
-    }
-
   }
 
   @Override
@@ -570,61 +582,6 @@ public abstract class AbstractCommand implements ICommand
   {
     // TODO Auto-generated method stub
 
-  }
-
-  /**
-   * clear all listeners, ditch outputs
-   * 
-   * @param subject
-   * @param toDelete
-   */
-  private void selfDestruct(final IStoreItem subject,
-      final List<Document<?>> toDelete)
-  {
-    // ok, remove from listeners
-    for (final IStoreItem t : getInputs())
-    {
-      if (t instanceof Document<?>)
-      {
-        final Document<?> doc = (Document<?>) t;
-        doc.removeDependent(this);
-      }
-      else
-      {
-        t.removeChangeListener(this);
-      }
-    }
-
-    getInputs().clear();
-
-    // and remove from outputs
-    for (final Document<?> t : getOutputs())
-    {
-      // stop listening to it
-      t.removeChangeListener(this);
-    }
-
-    // also, get the outputs to delete themselves
-    toDelete.clear();
-    toDelete.addAll(getOutputs());
-    for (final Document<?> t : toDelete)
-    {
-      if (!t.equals(subject))
-      {
-        // ok. it's not the document that's 
-        // already being deleted. drop it.
-        t.getParent().remove(t);
-      }
-    }
-
-    // clear the list of outputs
-    getOutputs().clear();
-
-    // remove from parent
-    if (getParent() != null)
-    {
-      getParent().remove(this);
-    }
   }
 
   @Override
