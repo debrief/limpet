@@ -44,7 +44,7 @@
             allowMultiple="true"
             category="info.limpet.ui"
             class="info.limpet.ui.xy_plot.HeatmapView"
-            icon="icons/24/heatmap-24x24.png"
+            icon="icons/heatmap.png"
             id="info.limpet.ui.HeatMapView"
             name="Heatmap Plot">
       </view>
@@ -52,7 +52,7 @@
             allowMultiple="true"
             category="info.limpet.ui"
             class="info.limpet.ui.xy_plot.TabularView"
-            icon="icons/24/Tabularview-24x24.png"
+            icon="icons/tabularview.png"
             id="info.limpet.ui.TabularView"
             name="Tabular view">
       </view>
