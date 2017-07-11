@@ -145,7 +145,7 @@ public class NewWizardPage extends WizardPage
     if (dotLoc != -1)
     {
       final String ext = fileName.substring(dotLoc + 1);
-      if (ext.equalsIgnoreCase("lap") == false)
+      if (!ext.equalsIgnoreCase("lap"))
       {
         updateStatus("File extension must be \"lap\"");
         return;
@@ -189,7 +189,7 @@ public class NewWizardPage extends WizardPage
 
   private void initialize()
   {
-    if (selection != null && selection.isEmpty() == false
+    if (selection != null && !selection.isEmpty()
         && selection instanceof IStructuredSelection)
     {
       final IStructuredSelection ssel = (IStructuredSelection) selection;
