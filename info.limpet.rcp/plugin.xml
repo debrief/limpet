@@ -166,5 +166,22 @@
             <hiddenToolBarItem id="org.eclipse.ui.workbench.help"/>
         </perspectiveExtension>
     </extension>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <category
+            id="info.limpet.rcp"
+            name="Limpet">
+      </category>
+      <wizard
+            canFinishEarly="true"
+            category="info.limpet.rcp"
+            class="info.limpet.rcp.wizards.NewFileWizard"
+            finalPerspective="info.limpet.product.perspective"
+            icon="icons/limpet.png"
+            id="info.limpet.rcp.wizards.NewFileWizard"
+            name="Limpet Analysis Project (.lap)"
+            project="true">
+      </wizard>
+   </extension>
 
 </plugin>

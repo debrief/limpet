@@ -66,5 +66,10 @@ public class Perspective implements IPerspectiveFactory
     layout.addShowViewShortcut(DataFrequencyView.ID);
     layout.addShowViewShortcut(XyPlotView.ID);
     layout.addShowViewShortcut(RangeSliderView.ID);
+    
+    // and shortcuts to create new Limpet files
+    layout.addNewWizardShortcut("org.eclipse.ui.wizards.new.folder");
+    layout.addNewWizardShortcut("info.limpet.rcp.wizards.NewFileWizard");
+    
   }
 }
