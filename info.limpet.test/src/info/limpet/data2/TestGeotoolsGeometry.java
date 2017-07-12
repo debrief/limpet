@@ -961,7 +961,7 @@ public class TestGeotoolsGeometry extends TestCase
     ops =
         new DistanceBetweenTracksOperation().actionsFor(selection, store,
             context);
-    assertEquals("does work collection", 2, ops.size());
+    assertEquals("does work collection", 1, ops.size());
 
     // check output is empty
     store.clear();
@@ -981,7 +981,7 @@ public class TestGeotoolsGeometry extends TestCase
     store.clear();
     assertEquals("store empty", 0, store.size());
 
-    final ICommand newOp = ops.get(1);
+    final ICommand newOp = ops.get(0);
     newOp.execute();
 
     assertEquals("store not empty", 1, store.size());
@@ -989,7 +989,7 @@ public class TestGeotoolsGeometry extends TestCase
     output = newOp.getOutputs().get(0);
     assertNotNull("output produced", output);
     assertEquals("correct items", 5, output.size());
-    assertNull("does not have indices", output.getIndex());
+    assertNotNull("has indices", output.getIndex());
 
   }
 
@@ -1124,7 +1124,7 @@ public class TestGeotoolsGeometry extends TestCase
     selection.add(singletonLoc.toDocument());
 
     ops = distanceOp.actionsFor(selection, store, context);
-    assertEquals("not empty collection", 2, ops.size());
+    assertEquals("not empty collection", 1, ops.size());
 
     // run the interpolation command
     store.clear();
@@ -1195,7 +1195,7 @@ public class TestGeotoolsGeometry extends TestCase
     // try the bearing operation
     ops = bearingOp.actionsFor(selection, store, context);
 
-    assertEquals("not empty collection", 2, ops.size());
+    assertEquals("not empty collection", 1, ops.size());
 
     store.clear();
     assertEquals("store empty", 0, store.size());
@@ -1256,7 +1256,7 @@ public class TestGeotoolsGeometry extends TestCase
     selection.add(loc2.toDocument());
     selection.add(len1.toDocument());
 
-    assertEquals("not empty collection", 2, pLossOp.actionsFor(selection,
+    assertEquals("not empty collection", 1, pLossOp.actionsFor(selection,
         store, context).size());
 
     // try adding an element to the length collection (it's ok,
@@ -1273,7 +1273,7 @@ public class TestGeotoolsGeometry extends TestCase
     selection.add(loc2.toDocument());
     selection.add(len1.toDocument());
 
-    assertEquals("not empty collection", 2, pLossOp.actionsFor(selection,
+    assertEquals("not empty collection", 1, pLossOp.actionsFor(selection,
         store, context).size());
 
     // make hte series different lengths
@@ -1302,7 +1302,7 @@ public class TestGeotoolsGeometry extends TestCase
     selection.add(loc3.toDocument());
 
     ops = pLossOp.actionsFor(selection, store, context);
-    assertEquals("not empty collection", 2, ops.size());
+    assertEquals("not empty collection", 1, ops.size());
 
     // check how it runs
     thisOp = ops.iterator().next();

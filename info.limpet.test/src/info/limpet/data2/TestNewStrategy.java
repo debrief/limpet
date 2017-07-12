@@ -84,7 +84,7 @@ public class TestNewStrategy extends TestCase
     Collection<ICommand> actions = adder.actionsFor(selection, target, context);
 
     assertEquals("target empty", 0, target.size());
-    assertEquals("correct num actions", 2, actions.size());
+    assertEquals("correct num actions", 1, actions.size());
 
     ICommand addAction = actions.iterator().next();
     addAction.execute();

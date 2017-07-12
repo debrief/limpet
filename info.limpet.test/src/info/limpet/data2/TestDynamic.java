@@ -52,9 +52,8 @@ public class TestDynamic extends TestCase
 
 		Collection<ICommand> actions = new AddQuantityOperation().actionsFor(
 				selection, store, context);
-		assertEquals("correct number of actions", 2, actions.size());
+		assertEquals("correct number of actions", 1, actions.size());
 		Iterator<ICommand> addIter = actions.iterator();
-		addIter.next();
 		ICommand firstAction = addIter.next();
 		assertEquals("correct action", "Add numeric values in provided series (interpolated)",
 				firstAction.getName());
@@ -116,7 +115,6 @@ public class TestDynamic extends TestCase
 		// ok - now for a further dependent calculation
 		actions = new AddQuantityOperation().actionsFor(selection, store, context);
 		addIter = actions.iterator();
-		addIter.next();
 		firstAction = addIter.next();
 		assertEquals("correct action", "Add numeric values in provided series (interpolated)",
 				firstAction.getName());

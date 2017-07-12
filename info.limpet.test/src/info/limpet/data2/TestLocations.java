@@ -63,7 +63,7 @@ public class TestLocations extends TestCase
     selection.add(ssn.get(0));
     List<ICommand> actions = pDiff.actionsFor(selection , store, context);  
     
-    assertEquals("got actions", 2, actions.size());
+    assertEquals("got actions", 1, actions.size());
     
     // ok, run it
     actions.get(0).execute();
