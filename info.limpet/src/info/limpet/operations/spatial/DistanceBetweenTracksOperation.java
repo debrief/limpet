@@ -96,8 +96,7 @@ public class DistanceBetweenTracksOperation extends TwoTrackOperation
                 timeProvider, context);
         res.add(newC);
       }
-
-      if (getATests().allEqualLengthOrSingleton(collatedTracks))
+      else if (getATests().allEqualLengthOrSingleton(collatedTracks))
       {
         // ok, provide an indexed action
         final ICommand newC =
