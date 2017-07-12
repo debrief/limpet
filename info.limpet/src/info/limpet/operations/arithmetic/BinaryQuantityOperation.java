@@ -479,21 +479,20 @@ public abstract class BinaryQuantityOperation implements IOperation
     final List<ICommand> res = new ArrayList<ICommand>();
     if (appliesTo(selection))
     {
-      // so, do we do our indexed commands?
-      if (getATests().allEqualLengthOrSingleton(selection))
-      {
-        addIndexedCommands(selection, destination, res, context);
-      }
 
       // aah, what about temporal (interpolated) values?
       final boolean allIndexed = getATests().allIndexed(selection);
       final boolean suitableForIndexedInterpolation =
           getATests().suitableForIndexedInterpolation(selection);
-      final boolean hasIndexed = getATests().hasIndexed(selection);
-      if (allIndexed && suitableForIndexedInterpolation || hasIndexed)
-      // )
+//      final boolean hasIndexed = getATests().hasIndexed(selection);
+      if (allIndexed && suitableForIndexedInterpolation /*|| hasIndexed */)
       {
         addInterpolatedCommands(selection, destination, res, context);
+      }
+      else if (getATests().allEqualLengthOrSingleton(selection))
+      {
+        // instead, offer our indexed commands?
+        addIndexedCommands(selection, destination, res, context);
       }
     }
     return res;

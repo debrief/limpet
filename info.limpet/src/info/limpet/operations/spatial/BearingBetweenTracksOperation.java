@@ -83,8 +83,7 @@ public class BearingBetweenTracksOperation extends TwoTrackOperation
 
         res.add(newC);
       }
-
-      if (getATests().allEqualLengthOrSingleton(collatedTracks))
+      else if (getATests().allEqualLengthOrSingleton(collatedTracks))
       {
         ICommand newC =
             new TwoTrackCommand(collatedTracks, destination,

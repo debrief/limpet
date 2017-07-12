@@ -80,7 +80,7 @@ public class TestBistaticAngleCalculations
     List<ICommand> actions = pDiff.actionsFor(selection, store, context);
 
     assertNotNull("found actions");
-    assertEquals("got actions", 2, actions.size());
+    assertEquals("got actions", 1, actions.size());
     assertEquals("store has original data", 3, store.size());
 
     // run it
@@ -98,7 +98,7 @@ public class TestBistaticAngleCalculations
     actions = pDiff.actionsFor(selection, store, context);
 
     assertNotNull("found actions");
-    assertEquals("got actions", 2, actions.size());
+    assertEquals("got actions", 1, actions.size());
     assertEquals("store has original data", 4, store.size());
 
     // run it
@@ -121,7 +121,7 @@ public class TestBistaticAngleCalculations
 
     // now the log adder
     actions = addL.actionsFor(selection, store, context);
-    assertEquals("actions returned", 2, actions.size());
+    assertEquals("actions returned", 1, actions.size());
 
     // ok, run the first action
     actions.get(0).execute();
@@ -153,7 +153,7 @@ public class TestBistaticAngleCalculations
     assertEquals("none returned", 0, actions.size());
 
     actions = subL.actionsFor(selection, store, context);
-    assertEquals("actions returned", 4, actions.size());
+    assertEquals("actions returned", 2, actions.size());
 
     // ok, run it
     actions.get(0).execute();

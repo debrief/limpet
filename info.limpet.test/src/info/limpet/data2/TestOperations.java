@@ -150,7 +150,7 @@ public class TestOperations
     selection.add(speedGood2);
     actions = new AddQuantityOperation().actionsFor(selection, store, context);
 
-    assertEquals("correct number of actions returned", 2, actions.size());
+    assertEquals("correct number of actions returned", 1, actions.size());
 
     ICommand addAction = actions.iterator().next();
 
@@ -308,7 +308,7 @@ public class TestOperations
     AddQuantityOperation adder = new AddQuantityOperation();
     IStoreGroup destination = new StoreGroup("data");
     List<ICommand> ops = adder.actionsFor(sel, destination, context);
-    assertEquals("one found", 2, ops.size());
+    assertEquals("one found", 1, ops.size());
 
     sel.clear();
     sel.add(len1.toDocument());
@@ -576,7 +576,7 @@ public class TestOperations
 
     commands =
         new MultiplyQuantityOperation().actionsFor(selection, store, context);
-    assertEquals("valid collections - both quantities", 2, commands.size());
+    assertEquals("valid collections - both quantities", 1, commands.size());
 
     selection.clear();
     selection.add(speedGood1);
@@ -585,7 +585,7 @@ public class TestOperations
     assertEquals("store empty", 0, store.size());
     commands =
         new MultiplyQuantityOperation().actionsFor(selection, store, context);
-    assertEquals("valid collections - both speeds", 2, commands.size());
+    assertEquals("valid collections - both speeds", 1, commands.size());
 
     // //////////////////////////
     // now test valid collections
@@ -598,7 +598,7 @@ public class TestOperations
     assertEquals("store empty", 0, store.size());
     commands =
         new MultiplyQuantityOperation().actionsFor(selection, store, context);
-    assertEquals("valid collections - one is singleton", 2, commands.size());
+    assertEquals("valid collections - one is singleton", 1, commands.size());
 
     ICommand command = commands.iterator().next();
 
@@ -627,7 +627,7 @@ public class TestOperations
     assertEquals("store empty", 0, store.size());
     commands =
         new MultiplyQuantityOperation().actionsFor(selection, store, context);
-    assertEquals("valid collections - one is singleton", 2, commands.size());
+    assertEquals("valid collections - one is singleton", 1, commands.size());
 
     selection.clear();
     selection.add(speedGood1);
@@ -833,7 +833,7 @@ public class TestOperations
     // test that new series has predecessors
     assertNotNull("new series has precedent", newS.getPrecedent());
     assertEquals("Have correct precedent",
-        "Add numeric values in provided series (indexed)", newS.getPrecedent()
+        "Add numeric values in provided series (interpolated)", newS.getPrecedent()
             .getName());
 
   }
@@ -863,7 +863,7 @@ public class TestOperations
     List<ICommand> commands =
         new SubtractQuantityOperation().actionsFor(selection, target, context);
 
-    assertEquals("got four commands", 4, commands.size());
+    assertEquals("got four commands", 2, commands.size());
 
     // have a look
     ICommand first = commands.get(0);
@@ -895,7 +895,8 @@ public class TestOperations
 
     commands =
         new SubtractQuantityOperation().actionsFor(selection, target, context);
-    first = commands.get(2);
+    assertEquals("correct number of actions", 2, commands.size());
+    first = commands.get(0);
     first.execute();
     output = (NumberDocument) first.getOutputs().iterator().next();
     assertNotNull("produced output", output);
@@ -909,7 +910,7 @@ public class TestOperations
 
     commands =
         new SubtractQuantityOperation().actionsFor(selection, target, context);
-    first = commands.get(3);
+    first = commands.get(1);
     first.execute();
     output = (NumberDocument) first.getOutputs().iterator().next();
     assertNotNull("produced output", output);
@@ -926,7 +927,7 @@ public class TestOperations
     commands =
         new SubtractQuantityOperation().actionsFor(selection, target, context);
 
-    assertEquals("got four commands", 4, commands.size());
+    assertEquals("got four commands", 2, commands.size());
 
     // have a look
     first = commands.get(1);
@@ -957,7 +958,7 @@ public class TestOperations
 
     commands =
         new SubtractQuantityOperation().actionsFor(selection, target, context);
-    first = commands.get(3);
+    first = commands.get(1);
     first.execute();
     output = (NumberDocument) first.getOutputs().iterator().next();
     assertNotNull("produced output", output);
@@ -971,7 +972,7 @@ public class TestOperations
 
     commands =
         new SubtractQuantityOperation().actionsFor(selection, target, context);
-    first = commands.get(2);
+    first = commands.get(0);
     first.execute();
     output = (NumberDocument) first.getOutputs().iterator().next();
     assertNotNull("produced output", output);
@@ -1002,11 +1003,10 @@ public class TestOperations
     selection.add(speedSingle);
     Collection<ICommand> commands =
         new AddQuantityOperation().actionsFor(selection, store, context);
-    assertEquals("got two commands", 2, commands.size());
+    assertEquals("got two commands", 1, commands.size());
 
     // have a look
     Iterator<ICommand> iter = commands.iterator();
-    iter.next();
     ICommand first = iter.next();
     first.execute();
     NumberDocument output =
@@ -1017,6 +1017,40 @@ public class TestOperations
 
     assertEquals("correct value", output.getValueAt(0), speedGood1
         .getValueAt(0) + 2, 0.001);
+  }
+  
+
+  @Test
+  public void testSubtractionNonOverlapping()
+  {
+    final CollectionComplianceTests testOp = new CollectionComplianceTests();
+
+    final StoreGroup store = new SampleData().getData(10);
+    final List<IStoreItem> selection = new ArrayList<IStoreItem>();
+
+    final NumberDocument speedGood1 =
+        (NumberDocument) store.get(SampleData.SPEED_ONE);
+    final NumberDocument speedGood2 =
+        (NumberDocument) store.get(SampleData.SPEED_EARLY);
+    selection.add(speedGood1);
+    selection.add(speedGood2);
+    
+    // check they are the same length (since indexing relies on that)
+    assertEquals("both same length", speedGood1.size(), speedGood2.size());
+    
+    // check they don't overlap
+    assertFalse("don't overlap", testOp.suitableForIndexedInterpolation(selection));
+    
+    // suitable for indexed
+    assertTrue("suitable for indexing", testOp.allEqualLengthOrSingleton(selection));
+    
+    List<ICommand> commands =
+        new SubtractQuantityOperation().actionsFor(selection, store, context);
+    assertEquals("Offered indexed operations", 2, commands
+        .size());
+    // get the first one
+    ICommand first = commands.get(0);
+    assertTrue("is indexed", first.getName().contains("(indexed)"));
   }
 
   @Test
@@ -1056,7 +1090,7 @@ public class TestOperations
 
     commands =
         new SubtractQuantityOperation().actionsFor(selection, store, context);
-    assertEquals("valid command", 4, commands.size());
+    assertEquals("valid command", 2, commands.size());
 
     int storeSize = store.size();
 
@@ -1124,7 +1158,7 @@ public class TestOperations
 
     List<ICommand> commands =
         new SubtractQuantityOperation().actionsFor(selection, store, context);
-    assertEquals("valid command", 4, commands.size());
+    assertEquals("valid command", 2, commands.size());
 
     int storeSize = store.size();
 
@@ -1616,12 +1650,9 @@ public class TestOperations
 
     List<ICommand> commands = new BearingBetweenTracksOperation().actionsFor(selection, store,
         context);
-    assertEquals("Bearing Between Tracks operation", 2, commands.size());
+    assertEquals("Bearing Between Tracks operation", 1, commands.size());
     Iterator<ICommand> iterator = commands.iterator();
     ICommand command = iterator.next();
-    command.execute();
-
-    command = iterator.next();
     command.execute();
 
     boolean numeric = CsvParser.isNumeric("123");
