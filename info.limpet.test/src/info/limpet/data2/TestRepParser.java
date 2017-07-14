@@ -30,35 +30,65 @@ import org.junit.Test;
 public class TestRepParser extends TestCase
 {
 
-  @Test
-  public void testParseSample() throws Exception
+  public static File getDataFile(final String name)
   {
-    File file = getDataFile("data/boat1.rep");
-    assertTrue(file.isFile());
-    FileParser parser = new RepParser();
-    List<IStoreItem> items = parser.parse(file.getAbsolutePath());
-    assertEquals("correct group", 1, items.size());
-    StoreGroup group = (StoreGroup) items.get(0);
-    assertEquals("correct num collections", 3, group.size());
-    IDocument<?> firstColl = (IDocument<?>) group.get(0);
-    assertEquals("correct num rows", 1708, firstColl.size());
-  }
-
-  public static File getDataFile(String name)
-  {
-    File file = new File(getFileName(name));
+    final File file = new File(getFileName(name));
     return file;
   }
 
-  public static String getFileName(String name)
+  public static String getFileName(final String name)
   {
-    StringBuilder builder = new StringBuilder();
+    final StringBuilder builder = new StringBuilder();
     builder.append("..");
     builder.append(File.separator);
     builder.append("info.limpet.sample_data");
     builder.append(File.separator);
     builder.append(name);
     return builder.toString();
+  }
+
+  @Test
+  public void testParseMultiTrack() throws Exception
+  {
+    final File file = getDataFile("data/two_boat.rep");
+    assertTrue(file.isFile());
+    final FileParser parser = new RepParser();
+    List<IStoreItem> items = parser.parse(file.getAbsolutePath());
+    assertEquals("correct group", 1, items.size());
+    items = (List<IStoreItem>) items.get(0);
+    final StoreGroup trackOne = (StoreGroup) items.get(0);
+    assertEquals("correct name", "COLLINGWOOD", trackOne.getName());
+    assertEquals("correct num collections", 3, trackOne.size());
+    IDocument<?> firstColl = (IDocument<?>) trackOne.get(0);
+    assertEquals("correct name", "COLLINGWOOD-location", firstColl.getName());
+    assertEquals("correct num rows", 403, firstColl.size());
+    IDocument<?> secondColl = (IDocument<?>) trackOne.get(1);
+    assertEquals("correct name", "COLLINGWOOD-speed", secondColl.getName());
+    assertEquals("correct num rows", 403, firstColl.size());
+
+    final StoreGroup trackTwo = (StoreGroup) items.get(1);
+    assertEquals("correct name", "NELSON", trackTwo.getName());
+    assertEquals("correct num collections", 3, trackTwo.size());
+    firstColl = (IDocument<?>) trackTwo.get(0);
+    assertEquals("correct num rows", 402, firstColl.size());
+    secondColl = (IDocument<?>) trackTwo.get(1);
+    assertEquals("correct num rows", 402, firstColl.size());
+
+  }
+
+  @Test
+  public void testParseSample() throws Exception
+  {
+    final File file = getDataFile("data/boat1.rep");
+    assertTrue(file.isFile());
+    final FileParser parser = new RepParser();
+    List<IStoreItem> items = parser.parse(file.getAbsolutePath());
+    assertEquals("correct group", 1, items.size());
+    items = (List<IStoreItem>) items.get(0);
+    final StoreGroup group = (StoreGroup) items.get(0);
+    assertEquals("correct num collections", 3, group.size());
+    final IDocument<?> firstColl = (IDocument<?>) group.get(0);
+    assertEquals("correct num rows", 402, firstColl.size());
   }
 
 }
