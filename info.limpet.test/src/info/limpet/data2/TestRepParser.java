@@ -81,16 +81,22 @@ public class TestRepParser extends TestCase
   @Test
   public void testParseSample() throws Exception
   {
-    final File file = getDataFile("data/boat1.rep");
+    final File file = getDataFile("data/three_boat_label.rep");
     assertTrue(file.isFile());
     final FileParser parser = new RepParser();
-    List<IStoreItem> items = parser.parse(file.getAbsolutePath());
+    final String path = file.getAbsolutePath();
+    List<IStoreItem> items = parser.parse(path);
     assertEquals("correct group", 1, items.size());
     items = (List<IStoreItem>) items.get(0);
-    final StoreGroup group = (StoreGroup) items.get(0);
+    assertEquals("two tracks", 3, items.size());
+    final StoreGroup group = (StoreGroup) items.get(1);
     assertEquals("correct num collections", 4, group.size());
     final IDocument<?> firstColl = (IDocument<?>) group.get(0);
     assertEquals("correct num rows", 402, firstColl.size());
+    StoreGroup singTrack = (StoreGroup) items.get(0);
+    assertEquals("correct num collections", 1, singTrack.size());
+    IDocument<?> locData = (IDocument<?>) singTrack.get(0);
+    assertEquals("correct num rows", 1, locData.size());
   }
 
 }
