@@ -170,6 +170,7 @@ public class RepParser extends FileParser
       thisTrack.add(thisGen._locB.toDocument());
       thisTrack.add(thisGen._speed.toDocument());
       thisTrack.add(thisGen._course.toDocument());
+      thisTrack.add(thisGen._depth.toDocument());
 
       group.add(thisTrack);
     }
