@@ -3,6 +3,7 @@ package info.limpet.persistence.rep;
 import static javax.measure.unit.SI.METRE;
 import static javax.measure.unit.SI.SECOND;
 import info.limpet.IStoreItem;
+import info.limpet.impl.LocationDocument;
 import info.limpet.impl.LocationDocumentBuilder;
 import info.limpet.impl.NumberDocumentBuilder;
 import info.limpet.impl.SampleData;
@@ -82,6 +83,11 @@ public class RepParser extends FileParser
     NumberDocumentBuilder _course;
     NumberDocumentBuilder _depth;
 
+    public boolean isSingleton()
+    {
+      return _speed.getValues().size() == 1;
+    }
+
     public TrackGenerator(final String name)
     {
       // generate the builders
@@ -101,10 +107,19 @@ public class RepParser extends FileParser
 
     public void add(FixItem thisEntry)
     {
-      _locB.add(thisEntry._date.getTime(), thisEntry._loc);
-      _speed.add(thisEntry._date.getTime(), thisEntry._speedMS);
-      _course.add(thisEntry._date.getTime(), thisEntry._course);
-      _depth.add(thisEntry._date.getTime(), thisEntry._depth);
+      final long theDate;
+      if (thisEntry._date != null)
+      {
+        theDate = thisEntry._date.getTime();
+      }
+      else
+      {
+        theDate = -1;
+      }
+      _locB.add(theDate, thisEntry._loc);
+      _speed.add(theDate, thisEntry._speedMS);
+      _course.add(theDate, thisEntry._course);
+      _depth.add(theDate, thisEntry._depth);
     }
   }
 
@@ -131,10 +146,25 @@ public class RepParser extends FileParser
       br = new BufferedReader(in);
       for (String line; (line = br.readLine()) != null;)
       {
-        FixItem thisEntry = parseThisLine(line);
-        if (thisEntry != null)
+        FixItem thisE = null;
+
+        // have a look at the line
+        if (line.startsWith(";;"))
         {
-          final String name = thisEntry._name;
+
+        }
+        else if (line.startsWith(";TEXT:"))
+        {
+          thisE = parseThisLabel(line);
+        }
+        else
+        {
+          thisE = parseThisRepLine(line);
+        }
+
+        if (thisE != null)
+        {
+          final String name = thisE._name;
 
           // do we know this track already?
           TrackGenerator thisG = builders.get(name);
@@ -146,7 +176,7 @@ public class RepParser extends FileParser
           }
 
           // ok, submit the new line
-          thisG.add(thisEntry);
+          thisG.add(thisE);
         }
       }
     }
@@ -166,11 +196,22 @@ public class RepParser extends FileParser
       // ok, create group for this track
       StoreGroup thisTrack = new StoreGroup(name);
 
-      // now add the constituents
-      thisTrack.add(thisGen._locB.toDocument());
-      thisTrack.add(thisGen._speed.toDocument());
-      thisTrack.add(thisGen._course.toDocument());
-      thisTrack.add(thisGen._depth.toDocument());
+      // ok, separate processing if it's a singleton
+      // ok, only add the others if they're present
+      if (thisGen.isSingleton())
+      {
+        // just do the single location
+        LocationDocument locDoc = thisGen._locB.toDocument();
+        thisTrack.add(locDoc);
+      }
+      else
+      {
+        // now add the constituents
+        thisTrack.add(thisGen._locB.toDocument());
+        thisTrack.add(thisGen._speed.toDocument());
+        thisTrack.add(thisGen._course.toDocument());
+        thisTrack.add(thisGen._depth.toDocument());
+      }
 
       group.add(thisTrack);
     }
@@ -182,7 +223,7 @@ public class RepParser extends FileParser
   /**
    * parse a date string using our format
    */
-  public synchronized static Date parseThis(final String rawText)
+  private static Date parseThis(final String rawText)
   {
     Date date = null;
     Date res = null;
@@ -249,7 +290,7 @@ public class RepParser extends FileParser
     return res;
   }
 
-  public static String checkForQuotedName(final StringTokenizer st,
+  private static String checkForQuotedName(final StringTokenizer st,
       String theName)
   {
     // so, does the track name contain a quote character?
@@ -313,7 +354,7 @@ public class RepParser extends FileParser
   /**
    * parse a date string using our format
    */
-  public static Date parseThis(final String dateToken, final String timeToken)
+  private static Date parseThis(final String dateToken, final String timeToken)
   {
     // do we have millis?
     final int decPoint = timeToken.indexOf(".");
@@ -339,7 +380,7 @@ public class RepParser extends FileParser
     return parseThis(composite);
   }
 
-  public FixItem parseThisLine(final String line)
+  private static FixItem parseThisRepLine(final String line)
   {
     // get a stream from the string
     final StringTokenizer st = new StringTokenizer(line);
@@ -426,14 +467,14 @@ public class RepParser extends FileParser
 
     // create the tactical data
     theLoc =
-        new Point2D.Double(toDegs(
-            longDeg, longMin, longSec, longHem), toDegs(latDeg, latMin, latSec, latHem));
+        new Point2D.Double(toDegs(longDeg, longMin, longSec, longHem), toDegs(
+            latDeg, latMin, latSec, latHem));
 
     return new FixItem(theDate, theLoc, theCourse, speedMS, theDepth,
         theTrackName, symbology);
   }
 
-  private double toDegs(double degs, double mins, double secs, char hem)
+  private static double toDegs(double degs, double mins, double secs, char hem)
   {
     double res = degs + mins / 60 + secs / (60 * 60);
     if (hem == 'S' || hem == 'W')
@@ -441,6 +482,74 @@ public class RepParser extends FileParser
       res = -res;
     }
     return res;
+  }
+
+  private FixItem parseThisLabel(final String line)
+  {
+    // get a stream from the string
+    final StringTokenizer st = new StringTokenizer(line);
+
+    // declare local variables
+    Point2D theLoc;
+    double latDeg, longDeg, latMin, longMin;
+    char latHem, longHem;
+    double latSec, longSec;
+    Date theDate = null;
+
+    String theTrackName = "UNKNOWN";
+
+    // check it's not an empty line
+    if (!st.hasMoreTokens())
+      return null;
+
+    // parse the line
+    // ;TEXT: @E 21.7 0 0 N 21.5 0 0 W test text
+
+    // skip the label
+    st.nextToken();
+
+    // skip the symbology
+    String symbology = st.nextToken();
+
+    // now the location
+    latDeg = Double.parseDouble(st.nextToken());
+    latMin = Double.parseDouble(st.nextToken());
+    latSec = Double.parseDouble(st.nextToken());
+
+    /**
+     * now, we may have trouble here, since there may not be a space between the hemisphere
+     * character and a 3-digit latitude value - so BE CAREFUL
+     */
+    final String vDiff = st.nextToken();
+    if (vDiff.length() > 3)
+    {
+      // hmm, they are combined
+      latHem = vDiff.charAt(0);
+      final String secondPart = vDiff.substring(1, vDiff.length());
+      longDeg = Double.parseDouble(secondPart);
+    }
+    else
+    {
+      // they are separate, so only the hem is in this one
+      latHem = vDiff.charAt(0);
+      longDeg = Double.parseDouble(st.nextToken());
+    }
+    longMin = Double.parseDouble(st.nextToken());
+    longSec = Double.parseDouble(st.nextToken());
+    longHem = st.nextToken().charAt(0);
+
+    // use the label as the track name
+    if (st.hasMoreTokens())
+      theTrackName = st.nextToken("\r");
+    if (theTrackName != null)
+      theTrackName = theTrackName.trim();
+
+    // create the tactical data
+    theLoc =
+        new Point2D.Double(toDegs(longDeg, longMin, longSec, longHem), toDegs(
+            latDeg, latMin, latSec, latHem));
+
+    return new FixItem(theDate, theLoc, 0, 0, 0, theTrackName, symbology);
   }
 
 }
