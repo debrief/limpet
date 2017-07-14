@@ -638,11 +638,7 @@ public class RepParser extends FileParser
         Item thisE = null;
 
         // have a look at the line
-        if (line.startsWith(";;"))
-        {
-          // comment: ignore
-        }
-        else if (line.startsWith(";TEXT:"))
+        if (line.startsWith(";TEXT:"))
         {
           thisE = parseThisLabel(line);
         }
@@ -650,12 +646,9 @@ public class RepParser extends FileParser
         {
           thisE = parseThisSensor2(line);
         }
-        else if (line.startsWith(";"))
+        else if(!line.startsWith(";"))
         {
-          // it must be some other kind of entry, ignore
-        }
-        else
-        {
+          // ok, it's not a comment. import
           thisE = parseThisRepLine(line);
         }
 
@@ -780,14 +773,6 @@ public class RepParser extends FileParser
     String theText;
     String theTrack;
     String sensorName;
-    double latDeg;
-    double longDeg;
-    double latMin;
-    double longMin;
-    char latHem;
-    char longHem;
-    double latSec;
-    double longSec;
     Point2D origin = null;
     Date theDtg = null;
     Double brg = null;
@@ -813,49 +798,9 @@ public class RepParser extends FileParser
 
     // now the sensor offsets
     final String next = st.nextToken().trim();
-    // find out if it's our null value
-    if (next.startsWith("N"))
-    {
-      // ditch it,
-    }
-    else
-    {
-
-      // get the deg out of this value
-      latDeg = Double.parseDouble(next);
-
-      // ok, this is valid data, persevere with it
-      latMin = Double.parseDouble(st.nextToken());
-      latSec = Double.parseDouble(st.nextToken());
-
-      /**
-       * now, we may have trouble here, since there may not be a space between the hemisphere
-       * character and a 3-digit latitude value - so BE CAREFUL
-       */
-      final String vDiff = st.nextToken();
-      if (vDiff.length() > 3)
-      {
-        // hmm, they are combined
-        latHem = vDiff.charAt(0);
-        final String secondPart = vDiff.substring(1, vDiff.length());
-        longDeg = Double.parseDouble(secondPart);
-      }
-      else
-      {
-        // they are separate, so only the hem is in this one
-        latHem = vDiff.charAt(0);
-        longDeg = Double.parseDouble(st.nextToken());
-      }
-
-      longMin = Double.parseDouble(st.nextToken());
-      longSec = Double.parseDouble(st.nextToken());
-      longHem = st.nextToken().charAt(0);
-
-      // create the origin
-      origin =
-          new Point2D.Double(toDegs(longDeg, longMin, longSec, longHem),
-              toDegs(latDeg, latMin, latSec, latHem));
-    } // whether the duff origin data was entered
+    
+    // get the origin, if we can
+    origin = getOptionalOrigin(st, origin, next);
 
     // get the bearing
     final String brgStr = st.nextToken();
@@ -913,6 +858,63 @@ public class RepParser extends FileParser
     return new Item.CutItem(theTrack, sensorName, origin, theDtg, brg, brg2,
         freq, rng, theText);
 
+  }
+
+  private Point2D getOptionalOrigin(final StringTokenizer st, Point2D origin,
+      final String next)
+  {
+    double latDeg;
+    double longDeg;
+    double latMin;
+    double longMin;
+    char latHem;
+    char longHem;
+    double latSec;
+    double longSec;
+    // find out if it's our null value
+    if (next.startsWith("N"))
+    {
+      // ditch it,
+    }
+    else
+    {
+
+      // get the deg out of this value
+      latDeg = Double.parseDouble(next);
+
+      // ok, this is valid data, persevere with it
+      latMin = Double.parseDouble(st.nextToken());
+      latSec = Double.parseDouble(st.nextToken());
+
+      /**
+       * now, we may have trouble here, since there may not be a space between the hemisphere
+       * character and a 3-digit latitude value - so BE CAREFUL
+       */
+      final String vDiff = st.nextToken();
+      if (vDiff.length() > 3)
+      {
+        // hmm, they are combined
+        latHem = vDiff.charAt(0);
+        final String secondPart = vDiff.substring(1, vDiff.length());
+        longDeg = Double.parseDouble(secondPart);
+      }
+      else
+      {
+        // they are separate, so only the hem is in this one
+        latHem = vDiff.charAt(0);
+        longDeg = Double.parseDouble(st.nextToken());
+      }
+
+      longMin = Double.parseDouble(st.nextToken());
+      longSec = Double.parseDouble(st.nextToken());
+      longHem = st.nextToken().charAt(0);
+
+      // create the origin
+      origin =
+          new Point2D.Double(toDegs(longDeg, longMin, longSec, longHem),
+              toDegs(latDeg, latMin, latSec, latHem));
+    } // whether the duff origin data was entered
+    return origin;
   }
 
 }
