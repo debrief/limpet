@@ -16,6 +16,7 @@ package info.limpet.data2;
 
 import info.limpet.IDocument;
 import info.limpet.IStoreItem;
+import info.limpet.impl.LocationDocument;
 import info.limpet.impl.StoreGroup;
 import info.limpet.persistence.FileParser;
 import info.limpet.persistence.rep.RepParser;
@@ -46,57 +47,48 @@ public class TestRepParser extends TestCase
     builder.append(name);
     return builder.toString();
   }
+  
 
   @SuppressWarnings("unchecked")
   @Test
-  public void testParseMultiTrack() throws Exception
+  public void testParseSensor() throws Exception
   {
-    final File file = getDataFile("data/two_boat.rep");
+    final File file = getDataFile("data/turn.dsf");
     assertTrue(file.isFile());
     final FileParser parser = new RepParser();
     List<IStoreItem> items = parser.parse(file.getAbsolutePath());
     assertEquals("correct group", 1, items.size());
     items = (List<IStoreItem>) items.get(0);
-    final StoreGroup trackOne = (StoreGroup) items.get(0);
-    assertEquals("correct name", "COLLINGWOOD", trackOne.getName());
-    assertEquals("correct num collections", 4, trackOne.size());
-    IDocument<?> firstColl = (IDocument<?>) trackOne.get(0);
-    assertEquals("correct name", "COLLINGWOOD-location", firstColl.getName());
-    assertEquals("correct num rows", 403, firstColl.size());
-    IDocument<?> secondColl = (IDocument<?>) trackOne.get(1);
-    assertEquals("correct name", "COLLINGWOOD-speed", secondColl.getName());
-    assertEquals("correct num rows", 403, firstColl.size());
-
-    final StoreGroup trackTwo = (StoreGroup) items.get(1);
-    assertEquals("correct name", "NELSON", trackTwo.getName());
-    assertEquals("correct num collections", 4, trackTwo.size());
-    firstColl = (IDocument<?>) trackTwo.get(0);
-    assertEquals("correct num rows", 402, firstColl.size());
-    secondColl = (IDocument<?>) trackTwo.get(1);
-    assertEquals("correct num rows", 402, firstColl.size());
-
+//    assertEquals("correct num tracks", 4, items.size());
+//    final StoreGroup trackOne =  (StoreGroup) items.get(2);
+//    assertEquals("correct name", "OWNSHIP", trackOne.getName());
+//    assertEquals("correct num collections", 4, trackOne.size());
   }
 
   @SuppressWarnings("unchecked")
   @Test
-  public void testParseSample() throws Exception
+  public void testParseMultiTrack() throws Exception
   {
-    final File file = getDataFile("data/three_boat_label.rep");
+    final File file = getDataFile("data/turn.rep");
     assertTrue(file.isFile());
     final FileParser parser = new RepParser();
-    final String path = file.getAbsolutePath();
-    List<IStoreItem> items = parser.parse(path);
+    List<IStoreItem> items = parser.parse(file.getAbsolutePath());
     assertEquals("correct group", 1, items.size());
     items = (List<IStoreItem>) items.get(0);
-    assertEquals("two tracks", 3, items.size());
-    final StoreGroup group = (StoreGroup) items.get(1);
-    assertEquals("correct num collections", 4, group.size());
-    final IDocument<?> firstColl = (IDocument<?>) group.get(0);
-    assertEquals("correct num rows", 402, firstColl.size());
-    StoreGroup singTrack = (StoreGroup) items.get(0);
-    assertEquals("correct num collections", 1, singTrack.size());
-    IDocument<?> locData = (IDocument<?>) singTrack.get(0);
-    assertEquals("correct num rows", 1, locData.size());
-  }
+    assertEquals("correct num tracks", 4, items.size());
+    final StoreGroup trackOne =  (StoreGroup) items.get(2);
+    assertEquals("correct name", "OWNSHIP", trackOne.getName());
+    assertEquals("correct num collections", 4, trackOne.size());
+    IDocument<?> firstColl = (IDocument<?>) trackOne.get(0);
+    assertEquals("correct name", "OWNSHIP-location", firstColl.getName());
+    assertEquals("correct num rows", 529, firstColl.size());
+    IDocument<?> secondColl = (IDocument<?>) trackOne.get(1);
+    assertEquals("correct name", "OWNSHIP-speed", secondColl.getName());
+    assertEquals("correct num rows", 529, firstColl.size());
 
+    LocationDocument trackTwo = (LocationDocument) items.get(1);
+    assertEquals("correct name", "Singleton Track B-location", trackTwo.getName());
+    assertEquals("correct num points", 1, trackTwo.size());
+
+  }
 }
