@@ -425,8 +425,8 @@ public class RepParser extends FileParser
 
     // create the tactical data
     theLoc =
-        new Point2D.Double(toDegs(latDeg, latMin, latSec, latHem), toDegs(
-            longDeg, longMin, longSec, longHem));
+        new Point2D.Double(toDegs(
+            longDeg, longMin, longSec, longHem), toDegs(latDeg, latMin, latSec, latHem));
 
     return new FixItem(theDate, theLoc, theCourse, speedMS, theDepth,
         theTrackName, symbology);
