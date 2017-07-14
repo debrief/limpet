@@ -213,23 +213,39 @@ public class DataManagerDropAdapter extends ViewerDropAdapter
         else if (fileName != null && fileName.endsWith(".lap"))
         {
           // defer that
-          // try
-          // {
-          // parseLap(fileName);
-          // }
-          // catch (IOException e)
-          // {
-          // MessageDialog.openWarning(getViewer().getControl().getShell(),
-          // "Warning", "Cannot drop '" + fileName +
-          // "'. See log for more details");
-          // Activator.log(e);
-          // return false;
-          // }
+          try
+          {
+            parseLap(fileName);
+          }
+          catch (IOException e)
+          {
+            MessageDialog.openWarning(getViewer().getControl().getShell(),
+                "Warning", "Cannot drop '" + fileName
+                    + "'. See log for more details");
+            Activator.log(e);
+            return false;
+          }
         }
         else if (fileName != null && fileName.toLowerCase().endsWith(".rep"))
         {
             try
             {
+              parseRep(fileName);
+            }
+            catch (IOException e)
+            {
+              MessageDialog.openWarning(getViewer().getControl().getShell(),
+                  "Warning", "Cannot drop '" + fileName
+                      + "'. See log for more details");
+              Activator.log(e);
+              return false;
+            }
+        }
+        else if (fileName != null && fileName.toLowerCase().endsWith(".dsf"))
+        {
+            try
+            {
+              // ok, re-use the REP parser
               parseRep(fileName);
             }
             catch (IOException e)
@@ -276,22 +292,25 @@ public class DataManagerDropAdapter extends ViewerDropAdapter
     getViewer().refresh();
   }
 
-  @SuppressWarnings("unused")
   private void parseLap(String fileName) throws IOException
   {
     Object target = getCurrentTarget();
     IStoreGroup store = new XStreamHandler().load(fileName);
     final List<IStoreItem> list = new ArrayList<IStoreItem>();
-    if (store instanceof IStoreGroup && target instanceof GroupWrapper)
+    final Iterator<IStoreItem> iter = ((IStoreGroup) store).iterator();
+    while (iter.hasNext())
     {
-      final Iterator<IStoreItem> iter = ((IStoreGroup) store).iterator();
+      final IStoreItem item = iter.next();
+      list.add(item);
+    }
+    if (target instanceof GroupWrapper)
+    {
       GroupWrapper groupWrapper = (GroupWrapper) target;
-      while (iter.hasNext())
-      {
-        final IStoreItem item = iter.next();
-        list.add(item);
-      }
       groupWrapper.getGroup().addAll(list);
+    }
+    else
+    {
+      _store.addAll(list);
     }
     changed();
   }
