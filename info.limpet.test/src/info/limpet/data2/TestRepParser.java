@@ -47,6 +47,7 @@ public class TestRepParser extends TestCase
     return builder.toString();
   }
 
+  @SuppressWarnings("unchecked")
   @Test
   public void testParseMultiTrack() throws Exception
   {
@@ -58,7 +59,7 @@ public class TestRepParser extends TestCase
     items = (List<IStoreItem>) items.get(0);
     final StoreGroup trackOne = (StoreGroup) items.get(0);
     assertEquals("correct name", "COLLINGWOOD", trackOne.getName());
-    assertEquals("correct num collections", 3, trackOne.size());
+    assertEquals("correct num collections", 4, trackOne.size());
     IDocument<?> firstColl = (IDocument<?>) trackOne.get(0);
     assertEquals("correct name", "COLLINGWOOD-location", firstColl.getName());
     assertEquals("correct num rows", 403, firstColl.size());
@@ -68,7 +69,7 @@ public class TestRepParser extends TestCase
 
     final StoreGroup trackTwo = (StoreGroup) items.get(1);
     assertEquals("correct name", "NELSON", trackTwo.getName());
-    assertEquals("correct num collections", 3, trackTwo.size());
+    assertEquals("correct num collections", 4, trackTwo.size());
     firstColl = (IDocument<?>) trackTwo.get(0);
     assertEquals("correct num rows", 402, firstColl.size());
     secondColl = (IDocument<?>) trackTwo.get(1);
@@ -76,6 +77,7 @@ public class TestRepParser extends TestCase
 
   }
 
+  @SuppressWarnings("unchecked")
   @Test
   public void testParseSample() throws Exception
   {
@@ -86,7 +88,7 @@ public class TestRepParser extends TestCase
     assertEquals("correct group", 1, items.size());
     items = (List<IStoreItem>) items.get(0);
     final StoreGroup group = (StoreGroup) items.get(0);
-    assertEquals("correct num collections", 3, group.size());
+    assertEquals("correct num collections", 4, group.size());
     final IDocument<?> firstColl = (IDocument<?>) group.get(0);
     assertEquals("correct num rows", 402, firstColl.size());
   }
