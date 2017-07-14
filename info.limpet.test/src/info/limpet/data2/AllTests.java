@@ -44,6 +44,7 @@ import junit.framework.TestSuite;
 	TestOperations.class,
 	TestAnalysis.class,
 	TestCsvParser.class,
+	TestRepParser.class,
 	TestLocations.class,
 	TestGeotoolsGeometry.class,
 	TestExport.class,

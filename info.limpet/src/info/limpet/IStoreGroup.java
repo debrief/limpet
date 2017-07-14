@@ -18,62 +18,66 @@ import java.beans.PropertyChangeListener;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Spliterator;
 import java.util.UUID;
 
-
 public interface IStoreGroup extends IStoreItem, Collection<IStoreItem>,
-    IChangeListener
-{
+		IChangeListener {
 
-  public interface StoreChangeListener
-  {
-    void changed();
-  }
- 
-  public void removeChangeListener(StoreChangeListener listener);
-  
-  public void addChangeListener(StoreChangeListener listener);
-  
-  /**
-   * retrieve the named collection
-   * 
-   * @param name
-   * @return
-   */
-  IStoreItem get(String name);
+	public Spliterator<IStoreItem> spliterator();
 
-  /** add this item
-   * 
-   */
-  boolean add(IStoreItem item);
+	public interface StoreChangeListener {
+		void changed();
+	}
 
-  /** remove this item
-   * 
-   */
-  boolean remove(Object item);
+	public void removeChangeListener(StoreChangeListener listener);
 
-  IStoreItem get(UUID uuid);
-  
-  
-  /** set the current "focus time"
-   * 
-   */
-  void setTime(Date time);
-  
-  /** listen for time changes
-   * 
-   * @param listener
-   */
-  void addTimeChangeListener(PropertyChangeListener listener);
+	public void addChangeListener(StoreChangeListener listener);
 
-  /** stop listening to time changes
-   * 
-   * @param listener
-   */
-  void removeTimeChangeListener(PropertyChangeListener listener);
+	/**
+	 * retrieve the named collection
+	 * 
+	 * @param name
+	 * @return
+	 */
+	IStoreItem get(String name);
 
-  Date getTime();
+	/**
+	 * add this item
+	 * 
+	 */
+	boolean add(IStoreItem item);
 
-  void addAll(List<IStoreItem> results);
+	/**
+	 * remove this item
+	 * 
+	 */
+	boolean remove(Object item);
+
+	IStoreItem get(UUID uuid);
+
+	/**
+	 * set the current "focus time"
+	 * 
+	 */
+	void setTime(Date time);
+
+	/**
+	 * listen for time changes
+	 * 
+	 * @param listener
+	 */
+	void addTimeChangeListener(PropertyChangeListener listener);
+
+	/**
+	 * stop listening to time changes
+	 * 
+	 * @param listener
+	 */
+	void removeTimeChangeListener(PropertyChangeListener listener);
+
+	Date getTime();
+
+	void addAll(List<IStoreItem> results);
 
 }

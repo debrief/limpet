@@ -1,4 +1,4 @@
-package info.limpet.persistence;
+package info.limpet.persistence.csv;
 
 import info.limpet.IDocument;
 import info.limpet.IStoreItem;

@@ -13,7 +13,7 @@ import info.limpet.impl.SampleData;
 import info.limpet.impl.StoreGroup;
 import info.limpet.operations.spatial.GeoSupport;
 import info.limpet.operations.spatial.ProplossBetweenTwoTracksOperation;
-import info.limpet.persistence.CsvParser;
+import info.limpet.persistence.csv.CsvParser;
 
 import java.awt.geom.Point2D;
 import java.io.File;
