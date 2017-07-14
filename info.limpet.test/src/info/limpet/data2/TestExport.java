@@ -4,7 +4,7 @@ import info.limpet.IDocument;
 import info.limpet.IStoreItem;
 import info.limpet.impl.SampleData;
 import info.limpet.impl.StoreGroup;
-import info.limpet.persistence.CsvGenerator;
+import info.limpet.persistence.csv.CsvGenerator;
 
 import java.util.ArrayList;
 import java.util.Iterator;

@@ -23,7 +23,7 @@ import info.limpet.impl.NumberDocument;
 import info.limpet.impl.Range;
 import info.limpet.operations.CollectionComplianceTests;
 import info.limpet.operations.arithmetic.SimpleMovingAverageOperation.SimpleMovingAverageCommand;
-import info.limpet.stackedcharts.ui.editor.Activator;
+import info.limpet.ui.Activator;
 import info.limpet.ui.core_view.CoreAnalysisView;
 
 import java.text.SimpleDateFormat;

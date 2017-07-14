@@ -28,7 +28,7 @@ import info.limpet.impl.NumberDocument;
 import info.limpet.impl.SampleData;
 import info.limpet.impl.StoreGroup;
 import info.limpet.impl.StringDocument;
-import info.limpet.persistence.CsvParser;
+import info.limpet.persistence.csv.CsvParser;
 
 import java.io.File;
 import java.util.List;
