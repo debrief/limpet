@@ -157,10 +157,10 @@ public class RepParser extends FileParser
 
     private static class TrackGenerator implements Generator
     {
-      LocationDocumentBuilder _locB;
-      NumberDocumentBuilder _speed;
-      NumberDocumentBuilder _course;
-      NumberDocumentBuilder _depth;
+      final private LocationDocumentBuilder _locB;
+      final private NumberDocumentBuilder _speed;
+      final private NumberDocumentBuilder _course;
+      final private NumberDocumentBuilder _depth;
       final private String _name;
 
       public TrackGenerator(final String name)
@@ -237,8 +237,8 @@ public class RepParser extends FileParser
   {
     public static class CutItem implements Item
     {
-      final String _host;
-      final String _sensor;
+      final private String _host;
+      final private String _sensor;
       private final Point2D _origin;
       private final Date _dtg;
       private final Double _brg;
@@ -314,7 +314,7 @@ public class RepParser extends FileParser
   /**
    * the normal token delimiter (for comma & white-space separated fields)
    */
-  static final String normalDelimiters = " \t\n\r\f";
+  static final private String normalDelimiters = " \t\n\r\f";
 
   /**
    * the quoted delimiter, for quoted track names
@@ -322,8 +322,10 @@ public class RepParser extends FileParser
   static private final String quoteDelimiter = "\"";
 
   private static String checkForQuotedName(final StringTokenizer st,
-      String theName)
+      final String nameIn)
   {
+    String theName = nameIn;
+    
     // so, does the track name contain a quote character?
     final int quoteIndex = theName.indexOf("\"");
     if (quoteIndex >= 0)
@@ -459,7 +461,8 @@ public class RepParser extends FileParser
   {
     // do we have millis?
     final int decPoint = timeToken.indexOf(".");
-    String milliStr, timeStr;
+    String milliStr;
+    String timeStr;
     if (decPoint > 0)
     {
       milliStr = timeToken.substring(decPoint, timeToken.length());
@@ -488,9 +491,14 @@ public class RepParser extends FileParser
 
     // declare local variables
     Point2D theLoc;
-    double latDeg, longDeg, latMin, longMin;
-    char latHem, longHem;
-    double latSec, longSec;
+    double latDeg;
+    double longDeg;
+    double latMin;
+    double longMin;
+    char latHem;
+    char longHem;
+    double latSec;
+    double longSec;
     Date theDate = null;
     double theCourse;
     double speedMS;
@@ -554,7 +562,7 @@ public class RepParser extends FileParser
 
     // we know that the Depth str may be NaN, but Java can interpret this
     // directly
-    if (depthStr.equals("NaN"))
+    if ("NaN".equals(depthStr))
       theDepth = Double.NaN;
     else
       theDepth = Double.parseDouble(depthStr);
@@ -696,9 +704,14 @@ public class RepParser extends FileParser
 
     // declare local variables
     Point2D theLoc;
-    double latDeg, longDeg, latMin, longMin;
-    char latHem, longHem;
-    double latSec, longSec;
+    double latDeg;
+    double longDeg;
+    double latMin;
+    double longMin;
+    char latHem;
+    char longHem;
+    double latSec;
+    double longSec;
     final Date theDate = null;
 
     String theTrackName = "UNKNOWN";
@@ -767,14 +780,20 @@ public class RepParser extends FileParser
     String theText;
     String theTrack;
     String sensorName;
-    double latDeg, longDeg, latMin, longMin;
-    char latHem, longHem;
-    double latSec, longSec;
+    double latDeg;
+    double longDeg;
+    double latMin;
+    double longMin;
+    char latHem;
+    char longHem;
+    double latSec;
+    double longSec;
     Point2D origin = null;
     Date theDtg = null;
     Double brg = null;
     Double rng = null;
-    Double brg2 = null, freq = null;
+    Double brg2 = null;
+    Double freq = null;
 
     // skip the comment identifier
     st.nextToken();
