@@ -34,19 +34,19 @@ import javax.measure.unit.SI;
 
 public class RepParser extends FileParser
 {
-  // parse the line
-  // 951212 050000.000 CARPET @C 12 11 10.63 N 11 41 52.37 W 269.7 2.0 0
+  /** parent for helpers that process series of data items 
+   * 
+   * @author Ian
+   *
+   */
   abstract private static interface Generator
   {
-    public void add(Item item);
-
-    public void storeTo(StoreGroup group);
-  }
-
-  private static class Generators
-  {
-
-    private static class CutGenerator implements Generator
+    /** handle sensor cuts
+     * 
+     * @author Ian
+     *
+     */
+    public static class CutGenerator implements Generator
     {
       private final LocationDocumentBuilder _origin;
       private final NumberDocumentBuilder _freq;
@@ -55,7 +55,7 @@ public class RepParser extends FileParser
       private final NumberDocumentBuilder _range;
       private final StringDocumentBuilder _label;
       private final String _name;
-
+    
       public CutGenerator(final String name)
       {
         _name = name;
@@ -78,7 +78,7 @@ public class RepParser extends FileParser
         _label =
             new StringDocumentBuilder(name + "-label", null, SampleData.MILLIS);
       }
-
+    
       @Override
       public void add(final Item thisEntry)
       {
@@ -92,7 +92,7 @@ public class RepParser extends FileParser
         {
           theDate = -1;
         }
-
+    
         if (cut._brg != null)
         {
           _brg.add(theDate, cut._brg);
@@ -118,13 +118,13 @@ public class RepParser extends FileParser
           _label.add(theDate, cut._text);
         }
       }
-
+    
       @Override
       public void storeTo(final StoreGroup group)
       {
         // ok, create group for this track
         final StoreGroup thisData = new StoreGroup(_name);
-
+    
         // now add the constituents
         if (!_origin.getValues().isEmpty())
         {
@@ -150,19 +150,24 @@ public class RepParser extends FileParser
         {
           thisData.add(_label.toDocument());
         }
-
+    
         group.add(thisData);
       }
     }
 
-    private static class TrackGenerator implements Generator
+    /** handle platform positions
+     * 
+     * @author Ian
+     *
+     */
+    public static class TrackGenerator implements Generator
     {
       final private LocationDocumentBuilder _locB;
       final private NumberDocumentBuilder _speed;
       final private NumberDocumentBuilder _course;
       final private NumberDocumentBuilder _depth;
       final private String _name;
-
+    
       public TrackGenerator(final String name)
       {
         _name = name;
@@ -180,7 +185,7 @@ public class RepParser extends FileParser
             new NumberDocumentBuilder(name + "-depth", METRE, null,
                 SampleData.MILLIS);
       }
-
+    
       @Override
       public void add(final Item thisE)
       {
@@ -199,12 +204,12 @@ public class RepParser extends FileParser
         _course.add(theDate, thisEntry._course);
         _depth.add(theDate, thisEntry._depth);
       }
-
+    
       public boolean isSingleton()
       {
         return _speed.getValues().size() == 1;
       }
-
+    
       @Override
       public void storeTo(final StoreGroup group)
       {
@@ -220,7 +225,7 @@ public class RepParser extends FileParser
         {
           // ok, create group for this track
           final StoreGroup thisTrack = new StoreGroup(_name);
-
+    
           // now add the constituents
           thisTrack.add(_locB.toDocument());
           thisTrack.add(_speed.toDocument());
@@ -231,10 +236,23 @@ public class RepParser extends FileParser
       }
     }
 
+    public void add(Item item);
+
+    public void storeTo(StoreGroup group);
   }
 
+  /** parent class for stored data item
+   * 
+   * @author Ian
+   *
+   */
   private static interface Item
   {
+    /** sensor cut data item
+     * 
+     * @author Ian
+     *
+     */
     public static class CutItem implements Item
     {
       final private String _host;
@@ -271,6 +289,11 @@ public class RepParser extends FileParser
 
     }
 
+    /** store platform location/state
+     * 
+     * @author Ian
+     *
+     */
     public static class FixItem implements Item
     {
       final private Date _date;
@@ -303,6 +326,11 @@ public class RepParser extends FileParser
 
     }
 
+    /**
+     * get the name to use for this item
+     * 
+     * @return
+     */
     public String getName();
   }
 
@@ -325,7 +353,7 @@ public class RepParser extends FileParser
       final String nameIn)
   {
     String theName = nameIn;
-    
+
     // so, does the track name contain a quote character?
     final int quoteIndex = theName.indexOf("\"");
     if (quoteIndex >= 0)
@@ -599,11 +627,11 @@ public class RepParser extends FileParser
     final Generator thisG;
     if (thisE instanceof Item.FixItem)
     {
-      thisG = new Generators.TrackGenerator(name);
+      thisG = new Generator.TrackGenerator(name);
     }
     else if (thisE instanceof Item.CutItem)
     {
-      thisG = new Generators.CutGenerator(name);
+      thisG = new Generator.CutGenerator(name);
     }
     else
     {
@@ -611,6 +639,65 @@ public class RepParser extends FileParser
     }
 
     return thisG;
+  }
+
+  private Point2D
+      getOptionalOrigin(final StringTokenizer st, final String next)
+  {
+    final Point2D res;
+    // find out if it's our null value
+    if (next.startsWith("N"))
+    {
+      // ditch it,
+      res = null;
+    }
+    else
+    {
+      double latDeg;
+      double longDeg;
+      double latMin;
+      double longMin;
+      char latHem;
+      char longHem;
+      double latSec;
+      double longSec;
+
+      // get the deg out of this value
+      latDeg = Double.parseDouble(next);
+
+      // ok, this is valid data, persevere with it
+      latMin = Double.parseDouble(st.nextToken());
+      latSec = Double.parseDouble(st.nextToken());
+
+      /**
+       * now, we may have trouble here, since there may not be a space between the hemisphere
+       * character and a 3-digit latitude value - so BE CAREFUL
+       */
+      final String vDiff = st.nextToken();
+      if (vDiff.length() > 3)
+      {
+        // hmm, they are combined
+        latHem = vDiff.charAt(0);
+        final String secondPart = vDiff.substring(1, vDiff.length());
+        longDeg = Double.parseDouble(secondPart);
+      }
+      else
+      {
+        // they are separate, so only the hem is in this one
+        latHem = vDiff.charAt(0);
+        longDeg = Double.parseDouble(st.nextToken());
+      }
+
+      longMin = Double.parseDouble(st.nextToken());
+      longSec = Double.parseDouble(st.nextToken());
+      longHem = st.nextToken().charAt(0);
+
+      // create the origin
+      res =
+          new Point2D.Double(toDegs(longDeg, longMin, longSec, longHem),
+              toDegs(latDeg, latMin, latSec, latHem));
+    } // whether the duff origin data was entered
+    return res;
   }
 
   @Override
@@ -646,7 +733,7 @@ public class RepParser extends FileParser
         {
           thisE = parseThisSensor2(line);
         }
-        else if(!line.startsWith(";"))
+        else if (!line.startsWith(";"))
         {
           // ok, it's not a comment. import
           thisE = parseThisRepLine(line);
@@ -798,9 +885,9 @@ public class RepParser extends FileParser
 
     // now the sensor offsets
     final String next = st.nextToken().trim();
-    
+
     // get the origin, if we can
-    origin = getOptionalOrigin(st, origin, next);
+    origin = getOptionalOrigin(st, next);
 
     // get the bearing
     final String brgStr = st.nextToken();
@@ -858,63 +945,6 @@ public class RepParser extends FileParser
     return new Item.CutItem(theTrack, sensorName, origin, theDtg, brg, brg2,
         freq, rng, theText);
 
-  }
-
-  private Point2D getOptionalOrigin(final StringTokenizer st, Point2D origin,
-      final String next)
-  {
-    double latDeg;
-    double longDeg;
-    double latMin;
-    double longMin;
-    char latHem;
-    char longHem;
-    double latSec;
-    double longSec;
-    // find out if it's our null value
-    if (next.startsWith("N"))
-    {
-      // ditch it,
-    }
-    else
-    {
-
-      // get the deg out of this value
-      latDeg = Double.parseDouble(next);
-
-      // ok, this is valid data, persevere with it
-      latMin = Double.parseDouble(st.nextToken());
-      latSec = Double.parseDouble(st.nextToken());
-
-      /**
-       * now, we may have trouble here, since there may not be a space between the hemisphere
-       * character and a 3-digit latitude value - so BE CAREFUL
-       */
-      final String vDiff = st.nextToken();
-      if (vDiff.length() > 3)
-      {
-        // hmm, they are combined
-        latHem = vDiff.charAt(0);
-        final String secondPart = vDiff.substring(1, vDiff.length());
-        longDeg = Double.parseDouble(secondPart);
-      }
-      else
-      {
-        // they are separate, so only the hem is in this one
-        latHem = vDiff.charAt(0);
-        longDeg = Double.parseDouble(st.nextToken());
-      }
-
-      longMin = Double.parseDouble(st.nextToken());
-      longSec = Double.parseDouble(st.nextToken());
-      longHem = st.nextToken().charAt(0);
-
-      // create the origin
-      origin =
-          new Point2D.Double(toDegs(longDeg, longMin, longSec, longHem),
-              toDegs(latDeg, latMin, latSec, latHem));
-    } // whether the duff origin data was entered
-    return origin;
   }
 
 }
