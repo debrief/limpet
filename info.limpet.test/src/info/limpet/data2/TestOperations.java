@@ -56,7 +56,7 @@ import info.limpet.operations.arithmetic.simple.MultiplyQuantityOperation;
 import info.limpet.operations.arithmetic.simple.SubtractQuantityOperation;
 import info.limpet.operations.arithmetic.simple.UnitConversionOperation;
 import info.limpet.operations.spatial.BearingBetweenTracksOperation;
-import info.limpet.persistence.CsvParser;
+import info.limpet.persistence.csv.CsvParser;
 
 import java.io.File;
 import java.io.IOException;

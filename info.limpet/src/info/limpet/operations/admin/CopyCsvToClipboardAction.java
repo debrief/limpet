@@ -21,7 +21,7 @@ import info.limpet.IOperation;
 import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
 import info.limpet.operations.AbstractCommand;
-import info.limpet.persistence.CsvGenerator;
+import info.limpet.persistence.csv.CsvGenerator;
 
 import java.util.ArrayList;
 import java.util.List;

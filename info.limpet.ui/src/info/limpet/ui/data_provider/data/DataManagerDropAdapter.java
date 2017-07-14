@@ -17,7 +17,9 @@ package info.limpet.ui.data_provider.data;
 import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
 import info.limpet.data.persistence.xml.XStreamHandler;
-import info.limpet.persistence.CsvParser;
+import info.limpet.persistence.FileParser;
+import info.limpet.persistence.csv.CsvParser;
+import info.limpet.persistence.rep.RepParser;
 import info.limpet.ui.Activator;
 import info.limpet.ui.editors.LimpetDragListener;
 
@@ -193,7 +195,7 @@ public class DataManagerDropAdapter extends ViewerDropAdapter
       for (int i = 0; i < fileNames.length; i++)
       {
         String fileName = fileNames[i];
-        if (fileName != null && fileName.endsWith(".csv"))
+        if (fileName != null && fileName.toLowerCase().endsWith(".csv"))
         {
           try
           {
@@ -211,37 +213,78 @@ public class DataManagerDropAdapter extends ViewerDropAdapter
         else if (fileName != null && fileName.endsWith(".lap"))
         {
           // defer that
-          // try
-          // {
-          // parseLap(fileName);
-          // }
-          // catch (IOException e)
-          // {
-          // MessageDialog.openWarning(getViewer().getControl().getShell(),
-          // "Warning", "Cannot drop '" + fileName +
-          // "'. See log for more details");
-          // Activator.log(e);
-          // return false;
-          // }
+          try
+          {
+            parseLap(fileName);
+          }
+          catch (IOException e)
+          {
+            MessageDialog.openWarning(getViewer().getControl().getShell(),
+                "Warning", "Cannot drop '" + fileName
+                    + "'. See log for more details");
+            Activator.log(e);
+            return false;
+          }
+        }
+        else if (fileName != null && fileName.toLowerCase().endsWith(".rep"))
+        {
+            try
+            {
+              parseRep(fileName);
+            }
+            catch (IOException e)
+            {
+              MessageDialog.openWarning(getViewer().getControl().getShell(),
+                  "Warning", "Cannot drop '" + fileName
+                      + "'. See log for more details");
+              Activator.log(e);
+              return false;
+            }
+        }
+        else if (fileName != null && fileName.toLowerCase().endsWith(".dsf"))
+        {
+            try
+            {
+              // ok, re-use the REP parser
+              parseRep(fileName);
+            }
+            catch (IOException e)
+            {
+              MessageDialog.openWarning(getViewer().getControl().getShell(),
+                  "Warning", "Cannot drop '" + fileName
+                      + "'. See log for more details");
+              Activator.log(e);
+              return false;
+            }
         }
       }
     }
     return true;
   }
 
+  private void parseThis(final FileParser parser, final String fileName) throws IOException
+  {
+	    List<IStoreItem> collections = parser.parse(fileName);
+	    Object target = getCurrentTarget();
+	    if (target instanceof GroupWrapper)
+	    {
+	      ((GroupWrapper) target).getGroup().addAll(collections);
+	    }
+	    else
+	    {
+	      _store.addAll(collections);
+	    }
+	    changed();
+  }
+  
   private void parseCsv(String fileName) throws IOException
   {
-    List<IStoreItem> collections = new CsvParser().parse(fileName);
-    Object target = getCurrentTarget();
-    if (target instanceof GroupWrapper)
-    {
-      ((GroupWrapper) target).getGroup().addAll(collections);
-    }
-    else
-    {
-      _store.addAll(collections);
-    }
-    changed();
+	  parseThis(new CsvParser(), fileName);
+  }
+  
+  private void parseRep(String fileName) throws IOException
+  {
+	  parseThis(new RepParser(), fileName);
   }
 
   private void changed()
@@ -249,22 +292,25 @@ public class DataManagerDropAdapter extends ViewerDropAdapter
     getViewer().refresh();
   }
 
-  @SuppressWarnings("unused")
   private void parseLap(String fileName) throws IOException
   {
     Object target = getCurrentTarget();
     IStoreGroup store = new XStreamHandler().load(fileName);
     final List<IStoreItem> list = new ArrayList<IStoreItem>();
-    if (store instanceof IStoreGroup && target instanceof GroupWrapper)
+    final Iterator<IStoreItem> iter = ((IStoreGroup) store).iterator();
+    while (iter.hasNext())
     {
-      final Iterator<IStoreItem> iter = ((IStoreGroup) store).iterator();
+      final IStoreItem item = iter.next();
+      list.add(item);
+    }
+    if (target instanceof GroupWrapper)
+    {
       GroupWrapper groupWrapper = (GroupWrapper) target;
-      while (iter.hasNext())
-      {
-        final IStoreItem item = iter.next();
-        list.add(item);
-      }
       groupWrapper.getGroup().addAll(list);
+    }
+    else
+    {
+      _store.addAll(list);
     }
     changed();
   }

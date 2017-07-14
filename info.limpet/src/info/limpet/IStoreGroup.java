@@ -20,60 +20,61 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-
 public interface IStoreGroup extends IStoreItem, Collection<IStoreItem>,
-    IChangeListener
-{
+		IChangeListener {
 
-  public interface StoreChangeListener
-  {
-    void changed();
-  }
- 
-  public void removeChangeListener(StoreChangeListener listener);
-  
-  public void addChangeListener(StoreChangeListener listener);
-  
-  /**
-   * retrieve the named collection
-   * 
-   * @param name
-   * @return
-   */
-  IStoreItem get(String name);
+	public interface StoreChangeListener {
+		void changed();
+	}
 
-  /** add this item
-   * 
-   */
-  boolean add(IStoreItem item);
+	public void removeChangeListener(StoreChangeListener listener);
 
-  /** remove this item
-   * 
-   */
-  boolean remove(Object item);
+	public void addChangeListener(StoreChangeListener listener);
 
-  IStoreItem get(UUID uuid);
-  
-  
-  /** set the current "focus time"
-   * 
-   */
-  void setTime(Date time);
-  
-  /** listen for time changes
-   * 
-   * @param listener
-   */
-  void addTimeChangeListener(PropertyChangeListener listener);
+	/**
+	 * retrieve the named collection
+	 * 
+	 * @param name
+	 * @return
+	 */
+	IStoreItem get(String name);
 
-  /** stop listening to time changes
-   * 
-   * @param listener
-   */
-  void removeTimeChangeListener(PropertyChangeListener listener);
+	/**
+	 * add this item
+	 * 
+	 */
+	boolean add(IStoreItem item);
 
-  Date getTime();
+	/**
+	 * remove this item
+	 * 
+	 */
+	boolean remove(Object item);
 
-  void addAll(List<IStoreItem> results);
+	IStoreItem get(UUID uuid);
+
+	/**
+	 * set the current "focus time"
+	 * 
+	 */
+	void setTime(Date time);
+
+	/**
+	 * listen for time changes
+	 * 
+	 * @param listener
+	 */
+	void addTimeChangeListener(PropertyChangeListener listener);
+
+	/**
+	 * stop listening to time changes
+	 * 
+	 * @param listener
+	 */
+	void removeTimeChangeListener(PropertyChangeListener listener);
+
+	Date getTime();
+
+	void addAll(List<IStoreItem> results);
 
 }

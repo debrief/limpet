@@ -61,10 +61,11 @@ public class GenerateCourseAndSpeedOperation implements IOperation
 
     /**
      * produce a name for the output
+     * @param string 
      * 
      * @return
      */
-    abstract protected String getOutputName();
+    abstract protected String getOutputName(final String name);
 
     @Override
     public void execute()
@@ -72,27 +73,24 @@ public class GenerateCourseAndSpeedOperation implements IOperation
       // get the unit
       List<Document<?>> outputs = new ArrayList<Document<?>>();
 
-      String prefix = getOutputName();
-
-      if (prefix == null)
-      {
-        return;
-      }
-
       // ok, generate the new series
       for (int i = 0; i < getInputs().size(); i++)
       {
         LocationDocument thisInput = (LocationDocument) getInputs().get(i);
-        String name = getOutputName();
+        String name = getOutputName(thisInput.getName());
         final Unit<?> units = getUnits();
 
         DoubleDataset res = (DoubleDataset) performCalc(thisInput, name, units);
 
         NumberDocument doc = new NumberDocument(res, this, units);
+        
+        doc.setIndexUnits(thisInput.getIndexUnits());
 
         outputs.add(doc);
         // store the output
         super.addOutput(doc);
+        
+        doc.fireDataChanged();
       }
 
       // tell each series that we're a dependent
@@ -103,8 +101,11 @@ public class GenerateCourseAndSpeedOperation implements IOperation
         iCollection.addDependent(this);
       }
 
-      // ok, done
-      getStore().addAll(outputs);
+      final IStoreGroup theStore = getStore();
+      for(final Document<?> thisO: outputs)
+      {
+        theStore.add(thisO);
+      }
     }
 
     protected abstract Unit<?> getUnits();
@@ -255,10 +256,10 @@ public class GenerateCourseAndSpeedOperation implements IOperation
             }
 
             @Override
-            protected String getOutputName()
+            protected String getOutputName(final String name)
             {
               return getContext().getInput("Generate course",
-                  "Please provide a dataset prefix", "Generated course for ");
+                  "Please provide a dataset prefix", "Generated course for " + name);
             }
 
             protected void calcAndStore(NumberDocumentBuilder target,
@@ -285,10 +286,10 @@ public class GenerateCourseAndSpeedOperation implements IOperation
               return METRE.divide(SECOND).asType(Velocity.class);
             }
 
-            protected String getOutputName()
+            protected String getOutputName(final String name)
             {
               return getContext().getInput("Generate speed",
-                  "Please provide a dataset prefix", "Generated speed for ");
+                  "Please provide a dataset prefix", "Generated speed for " + name);
             }
 
             protected void calcAndStore(NumberDocumentBuilder target,

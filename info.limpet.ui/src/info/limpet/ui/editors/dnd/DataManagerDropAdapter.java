@@ -18,7 +18,7 @@ import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
 import info.limpet.data.persistence.xml.XStreamHandler;
 import info.limpet.impl.StoreGroup;
-import info.limpet.persistence.CsvParser;
+import info.limpet.persistence.csv.CsvParser;
 import info.limpet.ui.Activator;
 import info.limpet.ui.data_provider.data.GroupWrapper;
 import info.limpet.ui.editors.LimpetDragListener;

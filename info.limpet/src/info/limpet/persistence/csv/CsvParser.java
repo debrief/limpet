@@ -12,7 +12,7 @@
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  *****************************************************************************/
-package info.limpet.persistence;
+package info.limpet.persistence.csv;
 
 import static javax.measure.unit.NonSI.BAR;
 import static javax.measure.unit.NonSI.DECIBEL;
@@ -33,6 +33,7 @@ import info.limpet.impl.SampleData;
 import info.limpet.impl.StoreGroup;
 import info.limpet.impl.StringDocumentBuilder;
 import info.limpet.operations.spatial.GeoSupport;
+import info.limpet.persistence.FileParser;
 
 import java.awt.geom.Point2D;
 import java.io.File;
@@ -68,7 +69,7 @@ import javax.measure.unit.Unit;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 
-public class CsvParser
+public class CsvParser extends FileParser
 {
   private static final DateFormat DATE_SECS_FORMAT = new SimpleDateFormat(
       "dd/MM/yyyy hh:mm:ss");
@@ -561,12 +562,6 @@ public class CsvParser
     {"dB"}));
   }
 
-  private String filePrefix(final String fullPath)
-  {
-    // gets filename without extension
-    return fullPath.split("\\.(?=[^\\.]+$)")[0];
-  }
-
   private DateFormat getDateThisFormat(final DateFormat customDateFormat,
       final String firstCell)
   {
@@ -651,6 +646,7 @@ public class CsvParser
     return res;
   }
 
+  @Override
   public List<IStoreItem> parse(final String filePath) throws IOException
   {
     final List<IStoreItem> res = new ArrayList<IStoreItem>();
