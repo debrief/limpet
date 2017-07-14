@@ -733,7 +733,14 @@ public class RepParser extends FileParser
         {
           thisE = parseThisSensor2(line);
         }
-        else if (!line.startsWith(";"))
+        else if (line.startsWith(";"))
+        {
+          if(!line.startsWith(";;"))
+          {
+            System.err.println("Unable to import line:" + line);
+          }           
+        }
+        else
         {
           // ok, it's not a comment. import
           thisE = parseThisRepLine(line);
