@@ -261,15 +261,15 @@ public class CsvParser extends FileParser
     }
   }
 
-  // /**
-  // * class to handle importing two columns of location data
-  // *
-  // * @author ian
-  // *
-  // */
-  protected static class LocationImporter extends DataImporter
+   /**
+   * class to handle importing two columns of location data
+   *
+   * @author ian
+   *
+   */
+  protected static class AbsoluteLocationImporter extends DataImporter
   {
-    protected LocationImporter()
+    protected AbsoluteLocationImporter()
     {
       super(null, "Lat", (String) null);
     }
@@ -308,7 +308,64 @@ public class CsvParser extends FileParser
     @Override
     public String nameFor(final String colName)
     {
-      return "Location";
+      return "Location (Lat/Lon)";
+    }
+
+    @Override
+    public int numCols()
+    {
+      return 2;
+    }
+  }
+  
+  /**
+   * class to handle importing two columns of location data
+   *
+   * @author ian
+   *
+   */
+  protected static class RelativeLocationImporter extends DataImporter
+  {
+    protected RelativeLocationImporter()
+    {
+      super(null, "X", (String) null);
+    }
+
+    @Override
+    public void consume(final IDocumentBuilder<?> series,
+        final double thisIndex, final int colStart, final CSVRecord row)
+    {
+      final String xValStr = row.get(colStart);
+      final Double xVal = Double.parseDouble(xValStr);
+      final String yValStr = row.get(colStart + 1);
+      final Double yVal = Double.parseDouble(yValStr);
+
+      final Point2D point =
+          GeoSupport.getCalculator().createPoint(xVal, yVal);
+      final LocationDocumentBuilder builder = (LocationDocumentBuilder) series;
+      builder.add(thisIndex, point);
+    }
+
+    /**
+     * create an instance of this series, using the specified name
+     * 
+     * @param name
+     * @param indexUnits
+     * @return
+     */
+    @Override
+    public IDocumentBuilder<?> create(final String name,
+        final Unit<?> indexUnits)
+    {
+      final LocationDocumentBuilder res =
+          new LocationDocumentBuilder(name, null, indexUnits);
+      return res;
+    }
+
+    @Override
+    public String nameFor(final String colName)
+    {
+      return "Location (x/y)";
     }
 
     @Override
@@ -519,7 +576,8 @@ public class CsvParser extends FileParser
     }
 
     _candidates = new ArrayList<DataImporter>();
-    _candidates.add(new LocationImporter());
+    _candidates.add(new AbsoluteLocationImporter());
+    _candidates.add(new RelativeLocationImporter());
     _candidates.add(new TemporalSeriesSupporter(SECOND.asType(Duration.class),
         null, new String[]
         {"secs", "s"}));
