@@ -8,6 +8,7 @@ import info.limpet.impl.LocationDocumentBuilder;
 import info.limpet.impl.NumberDocumentBuilder;
 import info.limpet.impl.SampleData;
 import info.limpet.impl.StoreGroup;
+import info.limpet.impl.StringDocumentBuilder;
 import info.limpet.persistence.FileParser;
 
 import java.awt.geom.Point2D;
@@ -29,170 +30,10 @@ import java.util.Map;
 import java.util.StringTokenizer;
 
 import javax.measure.quantity.Velocity;
+import javax.measure.unit.SI;
 
 public class RepParser extends FileParser
 {
-  private static final DateFormat FOUR_DIGIT_YEAR_FORMAT =
-      new SimpleDateFormat("yyyyMMdd HHmmss");
-
-  private static final DateFormat TWO_DIGIT_YEAR_FORMAT = new SimpleDateFormat(
-      "yyMMdd HHmmss");
-
-  /**
-   * the normal token delimiter (for comma & white-space separated fields)
-   */
-  static final String normalDelimiters = " \t\n\r\f";
-  /**
-   * the quoted delimiter, for quoted track names
-   */
-  static private final String quoteDelimiter = "\"";
-
-  private static interface Item
-  {
-    public String getName();
-  }
-  
-  public static class CutItem implements Item
-  {
-    final String _host;
-    final String _sensor;
-    private Point2D _origin;
-    private Object _dtg;
-    private Double _brg;
-    private Double _brg2;
-    private Double _freq;
-    private Double _rng;
-    public CutItem(final String host, final String sensor, Point2D origin, Date theDtg, Double brg, Double brg2, Double freq, Double rng)
-    {
-      _host = host;
-      _sensor = sensor;
-      _origin = origin;
-      _dtg = theDtg;
-      _brg = brg;
-      _brg2 = brg2;
-      _freq = freq;
-      _rng = rng;
-    }
-    @Override
-    public String getName()
-    {
-      return _host + "-" + _sensor;
-    }
-    
-  }
-  
-  public static class FixItem implements Item
-  {
-    final private Date _date;
-    final private Point2D _loc;
-    final private double _speedMS;
-    final private double _course;
-    final private String _name;
-    @SuppressWarnings("unused")
-    final private String _sym;
-    final private double _depth;
-
-    public FixItem(Date theDate, Point2D theLoc, double theCourse,
-        double speedMS, double depth, String theTrackName, String symbology)
-    {
-      _date = theDate;
-      _loc = theLoc;
-      _course = theCourse;
-      _speedMS = speedMS;
-      _name = theTrackName;
-      _sym = symbology;
-      _depth = depth;
-    }
-
-    @Override
-    public String getName()
-    {
-      return _name;
-    }
-
-  }
-
-  private static class CutGenerator implements Generator
-  {
-    private LocationDocumentBuilder _origin;
-    private NumberDocumentBuilder _bearing;
-    private NumberDocumentBuilder _freq;
-
-    public boolean isSingleton()
-    {
-      final boolean res;
-      if(!_origin.getValues().isEmpty())
-      {
-        res = _origin.getValues().size() == 1;            
-      }
-      else if(!_bearing.getValues().isEmpty())
-      {
-        res = _bearing.getValues().size() == 1;            
-      }
-      else if(!_freq.getValues().isEmpty())
-      {
-        res = _freq.getValues().size() == 1;            
-      }
-      else
-      {
-        res = false;
-      }
-      return res;
-    }
-
-    public CutGenerator(final String name)
-    {
-//      final String _host;
-//      final String _sensor;
-//      private Point2D _origin;
-//      private Object _dtg;
-//      private Double _brg;
-//      private Double _brg2;
-//      private Double _freq;
-//      private Double _rng;
-      
-      
-      // generate the builders
-      _origin =
-          new LocationDocumentBuilder(name + "-location", null,
-              SampleData.MILLIS);
-//      _course =
-//          new NumberDocumentBuilder(name + "-course", SampleData.DEGREE_ANGLE,
-//              null, SampleData.MILLIS);
-//      _speed =
-//          new NumberDocumentBuilder(name + "-speed", METRE.divide(SECOND)
-//              .asType(Velocity.class), null, SampleData.MILLIS);
-//      _depth =
-//          new NumberDocumentBuilder(name + "-depth", METRE, null,
-//              SampleData.MILLIS);
-    }
-
-    public void add(Item thisEntry)
-    {
-      CutItem cut = (CutItem) thisEntry;
-//      final long theDate;
-//      if (thisEntry._date != null)
-//      {
-//        theDate = thisEntry._date.getTime();
-//      }
-//      else
-//      {
-//        theDate = -1;
-//      }
-//      _locB.add(theDate, thisEntry._loc);
-//      _speed.add(theDate, thisEntry._speedMS);
-//      _course.add(theDate, thisEntry._course);
-//      _depth.add(theDate, thisEntry._depth);
-    }
-
-    @Override
-    public void storeTo(StoreGroup group)
-    {
-      // TODO Auto-generated method stub
-      
-    }
-  }
-
   // parse the line
   // 951212 050000.000 CARPET @C 12 11 10.63 N 11 41 52.37 W 269.7 2.0 0
   abstract private static interface Generator
@@ -201,186 +42,344 @@ public class RepParser extends FileParser
 
     public void storeTo(StoreGroup group);
   }
-  
-  private static class TrackGenerator implements Generator
+
+  private static class Generators
   {
-    LocationDocumentBuilder _locB;
-    NumberDocumentBuilder _speed;
-    NumberDocumentBuilder _course;
-    NumberDocumentBuilder _depth;
-    final private String _name;
-  
-    public boolean isSingleton()
-    {
-      return _speed.getValues().size() == 1;
-    }
-  
-    public TrackGenerator(final String name)
-    {
-      _name = name;
-      // generate the builders
-      _locB =
-          new LocationDocumentBuilder(name + "-location", null,
-              SampleData.MILLIS);
-      _course =
-          new NumberDocumentBuilder(name + "-course", SampleData.DEGREE_ANGLE,
-              null, SampleData.MILLIS);
-      _speed =
-          new NumberDocumentBuilder(name + "-speed", METRE.divide(SECOND)
-              .asType(Velocity.class), null, SampleData.MILLIS);
-      _depth =
-          new NumberDocumentBuilder(name + "-depth", METRE, null,
-              SampleData.MILLIS);
-    }
-  
-    public void add(Item thisE)
-    {
-      FixItem thisEntry = (FixItem) thisE;
-      final long theDate;
-      if (thisEntry._date != null)
-      {
-        theDate = thisEntry._date.getTime();
-      }
-      else
-      {
-        theDate = -1;
-      }
-      _locB.add(theDate, thisEntry._loc);
-      _speed.add(theDate, thisEntry._speedMS);
-      _course.add(theDate, thisEntry._course);
-      _depth.add(theDate, thisEntry._depth);
-    }
 
-    @Override
-    public void storeTo(StoreGroup group)
+    private static class CutGenerator implements Generator
     {
+      private final LocationDocumentBuilder _origin;
+      private final NumberDocumentBuilder _freq;
+      private final NumberDocumentBuilder _brg;
+      private final NumberDocumentBuilder _brg2;
+      private final NumberDocumentBuilder _range;
+      private final StringDocumentBuilder _label;
+      private final String _name;
 
-      // ok, separate processing if it's a singleton
-      // ok, only add the others if they're present
-      if (isSingleton())
+      public CutGenerator(final String name)
       {
-        // just do the single location
-        LocationDocument locDoc = _locB.toDocument();
-        group.add(locDoc);
-      }
-      else
-      {
-        // ok, create group for this track
-        StoreGroup thisTrack = new StoreGroup(_name);
-
-        // now add the constituents
-        thisTrack.add(_locB.toDocument());
-        thisTrack.add(_speed.toDocument());
-        thisTrack.add(_course.toDocument());
-        thisTrack.add(_depth.toDocument());
-        group.add(thisTrack);
+        _name = name;
+        // generate the builders
+        _origin =
+            new LocationDocumentBuilder(name + "-location", null,
+                SampleData.MILLIS);
+        _brg =
+            new NumberDocumentBuilder(name + "-brg", SampleData.DEGREE_ANGLE,
+                null, SampleData.MILLIS);
+        _brg2 =
+            new NumberDocumentBuilder(name + "-brg (ambig)",
+                SampleData.DEGREE_ANGLE, null, SampleData.MILLIS);
+        _range =
+            new NumberDocumentBuilder(name + "-range", METRE, null,
+                SampleData.MILLIS);
+        _freq =
+            new NumberDocumentBuilder(name + "-freq", SI.HERTZ, null,
+                SampleData.MILLIS);
+        _label =
+            new StringDocumentBuilder(name + "-label", null, SampleData.MILLIS);
       }
 
-    }
-  }
-
-  @Override
-  public List<IStoreItem> parse(String filePath) throws IOException
-  {
-    final List<IStoreItem> res = new ArrayList<IStoreItem>();
-    final File inFile = new File(filePath);
-    final Reader in =
-        new InputStreamReader(new FileInputStream(inFile), Charset
-            .forName("UTF-8"));
-    final String fullFileName = inFile.getName();
-    final String fileName = filePrefix(fullFileName);
-    final StoreGroup group = new StoreGroup(fileName);
-    res.add(group);
-
-    final Map<String, Generator> builders =
-        new HashMap<String, Generator>();
-
-    // ok, loop through the data
-    BufferedReader br = null;
-    try
-    {
-      br = new BufferedReader(in);
-      for (String line; (line = br.readLine()) != null;)
+      @Override
+      public void add(final Item thisEntry)
       {
-        Item thisE = null;
-
-        // have a look at the line
-        if (line.startsWith(";;"))
+        final Item.CutItem cut = (Item.CutItem) thisEntry;
+        final long theDate;
+        if (cut._dtg != null)
         {
-          // comment: ignore
-        }
-        else if (line.startsWith(";TEXT:"))
-        {
-          thisE = parseThisLabel(line);
-        }
-        else if (line.startsWith(";SENSOR2:"))
-        {
-          thisE = parseThisSensor2(line);
-        }
-        else if (line.startsWith(";"))
-        {
-          // it must be some other kind of entry, ignore
+          theDate = cut._dtg.getTime();
         }
         else
         {
-          thisE = parseThisRepLine(line);
+          theDate = -1;
         }
 
-        if (thisE != null)
+        if (cut._brg != null)
         {
-          final String name = thisE.getName();
+          _brg.add(theDate, cut._brg);
+        }
+        if (cut._brg2 != null)
+        {
+          _brg2.add(theDate, cut._brg2);
+        }
+        if (cut._rng != null)
+        {
+          _range.add(theDate, cut._rng);
+        }
+        if (cut._freq != null)
+        {
+          _freq.add(theDate, cut._freq);
+        }
+        if (cut._origin != null)
+        {
+          _origin.add(theDate, cut._origin);
+        }
+        if (cut._text != null)
+        {
+          _label.add(theDate, cut._text);
+        }
+      }
 
-          // do we know this track already?
-          Generator thisG = builders.get(name);
+      @Override
+      public void storeTo(final StoreGroup group)
+      {
+        // ok, create group for this track
+        final StoreGroup thisData = new StoreGroup(_name);
 
-          if (thisG == null)
-          {
-            thisG = builderFor(thisE, name);
-            builders.put(name, thisG);
-          }
+        // now add the constituents
+        if (!_origin.getValues().isEmpty())
+        {
+          thisData.add(_origin.toDocument());
+        }
+        if (!_brg.getValues().isEmpty())
+        {
+          thisData.add(_brg.toDocument());
+        }
+        if (!_brg2.getValues().isEmpty())
+        {
+          thisData.add(_brg2.toDocument());
+        }
+        if (!_freq.getValues().isEmpty())
+        {
+          thisData.add(_freq.toDocument());
+        }
+        if (!_range.getValues().isEmpty())
+        {
+          thisData.add(_range.toDocument());
+        }
+        if (!_label.getValues().isEmpty())
+        {
+          thisData.add(_label.toDocument());
+        }
 
-          // ok, submit the new line
-          thisG.add(thisE);
+        group.add(thisData);
+      }
+    }
+
+    private static class TrackGenerator implements Generator
+    {
+      LocationDocumentBuilder _locB;
+      NumberDocumentBuilder _speed;
+      NumberDocumentBuilder _course;
+      NumberDocumentBuilder _depth;
+      final private String _name;
+
+      public TrackGenerator(final String name)
+      {
+        _name = name;
+        // generate the builders
+        _locB =
+            new LocationDocumentBuilder(name + "-location", null,
+                SampleData.MILLIS);
+        _course =
+            new NumberDocumentBuilder(name + "-course",
+                SampleData.DEGREE_ANGLE, null, SampleData.MILLIS);
+        _speed =
+            new NumberDocumentBuilder(name + "-speed", METRE.divide(SECOND)
+                .asType(Velocity.class), null, SampleData.MILLIS);
+        _depth =
+            new NumberDocumentBuilder(name + "-depth", METRE, null,
+                SampleData.MILLIS);
+      }
+
+      @Override
+      public void add(final Item thisE)
+      {
+        final Item.FixItem thisEntry = (Item.FixItem) thisE;
+        final long theDate;
+        if (thisEntry._date != null)
+        {
+          theDate = thisEntry._date.getTime();
+        }
+        else
+        {
+          theDate = -1;
+        }
+        _locB.add(theDate, thisEntry._loc);
+        _speed.add(theDate, thisEntry._speedMS);
+        _course.add(theDate, thisEntry._course);
+        _depth.add(theDate, thisEntry._depth);
+      }
+
+      public boolean isSingleton()
+      {
+        return _speed.getValues().size() == 1;
+      }
+
+      @Override
+      public void storeTo(final StoreGroup group)
+      {
+        // ok, separate processing if it's a singleton
+        // ok, only add the others if they're present
+        if (isSingleton())
+        {
+          // just do the single location
+          final LocationDocument locDoc = _locB.toDocument();
+          group.add(locDoc);
+        }
+        else
+        {
+          // ok, create group for this track
+          final StoreGroup thisTrack = new StoreGroup(_name);
+
+          // now add the constituents
+          thisTrack.add(_locB.toDocument());
+          thisTrack.add(_speed.toDocument());
+          thisTrack.add(_course.toDocument());
+          thisTrack.add(_depth.toDocument());
+          group.add(thisTrack);
         }
       }
     }
-    finally
-    {
-      if (br != null)
-      {
-        br.close();
-      }
-    }
-
-    // ok, store handle the data
-    for (String name : builders.keySet())
-    {
-      Generator thisGen = builders.get(name);
-      
-      thisGen.storeTo(group);
-    }
-
-    return res;
 
   }
 
-  private Generator builderFor(Item thisE, String name)
+  private static interface Item
   {
-    final Generator thisG;
-    if (thisE instanceof FixItem)
+    public static class CutItem implements Item
     {
-      thisG = new TrackGenerator(name);
+      final String _host;
+      final String _sensor;
+      private final Point2D _origin;
+      private final Date _dtg;
+      private final Double _brg;
+      private final Double _brg2;
+      private final Double _freq;
+      private final Double _rng;
+      private final String _text;
+
+      public CutItem(final String host, final String sensor,
+          final Point2D origin, final Date theDtg, final Double brg,
+          final Double brg2, final Double freq, final Double rng,
+          final String theText)
+      {
+        _host = host;
+        _sensor = sensor;
+        _origin = origin;
+        _dtg = theDtg;
+        _brg = brg;
+        _brg2 = brg2;
+        _freq = freq;
+        _rng = rng;
+        _text = theText;
+      }
+
+      @Override
+      public String getName()
+      {
+        return _host + "-" + _sensor;
+      }
+
     }
-    else if(thisE instanceof CutItem)
+
+    public static class FixItem implements Item
     {
-      thisG = new CutGenerator(name);
+      final private Date _date;
+      final private Point2D _loc;
+      final private double _speedMS;
+      final private double _course;
+      final private String _name;
+      @SuppressWarnings("unused")
+      final private String _sym;
+      final private double _depth;
+
+      public FixItem(final Date theDate, final Point2D theLoc,
+          final double theCourse, final double speedMS, final double depth,
+          final String theTrackName, final String symbology)
+      {
+        _date = theDate;
+        _loc = theLoc;
+        _course = theCourse;
+        _speedMS = speedMS;
+        _name = theTrackName;
+        _sym = symbology;
+        _depth = depth;
+      }
+
+      @Override
+      public String getName()
+      {
+        return _name;
+      }
+
+    }
+
+    public String getName();
+  }
+
+  private static final DateFormat FOUR_DIGIT_YEAR_FORMAT =
+      new SimpleDateFormat("yyyyMMdd HHmmss");
+  private static final DateFormat TWO_DIGIT_YEAR_FORMAT = new SimpleDateFormat(
+      "yyMMdd HHmmss");
+
+  /**
+   * the normal token delimiter (for comma & white-space separated fields)
+   */
+  static final String normalDelimiters = " \t\n\r\f";
+
+  /**
+   * the quoted delimiter, for quoted track names
+   */
+  static private final String quoteDelimiter = "\"";
+
+  private static String checkForQuotedName(final StringTokenizer st,
+      String theName)
+  {
+    // so, does the track name contain a quote character?
+    final int quoteIndex = theName.indexOf("\"");
+    if (quoteIndex >= 0)
+    {
+      // aah, but, we may have just read in all of the item. just check if
+      // the
+      // token contains
+      // both speech marks...
+      final int secondQuoteIndex = theName.indexOf("\"", quoteIndex + 1);
+
+      if (secondQuoteIndex >= 0)
+      {
+        // yes, we have caught both quotes
+        // just trim off the quote marks
+        theName = theName.substring(1, theName.length() - 1);
+      }
+      else
+      {
+        // no, we just caught the first quote.
+        // fish around for the second one.
+
+        String lastPartOfName = st.nextToken(quoteDelimiter);
+
+        // yup. the ne
+        theName += lastPartOfName;
+
+        // and trim away the quote
+        theName = theName.substring(theName.indexOf("\"") + 1);
+
+        // consume the trailing quote delimiter (note - we allow spaces
+        // & tabs)
+        lastPartOfName = st.nextToken(" \t");
+      }
+    }
+    return theName;
+  }
+
+  private static String padToken(final String token)
+  {
+    final String res;
+    if (token.length() == 6)
+    {
+      res = token;
     }
     else
     {
-      thisG = null;
+      final int numMissing = 6 - token.length();
+      final StringBuffer buffer = new StringBuffer(6);
+      for (int i = 0; i < numMissing; i++)
+      {
+        buffer.append("0");
+      }
+      buffer.append(token);
+      res = buffer.toString();
     }
-
-    return thisG;
+    return res;
   }
 
   /**
@@ -453,67 +452,6 @@ public class RepParser extends FileParser
     return res;
   }
 
-  private static String checkForQuotedName(final StringTokenizer st,
-      String theName)
-  {
-    // so, does the track name contain a quote character?
-    final int quoteIndex = theName.indexOf("\"");
-    if (quoteIndex >= 0)
-    {
-      // aah, but, we may have just read in all of the item. just check if
-      // the
-      // token contains
-      // both speech marks...
-      final int secondQuoteIndex = theName.indexOf("\"", quoteIndex + 1);
-
-      if (secondQuoteIndex >= 0)
-      {
-        // yes, we have caught both quotes
-        // just trim off the quote marks
-        theName = theName.substring(1, theName.length() - 1);
-      }
-      else
-      {
-        // no, we just caught the first quote.
-        // fish around for the second one.
-
-        String lastPartOfName = st.nextToken(quoteDelimiter);
-
-        // yup. the ne
-        theName += lastPartOfName;
-
-        // and trim away the quote
-        theName = theName.substring(theName.indexOf("\"") + 1);
-
-        // consume the trailing quote delimiter (note - we allow spaces
-        // & tabs)
-        lastPartOfName = st.nextToken(" \t");
-      }
-    }
-    return theName;
-  }
-
-  private static String padToken(final String token)
-  {
-    final String res;
-    if (token.length() == 6)
-    {
-      res = token;
-    }
-    else
-    {
-      final int numMissing = 6 - token.length();
-      final StringBuffer buffer = new StringBuffer(6);
-      for (int i = 0; i < numMissing; i++)
-      {
-        buffer.append("0");
-      }
-      buffer.append(token);
-      res = buffer.toString();
-    }
-    return res;
-  }
-
   /**
    * parse a date string using our format
    */
@@ -543,7 +481,7 @@ public class RepParser extends FileParser
     return parseThis(composite);
   }
 
-  private static FixItem parseThisRepLine(final String line)
+  private static Item.FixItem parseThisRepLine(final String line)
   {
     // get a stream from the string
     final StringTokenizer st = new StringTokenizer(line);
@@ -633,11 +571,12 @@ public class RepParser extends FileParser
         new Point2D.Double(toDegs(longDeg, longMin, longSec, longHem), toDegs(
             latDeg, latMin, latSec, latHem));
 
-    return new FixItem(theDate, theLoc, theCourse, speedMS, theDepth,
+    return new Item.FixItem(theDate, theLoc, theCourse, speedMS, theDepth,
         theTrackName, symbology);
   }
 
-  private static double toDegs(double degs, double mins, double secs, char hem)
+  private static double toDegs(final double degs, final double mins,
+      final double secs, final char hem)
   {
     double res = degs + mins / 60 + secs / (60 * 60);
     if (hem == 'S' || hem == 'W')
@@ -647,7 +586,110 @@ public class RepParser extends FileParser
     return res;
   }
 
-  private FixItem parseThisLabel(final String line)
+  private Generator builderFor(final Item thisE, final String name)
+  {
+    final Generator thisG;
+    if (thisE instanceof Item.FixItem)
+    {
+      thisG = new Generators.TrackGenerator(name);
+    }
+    else if (thisE instanceof Item.CutItem)
+    {
+      thisG = new Generators.CutGenerator(name);
+    }
+    else
+    {
+      thisG = null;
+    }
+
+    return thisG;
+  }
+
+  @Override
+  public List<IStoreItem> parse(final String filePath) throws IOException
+  {
+    final List<IStoreItem> res = new ArrayList<IStoreItem>();
+    final File inFile = new File(filePath);
+    final Reader in =
+        new InputStreamReader(new FileInputStream(inFile), Charset
+            .forName("UTF-8"));
+    final String fullFileName = inFile.getName();
+    final String fileName = filePrefix(fullFileName);
+    final StoreGroup group = new StoreGroup(fileName);
+    res.add(group);
+
+    final Map<String, Generator> builders = new HashMap<String, Generator>();
+
+    // ok, loop through the data
+    BufferedReader br = null;
+    try
+    {
+      br = new BufferedReader(in);
+      for (String line; (line = br.readLine()) != null;)
+      {
+        Item thisE = null;
+
+        // have a look at the line
+        if (line.startsWith(";;"))
+        {
+          // comment: ignore
+        }
+        else if (line.startsWith(";TEXT:"))
+        {
+          thisE = parseThisLabel(line);
+        }
+        else if (line.startsWith(";SENSOR2:"))
+        {
+          thisE = parseThisSensor2(line);
+        }
+        else if (line.startsWith(";"))
+        {
+          // it must be some other kind of entry, ignore
+        }
+        else
+        {
+          thisE = parseThisRepLine(line);
+        }
+
+        if (thisE != null)
+        {
+          final String name = thisE.getName();
+
+          // do we know this track already?
+          Generator thisG = builders.get(name);
+
+          if (thisG == null)
+          {
+            thisG = builderFor(thisE, name);
+            builders.put(name, thisG);
+          }
+
+          // ok, submit the new line
+          thisG.add(thisE);
+        }
+      }
+    }
+    finally
+    {
+      if (br != null)
+      {
+        br.close();
+      }
+    }
+
+    // ok, store handle the data
+    for (final String name : builders.keySet())
+    {
+      final Generator thisGen = builders.get(name);
+
+      thisGen.storeTo(group);
+    }
+
+    return res;
+
+  }
+
+  private Item.FixItem parseThisLabel(final String line)
   {
     // get a stream from the string
     final StringTokenizer st = new StringTokenizer(line);
@@ -657,7 +699,7 @@ public class RepParser extends FileParser
     double latDeg, longDeg, latMin, longMin;
     char latHem, longHem;
     double latSec, longSec;
-    Date theDate = null;
+    final Date theDate = null;
 
     String theTrackName = "UNKNOWN";
 
@@ -672,7 +714,7 @@ public class RepParser extends FileParser
     st.nextToken();
 
     // skip the symbology
-    String symbology = st.nextToken();
+    final String symbology = st.nextToken();
 
     // now the location
     latDeg = Double.parseDouble(st.nextToken());
@@ -712,10 +754,10 @@ public class RepParser extends FileParser
         new Point2D.Double(toDegs(longDeg, longMin, longSec, longHem), toDegs(
             latDeg, latMin, latSec, latHem));
 
-    return new FixItem(theDate, theLoc, 0, 0, 0, theTrackName, symbology);
+    return new Item.FixItem(theDate, theLoc, 0, 0, 0, theTrackName, symbology);
   }
 
-  private CutItem parseThisSensor2(final String line)
+  private Item.CutItem parseThisSensor2(final String line)
   {
 
     // get a stream from the string
@@ -733,7 +775,6 @@ public class RepParser extends FileParser
     Double brg = null;
     Double rng = null;
     Double brg2 = null, freq = null;
-    java.awt.Color theColor;
 
     // skip the comment identifier
     st.nextToken();
@@ -826,7 +867,7 @@ public class RepParser extends FileParser
     if (!tmp.startsWith("N"))
     {
       // cool, we have data
-      double rngYds = Double.parseDouble(tmp);
+      final double rngYds = Double.parseDouble(tmp);
       rng = rngYds * 0.9144;
     }
 
@@ -837,7 +878,7 @@ public class RepParser extends FileParser
     sensorName = sensorName.trim();
 
     // and lastly read in the message (to the end of the line)
-    String labelTxt = st.nextToken("\r");
+    final String labelTxt = st.nextToken("\r");
 
     // did we find anything
     if (labelTxt != null)
@@ -850,9 +891,9 @@ public class RepParser extends FileParser
       theText = "";
     }
 
-    return new CutItem(theTrack, sensorName, origin, theDtg, brg, brg2, freq,
-        rng);
-    
+    return new Item.CutItem(theTrack, sensorName, origin, theDtg, brg, brg2,
+        freq, rng, theText);
+
   }
 
 }

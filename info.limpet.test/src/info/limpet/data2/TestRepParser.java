@@ -47,23 +47,6 @@ public class TestRepParser extends TestCase
     builder.append(name);
     return builder.toString();
   }
-  
-
-  @SuppressWarnings("unchecked")
-  @Test
-  public void testParseSensor() throws Exception
-  {
-    final File file = getDataFile("data/turn.dsf");
-    assertTrue(file.isFile());
-    final FileParser parser = new RepParser();
-    List<IStoreItem> items = parser.parse(file.getAbsolutePath());
-    assertEquals("correct group", 1, items.size());
-    items = (List<IStoreItem>) items.get(0);
-//    assertEquals("correct num tracks", 4, items.size());
-//    final StoreGroup trackOne =  (StoreGroup) items.get(2);
-//    assertEquals("correct name", "OWNSHIP", trackOne.getName());
-//    assertEquals("correct num collections", 4, trackOne.size());
-  }
 
   @SuppressWarnings("unchecked")
   @Test
@@ -76,19 +59,41 @@ public class TestRepParser extends TestCase
     assertEquals("correct group", 1, items.size());
     items = (List<IStoreItem>) items.get(0);
     assertEquals("correct num tracks", 4, items.size());
-    final StoreGroup trackOne =  (StoreGroup) items.get(2);
+    final StoreGroup trackOne = (StoreGroup) items.get(2);
     assertEquals("correct name", "OWNSHIP", trackOne.getName());
     assertEquals("correct num collections", 4, trackOne.size());
-    IDocument<?> firstColl = (IDocument<?>) trackOne.get(0);
+    final IDocument<?> firstColl = (IDocument<?>) trackOne.get(0);
     assertEquals("correct name", "OWNSHIP-location", firstColl.getName());
     assertEquals("correct num rows", 529, firstColl.size());
-    IDocument<?> secondColl = (IDocument<?>) trackOne.get(1);
+    final IDocument<?> secondColl = (IDocument<?>) trackOne.get(1);
     assertEquals("correct name", "OWNSHIP-speed", secondColl.getName());
     assertEquals("correct num rows", 529, firstColl.size());
 
-    LocationDocument trackTwo = (LocationDocument) items.get(1);
-    assertEquals("correct name", "Singleton Track B-location", trackTwo.getName());
+    final LocationDocument trackTwo = (LocationDocument) items.get(1);
+    assertEquals("correct name", "Singleton Track B-location", trackTwo
+        .getName());
     assertEquals("correct num points", 1, trackTwo.size());
 
+  }
+
+  @SuppressWarnings("unchecked")
+  @Test
+  public void testParseSensor() throws Exception
+  {
+    final File file = getDataFile("data/turn.dsf");
+    assertTrue(file.isFile());
+    final FileParser parser = new RepParser();
+    List<IStoreItem> items = parser.parse(file.getAbsolutePath());
+    assertEquals("correct group", 1, items.size());
+    items = (List<IStoreItem>) items.get(0);
+    assertEquals("correct num tracks", 1, items.size());
+    items = (List<IStoreItem>) items.get(0);
+    assertEquals("correct num tracks", 3, items.size());
+    assertEquals("correct name", "OWNSHIP-BowMerchantvessel-brg", items.get(0)
+        .getName());
+    assertEquals("correct name", "OWNSHIP-BowMerchantvessel-freq", items.get(1)
+        .getName());
+    assertEquals("correct name", "OWNSHIP-BowMerchantvessel-label", items
+        .get(2).getName());
   }
 }
