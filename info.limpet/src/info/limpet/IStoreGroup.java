@@ -18,13 +18,10 @@ import java.beans.PropertyChangeListener;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.Spliterator;
 import java.util.UUID;
 
 public interface IStoreGroup extends IStoreItem, Collection<IStoreItem>,
 		IChangeListener {
-
-	public Spliterator<IStoreItem> spliterator();
 
 	public interface StoreChangeListener {
 		void changed();
