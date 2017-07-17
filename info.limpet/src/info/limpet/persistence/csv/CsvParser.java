@@ -358,7 +358,7 @@ public class CsvParser extends FileParser
         final Unit<?> indexUnits)
     {
       final LocationDocumentBuilder res =
-          new LocationDocumentBuilder(name, null, indexUnits);
+          new LocationDocumentBuilder(name, null, indexUnits, SI.METER);
       return res;
     }
 
