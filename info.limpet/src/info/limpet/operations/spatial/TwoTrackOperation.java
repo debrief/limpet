@@ -250,8 +250,9 @@ public abstract class TwoTrackOperation implements IOperation
     final boolean hasContents = getATests().allHaveData(selection);
     final boolean equalOrInterp = equalLength || canInterpolate;
     final boolean allLocation = getATests().allLocation(selection);
+    final boolean allEqualDistanceUnits = getATests().allEqualDistanceUnits(selection);
 
-    return nonEmpty && equalOrInterp && onlyTwo && allLocation && hasContents;
+    return nonEmpty && equalOrInterp && onlyTwo && allLocation && hasContents && allEqualDistanceUnits;
   }
 
   public CollectionComplianceTests getATests()

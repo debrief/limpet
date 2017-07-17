@@ -57,6 +57,7 @@ import info.limpet.operations.arithmetic.simple.MultiplyQuantityOperation;
 import info.limpet.operations.arithmetic.simple.SubtractQuantityOperation;
 import info.limpet.operations.arithmetic.simple.UnitConversionOperation;
 import info.limpet.operations.spatial.BearingBetweenTracksOperation;
+import info.limpet.operations.spatial.DistanceBetweenTracksOperation;
 import info.limpet.operations.spatial.IGeoCalculator;
 import info.limpet.persistence.csv.CsvParser;
 
@@ -329,6 +330,50 @@ public class TestOperations
     assertFalse("all not equal", testOp.allIndexed(sel));
     ops = adder.actionsFor(sel, destination, context);
     assertEquals("none found", 0, ops.size());
+
+  }
+
+  @Test
+  public void testLocationComplianceTest()
+  {
+    LocationDocumentBuilder lda1 =
+        new LocationDocumentBuilder("relative", null, SI.SECOND);
+    LocationDocumentBuilder lda2 =
+        new LocationDocumentBuilder("relative", null, SI.SECOND);
+    LocationDocumentBuilder ldb =
+        new LocationDocumentBuilder("relative", null, SI.SECOND, SI.METER);
+
+    IGeoCalculator calcA = lda1.getCalculator();
+    IGeoCalculator calcB = ldb.getCalculator();
+
+    lda1.add(1000, calcA.createPoint(2, 4));
+    lda1.add(2000, calcA.createPoint(3, 5));
+
+    lda2.add(1000, calcA.createPoint(1, 2));
+    lda2.add(2000, calcA.createPoint(4, 1));
+
+    ldb.add(1000, calcB.createPoint(2, 4));
+    ldb.add(2000, calcB.createPoint(3, 5));
+
+    final List<IStoreItem> selection = new ArrayList<IStoreItem>();
+    selection.add(lda1.toDocument());
+    selection.add(ldb.toDocument());
+    final StoreGroup store = new StoreGroup("Results");
+
+    List<ICommand> ops =
+        new DistanceBetweenTracksOperation().actionsFor(selection, store,
+            context);
+    assertEquals("empty collection - wrong distance units", 0, ops.size());
+
+    // try with wroking permutation
+    selection.clear();
+    selection.add(lda1.toDocument());
+    selection.add(lda2.toDocument());
+
+    ops =
+        new DistanceBetweenTracksOperation().actionsFor(selection, store,
+            context);
+    assertEquals("received command", 1, ops.size());
 
   }
 
@@ -1642,8 +1687,9 @@ public class TestOperations
     selection.add(lda.toDocument());
     selection.add(ldb.toDocument());
 
-    List<ICommand> commands = new BearingBetweenTracksOperation().actionsFor(selection, store,
-        context);
+    List<ICommand> commands =
+        new BearingBetweenTracksOperation().actionsFor(selection, store,
+            context);
     ICommand oper = commands.get(0);
     oper.execute();
     NumberDocument output = (NumberDocument) oper.getOutputs().get(0);

@@ -224,8 +224,12 @@ public class GenerateCourseAndSpeedOperation implements IOperation
     boolean nonEmpty = aTests.nonEmpty(selection);
     boolean allTemporal = aTests.allIndexed(selection);
 
-    return nonEmpty && allTemporal && aTests.allNonQuantity(selection)
-        && aTests.allLocation(selection);
+    final boolean allNonQuantity = aTests.allNonQuantity(selection);
+    final boolean allLocation = aTests.allLocation(selection);
+    final boolean allSameDistanceUnits = aTests.allEqualDistanceUnits(selection);
+    
+    return nonEmpty && allTemporal && allNonQuantity
+        && allLocation && allSameDistanceUnits;
   }
 
   public List<ICommand> actionsFor(List<IStoreItem> selection,
