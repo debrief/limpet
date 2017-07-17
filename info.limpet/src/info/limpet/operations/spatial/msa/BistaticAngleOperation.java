@@ -359,7 +359,11 @@ public class BistaticAngleOperation implements IOperation
                 if (item instanceof StoreGroup)
                 {
                   StoreGroup group = (StoreGroup) item;
-                  subjects.add(aTests.getFirstLocation(group));
+                  final LocationDocument firstLoc = aTests.getFirstLocation(group);
+                  if(firstLoc != null)
+                  {
+                    subjects.add(firstLoc);
+                  }
                 }
                 else if (item instanceof LocationDocument)
                 {

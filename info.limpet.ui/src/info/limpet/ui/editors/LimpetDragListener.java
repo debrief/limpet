@@ -64,8 +64,15 @@ public class LimpetDragListener extends DragSourceAdapter
       while (iter.hasNext())
       {
         LimpetWrapper object = (LimpetWrapper) iter.next();
-        IStoreItem si = (IStoreItem) object.getSubject();
-        items.append(si.getUUID().toString());
+        if(object instanceof IStoreItem)
+        {
+          IStoreItem si = (IStoreItem) object.getSubject();
+          items.append(si.getUUID().toString());
+        }
+        else
+        {
+          items.append(object.toString());
+        }
         items.append(SEPARATOR);
       }
       event.data = items.toString();

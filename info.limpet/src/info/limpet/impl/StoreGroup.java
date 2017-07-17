@@ -152,9 +152,15 @@ public class StoreGroup extends ArrayList<IStoreItem> implements IStoreGroup
   }
 
   @Override
+  @UIProperty(name = "Name", category = UIProperty.CATEGORY_LABEL)
   public String getName()
   {
     return _name;
+  }
+  
+  public void setName(final String val)
+  {
+    _name = val;
   }
 
   @Override
