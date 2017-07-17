@@ -71,11 +71,20 @@ public abstract class TwoTrackOperation implements IOperation
     @Override
     public void execute()
     {
+      // name the output
+      final String name = getOutputName();
+
+      if (name == null)
+      {
+        // ok, cancelled. drop out
+        return;
+      }
+
       // start adding values.
       final DoubleDataset dataset = performCalc();
 
-      // name the output
-      dataset.setName(getOutputName());
+      // and name it
+      dataset.setName(name);
 
       // now create the output dataset
       final NumberDocument output =
@@ -250,9 +259,11 @@ public abstract class TwoTrackOperation implements IOperation
     final boolean hasContents = getATests().allHaveData(selection);
     final boolean equalOrInterp = equalLength || canInterpolate;
     final boolean allLocation = getATests().allLocation(selection);
-    final boolean allEqualDistanceUnits = getATests().allEqualDistanceUnits(selection);
+    final boolean allEqualDistanceUnits =
+        getATests().allEqualDistanceUnits(selection);
 
-    return nonEmpty && equalOrInterp && onlyTwo && allLocation && hasContents && allEqualDistanceUnits;
+    return nonEmpty && equalOrInterp && onlyTwo && allLocation && hasContents
+        && allEqualDistanceUnits;
   }
 
   public CollectionComplianceTests getATests()
