@@ -337,11 +337,11 @@ public class TestOperations
   public void testLocationComplianceTest()
   {
     LocationDocumentBuilder lda1 =
-        new LocationDocumentBuilder("relative", null, SI.SECOND);
+        new LocationDocumentBuilder("relative", null, SECOND);
     LocationDocumentBuilder lda2 =
-        new LocationDocumentBuilder("relative", null, SI.SECOND);
+        new LocationDocumentBuilder("relative", null, SECOND);
     LocationDocumentBuilder ldb =
-        new LocationDocumentBuilder("relative", null, SI.SECOND, SI.METER);
+        new LocationDocumentBuilder("relative", null, SECOND, SI.METER);
 
     IGeoCalculator calcA = lda1.getCalculator();
     IGeoCalculator calcB = ldb.getCalculator();

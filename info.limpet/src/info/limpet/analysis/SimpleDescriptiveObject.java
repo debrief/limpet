@@ -24,8 +24,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.opengis.geometry.Geometry;
-
 public abstract class SimpleDescriptiveObject extends CoreAnalysis
 {
 
