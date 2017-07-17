@@ -14,9 +14,6 @@
  *****************************************************************************/
 package info.limpet.ui;
 
-import info.limpet.operations.spatial.GeoSupport;
-import info.limpet.operations.spatial.GeotoolsCalculator;
-
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IAdapterFactory;
@@ -92,9 +89,6 @@ public class Activator extends AbstractUIPlugin
   {
     super.start(context);
     plugin = this;
-
-    // ok, setup the geo tools service
-    GeoSupport.setCalculator(new GeotoolsCalculator());
   }
 
   /*

@@ -16,13 +16,13 @@ package info.limpet.analysis;
 
 import info.limpet.IDocument;
 import info.limpet.IStoreItem;
+import info.limpet.impl.LocationDocument;
 import info.limpet.operations.CollectionComplianceTests;
 
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import org.opengis.geometry.Geometry;
 
 public abstract class SimpleDescriptiveObject extends CoreAnalysis
 {
@@ -55,6 +55,15 @@ public abstract class SimpleDescriptiveObject extends CoreAnalysis
           titles.add("Content Type");
           Object nextObject = thisD.getIterator().next();
           values.add(typeFor(nextObject, nextObject.getClass()));
+          
+          // is it a location?
+          if(thisD instanceof LocationDocument)
+          {
+            LocationDocument locD = (LocationDocument) thisD;
+            titles.add("Spatial units");
+            values.add(locD.getUnits().toString());
+          }
+          
         }
       }
     }
@@ -73,7 +82,7 @@ public abstract class SimpleDescriptiveObject extends CoreAnalysis
     {
       res = "String";
     }
-    else if (subject instanceof Geometry)
+    else if (subject instanceof Point2D)
     {
       res = "Location";
     }

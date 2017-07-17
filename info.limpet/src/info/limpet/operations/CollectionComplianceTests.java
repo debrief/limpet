@@ -1502,4 +1502,50 @@ public class CollectionComplianceTests
   {
     return checkDims(selection, 2);
   }
+
+  /**
+   * check if the series are all locations, and that their units are equal
+   * 
+   * @param selection
+   * @return true/false
+   */
+  public boolean allEqualDistanceUnits(List<IStoreItem> selection)
+  {
+
+    // are they all non location?
+    boolean allValid = true;
+    
+    Unit<?> distUnits = null;
+
+    for (int i = 0; i < selection.size(); i++)
+    {
+      IStoreItem thisI = selection.get(i);
+      if (thisI instanceof LocationDocument)
+      {
+        LocationDocument doc = (LocationDocument) thisI;
+        Unit<?> hisUnits = doc.getUnits();
+        if(distUnits == null)
+        {
+          // ok, store it
+          distUnits = hisUnits;
+        }
+        else
+        {
+          if(!hisUnits.equals(distUnits))
+          {
+            // ok, fail
+            return false;
+          }
+        }
+      }
+      else
+      {
+        allValid = false;
+        break;
+      }
+
+    }
+    return allValid;
+
+  }
 }

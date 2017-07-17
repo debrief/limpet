@@ -33,6 +33,7 @@ import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
 import info.limpet.impl.Document;
 import info.limpet.impl.LocationDocument;
+import info.limpet.impl.LocationDocumentBuilder;
 import info.limpet.impl.MockContext;
 import info.limpet.impl.NumberDocument;
 import info.limpet.impl.NumberDocumentBuilder;
@@ -56,6 +57,8 @@ import info.limpet.operations.arithmetic.simple.MultiplyQuantityOperation;
 import info.limpet.operations.arithmetic.simple.SubtractQuantityOperation;
 import info.limpet.operations.arithmetic.simple.UnitConversionOperation;
 import info.limpet.operations.spatial.BearingBetweenTracksOperation;
+import info.limpet.operations.spatial.DistanceBetweenTracksOperation;
+import info.limpet.operations.spatial.IGeoCalculator;
 import info.limpet.persistence.csv.CsvParser;
 
 import java.io.File;
@@ -70,9 +73,11 @@ import javax.measure.quantity.Angle;
 import javax.measure.quantity.Dimensionless;
 import javax.measure.quantity.Length;
 import javax.measure.quantity.Velocity;
+import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 
 import org.easymock.EasyMock;
+import org.eclipse.january.dataset.DoubleDataset;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -325,6 +330,50 @@ public class TestOperations
     assertFalse("all not equal", testOp.allIndexed(sel));
     ops = adder.actionsFor(sel, destination, context);
     assertEquals("none found", 0, ops.size());
+
+  }
+
+  @Test
+  public void testLocationComplianceTest()
+  {
+    LocationDocumentBuilder lda1 =
+        new LocationDocumentBuilder("relative", null, SECOND);
+    LocationDocumentBuilder lda2 =
+        new LocationDocumentBuilder("relative", null, SECOND);
+    LocationDocumentBuilder ldb =
+        new LocationDocumentBuilder("relative", null, SECOND, SI.METER);
+
+    IGeoCalculator calcA = lda1.getCalculator();
+    IGeoCalculator calcB = ldb.getCalculator();
+
+    lda1.add(1000, calcA.createPoint(2, 4));
+    lda1.add(2000, calcA.createPoint(3, 5));
+
+    lda2.add(1000, calcA.createPoint(1, 2));
+    lda2.add(2000, calcA.createPoint(4, 1));
+
+    ldb.add(1000, calcB.createPoint(2, 4));
+    ldb.add(2000, calcB.createPoint(3, 5));
+
+    final List<IStoreItem> selection = new ArrayList<IStoreItem>();
+    selection.add(lda1.toDocument());
+    selection.add(ldb.toDocument());
+    final StoreGroup store = new StoreGroup("Results");
+
+    List<ICommand> ops =
+        new DistanceBetweenTracksOperation().actionsFor(selection, store,
+            context);
+    assertEquals("empty collection - wrong distance units", 0, ops.size());
+
+    // try with wroking permutation
+    selection.clear();
+    selection.add(lda1.toDocument());
+    selection.add(lda2.toDocument());
+
+    ops =
+        new DistanceBetweenTracksOperation().actionsFor(selection, store,
+            context);
+    assertEquals("received command", 1, ops.size());
 
   }
 
@@ -833,8 +882,8 @@ public class TestOperations
     // test that new series has predecessors
     assertNotNull("new series has precedent", newS.getPrecedent());
     assertEquals("Have correct precedent",
-        "Add numeric values in provided series (interpolated)", newS.getPrecedent()
-            .getName());
+        "Add numeric values in provided series (interpolated)", newS
+            .getPrecedent().getName());
 
   }
 
@@ -1018,7 +1067,6 @@ public class TestOperations
     assertEquals("correct value", output.getValueAt(0), speedGood1
         .getValueAt(0) + 2, 0.001);
   }
-  
 
   @Test
   public void testSubtractionNonOverlapping()
@@ -1034,20 +1082,21 @@ public class TestOperations
         (NumberDocument) store.get(SampleData.SPEED_EARLY);
     selection.add(speedGood1);
     selection.add(speedGood2);
-    
+
     // check they are the same length (since indexing relies on that)
     assertEquals("both same length", speedGood1.size(), speedGood2.size());
-    
+
     // check they don't overlap
-    assertFalse("don't overlap", testOp.suitableForIndexedInterpolation(selection));
-    
+    assertFalse("don't overlap", testOp
+        .suitableForIndexedInterpolation(selection));
+
     // suitable for indexed
-    assertTrue("suitable for indexing", testOp.allEqualLengthOrSingleton(selection));
-    
+    assertTrue("suitable for indexing", testOp
+        .allEqualLengthOrSingleton(selection));
+
     List<ICommand> commands =
         new SubtractQuantityOperation().actionsFor(selection, store, context);
-    assertEquals("Offered indexed operations", 2, commands
-        .size());
+    assertEquals("Offered indexed operations", 2, commands.size());
     // get the first one
     ICommand first = commands.get(0);
     assertTrue("is indexed", first.getName().contains("(indexed)"));
@@ -1608,7 +1657,7 @@ public class TestOperations
     assertEquals("Delete collection operation", 1, commands.size());
     ICommand command = commands.iterator().next();
     command.execute();
-    
+
     // how many do we expect to lose? This will be the number of documents deleted,
     // plus any output documents that depend on them
     int expectedToDelete = 4;
@@ -1617,7 +1666,38 @@ public class TestOperations
     assertEquals("speeds smaller", factorLen - 1, speedParent.size());
   }
 
-  // TODO: reinstate this test, once we have location structures
+  @Test
+  public void testBearingBetweenTracks2D()
+  {
+    StoreGroup store = new SampleData().getData(10);
+    List<IStoreItem> selection = new ArrayList<IStoreItem>();
+
+    LocationDocumentBuilder lda =
+        new LocationDocumentBuilder("one", null, SampleData.MILLIS, SI.METER);
+    LocationDocumentBuilder ldb =
+        new LocationDocumentBuilder("one", null, SampleData.MILLIS, SI.METER);
+
+    IGeoCalculator calc = lda.getCalculator();
+    lda.add(1000, calc.createPoint(1, 1));
+    lda.add(2000, calc.createPoint(1, 1));
+
+    ldb.add(1000, calc.createPoint(2, 2));
+    ldb.add(2000, calc.createPoint(0, 0));
+
+    selection.add(lda.toDocument());
+    selection.add(ldb.toDocument());
+
+    List<ICommand> commands =
+        new BearingBetweenTracksOperation().actionsFor(selection, store,
+            context);
+    ICommand oper = commands.get(0);
+    oper.execute();
+    NumberDocument output = (NumberDocument) oper.getOutputs().get(0);
+    DoubleDataset ds = (DoubleDataset) output.getDataset();
+    assertEquals("correct ang", 45d, ds.get(0), 0.0001);
+    assertEquals("correct ang", 225d, ds.get(1), 0.0001);
+  }
+
   @Test
   public void testBearingBetweenTracksOperation() throws IOException
   {
@@ -1648,8 +1728,9 @@ public class TestOperations
     selection.add(track1);
     selection.add(track2);
 
-    List<ICommand> commands = new BearingBetweenTracksOperation().actionsFor(selection, store,
-        context);
+    List<ICommand> commands =
+        new BearingBetweenTracksOperation().actionsFor(selection, store,
+            context);
     assertEquals("Bearing Between Tracks operation", 1, commands.size());
     Iterator<ICommand> iterator = commands.iterator();
     ICommand command = iterator.next();

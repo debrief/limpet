@@ -14,9 +14,6 @@
  *****************************************************************************/
 package info.limpet.rcp;
 
-import info.limpet.operations.spatial.GeoSupport;
-import info.limpet.operations.spatial.GeotoolsCalculator;
-
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -85,9 +82,6 @@ public class Activator extends AbstractUIPlugin
 	{
 		super.start(context);
 		plugin = this;
-		
-		// ok, setup the geo tools service
-		GeoSupport.setCalculator(new GeotoolsCalculator());
 	}
 
 	/*

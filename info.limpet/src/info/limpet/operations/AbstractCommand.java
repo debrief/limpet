@@ -28,7 +28,6 @@ import info.limpet.impl.NumberDocumentBuilder;
 import info.limpet.impl.SampleData;
 import info.limpet.impl.StoreGroup;
 import info.limpet.impl.UIProperty;
-import info.limpet.operations.spatial.GeoSupport;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
@@ -461,7 +460,7 @@ public abstract class AbstractCommand implements ICommand
       for (int i = 0; i < ds.getSize(); i++)
       {
         final Point2D pt =
-            GeoSupport.getCalculator().createPoint(
+            track.getCalculator().createPoint(
                 longInterpolated.getDouble(i), latInterpolated.getDouble(i));
         ldb.add(ds.getLong(i), pt);
       }
