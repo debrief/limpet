@@ -55,6 +55,7 @@ import javax.measure.unit.SI;
 
 import junit.framework.TestCase;
 
+import org.eclipse.january.dataset.DoubleDataset;
 import org.junit.Assert;
 
 public class TestGeotoolsGeometry extends TestCase
@@ -90,7 +91,17 @@ public class TestGeotoolsGeometry extends TestCase
   public void testBearingCalc()
   {
 
-    final IGeoCalculator builder = GeoSupport.getCalculator();
+    final IGeoCalculator builder = GeoSupport.getCalculatorWGS84();
+
+    final Point2D p1 = builder.createPoint(1, 0);
+    final Point2D p2 = builder.createPoint(2, 1);
+
+    assertEquals("correct result", 45, builder.getAngleBetween(p1, p2), 0.2);
+  }
+
+  public void testBearingCalc2D()
+  {
+    final IGeoCalculator builder = GeoSupport.getCalculatorGeneric2D();
 
     final Point2D p1 = builder.createPoint(1, 0);
     final Point2D p2 = builder.createPoint(2, 1);
@@ -103,7 +114,7 @@ public class TestGeotoolsGeometry extends TestCase
     final LocationDocumentBuilder track1 =
         new LocationDocumentBuilder("some location data", null, null);
 
-    final IGeoCalculator calc = GeoSupport.getCalculator();
+    final IGeoCalculator calc = track1.getCalculator();
     final Point2D pos1 = calc.createPoint(-4, 55.8);
     final Point2D pos2 = calc.calculatePoint(pos1, Math.toRadians(54), 0.003);
 
@@ -118,12 +129,16 @@ public class TestGeotoolsGeometry extends TestCase
 
   public void testCreatePoint()
   {
-    final IGeoCalculator builder = GeoSupport.getCalculator();
+    final IGeoCalculator builder = GeoSupport.getCalculatorWGS84();
     final Point2D point = builder.createPoint(48.44, -123.37);
     Assert.assertNotNull(point);
+  }
 
-    final Point2D point2 = builder.createPoint(48.44, -123.37);
-    Assert.assertNotNull(point2);
+  public void testCreatePoint2D()
+  {
+    final IGeoCalculator builder = GeoSupport.getCalculatorGeneric2D();
+    final Point2D point = builder.createPoint(48.44, -123.37);
+    Assert.assertNotNull(point);
   }
 
   public void testCreateTemporalObjectCollection()
@@ -849,7 +864,7 @@ public class TestGeotoolsGeometry extends TestCase
     assertEquals("empty collection", 0, ops.size());
 
     // ok, try adding some data
-    final IGeoCalculator builder = GeoSupport.getCalculator();
+    final IGeoCalculator builder = loc1.getCalculator();
     loc1.add(builder.createPoint(4, 3));
     loc1.add(builder.createPoint(1, 3));
     loc2.add(builder.createPoint(3, 4));
@@ -914,7 +929,7 @@ public class TestGeotoolsGeometry extends TestCase
     assertEquals("empty collection", 0, ops.size());
 
     // ok, try adding some data
-    final IGeoCalculator builder = GeoSupport.getCalculator();
+    final IGeoCalculator builder = loc1.getCalculator();
 
     loc1.add(1000, builder.createPoint(1, 3));
     loc1.add(2000, builder.createPoint(2, 3));
@@ -993,6 +1008,47 @@ public class TestGeotoolsGeometry extends TestCase
 
   }
 
+
+  public void testLocationCalc2D()
+  {
+    final LocationDocumentBuilder loc1 =
+        new LocationDocumentBuilder("loc1", null, SI.MILLI(SI.SECOND), SI.METER);
+    final LocationDocumentBuilder loc2 =
+        new LocationDocumentBuilder("loc2", null, SI.MILLI(SI.SECOND), SI.METER);
+
+    final List<IStoreItem> selection = new ArrayList<IStoreItem>();
+    selection.add(loc1.toDocument());
+
+    final StoreGroup store = new StoreGroup("Results");
+
+    // ok, try adding some data
+    final IGeoCalculator builder = loc1.getCalculator();
+
+    loc1.add(1000, builder.createPoint(4, 3));
+    loc1.add(2000, builder.createPoint(3, 4));
+
+    loc2.add(1000, builder.createPoint(5, 3));
+    loc2.add(2000, builder.createPoint(3, 6));
+
+    // put in the new documents
+    selection.clear();
+    selection.add(loc1.toDocument());
+    selection.add(loc2.toDocument());
+
+    List<ICommand> ops = new DistanceBetweenTracksOperation().actionsFor(selection, store,
+        context);
+    assertEquals("not empty collection", 1, ops.size());
+    ICommand firstC = ops.get(0);
+    // ok, execute it
+    firstC.execute();
+    
+    NumberDocument output = (NumberDocument) firstC.getOutputs().get(0);
+    DoubleDataset data = (DoubleDataset) output.getDataset();
+    assertEquals(1d, data.get(0), 0.0001);
+    assertEquals(2d, data.get(1), 0.0001);
+  }
+  
+  
   public void testLocationCalc()
   {
     final LocationDocumentBuilder loc1 =
@@ -1029,7 +1085,7 @@ public class TestGeotoolsGeometry extends TestCase
     assertEquals("empty collection", 0, ops.size());
 
     // ok, try adding some data
-    final IGeoCalculator builder = GeoSupport.getCalculator();
+    final IGeoCalculator builder = loc1.getCalculator();
 
     loc1.add(1000, builder.createPoint(4, 3));
     loc2.add(2000, builder.createPoint(3, 4));
@@ -1045,11 +1101,30 @@ public class TestGeotoolsGeometry extends TestCase
     assertEquals("not empty collection", 1, ops.size());
   }
 
+  public void testLocationInterp2D()
+  {
+    final LocationDocumentBuilder loc1b =
+        new LocationDocumentBuilder("loc1", null, SI.MILLI(SI.SECOND), SI.METER);
+    final IGeoCalculator builder = loc1b.getCalculator();
+    loc1b.add(1000, builder.createPoint(2, 3));
+    loc1b.add(2000, builder.createPoint(3, 4));
+
+    final LocationDocument loc1 = loc1b.toDocument();
+
+    Point2D geo1 = loc1.locationAt(1500);
+    assertEquals("correct value", 2.5, geo1.getX());
+    assertEquals("correct value", 3.5, geo1.getY());
+
+    geo1 = loc1.locationAt(1700);
+    assertEquals("correct value", 2.7, geo1.getX());
+    assertEquals("correct value", 3.7, geo1.getY());
+  }
+  
   public void testLocationInterp()
   {
     final LocationDocumentBuilder loc1b =
         new LocationDocumentBuilder("loc1", null, SI.MILLI(SI.SECOND));
-    final IGeoCalculator builder = GeoSupport.getCalculator();
+    final IGeoCalculator builder = loc1b.getCalculator();
     loc1b.add(1000, builder.createPoint(2, 3));
     loc1b.add(2000, builder.createPoint(3, 4));
 
@@ -1075,7 +1150,7 @@ public class TestGeotoolsGeometry extends TestCase
             null);
 
     final IOperation distanceOp = new DistanceBetweenTracksOperation();
-    final IGeoCalculator builder = GeoSupport.getCalculator();
+    final IGeoCalculator builder = loc1.getCalculator();
 
     final List<IStoreItem> selection = new ArrayList<IStoreItem>();
     selection.add(loc1.toDocument());
@@ -1140,7 +1215,7 @@ public class TestGeotoolsGeometry extends TestCase
         new LocationDocumentBuilder("loc2", null, SI.MILLI(SI.SECOND));
 
     final IOperation bearingOp = new BearingBetweenTracksOperation();
-    final IGeoCalculator builder = GeoSupport.getCalculator();
+    final IGeoCalculator builder = loc1.getCalculator();
 
     final List<IStoreItem> selection = new ArrayList<IStoreItem>();
 
@@ -1242,7 +1317,7 @@ public class TestGeotoolsGeometry extends TestCase
         context).size());
 
     // ok, try adding some data
-    final IGeoCalculator builder = GeoSupport.getCalculator();
+    final IGeoCalculator builder = loc1.getCalculator();
 
     // start with a singleton
     loc1.add(1000, builder.createPoint(4, 3));
@@ -1314,7 +1389,7 @@ public class TestGeotoolsGeometry extends TestCase
 
   public void testRangeCalc()
   {
-    final IGeoCalculator builder = GeoSupport.getCalculator();
+    final IGeoCalculator builder = GeoSupport.getCalculatorWGS84();
 
     final Point2D p1 = builder.createPoint(0, 80);
     final Point2D p2 = builder.createPoint(0, 81);
@@ -1326,4 +1401,20 @@ public class TestGeotoolsGeometry extends TestCase
     assertEquals("range 1 right", 111663, dest1, 10);
     assertEquals("range 2 right", 19393, dest2, 10);
   }
+  
+  public void testRangeCalc2D()
+  {
+    final IGeoCalculator builder = GeoSupport.getCalculatorGeneric2D();
+
+    final Point2D p1 = builder.createPoint(0, 80);
+    final Point2D p2 = builder.createPoint(0, 81);
+    final Point2D p3 = builder.createPoint(1, 80);
+
+    final double dest1 = builder.getDistanceBetween(p1, p2);
+    final double dest2 = builder.getDistanceBetween(p1, p3);
+
+    assertEquals("range 1 right", 1d, dest1, 0.00001);
+    assertEquals("range 2 right", 1d, dest2, 0.00001);
+  }
+
 }

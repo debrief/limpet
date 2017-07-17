@@ -145,7 +145,7 @@ public abstract class TwoTrackOperation implements IOperation
       final LocationDocument track2 = (LocationDocument) getInputs().get(1);
 
       // get a calculator to use
-      final IGeoCalculator calc = GeoSupport.getCalculator();
+      final IGeoCalculator calc = track1.getCalculator();
 
       final LocationDocument interp1;
       final LocationDocument interp2;
@@ -250,8 +250,9 @@ public abstract class TwoTrackOperation implements IOperation
     final boolean hasContents = getATests().allHaveData(selection);
     final boolean equalOrInterp = equalLength || canInterpolate;
     final boolean allLocation = getATests().allLocation(selection);
+    final boolean allEqualDistanceUnits = getATests().allEqualDistanceUnits(selection);
 
-    return nonEmpty && equalOrInterp && onlyTwo && allLocation && hasContents;
+    return nonEmpty && equalOrInterp && onlyTwo && allLocation && hasContents && allEqualDistanceUnits;
   }
 
   public CollectionComplianceTests getATests()

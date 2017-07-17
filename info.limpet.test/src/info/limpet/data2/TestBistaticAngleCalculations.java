@@ -253,7 +253,7 @@ public class TestBistaticAngleCalculations
     Point2D rx = new Point2D.Double(1.1, 0);
     final double time = 1000d;
 
-    final IGeoCalculator calc = GeoSupport.getCalculator();
+    final IGeoCalculator calc = GeoSupport.getCalculatorWGS84();
     BistaticAngleOperation.calcAndStore(calc, tx, tgt, rx, heading, time, bi,
         biA);
 

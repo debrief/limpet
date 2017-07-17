@@ -2,10 +2,13 @@ package info.limpet.impl;
 
 import info.limpet.ICommand;
 import info.limpet.operations.spatial.GeoSupport;
+import info.limpet.operations.spatial.IGeoCalculator;
 
 import java.awt.geom.Point2D;
 import java.util.Arrays;
 import java.util.Iterator;
+
+import javax.measure.unit.Unit;
 
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.Dataset;
@@ -19,12 +22,25 @@ import org.eclipse.january.metadata.AxesMetadata;
 
 public class LocationDocument extends Document<Point2D>
 {
+  
+  private Unit<?> _distanceUnits;
 
   public LocationDocument(ObjectDataset dataset, ICommand predecessor)
   {
-    super(dataset, predecessor);
+    this(dataset, predecessor, SampleData.DEGREE_ANGLE);
   }
 
+  public LocationDocument(ObjectDataset dataset, ICommand predecessor, Unit<?> units)
+  {
+    super(dataset, predecessor);
+    _distanceUnits = units;
+  }
+
+  public IGeoCalculator getCalculator()
+  {
+    return GeoSupport.calculatorFor(_distanceUnits);
+  }
+  
   public boolean isQuantity()
   {
     return false;
@@ -203,6 +219,8 @@ public class LocationDocument extends Document<Point2D>
   private Point2D interpolateValue(double time)
   {
     final Point2D res;
+    
+    final IGeoCalculator calculator = getCalculator();
 
     // ok, find the values either side
     int beforeIndex = -1, afterIndex = -1;
@@ -261,7 +279,7 @@ public class LocationDocument extends Document<Point2D>
         double newResLong = longY0 + (longY1 - longY0) * (x - x0) / (x1 - x0);
 
         // ok, we can do the calc
-        res = GeoSupport.getCalculator().createPoint(newResLong, newResLat);
+        res = calculator.createPoint(newResLong, newResLat);
       }
     }
     else
@@ -349,5 +367,10 @@ public class LocationDocument extends Document<Point2D>
   public Iterator<Point2D> getIterator()
   {
     return getLocationIterator();
+  }
+
+  public Unit<?> getUnits()
+  {
+    return _distanceUnits;
   }
 }

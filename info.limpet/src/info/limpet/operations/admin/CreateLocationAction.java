@@ -22,7 +22,6 @@ import info.limpet.impl.LocationDocumentBuilder;
 import info.limpet.impl.StoreGroup;
 import info.limpet.operations.AbstractCommand;
 import info.limpet.operations.CollectionComplianceTests;
-import info.limpet.operations.spatial.GeoSupport;
 
 import java.awt.geom.Point2D;
 
@@ -86,11 +85,12 @@ public class CreateLocationAction extends CreateSingletonGenerator
         double dblLat = Double.parseDouble(strLat);
         double dblLong = Double.parseDouble(strLong);
 
-        Point2D newLoc =
-            GeoSupport.getCalculator().createPoint(dblLong, dblLat);
 
         LocationDocumentBuilder builder =
             new LocationDocumentBuilder(seriesName, this, null);
+        Point2D newLoc =
+            builder.getCalculator().createPoint(dblLong, dblLat);
+        
         builder.add(newLoc);
         LocationDocument newData = builder.toDocument();
 

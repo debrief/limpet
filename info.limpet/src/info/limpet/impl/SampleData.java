@@ -71,6 +71,8 @@ public class SampleData
   public static final String TRACK_ONE = "Track One Time";
   public static final String COMPOSITE_ONE = "Composite Track One";
   public static final String TRACK_TWO = "Track Two Time";
+  public static final String TRACK_2D_ONE = "Track Two 2D Time";
+  public static final String TRACK_2D_TWO = "Track Two 2D Time";
   public static final String SPEED_EARLY = "Speed Two Time (earlier)";
   public static final String RANGED_SPEED_SINGLETON = "Ranged Speed Singleton";
   public static final String FLOATING_POINT_FACTOR = "Floating point factor";
@@ -168,11 +170,15 @@ public class SampleData
         new LocationDocumentBuilder(SINGLETON_LOC_1, null, null);
     LocationDocumentBuilder singleLoc2 =
         new LocationDocumentBuilder(SINGLETON_LOC_2, null, null);
+    LocationDocumentBuilder track1_2D =
+        new LocationDocumentBuilder(TRACK_2D_ONE, null, SampleData.MILLIS, SI.METER);
+    LocationDocumentBuilder track2_2D =
+        new LocationDocumentBuilder(TRACK_2D_TWO, null, SampleData.MILLIS, SI.METER);
 
     long thisTime = 0;
 
     // get ready for the track generation
-    final IGeoCalculator calc = GeoSupport.getCalculator();
+    final IGeoCalculator calc = GeoSupport.getCalculatorWGS84();
     Point2D pos1 = calc.createPoint(-4, 55.8);
     Point2D pos2 = calc.createPoint(-4.2, 54.9);
 
@@ -236,7 +242,9 @@ public class SampleData
 
       track1.add(thisTime, p1);
       track2.add(thisTime, p2);
-
+      
+      track1_2D.add(thisTime, p1);
+      track2_2D.add(thisTime, p2);
     }
 
     // add an extra item to speedSeries3
@@ -321,6 +329,8 @@ public class SampleData
     list.add(track2d);
     list.add(singleLoc1.toDocument());
     list.add(singleLoc2.toDocument());
+    list.add(track1_2D.toDocument());
+    list.add(track2_2D.toDocument());
     list.add(speedSeries3.toDocument());
 
     // res.addAll(list);

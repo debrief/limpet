@@ -17,7 +17,7 @@ package info.limpet.operations.spatial;
 import java.awt.geom.Point2D;
 
 import org.geotools.referencing.GeodeticCalculator;
-import org.geotools.referencing.crs.DefaultGeographicCRS;
+import org.opengis.referencing.crs.SingleCRS;
 
 public class GeotoolsCalculator implements IGeoCalculator
 {
@@ -27,10 +27,10 @@ public class GeotoolsCalculator implements IGeoCalculator
    * protected constructor - to prevent declaration of GeoSupport
    * 
    */
-  public GeotoolsCalculator()
+  public GeotoolsCalculator(SingleCRS system)
   {
     calc =
-        new GeodeticCalculator(DefaultGeographicCRS.WGS84);
+        new GeodeticCalculator(system);
   }
 
   @Override

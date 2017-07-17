@@ -183,6 +183,8 @@ public class DopplerShiftBetweenTracksOperation implements IOperation
       double getSpeedAt(long time);
 
       String getName();
+      
+      IGeoCalculator getCalculator();
 
       /**
        * @param dsOperation
@@ -237,6 +239,12 @@ public class DopplerShiftBetweenTracksOperation implements IOperation
       public void addDependent(ICommand operation)
       {
         _dataset.addDependent(operation);
+      }
+
+      @Override
+      public IGeoCalculator getCalculator()
+      {
+        return _dataset.getCalculator();
       }
 
     }
@@ -313,6 +321,12 @@ public class DopplerShiftBetweenTracksOperation implements IOperation
         return _name;
       }
 
+      @Override
+      public IGeoCalculator getCalculator()
+      {
+        return _location.getCalculator();
+      }
+
     }
 
     @Override
@@ -375,7 +389,8 @@ public class DopplerShiftBetweenTracksOperation implements IOperation
         System.err.println("Unable to find time source dataset");
         return;
       }
-      final IGeoCalculator calc = GeoSupport.getCalculator();
+            
+      final IGeoCalculator calc = _allTracks.get(0).getCalculator();
 
       // ok, now loop through the receivers
       Iterator<TrackProvider> rIter = _allTracks.iterator();
