@@ -378,7 +378,7 @@ public abstract class PropertyTypeHandler
             double latV = Double.parseDouble(lat);
             double lngV = Double.parseDouble(lng);
 
-            newL = GeoSupport.getCalculator().createPoint(lngV, latV);
+            newL = GeoSupport.getCalculatorWGS84().createPoint(lngV, latV);
           }
           catch (NumberFormatException fe)
           {

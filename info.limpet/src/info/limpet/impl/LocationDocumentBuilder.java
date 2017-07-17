@@ -2,6 +2,8 @@ package info.limpet.impl;
 
 import info.limpet.ICommand;
 import info.limpet.IDocumentBuilder;
+import info.limpet.operations.spatial.GeoSupport;
+import info.limpet.operations.spatial.IGeoCalculator;
 
 import java.awt.geom.Point2D;
 import java.util.List;
@@ -16,10 +18,24 @@ public class LocationDocumentBuilder extends
     CoreDocumentBuilder<Point2D, LocationDocument> implements
     IDocumentBuilder<Point2D>
 {
+  final private Unit<?> _distanceUnits;
+  
   public LocationDocumentBuilder(final String name, final ICommand predecessor,
       final Unit<?> indexUnits)
   {
+    this(name, predecessor, indexUnits, SampleData.DEGREE_ANGLE);
+  }
+ 
+  public IGeoCalculator getCalculator()
+  {
+    return GeoSupport.calculatorFor(_distanceUnits);
+  }
+
+  public LocationDocumentBuilder(final String name, final ICommand predecessor,
+      final Unit<?> indexUnits, final Unit<?> distanceUnits)
+  {
     super(name, predecessor, indexUnits);
+    _distanceUnits = distanceUnits;
   }
 
   @Override
@@ -31,9 +47,10 @@ public class LocationDocumentBuilder extends
 
   @Override
   protected LocationDocument getDocument(final IDataset dataset,
-      final ICommand _predecessor2)
+      final ICommand predecessor)
   {
-    return new LocationDocument((ObjectDataset) dataset, _predecessor2);
+    return new LocationDocument((ObjectDataset) dataset, predecessor,
+        _distanceUnits);
   }
 
 }

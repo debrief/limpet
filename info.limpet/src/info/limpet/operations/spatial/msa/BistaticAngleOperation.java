@@ -29,7 +29,6 @@ import info.limpet.impl.StoreGroup;
 import info.limpet.operations.AbstractCommand;
 import info.limpet.operations.CollectionComplianceTests;
 import info.limpet.operations.CollectionComplianceTests.TimePeriod;
-import info.limpet.operations.spatial.GeoSupport;
 import info.limpet.operations.spatial.IGeoCalculator;
 
 import java.awt.geom.Point2D;
@@ -172,8 +171,7 @@ public class BistaticAngleOperation implements IOperation
       }
 
       // get a calculator to use
-      final IGeoCalculator calc = GeoSupport.getCalculator();
-
+      final IGeoCalculator calc = tx_track.getCalculator();
       final IDocument<?> times;
 
       if (_timeProvider == null)

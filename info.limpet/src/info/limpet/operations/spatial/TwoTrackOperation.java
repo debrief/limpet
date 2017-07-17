@@ -145,7 +145,7 @@ public abstract class TwoTrackOperation implements IOperation
       final LocationDocument track2 = (LocationDocument) getInputs().get(1);
 
       // get a calculator to use
-      final IGeoCalculator calc = GeoSupport.getCalculator();
+      final IGeoCalculator calc = track1.getCalculator();
 
       final LocationDocument interp1;
       final LocationDocument interp2;

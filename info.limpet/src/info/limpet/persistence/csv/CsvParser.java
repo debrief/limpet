@@ -284,7 +284,7 @@ public class CsvParser extends FileParser
       final Double valLong = Double.parseDouble(longVal);
 
       final Point2D point =
-          GeoSupport.getCalculator().createPoint(valLong, valLat);
+          GeoSupport.getCalculatorWGS84().createPoint(valLong, valLat);
       final LocationDocumentBuilder builder = (LocationDocumentBuilder) series;
       builder.add(thisIndex, point);
     }
@@ -341,7 +341,7 @@ public class CsvParser extends FileParser
       final Double yVal = Double.parseDouble(yValStr);
 
       final Point2D point =
-          GeoSupport.getCalculator().createPoint(xVal, yVal);
+          GeoSupport.getCalculatorGeneric2D().createPoint(xVal, yVal);
       final LocationDocumentBuilder builder = (LocationDocumentBuilder) series;
       builder.add(thisIndex, point);
     }

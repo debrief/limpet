@@ -155,7 +155,7 @@ public class GenerateCourseAndSpeedOperation implements IOperation
         Unit<?> units)
     {
       // get a calculator to use
-      final IGeoCalculator calc = GeoSupport.getCalculator();
+      final IGeoCalculator calc = thisTrack.getCalculator();
 
       final NumberDocumentBuilder builder =
           new NumberDocumentBuilder(name, units, this, SampleData.MILLIS);

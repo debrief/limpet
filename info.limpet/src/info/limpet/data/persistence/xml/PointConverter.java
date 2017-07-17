@@ -71,7 +71,7 @@ public class PointConverter implements Converter
       }
       reader.moveUp();
     }
-    Point2D point = GeoSupport.getCalculator().createPoint(lon, lat);
+    Point2D point = GeoSupport.getCalculatorWGS84().createPoint(lon, lat);
     return point;
   }
 

@@ -12,6 +12,7 @@ import info.limpet.impl.NumberDocument;
 import info.limpet.impl.SampleData;
 import info.limpet.impl.StoreGroup;
 import info.limpet.operations.spatial.GeoSupport;
+import info.limpet.operations.spatial.IGeoCalculator;
 import info.limpet.operations.spatial.ProplossBetweenTwoTracksOperation;
 import info.limpet.persistence.csv.CsvParser;
 
@@ -32,6 +33,27 @@ public class TestLocations extends TestCase
   
   private static final String DOC_NAME = "some input";
 
+  @Test
+  public void test2Dcalculator() 
+  {
+    // test our manual implementation of a 2d geo calculator
+    
+    IGeoCalculator calc = GeoSupport.getCalculatorGeneric2D();
+    Point2D p1 = calc.createPoint(70, 70);
+    Point2D p2 = calc.createPoint(71, 70);
+    double sep = calc.getDistanceBetween(p1, p2);
+    assertEquals("2d ref system", 1.0, sep, 0.0001);
+    
+    
+    Point2D p3 = calc.calculatePoint(p1, 315, 1.414213562);
+    assertEquals("new point right", 69, p3.getX(), 0.0001);
+    assertEquals("new point right", 71, p3.getY(), 0.0001);
+    
+    double angle = calc.getAngleBetween(p3,  p1);
+    assertEquals("right angle", 315d, angle, 0.0001);
+    
+  }
+  
   @Test
   public void testSingleton() throws IOException
   {
@@ -79,9 +101,10 @@ public class TestLocations extends TestCase
   {
     LocationDocumentBuilder builder =
         new LocationDocumentBuilder(DOC_NAME, null, null);
+    final IGeoCalculator calc = builder.getCalculator();
     for (int i = 0; i < 10; i++)
     {
-      Point2D newP = GeoSupport.getCalculator().createPoint(i, i * 2);
+      Point2D newP = calc.createPoint(i, i * 2);
       builder.add(newP);
     }
 
@@ -100,9 +123,10 @@ public class TestLocations extends TestCase
   {
     LocationDocumentBuilder builder =
         new LocationDocumentBuilder(DOC_NAME, null, SampleData.MILLIS);
+    final IGeoCalculator calc = builder.getCalculator();
     for (int i = 0; i < 10; i++)
     {
-      Point2D newP = GeoSupport.getCalculator().createPoint(i, i * 2);
+      Point2D newP = calc.createPoint(i, i * 2);
       builder.add((long) (i * 100000), newP);
     }
 
