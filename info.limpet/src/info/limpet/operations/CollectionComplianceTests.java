@@ -217,7 +217,7 @@ public class CollectionComplianceTests
     Unit<?> units = null;
 
     // check they're all 1D
-    if (allOneDim(selection))
+    if (suitable && allOneDim(selection))
     {
       for (int i = 0; i < selection.size(); i++)
       {
@@ -227,6 +227,9 @@ public class CollectionComplianceTests
           Document<?> thisC = (Document<?>) thisI;
           if (thisC.isQuantity() || thisC instanceof LocationDocument)
           {
+            // note: we only consider it as suitable for interpolation if it
+            // has more than one value. With just one value we're better
+            // treating it as indexed
             if (thisC.isIndexed())
             {
               Unit<?> thisUnit = thisC.getIndexUnits();
@@ -1182,31 +1185,24 @@ public class CollectionComplianceTests
       // data types
       if (iCollection != null && iCollection.isIndexed())
       {
-        // special case - check it's not a singleton, in which case we ignore it's time value
-        int thisSize = iCollection.size();
+        TimePeriod hisPeriod = getBoundsFor(iCollection);
 
-        if (thisSize != 1)
+        if (res == null)
         {
-          TimePeriod hisPeriod = getBoundsFor(iCollection);
-
-          if (res == null)
+          res = hisPeriod;
+        }
+        else
+        {
+          if (res.overlaps(hisPeriod))
           {
-            res = hisPeriod;
+            // ok, constrain to the overlap
+            res.setStartTime(Math.max(res.getStartTime(), hisPeriod.startTime));
+            res.setEndTime(Math.min(res.getEndTime(), hisPeriod.endTime));
           }
           else
           {
-            if (res.overlaps(hisPeriod))
-            {
-              // ok, constrain to the overlap
-              res.setStartTime(Math
-                  .max(res.getStartTime(), hisPeriod.startTime));
-              res.setEndTime(Math.min(res.getEndTime(), hisPeriod.endTime));
-            }
-            else
-            {
-              // they don't overlap. fail
-              return null;
-            }
+            // they don't overlap. fail
+            return null;
           }
         }
       }
@@ -1514,7 +1510,7 @@ public class CollectionComplianceTests
 
     // are they all non location?
     boolean allValid = true;
-    
+
     Unit<?> distUnits = null;
 
     for (int i = 0; i < selection.size(); i++)
@@ -1524,14 +1520,14 @@ public class CollectionComplianceTests
       {
         LocationDocument doc = (LocationDocument) thisI;
         Unit<?> hisUnits = doc.getUnits();
-        if(distUnits == null)
+        if (distUnits == null)
         {
           // ok, store it
           distUnits = hisUnits;
         }
         else
         {
-          if(!hisUnits.equals(distUnits))
+          if (!hisUnits.equals(distUnits))
           {
             // ok, fail
             return false;
