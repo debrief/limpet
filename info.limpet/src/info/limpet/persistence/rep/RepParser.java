@@ -217,6 +217,9 @@ public class RepParser extends FileParser
         // ok, only add the others if they're present
         if (isSingleton())
         {
+          // clear the index units
+          _locB.setIndexUnits(null);
+          
           // just do the single location
           final LocationDocument locDoc = _locB.toDocument();
           group.add(locDoc);
