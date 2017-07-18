@@ -209,10 +209,36 @@ public abstract class TwoTrackOperation implements IOperation
       {
         timeIter = null;
       }
-      while (t1Iter.hasNext())
+
+      // if we can't iterate through a collection, re-use the same value
+      final Point2D fixed1 = interp1.size() == 1 ? t1Iter.next() : null;
+      final Point2D fixed2 = interp2.size() == 1 ? t2Iter.next() : null;
+
+      // special case. if we haven't got any times, we'll just produce a single output.
+      // we don't want to try to index it.
+      boolean singlePass = (fixed1 != null && fixed2 != null);
+
+      while (singlePass || t1Iter.hasNext() || t2Iter.hasNext())
       {
-        final Point2D p1 = t1Iter.next();
-        final Point2D p2 = t2Iter.next();
+        final Point2D p1;
+        if (fixed1 != null)
+        {
+          p1 = fixed1;
+        }
+        else
+        {
+          p1 = t1Iter.next();
+        }
+        final Point2D p2;
+        if (fixed2 != null)
+        {
+          p2 = fixed2;
+        }
+        else
+        {
+          p2 = t2Iter.next();
+        }
+
         final Double time;
         if (timeIter != null)
         {
@@ -223,6 +249,11 @@ public abstract class TwoTrackOperation implements IOperation
           time = null;
         }
         calcAndStore(calc, p1, p2, time);
+
+        if (singlePass)
+        {
+          singlePass = false;
+        }
       }
 
       return getOutputDocument();
