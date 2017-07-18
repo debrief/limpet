@@ -1008,7 +1008,6 @@ public class TestGeotoolsGeometry extends TestCase
 
   }
 
-
   public void testLocationCalc2D()
   {
     final LocationDocumentBuilder loc1 =
@@ -1035,20 +1034,20 @@ public class TestGeotoolsGeometry extends TestCase
     selection.add(loc1.toDocument());
     selection.add(loc2.toDocument());
 
-    List<ICommand> ops = new DistanceBetweenTracksOperation().actionsFor(selection, store,
-        context);
+    List<ICommand> ops =
+        new DistanceBetweenTracksOperation().actionsFor(selection, store,
+            context);
     assertEquals("not empty collection", 1, ops.size());
     ICommand firstC = ops.get(0);
     // ok, execute it
     firstC.execute();
-    
+
     NumberDocument output = (NumberDocument) firstC.getOutputs().get(0);
     DoubleDataset data = (DoubleDataset) output.getDataset();
     assertEquals(1d, data.get(0), 0.0001);
     assertEquals(2d, data.get(1), 0.0001);
   }
-  
-  
+
   public void testLocationCalc()
   {
     final LocationDocumentBuilder loc1 =
@@ -1119,7 +1118,7 @@ public class TestGeotoolsGeometry extends TestCase
     assertEquals("correct value", 2.7, geo1.getX());
     assertEquals("correct value", 3.7, geo1.getY());
   }
-  
+
   public void testLocationInterp()
   {
     final LocationDocumentBuilder loc1b =
@@ -1205,6 +1204,156 @@ public class TestGeotoolsGeometry extends TestCase
     store.clear();
     ops.get(0).execute();
     assertEquals("store has other collection", 1, store.size());
+  }
+
+  public void testLocationSingletonCalcDistance_MixedIndex()
+  {
+    final LocationDocumentBuilder loc1 =
+        new LocationDocumentBuilder("loc1", null, SI.MILLI(SI.SECOND));
+    final LocationDocumentBuilder singletonLoc =
+        new LocationDocumentBuilder("loc2", null, null);
+    final NumberDocumentBuilder len1b =
+        new NumberDocumentBuilder("dummy", METRE.asType(Length.class), null,
+            null);
+
+    final IOperation distanceOp = new DistanceBetweenTracksOperation();
+    final IGeoCalculator builder = loc1.getCalculator();
+
+    final List<IStoreItem> selection = new ArrayList<IStoreItem>();
+    selection.add(loc1.toDocument());
+
+    final StoreGroup store = new StoreGroup("Results");
+
+    List<ICommand> ops = distanceOp.actionsFor(selection, store, context);
+    assertEquals("empty collection", 0, ops.size());
+
+    final NumberDocument len1 = len1b.toDocument();
+
+    selection.add(len1);
+    ops = distanceOp.actionsFor(selection, store, context);
+    assertEquals("empty collection", 0, ops.size());
+
+    selection.remove(len1);
+    selection.add(singletonLoc.toDocument());
+    ops = distanceOp.actionsFor(selection, store, context);
+    assertEquals("empty collection", 0, ops.size());
+
+    // ok, try adding some data
+    loc1.add(1000, builder.createPoint(4, 3));
+    singletonLoc.add(builder.createPoint(3, 4));
+
+    // put in the new documents
+    selection.clear();
+    selection.add(loc1.toDocument());
+    selection.add(singletonLoc.toDocument());
+
+    ops = distanceOp.actionsFor(selection, store, context);
+    assertEquals("not empty collection", 1, ops.size());
+
+    assertEquals("store empty", 0, store.size());
+
+    ops.get(0).execute();
+
+    assertEquals("store no longer empty", 1, store.size());
+    
+    // check the output has the time units from the time provider
+    NumberDocument output = (NumberDocument) ops.get(0).getOutputs().get(0);
+    assertTrue("has index units", output.getIndexUnits() != null);   
+    
+    // add some more entries to loc1
+    loc1.add(2000, builder.createPoint(4, 3));
+    loc1.add(3000, builder.createPoint(4, 3));
+    loc1.add(4000, builder.createPoint(4, 3));
+
+    // put in the new documents
+    selection.clear();
+    selection.add(loc1.toDocument());
+    selection.add(singletonLoc.toDocument());
+
+    ops = distanceOp.actionsFor(selection, store, context);
+    assertEquals("not empty collection", 1, ops.size());
+
+    // run the interpolation command
+    store.clear();
+    ops.get(0).execute();
+    assertEquals("store has other collection", 1, store.size());
+    
+    // check that the results object is indexed
+    output = (NumberDocument) ops.get(0).getOutputs().get(0);
+    assertTrue("has index units", output.getIndexUnits() != null);   
+  }
+
+  public void testLocationSingletonCalcDistance_IndexLess()
+  {
+    final LocationDocumentBuilder loc1 =
+        new LocationDocumentBuilder("loc1", null, null);
+    final LocationDocumentBuilder singletonLoc =
+        new LocationDocumentBuilder("loc2", null, null);
+    final NumberDocumentBuilder len1b =
+        new NumberDocumentBuilder("dummy", METRE.asType(Length.class), null,
+            null);
+
+    final IOperation distanceOp = new DistanceBetweenTracksOperation();
+    final IGeoCalculator builder = loc1.getCalculator();
+
+    final List<IStoreItem> selection = new ArrayList<IStoreItem>();
+    selection.add(loc1.toDocument());
+
+    final StoreGroup store = new StoreGroup("Results");
+
+    List<ICommand> ops = distanceOp.actionsFor(selection, store, context);
+    assertEquals("empty collection", 0, ops.size());
+
+    final NumberDocument len1 = len1b.toDocument();
+
+    selection.add(len1);
+    ops = distanceOp.actionsFor(selection, store, context);
+    assertEquals("empty collection", 0, ops.size());
+
+    selection.remove(len1);
+    selection.add(singletonLoc.toDocument());
+    ops = distanceOp.actionsFor(selection, store, context);
+    assertEquals("empty collection", 0, ops.size());
+
+    // ok, try adding some data
+    loc1.add(builder.createPoint(4, 3));
+    singletonLoc.add(builder.createPoint(3, 4));
+
+    // put in the new documents
+    selection.clear();
+    selection.add(loc1.toDocument());
+    selection.add(singletonLoc.toDocument());
+
+    ops = distanceOp.actionsFor(selection, store, context);
+    assertEquals("not empty collection", 1, ops.size());
+
+    assertEquals("store empty", 0, store.size());
+
+    ops.get(0).execute();
+
+    assertEquals("store no longer empty", 1, store.size());
+    NumberDocument output = (NumberDocument) ops.get(0).getOutputs().get(0);
+    assertTrue("has no index units", output.getIndexUnits() == null);
+    
+    // add some more entries to loc1
+    loc1.add(builder.createPoint(4, 3));
+    loc1.add(builder.createPoint(4, 3));
+    loc1.add(builder.createPoint(4, 3));
+
+    // put in the new documents
+    selection.clear();
+    selection.add(loc1.toDocument());
+    selection.add(singletonLoc.toDocument());
+
+    ops = distanceOp.actionsFor(selection, store, context);
+    assertEquals("not empty collection", 1, ops.size());
+
+    // run the interpolation command
+    store.clear();
+    ops.get(0).execute();
+    assertEquals("store has other collection", 1, store.size());
+    output = (NumberDocument) ops.get(0).getOutputs().get(0);
+    assertTrue("has no index units", output.getIndexUnits() == null);
   }
 
   public void testLocationSingletonCalcBearing()
@@ -1401,7 +1550,7 @@ public class TestGeotoolsGeometry extends TestCase
     assertEquals("range 1 right", 111663, dest1, 10);
     assertEquals("range 2 right", 19393, dest2, 10);
   }
-  
+
   public void testRangeCalc2D()
   {
     final IGeoCalculator builder = GeoSupport.getCalculatorGeneric2D();
