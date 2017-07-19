@@ -330,7 +330,7 @@ public class XyPlotView extends CoreAnalysisView
     {
       int leftCount = 0;
       int rightCount = 0;
-      
+
       // clear the axis id, we're going to rely on it
       final int INVALID_ID = -10000;
       newSeries.setYAxisId(INVALID_ID);
