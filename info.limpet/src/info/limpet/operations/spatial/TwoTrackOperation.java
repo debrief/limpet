@@ -40,9 +40,6 @@ import org.eclipse.january.dataset.DoubleDataset;
 
 public abstract class TwoTrackOperation implements IOperation
 {
-  private final CollectionComplianceTests aTests =
-      new CollectionComplianceTests();
-
   public abstract static class TwoTrackCommand extends AbstractCommand
   {
     private final IDocument<?> _timeProvider;
@@ -54,7 +51,7 @@ public abstract class TwoTrackOperation implements IOperation
     public TwoTrackCommand(final List<IStoreItem> selection,
         final IStoreGroup store, final String title, final String description,
         final IDocument<?> timeProvider, final IContext context,
-        Unit<?> outputUnits)
+        final Unit<?> outputUnits)
     {
       super(title, description, store, false, false, selection, context);
       _timeProvider = timeProvider;
@@ -199,7 +196,7 @@ public abstract class TwoTrackOperation implements IOperation
 
       final Iterator<Point2D> t1Iter = interp1.getLocationIterator();
       final Iterator<Point2D> t2Iter = interp2.getLocationIterator();
-      
+
       // produce a time iterator, if we can.
       final Iterator<Double> timeIter = times != null ? times.getIndex() : null;
 
@@ -209,7 +206,23 @@ public abstract class TwoTrackOperation implements IOperation
 
       // special case. if we haven't got any times, we'll just produce a single output.
       // we don't want to try to index it.
-      boolean singlePass = (fixed1 != null && fixed2 != null);
+      final boolean singlePass = (fixed1 != null && fixed2 != null);
+
+      // refactor out the process to loop through the data
+      processData(singlePass, t1Iter, t2Iter, fixed1, fixed2, timeIter, calc);
+
+      return getOutputDocument();
+    }
+
+    /**
+     * process the iterators, storing the data as we go
+     * 
+     */
+    private void processData(boolean singlePass,
+        final Iterator<Point2D> t1Iter, final Iterator<Point2D> t2Iter,
+        final Point2D fixed1, final Point2D fixed2,
+        final Iterator<Double> timeIter, final IGeoCalculator calc)
+    {
 
       while (singlePass || t1Iter.hasNext() || t2Iter.hasNext())
       {
@@ -217,10 +230,10 @@ public abstract class TwoTrackOperation implements IOperation
         // case we're using a fixed value rather than an interator
         final Point2D p1 = fixed1 != null ? fixed1 : t1Iter.next();
         final Point2D p2 = fixed2 != null ? fixed2 : t2Iter.next();
-        
+
         // and the same for time
-        final Double time = timeIter != null ? timeIter.next(): null;
-        
+        final Double time = timeIter != null ? timeIter.next() : null;
+
         calcAndStore(calc, p1, p2, time);
 
         // are we just doing a single pass anyway?
@@ -229,8 +242,6 @@ public abstract class TwoTrackOperation implements IOperation
           singlePass = false;
         }
       }
-
-      return getOutputDocument();
     }
 
     @Override
@@ -252,6 +263,9 @@ public abstract class TwoTrackOperation implements IOperation
       }
     }
   }
+
+  private final CollectionComplianceTests aTests =
+      new CollectionComplianceTests();
 
   protected boolean appliesTo(final List<IStoreItem> selection)
   {
