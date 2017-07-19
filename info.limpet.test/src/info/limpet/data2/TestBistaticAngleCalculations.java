@@ -15,7 +15,6 @@ import info.limpet.impl.NumberDocument;
 import info.limpet.impl.NumberDocumentBuilder;
 import info.limpet.impl.SampleData;
 import info.limpet.impl.StoreGroup;
-import info.limpet.operations.arithmetic.simple.AddLogQuantityOperation;
 import info.limpet.operations.arithmetic.simple.AddQuantityOperation;
 import info.limpet.operations.arithmetic.simple.SubtractLogQuantityOperation;
 import info.limpet.operations.arithmetic.simple.SubtractQuantityOperation;
@@ -109,7 +108,6 @@ public class TestBistaticAngleCalculations
     rxProp.setName("rxProp");
 
     // ok, now we can try to add them
-    IOperation addL = new AddLogQuantityOperation();
     IOperation add = new AddQuantityOperation();
     selection.clear();
     selection.add(txProp);
@@ -117,15 +115,13 @@ public class TestBistaticAngleCalculations
 
     // check the normal adder drops out
     actions = add.actionsFor(selection, store, context);
-    assertEquals("no actions returned", 0, actions.size());
-
-    // now the log adder
-    actions = addL.actionsFor(selection, store, context);
-    assertEquals("actions returned", 1, actions.size());
+    assertEquals("no actions returned", 2, actions.size());
 
     // ok, run the first action
     actions.get(0).execute();
     assertEquals("has new data", 6, store.size());
+    actions.get(1).execute();
+    assertEquals("has more new data", 7, store.size());
 
     // check the outputs
     NumberDocument propSum =
@@ -157,7 +153,7 @@ public class TestBistaticAngleCalculations
 
     // ok, run it
     actions.get(0).execute();
-    assertEquals("has new data", 7, store.size());
+    assertEquals("has new data", 8, store.size());
 
     // check the results
     NumberDocument propDiff =
