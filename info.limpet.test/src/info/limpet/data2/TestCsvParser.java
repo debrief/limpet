@@ -172,7 +172,7 @@ public class TestCsvParser extends TestCase
   @Test
   public void testMissingCell() throws Exception
   {
-    File file = getDataFile("overview/shortContact.csv");
+    File file = getDataFile("overview/ShortContact.csv");
     assertTrue(file.isFile());
     CsvParser parser = new CsvParser();
     List<IStoreItem> items = parser.parse(file.getAbsolutePath());
