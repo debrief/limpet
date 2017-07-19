@@ -104,6 +104,6 @@ public class TestNewStrategy extends TestCase
   public void testGenerateSampleData()
   {
     StoreGroup data = new SampleData().getData(10);
-    assertEquals("top level items created", 24, data.size());
+    assertEquals("top level items created", 23, data.size());
   }
 }
