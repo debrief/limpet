@@ -49,6 +49,7 @@ public class BistaticAngleOperation implements IOperation
   public abstract class BistaticAngleCommand extends AbstractCommand
   {
     private final IDocument<?> _timeProvider;
+    final private NumberDocumentBuilder _azimuthBuilder;
     final protected NumberDocumentBuilder _bistaticBuilder;
     final protected NumberDocumentBuilder _bistaticAspectBuilder;
     final private Unit<?> _outputUnits;
@@ -77,6 +78,9 @@ public class BistaticAngleOperation implements IOperation
       _outputUnits = SampleData.DEGREE_ANGLE;
       final Unit<?> indexUnits =
           _timeProvider == null ? null : SampleData.MILLIS;
+      _azimuthBuilder =
+          new NumberDocumentBuilder("Aximuth Angle at:" + target.getName(),
+              _outputUnits, null, indexUnits);
       _bistaticBuilder =
           new NumberDocumentBuilder("Bistatic Angle at:" + target.getName(),
               _outputUnits, null, indexUnits);
@@ -94,12 +98,14 @@ public class BistaticAngleOperation implements IOperation
       // get the output documents
       NumberDocument biDataset = _bistaticBuilder.toDocument();
       NumberDocument biADataset = _bistaticAspectBuilder.toDocument();
+      NumberDocument azDataset = _azimuthBuilder.toDocument();
 
       // now create the output dataset
 
       // store the output
       super.addOutput(biDataset);
       super.addOutput(biADataset);
+      super.addOutput(azDataset);
 
       // tell each series that we're a dependent
       for (IStoreItem doc : getInputs())
@@ -111,11 +117,13 @@ public class BistaticAngleOperation implements IOperation
       // ok, done
       getStore().add(biDataset);
       getStore().add(biADataset);
+      getStore().add(azDataset);
 
       // tell the output it's been updated (by now it should
       // have a full set of listeners
       biDataset.fireDataChanged();
       biADataset.fireDataChanged();
+      azDataset.fireDataChanged();
     }
 
     /**
@@ -125,7 +133,7 @@ public class BistaticAngleOperation implements IOperation
      */
     protected String getOutputName()
     {
-      return "Bistatic angle at " + getInputs().get(1).getName();
+      return "Bistatic angle sets at " + getInputs().get(1).getName();
     }
 
     /**
@@ -136,6 +144,7 @@ public class BistaticAngleOperation implements IOperation
     {
       _bistaticBuilder.clear();
       _bistaticAspectBuilder.clear();
+      _azimuthBuilder.clear();
     }
 
     /**
@@ -226,7 +235,7 @@ public class BistaticAngleOperation implements IOperation
         final double heading = hdgIter.next();
         final Double time = timeIter.next();
         calcAndStore(calc, txP, targetP, rxP, heading, time, _bistaticBuilder,
-            _bistaticAspectBuilder);
+            _bistaticAspectBuilder, _azimuthBuilder);
       }
     }
 
@@ -450,11 +459,12 @@ public class BistaticAngleOperation implements IOperation
    *          where to store the bistatic angle
    * @param bistaticAspectBuilder
    *          where to store the bistatic aspect angle
+   * @param azimuthBuilder 
    */
   public static void calcAndStore(final IGeoCalculator calc, final Point2D tx,
       final Point2D target, final Point2D rx, Double heading, Double time,
       NumberDocumentBuilder bistaticBuilder,
-      NumberDocumentBuilder bistaticAspectBuilder)
+      NumberDocumentBuilder bistaticAspectBuilder, NumberDocumentBuilder azimuthBuilder)
   {
     // ok start with two angles
     double toSource = calc.getAngleBetween(target, tx);
@@ -482,6 +492,7 @@ public class BistaticAngleOperation implements IOperation
 
     bistaticBuilder.add(time, biAngle);
     bistaticAspectBuilder.add(time, biAspectAngle);
+    azimuthBuilder.add(time, relToSource);
   }
 
 }
