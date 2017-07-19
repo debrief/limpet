@@ -50,7 +50,8 @@ import junit.framework.TestSuite;
 	TestExport.class,
 	TestBistaticAngleCalculations.class,
 	TestPersistence.class,
-	TestGrids.class
+	TestGrids.class,
+	TestAdmin.class
 })
 
 @RunWith(Suite.class)

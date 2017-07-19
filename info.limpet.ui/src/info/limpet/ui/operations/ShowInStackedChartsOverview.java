@@ -91,7 +91,7 @@ public class ShowInStackedChartsOverview implements IOperation
     boolean nonEmpty = aTests.nonEmpty(selection);
     boolean allData = aTests.allCollections(selection);
     boolean allQuantity = aTests.allQuantity(selection);
-    boolean allTemporal = aTests.allIndexed(selection);
+    boolean allTemporal = aTests.allEqualIndexed(selection);
 
     return (nonEmpty && allData && allQuantity && allTemporal);
   }

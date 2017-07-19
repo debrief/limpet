@@ -139,7 +139,7 @@ public class AddLogQuantityOperation extends BinaryQuantityOperation
     final boolean nonEmpty = getATests().nonEmpty(selection);
     final boolean allQuantity = getATests().allQuantity(selection);
     final boolean suitableLength =
-        getATests().allIndexed(selection)
+        getATests().allEqualIndexed(selection)
             || getATests().allEqualLengthOrSingleton(selection);
     final boolean equalDimensions = getATests().allEqualDimensions(selection);
     final boolean equalUnits = getATests().allEqualUnits(selection);

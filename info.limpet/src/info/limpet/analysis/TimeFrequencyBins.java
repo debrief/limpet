@@ -185,7 +185,7 @@ public abstract class TimeFrequencyBins extends CoreAnalysis
 
   private boolean appliesTo(List<IStoreItem> selection)
   {
-    return aTests.allCollections(selection) && aTests.allIndexed(selection);
+    return aTests.allCollections(selection) && aTests.allEqualIndexed(selection);
   }
 
   protected abstract void presentResults(List<String> titles,

@@ -222,7 +222,7 @@ public class GenerateCourseAndSpeedOperation implements IOperation
   protected boolean appliesTo(List<IStoreItem> selection)
   {
     boolean nonEmpty = aTests.nonEmpty(selection);
-    boolean allTemporal = aTests.allIndexed(selection);
+    boolean allTemporal = aTests.allEqualIndexed(selection);
 
     final boolean allNonQuantity = aTests.allNonQuantity(selection);
     final boolean allLocation = aTests.allLocation(selection);

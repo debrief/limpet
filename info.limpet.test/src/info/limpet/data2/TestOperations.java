@@ -308,7 +308,7 @@ public class TestOperations
     sel.add(sec1.toDocument());
     sel.add(sec2.toDocument());
 
-    assertTrue("all equal", testOp.allIndexed(sel));
+    assertTrue("all equal", testOp.allEqualIndexed(sel));
 
     AddQuantityOperation adder = new AddQuantityOperation();
     IStoreGroup destination = new StoreGroup("data");
@@ -319,7 +319,7 @@ public class TestOperations
     sel.add(len1.toDocument());
     sel.add(len2.toDocument());
 
-    assertTrue("all equal", testOp.allIndexed(sel));
+    assertTrue("all equal", testOp.allEqualIndexed(sel));
     ops = adder.actionsFor(sel, destination, context);
     assertEquals("one found", 1, ops.size());
 
@@ -327,7 +327,7 @@ public class TestOperations
     sel.add(sec1.toDocument());
     sel.add(len2.toDocument());
 
-    assertFalse("all not equal", testOp.allIndexed(sel));
+    assertFalse("all not equal", testOp.allEqualIndexed(sel));
     ops = adder.actionsFor(sel, destination, context);
     assertEquals("none found", 0, ops.size());
 
@@ -450,7 +450,7 @@ public class TestOperations
     assertTrue("all same units", testOp.allEqualUnits(selection));
     assertTrue("all same length", testOp.allEqualLength(selection));
     assertTrue("all quantities", testOp.allQuantity(selection));
-    assertFalse("all temporal", testOp.allIndexed(selection));
+    assertFalse("all temporal", testOp.allEqualIndexed(selection));
     assertFalse("all groups", testOp.allGroups(selection));
 
     assertFalse("all Temporal or singleton", testOp
@@ -475,7 +475,7 @@ public class TestOperations
     assertFalse("all same units", testOp.allEqualUnits(selection));
     assertTrue("all same length", testOp.allEqualLength(selection));
     assertTrue("all quantities", testOp.allQuantity(selection));
-    assertFalse("all temporal", testOp.allIndexed(selection));
+    assertFalse("all temporal", testOp.allEqualIndexed(selection));
 
     selection.clear();
     selection.add(speedGood1);
@@ -487,7 +487,7 @@ public class TestOperations
     assertFalse("all same units", testOp.allEqualUnits(selection));
     assertTrue("all same length", testOp.allEqualLength(selection));
     assertTrue("all quantities", testOp.allQuantity(selection));
-    assertFalse("all temporal", testOp.allIndexed(selection));
+    assertFalse("all temporal", testOp.allEqualIndexed(selection));
 
     selection.clear();
     selection.add(speedGood1);
@@ -499,7 +499,7 @@ public class TestOperations
     assertTrue("all same units", testOp.allEqualUnits(selection));
     assertFalse("all same length", testOp.allEqualLength(selection));
     assertTrue("all quantities", testOp.allQuantity(selection));
-    assertFalse("all temporal", testOp.allIndexed(selection));
+    assertFalse("all temporal", testOp.allEqualIndexed(selection));
 
     selection.clear();
     selection.add(temporalSpeed1);
@@ -509,7 +509,7 @@ public class TestOperations
     assertTrue("all same units", testOp.allEqualUnits(selection));
     assertTrue("all same length", testOp.allEqualLength(selection));
     assertTrue("all quantities", testOp.allQuantity(selection));
-    assertTrue("all temporal", testOp.allIndexed(selection));
+    assertTrue("all temporal", testOp.allEqualIndexed(selection));
 
     selection.clear();
     selection.add(temporalSpeed1);
@@ -520,7 +520,7 @@ public class TestOperations
     assertFalse("all same units", testOp.allEqualUnits(selection));
     assertTrue("all same length", testOp.allEqualLength(selection));
     assertFalse("all quantities", testOp.allQuantity(selection));
-    assertFalse("all temporal", testOp.allIndexed(selection));
+    assertFalse("all temporal", testOp.allEqualIndexed(selection));
 
     selection.clear();
     selection.add(string1d);
@@ -530,7 +530,7 @@ public class TestOperations
     assertFalse("all same units", testOp.allEqualUnits(selection));
     assertTrue("all same length", testOp.allEqualLength(selection));
     assertTrue("all non quantities", testOp.allNonQuantity(selection));
-    assertFalse("all temporal", testOp.allIndexed(selection));
+    assertFalse("all temporal", testOp.allEqualIndexed(selection));
 
     // ok, let's try one that works
     selection.clear();
