@@ -138,11 +138,8 @@ public class AddQuantityOperation extends BinaryQuantityOperation
     final boolean equalDimensions = getATests().allEqualDimensions(selection);
     final boolean equalUnits = getATests().allEqualUnits(selection);
 
-    // lastly, check they're not logarithmic
-    final boolean hasLog = hasLogData(selection);
-
     return nonEmpty && allQuantity && suitableLength && equalDimensions
-        && equalUnits && !hasLog;
+        && equalUnits;
   }
 
 }
