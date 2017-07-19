@@ -68,7 +68,13 @@ public class BearingBetweenTracksOperation extends TwoTrackOperation
                   final Point2D locB, final Double time)
               {
                 // now find the range between them
-                final double thisDist = calc.getAngleBetween(locA, locB);
+                double thisDist = calc.getAngleBetween(locA, locB);
+                
+                // and correct it
+                if(thisDist < 0)
+                {
+                  thisDist += 360d;
+                }
 
                 if (time != null)
                 {

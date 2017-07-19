@@ -94,6 +94,9 @@ public class ShowInNamedView implements IOperation
     public void execute()
     {
       String secId = getInputs().toString();
+      
+      // clean the id, since it can't contain a colon
+      secId = secId.replace(":", "_");
 
       // create a new instance of the specified view
       IWorkbenchWindow window =

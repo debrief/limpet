@@ -1258,7 +1258,7 @@ public class TestGeotoolsGeometry extends TestCase
     
     // check the output has the time units from the time provider
     NumberDocument output = (NumberDocument) ops.get(0).getOutputs().get(0);
-    assertTrue("has index units", output.getIndexUnits() != null);   
+    assertTrue("does not have index units", output.getIndexUnits() == null);   
     
     // add some more entries to loc1
     loc1.add(2000, builder.createPoint(4, 3));

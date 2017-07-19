@@ -49,6 +49,7 @@ public class BistaticAngleOperation implements IOperation
   public abstract class BistaticAngleCommand extends AbstractCommand
   {
     private final IDocument<?> _timeProvider;
+    final private NumberDocumentBuilder _azimuthBuilder;
     final protected NumberDocumentBuilder _bistaticBuilder;
     final protected NumberDocumentBuilder _bistaticAspectBuilder;
     final private Unit<?> _outputUnits;
@@ -61,7 +62,8 @@ public class BistaticAngleOperation implements IOperation
         final LocationDocument rx, final IStoreGroup store,
         final IDocument<?> timeProvider, final IContext context)
     {
-      super("Bistatic angle at:" + target.getName(),
+      super("Bistatic angle at:" + target.getName() + " from "
+          + tx.getName() + " to:" + rx.getName(),
           "Calculate bistatic angle at:" + target.getName() + " from "
               + tx.getName() + " to:" + rx.getName(), store, false, false,
           selection, context);
@@ -77,6 +79,9 @@ public class BistaticAngleOperation implements IOperation
       _outputUnits = SampleData.DEGREE_ANGLE;
       final Unit<?> indexUnits =
           _timeProvider == null ? null : SampleData.MILLIS;
+      _azimuthBuilder =
+          new NumberDocumentBuilder("Aximuth Angle at:" + target.getName(),
+              _outputUnits, null, indexUnits);
       _bistaticBuilder =
           new NumberDocumentBuilder("Bistatic Angle at:" + target.getName(),
               _outputUnits, null, indexUnits);
@@ -94,12 +99,14 @@ public class BistaticAngleOperation implements IOperation
       // get the output documents
       NumberDocument biDataset = _bistaticBuilder.toDocument();
       NumberDocument biADataset = _bistaticAspectBuilder.toDocument();
+      NumberDocument azDataset = _azimuthBuilder.toDocument();
 
       // now create the output dataset
 
       // store the output
       super.addOutput(biDataset);
       super.addOutput(biADataset);
+      super.addOutput(azDataset);
 
       // tell each series that we're a dependent
       for (IStoreItem doc : getInputs())
@@ -111,11 +118,13 @@ public class BistaticAngleOperation implements IOperation
       // ok, done
       getStore().add(biDataset);
       getStore().add(biADataset);
+      getStore().add(azDataset);
 
       // tell the output it's been updated (by now it should
       // have a full set of listeners
       biDataset.fireDataChanged();
       biADataset.fireDataChanged();
+      azDataset.fireDataChanged();
     }
 
     /**
@@ -125,7 +134,7 @@ public class BistaticAngleOperation implements IOperation
      */
     protected String getOutputName()
     {
-      return "Bistatic angle at " + getInputs().get(1).getName();
+      return "Bistatic angle sets at " + getInputs().get(1).getName();
     }
 
     /**
@@ -136,6 +145,7 @@ public class BistaticAngleOperation implements IOperation
     {
       _bistaticBuilder.clear();
       _bistaticAspectBuilder.clear();
+      _azimuthBuilder.clear();
     }
 
     /**
@@ -182,6 +192,7 @@ public class BistaticAngleOperation implements IOperation
       // and the bounding period
       final Collection<IStoreItem> selection = new ArrayList<IStoreItem>();
       selection.add(tx_track);
+      selection.add(rx_track);
       selection.add(tgt_track);
       selection.add(tgt_hdg);
 
@@ -218,7 +229,7 @@ public class BistaticAngleOperation implements IOperation
       final Iterator<Double> hdgIter = interp_headings.getIterator();
       final Iterator<Double> timeIter = times.getIndex();
 
-      while (txIter.hasNext())
+      while (timeIter.hasNext())
       {
         final Point2D txP = txIter.next();
         final Point2D targetP = tgtIter.next();
@@ -226,7 +237,7 @@ public class BistaticAngleOperation implements IOperation
         final double heading = hdgIter.next();
         final Double time = timeIter.next();
         calcAndStore(calc, txP, targetP, rxP, heading, time, _bistaticBuilder,
-            _bistaticAspectBuilder);
+            _bistaticAspectBuilder, _azimuthBuilder);
       }
     }
 
@@ -377,12 +388,15 @@ public class BistaticAngleOperation implements IOperation
             {
               return res;
             }
-            LocationDocument tx = subjects.get(0);
-            LocationDocument rx = subjects.get(1);
+            LocationDocument tx1 = subjects.get(0);
+            LocationDocument rx1 = subjects.get(1);
+
+            LocationDocument tx2 = subjects.get(1);
+            LocationDocument rx2 = subjects.get(0);
 
             // ok, and the command
-            ICommand command =
-                new BistaticAngleCommand(rawSelection, thisTarget, tx, rx,
+            res.add(
+                new BistaticAngleCommand(rawSelection, thisTarget, tx1, rx1,
                     destination, targetTrack, context)
                 {
 
@@ -394,8 +408,22 @@ public class BistaticAngleOperation implements IOperation
                         "Bearing between " + super.getSubjectList());
                   }
 
-                };
-            res.add(command);
+                });
+            // ok, and the command
+            res.add(
+                new BistaticAngleCommand(rawSelection, thisTarget, tx2, rx2,
+                    destination, targetTrack, context)
+                {
+
+                  @Override
+                  protected String getOutputName()
+                  {
+                    return getContext().getInput("Generate bearing",
+                        NEW_DATASET_MESSAGE,
+                        "Bearing between " + super.getSubjectList());
+                  }
+
+                });
           }
         }
         else
@@ -450,11 +478,12 @@ public class BistaticAngleOperation implements IOperation
    *          where to store the bistatic angle
    * @param bistaticAspectBuilder
    *          where to store the bistatic aspect angle
+   * @param azimuthBuilder 
    */
   public static void calcAndStore(final IGeoCalculator calc, final Point2D tx,
       final Point2D target, final Point2D rx, Double heading, Double time,
       NumberDocumentBuilder bistaticBuilder,
-      NumberDocumentBuilder bistaticAspectBuilder)
+      NumberDocumentBuilder bistaticAspectBuilder, NumberDocumentBuilder azimuthBuilder)
   {
     // ok start with two angles
     double toSource = calc.getAngleBetween(target, tx);
@@ -476,12 +505,19 @@ public class BistaticAngleOperation implements IOperation
     {
       biAspectAngle += 360d;
     }
-
+   
+    // make sure they're positive
+    if(relToSource < 0)
+    {
+      relToSource += 360d;
+    }
+    
     // and make sure it's positive
     biAspectAngle = Math.abs(biAspectAngle);
 
     bistaticBuilder.add(time, biAngle);
     bistaticAspectBuilder.add(time, biAspectAngle);
+    azimuthBuilder.add(time, relToSource);
   }
 
 }

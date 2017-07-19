@@ -167,7 +167,7 @@ public abstract class TwoTrackOperation implements IOperation
         final TimePeriod period = aTests.getBoundingRange(selection);
 
         // check it's valid
-        if (period.invalid())
+        if (period == null || period.invalid())
         {
           throw new IllegalArgumentException(
               "Insufficient coverage for datasets");
