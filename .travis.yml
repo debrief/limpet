@@ -1,10 +1,9 @@
 language: java
-dist: precise
 jdk: oraclejdk7
 cache:
   directories:
   - "$HOME/.m2"
-sudo: false
+sudo: true
 install:
 - mvn --version
 before_script:
