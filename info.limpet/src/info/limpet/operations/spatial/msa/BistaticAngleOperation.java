@@ -62,7 +62,8 @@ public class BistaticAngleOperation implements IOperation
         final LocationDocument rx, final IStoreGroup store,
         final IDocument<?> timeProvider, final IContext context)
     {
-      super("Bistatic angle at:" + target.getName(),
+      super("Bistatic angle at:" + target.getName() + " from "
+          + tx.getName() + " to:" + rx.getName(),
           "Calculate bistatic angle at:" + target.getName() + " from "
               + tx.getName() + " to:" + rx.getName(), store, false, false,
           selection, context);
@@ -191,6 +192,7 @@ public class BistaticAngleOperation implements IOperation
       // and the bounding period
       final Collection<IStoreItem> selection = new ArrayList<IStoreItem>();
       selection.add(tx_track);
+      selection.add(rx_track);
       selection.add(tgt_track);
       selection.add(tgt_hdg);
 
@@ -227,7 +229,7 @@ public class BistaticAngleOperation implements IOperation
       final Iterator<Double> hdgIter = interp_headings.getIterator();
       final Iterator<Double> timeIter = times.getIndex();
 
-      while (txIter.hasNext())
+      while (timeIter.hasNext())
       {
         final Point2D txP = txIter.next();
         final Point2D targetP = tgtIter.next();
@@ -386,12 +388,15 @@ public class BistaticAngleOperation implements IOperation
             {
               return res;
             }
-            LocationDocument tx = subjects.get(0);
-            LocationDocument rx = subjects.get(1);
+            LocationDocument tx1 = subjects.get(0);
+            LocationDocument rx1 = subjects.get(1);
+
+            LocationDocument tx2 = subjects.get(1);
+            LocationDocument rx2 = subjects.get(0);
 
             // ok, and the command
-            ICommand command =
-                new BistaticAngleCommand(rawSelection, thisTarget, tx, rx,
+            res.add(
+                new BistaticAngleCommand(rawSelection, thisTarget, tx1, rx1,
                     destination, targetTrack, context)
                 {
 
@@ -403,8 +408,22 @@ public class BistaticAngleOperation implements IOperation
                         "Bearing between " + super.getSubjectList());
                   }
 
-                };
-            res.add(command);
+                });
+            // ok, and the command
+            res.add(
+                new BistaticAngleCommand(rawSelection, thisTarget, tx2, rx2,
+                    destination, targetTrack, context)
+                {
+
+                  @Override
+                  protected String getOutputName()
+                  {
+                    return getContext().getInput("Generate bearing",
+                        NEW_DATASET_MESSAGE,
+                        "Bearing between " + super.getSubjectList());
+                  }
+
+                });
           }
         }
         else
@@ -486,7 +505,13 @@ public class BistaticAngleOperation implements IOperation
     {
       biAspectAngle += 360d;
     }
-
+   
+    // make sure they're positive
+    if(relToSource < 0)
+    {
+      relToSource += 360d;
+    }
+    
     // and make sure it's positive
     biAspectAngle = Math.abs(biAspectAngle);
 
