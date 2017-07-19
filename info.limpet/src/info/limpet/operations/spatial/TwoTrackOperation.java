@@ -162,7 +162,6 @@ public abstract class TwoTrackOperation implements IOperation
 
       if (_timeProvider != null)
       {
-
         // and the bounding period
         final Collection<IStoreItem> selection = new ArrayList<IStoreItem>();
         selection.add(track1);
@@ -200,15 +199,9 @@ public abstract class TwoTrackOperation implements IOperation
 
       final Iterator<Point2D> t1Iter = interp1.getLocationIterator();
       final Iterator<Point2D> t2Iter = interp2.getLocationIterator();
-      final Iterator<Double> timeIter;
-      if (times != null)
-      {
-        timeIter = times.getIndex();
-      }
-      else
-      {
-        timeIter = null;
-      }
+      
+      // produce a time iterator, if we can.
+      final Iterator<Double> timeIter = times != null ? times.getIndex() : null;
 
       // if we can't iterate through a collection, re-use the same value
       final Point2D fixed1 = interp1.size() == 1 ? t1Iter.next() : null;
@@ -220,36 +213,17 @@ public abstract class TwoTrackOperation implements IOperation
 
       while (singlePass || t1Iter.hasNext() || t2Iter.hasNext())
       {
-        final Point2D p1;
-        if (fixed1 != null)
-        {
-          p1 = fixed1;
-        }
-        else
-        {
-          p1 = t1Iter.next();
-        }
-        final Point2D p2;
-        if (fixed2 != null)
-        {
-          p2 = fixed2;
-        }
-        else
-        {
-          p2 = t2Iter.next();
-        }
-
-        final Double time;
-        if (timeIter != null)
-        {
-          time = timeIter.next();
-        }
-        else
-        {
-          time = null;
-        }
+        // special handling for if we have singletons, in which
+        // case we're using a fixed value rather than an interator
+        final Point2D p1 = fixed1 != null ? fixed1 : t1Iter.next();
+        final Point2D p2 = fixed2 != null ? fixed2 : t2Iter.next();
+        
+        // and the same for time
+        final Double time = timeIter != null ? timeIter.next(): null;
+        
         calcAndStore(calc, p1, p2, time);
 
+        // are we just doing a single pass anyway?
         if (singlePass)
         {
           singlePass = false;
