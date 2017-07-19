@@ -55,11 +55,6 @@ abstract public class Document<T extends Object> implements IDocument<T>
   @Override
   public Unit<?> getIndexUnits()
   {
-    if (!isIndexed())
-    {
-      throw new IllegalArgumentException(
-          "Index not present, cannot retrieve index units");
-    }
     return indexUnits;
   }
 

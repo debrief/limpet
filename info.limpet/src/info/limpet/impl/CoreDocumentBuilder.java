@@ -22,7 +22,7 @@ abstract class CoreDocumentBuilder<T extends Object, D extends IDocument<T>>
   protected final String _name;
   private ArrayList<Double> _indices;
   protected final ICommand _predecessor;
-  protected final Unit<?> _indexUnits;
+  protected Unit<?> _indexUnits;
   protected final List<T> _values = new ArrayList<T>();
 
   public CoreDocumentBuilder(final String name, final ICommand predecessor,
@@ -122,6 +122,17 @@ abstract class CoreDocumentBuilder<T extends Object, D extends IDocument<T>>
     return _indexUnits;
   }
 
+  /** override the index units
+   * 
+   */
+  public void setIndexUnits(Unit<?> units)
+  {
+    _indexUnits = units;
+    
+    // oh, and clear the indices - we can't use them anyway
+    _indices = null;
+  }
+  
   @Override
   public D toDocument()
   {
