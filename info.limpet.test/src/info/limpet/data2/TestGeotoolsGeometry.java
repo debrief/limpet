@@ -1206,7 +1206,7 @@ public class TestGeotoolsGeometry extends TestCase
     assertEquals("store has other collection", 1, store.size());
   }
 
-  public void testLocationSingletonCalcDistance_MixedIndex()
+  public void testLocationSingletonCalcDistanceMixedIndex()
   {
     final LocationDocumentBuilder loc1 =
         new LocationDocumentBuilder("loc1", null, SI.MILLI(SI.SECOND));
@@ -1283,7 +1283,7 @@ public class TestGeotoolsGeometry extends TestCase
     assertTrue("has index units", output.getIndexUnits() != null);   
   }
 
-  public void testLocationSingletonCalcDistance_IndexLess()
+  public void testLocationSingletonCalcDistanceNoIndex()
   {
     final LocationDocumentBuilder loc1 =
         new LocationDocumentBuilder("loc1", null, null);
