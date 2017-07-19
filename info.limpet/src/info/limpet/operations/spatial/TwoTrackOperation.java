@@ -218,21 +218,48 @@ public abstract class TwoTrackOperation implements IOperation
      * process the iterators, storing the data as we go
      * 
      */
-    private void processData(boolean singlePass,
+    private void processData(final boolean doSinglePass,
         final Iterator<Point2D> t1Iter, final Iterator<Point2D> t2Iter,
         final Point2D fixed1, final Point2D fixed2,
         final Iterator<Double> timeIter, final IGeoCalculator calc)
     {
+      boolean singlePass = doSinglePass;
 
       while (singlePass || t1Iter.hasNext() || t2Iter.hasNext())
       {
         // special handling for if we have singletons, in which
         // case we're using a fixed value rather than an interator
-        final Point2D p1 = fixed1 != null ? fixed1 : t1Iter.next();
-        final Point2D p2 = fixed2 != null ? fixed2 : t2Iter.next();
+        final Point2D p1;
+        if (fixed1 != null)
+        {
+          p1 = fixed1;
+        }
+        else
+        {
+          p1 = t1Iter.next();
+        }
+
+        final Point2D p2;
+        if (fixed2 != null)
+        {
+          p2 = fixed2;
+        }
+        else
+        {
+          p2 = t2Iter.next();
+
+        }
 
         // and the same for time
-        final Double time = timeIter != null ? timeIter.next() : null;
+        final Double time;
+        if (timeIter != null)
+        {
+          time = timeIter.next();
+        }
+        else
+        {
+          time = null;
+        }
 
         calcAndStore(calc, p1, p2, time);
 
