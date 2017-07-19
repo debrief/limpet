@@ -82,37 +82,52 @@ public class XyPlotView extends CoreAnalysisView
   }
 
   @Override
-  protected void makeActions()
+  protected boolean appliesToMe(final List<IStoreItem> res,
+      final CollectionComplianceTests tests)
   {
-    super.makeActions();
+    final boolean allNonQuantity = tests.allNonQuantity(res);
+    final boolean allCollections = tests.allCollections(res);
+    final boolean allQuantity = tests.allQuantity(res);
+    final boolean suitableIndex =
+        tests.allEqualIndexed(res) || tests.allNonIndexed(res);
+    return allCollections && suitableIndex && (allQuantity || allNonQuantity);
+  }
 
-    switchAxes = new Action("Switch axes", SWT.TOGGLE)
+  private void clearChart()
+  {
+    // clear the graph
+    final ISeries[] series = chart.getSeriesSet().getSeries();
+    for (int i = 0; i < series.length; i++)
     {
-      @Override
-      public void run()
-      {
-        if (switchAxes.isChecked())
-        {
-          chart.setOrientation(SWT.VERTICAL);
-        }
-        else
-        {
-          chart.setOrientation(SWT.HORIZONTAL);
-        }
-      }
-    };
-    switchAxes.setText("Switch axes");
-    switchAxes.setToolTipText("Switch X and Y axes");
-    switchAxes.setImageDescriptor(Activator
-        .getImageDescriptor("icons/angle.png"));
+      final ISeries iSeries = series[i];
+      chart.getSeriesSet().deleteSeries(iSeries.getId());
+    }
+  }
 
+  private void clearGraph()
+  {
+    // clear the graph
+    final ISeries[] series = chart.getSeriesSet().getSeries();
+    for (int i = 0; i < series.length; i++)
+    {
+      final ISeries iSeries = series[i];
+      chart.getSeriesSet().deleteSeries(iSeries.getId());
+
+      // and clear any series
+      final IAxis[] yA = chart.getAxisSet().getYAxes();
+      for (int j = 1; j < yA.length; j++)
+      {
+        final IAxis iAxis = yA[j];
+        chart.getAxisSet().deleteYAxis(iAxis.getId());
+      }
+    }
   }
 
   @Override
   protected void contributeToActionBars()
   {
     super.contributeToActionBars();
-    IActionBars bars = getViewSite().getActionBars();
+    final IActionBars bars = getViewSite().getActionBars();
     bars.getToolBarManager().add(switchAxes);
     bars.getMenuManager().add(switchAxes);
   }
@@ -121,7 +136,7 @@ public class XyPlotView extends CoreAnalysisView
    * This is a callback that will allow us to create the viewer and initialize it.
    */
   @Override
-  public void createPartControl(Composite parent)
+  public void createPartControl(final Composite parent)
   {
     makeActions();
     contributeToActionBars();
@@ -144,7 +159,34 @@ public class XyPlotView extends CoreAnalysisView
   }
 
   @Override
-  public void display(List<IStoreItem> res)
+  protected void datasetDataChanged(final IStoreItem subject)
+  {
+    final String name;
+    final IDocument<?> coll = (IDocument<?>) subject;
+    if (coll.isQuantity())
+    {
+      final NumberDocument cq = (NumberDocument) coll;
+      final Unit<?> units = cq.getUnits();
+      name = seriesNameFor(cq, units);
+    }
+    else
+    {
+      name = coll.getName();
+    }
+
+    final ISeries match = chart.getSeriesSet().getSeries(name);
+    if (match != null)
+    {
+      chart.getSeriesSet().deleteSeries(name);
+    }
+    else
+    {
+      clearChart();
+    }
+  }
+
+  @Override
+  public void display(final List<IStoreItem> res)
   {
     if (res.size() == 0)
     {
@@ -165,256 +207,54 @@ public class XyPlotView extends CoreAnalysisView
     }
   }
 
-  private void showTwoDim(IStoreItem item)
+  @Override
+  protected String getTextForClipboard()
   {
-    NumberDocument thisQ = (NumberDocument) item;
-
-    clearGraph();
-
-    String seriesName = thisQ.getName();
-    final ILineSeries newSeries =
-        (ILineSeries) chart.getSeriesSet().createSeries(SeriesType.LINE,
-            seriesName);
-
-    final PlotSymbolType theSym;
-    // if it's a singleton, show the symbol
-    // markers
-    if (thisQ.size() > 500 || thisQ.size() == 1)
-    {
-      theSym = PlotSymbolType.NONE;
-    }
-    else
-    {
-      theSym = PlotSymbolType.CIRCLE;
-    }
-
-    newSeries.setSymbolType(theSym);
-    newSeries.setLineStyle(LineStyle.NONE);
-    newSeries.setSymbolColor(PlottingHelpers.colorFor(seriesName));
-
-    // ok, show this 2d dataset
-    NumberDocument nd = (NumberDocument) item;
-
-    try
-    {
-      // sort out the axes
-      final List<AxesMetadata> amList =
-          nd.getDataset().getMetadata(AxesMetadata.class);
-      AxesMetadata am = amList.get(0);
-      ILazyDataset[] axes = am.getAxes();
-      if (axes.length == 2)
-      {
-        DoubleDataset aOne = (DoubleDataset) axes[0];
-        DoubleDataset aTwo = (DoubleDataset) axes[1];
-
-        double[] aIndices = aOne.getData();
-        double[] bIndices = aTwo.getData();
-
-        // loop through the data
-        List<Double> xValues = new ArrayList<Double>();
-        List<Double> yValues = new ArrayList<Double>();
-
-        final DoubleDataset dataset = (DoubleDataset) nd.getDataset();
-
-        // process the data
-        for (int i = 0; i < aIndices.length; i++)
-        {
-          for (int j = 0; j < bIndices.length; j++)
-          {
-            Double thisVal = dataset.get(i, j);
-            if (!thisVal.equals(Double.NaN))
-            {
-              xValues.add(aIndices[i]);
-              yValues.add(bIndices[j]);
-            }
-          }
-        }
-
-        final double[] xArr = toArray(xValues);
-        final double[] yArr = toArray(yValues);
-
-        newSeries.setXSeries(xArr);
-        newSeries.setYSeries(yArr);
-
-        chart.getAxisSet().getYAxes()[0].getTitle().setText(
-            "" + nd.getIndexUnits());
-        chart.getAxisSet().getXAxes()[0].getTitle().setText(
-            "" + nd.getIndexUnits());
-
-        // adjust the axis range
-        chart.getAxisSet().adjustRange();
-
-      }
-    }
-    catch (MetadataException e)
-    {
-      e.printStackTrace();
-      // ok, just drop out
-    }
+    return "Pending";
   }
 
-  private void showOneDim(List<IStoreItem> res)
+  /**
+   * produce the graph's title text
+   * 
+   * @param xTimeData
+   * @param indexUnits
+   * @return
+   */
+  private String getTitleFor(final Date[] xTimeData, final Unit<?> indexUnits)
   {
-    // transform them to a lsit of documents
-    List<IDocument<?>> docList = aTests.getDocumentsIn(res);
+    String xTitle = null;
 
-    // they're all the same type - check the first one
-    Iterator<IDocument<?>> iter = docList.iterator();
-
-    IDocument<?> first = iter.next();
-
-    // sort out what type of data this is.
-    if (first.isQuantity())
+    if (xTimeData != null)
     {
-      if (aTests.allIndexedOrSingleton(res))
-      {
-        showIndexedQuantity(res);
-      }
-      else
-      {
-        showQuantity(res);
-      }
-      chart.setVisible(true);
+      xTitle = "Time";
     }
     else
     {
-      // exception - show locations
-      if (aTests.allLocation(res))
+      final String titlePrefix;
+      final String theDim =
+          indexUnits != null ? indexUnits.getDimension().toString() : "N/A";
+      switch (theDim)
       {
-        showLocations(res);
-        chart.setVisible(true);
+      case "[L]":
+        titlePrefix = "Length";
+        break;
+      case "[M]":
+        titlePrefix = "Mass";
+        break;
+      case "[T]":
+        titlePrefix = "Time";
+        break;
+      default:
+        titlePrefix = theDim;
+        break;
       }
-      else
-      {
-        chart.setVisible(false);
-      }
+
+      final String indexText =
+          indexUnits != null ? " (" + indexUnits.toString() + ")" : "";
+      xTitle = titlePrefix + indexText;
+
     }
-  }
-
-  private double[] toArray(List<Double> xData)
-  {
-    double[] res = new double[xData.size()];
-    for (int i = 0; i < xData.size(); i++)
-    {
-      res[i] = xData.get(i);
-    }
-    return res;
-  }
-
-  private void showQuantity(List<IStoreItem> items)
-  {
-    clearGraph();
-
-    Unit<?> existingUnits = null;
-
-    // get the longest collection length (used for plotting singletons)
-    final int longestColl = aTests.getLongestCollectionLength(items);
-
-    boolean chartUpdated = false;
-
-    for (IStoreItem item : items)
-    {
-      final IDocument<?> coll = (IDocument<?>) item;
-      if (coll.isQuantity() && coll.size() >= 1 && coll.size() < MAX_SIZE)
-      {
-
-        final NumberDocument thisQ = (NumberDocument) coll;
-
-        final Unit<?> theseUnits = thisQ.getUnits();
-        final String seriesName = seriesNameFor(thisQ, theseUnits);
-
-        // do we need to create this series
-        final ISeries match = chart.getSeriesSet().getSeries(seriesName);
-        if (match != null)
-        {
-          continue;
-        }
-
-        existingUnits =
-            showThisNumberDocument(existingUnits, longestColl, coll, thisQ,
-                theseUnits, seriesName);
-
-        chartUpdated = true;
-      }
-    }
-
-    if (chartUpdated)
-    {
-      chart.redraw();
-    }
-  }
-
-  private Unit<?> showThisNumberDocument(final Unit<?> existingUnits,
-      final int longestColl, final IDocument<?> coll,
-      final NumberDocument thisQ, final Unit<?> theseUnits,
-      final String seriesName)
-  {
-    Unit<?> NewUnits = existingUnits;
-
-    final ILineSeries newSeries =
-        (ILineSeries) chart.getSeriesSet().createSeries(SeriesType.LINE,
-            seriesName);
-
-    final PlotSymbolType theSym;
-    // if it's a singleton, show the symbol
-    // markers
-    if (thisQ.size() > 100 || thisQ.size() == 1)
-    {
-      theSym = PlotSymbolType.NONE;
-    }
-    else
-    {
-      theSym = PlotSymbolType.CIRCLE;
-    }
-
-    newSeries.setSymbolType(theSym);
-    newSeries.setLineColor(PlottingHelpers.colorFor(seriesName));
-    newSeries.setSymbolColor(PlottingHelpers.colorFor(seriesName));
-
-    // get the data, depending on if it's a singleton or not
-    final double[] yData = getYData(longestColl, coll, thisQ);
-
-    // ok, do we have existing data?
-    if (existingUnits != null && !existingUnits.equals(theseUnits))
-    {
-      // create second Y axis
-      final int axisId = chart.getAxisSet().createYAxis();
-
-      // set the properties of second Y axis
-      final IAxis yAxis2 = chart.getAxisSet().getYAxis(axisId);
-      yAxis2.getTitle().setText(theseUnits.toString());
-      yAxis2.setPosition(Position.Secondary);
-      newSeries.setYAxisId(axisId);
-    }
-    else
-    {
-      chart.getAxisSet().getYAxes()[0].getTitle()
-          .setText(theseUnits.toString());
-      NewUnits = theseUnits;
-    }
-
-    newSeries.setYSeries(yData);
-
-    // if it's a monster line, we won't plot
-    // markers
-    if (thisQ.size() > 90)
-    {
-      newSeries.setSymbolType(PlotSymbolType.NONE);
-      newSeries.setLineWidth(2);
-    }
-    else
-    {
-      newSeries.setSymbolType(PlotSymbolType.CROSS);
-    }
-
-    chart.getAxisSet().getXAxis(0).getTitle().setText("Count");
-
-    // adjust the axis range
-    chart.getAxisSet().adjustRange();
-    final IAxis xAxis = chart.getAxisSet().getXAxis(0);
-    xAxis.enableCategory(false);
-
-    return NewUnits;
+    return xTitle;
   }
 
   private double[] getYData(final int longestColl, final IDocument<?> coll,
@@ -446,24 +286,134 @@ public class XyPlotView extends CoreAnalysisView
     return yData;
   }
 
-  private String seriesNameFor(NumberDocument thisQ, final Unit<?> theseUnits)
+  @Override
+  protected void makeActions()
   {
-    String seriesName = thisQ.getName() + " (" + theseUnits + ")";
+    super.makeActions();
+
+    switchAxes = new Action("Switch axes", SWT.TOGGLE)
+    {
+      @Override
+      public void run()
+      {
+        if (switchAxes.isChecked())
+        {
+          chart.setOrientation(SWT.VERTICAL);
+        }
+        else
+        {
+          chart.setOrientation(SWT.HORIZONTAL);
+        }
+      }
+    };
+    switchAxes.setText("Switch axes");
+    switchAxes.setToolTipText("Switch X and Y axes");
+    switchAxes.setImageDescriptor(Activator
+        .getImageDescriptor("icons/angle.png"));
+
+  }
+
+  private void putOnAxis(final Chart chart, final ILineSeries newSeries,
+      final Unit<?> newUnits)
+  {
+    final String unitStr = newUnits.toString();
+
+    // special case. at start we just have an empty y axis
+    final IAxis[] yAxes = chart.getAxisSet().getYAxes();
+    if (yAxes.length == 1 && yAxes[0].getTitle().getText() == "")
+    {
+      // ok, we're only just opened. Use this one
+      yAxes[0].getTitle().setText(unitStr);
+      newSeries.setYAxisId(yAxes[0].getId());
+    }
+    else
+    {
+      int leftCount = 0;
+      int rightCount = 0;
+
+      // clear the axis id, we're going to rely on it
+      final int INVALID_ID = -10000;
+      newSeries.setYAxisId(INVALID_ID);
+
+      // ok, work through the axes
+      for (final IAxis t : yAxes)
+      {
+        if (t.getTitle().getText().equals(unitStr))
+        {
+          // ok, this will do
+          newSeries.setYAxisId(t.getId());
+        }
+        else
+        {
+          // just keep track of the count
+          switch (t.getPosition())
+          {
+          case Primary:
+            leftCount++;
+            break;
+          case Secondary:
+          default:
+            rightCount++;
+            break;
+          }
+        }
+      }
+
+      // did we store it?
+      if (newSeries.getYAxisId() == INVALID_ID)
+      {
+        final Position toUse;
+        // choose the side with the fewest, or the x if none.
+        if (leftCount == 0)
+        {
+          toUse = Position.Primary;
+        }
+        else if (leftCount > rightCount)
+        {
+          toUse = Position.Secondary;
+        }
+        else
+        {
+          toUse = Position.Primary;
+        }
+
+        // create the axis
+        final int newAxisId = chart.getAxisSet().createYAxis();
+        final IAxis newAxis = chart.getAxisSet().getYAxis(newAxisId);
+        newAxis.getTitle().setText(unitStr);
+        newAxis.setPosition(toUse);
+
+        // and tell the series to use it
+        newSeries.setYAxisId(newAxisId);
+      }
+    }
+  }
+
+  private String seriesNameFor(final NumberDocument thisQ,
+      final Unit<?> theseUnits)
+  {
+    final String seriesName = thisQ.getName() + " (" + theseUnits + ")";
     return seriesName;
   }
 
-  private void showIndexedQuantity(List<IStoreItem> res)
+  @Override
+  public void setFocus()
+  {
+    chart.setFocus();
+  }
+
+  private void showIndexedQuantity(final List<IStoreItem> res)
   {
     clearGraph();
 
     Unit<?> existingUnits = null;
 
-    List<IDocument<?>> docList = aTests.getDocumentsIn(res);
+    final List<IDocument<?>> docList = aTests.getDocumentsIn(res);
 
     // get the outer time period (used for plotting singletons)
-    List<IDocument<?>> safeColl = new ArrayList<IDocument<?>>();
+    final List<IDocument<?>> safeColl = new ArrayList<IDocument<?>>();
     safeColl.addAll(docList);
-    TimePeriod outerPeriod = aTests.getBoundingRange(res);
+    final TimePeriod outerPeriod = aTests.getBoundingRange(res);
 
     for (final IDocument<?> coll : docList)
     {
@@ -504,11 +454,313 @@ public class XyPlotView extends CoreAnalysisView
 
         // adjust the axis range
         chart.getAxisSet().adjustRange();
-        IAxis xAxis = chart.getAxisSet().getXAxis(0);
+        final IAxis xAxis = chart.getAxisSet().getXAxis(0);
         xAxis.enableCategory(false);
 
         chart.redraw();
       }
+    }
+  }
+
+  private void showLocations(final List<IStoreItem> res)
+  {
+    clearChart();
+
+    // now loop through
+    boolean chartUpdated = false;
+    for (final IStoreItem document : res)
+    {
+      final IDocument<?> coll = (IDocument<?>) document;
+      if (!coll.isQuantity() && coll.size() >= 1 && coll.size() < MAX_SIZE)
+      {
+        final String seriesName = coll.getName();
+        final ILineSeries newSeries =
+            (ILineSeries) chart.getSeriesSet().createSeries(SeriesType.LINE,
+                seriesName);
+        newSeries.setSymbolType(PlotSymbolType.NONE);
+        newSeries.setLineColor(PlottingHelpers.colorFor(seriesName));
+        newSeries.setSymbolColor(PlottingHelpers.colorFor(seriesName));
+
+        final double[] xData = new double[coll.size()];
+        final double[] yData = new double[coll.size()];
+
+        final LocationDocument loc = (LocationDocument) coll;
+        int ctr = 0;
+        final Iterator<Point2D> lIter = loc.getLocationIterator();
+        while (lIter.hasNext())
+        {
+          final Point2D geom = lIter.next();
+          xData[ctr] = geom.getX();
+          yData[ctr++] = geom.getY();
+        }
+
+        // clear the axis labels
+        chart.getAxisSet().getXAxis(0).getTitle().setText("");
+        chart.getAxisSet().getYAxis(0).getTitle().setText("");
+
+        newSeries.setXSeries(xData);
+        newSeries.setYSeries(yData);
+
+        newSeries.setSymbolType(PlotSymbolType.CROSS);
+
+        // adjust the axis range
+        chart.getAxisSet().adjustRange();
+        chartUpdated = true;
+      }
+    }
+    if (chartUpdated)
+    {
+      chart.redraw();
+    }
+  }
+
+  private void showOneDim(final List<IStoreItem> res)
+  {
+    // transform them to a lsit of documents
+    final List<IDocument<?>> docList = aTests.getDocumentsIn(res);
+
+    // they're all the same type - check the first one
+    final Iterator<IDocument<?>> iter = docList.iterator();
+
+    final IDocument<?> first = iter.next();
+
+    // do a bit of y axis tidying. We rely on the first
+    // axis having blank text to know when we're overwriting
+    // the initial empty (template) dataset
+    chart.getAxisSet().getYAxes()[0].getTitle().setText("");
+
+    // sort out what type of data this is.
+    if (first.isQuantity())
+    {
+      if (aTests.allIndexedOrSingleton(res))
+      {
+        showIndexedQuantity(res);
+      }
+      else
+      {
+        showQuantity(res);
+      }
+      chart.setVisible(true);
+    }
+    else
+    {
+      // exception - show locations
+      if (aTests.allLocation(res))
+      {
+        showLocations(res);
+        chart.setVisible(true);
+      }
+      else
+      {
+        chart.setVisible(false);
+      }
+    }
+  }
+
+  private void showQuantity(final List<IStoreItem> items)
+  {
+    clearGraph();
+
+    Unit<?> existingUnits = null;
+
+    // get the longest collection length (used for plotting singletons)
+    final int longestColl = aTests.getLongestCollectionLength(items);
+
+    boolean chartUpdated = false;
+
+    for (final IStoreItem item : items)
+    {
+      final IDocument<?> coll = (IDocument<?>) item;
+      if (coll.isQuantity() && coll.size() >= 1 && coll.size() < MAX_SIZE)
+      {
+
+        final NumberDocument thisQ = (NumberDocument) coll;
+
+        final Unit<?> theseUnits = thisQ.getUnits();
+        final String seriesName = seriesNameFor(thisQ, theseUnits);
+
+        // do we need to create this series
+        final ISeries match = chart.getSeriesSet().getSeries(seriesName);
+        if (match != null)
+        {
+          continue;
+        }
+
+        existingUnits =
+            showThisNumberDocument(existingUnits, longestColl, coll, thisQ,
+                theseUnits, seriesName);
+
+        chartUpdated = true;
+      }
+    }
+
+    if (chartUpdated)
+    {
+      chart.redraw();
+    }
+  }
+
+  private Unit<?> showThisNumberDocument(final Unit<?> existingUnits,
+      final int longestColl, final IDocument<?> coll,
+      final NumberDocument thisQ, final Unit<?> theseUnits,
+      final String seriesName)
+  {
+    final Unit<?> NewUnits = existingUnits;
+
+    final ILineSeries newSeries =
+        (ILineSeries) chart.getSeriesSet().createSeries(SeriesType.LINE,
+            seriesName);
+
+    final PlotSymbolType theSym;
+    // if it's a singleton, show the symbol
+    // markers
+    if (thisQ.size() > 100 || thisQ.size() == 1)
+    {
+      theSym = PlotSymbolType.NONE;
+    }
+    else
+    {
+      theSym = PlotSymbolType.CIRCLE;
+    }
+
+    newSeries.setSymbolType(theSym);
+    newSeries.setLineColor(PlottingHelpers.colorFor(seriesName));
+    newSeries.setSymbolColor(PlottingHelpers.colorFor(seriesName));
+
+    // get the data, depending on if it's a singleton or not
+    final double[] yData = getYData(longestColl, coll, thisQ);
+
+    // loop through the axes, see if we have suitable
+    putOnAxis(chart, newSeries, theseUnits);
+    //
+    // // ok, do we have existing data?
+    // if (existingUnits != null && !existingUnits.equals(theseUnits))
+    // {
+    // // create second Y axis
+    // final int axisId = chart.getAxisSet().createYAxis();
+    //
+    // // set the properties of second Y axis
+    // final IAxis yAxis2 = chart.getAxisSet().getYAxis(axisId);
+    // yAxis2.getTitle().setText(theseUnits.toString());
+    // yAxis2.setPosition(Position.Secondary);
+    // newSeries.setYAxisId(axisId);
+    // }
+    // else
+    // {
+    // chart.getAxisSet().getYAxes()[0].getTitle()
+    // .setText(theseUnits.toString());
+    // NewUnits = theseUnits;
+    // }
+
+    newSeries.setYSeries(yData);
+
+    // if it's a monster line, we won't plot
+    // markers
+    if (thisQ.size() > 90)
+    {
+      newSeries.setSymbolType(PlotSymbolType.NONE);
+      newSeries.setLineWidth(2);
+    }
+    else
+    {
+      newSeries.setSymbolType(PlotSymbolType.CROSS);
+    }
+
+    chart.getAxisSet().getXAxis(0).getTitle().setText("Count");
+
+    // adjust the axis range
+    chart.getAxisSet().adjustRange();
+    final IAxis xAxis = chart.getAxisSet().getXAxis(0);
+    xAxis.enableCategory(false);
+
+    return NewUnits;
+  }
+
+  private void showTwoDim(final IStoreItem item)
+  {
+    final NumberDocument thisQ = (NumberDocument) item;
+
+    clearGraph();
+
+    final String seriesName = thisQ.getName();
+    final ILineSeries newSeries =
+        (ILineSeries) chart.getSeriesSet().createSeries(SeriesType.LINE,
+            seriesName);
+
+    final PlotSymbolType theSym;
+    // if it's a singleton, show the symbol
+    // markers
+    if (thisQ.size() > 500 || thisQ.size() == 1)
+    {
+      theSym = PlotSymbolType.NONE;
+    }
+    else
+    {
+      theSym = PlotSymbolType.CIRCLE;
+    }
+
+    newSeries.setSymbolType(theSym);
+    newSeries.setLineStyle(LineStyle.NONE);
+    newSeries.setSymbolColor(PlottingHelpers.colorFor(seriesName));
+
+    // ok, show this 2d dataset
+    final NumberDocument nd = (NumberDocument) item;
+
+    try
+    {
+      // sort out the axes
+      final List<AxesMetadata> amList =
+          nd.getDataset().getMetadata(AxesMetadata.class);
+      final AxesMetadata am = amList.get(0);
+      final ILazyDataset[] axes = am.getAxes();
+      if (axes.length == 2)
+      {
+        final DoubleDataset aOne = (DoubleDataset) axes[0];
+        final DoubleDataset aTwo = (DoubleDataset) axes[1];
+
+        final double[] aIndices = aOne.getData();
+        final double[] bIndices = aTwo.getData();
+
+        // loop through the data
+        final List<Double> xValues = new ArrayList<Double>();
+        final List<Double> yValues = new ArrayList<Double>();
+
+        final DoubleDataset dataset = (DoubleDataset) nd.getDataset();
+
+        // process the data
+        for (int i = 0; i < aIndices.length; i++)
+        {
+          for (int j = 0; j < bIndices.length; j++)
+          {
+            final Double thisVal = dataset.get(i, j);
+            if (!thisVal.equals(Double.NaN))
+            {
+              xValues.add(aIndices[i]);
+              yValues.add(bIndices[j]);
+            }
+          }
+        }
+
+        final double[] xArr = toArray(xValues);
+        final double[] yArr = toArray(yValues);
+
+        newSeries.setXSeries(xArr);
+        newSeries.setYSeries(yArr);
+
+        chart.getAxisSet().getYAxes()[0].getTitle().setText(
+            "" + nd.getIndexUnits());
+        chart.getAxisSet().getXAxes()[0].getTitle().setText(
+            "" + nd.getIndexUnits());
+
+        // adjust the axis range
+        chart.getAxisSet().adjustRange();
+
+      }
+    }
+    catch (final MetadataException e)
+    {
+      e.printStackTrace();
+      // ok, just drop out
     }
   }
 
@@ -518,7 +770,7 @@ public class XyPlotView extends CoreAnalysisView
       final Unit<?> indexUnits, final ILineSeries newSeries)
   {
 
-    Unit<?> newUnits = existingUnits;
+    final Unit<?> newUnits = existingUnits;
 
     final Date[] xTimeData;
     final double[] xData;
@@ -578,37 +830,8 @@ public class XyPlotView extends CoreAnalysisView
     }
     newSeries.setYSeries(yData);
 
-    // ok, do we have existing data, in different units?
-    if (newUnits != null && !newUnits.equals(theseUnits))
-    {
-      // create second Y axis
-      final int axisId = chart.getAxisSet().createYAxis();
-
-      // set the properties of second Y axis
-      final IAxis yAxis2 = chart.getAxisSet().getYAxis(axisId);
-
-      final String newTitle = theseUnits.toString();
-      if (!newTitle.equals(yAxis2.getTitle().getText()))
-      {
-        yAxis2.getTitle().setText(theseUnits.toString());
-      }
-
-      yAxis2.setPosition(Position.Secondary);
-      newSeries.setYAxisId(axisId);
-    }
-    else
-    {
-      // check the current title
-
-      final ITitle theTitle = chart.getAxisSet().getYAxes()[0].getTitle();
-      final String oldTitle = theTitle.getText();
-      final String newTitle = theseUnits.toString();
-      if (!newTitle.equals(oldTitle))
-      {
-        theTitle.setText(theseUnits.toString());
-      }
-      newUnits = theseUnits;
-    }
+    // loop through the axes, see if we have suitable
+    putOnAxis(chart, newSeries, theseUnits);
 
     // if it's a monster line, we won't plot
     // markers
@@ -671,181 +894,14 @@ public class XyPlotView extends CoreAnalysisView
     }
   }
 
-  /**
-   * produce the graph's title text
-   * 
-   * @param xTimeData
-   * @param indexUnits
-   * @return
-   */
-  private String getTitleFor(final Date[] xTimeData, final Unit<?> indexUnits)
+  private double[] toArray(final List<Double> xData)
   {
-    String xTitle = null;
-
-    if (xTimeData != null)
+    final double[] res = new double[xData.size()];
+    for (int i = 0; i < xData.size(); i++)
     {
-      xTitle = "Time";
+      res[i] = xData.get(i);
     }
-    else
-    {
-      final String titlePrefix;
-      final String theDim =
-          indexUnits != null ? indexUnits.getDimension().toString() : "N/A";
-      switch (theDim)
-      {
-      case "[L]":
-        titlePrefix = "Length";
-        break;
-      case "[M]":
-        titlePrefix = "Mass";
-        break;
-      case "[T]":
-        titlePrefix = "Time";
-        break;
-      default:
-        titlePrefix = theDim;
-        break;
-      }
-
-      final String indexText =
-          indexUnits != null ? " (" + indexUnits.toString() + ")" : "";
-      xTitle = titlePrefix + indexText;
-
-    }
-    return xTitle;
-  }
-
-  private void clearGraph()
-  {
-    // clear the graph
-    ISeries[] series = chart.getSeriesSet().getSeries();
-    for (int i = 0; i < series.length; i++)
-    {
-      ISeries iSeries = series[i];
-      chart.getSeriesSet().deleteSeries(iSeries.getId());
-
-      // and clear any series
-      IAxis[] yA = chart.getAxisSet().getYAxes();
-      for (int j = 1; j < yA.length; j++)
-      {
-        IAxis iAxis = yA[j];
-        chart.getAxisSet().deleteYAxis(iAxis.getId());
-      }
-    }
-  }
-
-  private void showLocations(List<IStoreItem> res)
-  {
-    clearChart();
-
-    // now loop through
-    boolean chartUpdated = false;
-    for (final IStoreItem document : res)
-    {
-      final IDocument<?> coll = (IDocument<?>) document;
-      if (!coll.isQuantity() && coll.size() >= 1 && coll.size() < MAX_SIZE)
-      {
-        final String seriesName = coll.getName();
-        final ILineSeries newSeries =
-            (ILineSeries) chart.getSeriesSet().createSeries(SeriesType.LINE,
-                seriesName);
-        newSeries.setSymbolType(PlotSymbolType.NONE);
-        newSeries.setLineColor(PlottingHelpers.colorFor(seriesName));
-        newSeries.setSymbolColor(PlottingHelpers.colorFor(seriesName));
-
-        final double[] xData = new double[coll.size()];
-        final double[] yData = new double[coll.size()];
-
-        final LocationDocument loc = (LocationDocument) coll;
-        int ctr = 0;
-        final Iterator<Point2D> lIter = loc.getLocationIterator();
-        while (lIter.hasNext())
-        {
-          final Point2D geom = lIter.next();
-          xData[ctr] = geom.getX();
-          yData[ctr++] = geom.getY();
-        }
-
-        // clear the axis labels
-        chart.getAxisSet().getXAxis(0).getTitle().setText("");
-        chart.getAxisSet().getYAxis(0).getTitle().setText("");
-
-        newSeries.setXSeries(xData);
-        newSeries.setYSeries(yData);
-
-        newSeries.setSymbolType(PlotSymbolType.CROSS);
-
-        // adjust the axis range
-        chart.getAxisSet().adjustRange();
-        chartUpdated = true;
-      }
-    }
-    if (chartUpdated)
-    {
-      chart.redraw();
-    }
-  }
-
-  private void clearChart()
-  {
-    // clear the graph
-    ISeries[] series = chart.getSeriesSet().getSeries();
-    for (int i = 0; i < series.length; i++)
-    {
-      ISeries iSeries = series[i];
-      chart.getSeriesSet().deleteSeries(iSeries.getId());
-    }
-  }
-
-  @Override
-  public void setFocus()
-  {
-    chart.setFocus();
-  }
-
-  @Override
-  protected boolean appliesToMe(List<IStoreItem> res,
-      CollectionComplianceTests tests)
-  {
-    final boolean allNonQuantity = tests.allNonQuantity(res);
-    final boolean allCollections = tests.allCollections(res);
-    final boolean allQuantity = tests.allQuantity(res);
-    final boolean suitableIndex =
-        tests.allEqualIndexed(res) || tests.allNonIndexed(res);
-    return allCollections && suitableIndex && (allQuantity || allNonQuantity);
-  }
-
-  @Override
-  protected String getTextForClipboard()
-  {
-    return "Pending";
-  }
-
-  @Override
-  protected void datasetDataChanged(IStoreItem subject)
-  {
-    final String name;
-    IDocument<?> coll = (IDocument<?>) subject;
-    if (coll.isQuantity())
-    {
-      NumberDocument cq = (NumberDocument) coll;
-      Unit<?> units = cq.getUnits();
-      name = seriesNameFor(cq, units);
-    }
-    else
-    {
-      name = coll.getName();
-    }
-
-    ISeries match = chart.getSeriesSet().getSeries(name);
-    if (match != null)
-    {
-      chart.getSeriesSet().deleteSeries(name);
-    }
-    else
-    {
-      clearChart();
-    }
+    return res;
   }
 
 }

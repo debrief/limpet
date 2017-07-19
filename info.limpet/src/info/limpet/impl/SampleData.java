@@ -142,6 +142,10 @@ public class SampleData
     NumberDocumentBuilder speedRadNoise =
         new NumberDocumentBuilder(SPEED_ONE_RAD, NonSI.DECIBEL, null,
             SampleData.MILLIS);    
+    NumberDocumentBuilder radNoiseLookup =
+        new NumberDocumentBuilder(RAD_NOISE_LOOKUP, NonSI.DECIBEL, null,
+            METRE.divide(SECOND).asType(
+                Velocity.class));
     NumberDocumentBuilder length1 =
         new NumberDocumentBuilder(LENGTH_ONE, METRE.asType(Length.class), null,
             null);
@@ -199,7 +203,7 @@ public class SampleData
       angle1.add(thisTime, 90 + 1.1 * Math.toDegrees(Math.sin(Math
           .toRadians(i * 52.5))));
       final double thisSpeedOne = 6 + 4d * Math.sin(Math.toRadians(i));
-      final double thisRadNoise = Math.pow(thisSpeedOne, 2);
+      final double thisRadNoise = Math.pow(thisSpeedOne, 2.1);
       speedSeries1b.add(thisTime, thisSpeedOne);
       speedSeries2b.add(thisTime, 7 + 2 * Math.sin(i));
       speedRadNoise.add(thisTime, thisRadNoise);
@@ -258,6 +262,12 @@ public class SampleData
 
     // add an extra item to speedSeries3
     speedSeries3.add(thisTime + 12 * 500 * 60, 12d);
+    
+    // ok, generate the radiated noise lookup table
+    for(int i=0;i<30;i+=5)
+    {
+      radNoiseLookup.add(i,Math.pow(i, 2.05));
+    }
 
     // give the singletons a value
     singleton1.add(4d);
@@ -342,6 +352,7 @@ public class SampleData
     list.add(track1_2D.toDocument());
     list.add(track2_2D.toDocument());
     list.add(speedSeries3.toDocument());
+    list.add(radNoiseLookup.toDocument());
 
     // res.addAll(list);
 

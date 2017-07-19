@@ -199,7 +199,7 @@ public abstract class BinaryQuantityOperation implements IOperation
     abstract protected Unit<?>
         getBinaryOutputUnit(Unit<?> first, Unit<?> second);
 
-    private Unit<?> getIndexUnits()
+    protected Unit<?> getIndexUnits()
     {
       final Unit<?> res;
 
