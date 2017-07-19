@@ -29,6 +29,7 @@ import info.limpet.impl.SampleData;
 import info.limpet.operations.admin.AddLayerOperation;
 import info.limpet.operations.admin.CopyCsvToClipboardAction;
 import info.limpet.operations.admin.CreateNewIndexedDatafileOperation;
+import info.limpet.operations.admin.CreateNewLookupDatafileOperation;
 import info.limpet.operations.admin.CreateSingletonGenerator;
 import info.limpet.operations.admin.DeleteCollectionOperation;
 import info.limpet.operations.admin.ExportCsvToFileAction;
@@ -126,6 +127,7 @@ public class OperationsLibrary
     admin.add(new GenerateDummyDataOperation("large", 1000));
     admin.add(new GenerateDummyDataOperation("monster", 1000000));
     admin.add(new CreateNewIndexedDatafileOperation());
+    admin.add(new CreateNewLookupDatafileOperation());
     admin.add(new UnaryQuantityOperation("Clear units")
     {
       @Override
