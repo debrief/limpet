@@ -211,12 +211,15 @@ public class CollectionComplianceTests
   {
     // are suitable
     boolean suitable = selection.size() >= 2;
+    boolean allSingleton = true;
 
     Long startT = null;
     Long endT = null;
     Unit<?> units = null;
+    
 
     // check they're all 1D
+    // see if they're all singletons
     if (suitable && allOneDim(selection))
     {
       for (int i = 0; i < selection.size(); i++)
@@ -225,6 +228,14 @@ public class CollectionComplianceTests
         if (thisI instanceof Document)
         {
           Document<?> thisC = (Document<?>) thisI;
+          
+          // check if it's a singleton
+          if(thisC.size() != 1)
+          {
+            // nope, they can't all be singletons
+            allSingleton = false;
+          }
+          
           if (thisC.isQuantity() || thisC instanceof LocationDocument)
           {
             // note: we only consider it as suitable for interpolation if it
@@ -301,7 +312,16 @@ public class CollectionComplianceTests
       // two dim
       suitable = false;
     }
-    return suitable && startT != null;
+    
+    if(allSingleton)
+    {
+      // ok, they're singletons, force an indexed operation
+      return false;
+    }
+    else
+    {
+      return suitable && startT != null;
+    }
   }
 
   /**
@@ -1183,7 +1203,7 @@ public class CollectionComplianceTests
 
       // allow for empty value. sometimes our logic allows null objects for some
       // data types
-      if (iCollection != null && iCollection.isIndexed())
+      if (iCollection != null && iCollection.isIndexed() && iCollection.size() > 1)
       {
         TimePeriod hisPeriod = getBoundsFor(iCollection);
 
