@@ -374,10 +374,24 @@ public class XyPlotView extends CoreAnalysisView
     // get the data, depending on if it's a singleton or not
     final double[] yData = getYData(longestColl, coll, thisQ);
 
-    // ok, do we have existing data?
-    if (existingUnits != null && !existingUnits.equals(theseUnits))
+    // loop through any existing axes
+    boolean needNew = true;
+    IAxis[] yAxes = chart.getAxisSet().getYAxes();
+    for(IAxis t:  yAxes)
     {
-      // create second Y axis
+      // note: we're using a string comparison,
+      // since for some reason decibel objects
+      // don't equate
+      if(theseUnits.toString().equals(t.getTitle().getText()))
+      {
+        // ok, this will do
+        newSeries.setYAxisId(t.getId());
+        needNew = false;
+      }
+    }
+    if(needNew)
+    {
+      // create extra Y axis
       final int axisId = chart.getAxisSet().createYAxis();
 
       // set the properties of second Y axis
@@ -385,13 +399,7 @@ public class XyPlotView extends CoreAnalysisView
       yAxis2.getTitle().setText(theseUnits.toString());
       yAxis2.setPosition(Position.Secondary);
       newSeries.setYAxisId(axisId);
-    }
-    else
-    {
-      chart.getAxisSet().getYAxes()[0].getTitle()
-          .setText(theseUnits.toString());
-      NewUnits = theseUnits;
-    }
+    }    
 
     newSeries.setYSeries(yData);
 
@@ -578,38 +586,30 @@ public class XyPlotView extends CoreAnalysisView
     }
     newSeries.setYSeries(yData);
 
-    // ok, do we have existing data, in different units?
-    if (newUnits != null && !newUnits.equals(theseUnits))
+    // loop through any existing axes
+    boolean needNew = true;
+    IAxis[] yAxes = chart.getAxisSet().getYAxes();
+    for(IAxis t:  yAxes)
+    {
+      if(theseUnits.toString().equals(t.getTitle().getText()))
+      {
+        // ok, this will do
+        newSeries.setYAxisId(t.getId());
+        needNew = false;
+      }
+    }
+    if(needNew)
     {
       // create second Y axis
       final int axisId = chart.getAxisSet().createYAxis();
 
       // set the properties of second Y axis
       final IAxis yAxis2 = chart.getAxisSet().getYAxis(axisId);
-
-      final String newTitle = theseUnits.toString();
-      if (!newTitle.equals(yAxis2.getTitle().getText()))
-      {
-        yAxis2.getTitle().setText(theseUnits.toString());
-      }
-
+      yAxis2.getTitle().setText(theseUnits.toString());
       yAxis2.setPosition(Position.Secondary);
       newSeries.setYAxisId(axisId);
-    }
-    else
-    {
-      // check the current title
-
-      final ITitle theTitle = chart.getAxisSet().getYAxes()[0].getTitle();
-      final String oldTitle = theTitle.getText();
-      final String newTitle = theseUnits.toString();
-      if (!newTitle.equals(oldTitle))
-      {
-        theTitle.setText(theseUnits.toString());
-      }
-      newUnits = theseUnits;
-    }
-
+    }    
+    
     // if it's a monster line, we won't plot
     // markers
     if (thisQ.size() > 90)
