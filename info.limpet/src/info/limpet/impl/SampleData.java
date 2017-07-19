@@ -41,6 +41,7 @@ import javax.measure.quantity.Duration;
 import javax.measure.quantity.Frequency;
 import javax.measure.quantity.Length;
 import javax.measure.quantity.Velocity;
+import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 
@@ -68,6 +69,8 @@ public class SampleData
   public static final String SPEED_ONE = "Speed One Time";
   public static final String SPEED_TWO = "Speed Two Time";
   public static final String SPEED_FOUR = "Speed Four Time";
+  public static final String SPEED_ONE_RAD = "Speed One Rad Noise time";
+  public static final String RAD_NOISE_LOOKUP = "Radiated Noise Lookup";  
   public static final String TRACK_ONE = "Track One Time";
   public static final String COMPOSITE_ONE = "Composite Track One";
   public static final String TRACK_TWO = "Track Two Time";
@@ -136,6 +139,9 @@ public class SampleData
     NumberDocumentBuilder speedSeries4 =
         new NumberDocumentBuilder(SPEED_FOUR, METRE.divide(SECOND).asType(
             Velocity.class), null, SampleData.MILLIS);
+    NumberDocumentBuilder speedRadNoise =
+        new NumberDocumentBuilder(SPEED_ONE_RAD, NonSI.DECIBEL, null,
+            SampleData.MILLIS);    
     NumberDocumentBuilder length1 =
         new NumberDocumentBuilder(LENGTH_ONE, METRE.asType(Length.class), null,
             null);
@@ -192,9 +198,12 @@ public class SampleData
 
       angle1.add(thisTime, 90 + 1.1 * Math.toDegrees(Math.sin(Math
           .toRadians(i * 52.5))));
-      speedSeries1b.add(thisTime, 1 / Math.sin(i));
+      final double thisSpeedOne = 6 + 4d * Math.sin(Math.toRadians(i));
+      final double thisRadNoise = Math.pow(thisSpeedOne, 2);
+      speedSeries1b.add(thisTime, thisSpeedOne);
       speedSeries2b.add(thisTime, 7 + 2 * Math.sin(i));
-
+      speedRadNoise.add(thisTime, thisRadNoise);
+      
       // we want the irregular series to only have occasional
       if (i % 3 == 0)
       {
@@ -270,6 +279,7 @@ public class SampleData
     group1.add(speedIrregular.toDocument());
     group1.add(speedEarly1.toDocument());
     group1.add(speedSeries2);
+    group1.add(speedRadNoise.toDocument());
     list.add(group1);
 
     IStoreGroup factors = new StoreGroup("Factors");
