@@ -36,25 +36,38 @@ public class AddQuantityOperation extends BinaryQuantityOperation
 
   public class AddQuantityValues extends BinaryQuantityCommand
   {
+    final private boolean doLog;
+
     public AddQuantityValues(final String name,
         final List<IStoreItem> selection, final IStoreGroup store,
-        final IContext context)
+        final IContext context, final boolean doLog)
     {
-      this(name, selection, store, null, context);
+      this(name, selection, store, null, context, doLog);
     }
 
     public AddQuantityValues(final String name,
         final List<IStoreItem> selection, final IStoreGroup destination,
-        final IDocument<?> timeProvider, final IContext context)
+        final IDocument<?> timeProvider, final IContext context,
+        final boolean doLog)
     {
       super(name, "Add datasets", destination, false, false, selection,
           timeProvider, context);
+      this.doLog = doLog;
     }
 
     @Override
     protected String getBinaryNameFor(final String name1, final String name2)
     {
-      return "Sum of " + name1 + " + " + name2;
+      final String prefix;
+      if(doLog)
+      {
+        prefix = "Logarithmic Sum";
+      }
+      else
+      {
+        prefix = "Sum";
+      }
+      return prefix + " of " + name1 + " + " + name2;
     }
 
     @Override
@@ -68,15 +81,55 @@ public class AddQuantityOperation extends BinaryQuantityOperation
     @Override
     protected IOperationPerformer getOperation()
     {
-      return new InterpolatedMaths.IOperationPerformer()
+      final IOperationPerformer res;
+      if (doLog)
       {
-        @Override
-        public Dataset
-            perform(final Dataset a, final Dataset b, final Dataset o)
+        res = new InterpolatedMaths.IOperationPerformer()
         {
-          return Maths.add(a, b, o);
-        }
-      };
+          @Override
+          public Dataset perform(final Dataset a, final Dataset b,
+              final Dataset o)
+          {
+            // ok, convert them to alog
+            final Dataset aNon = toNonLog(a);
+            final Dataset bNon = toNonLog(b);
+
+            final Dataset sum = Maths.add(aNon, bNon);
+
+            final Dataset res = toLog(sum);
+
+            return res;
+
+          }
+
+          private Dataset toLog(final Dataset sum)
+          {
+            final Dataset log10 = Maths.log10(sum);
+            final Dataset times10 = Maths.multiply(log10, 10);
+            return times10;
+          }
+
+          private Dataset toNonLog(final Dataset d)
+          {
+            final Dataset div10 = Maths.divide(d, 10);
+            final Dataset raised = Maths.power(10, div10);
+            return raised;
+          }
+        };
+      }
+      else
+      {
+        res = new InterpolatedMaths.IOperationPerformer()
+        {
+          @Override
+          public Dataset perform(final Dataset a, final Dataset b,
+              final Dataset o)
+          {
+            return Maths.add(a, b, o);
+          }
+        };
+      }
+      return res;
     }
   }
 
@@ -85,11 +138,34 @@ public class AddQuantityOperation extends BinaryQuantityOperation
       final IStoreGroup destination, final Collection<ICommand> res,
       final IContext context)
   {
-    final ICommand newC =
-        new AddQuantityValues(
-            "Add numeric values in provided series (indexed)", selection,
-            destination, context);
-    res.add(newC);
+    if (hasLogData(selection))
+    {
+      // ok, we need to offer log and non-log operations
+
+      // just offer the log operation
+      ICommand newC =
+          new AddQuantityValues(
+              "Logarithmic Add for provided series (indexed)", selection,
+              destination, context, true);
+      res.add(newC);
+
+      // just offer the log operation
+      newC =
+          new AddQuantityValues("Power Add for provided series (indexed)",
+              selection, destination, context, false);
+      res.add(newC);
+
+    }
+    else
+    {
+      // just offer the log operation
+      final ICommand newC =
+          new AddQuantityValues(
+              "Add numeric values in provided series (indexed)", selection,
+              destination, context, false);
+      res.add(newC);
+    }
+
   }
 
   @Override
@@ -101,11 +177,29 @@ public class AddQuantityOperation extends BinaryQuantityOperation
 
     if (longest != null)
     {
-      final ICommand newC =
-          new AddQuantityValues(
-              "Add numeric values in provided series (interpolated)",
-              selection, destination, longest, context);
-      res.add(newC);
+      if (hasLogData(selection))
+      {
+        ICommand newC =
+            new AddQuantityValues(
+                "Logarithmic Add for provided series (interpolated)",
+                selection, destination, longest, context, true);
+        res.add(newC);
+
+        newC =
+            new AddQuantityValues(
+                "Power Add for provided series (interpolated)", selection,
+                destination, longest, context, false);
+        res.add(newC);
+
+      }
+      else
+      {
+        final ICommand newC =
+            new AddQuantityValues(
+                "Add numeric values in provided series (interpolated)",
+                selection, destination, longest, context, false);
+        res.add(newC);
+      }
     }
   }
 
@@ -120,11 +214,8 @@ public class AddQuantityOperation extends BinaryQuantityOperation
     final boolean equalDimensions = getATests().allEqualDimensions(selection);
     final boolean equalUnits = getATests().allEqualUnits(selection);
 
-    // lastly, check they're not logarithmic
-    final boolean hasLog = hasLogData(selection);
-
     return nonEmpty && allQuantity && suitableLength && equalDimensions
-        && equalUnits && !hasLog;
+        && equalUnits;
   }
 
 }
