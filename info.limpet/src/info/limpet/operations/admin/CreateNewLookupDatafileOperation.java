@@ -74,7 +74,8 @@ public class CreateNewLookupDatafileOperation extends BinaryQuantityOperation
     @Override
     protected String getBinaryNameFor(final String name1, final String name2)
     {
-      return "Lookup of " + name1 + " and " + name2;
+      return "Lookup derived by retrieving " + _subject.getName() + "'s "
+          + _subject.getUnits() + " values from " + name2;
     }
 
     @Override
@@ -82,8 +83,6 @@ public class CreateNewLookupDatafileOperation extends BinaryQuantityOperation
     {
       return null;
     }
-    
-    
 
     @Override
     protected Unit<?> getIndexUnits()
@@ -232,9 +231,12 @@ public class CreateNewLookupDatafileOperation extends BinaryQuantityOperation
       IStoreGroup destination, Collection<ICommand> res, IContext context)
   {
 
+    NumberDocument subject = (NumberDocument) selection.get(0);
+    NumberDocument lookup = (NumberDocument) selection.get(1);
     ICommand newC =
-        new NewIndexedLookupDatasetCommand("Create new document, indexed on:"
-            + selection.get(0), selection, destination, context);
+        new NewIndexedLookupDatasetCommand("Create new document by retrieving "
+            + subject.getUnits() + " from " + lookup, selection, destination,
+            context);
     res.add(newC);
   }
 
