@@ -204,7 +204,7 @@ public abstract class BinaryQuantityOperation implements IOperation
       final Unit<?> res;
 
       // ok. are they both indexed?
-      if (getATests().allIndexed(getInputs()))
+      if (getATests().allEqualIndexed(getInputs()))
       {
         // ok, that's easy
         final Document<?> doc = (Document<?>) getInputs().get(0);
@@ -481,7 +481,7 @@ public abstract class BinaryQuantityOperation implements IOperation
     {
 
       // aah, what about temporal (interpolated) values?
-      final boolean allIndexed = getATests().allIndexed(selection);
+      final boolean allIndexed = getATests().allEqualIndexed(selection);
       final boolean suitableForIndexedInterpolation =
           getATests().suitableForIndexedInterpolation(selection);
 //      final boolean hasIndexed = getATests().hasIndexed(selection);

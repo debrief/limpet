@@ -89,7 +89,7 @@ public class TimeFrequencyView extends CoreAnalysisView
   @Override
   public void display(List<IStoreItem> res)
   {
-    if (getATests().allIndexed(res))
+    if (getATests().allEqualIndexed(res))
     {
       // sort out what type of data this is.
       showData(res);

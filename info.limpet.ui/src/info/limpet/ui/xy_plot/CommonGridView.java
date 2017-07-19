@@ -22,7 +22,7 @@ abstract public class CommonGridView extends CoreAnalysisView
     final boolean allCollections = tests.allCollections(res);
     final boolean allQuantity = tests.allQuantity(res);
     final boolean suitableIndex =
-        tests.allIndexed(res) || tests.allNonIndexed(res);
+        tests.allEqualIndexed(res) || tests.allNonIndexed(res);
     return allCollections && suitableIndex && (allQuantity || allNonQuantity);
   }
 
