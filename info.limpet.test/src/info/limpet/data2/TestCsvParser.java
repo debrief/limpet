@@ -169,6 +169,16 @@ public class TestCsvParser extends TestCase
     assertEquals("correct num rows", 1708, firstColl.size());
   }
 
+  @Test
+  public void testMissingCell() throws Exception
+  {
+    File file = getDataFile("overview/ShortContact.csv");
+    assertTrue(file.isFile());
+    CsvParser parser = new CsvParser();
+    List<IStoreItem> items = parser.parse(file.getAbsolutePath());
+    assertEquals("correct group", 1, items.size());
+  }
+
   public static File getDataFile(String name)
   {
     File file = new File(getFileName(name));

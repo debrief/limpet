@@ -73,6 +73,8 @@ public class TestRepParser extends TestCase
     assertEquals("correct name", "Singleton Track B-location", trackTwo
         .getName());
     assertEquals("correct num points", 1, trackTwo.size());
+    // check it doesn't have time units
+    assertEquals("doesn't have units", null, trackTwo.getIndexUnits());
 
   }
 

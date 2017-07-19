@@ -40,9 +40,6 @@ import org.eclipse.january.dataset.DoubleDataset;
 
 public abstract class TwoTrackOperation implements IOperation
 {
-  private final CollectionComplianceTests aTests =
-      new CollectionComplianceTests();
-
   public abstract static class TwoTrackCommand extends AbstractCommand
   {
     private final IDocument<?> _timeProvider;
@@ -54,7 +51,7 @@ public abstract class TwoTrackOperation implements IOperation
     public TwoTrackCommand(final List<IStoreItem> selection,
         final IStoreGroup store, final String title, final String description,
         final IDocument<?> timeProvider, final IContext context,
-        Unit<?> outputUnits)
+        final Unit<?> outputUnits)
     {
       super(title, description, store, false, false, selection, context);
       _timeProvider = timeProvider;
@@ -162,7 +159,6 @@ public abstract class TwoTrackOperation implements IOperation
 
       if (_timeProvider != null)
       {
-
         // and the bounding period
         final Collection<IStoreItem> selection = new ArrayList<IStoreItem>();
         selection.add(track1);
@@ -200,19 +196,61 @@ public abstract class TwoTrackOperation implements IOperation
 
       final Iterator<Point2D> t1Iter = interp1.getLocationIterator();
       final Iterator<Point2D> t2Iter = interp2.getLocationIterator();
-      final Iterator<Double> timeIter;
-      if (times != null)
+
+      // produce a time iterator, if we can.
+      final Iterator<Double> timeIter = times != null ? times.getIndex() : null;
+
+      // if we can't iterate through a collection, re-use the same value
+      final Point2D fixed1 = interp1.size() == 1 ? t1Iter.next() : null;
+      final Point2D fixed2 = interp2.size() == 1 ? t2Iter.next() : null;
+
+      // special case. if we haven't got any times, we'll just produce a single output.
+      // we don't want to try to index it.
+      final boolean singlePass = (fixed1 != null && fixed2 != null);
+
+      // refactor out the process to loop through the data
+      processData(singlePass, t1Iter, t2Iter, fixed1, fixed2, timeIter, calc);
+
+      return getOutputDocument();
+    }
+
+    /**
+     * process the iterators, storing the data as we go
+     * 
+     */
+    private void processData(final boolean doSinglePass,
+        final Iterator<Point2D> t1Iter, final Iterator<Point2D> t2Iter,
+        final Point2D fixed1, final Point2D fixed2,
+        final Iterator<Double> timeIter, final IGeoCalculator calc)
+    {
+      boolean singlePass = doSinglePass;
+
+      while (singlePass || t1Iter.hasNext() || t2Iter.hasNext())
       {
-        timeIter = times.getIndex();
-      }
-      else
-      {
-        timeIter = null;
-      }
-      while (t1Iter.hasNext())
-      {
-        final Point2D p1 = t1Iter.next();
-        final Point2D p2 = t2Iter.next();
+        // special handling for if we have singletons, in which
+        // case we're using a fixed value rather than an interator
+        final Point2D p1;
+        if (fixed1 != null)
+        {
+          p1 = fixed1;
+        }
+        else
+        {
+          p1 = t1Iter.next();
+        }
+
+        final Point2D p2;
+        if (fixed2 != null)
+        {
+          p2 = fixed2;
+        }
+        else
+        {
+          p2 = t2Iter.next();
+
+        }
+
+        // and the same for time
         final Double time;
         if (timeIter != null)
         {
@@ -222,10 +260,15 @@ public abstract class TwoTrackOperation implements IOperation
         {
           time = null;
         }
-        calcAndStore(calc, p1, p2, time);
-      }
 
-      return getOutputDocument();
+        calcAndStore(calc, p1, p2, time);
+
+        // are we just doing a single pass anyway?
+        if (singlePass)
+        {
+          singlePass = false;
+        }
+      }
     }
 
     @Override
@@ -247,6 +290,9 @@ public abstract class TwoTrackOperation implements IOperation
       }
     }
   }
+
+  private final CollectionComplianceTests aTests =
+      new CollectionComplianceTests();
 
   protected boolean appliesTo(final List<IStoreItem> selection)
   {

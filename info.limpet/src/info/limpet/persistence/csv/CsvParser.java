@@ -211,6 +211,20 @@ public class CsvParser extends FileParser
     {
       return colName;
     }
+    
+    protected Double parseDouble(final String input)
+    {
+      final Double res;
+      if(input.length() > 0)
+      {
+        res = Double.parseDouble(input);
+      }
+      else
+      {
+        res = Double.NaN;
+      }
+      return res;
+    }
 
     /**
      * how many columns do we consume?
@@ -401,7 +415,7 @@ public class CsvParser extends FileParser
         final double thisIndex, final int colStart, final CSVRecord row)
     {
       final String thisVal = row.get(colStart);
-      final Double val = Double.parseDouble(thisVal);
+      final Double val = parseDouble(thisVal);
       final NumberDocumentBuilder nm = (NumberDocumentBuilder) series;
       add(nm, thisIndex, val);
     }
@@ -484,7 +498,7 @@ public class CsvParser extends FileParser
         final double thisTime, final int colStart, final CSVRecord row)
     {
       final String thisVal = row.get(colStart);
-      final Double val = Double.parseDouble(thisVal);
+      final Double val = parseDouble(thisVal);
       final NumberDocumentBuilder inm = (NumberDocumentBuilder) series;
       add(inm, thisTime, val);
     }
