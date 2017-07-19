@@ -85,9 +85,11 @@ public class AddQuantityOperation extends BinaryQuantityOperation
       final IStoreGroup destination, final Collection<ICommand> res,
       final IContext context)
   {
+    final String modifier = describeOpFor(selection);
+    
     final ICommand newC =
         new AddQuantityValues(
-            "Add numeric values in provided series (indexed)", selection,
+            modifier + "numeric values in provided series (indexed)", selection,
             destination, context);
     res.add(newC);
   }
@@ -97,16 +99,32 @@ public class AddQuantityOperation extends BinaryQuantityOperation
       final IStoreGroup destination, final Collection<ICommand> res,
       final IContext context)
   {
+    final String modifier = describeOpFor(selection);
     final IDocument<?> longest = getLongestIndexedCollection(selection);
 
     if (longest != null)
     {
       final ICommand newC =
           new AddQuantityValues(
-              "Add numeric values in provided series (interpolated)",
+              modifier + "numeric values in provided series (interpolated)",
               selection, destination, longest, context);
       res.add(newC);
     }
+  }
+
+
+  private String describeOpFor(final List<IStoreItem> selection)
+  {
+    final String modifier;
+    if(hasLogData(selection))
+    {
+      modifier = "Power addition for ";
+    }
+    else
+    {
+      modifier = "Add ";
+    }
+    return modifier;
   }
 
   @Override
