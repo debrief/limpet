@@ -38,12 +38,99 @@ import org.eclipse.january.metadata.internal.AxesMetadataImpl;
 
 public class CreateNewIndexedDatafileOperation extends BinaryQuantityOperation
 {
-  
-  @Override
-  public List<ICommand> actionsFor(List<IStoreItem> selection,
-      IStoreGroup destination, IContext context)
+
+  public class NewIndexedDatasetCommand extends BinaryQuantityCommand
   {
-    List<ICommand> res = new ArrayList<ICommand>();
+    public NewIndexedDatasetCommand(final String name,
+        final List<IStoreItem> selection, final IStoreGroup store,
+        final IContext context)
+    {
+      this(name, selection, store, null, context);
+    }
+
+    public NewIndexedDatasetCommand(final String name,
+        final List<IStoreItem> selection, final IStoreGroup destination,
+        final IDocument<?> timeProvider, final IContext context)
+    {
+      super(name, "Reindex dataset", destination, false, false, selection,
+          timeProvider, context);
+    }
+
+    @Override
+    protected void assignOutputIndices(final IDataset output,
+        final Dataset outputIndices)
+    {
+      // ok, we don't do this, we want to take charge of the output indices
+    }
+
+    @Override
+    protected String getBinaryNameFor(final String name1, final String name2)
+    {
+      return "Composite of " + name1 + " and " + name2;
+    }
+
+    @Override
+    protected Unit<?> getBinaryOutputUnit(final Unit<?> first,
+        final Unit<?> second)
+    {
+      // return product of units
+      return first.times(second);
+    }
+
+    @Override
+    protected IOperationPerformer getOperation()
+    {
+      return new InterpolatedMaths.IOperationPerformer()
+      {
+        @Override
+        public Dataset
+            perform(final Dataset a, final Dataset b, final Dataset o)
+        {
+          // ok, we're going to use dataset a as the new index units,
+          // so we've just got to set them in a copy of b
+          final Dataset output = b.clone();
+
+          // clear any existing metadata
+          output.clearMetadata(AxesMetadata.class);
+
+          // now store the new metadata
+          final AxesMetadata am = new AxesMetadataImpl();
+          am.initialize(1);
+          am.setAxis(0, a);
+          output.addMetadata(am);
+
+          return output;
+        }
+      };
+    }
+
+    @Override
+    protected Unit<?> getUnits()
+    {
+      // ok, now set the index units
+      final NumberDocument index = (NumberDocument) getInputs().get(1);
+      return index.getUnits();
+    }
+
+    @Override
+    protected void tidyOutput(final NumberDocument output)
+    {
+      super.tidyOutput(output);
+
+      // ok, now set the index units
+      final NumberDocument index = (NumberDocument) getInputs().get(0);
+      final Unit<?> indUnits = index.getUnits();
+
+      // and store them
+      output.setIndexUnits(indUnits);
+    }
+  }
+
+  @Override
+  public List<ICommand> actionsFor(final List<IStoreItem> selection,
+      final IStoreGroup destination, final IContext context)
+  {
+    final List<ICommand> res = new ArrayList<ICommand>();
     if (appliesTo(selection))
     {
       // aah, what about temporal (interpolated) values?
@@ -53,133 +140,52 @@ public class CreateNewIndexedDatafileOperation extends BinaryQuantityOperation
   }
 
   @Override
-  protected void addInterpolatedCommands(List<IStoreItem> selection,
-      IStoreGroup destination, Collection<ICommand> res, IContext context)
+  protected void addIndexedCommands(final List<IStoreItem> selection,
+      final IStoreGroup destination, final Collection<ICommand> res,
+      final IContext context)
   {
-    IDocument<?> longest = getLongestIndexedCollection(selection);
+    throw new RuntimeException(
+        "This operation doesn't support indexed operations");
+  }
+
+  @Override
+  protected void addInterpolatedCommands(final List<IStoreItem> selection,
+      final IStoreGroup destination, final Collection<ICommand> res,
+      final IContext context)
+  {
+    final IDocument<?> longest = getLongestIndexedCollection(selection);
 
     if (longest != null)
     {
-      NumberDocument coll1 = (NumberDocument) selection.get(0);
-      NumberDocument coll2 = (NumberDocument) selection.get(1);
-      
+      final NumberDocument coll1 = (NumberDocument) selection.get(0);
+      final NumberDocument coll2 = (NumberDocument) selection.get(1);
+
       ICommand newC =
-          new NewIndexedDatasetCommand(
-              "Create new document, indexed on:" + coll1,
-              selection, destination, longest, context);
+          new NewIndexedDatasetCommand("Create new document, indexed on:"
+              + coll1, selection, destination, longest, context);
       res.add(newC);
-      
-      ArrayList<IStoreItem> newSel = new ArrayList<IStoreItem>(selection);
+
+      final ArrayList<IStoreItem> newSel = new ArrayList<IStoreItem>(selection);
       Collections.reverse(newSel);
-      
+
       // ok, now reverse the selection
       newC =
-          new NewIndexedDatasetCommand(
-              "Create new document, indexed on:" + coll2,
-              newSel, destination, longest, context);
+          new NewIndexedDatasetCommand("Create new document, indexed on:"
+              + coll2, newSel, destination, longest, context);
       res.add(newC);
-      
+
     }
   }
 
-  protected void addIndexedCommands(List<IStoreItem> selection,
-      IStoreGroup destination, Collection<ICommand> res, IContext context)
+  @Override
+  protected boolean appliesTo(final List<IStoreItem> selection)
   {
-    throw new RuntimeException("This operation doesn't support indexed operations");
-  }
-
-  protected boolean appliesTo(List<IStoreItem> selection)
-  {
-    boolean nonEmpty = getATests().nonEmpty(selection);
-    boolean correctNum = getATests().exactNumber(selection, 2);
-    boolean allQuantity = getATests().allQuantity(selection);
-    boolean commonIndex = getATests().allIndexed(selection);
+    final boolean nonEmpty = getATests().nonEmpty(selection);
+    final boolean correctNum = getATests().exactNumber(selection, 2);
+    final boolean allQuantity = getATests().allQuantity(selection);
+    final boolean commonIndex = getATests().allEqualIndexed(selection);
 
     return nonEmpty && correctNum && allQuantity && commonIndex;
-  }
-
-  public class NewIndexedDatasetCommand extends BinaryQuantityCommand
-  {
-    public NewIndexedDatasetCommand(String name, List<IStoreItem> selection,
-        IStoreGroup store, IContext context)
-    {
-      this(name, selection, store, null, context);
-    }
-
-    public NewIndexedDatasetCommand(String name, List<IStoreItem> selection,
-        IStoreGroup destination, IDocument<?> timeProvider, IContext context)
-    {
-      super(name, "Reindex dataset", destination, false, false, selection,
-          timeProvider, context);
-    }
-    
-    
-   
-    @Override
-    protected Unit<?> getUnits()
-    {
-      // ok, now set the index units
-      NumberDocument index = (NumberDocument) getInputs().get(1);
-      return index.getUnits();
-    }
-
-    @Override
-    protected void tidyOutput(NumberDocument output)
-    {
-      super.tidyOutput(output);
-      
-      // ok, now set the index units
-      NumberDocument index = (NumberDocument) getInputs().get(0);
-      Unit<?> indUnits = index.getUnits();
-      
-      // and store them
-      output.setIndexUnits(indUnits);
-    }
-
-    @Override
-    protected void assignOutputIndices(IDataset output, Dataset outputIndices)
-    {
-      // ok, we don't do this, we want to take charge of the output indices
-    }
-
-    @Override
-    protected IOperationPerformer getOperation()
-    {
-      return new InterpolatedMaths.IOperationPerformer()
-      {
-        @Override
-        public Dataset perform(Dataset a, Dataset b, Dataset o)
-        {
-          // ok, we're going to use dataset a as the new index units,
-          // so we've just got to set them in a copy of b
-          Dataset output = b.clone();
-          
-          // clear any existing metadata
-          output.clearMetadata(AxesMetadata.class);
-          
-          // now store the new metadata
-          AxesMetadata am = new AxesMetadataImpl();
-          am.initialize(1);
-          am.setAxis(0, a);
-          output.addMetadata(am);
-          
-          return output;
-        }
-      };
-    }
-
-    @Override
-    protected Unit<?> getBinaryOutputUnit(Unit<?> first, Unit<?> second)
-    {
-      // return product of units
-      return first.times(second);
-    }
-
-    @Override
-    protected String getBinaryNameFor(String name1, String name2)
-    {
-      return "Composite of " + name1 + " and " + name2;
-    }
   }
 
 }

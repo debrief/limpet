@@ -115,7 +115,7 @@ public class MultiplyQuantityOperation extends BinaryQuantityOperation
     final boolean nonEmpty = getATests().nonEmpty(selection);
     final boolean allQuantity = getATests().allQuantity(selection);
     final boolean suitableLength =
-        getATests().allIndexed(selection)
+        getATests().allEqualIndexed(selection)
             || getATests().allEqualLengthOrSingleton(selection);
     final boolean hasMoreThanOne = selection.size() > 1;
 

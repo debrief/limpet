@@ -469,7 +469,7 @@ public class CollectionComplianceTests
     }
     return allValid;
   }
-
+  
   /**
    * check if the series all have equal indixes
    * 
@@ -477,6 +477,40 @@ public class CollectionComplianceTests
    * @return true/false
    */
   public boolean allIndexed(List<IStoreItem> selection)
+  {
+    // are they all temporal?
+    boolean allValid = true;
+
+    for (int i = 0; i < selection.size(); i++)
+    {
+      final IStoreItem thisI = selection.get(i);
+      if (thisI instanceof IDocument)
+      {
+        final IDocument<?> thisC = (IDocument<?>) thisI;
+        if (!thisC.isIndexed())
+        {
+          // oops, no
+          allValid = false;
+          break;
+        }
+      }
+      else
+      {
+        // oops, no
+        allValid = false;
+        break;
+      }
+    }
+    return allValid;
+  }
+
+  /**
+   * check if the series all have equal indixes
+   * 
+   * @param selection
+   * @return true/false
+   */
+  public boolean allEqualIndexed(List<IStoreItem> selection)
   {
     // are they all temporal?
     boolean allValid = true;
