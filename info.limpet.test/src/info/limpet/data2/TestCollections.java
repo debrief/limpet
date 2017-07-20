@@ -32,6 +32,7 @@ import info.limpet.impl.Range;
 import info.limpet.impl.SampleData;
 import info.limpet.impl.StoreGroup;
 import info.limpet.impl.StringDocument;
+import info.limpet.operations.admin.CreateNewLookupDatafileOperation;
 import info.limpet.operations.arithmetic.simple.MultiplyQuantityOperation;
 
 import java.awt.geom.Point2D;
@@ -41,6 +42,7 @@ import java.util.List;
 import java.util.UUID;
 
 import javax.measure.quantity.Velocity;
+import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
 
 import junit.framework.TestCase;
@@ -73,7 +75,7 @@ public class TestCollections extends TestCase
     // check it got stored
     assertEquals("correct number of samples", 10, strDoc.size());
   }
-  
+
   public void testDelete()
   {
     NumberDocumentBuilder tq1b =
@@ -105,7 +107,7 @@ public class TestCollections extends TestCase
     ICommand firstC = commands.iterator().next();
 
     assertEquals("store size before", 2, store.size());
-    
+
     firstC.execute();
 
     assertEquals("store size after", 3, store.size());
@@ -113,24 +115,25 @@ public class TestCollections extends TestCase
     // check deleting the output document
     Document<?> out = firstC.getOutputs().get(0);
     assertNotNull("found output", out);
-    
+
     // ok, check output there
     assertEquals("has output", 1, firstC.getOutputs().size());
-    
+
     // check the input contains the output
     assertTrue("registered with input", tq1.getDependents().contains(firstC));
-    
-    // ok, now delete the output 
+
+    // ok, now delete the output
     store.remove(out);
 
     // ok, check outputs deleted
     assertEquals("output removed", 0, firstC.getOutputs().size());
-    
-    // and check the inputs were deleted 
+
+    // and check the inputs were deleted
     assertEquals("input removed", 0, firstC.getInputs().size());
-    
+
     // check the input contains the output
-    assertFalse("not registered with input", tq1.getDependents().contains(firstC));
+    assertFalse("not registered with input", tq1.getDependents().contains(
+        firstC));
 
     assertEquals("store size after output deleted", 2, store.size());
 
@@ -145,22 +148,23 @@ public class TestCollections extends TestCase
     // try to re-run
     firstC.execute();
 
-    // ok, check inputs have 
+    // ok, check inputs have
     assertEquals("has output", 1, firstC.getOutputs().size());
 
     // check the command is registered as dependent on the input
-    assertTrue("command registered as dependent", tq1.getDependents().contains(firstC));
-    
+    assertTrue("command registered as dependent", tq1.getDependents().contains(
+        firstC));
+
     // now try to remove an input
     store.remove(tq1);
-    
+
     // check we're no longer a dependent of the input
     assertFalse("no longer a dependent", tq1.getDependents().contains(firstC));
-    
+
     // what's happened to the command?
-    assertFalse("input should be deleted",firstC.getInputs().contains(tq1));
-    
-    // check the 
+    assertFalse("input should be deleted", firstC.getInputs().contains(tq1));
+
+    // check the
   }
 
   public void testDocumentListeners()
@@ -296,6 +300,75 @@ public class TestCollections extends TestCase
       thrown = true;
     }
     assertTrue("the expected exception got caught", thrown);
+  }
+
+  public void testExtrapolateOnInterpolate()
+  {
+    CreateNewLookupDatafileOperation op =
+        new CreateNewLookupDatafileOperation();
+    StoreGroup store = new StoreGroup("data");
+    List<IStoreItem> selection = new ArrayList<IStoreItem>();
+
+    // start off with values all in range
+    NumberDocumentBuilder ndb =
+        new NumberDocumentBuilder("lookup", NonSI.DECIBEL, null, SI.METER);
+    ndb.add(100d, 55d);
+    ndb.add(200d, 50d);
+    ndb.add(300d, 45d);
+    ndb.add(400d, 40d);
+
+    NumberDocument lookup = ndb.toDocument();
+    NumberDocumentBuilder sbj =
+        new NumberDocumentBuilder("subject", SI.METER, null, null);
+    sbj.add(250d);
+    NumberDocument subject = sbj.toDocument();
+
+    selection.add(subject);
+    selection.add(lookup);
+    List<ICommand> ops = op.actionsFor(selection, store, context);
+    assertNotNull("found some actions", ops);
+
+    ops.get(0).execute();
+
+    NumberDocument output = (NumberDocument) ops.get(0).getOutputs().get(0);
+    assertEquals("correct interpolated value", 47.5, output.getValueAt(0), 0.1);
+
+    // now create value out of range (to the left)
+    selection.remove(subject);
+    sbj.clear();
+    sbj.add(50d);
+    subject = sbj.toDocument();
+    selection.add(subject);
+
+    ops = op.actionsFor(selection, store, context);
+    assertNotNull("found some actions", ops);
+
+    ops.get(0).execute();
+
+    output = (NumberDocument) ops.get(0).getOutputs().get(0);
+    // TODO: we still need a fix to extrapolate the value if it's outside
+    // the coverage of the lookup table. The current (default) behaviour
+    // is to return the first/last value
+    assertEquals("correct interpolated value", 55, output.getValueAt(0), 0.1);
+
+    // now create value out of range (to the right)
+    selection.remove(subject);
+    sbj.clear();
+    sbj.add(500d);
+    subject = sbj.toDocument();
+    selection.add(subject);
+
+    ops = op.actionsFor(selection, store, context);
+    assertNotNull("found some actions", ops);
+
+    ops.get(0).execute();
+
+    output = (NumberDocument) ops.get(0).getOutputs().get(0);
+    // TODO: we still need a fix to extrapolate the value if it's outside
+    // the coverage of the lookup table. The current (default) behaviour
+    // is to return the first/last value
+    assertEquals("correct interpolated value", 40, output.getValueAt(0), 0.1);
+
   }
 
   public void testStoreWrongStringType()
