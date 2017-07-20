@@ -110,10 +110,11 @@ public class CreateNewLookupDatafileOperation extends BinaryQuantityOperation
 
       try
       {
-
         // find the times for the output
+        final List<AxesMetadata> allAxes =
+            _subject.getDataset().getMetadata(AxesMetadata.class);
         final AxesMetadata subjectIndices =
-            _subject.getDataset().getMetadata(AxesMetadata.class).get(0);
+            allAxes != null ? allAxes.get(0) : null;
         final DoubleDataset subjectValues =
             (DoubleDataset) _subject.getDataset();
 
@@ -129,13 +130,15 @@ public class CreateNewLookupDatafileOperation extends BinaryQuantityOperation
             (DoubleDataset) Maths.interpolate(lookupIndex, lookupValues,
                 subjectValues, null, null);
 
-        // ok, now put the indices back in
-        newVals.clearMetadata(AxesMetadata.class);
-        newVals.addMetadata(subjectIndices);
+        // ok, now put the indices back in, if we have any
+        if (subjectIndices != null)
+        {
+          newVals.clearMetadata(AxesMetadata.class);
+          newVals.addMetadata(subjectIndices);
+        }
       }
       catch (MetadataException e)
       {
-        // TODO Auto-generated catch block
         e.printStackTrace();
       }
 
@@ -246,7 +249,7 @@ public class CreateNewLookupDatafileOperation extends BinaryQuantityOperation
     final boolean nonEmpty = getATests().nonEmpty(selection);
     final boolean correctNum = getATests().exactNumber(selection, 2);
     final boolean allQuantity = getATests().allQuantity(selection);
-    final boolean allIndexed = getATests().allIndexed(selection);
+    final boolean allIndexed = getATests().allIndexedOrSingleton(selection);
 
     return nonEmpty && correctNum && allQuantity && allIndexed;
   }

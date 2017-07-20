@@ -81,6 +81,32 @@ public class TestAdmin extends TestCase
     assertEquals("right y axis", SI.METRE.divide(SI.SECOND), output.getUnits());
   }
 
+  public void testDeriveFromOthersSingleton()
+  {
+    StoreGroup store = new StoreGroup("data");
+    IOperation oper = new CreateNewLookupDatafileOperation();
+    List<IStoreItem> selection = new ArrayList<IStoreItem>();
+
+    StoreGroup sampleData = new SampleData().getData(20);
+
+    final NumberDocument speedSet = (NumberDocument) sampleData.get(SampleData.RANGED_SPEED_SINGLETON);
+    final NumberDocument lookupSet = (NumberDocument) sampleData.get(SampleData.RAD_NOISE_LOOKUP);
+
+    selection.clear();
+    selection.add(speedSet);
+    selection.add(lookupSet);
+    List<ICommand> ops = oper.actionsFor(selection, store, context);
+    assertEquals("found some ops", 1, ops.size());
+    ops.get(0).execute();
+   
+    NumberDocument output = (NumberDocument) ops.get(0).getOutputs().get(0);
+    assertNotNull(output);
+    
+    // check the units
+    assertEquals("right units", lookupSet.getUnits(), output.getUnits());
+    assertEquals("right index units", speedSet.getIndexUnits(), output.getIndexUnits());    
+  }
+
   public void testDeriveFromOthersValid()
   {
     StoreGroup store = new StoreGroup("data");
@@ -104,8 +130,7 @@ public class TestAdmin extends TestCase
     
     // check the units
     assertEquals("right units", lookupSet.getUnits(), output.getUnits());
-    assertEquals("right index units", speedSet.getIndexUnits(), output.getIndexUnits());
-    
+    assertEquals("right index units", speedSet.getIndexUnits(), output.getIndexUnits());    
   }
 
   public void testDeriveFromOthersInvalid()
