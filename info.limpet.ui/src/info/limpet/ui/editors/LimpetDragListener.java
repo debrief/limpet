@@ -14,7 +14,9 @@
  *****************************************************************************/
 package info.limpet.ui.editors;
 
+import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
+import info.limpet.impl.Document;
 import info.limpet.ui.data_provider.data.LimpetWrapper;
 
 import java.util.Iterator;
@@ -35,8 +37,6 @@ public class LimpetDragListener extends DragSourceAdapter
   {
     this.viewer = viewer;
   }
-  
-  
 
   @Override
   public void dragFinished(DragSourceEvent event)
@@ -58,15 +58,15 @@ public class LimpetDragListener extends DragSourceAdapter
 
     if (TextTransfer.getInstance().isSupportedType(event.dataType))
     {
-
       StringBuffer items = new StringBuffer();
       Iterator<?> iter = selection.iterator();
       while (iter.hasNext())
       {
         LimpetWrapper object = (LimpetWrapper) iter.next();
-        if(object instanceof IStoreItem)
+        Object subject = object.getSubject();
+        if (subject instanceof IStoreItem)
         {
-          IStoreItem si = (IStoreItem) object.getSubject();
+          IStoreItem si = (IStoreItem) subject;
           items.append(si.getUUID().toString());
         }
         else
@@ -79,7 +79,7 @@ public class LimpetDragListener extends DragSourceAdapter
     }
     if (LocalSelectionTransfer.getTransfer().isSupportedType(event.dataType))
     {
-      
+
       LocalSelectionTransfer.getTransfer().setSelection(selection);
       event.data = selection;
     }
@@ -90,7 +90,44 @@ public class LimpetDragListener extends DragSourceAdapter
    */
   public void dragStart(DragSourceEvent event)
   {
-    event.doit = !viewer.getSelection().isEmpty();
+    boolean allowDrag = false;
+
+    // check selection isn't empty
+    if (viewer.getSelection().isEmpty())
+    {
+      allowDrag = false;
+    }
+
+    // check the selection is store items, and not just structural entities such
+    // as "Predecessors" folder.
+    IStructuredSelection selection =
+        (IStructuredSelection) viewer.getSelection();
+
+    Iterator<?> iter = selection.iterator();
+    while (iter.hasNext())
+    {
+      LimpetWrapper object = (LimpetWrapper) iter.next();
+      final Object subject = object.getSubject();
+      if (subject instanceof IStoreItem)
+      {
+        // allow folders & documents, not commands
+        if(subject instanceof Document || subject instanceof IStoreGroup)
+        {
+          allowDrag = true;
+        }
+        else
+        {
+          allowDrag = false;
+        }
+      }
+      else
+      {
+        allowDrag = false;
+        break;
+      }
+    }
+
+    event.doit = allowDrag;
     LocalSelectionTransfer.getTransfer().setSelection(viewer.getSelection());
   }
 }
