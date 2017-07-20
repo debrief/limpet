@@ -255,15 +255,11 @@ public class StoreGroup extends ArrayList<IStoreItem> implements IStoreGroup
       if (item instanceof IStoreGroup)
       {
         IStoreGroup group = (IStoreGroup) item;
-        Iterator<IStoreItem> iter2 = group.iterator();
-        while (iter2.hasNext())
+        // recurse down through groups
+        res = group.get(uuid);
+        if(res != null)
         {
-          IStoreItem thisI = (IStoreItem) iter2.next();
-          if (uuid.equals(thisI.getUUID()))
-          {
-            res = thisI;
-            break;
-          }
+          break;
         }
       }
       if (uuid.equals(item.getUUID()))
