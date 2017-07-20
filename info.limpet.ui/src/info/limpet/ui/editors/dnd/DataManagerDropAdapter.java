@@ -102,7 +102,7 @@ public class DataManagerDropAdapter extends ViewerDropAdapter
           if (item == null)
           {
             Activator.logError(Status.ERROR,
-                "Failed to find matching UUID, from another editor?", null);
+                "Failed to find matching UUID in DnD, from another editor?", null);
             return false;
           }
 
