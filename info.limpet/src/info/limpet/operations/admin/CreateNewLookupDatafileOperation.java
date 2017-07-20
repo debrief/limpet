@@ -110,10 +110,11 @@ public class CreateNewLookupDatafileOperation extends BinaryQuantityOperation
 
       try
       {
-
         // find the times for the output
+        final List<AxesMetadata> allAxes =
+            _subject.getDataset().getMetadata(AxesMetadata.class);
         final AxesMetadata subjectIndices =
-            _subject.getDataset().getMetadata(AxesMetadata.class).get(0);
+            allAxes != null ? allAxes.get(0) : null;
         final DoubleDataset subjectValues =
             (DoubleDataset) _subject.getDataset();
 
@@ -125,17 +126,24 @@ public class CreateNewLookupDatafileOperation extends BinaryQuantityOperation
             (DoubleDataset) lookupIndices.getAxis(0)[0];
         final DoubleDataset lookupValues = (DoubleDataset) _lookup.getDataset();
 
+        // find the first/last values, use them as "left" and "right" in the 
+        // interpolation
+        final double left = lookupValues.get(0);
+        final double right = lookupValues.get(lookupValues.getSize()-1);
+        
         newVals =
             (DoubleDataset) Maths.interpolate(lookupIndex, lookupValues,
-                subjectValues, null, null);
+                subjectValues, left, right);
 
-        // ok, now put the indices back in
-        newVals.clearMetadata(AxesMetadata.class);
-        newVals.addMetadata(subjectIndices);
+        // ok, now put the indices back in, if we have any
+        if (subjectIndices != null)
+        {
+          newVals.clearMetadata(AxesMetadata.class);
+          newVals.addMetadata(subjectIndices);
+        }
       }
       catch (MetadataException e)
       {
-        // TODO Auto-generated catch block
         e.printStackTrace();
       }
 
@@ -199,11 +207,12 @@ public class CreateNewLookupDatafileOperation extends BinaryQuantityOperation
         NumberDocument d1 = (NumberDocument) selection.get(0);
         NumberDocument d2 = (NumberDocument) selection.get(1);
 
-        if (d1.getUnits().equals(thisU) && d2.getIndexUnits().equals(thisU))
+        if (d1.getUnits().equals(thisU) && d2.getIndexUnits() != null
+            && d2.getIndexUnits().equals(thisU))
         {
           addInterpolatedCommands(selection, destination, res, context);
         }
-        else if (d2.getUnits().equals(thisU)
+        else if (d2.getUnits().equals(thisU) && d1.getIndexUnits() != null
             && d1.getIndexUnits().equals(thisU))
         {
           // ok, reverse the selection
@@ -246,7 +255,7 @@ public class CreateNewLookupDatafileOperation extends BinaryQuantityOperation
     final boolean nonEmpty = getATests().nonEmpty(selection);
     final boolean correctNum = getATests().exactNumber(selection, 2);
     final boolean allQuantity = getATests().allQuantity(selection);
-    final boolean allIndexed = getATests().allIndexed(selection);
+    final boolean allIndexed = getATests().allIndexedOrSingleton(selection);
 
     return nonEmpty && correctNum && allQuantity && allIndexed;
   }
