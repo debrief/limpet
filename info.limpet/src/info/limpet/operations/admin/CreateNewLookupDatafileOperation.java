@@ -126,9 +126,14 @@ public class CreateNewLookupDatafileOperation extends BinaryQuantityOperation
             (DoubleDataset) lookupIndices.getAxis(0)[0];
         final DoubleDataset lookupValues = (DoubleDataset) _lookup.getDataset();
 
+        // find the first/last values, use them as "left" and "right" in the 
+        // interpolation
+        final double left = lookupValues.get(0);
+        final double right = lookupValues.get(lookupValues.getSize()-1);
+        
         newVals =
             (DoubleDataset) Maths.interpolate(lookupIndex, lookupValues,
-                subjectValues, null, null);
+                subjectValues, left, right);
 
         // ok, now put the indices back in, if we have any
         if (subjectIndices != null)
