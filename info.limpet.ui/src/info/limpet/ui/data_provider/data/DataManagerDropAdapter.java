@@ -228,63 +228,64 @@ public class DataManagerDropAdapter extends ViewerDropAdapter
         }
         else if (fileName != null && fileName.toLowerCase().endsWith(".rep"))
         {
-            try
-            {
-              parseRep(fileName);
-            }
-            catch (IOException e)
-            {
-              MessageDialog.openWarning(getViewer().getControl().getShell(),
-                  "Warning", "Cannot drop '" + fileName
-                      + "'. See log for more details");
-              Activator.log(e);
-              return false;
-            }
+          try
+          {
+            parseRep(fileName);
+          }
+          catch (IOException e)
+          {
+            MessageDialog.openWarning(getViewer().getControl().getShell(),
+                "Warning", "Cannot drop '" + fileName
+                    + "'. See log for more details");
+            Activator.log(e);
+            return false;
+          }
         }
         else if (fileName != null && fileName.toLowerCase().endsWith(".dsf"))
         {
-            try
-            {
-              // ok, re-use the REP parser
-              parseRep(fileName);
-            }
-            catch (IOException e)
-            {
-              MessageDialog.openWarning(getViewer().getControl().getShell(),
-                  "Warning", "Cannot drop '" + fileName
-                      + "'. See log for more details");
-              Activator.log(e);
-              return false;
-            }
+          try
+          {
+            // ok, re-use the REP parser
+            parseRep(fileName);
+          }
+          catch (IOException e)
+          {
+            MessageDialog.openWarning(getViewer().getControl().getShell(),
+                "Warning", "Cannot drop '" + fileName
+                    + "'. See log for more details");
+            Activator.log(e);
+            return false;
+          }
         }
       }
     }
     return true;
   }
 
-  private void parseThis(final FileParser parser, final String fileName) throws IOException
+  private void parseThis(final FileParser parser, final String fileName)
+      throws IOException
   {
-	    List<IStoreItem> collections = parser.parse(fileName);
-	    Object target = getCurrentTarget();
-	    if (target instanceof GroupWrapper)
-	    {
-	      ((GroupWrapper) target).getGroup().addAll(collections);
-	    }
-	    else
-	    {
-	      _store.addAll(collections);
-	    }
-	    changed();
+    List<IStoreItem> collections = parser.parse(fileName);
+    Object target = getCurrentTarget();
+    if (target instanceof GroupWrapper)
+    {
+      ((GroupWrapper) target).getGroup().addAll(collections);
+    }
+    else
+    {
+      _store.addAll(collections);
+    }
+    changed();
   }
-  
+
   private void parseCsv(String fileName) throws IOException
   {
-	  parseThis(new CsvParser(), fileName);
+    parseThis(new CsvParser(), fileName);
   }
-  
+
   private void parseRep(String fileName) throws IOException
   {
-	  parseThis(new RepParser(), fileName);
+    parseThis(new RepParser(), fileName);
   }
 
   private void changed()
@@ -296,23 +297,26 @@ public class DataManagerDropAdapter extends ViewerDropAdapter
   {
     Object target = getCurrentTarget();
     IStoreGroup store = new XStreamHandler().load(fileName);
-    final List<IStoreItem> list = new ArrayList<IStoreItem>();
-    final Iterator<IStoreItem> iter = ((IStoreGroup) store).iterator();
-    while (iter.hasNext())
+    if (store != null)
     {
-      final IStoreItem item = iter.next();
-      list.add(item);
+      final List<IStoreItem> list = new ArrayList<IStoreItem>();
+      final Iterator<IStoreItem> iter = ((IStoreGroup) store).iterator();
+      while (iter.hasNext())
+      {
+        final IStoreItem item = iter.next();
+        list.add(item);
+      }
+      if (target instanceof GroupWrapper)
+      {
+        GroupWrapper groupWrapper = (GroupWrapper) target;
+        groupWrapper.getGroup().addAll(list);
+      }
+      else
+      {
+        _store.addAll(list);
+      }
+      changed();
     }
-    if (target instanceof GroupWrapper)
-    {
-      GroupWrapper groupWrapper = (GroupWrapper) target;
-      groupWrapper.getGroup().addAll(list);
-    }
-    else
-    {
-      _store.addAll(list);
-    }
-    changed();
   }
 
 }
