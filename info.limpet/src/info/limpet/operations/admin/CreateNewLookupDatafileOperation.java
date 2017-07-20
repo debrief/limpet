@@ -202,11 +202,12 @@ public class CreateNewLookupDatafileOperation extends BinaryQuantityOperation
         NumberDocument d1 = (NumberDocument) selection.get(0);
         NumberDocument d2 = (NumberDocument) selection.get(1);
 
-        if (d1.getUnits().equals(thisU) && d2.getIndexUnits().equals(thisU))
+        if (d1.getUnits().equals(thisU) && d2.getIndexUnits() != null
+            && d2.getIndexUnits().equals(thisU))
         {
           addInterpolatedCommands(selection, destination, res, context);
         }
-        else if (d2.getUnits().equals(thisU)
+        else if (d2.getUnits().equals(thisU) && d1.getIndexUnits() != null
             && d1.getIndexUnits().equals(thisU))
         {
           // ok, reverse the selection
