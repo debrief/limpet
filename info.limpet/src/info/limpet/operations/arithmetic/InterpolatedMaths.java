@@ -10,13 +10,12 @@
  *******************************************************************************/
 package info.limpet.operations.arithmetic;
 
-import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.Comparisons;
 import org.eclipse.january.dataset.Comparisons.Monotonicity;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
-import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.Maths;
 import org.eclipse.january.metadata.AxesMetadata;
 import org.eclipse.january.metadata.internal.AxesMetadataImpl;
@@ -98,265 +97,240 @@ public class InterpolatedMaths extends Maths
     else
     {
       // ok, we've got indexed data. see if they match
-      final ILazyDataset aLazyIndices = axesA.getAxis(0)[0];
-      final ILazyDataset bLazyIndices = axesB.getAxis(0)[0];
+      final DoubleDataset aIndices = (DoubleDataset) axesA.getAxis(0)[0];
+      final DoubleDataset bIndices = (DoubleDataset) axesB.getAxis(0)[0];
 
-      // first we need to load the datasets in order to compare
-      // them
-      Dataset aIndices = null;
-      Dataset bIndices = null;
-      boolean datasetLoaded = false;
-      try
+      final boolean needInterp;
+
+      // inspect the data to see if it needs to be
+      // interpolated
+      if (aIndices.getSize() != bIndices.getSize())
       {
-        aIndices = DatasetUtils.sliceAndConvertLazyDataset(aLazyIndices);
-        bIndices = DatasetUtils.sliceAndConvertLazyDataset(bLazyIndices);
-        datasetLoaded = true;
+        // ok, they're different sizes, they need syncing
+        needInterp = true;
       }
-      catch (final DatasetException e)
+      else if (aIndices.equals(bIndices))
       {
-        throw new IllegalArgumentException("Axis values not present");
+        // ok, they're equal, no need to interp
+        needInterp = false;
+      }
+      else
+      {
+        // indices don't match, need to interp
+        needInterp = true;
       }
 
-      if (datasetLoaded)
+      if (needInterp)
       {
-        final boolean needInterp;
+        // ok, we need to use interpolation. But, first we
+        // need to check if the axes are suitable for interpolation.
+        final Monotonicity aMono = Comparisons.findMonotonicity(aIndices);
+        final Monotonicity bMono = Comparisons.findMonotonicity(bIndices);
 
-        // inspect the data to see if it needs to be
-        // interpolated
-        if (aIndices.getSize() != bIndices.getSize())
+        if (aMono.equals(Monotonicity.NOT_ORDERED)
+            || bMono.equals(Monotonicity.NOT_ORDERED))
         {
-          // ok, they're different sizes, they need syncing
-          needInterp = true;
+          throw new IllegalArgumentException(AXES_MUST_BE_MONOTONIC);
         }
-        else if (aIndices.equals(bIndices))
+        else if (aMono.equals(Monotonicity.NONDECREASING)
+            || bMono.equals(Monotonicity.NONDECREASING))
         {
-          // ok, they're equal, no need to interp
-          needInterp = false;
+          throw new IllegalArgumentException(DUPLICATE_INDEX_VALUES_NOT_ALLOWED);
         }
         else
         {
-          // indices don't match, need to interp
-          needInterp = true;
-        }
-
-        if (needInterp)
-        {
-          // ok, we need to use interpolation. But, first we
-          // need to check if the axes are suitable for interpolation.
-          final Monotonicity aMono = Comparisons.findMonotonicity(aIndices);
-          final Monotonicity bMono = Comparisons.findMonotonicity(bIndices);
-
-          if (aMono.equals(Monotonicity.NOT_ORDERED)
-              || bMono.equals(Monotonicity.NOT_ORDERED))
-          {
-            throw new IllegalArgumentException(AXES_MUST_BE_MONOTONIC);
-          }
-          else if (aMono.equals(Monotonicity.NONDECREASING)
-              || bMono.equals(Monotonicity.NONDECREASING))
+          // check they're in the same direction
+          if (aMono != bMono)
           {
             throw new IllegalArgumentException(
-                DUPLICATE_INDEX_VALUES_NOT_ALLOWED);
+                AXES_MUST_ASCEND_IN_SAME_DIRECTION);
+          }
+
+          // ok, they're both monotonic, in the same direction. we can continue.
+        }
+
+        // find the data limits
+        final double aMin = aIndices.min().doubleValue();
+        final double aMax = aIndices.max().doubleValue();
+        final double bMin = bIndices.min().doubleValue();
+        final double bMax = bIndices.max().doubleValue();
+
+        if (aMax < bMin || aMin > bMax)
+        {
+          // datasets don't overlap
+          throw new IllegalArgumentException(INDICES_DO_NOT_OVERLAP);
+        }
+        else if (aMin <= bMin && aMax >= bMax)
+        {
+          // ok, b is wholly contained within A. Just generate
+          // points in A at the time in B
+          final Dataset interpolatedValues =
+              Maths.interpolate(aIndices, da, bIndices, null, null);
+          // remember the output axes, since we'll put them
+          // into the results
+          interpolatedValues.addMetadata(axesB);
+
+          operandA = interpolatedValues;
+          operandB = db;
+        }
+        else if (bMin < aMin && bMax > aMax)
+        {
+          // ok, A is wholly contained within B. Just generate
+          // points in B at the time in A
+          final Dataset interpolatedValues =
+              Maths.interpolate(bIndices, db, aIndices, null, null);
+          // remember the output axes, since we'll put them
+          // into the results
+          interpolatedValues.addMetadata(axesA);
+
+          operandA = da;
+          operandB = interpolatedValues;
+        }
+        else
+        {
+          // ok, one isn't contained within the other,
+          // they merely overlap. Find the overlapping period
+          final double startPoint = aMin < bMin ? bMin : aMin;
+          final double endPoint = aMax > bMax ? bMax : aMax;
+
+          // to find the last matching entry, we have to work through
+          // the dataset in reverse.
+          final Dataset aReverse = aIndices.getSliceView(null, null, new int[]
+          {-1});
+          final Dataset bReverse = bIndices.getSliceView(null, null, new int[]
+          {-1});
+
+          // now get the two slices in this period
+          final int aStartPosition;
+          final int aEndPosition;
+          final int bStartPosition;
+          final int bEndPosition;
+          if (aMono == Monotonicity.STRICTLY_INCREASING)
+          {
+            // ok - get the index of the first point in the region
+            final int aStartIndex =
+                DatasetUtils
+                    .findIndexGreaterThanOrEqualTo(aIndices, startPoint);
+
+            // now retrieve the n-dimensional position that matches this index
+            aStartPosition = aIndices.getNDPosition(aStartIndex)[0];
+
+            // note: we reduce index by one to allow for zero-indexing
+            final int aEndIndex =
+                DatasetUtils.findIndexLessThanOrEqualTo(aReverse, endPoint);
+            aEndPosition =
+                aReverse.getSize() - 1 - aReverse.getNDPosition(aEndIndex)[0];
+
+            final int bStartIndex =
+                DatasetUtils
+                    .findIndexGreaterThanOrEqualTo(bIndices, startPoint);
+            bStartPosition = bIndices.getNDPosition(bStartIndex)[0];
+
+            final int bEndIndex =
+                DatasetUtils.findIndexLessThanOrEqualTo(bReverse, endPoint);
+            bEndPosition =
+                bReverse.getSize() - 1 - bReverse.getNDPosition(bEndIndex)[0];
           }
           else
           {
-            // check they're in the same direction
-            if (aMono != bMono)
-            {
-              throw new IllegalArgumentException(
-                  AXES_MUST_ASCEND_IN_SAME_DIRECTION);
-            }
+            // ok - data descending
+            // get the index of the first point in the region
+            final int aStartIndex =
+                DatasetUtils.findIndexLessThanOrEqualTo(aIndices, endPoint);
 
-            // ok, they're both monotonic, in the same direction. we can continue.
+            // now retrieve the n-dimensional position that matches this index
+            aStartPosition = aIndices.getNDPosition(aStartIndex)[0];
+
+            // note: we reduce index by one to allow for zero-indexing
+            final int aEndIndex =
+                DatasetUtils
+                    .findIndexGreaterThanOrEqualTo(aReverse, startPoint);
+            aEndPosition =
+                aReverse.getSize() - 1 - aReverse.getNDPosition(aEndIndex)[0];
+
+            final int bStartIndex =
+                DatasetUtils.findIndexLessThanOrEqualTo(bIndices, endPoint);
+            bStartPosition = bIndices.getNDPosition(bStartIndex)[0];
+
+            final int bEndIndex =
+                DatasetUtils
+                    .findIndexGreaterThanOrEqualTo(bReverse, startPoint);
+            bEndPosition =
+                bReverse.getSize() - 1 - bReverse.getNDPosition(bEndIndex)[0];
           }
 
-          // find the data limits
-          final double aMin = aIndices.min().doubleValue();
-          final double aMax = aIndices.max().doubleValue();
-          final double bMin = bIndices.min().doubleValue();
-          final double bMax = bIndices.max().doubleValue();
+          // ok, retrieve the index values that are within the intersecting period
+          final Dataset aIndicesTrimmed = aIndices.getSliceView(new int[]
+          {aStartPosition}, new int[]
+          {aEndPosition + 1}, null);
+          final Dataset bIndicesTrimmed = bIndices.getSliceView(new int[]
+          {bStartPosition}, new int[]
+          {bEndPosition + 1}, null);
 
-          if (aMax < bMin || aMin > bMax)
+          // the interpolation strategy we're going to adopt is that we're
+          // going to use the index values from the dataset that has
+          // the most measurements in the intersecting range.
+          if (aIndicesTrimmed.getSize() > bIndicesTrimmed.getSize())
           {
-            // datasets don't overlap
-            throw new IllegalArgumentException(INDICES_DO_NOT_OVERLAP);
-          }
-          else if (aMin <= bMin && aMax >= bMax)
-          {
-            // ok, b is wholly contained within A. Just generate
-            // points in A at the time in B
+            // aTimes has more samples, use it for interpolation
             final Dataset interpolatedValues =
-                Maths.interpolate(aIndices, da, bIndices, null, null);
-            // remember the output axes, since we'll put them
-            // into the results
-            interpolatedValues.addMetadata(axesB);
+                Maths.interpolate(bIndices, db, aIndicesTrimmed, null, null);
+            interpolatedValues.setName(da + "(interp)");
 
-            operandA = db;
-            operandB = interpolatedValues;
-          }
-          else if (bMin < aMin && bMax > aMax)
-          {
-            // ok, A is wholly contained within B. Just generate
-            // points in B at the time in A
-            final Dataset interpolatedValues =
-                Maths.interpolate(bIndices, db, aIndices, null, null);
-            // remember the output axes, since we'll put them
-            // into the results
-            interpolatedValues.addMetadata(axesA);
-
-            operandA = da;
-            operandB = interpolatedValues;
-          }
-          else
-          {
-            // ok, one isn't contained within the other,
-            // they merely overlap. Find the overlapping period
-            final double startPoint = aMin < bMin ? bMin : aMin;
-            final double endPoint = aMax > bMax ? bMax : aMax;
-
-            // to find the last matching entry, we have to work through
-            // the dataset in reverse.
-            final Dataset aReverse =
-                aIndices.getSliceView(null, null, new int[]
-                {-1});
-            final Dataset bReverse =
-                bIndices.getSliceView(null, null, new int[]
-                {-1});
-
-            // now get the two slices in this period
-            final int aStartPosition;
-            final int aEndPosition;
-            final int bStartPosition;
-            final int bEndPosition;
-            if (aMono == Monotonicity.STRICTLY_INCREASING)
-            {
-              // ok - get the index of the first point in the region
-              final int aStartIndex =
-                  DatasetUtils.findIndexGreaterThanOrEqualTo(aIndices,
-                      startPoint);
-
-              // now retrieve the n-dimensional position that matches this index
-              aStartPosition = aIndices.getNDPosition(aStartIndex)[0];
-
-              // note: we reduce index by one to allow for zero-indexing
-              final int aEndIndex =
-                  DatasetUtils.findIndexLessThanOrEqualTo(aReverse, endPoint);
-              aEndPosition =
-                  aReverse.getSize() - 1 - aReverse.getNDPosition(aEndIndex)[0];
-
-              final int bStartIndex =
-                  DatasetUtils.findIndexGreaterThanOrEqualTo(bIndices,
-                      startPoint);
-              bStartPosition = bIndices.getNDPosition(bStartIndex)[0];
-
-              final int bEndIndex =
-                  DatasetUtils.findIndexLessThanOrEqualTo(bReverse, endPoint);
-              bEndPosition =
-                  bReverse.getSize() - 1 - bReverse.getNDPosition(bEndIndex)[0];
-            }
-            else
-            {
-              // ok - data descending
-              // get the index of the first point in the region
-              final int aStartIndex =
-                  DatasetUtils.findIndexLessThanOrEqualTo(aIndices, endPoint);
-
-              // now retrieve the n-dimensional position that matches this index
-              aStartPosition = aIndices.getNDPosition(aStartIndex)[0];
-
-              // note: we reduce index by one to allow for zero-indexing
-              final int aEndIndex =
-                  DatasetUtils.findIndexGreaterThanOrEqualTo(aReverse,
-                      startPoint);
-              aEndPosition =
-                  aReverse.getSize() - 1 - aReverse.getNDPosition(aEndIndex)[0];
-
-              final int bStartIndex =
-                  DatasetUtils.findIndexLessThanOrEqualTo(bIndices, endPoint);
-              bStartPosition = bIndices.getNDPosition(bStartIndex)[0];
-
-              final int bEndIndex =
-                  DatasetUtils.findIndexGreaterThanOrEqualTo(bReverse,
-                      startPoint);
-              bEndPosition =
-                  bReverse.getSize() - 1 - bReverse.getNDPosition(bEndIndex)[0];
-            }
-
-            // ok, retrieve the index values that are within the intersecting period
-            final Dataset aIndicesTrimmed = aIndices.getSliceView(new int[]
+            // we can just extract the trimmed set of a values
+            final Dataset aValues = da.getSliceView(new int[]
             {aStartPosition}, new int[]
             {aEndPosition + 1}, null);
-            final Dataset bIndicesTrimmed = bIndices.getSliceView(new int[]
+
+            // clear the metadata from this, since we'll change the axis length
+            aValues.clearMetadata(AxesMetadata.class);
+
+            // remember the output axes, since we'll put them
+            // into the results
+            final AxesMetadata newAxis = new AxesMetadataImpl();
+            newAxis.initialize(1);
+            newAxis.setAxis(0, aIndicesTrimmed);
+            interpolatedValues.addMetadata(newAxis);
+            aValues.addMetadata(newAxis);
+
+            operandA = aValues;
+            operandB = interpolatedValues;
+          }
+          else
+          {
+            // bTimes has more samples (or they're equal), use it for interpolation
+            final Dataset interpolatedValues =
+                Maths.interpolate(aIndices, da, bIndicesTrimmed, null, null);
+            interpolatedValues.setName(db + "(interp)");
+
+            // we can just extract the trimmed set of b values
+            final Dataset bValues = db.getSliceView(new int[]
             {bStartPosition}, new int[]
             {bEndPosition + 1}, null);
 
-            // the interpolation strategy we're going to adopt is that we're
-            // going to use the index values from the dataset that has
-            // the most measurements in the intersecting range.
-            if (aIndicesTrimmed.getSize() > bIndicesTrimmed.getSize())
-            {
-              // aTimes has more samples, use it for interpolation
-              final Dataset interpolatedValues =
-                  Maths.interpolate(bIndices, db, aIndicesTrimmed, null, null);
+            // clear the metadata from this, since we'll change the axis length
+            bValues.clearMetadata(AxesMetadata.class);
 
-              // we can just extract the trimmed set of a values
-              final Dataset aValues = da.getSliceView(new int[]
-              {aStartPosition}, new int[]
-              {aEndPosition + 1}, null);
+            // remember the output axes, since we'll put them
+            // into the results
+            final AxesMetadata newAxis = new AxesMetadataImpl();
+            newAxis.initialize(1);
+            newAxis.setAxis(0, bIndicesTrimmed);
+            interpolatedValues.addMetadata(newAxis);
+            bValues.addMetadata(newAxis);
 
-              // clear the metadata from this, since we'll change the axis length
-              aValues.clearMetadata(AxesMetadata.class);
-
-              // remember the output axes, since we'll put them
-              // into the results
-              final AxesMetadata newAxis = new AxesMetadataImpl();
-              newAxis.initialize(1);
-              newAxis.setAxis(0, aIndicesTrimmed);
-              interpolatedValues.addMetadata(newAxis);
-              aValues.addMetadata(newAxis);
-
-              operandA = aValues;
-              operandB = interpolatedValues;
-            }
-            else
-            {
-              // bTimes has more samples (or they're equal), use it for interpolation
-              final Dataset interpolatedValues =
-                  Maths.interpolate(aIndices, da, bIndicesTrimmed, null, null);
-
-              // we can just extract the trimmed set of b values
-              final Dataset bValues = db.getSliceView(new int[]
-              {bStartPosition}, new int[]
-              {bEndPosition + 1}, null);
-
-              // clear the metadata from this, since we'll change the axis length
-              bValues.clearMetadata(AxesMetadata.class);
-
-              // remember the output axes, since we'll put them
-              // into the results
-              final AxesMetadata newAxis = new AxesMetadataImpl();
-              newAxis.initialize(1);
-              newAxis.setAxis(0, bIndicesTrimmed);
-              interpolatedValues.addMetadata(newAxis);
-              bValues.addMetadata(newAxis);
-
-              // note: swap them over, so they remain in the correct order for
-              // non-commutative operations
-              operandB = bValues;
-              operandA = interpolatedValues;
-            }
+            // note: swap them over, so they remain in the correct order for
+            // non-commutative operations
+            operandB = bValues;
+            operandA = interpolatedValues;
           }
-        }
-        else
-        {
-          // no interpolation needed
-          operandA = da;
-          operandB = db;
         }
       }
       else
       {
-        // we couldn't load the dataset
-        throw new IllegalArgumentException("We were unable to load the axis dataset");
+        // no interpolation needed
+        operandA = da;
+        operandB = db;
       }
     }
 
