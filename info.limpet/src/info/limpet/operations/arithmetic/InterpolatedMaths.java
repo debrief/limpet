@@ -287,11 +287,7 @@ public class InterpolatedMaths extends Maths
 
             // remember the output axes, since we'll put them
             // into the results
-            final AxesMetadata newAxis = new AxesMetadataImpl();
-            newAxis.initialize(1);
-            newAxis.setAxis(0, aIndicesTrimmed);
-            interpolatedValues.addMetadata(newAxis);
-            aValues.addMetadata(newAxis);
+            storeMetadata(aIndicesTrimmed, interpolatedValues, aValues);
 
             operandA = aValues;
             operandB = interpolatedValues;
@@ -313,16 +309,12 @@ public class InterpolatedMaths extends Maths
 
             // remember the output axes, since we'll put them
             // into the results
-            final AxesMetadata newAxis = new AxesMetadataImpl();
-            newAxis.initialize(1);
-            newAxis.setAxis(0, bIndicesTrimmed);
-            interpolatedValues.addMetadata(newAxis);
-            bValues.addMetadata(newAxis);
+            storeMetadata(bIndicesTrimmed, interpolatedValues, bValues);
 
             // note: swap them over, so they remain in the correct order for
             // non-commutative operations
-            operandB = bValues;
             operandA = interpolatedValues;
+            operandB = bValues;
           }
         }
       }
@@ -349,5 +341,15 @@ public class InterpolatedMaths extends Maths
     }
 
     return res;
+  }
+
+  private static void storeMetadata(final Dataset indicesTrimmed,
+      final Dataset datasetA, final Dataset datasetB)
+  {
+    final AxesMetadata newAxis = new AxesMetadataImpl();
+    newAxis.initialize(1);
+    newAxis.setAxis(0, indicesTrimmed);
+    datasetA.addMetadata(newAxis);
+    datasetB.addMetadata(newAxis);
   }
 }
