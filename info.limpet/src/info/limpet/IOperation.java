@@ -14,13 +14,10 @@
  *****************************************************************************/
 package info.limpet;
 
-
-
-
 import java.util.List;
-
 
 public interface IOperation
 {
-	List<ICommand> actionsFor(List<IStoreItem> selection, IStoreGroup destination, IContext context);
+  List<ICommand> actionsFor(final List<IStoreItem> selection,
+      final IStoreGroup destination, final IContext context);
 }
