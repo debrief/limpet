@@ -500,21 +500,38 @@ public class DataManagerEditor extends EditorPart
 
   }
 
-  public static void showThisList(List<IStoreItem> selection, IMenuManager newM,
-      List<IOperation> values, final IStoreGroup theStore, final IContext context, final Runnable listener)
+  public static void showThisList(final List<IStoreItem> selection, final IMenuManager newM,
+      final List<IOperation> operations, final IStoreGroup theStore, final IContext context, final Runnable listener)
   {
-    Iterator<IOperation> oIter = values.iterator();
+    final int GROUP_NUM = 2;
+    
+    final Iterator<IOperation> oIter = operations.iterator();
     while (oIter.hasNext())
     {
       final IOperation op = (IOperation) oIter.next();
-      Collection<ICommand> matches =
+      final Collection<ICommand> matches =
           op.actionsFor(selection, theStore, context);
+     
+      IMenuManager thisMenu = newM;
+      
+      // do we have lots of them?
+      if(matches.size() >= GROUP_NUM)
+      {
+        // get a short name for the command
+        final String theName = matches.iterator().next().getDescription();
+        
+        // ok, put them into a submenu
+        thisMenu = new MenuManager(theName);
+        
+        // and add it to the main menu
+        newM.add(thisMenu);
+      }
 
-      Iterator<ICommand> mIter = matches.iterator();
+      final Iterator<ICommand> mIter = matches.iterator();
       while (mIter.hasNext())
       {
         final ICommand thisC = (ICommand) mIter.next();
-        newM.add(new Action(thisC.getName())
+        thisMenu.add(new Action(thisC.getName())
         {
           @Override
           public void run()

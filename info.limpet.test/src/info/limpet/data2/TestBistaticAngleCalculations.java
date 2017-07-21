@@ -146,7 +146,7 @@ public class TestBistaticAngleCalculations
     IOperation subL = new SubtractLogQuantityOperation();
 
     actions = sub.actionsFor(selection, store, context);
-    assertEquals("none returned", 0, actions.size());
+    assertEquals("none returned", 4, actions.size());
 
     actions = subL.actionsFor(selection, store, context);
     assertEquals("actions returned", 2, actions.size());

@@ -36,19 +36,16 @@ public class SubtractQuantityOperation extends BinaryQuantityOperation
 
   public class SubtractQuantityValues extends BinaryQuantityCommand
   {
-    public SubtractQuantityValues(final String name,
-        final List<IStoreItem> selection, final IStoreGroup store,
-        final IContext context)
-    {
-      this(name, selection, store, null, context);
-    }
+    private final IOperationPerformer _performer;
 
     public SubtractQuantityValues(final String name,
         final List<IStoreItem> selection, final IStoreGroup destination,
-        final IDocument<?> timeProvider, final IContext context)
+        final IDocument<?> timeProvider, final IContext context,
+        final IOperationPerformer performer)
     {
       super(name, "Subtract datasets", destination, false, false, selection,
           timeProvider, context);
+      _performer = performer;
     }
 
     @Override
@@ -68,17 +65,52 @@ public class SubtractQuantityOperation extends BinaryQuantityOperation
     @Override
     protected IOperationPerformer getOperation()
     {
-      return new InterpolatedMaths.IOperationPerformer()
-      {
-        @Override
-        public Dataset
-            perform(final Dataset a, final Dataset b, final Dataset o)
-        {
-          return Maths.subtract(a, b, o);
-        }
-      };
+      return _performer;
     }
   }
+
+  private static class PowerPerformer implements
+      InterpolatedMaths.IOperationPerformer
+  {
+    @Override
+    public Dataset perform(final Dataset a, final Dataset b, final Dataset o)
+    {
+      return Maths.subtract(a, b, o);
+    }
+  };
+
+  private static class LogPerformer implements
+      InterpolatedMaths.IOperationPerformer
+  {
+    @Override
+    public Dataset perform(final Dataset a, final Dataset b, final Dataset o)
+    {
+      // ok, convert them to alog
+      final Dataset aNon = toNonLog(a);
+      final Dataset bNon = toNonLog(b);
+
+      final Dataset sum = Maths.subtract(aNon, bNon);
+
+      final Dataset res = toLog(sum);
+
+      return res;
+
+    }
+
+    private Dataset toLog(final Dataset sum)
+    {
+      final Dataset log10 = Maths.log10(sum);
+      final Dataset times10 = Maths.multiply(log10, 10);
+      return times10;
+    }
+
+    private Dataset toNonLog(final Dataset d)
+    {
+      final Dataset div10 = Maths.divide(d, 10);
+      final Dataset raised = Maths.power(10, div10);
+      return raised;
+    }
+  };
 
   @Override
   protected void addIndexedCommands(final List<IStoreItem> selection,
@@ -88,14 +120,53 @@ public class SubtractQuantityOperation extends BinaryQuantityOperation
     final IStoreItem doc1 = selection.get(0);
     final IStoreItem doc2 = selection.get(1);
 
-    ICommand newC =
-        new SubtractQuantityValues("Subtract " + doc2 + " from " + doc1
-            + "(indexed)", selection, destination, context);
-    res.add(newC);
-    newC =
-        new SubtractQuantityValues("Subtract " + doc1 + " from " + doc2
-            + "(indexed)", reverse(selection), destination, context);
-    res.add(newC);
+    // this is indexed, so we don't provide a time-provider
+    IDocument<?> timeProvider = null;
+
+    final IOperationPerformer powerPerformer = new PowerPerformer();
+
+    if (hasLogData(selection))
+    { 
+      // ok, we need to provide log and power operators
+      final IOperationPerformer logPerformer = new LogPerformer();
+      
+      ICommand newC =
+          new SubtractQuantityValues("Power Subtract " + doc2 + " from " + doc1
+              + "(indexed)", selection, destination, timeProvider, context,
+              powerPerformer);
+      res.add(newC);
+      newC =
+          new SubtractQuantityValues("Power Subtract " + doc1 + " from " + doc2
+              + "(indexed)", reverse(selection), destination, timeProvider,
+              context, powerPerformer);
+      res.add(newC);
+
+      newC =
+          new SubtractQuantityValues("Log Subtract " + doc2 + " from " + doc1
+              + "(indexed)", reverse(selection), destination, timeProvider, context,
+              logPerformer);
+      res.add(newC);
+      newC =
+          new SubtractQuantityValues("Log Subtract " + doc1 + " from " + doc2
+              + "(indexed)", reverse(selection), destination, timeProvider,
+              context, logPerformer);
+      res.add(newC);
+
+    }
+    else
+    {
+      // ok, we don't need to detail them
+      ICommand newC =
+          new SubtractQuantityValues("Subtract " + doc2 + " from " + doc1
+              + "(indexed)", selection, destination, timeProvider, context,
+              powerPerformer);
+      res.add(newC);
+      newC =
+          new SubtractQuantityValues("Subtract " + doc1 + " from " + doc2
+              + "(indexed)", reverse(selection), destination, timeProvider,
+              context, powerPerformer);
+      res.add(newC);
+    }
   }
 
   @Override
@@ -110,17 +181,49 @@ public class SubtractQuantityOperation extends BinaryQuantityOperation
       final IStoreItem doc1 = selection.get(0);
       final IStoreItem doc2 = selection.get(1);
 
-      ICommand newC =
-          new SubtractQuantityValues("Subtract " + doc2 + " from " + doc1
-              + "(interpolated)", selection, destination, longest, context);
-      res.add(newC);
+      final IOperationPerformer powerPerformer = new PowerPerformer();
 
-      newC =
-          new SubtractQuantityValues("Subtract " + doc1 + " from " + doc2
-              + "(interpolated)", reverse(selection), destination, longest,
-              context);
-      res.add(newC);
-
+      if(hasLogData(selection))
+      {
+        // ok, we need to provide log and power operators
+        final IOperationPerformer logPerformer = new LogPerformer();
+        ICommand newC =
+            new SubtractQuantityValues("Power Subtract " + doc2 + " from " + doc1
+                + "(interpolated)", selection, destination, longest, context,
+                powerPerformer);
+        res.add(newC);
+        newC =
+            new SubtractQuantityValues("Power Subtract " + doc1 + " from " + doc2
+                + "(interpolated)", reverse(selection), destination, longest,
+                context, powerPerformer);
+        res.add(newC);
+        
+        // and log
+        newC =
+            new SubtractQuantityValues("Log Subtract " + doc2 + " from " + doc1
+                + "(interpolated)", reverse(selection), destination, longest, context,
+                logPerformer);
+        res.add(newC);
+        newC =
+            new SubtractQuantityValues("Log Subtract " + doc1 + " from " + doc2
+                + "(interpolated)", reverse(selection), destination, longest,
+                context, logPerformer);
+        res.add(newC);
+      }      
+      else
+      {
+        // easy - just provide the plain operation
+        ICommand newC =
+            new SubtractQuantityValues("Subtract " + doc2 + " from " + doc1
+                + "(interpolated)", selection, destination, longest, context,
+                powerPerformer);
+        res.add(newC);
+        newC =
+            new SubtractQuantityValues("Subtract " + doc1 + " from " + doc2
+                + "(interpolated)", reverse(selection), destination, longest,
+                context, powerPerformer);
+        res.add(newC);
+      }
     }
   }
 
@@ -135,11 +238,8 @@ public class SubtractQuantityOperation extends BinaryQuantityOperation
     final boolean equalDimensions = getATests().allEqualDimensions(selection);
     final boolean equalUnits = getATests().allEqualUnits(selection);
 
-    // lastly, check they're not logarithmic
-    final boolean hasLog = hasLogData(selection);
-
     return nonEmpty && allQuantity && suitableLength && equalDimensions
-        && equalUnits && !hasLog;
+        && equalUnits;
   }
 
 }
