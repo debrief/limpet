@@ -94,8 +94,81 @@ public class TestArithmeticCollections extends TestCase
     assertNull("returned null for out of intersection", tq.interpolateValue(
         420, InterpMethod.Linear));
   }
+  
+  public void testMathOperatorsUnIndexed()
+  {
+    // check the unary operations work on non-indexed datasets
+    
+    final NumberDocumentBuilder nq2 =
+        new NumberDocumentBuilder("Some data2", METRE.divide(SECOND).asType(
+            Velocity.class), null, null);
+    nq2.add(-20d);
+    nq2.add(20d);
+    nq2.add(-40d);
 
-  public void testMathOperators()
+    final NumberDocument nq2d = nq2.toDocument();
+
+    final List<IStoreItem> selection = new ArrayList<IStoreItem>();
+    selection.add(nq2d);
+
+    final StoreGroup store = new StoreGroup("Store");
+    final UnaryQuantityOperation absOp = new UnaryQuantityOperation("Abs")
+    {
+
+      @Override
+      protected boolean appliesTo(final List<IStoreItem> selection)
+      {
+        // check it's numerical
+        return true;
+      }
+
+      @Override
+      public Dataset calculate(final Dataset input)
+      {
+        return Maths.abs(input);
+      }
+
+      @Override
+      protected String getUnaryNameFor(final String name)
+      {
+        return "Absolute value of " + name;
+      }
+
+      @Override
+      protected Unit<?> getUnaryOutputUnit(final Unit<?> first)
+      {
+        return first;
+      }
+    };
+    final Collection<ICommand> commands =
+        absOp.actionsFor(selection, store, context);
+
+    assertEquals("have some commands", 1, commands.size());
+
+    final ICommand firstC = commands.iterator().next();
+
+    assertEquals("store empty", 0, store.size());
+
+    firstC.execute();
+
+    assertEquals("new collection created", 1, store.size());
+    assertEquals("corrent num of outputs", 1, firstC.getOutputs().size());
+
+    // get the first one.
+    NumberDocument series = (NumberDocument) firstC.getOutputs().get(0);
+    assertTrue("non empty", series.size() > 0);
+    assertEquals("corrent length results", 3, series.size());
+    assertFalse("temporal", series.isIndexed());
+    assertTrue("quantity", series.isQuantity());
+    assertEquals("no index units", null, series.getIndexUnits());
+
+    // check some values
+    assertEquals("value correct", 20d, series.getValueAt(0), 0.001);
+    assertEquals("value correct", 20d, series.getValueAt(1), 0.001);
+    assertEquals("value correct", 40d, series.getValueAt(2), 0.001);
+  }
+
+  public void testMathOperatorsIndexed()
   {
     final NumberDocumentBuilder tq1 =
         new NumberDocumentBuilder("Some data1", METRE.divide(SECOND).asType(
@@ -179,6 +252,7 @@ public class TestArithmeticCollections extends TestCase
     assertEquals("corrent length results", 4, series.size());
     assertTrue("temporal", series.isIndexed());
     assertTrue("quantity", series.isQuantity());
+    assertEquals("correct index units", SampleData.MILLIS, series.getIndexUnits());
 
     // check some values
     assertEquals("value correct", 10d, series.getValueAt(0), 0.001);
