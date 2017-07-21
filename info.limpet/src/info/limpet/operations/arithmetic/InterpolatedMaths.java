@@ -270,51 +270,68 @@ public class InterpolatedMaths extends Maths
           // the interpolation strategy we're going to adopt is that we're
           // going to use the index values from the dataset that has
           // the most measurements in the intersecting range.
+          
+          // is the interpolated dataset going to go in slot b?
+          final boolean interpInB;
+          final Dataset lookupValues;
+          final Dataset refValues;
+          final Dataset lookupIndices;
+          final DoubleDataset refIndices;
+          final int itemStartPos;
+          final int itemEndPos;
+
           if (aIndicesTrimmed.getSize() > bIndicesTrimmed.getSize())
           {
-            // aTimes has more samples, use it for interpolation
-            final Dataset interpolatedValues =
-                Maths.interpolate(bIndices, db, aIndicesTrimmed, null, null);
-            interpolatedValues.setName(da + "(interp)");
+            interpInB = true;
+            lookupValues = da;
+            refValues = db;
+            lookupIndices = aIndicesTrimmed;
+            refIndices = bIndices;
+            itemStartPos = aStartPosition;
+            itemEndPos = aEndPosition;
+          }
+          else
+          {
+            interpInB = false;
+            lookupValues = db;
+            lookupIndices = bIndicesTrimmed;
+            refValues = da;
+            refIndices = aIndices;
+            itemStartPos = bStartPosition;
+            itemEndPos = bEndPosition;
+          }
 
-            // we can just extract the trimmed set of a values
-            final Dataset aValues = da.getSliceView(new int[]
-            {aStartPosition}, new int[]
-            {aEndPosition + 1}, null);
+          // ////
+          final Dataset interpolatedValues =
+              Maths.interpolate(refIndices, refValues, lookupIndices, null,
+                  null);
+          interpolatedValues.setName(lookupValues + "(interp)");
 
-            // clear the metadata from this, since we'll change the axis length
-            aValues.clearMetadata(AxesMetadata.class);
+          // we can just extract the trimmed set of a values
+          final Dataset values = lookupValues.getSliceView(new int[]
+          {itemStartPos}, new int[]
+          {itemEndPos + 1}, null);
 
-            // remember the output axes, since we'll put them
-            // into the results
-            storeMetadata(aIndicesTrimmed, interpolatedValues, aValues);
+          // clear the metadata from this, since we'll change the axis length
+          values.clearMetadata(AxesMetadata.class);
 
-            operandA = aValues;
+          // remember the output axes, since we'll put them
+          // into the results
+          storeMetadata(lookupIndices, interpolatedValues, values);
+
+          // ok, do we need to put the interpolated results into the
+          // first slot
+          if (interpInB)
+          {
+            operandA = values;
             operandB = interpolatedValues;
           }
           else
           {
-            // bTimes has more samples (or they're equal), use it for interpolation
-            final Dataset interpolatedValues =
-                Maths.interpolate(aIndices, da, bIndicesTrimmed, null, null);
-            interpolatedValues.setName(db + "(interp)");
-
-            // we can just extract the trimmed set of b values
-            final Dataset bValues = db.getSliceView(new int[]
-            {bStartPosition}, new int[]
-            {bEndPosition + 1}, null);
-
-            // clear the metadata from this, since we'll change the axis length
-            bValues.clearMetadata(AxesMetadata.class);
-
-            // remember the output axes, since we'll put them
-            // into the results
-            storeMetadata(bIndicesTrimmed, interpolatedValues, bValues);
-
             // note: swap them over, so they remain in the correct order for
             // non-commutative operations
             operandA = interpolatedValues;
-            operandB = bValues;
+            operandB = values;
           }
         }
       }
