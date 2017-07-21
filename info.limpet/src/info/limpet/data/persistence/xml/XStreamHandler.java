@@ -110,8 +110,18 @@ public class XStreamHandler
 
   public IStoreGroup load(String fileName)
   {
-    IStoreGroup store = (IStoreGroup) XSTREAM.fromXML(new File(fileName));
-    return store;
+    final File inFile = new File(fileName);
+    
+    boolean empty = inFile.exists() && inFile.length() == 0;
+    if(!empty)
+    {
+      IStoreGroup store = (IStoreGroup) XSTREAM.fromXML(inFile);
+      return store;
+    }
+    else
+    {
+      return null;
+    }
   }
 
   public void save(IStoreGroup store, String fileName) throws FileNotFoundException,
