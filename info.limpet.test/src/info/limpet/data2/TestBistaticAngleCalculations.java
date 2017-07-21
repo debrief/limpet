@@ -230,7 +230,7 @@ public class TestBistaticAngleCalculations
 
     double subRes = propDiff.getDataset().getDouble(0);
 
-    double testSubtract = doLogSubtract(valB, addRes);
+    double testSubtract = doLogSubtract(addRes, valB);
     assertEquals("correct log sum", testSubtract, subRes, 0.0001);
 
   }
