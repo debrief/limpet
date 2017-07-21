@@ -33,7 +33,6 @@ import org.eclipse.january.dataset.Maths;
 
 public class SubtractQuantityOperation extends BinaryQuantityOperation
 {
-
   public class SubtractQuantityValues extends BinaryQuantityCommand
   {
     private final IOperationPerformer _performer;
@@ -51,7 +50,7 @@ public class SubtractQuantityOperation extends BinaryQuantityOperation
     @Override
     protected String getBinaryNameFor(final String name1, final String name2)
     {
-      return name1 + " subtracted from " + name2;
+      return "[" + name1 + "] - [" + name2 + "]";
     }
 
     @Override
@@ -126,10 +125,10 @@ public class SubtractQuantityOperation extends BinaryQuantityOperation
     final IOperationPerformer powerPerformer = new PowerPerformer();
 
     if (hasLogData(selection))
-    { 
+    {
       // ok, we need to provide log and power operators
       final IOperationPerformer logPerformer = new LogPerformer();
-      
+
       ICommand newC =
           new SubtractQuantityValues("Power Subtract " + doc2 + " from " + doc1
               + "(indexed)", selection, destination, timeProvider, context,
@@ -143,7 +142,7 @@ public class SubtractQuantityOperation extends BinaryQuantityOperation
 
       newC =
           new SubtractQuantityValues("Log Subtract " + doc2 + " from " + doc1
-              + "(indexed)", reverse(selection), destination, timeProvider, context,
+              + "(indexed)", selection, destination, timeProvider, context,
               logPerformer);
       res.add(newC);
       newC =
@@ -183,25 +182,25 @@ public class SubtractQuantityOperation extends BinaryQuantityOperation
 
       final IOperationPerformer powerPerformer = new PowerPerformer();
 
-      if(hasLogData(selection))
+      if (hasLogData(selection))
       {
         // ok, we need to provide log and power operators
         final IOperationPerformer logPerformer = new LogPerformer();
         ICommand newC =
-            new SubtractQuantityValues("Power Subtract " + doc2 + " from " + doc1
-                + "(interpolated)", selection, destination, longest, context,
-                powerPerformer);
-        res.add(newC);
-        newC =
-            new SubtractQuantityValues("Power Subtract " + doc1 + " from " + doc2
-                + "(interpolated)", reverse(selection), destination, longest,
+            new SubtractQuantityValues("Power Subtract " + doc2 + " from "
+                + doc1 + "(interpolated)", selection, destination, longest,
                 context, powerPerformer);
         res.add(newC);
-        
+        newC =
+            new SubtractQuantityValues("Power Subtract " + doc1 + " from "
+                + doc2 + "(interpolated)", reverse(selection), destination,
+                longest, context, powerPerformer);
+        res.add(newC);
+
         // and log
         newC =
             new SubtractQuantityValues("Log Subtract " + doc2 + " from " + doc1
-                + "(interpolated)", reverse(selection), destination, longest, context,
+                + "(interpolated)", selection, destination, longest, context,
                 logPerformer);
         res.add(newC);
         newC =
@@ -209,7 +208,7 @@ public class SubtractQuantityOperation extends BinaryQuantityOperation
                 + "(interpolated)", reverse(selection), destination, longest,
                 context, logPerformer);
         res.add(newC);
-      }      
+      }
       else
       {
         // easy - just provide the plain operation
