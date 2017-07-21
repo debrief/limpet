@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
 
 import org.junit.Test;
@@ -48,6 +49,73 @@ public class TestBistaticAngleCalculations
     assertEquals("correct group", 1, items.size());
     LocationDocument doc = (LocationDocument) items.get(0);
     assertEquals("singleton", 1, doc.size());
+  }
+
+  @Test
+  public void testLogArithmeticIndexed()
+  {
+    List<IStoreItem> selection = new ArrayList<IStoreItem>();
+    IStoreGroup destination = new StoreGroup("dest");
+
+    NumberDocumentBuilder docAb =
+        new NumberDocumentBuilder("doc a", NonSI.DECIBEL, null, SI.SECOND);
+    NumberDocumentBuilder docBb =
+        new NumberDocumentBuilder("doc b", NonSI.DECIBEL, null, SI.SECOND);
+
+    docAb.add(10d, 23d);
+    docAb.add(20d, 24d);
+    docAb.add(30d, 25d);
+
+    docBb.add(10d, 33d);
+    docBb.add(22d, 32d);
+    docBb.add(27d, 35d);
+    docBb.add(30d, 36d);
+
+    final NumberDocument docA = docAb.toDocument();
+    final NumberDocument docB = docBb.toDocument();
+
+    selection.add(docA);
+    selection.add(docB);
+
+    IOperation adder = new AddQuantityOperation();
+    List<ICommand> ops = adder.actionsFor(selection, destination, context);
+    assertEquals("only two commands", 2, ops.size());
+
+    // run the two operations
+    final ICommand logOp = ops.get(0);
+    final ICommand powerOp = ops.get(1);
+    logOp.execute();
+    powerOp.execute();
+
+    // check they're as expecetd
+    assertTrue("log is first", logOp.getName().startsWith("Log"));
+    assertTrue("power is second", powerOp.getName().startsWith("Power"));
+
+    System.out.println(docA.toListing());
+    System.out.println(docB.toListing());
+
+    NumberDocument logRes = (NumberDocument) logOp.getOutputs().get(0);
+    System.out.println(logRes.toListing());
+
+    NumberDocument powerRes = (NumberDocument) powerOp.getOutputs().get(0);
+    System.out.println(powerRes.toListing());
+
+    // and now the reverse operation
+    IOperation combinedSubber = new SubtractQuantityOperation();
+    IOperation oldSubber = new SubtractLogQuantityOperation();
+
+    selection.clear();
+    selection.add(logRes);
+    selection.add(docA);
+
+    List<ICommand> combinedOps =
+        combinedSubber.actionsFor(selection, destination, context);
+    List<ICommand> oldOps =
+        oldSubber.actionsFor(selection, destination, context);
+
+    assertEquals("have 4 combined ops", 4, combinedOps.size());
+    assertEquals("have 2 old ops", 2, oldOps.size());
+
   }
 
   @Test
@@ -183,6 +251,90 @@ public class TestBistaticAngleCalculations
     double sum = aN - bN;
     double toLog = Math.log10(sum) * 10d;
     return toLog;
+  }
+
+  @Test
+  public void testSubtractLogInterpolated()
+  {
+    List<IStoreItem> selection = new ArrayList<IStoreItem>();
+    IStoreGroup destination = new StoreGroup("data");
+
+    NumberDocumentBuilder docAb =
+        new NumberDocumentBuilder("docA", NonSI.DECIBEL, null, SI.SECOND);
+    NumberDocumentBuilder docBb =
+        new NumberDocumentBuilder("docB", NonSI.DECIBEL, null, SI.SECOND);
+
+    docAb.add(100d, 41d);
+    docAb.add(200d, 40d);
+    docAb.add(300d, 45d);
+
+    docBb.add(100d, 43d);
+    docBb.add(170d, 46d);
+    docBb.add(240d, 47d);
+    docBb.add(300d, 49d);
+
+    NumberDocument docA = docAb.toDocument();
+    NumberDocument docB = docBb.toDocument();
+
+    selection.add(docA);
+    selection.add(docB);
+
+    // add them first
+    IOperation adder = new AddQuantityOperation();
+    List<ICommand> ops = adder.actionsFor(selection, destination, context);
+
+    assertEquals("both offered", 2, ops.size());
+    assertTrue("log is first", ops.get(0).getName().startsWith("Log"));
+    assertTrue("power is second", ops.get(1).getName().startsWith("Power"));
+
+    ops.get(0).execute();
+    NumberDocument logSum = (NumberDocument) ops.get(0).getOutputs().get(0);
+
+    // check the first value
+    double valSum = logSum.getValueAt(0);
+
+    // sum if 41 & 43 calculated in Excel is
+    assertEquals("correct log10 sum", 45.12443, valSum, 0.001);
+
+    // change the name
+    logSum.setName("Log Sum");
+
+    // and now the subtract
+    selection.remove(docB);
+    selection.add(logSum);
+
+    IOperation logSub = new SubtractLogQuantityOperation();
+    IOperation combinedSub = new SubtractQuantityOperation();
+
+    List<ICommand> logOps = logSub.actionsFor(selection, destination, context);
+    List<ICommand> combinedOps =
+        combinedSub.actionsFor(selection, destination, context);
+
+    assertEquals("has ops", 2, logOps.size());
+    assertEquals("has ops", 4, combinedOps.size());
+
+    ICommand logOp = logOps.get(1);
+    ICommand combinedOp = combinedOps.get(3);
+
+    // ok, do the old subtract first
+    assertTrue("We have log operation", combinedOp.getName().startsWith("Log"));
+
+    logOp.execute();
+    combinedOp.execute();
+
+    NumberDocument logOut = (NumberDocument) logOp.getOutputs().get(0);
+    NumberDocument combinedOut =
+        (NumberDocument) combinedOp.getOutputs().get(0);
+
+    System.out.println(logOut.toListing());
+    System.out.println(combinedOut.toListing());
+
+    double logRes = logOut.getValueAt(0);
+    double combinedRes = combinedOut.getValueAt(0);
+
+    assertEquals("correct result", 43, combinedRes, 0.001);
+    assertEquals(logRes, combinedRes, 0.001);
+
   }
 
   @Test

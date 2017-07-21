@@ -1150,8 +1150,7 @@ public class TestOperations
     assertEquals("store not empty", storeSize + 1, store.size());
 
     NumberDocument newS =
-        (NumberDocument) store.get(speedGood1.getName() + " subtracted from "
-            + speedGood2.getName());
+        (NumberDocument)command.getOutputs().get(0);
 
     assertNotNull("document produced", newS);
     assertEquals("correct size", 10, newS.size());
@@ -1173,8 +1172,7 @@ public class TestOperations
     assertEquals("store not empty", storeSize + 2, store.size());
 
     newS =
-        (NumberDocument) store.get(speedGood2.getName() + " subtracted from "
-            + speedGood1.getName());
+        (NumberDocument) command.getOutputs().get(0);
 
     assertNotNull("document produced", newS);
     assertEquals("correct size", 10, newS.size());
@@ -1219,7 +1217,7 @@ public class TestOperations
 
     String outName =
         speedGood1.getName() + " subtracted from " + speedSingleton.getName();
-    NumberDocument newS = (NumberDocument) store.get(outName);
+    NumberDocument newS =  (NumberDocument) command.getOutputs().get(0);
 
     assertNotNull("document produced", newS);
     assertEquals("correct size", 10, newS.size());
@@ -1230,9 +1228,7 @@ public class TestOperations
     command = commands.get(1);
     command.execute();
 
-    outName =
-        speedGood1.getName() + " subtracted from " + speedSingleton.getName();
-    newS = (NumberDocument) store.get(outName);
+    newS = (NumberDocument) command.getOutputs().get(0);
 
     assertNotNull("document produced", newS);
     assertEquals("correct size", 10, newS.size());
