@@ -29,14 +29,10 @@ import java.util.List;
 
 import javax.measure.unit.Unit;
 
-import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.Dataset;
-import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
-import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.metadata.AxesMetadata;
-import org.eclipse.january.metadata.internal.AxesMetadataImpl;
 
 public abstract class UnaryQuantityOperation implements IOperation
 {
@@ -81,7 +77,13 @@ public abstract class UnaryQuantityOperation implements IOperation
         // ok, wrap the dataset
         final NumberDocument output =
             new NumberDocument((DoubleDataset) dataset, this, unit);
-
+        
+        // also store the index units
+        if(output.isIndexed())
+        {
+          output.setIndexUnits(inputDoc.getIndexUnits());
+        }
+        
         // and fire out the update
         output.fireDataChanged();
 
@@ -123,43 +125,24 @@ public abstract class UnaryQuantityOperation implements IOperation
      */
     protected IDataset performCalc(final NumberDocument nd)
     {
-      final IDataset ids = nd.getDataset();
-      Dataset res = null;
-      try
+      final DoubleDataset ds = (DoubleDataset) nd.getDataset();
+
+      // ok, re-calculate this
+      Dataset res = calculate(ds);
+
+      // store the axes
+      final AxesMetadata axis1 = ds.getFirstMetadata(AxesMetadata.class);
+
+      // if there are indices, store them
+      if (axis1 != null)
       {
-        final Dataset ds = DatasetUtils.sliceAndConvertLazyDataset(ids);
-
-        // ok, re-calculate this
-        res = calculate(ds);
-
-        // store the axes
-        final AxesMetadata axis1 = ds.getFirstMetadata(AxesMetadata.class);
-
-        // if there are indices, store them
-        if (axis1 != null)
-        {
-          final AxesMetadata am = new AxesMetadataImpl();
-          // keep track of the indices to use in the output
-          final ILazyDataset outputIndicesLazy = axis1.getAxes()[0];
-          Dataset outputIndices = null;
-          try
-          {
-            outputIndices =
-                DatasetUtils.sliceAndConvertLazyDataset(outputIndicesLazy);
-          }
-          catch (final DatasetException e)
-          {
-            throw new IllegalArgumentException(
-                "Unable to load axis for dataset:" + ds.getName());
-          }
-          am.initialize(1);
-          am.setAxis(0, outputIndices);
-          res.addMetadata(am);
-        }
-      }
-      catch (final DatasetException e)
-      {
-        throw new RuntimeException(e);
+        res.addMetadata(axis1.clone());
+//        final AxesMetadata am = new AxesMetadataImpl();
+//        // keep track of the indices to use in the output
+//        final DoubleDataset outputIndices = (DoubleDataset) axis1.getAxes()[0];
+//        am.initialize(1);
+//        am.setAxis(0, outputIndices);
+//        res.addMetadata(am);
       }
 
       // done
