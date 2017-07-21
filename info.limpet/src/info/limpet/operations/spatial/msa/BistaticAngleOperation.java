@@ -64,8 +64,7 @@ public class BistaticAngleOperation implements IOperation
     {
       super("Bistatic angle at:" + target.getName() + " from "
           + tx.getName() + " to:" + rx.getName(),
-          "Calculate bistatic angle at:" + target.getName() + " from "
-              + tx.getName() + " to:" + rx.getName(), store, false, false,
+          "Calculate bistatic angles", store, false, false,
           selection, context);
 
       // special processing.
@@ -81,13 +80,13 @@ public class BistaticAngleOperation implements IOperation
           _timeProvider == null ? null : SampleData.MILLIS;
       _azimuthBuilder =
           new NumberDocumentBuilder("Aximuth Angle at:" + target.getName(),
-              _outputUnits, null, indexUnits);
+              _outputUnits, this, indexUnits);
       _bistaticBuilder =
           new NumberDocumentBuilder("Bistatic Angle at:" + target.getName(),
-              _outputUnits, null, indexUnits);
+              _outputUnits, this, indexUnits);
       _bistaticAspectBuilder =
           new NumberDocumentBuilder("Bistatic Aspect Angle at:"
-              + target.getName(), _outputUnits, null, indexUnits);
+              + target.getName(), _outputUnits, this, indexUnits);
     }
 
     @Override

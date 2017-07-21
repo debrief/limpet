@@ -389,6 +389,19 @@ public class TestBistaticAngleCalculations
 
     assertEquals("new datasets generated", 6, store.size());
 
+    // check the new datasets know about their predecessors
+    List<Document<?>> newOut = actions.get(0).getOutputs();
+    assertEquals("three outputs", 3, newOut.size());
+
+    // check they're all angles
+    for (Document<?> t : newOut)
+    {
+      NumberDocument output = (NumberDocument) t;
+      assertEquals("all in degrees", SampleData.DEGREE_ANGLE, output.getUnits());
+      assertEquals("time-related", SampleData.MILLIS, output.getIndexUnits());
+      assertNotNull("output knows where it came from", output.getPrecedent());
+    }
+
   }
 
   @Test
