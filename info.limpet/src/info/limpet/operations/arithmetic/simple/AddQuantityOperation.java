@@ -193,6 +193,7 @@ public class AddQuantityOperation extends BinaryQuantityOperation
   @Override
   protected boolean appliesTo(final List<IStoreItem> selection)
   {
+    final boolean twoItems = selection.size() == 2;
     final boolean nonEmpty = getATests().nonEmpty(selection);
     final boolean allQuantity = getATests().allQuantity(selection);
     final boolean suitableLength =
@@ -201,7 +202,7 @@ public class AddQuantityOperation extends BinaryQuantityOperation
     final boolean equalDimensions = getATests().allEqualDimensions(selection);
     final boolean equalUnits = getATests().allEqualUnits(selection);
 
-    return nonEmpty && allQuantity && suitableLength && equalDimensions
+    return twoItems && nonEmpty && allQuantity && suitableLength && equalDimensions
         && equalUnits;
   }
 
