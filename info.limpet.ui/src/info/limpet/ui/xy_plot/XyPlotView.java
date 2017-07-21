@@ -98,10 +98,26 @@ public class XyPlotView extends CoreAnalysisView
   {
     // clear the graph
     final ISeries[] series = chart.getSeriesSet().getSeries();
-    for (int i = 0; i < series.length; i++)
+    for (final ISeries iSeries: series)
     {
-      final ISeries iSeries = series[i];
       chart.getSeriesSet().deleteSeries(iSeries.getId());
+    }
+    
+    /** we keep the zero axis, it's the first y axis.
+     * 
+     */
+    final int AXIS_TO_KEEP = 0;
+    
+    // clear the secondary x axes
+    final IAxis[] yAxes = chart.getAxisSet().getYAxes();
+    for(final IAxis axis: yAxes)
+    {
+      // delete all axes except the first
+      final int thisId = axis.getId();
+      if(thisId != AXIS_TO_KEEP)
+      {
+        chart.getAxisSet().deleteYAxis(thisId);
+      }
     }
   }
 
