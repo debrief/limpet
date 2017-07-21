@@ -36,18 +36,18 @@ public class AddQuantityOperation extends BinaryQuantityOperation
 
   public class AddQuantityValues extends BinaryQuantityCommand
   {
-    final private boolean doLog;
-    private String outputPrefix;
+    final private String outputPrefix;
+    final private IOperationPerformer operation;
 
     public AddQuantityValues(final String name,
         final List<IStoreItem> selection, final IStoreGroup destination,
         final IDocument<?> timeProvider, final IContext context,
-        final boolean doLog, final String outputPrefix)
+        final String outputPrefix, final IOperationPerformer operation)
     {
       super(name, "Add datasets", destination, false, false, selection,
           timeProvider, context);
-      this.doLog = doLog;
       this.outputPrefix = outputPrefix;
+      this.operation = operation;
     }
 
     @Override
@@ -67,57 +67,48 @@ public class AddQuantityOperation extends BinaryQuantityOperation
     @Override
     protected IOperationPerformer getOperation()
     {
-      final IOperationPerformer res;
-      if (doLog)
-      {
-        res = new InterpolatedMaths.IOperationPerformer()
-        {
-          @Override
-          public Dataset perform(final Dataset a, final Dataset b,
-              final Dataset o)
-          {
-            // ok, convert them to alog
-            final Dataset aNon = toNonLog(a);
-            final Dataset bNon = toNonLog(b);
-
-            final Dataset sum = Maths.add(aNon, bNon);
-
-            final Dataset res = toLog(sum);
-
-            return res;
-
-          }
-
-          private Dataset toLog(final Dataset sum)
-          {
-            final Dataset log10 = Maths.log10(sum);
-            final Dataset times10 = Maths.multiply(log10, 10);
-            return times10;
-          }
-
-          private Dataset toNonLog(final Dataset d)
-          {
-            final Dataset div10 = Maths.divide(d, 10);
-            final Dataset raised = Maths.power(10, div10);
-            return raised;
-          }
-        };
-      }
-      else
-      {
-        res = new InterpolatedMaths.IOperationPerformer()
-        {
-          @Override
-          public Dataset perform(final Dataset a, final Dataset b,
-              final Dataset o)
-          {
-            return Maths.add(a, b, o);
-          }
-        };
-      }
-      return res;
+      return operation;
     }
   }
+
+  private static class LogAdder implements
+      InterpolatedMaths.IOperationPerformer
+  {
+    @Override
+    public Dataset perform(final Dataset a, final Dataset b, final Dataset o)
+    {
+      // ok, convert them to alog
+      final Dataset aNon = toNonLog(a);
+      final Dataset bNon = toNonLog(b);
+      final Dataset sum = Maths.add(aNon, bNon);
+      final Dataset res = toLog(sum);
+      return res;
+    }
+
+    private Dataset toLog(final Dataset sum)
+    {
+      final Dataset log10 = Maths.log10(sum);
+      final Dataset times10 = Maths.multiply(log10, 10);
+      return times10;
+    }
+
+    private Dataset toNonLog(final Dataset d)
+    {
+      final Dataset div10 = Maths.divide(d, 10);
+      final Dataset raised = Maths.power(10, div10);
+      return raised;
+    }
+  }
+
+  private static class PowerAdder implements
+      InterpolatedMaths.IOperationPerformer
+  {
+    @Override
+    public Dataset perform(final Dataset a, final Dataset b, final Dataset o)
+    {
+      return Maths.add(a, b, o);
+    }
+  };
 
   @Override
   protected void addIndexedCommands(final List<IStoreItem> selection,
@@ -126,21 +117,25 @@ public class AddQuantityOperation extends BinaryQuantityOperation
   {
     final IDocument<?> timeProvider = null;
 
+    final PowerAdder powerAdder = new PowerAdder();
+
     if (hasLogData(selection))
     {
       // ok, we need to offer log and non-log operations
+      final LogAdder logAdder = new LogAdder();
 
       // just offer the log operation
       ICommand newC =
           new AddQuantityValues(
               "Logarithmic Add for provided series (indexed)", selection,
-              destination, timeProvider, context, true, "Log ");
+              destination, timeProvider, context, "Log ", logAdder);
       res.add(newC);
 
       // just offer the log operation
       newC =
           new AddQuantityValues("Power Add for provided series (indexed)",
-              selection, destination, timeProvider, context, false, "Power ");
+              selection, destination, timeProvider, context, "Power ",
+              powerAdder);
       res.add(newC);
 
     }
@@ -150,11 +145,11 @@ public class AddQuantityOperation extends BinaryQuantityOperation
       final ICommand newC =
           new AddQuantityValues(
               "Add numeric values in provided series (indexed)", selection,
-              destination, timeProvider, context, false, "");
+              destination, timeProvider, context, "", powerAdder);
       res.add(newC);
     }
 
-  }
+  };
 
   @Override
   protected void addInterpolatedCommands(final List<IStoreItem> selection,
@@ -165,18 +160,22 @@ public class AddQuantityOperation extends BinaryQuantityOperation
 
     if (longest != null)
     {
+      final PowerAdder powerAdder = new PowerAdder();
+
       if (hasLogData(selection))
       {
+        final LogAdder logAdder = new LogAdder();
+
         ICommand newC =
             new AddQuantityValues(
                 "Logarithmic Add for provided series (interpolated)",
-                selection, destination, longest, context, true, "Log ");
+                selection, destination, longest, context, "Log ", logAdder);
         res.add(newC);
 
         newC =
             new AddQuantityValues(
                 "Power Add for provided series (interpolated)", selection,
-                destination, longest, context, false, "Power ");
+                destination, longest, context, "Power ", powerAdder);
         res.add(newC);
 
       }
@@ -185,7 +184,7 @@ public class AddQuantityOperation extends BinaryQuantityOperation
         final ICommand newC =
             new AddQuantityValues(
                 "Add numeric values in provided series (interpolated)",
-                selection, destination, longest, context, false, "");
+                selection, destination, longest, context, "", powerAdder);
         res.add(newC);
       }
     }
