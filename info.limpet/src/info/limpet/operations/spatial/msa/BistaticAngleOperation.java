@@ -62,10 +62,9 @@ public class BistaticAngleOperation implements IOperation
         final LocationDocument rx, final IStoreGroup store,
         final IDocument<?> timeProvider, final IContext context)
     {
-      super("Bistatic angle at:" + target.getName() + " from "
-          + tx.getName() + " to:" + rx.getName(),
-          "Calculate bistatic angles", store, false, false,
-          selection, context);
+      super("Bistatic angle at:" + target.getName() + " from " + tx.getName()
+          + " to:" + rx.getName(), "Calculate bistatic angles", store, false,
+          false, selection, context);
 
       // special processing.
       // we generate our own list of inputs, so clear the existing list
@@ -78,15 +77,19 @@ public class BistaticAngleOperation implements IOperation
       _outputUnits = SampleData.DEGREE_ANGLE;
       final Unit<?> indexUnits =
           _timeProvider == null ? null : SampleData.MILLIS;
+
+      final String elements =
+          "[" + _transmitter + "] > [" + _target.getName() + "] > [" + _receiver + "]";
+
       _azimuthBuilder =
-          new NumberDocumentBuilder("Aximuth Angle at:" + target.getName(),
+          new NumberDocumentBuilder("Azimuth Angle for " + elements,
               _outputUnits, this, indexUnits);
       _bistaticBuilder =
-          new NumberDocumentBuilder("Bistatic Angle at:" + target.getName(),
+          new NumberDocumentBuilder("Bistatic Angle for " + elements,
               _outputUnits, this, indexUnits);
       _bistaticAspectBuilder =
-          new NumberDocumentBuilder("Bistatic Aspect Angle at:"
-              + target.getName(), _outputUnits, this, indexUnits);
+          new NumberDocumentBuilder("Bistatic Aspect Angle for " + elements,
+              _outputUnits, this, indexUnits);
     }
 
     @Override
@@ -369,8 +372,9 @@ public class BistaticAngleOperation implements IOperation
                 if (item instanceof StoreGroup)
                 {
                   StoreGroup group = (StoreGroup) item;
-                  final LocationDocument firstLoc = aTests.getFirstLocation(group);
-                  if(firstLoc != null)
+                  final LocationDocument firstLoc =
+                      aTests.getFirstLocation(group);
+                  if (firstLoc != null)
                   {
                     subjects.add(firstLoc);
                   }
@@ -382,8 +386,8 @@ public class BistaticAngleOperation implements IOperation
                 }
               }
             }
-            
-            if(subjects.size() != 2)
+
+            if (subjects.size() != 2)
             {
               return res;
             }
@@ -394,35 +398,33 @@ public class BistaticAngleOperation implements IOperation
             LocationDocument rx2 = subjects.get(0);
 
             // ok, and the command
-            res.add(
-                new BistaticAngleCommand(rawSelection, thisTarget, tx1, rx1,
-                    destination, targetTrack, context)
-                {
+            res.add(new BistaticAngleCommand(rawSelection, thisTarget, tx1,
+                rx1, destination, targetTrack, context)
+            {
 
-                  @Override
-                  protected String getOutputName()
-                  {
-                    return getContext().getInput("Generate bearing",
-                        NEW_DATASET_MESSAGE,
-                        "Bearing between " + super.getSubjectList());
-                  }
+              @Override
+              protected String getOutputName()
+              {
+                return getContext().getInput("Generate bearing",
+                    NEW_DATASET_MESSAGE,
+                    "Bearing between " + super.getSubjectList());
+              }
 
-                });
+            });
             // ok, and the command
-            res.add(
-                new BistaticAngleCommand(rawSelection, thisTarget, tx2, rx2,
-                    destination, targetTrack, context)
-                {
+            res.add(new BistaticAngleCommand(rawSelection, thisTarget, tx2,
+                rx2, destination, targetTrack, context)
+            {
 
-                  @Override
-                  protected String getOutputName()
-                  {
-                    return getContext().getInput("Generate bearing",
-                        NEW_DATASET_MESSAGE,
-                        "Bearing between " + super.getSubjectList());
-                  }
+              @Override
+              protected String getOutputName()
+              {
+                return getContext().getInput("Generate bearing",
+                    NEW_DATASET_MESSAGE,
+                    "Bearing between " + super.getSubjectList());
+              }
 
-                });
+            });
           }
         }
         else
@@ -477,12 +479,13 @@ public class BistaticAngleOperation implements IOperation
    *          where to store the bistatic angle
    * @param bistaticAspectBuilder
    *          where to store the bistatic aspect angle
-   * @param azimuthBuilder 
+   * @param azimuthBuilder
    */
   public static void calcAndStore(final IGeoCalculator calc, final Point2D tx,
       final Point2D target, final Point2D rx, Double heading, Double time,
       NumberDocumentBuilder bistaticBuilder,
-      NumberDocumentBuilder bistaticAspectBuilder, NumberDocumentBuilder azimuthBuilder)
+      NumberDocumentBuilder bistaticAspectBuilder,
+      NumberDocumentBuilder azimuthBuilder)
   {
     // ok start with two angles
     double toSource = calc.getAngleBetween(target, tx);
@@ -504,13 +507,13 @@ public class BistaticAngleOperation implements IOperation
     {
       biAspectAngle += 360d;
     }
-   
+
     // make sure they're positive
-    if(relToSource < 0)
+    if (relToSource < 0)
     {
       relToSource += 360d;
     }
-    
+
     // and make sure it's positive
     biAspectAngle = Math.abs(biAspectAngle);
 
