@@ -82,7 +82,7 @@ public class BistaticAngleOperation implements IOperation
           "[" + _transmitter + "] > [" + _target.getName() + "] > [" + _receiver + "]";
 
       _azimuthBuilder =
-          new NumberDocumentBuilder("Aximuth Angle for " + elements,
+          new NumberDocumentBuilder("Azimuth Angle for " + elements,
               _outputUnits, this, indexUnits);
       _bistaticBuilder =
           new NumberDocumentBuilder("Bistatic Angle for " + elements,
