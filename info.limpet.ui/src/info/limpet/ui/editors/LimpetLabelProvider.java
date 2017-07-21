@@ -102,7 +102,7 @@ public class LimpetLabelProvider extends LabelProvider
           {
             res = Activator.getImageDescriptor("icons/measure.png");
           }
-          if (Angle.UNIT.equals(unit.getStandardUnit()))
+          else if (Angle.UNIT.equals(unit.getStandardUnit()))
           {
             res = Activator.getImageDescriptor("icons/angle.png");
           }
