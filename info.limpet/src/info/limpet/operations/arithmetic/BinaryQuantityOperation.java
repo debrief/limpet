@@ -267,8 +267,10 @@ public abstract class BinaryQuantityOperation implements IOperation
     {
       final IDataset res;
 
-      final IDataset in1 = ((NumberDocument) getInputs().get(0)).getDataset();
-      final IDataset in2 = ((NumberDocument) getInputs().get(1)).getDataset();
+      final DoubleDataset in1 =
+          (DoubleDataset) ((NumberDocument) getInputs().get(0)).getDataset();
+      final DoubleDataset in2 =
+          (DoubleDataset) ((NumberDocument) getInputs().get(1)).getDataset();
 
       // look for axes metadata
       final AxesMetadata axis1 = in1.getFirstMetadata(AxesMetadata.class);
@@ -369,60 +371,15 @@ public abstract class BinaryQuantityOperation implements IOperation
       {
         final InterpolatedMaths.IOperationPerformer doAdd = getOperation();
 
-        Dataset ind1 = null;
-        Dataset ind2 = null;
-        // extract the datasets
-        try
-        {
-          // load the datasets
-          ind1 = DatasetUtils.sliceAndConvertLazyDataset(in1);
-          ind2 = DatasetUtils.sliceAndConvertLazyDataset(in2);
-        }
-        catch (final DatasetException e)
-        {
-          e.printStackTrace();
-        }
-
-        if (ind2 != null)
-        {
-          // apply our operation to the two datasets
-          res =
-              InterpolatedMaths.performWithInterpolation(ind1, ind2, null,
-                  doAdd);
-        }
-        else
-        {
-          res = null;
-        }
-
+        // apply our operation to the two datasets
+        res = InterpolatedMaths.performWithInterpolation(in1, in2, null, doAdd);
       }
       else if (getATests().allEqualLengthOrSingleton(getInputs()))
       {
-        // extract the datasets
-        Dataset ind1 = null;
-        Dataset ind2 = null;
-        try
-        {
-          // load the datasets
-          ind1 = DatasetUtils.sliceAndConvertLazyDataset(in1);
-          ind2 = DatasetUtils.sliceAndConvertLazyDataset(in2);
-        }
-        catch (final DatasetException de)
-        {
-          de.printStackTrace();
-        }
+        res = getOperation().perform(in1, in2, null);
 
-        if (ind2 != null)
-        {
-          res = getOperation().perform(ind1, ind2, null);
-
-          // if there are indices, store them
-          assignOutputIndices(res, outputIndices);
-        }
-        else
-        {
-          res = null;
-        }
+        // if there are indices, store them
+        assignOutputIndices(res, outputIndices);
       }
       else
       {
@@ -484,8 +441,8 @@ public abstract class BinaryQuantityOperation implements IOperation
       final boolean allIndexed = getATests().allEqualIndexed(selection);
       final boolean suitableForIndexedInterpolation =
           getATests().suitableForIndexedInterpolation(selection);
-//      final boolean hasIndexed = getATests().hasIndexed(selection);
-      if (allIndexed && suitableForIndexedInterpolation /*|| hasIndexed */)
+      // final boolean hasIndexed = getATests().hasIndexed(selection);
+      if (allIndexed && suitableForIndexedInterpolation /* || hasIndexed */)
       {
         addInterpolatedCommands(selection, destination, res, context);
       }
