@@ -88,8 +88,9 @@ public class XyPlotView extends CoreAnalysisView
     final boolean allNonQuantity = tests.allNonQuantity(res);
     final boolean allCollections = tests.allCollections(res);
     final boolean allQuantity = tests.allQuantity(res);
+    final boolean allLocation = tests.allLocation(res);
     final boolean suitableIndex =
-        tests.allEqualIndexed(res) || tests.allNonIndexed(res);
+        tests.allEqualIndexed(res) || tests.allNonIndexed(res) || allLocation;
     return allCollections && suitableIndex && (allQuantity || allNonQuantity);
   }
 
