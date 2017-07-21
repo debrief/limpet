@@ -100,20 +100,23 @@ import org.osgi.framework.Bundle;
 public class DataManagerEditor extends EditorPart
 {
 
-  /** interface for something that can process something selected in the UI.
-   * Initially used for key handlers
+  /**
+   * interface for something that can process something selected in the UI. Initially used for key
+   * handlers
+   * 
    * @author Ian
-   *
+   * 
    */
   private static interface ItemProcessor
   {
     public void processThis(LimpetWrapper wrapper);
   }
-  
-  /** utility class for handling key presses on the editor
+
+  /**
+   * utility class for handling key presses on the editor
    * 
    * @author Ian
-   *
+   * 
    */
   private class ViewerKeyAdapter extends KeyAdapter
   {
@@ -122,32 +125,31 @@ public class DataManagerEditor extends EditorPart
     private final ItemProcessor processor;
     private final ISelectionProvider provider;
 
-    public ViewerKeyAdapter(final int keyCode, final int stateMask, ISelectionProvider provider, ItemProcessor processor)
+    public ViewerKeyAdapter(final int keyCode, final int stateMask,
+        final ISelectionProvider provider, final ItemProcessor processor)
     {
       this.keyCode = keyCode;
       this.stateMask = stateMask;
       this.processor = processor;
-      this.provider  = provider;
+      this.provider = provider;
     }
 
     @Override
     public void keyReleased(final KeyEvent e)
     {
-      if ((e.stateMask & stateMask) != 0 || stateMask == SWT.NONE)
+      if ((e.stateMask & stateMask) != 0 || stateMask == SWT.NONE
+          && e.keyCode == keyCode)
       {
-        if (e.keyCode == keyCode)
+        final StructuredSelection sel =
+            (StructuredSelection) provider.getSelection();
+        final Iterator<?> sIter = sel.iterator();
+        while (sIter.hasNext())
         {
-          final StructuredSelection sel =
-              (StructuredSelection) provider.getSelection();
-          final Iterator<?> sIter = sel.iterator();
-          while (sIter.hasNext())
+          final Object object = sIter.next();
+          if (object instanceof LimpetWrapper)
           {
-            final Object object = sIter.next();
-            if (object instanceof LimpetWrapper)
-            {
-              final LimpetWrapper wrapper = (LimpetWrapper) object;
-              processor.processThis(wrapper);
-            }
+            final LimpetWrapper wrapper = (LimpetWrapper) object;
+            processor.processThis(wrapper);
           }
         }
       }
@@ -387,12 +389,16 @@ public class DataManagerEditor extends EditorPart
           final IDocument<?> doc = (IDocument<?>) subject;
           doc.beingDeleted();
 
-          // and detach it from the parent
-          doc.getParent().remove(doc);
+          // and detach it from the parent, if it hasn't
+          // already been deleted
+          if (doc.getParent() != null)
+          {
+            doc.getParent().remove(doc);
+          }
         }
-        else if (subject instanceof IStoreItem)
+        else if (subject instanceof IStoreGroup)
         {
-          final IStoreItem item = (IStoreItem) subject;
+          final IStoreGroup item = (IStoreGroup) subject;
           item.getParent().remove(item);
         }
       }
@@ -437,14 +443,10 @@ public class DataManagerEditor extends EditorPart
       }
     };
 
-    final ViewerKeyAdapter deleteHandler =
-        new ViewerKeyAdapter(SWT.DEL, 0, viewer, deleteAction);
-    viewer.getControl().addKeyListener(deleteHandler);
-
-    final ViewerKeyAdapter renameHandler =
-        new ViewerKeyAdapter(SWT.F2, 0, viewer, renameAction);
-    viewer.getControl().addKeyListener(renameHandler);
-
+    viewer.getControl().addKeyListener(
+        new ViewerKeyAdapter(SWT.DEL, 0, viewer, deleteAction));
+    viewer.getControl().addKeyListener(
+        new ViewerKeyAdapter(SWT.F2, 0, viewer, renameAction));
   }
 
   /**
@@ -454,8 +456,7 @@ public class DataManagerEditor extends EditorPart
    * @param parent
    * @param listener
    */
-  private void connectUp(final IStoreItem next, final IStoreGroup parent,
-      final IChangeListener listener)
+  private void connectUp(final IStoreItem next, final IChangeListener listener)
   {
     if (next instanceof IStoreGroup)
     {
@@ -463,7 +464,7 @@ public class DataManagerEditor extends EditorPart
       final Iterator<IStoreItem> iter = group.iterator();
       while (iter.hasNext())
       {
-        connectUp(iter.next(), group, group);
+        connectUp(iter.next(), group);
       }
     }
 
@@ -745,7 +746,7 @@ public class DataManagerEditor extends EditorPart
           final Iterator<IStoreItem> iter = ms.iterator();
           while (iter.hasNext())
           {
-            connectUp(iter.next(), null, ms);
+            connectUp(iter.next(), ms);
           }
         }
         else
