@@ -16,7 +16,6 @@ import info.limpet.impl.NumberDocumentBuilder;
 import info.limpet.impl.SampleData;
 import info.limpet.impl.StoreGroup;
 import info.limpet.operations.arithmetic.simple.AddQuantityOperation;
-import info.limpet.operations.arithmetic.simple.SubtractLogQuantityOperation;
 import info.limpet.operations.arithmetic.simple.SubtractQuantityOperation;
 import info.limpet.operations.spatial.GeoSupport;
 import info.limpet.operations.spatial.IGeoCalculator;
@@ -102,7 +101,6 @@ public class TestBistaticAngleCalculations
 
     // and now the reverse operation
     IOperation combinedSubber = new SubtractQuantityOperation();
-    IOperation oldSubber = new SubtractLogQuantityOperation();
 
     selection.clear();
     selection.add(logRes);
@@ -110,12 +108,8 @@ public class TestBistaticAngleCalculations
 
     List<ICommand> combinedOps =
         combinedSubber.actionsFor(selection, destination, context);
-    List<ICommand> oldOps =
-        oldSubber.actionsFor(selection, destination, context);
 
     assertEquals("have 4 combined ops", 4, combinedOps.size());
-    assertEquals("have 2 old ops", 2, oldOps.size());
-
   }
 
   @Test
@@ -211,28 +205,23 @@ public class TestBistaticAngleCalculations
 
     // hmm, go for the subtract
     IOperation sub = new SubtractQuantityOperation();
-    IOperation subL = new SubtractLogQuantityOperation();
 
-    actions = sub.actionsFor(selection, store, context);
-    assertEquals("none returned", 4, actions.size());
-
-    actions = subL.actionsFor(selection, store, context);
-    assertEquals("actions returned", 2, actions.size());
+    List<ICommand> subActions = sub.actionsFor(selection, store, context);
+    assertEquals("none returned", 4, subActions.size());
 
     // ok, run it
-    actions.get(0).execute();
+    subActions.get(2).execute();
     assertEquals("has new data", 8, store.size());
 
     // check the results
     NumberDocument propDiff =
-        (NumberDocument) actions.get(0).getOutputs().get(0);
+        (NumberDocument) subActions.get(2).getOutputs().get(0);
     propDiff.setName("propDiff");
 
     double subRes = propDiff.getDataset().getDouble(0);
-
+    
     double testSubtract = doLogSubtract(addRes, valB);
     assertEquals("correct log sum", testSubtract, subRes, 0.0001);
-
   }
 
   private double doLogAdd(double valA, double valB)
@@ -303,37 +292,28 @@ public class TestBistaticAngleCalculations
     selection.remove(docB);
     selection.add(logSum);
 
-    IOperation logSub = new SubtractLogQuantityOperation();
     IOperation combinedSub = new SubtractQuantityOperation();
 
-    List<ICommand> logOps = logSub.actionsFor(selection, destination, context);
     List<ICommand> combinedOps =
         combinedSub.actionsFor(selection, destination, context);
 
-    assertEquals("has ops", 2, logOps.size());
     assertEquals("has ops", 4, combinedOps.size());
 
-    ICommand logOp = logOps.get(1);
     ICommand combinedOp = combinedOps.get(3);
 
     // ok, do the old subtract first
     assertTrue("We have log operation", combinedOp.getName().startsWith("Log"));
 
-    logOp.execute();
     combinedOp.execute();
 
-    NumberDocument logOut = (NumberDocument) logOp.getOutputs().get(0);
     NumberDocument combinedOut =
         (NumberDocument) combinedOp.getOutputs().get(0);
 
-    System.out.println(logOut.toListing());
     System.out.println(combinedOut.toListing());
 
-    double logRes = logOut.getValueAt(0);
     double combinedRes = combinedOut.getValueAt(0);
 
     assertEquals("correct result", 43, combinedRes, 0.001);
-    assertEquals(logRes, combinedRes, 0.001);
 
   }
 
