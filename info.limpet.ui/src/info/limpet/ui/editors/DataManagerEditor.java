@@ -17,10 +17,11 @@ package info.limpet.ui.editors;
 import info.limpet.IChangeListener;
 import info.limpet.ICommand;
 import info.limpet.IContext;
+import info.limpet.IDocument;
 import info.limpet.IOperation;
 import info.limpet.IStoreGroup;
-import info.limpet.IStoreItem;
 import info.limpet.IStoreGroup.StoreChangeListener;
+import info.limpet.IStoreItem;
 import info.limpet.data.persistence.xml.XStreamHandler;
 import info.limpet.impl.StoreGroup;
 import info.limpet.operations.OperationsLibrary;
@@ -29,6 +30,7 @@ import info.limpet.operations.admin.GenerateDummyDataOperation;
 import info.limpet.ui.RCPContext;
 import info.limpet.ui.data_provider.data.DataManagerDropAdapter;
 import info.limpet.ui.data_provider.data.DataModel;
+import info.limpet.ui.data_provider.data.LimpetWrapper;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -67,8 +69,10 @@ import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.DecoratingLabelProvider;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
@@ -76,6 +80,8 @@ import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.FileTransfer;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
@@ -94,6 +100,111 @@ import org.osgi.framework.Bundle;
 public class DataManagerEditor extends EditorPart
 {
 
+  /** interface for something that can process something selected in the UI.
+   * Initially used for key handlers
+   * @author Ian
+   *
+   */
+  private static interface ItemProcessor
+  {
+    public void processThis(LimpetWrapper wrapper);
+  }
+  
+  /** utility class for handling key presses on the editor
+   * 
+   * @author Ian
+   *
+   */
+  private class ViewerKeyAdapter extends KeyAdapter
+  {
+    private final int keyCode;
+    private final int stateMask;
+    private final ItemProcessor processor;
+    private final ISelectionProvider provider;
+
+    public ViewerKeyAdapter(final int keyCode, final int stateMask, ISelectionProvider provider, ItemProcessor processor)
+    {
+      this.keyCode = keyCode;
+      this.stateMask = stateMask;
+      this.processor = processor;
+      this.provider  = provider;
+    }
+
+    @Override
+    public void keyReleased(final KeyEvent e)
+    {
+      if ((e.stateMask & stateMask) != 0 || stateMask == SWT.NONE)
+      {
+        if (e.keyCode == keyCode)
+        {
+          final StructuredSelection sel =
+              (StructuredSelection) provider.getSelection();
+          final Iterator<?> sIter = sel.iterator();
+          while (sIter.hasNext())
+          {
+            final Object object = sIter.next();
+            if (object instanceof LimpetWrapper)
+            {
+              final LimpetWrapper wrapper = (LimpetWrapper) object;
+              processor.processThis(wrapper);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  public static void showThisList(final List<IStoreItem> selection,
+      final IMenuManager newM, final List<IOperation> operations,
+      final IStoreGroup theStore, final IContext context,
+      final Runnable listener)
+  {
+    final int GROUP_NUM = 2;
+
+    final Iterator<IOperation> oIter = operations.iterator();
+    while (oIter.hasNext())
+    {
+      final IOperation op = oIter.next();
+      final Collection<ICommand> matches =
+          op.actionsFor(selection, theStore, context);
+
+      IMenuManager thisMenu = newM;
+
+      // do we have lots of them?
+      if (matches.size() >= GROUP_NUM)
+      {
+        // get a short name for the command
+        final String theName = matches.iterator().next().getDescription();
+
+        // ok, put them into a submenu
+        thisMenu = new MenuManager(theName);
+
+        // and add it to the main menu
+        newM.add(thisMenu);
+      }
+
+      final Iterator<ICommand> mIter = matches.iterator();
+      while (mIter.hasNext())
+      {
+        final ICommand thisC = mIter.next();
+        thisMenu.add(new Action(thisC.getName())
+        {
+          @Override
+          public void run()
+          {
+            thisC.execute();
+
+            // do we have a listener?
+            if (listener != null)
+            {
+              listener.run();
+            }
+          }
+        });
+      }
+    }
+  }
+
   private IStoreGroup _store;
   private TreeViewer viewer;
   private IMenuListener _menuListener;
@@ -101,8 +212,10 @@ public class DataManagerEditor extends EditorPart
   private Action generateData;
   private Action addFolder;
   private boolean _dirty = false;
+
   private DataModel _model;
-  private StoreChangeListener _changeListener = new StoreChangeListener()
+
+  private final StoreChangeListener _changeListener = new StoreChangeListener()
   {
 
     @Override
@@ -116,16 +229,17 @@ public class DataManagerEditor extends EditorPart
       viewer.refresh();
     }
   };
-  private IContext _context = new RCPContext();
 
-  private IResourceChangeListener resourceChangeListener =
+  private final IContext _context = new RCPContext();
+
+  private final IResourceChangeListener resourceChangeListener =
       new IResourceChangeListener()
       {
 
         @Override
-        public void resourceChanged(IResourceChangeEvent event)
+        public void resourceChanged(final IResourceChangeEvent event)
         {
-          IResourceDelta delta = event.getDelta();
+          final IResourceDelta delta = event.getDelta();
           final int eventType = event.getType();
           if (delta != null)
           {
@@ -138,17 +252,17 @@ public class DataManagerEditor extends EditorPart
                 public boolean visit(final IResourceDelta delta)
                     throws CoreException
                 {
-                  IResource resource = delta.getResource();
+                  final IResource resource = delta.getResource();
                   if (resource instanceof IWorkspaceRoot)
                   {
                     return true;
                   }
                   if (resource instanceof IProject)
                   {
-                    IEditorInput input = getEditorInput();
+                    final IEditorInput input = getEditorInput();
                     if (input instanceof IFileEditorInput)
                     {
-                      IProject project =
+                      final IProject project =
                           ((IFileEditorInput) input).getFile().getProject();
                       final boolean isPreDelete =
                           eventType == IResourceChangeEvent.PRE_DELETE;
@@ -169,17 +283,17 @@ public class DataManagerEditor extends EditorPart
                   }
                   if (resource instanceof IFile)
                   {
-                    IEditorInput input = getEditorInput();
+                    final IEditorInput input = getEditorInput();
                     if (input instanceof IFileEditorInput)
                     {
-                      IFile file = ((IFileEditorInput) input).getFile();
+                      final IFile file = ((IFileEditorInput) input).getFile();
                       if (resource.equals(file)
                           && delta.getKind() == IResourceDelta.REMOVED)
                       {
-                        IPath movedToPath = delta.getMovedToPath();
+                        final IPath movedToPath = delta.getMovedToPath();
                         if (movedToPath != null)
                         {
-                          IResource path =
+                          final IResource path =
                               ResourcesPlugin.getWorkspace().getRoot()
                                   .findMember(movedToPath);
                           if (path instanceof IFile)
@@ -203,9 +317,9 @@ public class DataManagerEditor extends EditorPart
                           closeEditor();
                         }
                       }
-                      boolean resChanged =
+                      final boolean resChanged =
                           delta.getKind() == IResourceDelta.CHANGED;
-                      boolean contentChanged =
+                      final boolean contentChanged =
                           (delta.getFlags() & IResourceDelta.CONTENT) != 0;
                       if (resource.equals(file)
                           && (resChanged && contentChanged))
@@ -219,33 +333,13 @@ public class DataManagerEditor extends EditorPart
 
               });
             }
-            catch (CoreException e)
+            catch (final CoreException e)
             {
               log(e);
             }
           }
         }
       };
-
-  private void reload()
-  {
-    if (_store != null)
-    {
-      _store.removeChangeListener(_changeListener);
-    }
-    load(getEditorInput());
-    Display.getDefault().asyncExec(new Runnable()
-    {
-
-      @Override
-      public void run()
-      {
-        viewer.setInput(_store);
-        viewer.refresh();
-      }
-    });
-
-  }
 
   private void closeEditor()
   {
@@ -260,8 +354,354 @@ public class DataManagerEditor extends EditorPart
     });
   }
 
+  private void configureDragSupport()
+  {
+    final int ops = DND.DROP_COPY | DND.DROP_MOVE;
+    final Transfer[] transfers = new Transfer[]
+    {TextTransfer.getInstance(), LocalSelectionTransfer.getTransfer()};
+    viewer.addDragSupport(ops, transfers, new LimpetDragListener(viewer));
+  }
+
+  /**
+   * sort out the drop target
+   */
+  private void configureDropSupport()
+  {
+    final int dropOperation = DND.DROP_COPY | DND.DROP_MOVE;
+    final Transfer[] dropTypes =
+    {FileTransfer.getInstance(), TextTransfer.getInstance()};
+    viewer.addDropSupport(dropOperation, dropTypes, new DataManagerDropAdapter(
+        viewer, _store));
+  }
+
+  private void configureKeys(final TreeViewer viewer)
+  {
+    final ItemProcessor deleteAction = new ItemProcessor()
+    {
+      @Override
+      public void processThis(final LimpetWrapper wrapper)
+      {
+        final Object subject = wrapper.getSubject();
+        if (subject instanceof IDocument<?>)
+        {
+          final IDocument<?> doc = (IDocument<?>) subject;
+          doc.beingDeleted();
+
+          // and detach it from the parent
+          doc.getParent().remove(doc);
+        }
+        else if (subject instanceof IStoreItem)
+        {
+          final IStoreItem item = (IStoreItem) subject;
+          item.getParent().remove(item);
+        }
+      }
+    };
+    final ItemProcessor renameAction = new ItemProcessor()
+    {
+      @Override
+      public void processThis(final LimpetWrapper wrapper)
+      {
+        final Object subject = wrapper.getSubject();
+        if (subject instanceof IDocument<?>)
+        {
+          final IDocument<?> doc = (IDocument<?>) subject;
+
+          // ask for a new name
+          final String oldName = doc.getName();
+
+          final String res =
+              _context.getInput("Rename document",
+                  "Please provide an new name", oldName);
+
+          if (res != null)
+          {
+            doc.setName(res);
+          }
+        }
+        else if (subject instanceof StoreGroup)
+        {
+          final StoreGroup group = (StoreGroup) subject;
+          // ask for a new name
+          final String oldName = group.getName();
+
+          final String res =
+              _context.getInput("Rename document",
+                  "Please provide an new name", oldName);
+
+          if (res != null)
+          {
+            group.setName(res);
+          }
+        }
+      }
+    };
+
+    final ViewerKeyAdapter deleteHandler =
+        new ViewerKeyAdapter(SWT.DEL, 0, viewer, deleteAction);
+    viewer.getControl().addKeyListener(deleteHandler);
+
+    final ViewerKeyAdapter renameHandler =
+        new ViewerKeyAdapter(SWT.F2, 0, viewer, renameAction);
+    viewer.getControl().addKeyListener(renameHandler);
+
+  }
+
+  /**
+   * walk down through the object tree, connecting listeners as appropriate
+   * 
+   * @param next
+   * @param parent
+   * @param listener
+   */
+  private void connectUp(final IStoreItem next, final IStoreGroup parent,
+      final IChangeListener listener)
+  {
+    if (next instanceof IStoreGroup)
+    {
+      final IStoreGroup group = (IStoreGroup) next;
+      final Iterator<IStoreItem> iter = group.iterator();
+      while (iter.hasNext())
+      {
+        connectUp(iter.next(), group, group);
+      }
+    }
+
+    next.addTransientChangeListener(listener);
+  }
+
+  protected IMenuListener createContextMenuListener()
+  {
+    return new IMenuListener()
+    {
+      @Override
+      public void menuAboutToShow(final IMenuManager menu)
+      {
+        setFocus();
+        editorContextMenuAboutToShow(menu);
+      }
+    };
+  }
+
   @Override
-  public void init(IEditorSite site, IEditorInput input)
+  public void createPartControl(final Composite parent)
+  {
+    viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+    _model = new DataModel();
+    viewer.setContentProvider(_model);
+    final LabelProvider labelProvider = new LimpetLabelProvider();
+    final ILabelDecorator decorator =
+        PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator();
+    viewer.setLabelProvider(new DecoratingLabelProvider(labelProvider,
+        decorator));
+    viewer.setInput(_store);
+
+    getSite().setSelectionProvider(viewer);
+    makeActions();
+    hookContextMenu();
+
+    final IActionBars bars = getEditorSite().getActionBars();
+    fillLocalToolBar(bars.getToolBarManager());
+
+    configureDropSupport();
+    configureDragSupport();
+    ResourcesPlugin.getWorkspace().addResourceChangeListener(
+        resourceChangeListener,
+        IResourceChangeEvent.PRE_CLOSE | IResourceChangeEvent.PRE_DELETE
+            | IResourceChangeEvent.POST_CHANGE);
+
+    // and the key listener
+    configureKeys(viewer);
+  }
+
+  @Override
+  public void dispose()
+  {
+    super.dispose();
+    ResourcesPlugin.getWorkspace().removeResourceChangeListener(
+        resourceChangeListener);
+    if (_store != null)
+    {
+      _store.removeChangeListener(_changeListener);
+    }
+  }
+
+  @Override
+  public void doSave(final IProgressMonitor monitor)
+  {
+    final IEditorInput input = getEditorInput();
+    // FIXME we will support FileEditorInput, FileStoreEditorInput and
+    // FileRevisionEditorInput
+    if (input instanceof IFileEditorInput)
+    {
+      final IFile file = ((IFileEditorInput) input).getFile();
+      doSaveAs(file, monitor);
+    }
+  }
+
+  @Override
+  public void doSaveAs()
+  {
+    final SaveAsDialog dialog = new SaveAsDialog(getEditorSite().getShell());
+    dialog.setTitle("Save As");
+    if (getEditorInput() instanceof IFileEditorInput)
+    {
+      final IFileEditorInput input = (IFileEditorInput) getEditorInput();
+      final IFile file = input.getFile();
+      dialog.setOriginalFile(file);
+    }
+    dialog.create();
+    dialog.setMessage("Save file to another location.");
+    if (dialog.open() == Window.OK)
+    {
+      final IPath path = dialog.getResult();
+      final IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
+      doSaveAs(file, new NullProgressMonitor());
+      final IFileEditorInput input = new FileEditorInput(file);
+      setInput(input);
+      setPartName(input.getName());
+      viewer.refresh();
+    }
+  }
+
+  private void doSaveAs(final IFile file, final IProgressMonitor monitor)
+  {
+    try
+    {
+      ResourcesPlugin.getWorkspace().removeResourceChangeListener(
+          resourceChangeListener);
+      new XStreamHandler().save(_store, file);
+      _dirty = false;
+      file.refreshLocal(IResource.DEPTH_INFINITE, monitor);
+      firePropertyChange(PROP_DIRTY);
+    }
+    catch (CoreException | IOException e)
+    {
+      log(e);
+    }
+    finally
+    {
+      ResourcesPlugin.getWorkspace().addResourceChangeListener(
+          resourceChangeListener,
+          IResourceChangeEvent.PRE_CLOSE | IResourceChangeEvent.PRE_DELETE
+              | IResourceChangeEvent.POST_CHANGE);
+    }
+  }
+
+  protected void editorContextMenuAboutToShow(final IMenuManager menu)
+  {
+    // get any suitable objects from selection
+    final List<IStoreItem> selection = getSuitableObjects();
+
+    // include some top level items
+    showThisList(selection, menu, OperationsLibrary.getTopLevel(), _store,
+        _context, null);
+
+    // now the tree of operations
+    menu.add(new Separator());
+
+    // get the list of operations
+    final HashMap<String, List<IOperation>> ops =
+        OperationsLibrary.getOperations();
+
+    // and the RCP-specific operations
+    final HashMap<String, List<IOperation>> rcpOps =
+        RCPOperationsLibrary.getOperations();
+    ops.putAll(rcpOps);
+
+    // did we find anything?
+    final Iterator<String> hIter = ops.keySet().iterator();
+
+    while (hIter.hasNext())
+    {
+      // ok, we're in a menu grouping
+      final String name = hIter.next();
+
+      // create a new menu tier
+      final MenuManager newM = new MenuManager(name);
+      menu.add(newM);
+
+      // now loop through this set of operations
+      final List<IOperation> values = ops.get(name);
+
+      showThisList(selection, newM, values, _store, _context, null);
+    }
+
+    menu.add(new Separator());
+    menu.add(refreshView);
+
+  }
+
+  protected void fillLocalToolBar(final IToolBarManager manager)
+  {
+    manager.add(refreshView);
+    manager.add(generateData);
+    manager.add(addFolder);
+  }
+
+  public IContext getContext()
+  {
+    return _context;
+  }
+
+  protected final IMenuListener getContextMenuListener()
+  {
+    if (_menuListener == null)
+    {
+      _menuListener = createContextMenuListener();
+    }
+    return _menuListener;
+  }
+
+  public IStoreGroup getStore()
+  {
+    return _store;
+  }
+
+  private List<IStoreItem> getSuitableObjects()
+  {
+    final ArrayList<IStoreItem> matches = new ArrayList<IStoreItem>();
+
+    // ok, find the applicable operations
+    final ISelection sel = viewer.getSelection();
+    final IStructuredSelection str = (IStructuredSelection) sel;
+    final Iterator<?> iter = str.iterator();
+    while (iter.hasNext())
+    {
+      final Object object = iter.next();
+      if (object instanceof IStoreItem)
+      {
+        matches.add((IStoreItem) object);
+      }
+      else if (object instanceof IAdaptable)
+      {
+        final IAdaptable ada = (IAdaptable) object;
+        final Object match = ada.getAdapter(IStoreItem.class);
+        if (match != null)
+        {
+          matches.add((IStoreItem) match);
+        }
+      }
+    }
+
+    return matches;
+  }
+
+  private void hookContextMenu()
+  {
+    final String id = "#DataManagerEditor";
+    final MenuManager menuMgr = new MenuManager(id, id);
+    menuMgr.setRemoveAllWhenShown(true);
+    menuMgr.addMenuListener(getContextMenuListener());
+    final Menu menu = menuMgr.createContextMenu(viewer.getControl());
+    viewer.getControl().setMenu(menu);
+    // We shouldn't register menu because we will contribute menus
+    // using separate extension point
+    // getSite().registerContextMenu(menuMgr, viewer);
+  }
+
+  @Override
+  public void init(final IEditorSite site, final IEditorInput input)
       throws PartInitException
   {
     // FIXME we will support FileEditorInput, FileStoreEditorInput and
@@ -272,12 +712,24 @@ public class DataManagerEditor extends EditorPart
     setPartName(input.getName());
   }
 
-  private void load(IEditorInput input)
+  @Override
+  public boolean isDirty()
+  {
+    return _dirty;
+  }
+
+  @Override
+  public boolean isSaveAsAllowed()
+  {
+    return true;
+  }
+
+  private void load(final IEditorInput input)
   {
     if (input instanceof IFileEditorInput)
     {
       // just check if the document is empty
-      IFileEditorInput iF = (IFileEditorInput) input;
+      final IFileEditorInput iF = (IFileEditorInput) input;
       try
       {
         // ok, the file may be empty, do a quick check
@@ -287,10 +739,10 @@ public class DataManagerEditor extends EditorPart
               new XStreamHandler().load(((IFileEditorInput) input).getFile());
 
           // we need to loop down through the data, setting all of the listeners
-          StoreGroup ms = (StoreGroup) _store;
+          final StoreGroup ms = (StoreGroup) _store;
 
           // and get hooked up
-          Iterator<IStoreItem> iter = ms.iterator();
+          final Iterator<IStoreItem> iter = ms.iterator();
           while (iter.hasNext())
           {
             connectUp(iter.next(), null, ms);
@@ -311,107 +763,35 @@ public class DataManagerEditor extends EditorPart
     _store.addChangeListener(_changeListener);
   }
 
-  /**
-   * walk down through the object tree, connecting listeners as appropriate
-   * 
-   * @param next
-   * @param parent
-   * @param listener
-   */
-  private void connectUp(IStoreItem next, IStoreGroup parent,
-      IChangeListener listener)
+  private void log(final Throwable t)
   {
-    if (next instanceof IStoreGroup)
+    final Bundle bundle = Platform.getBundle("info.limpet");
+    if (bundle != null)
     {
-      IStoreGroup group = (IStoreGroup) next;
-      Iterator<IStoreItem> iter = group.iterator();
-      while (iter.hasNext())
+      final ILog log = Platform.getLog(bundle);
+      if (log != null)
       {
-        connectUp(iter.next(), group, group);
+        log.log(new Status(IStatus.WARNING, bundle.getSymbolicName(), t
+            .getMessage(), t));
+        return;
       }
     }
-
-    next.addTransientChangeListener(listener);
-  }
-
-  @Override
-  public boolean isDirty()
-  {
-    return _dirty;
-  }
-
-  @Override
-  public boolean isSaveAsAllowed()
-  {
-    return true;
-  }
-
-  @Override
-  public void createPartControl(Composite parent)
-  {
-    viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
-    _model = new DataModel();
-    viewer.setContentProvider(_model);
-    LabelProvider labelProvider = new LimpetLabelProvider();
-    ILabelDecorator decorator =
-        PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator();
-    viewer.setLabelProvider(new DecoratingLabelProvider(labelProvider,
-        decorator));
-    viewer.setInput(_store);
-
-    getSite().setSelectionProvider(viewer);
-    makeActions();
-    hookContextMenu();
-
-    IActionBars bars = getEditorSite().getActionBars();
-    fillLocalToolBar(bars.getToolBarManager());
-
-    configureDropSupport();
-    configureDragSupport();
-    ResourcesPlugin.getWorkspace().addResourceChangeListener(
-        resourceChangeListener,
-        IResourceChangeEvent.PRE_CLOSE | IResourceChangeEvent.PRE_DELETE
-            | IResourceChangeEvent.POST_CHANGE);
-  }
-
-  private void configureDragSupport()
-  {
-    int ops = DND.DROP_COPY | DND.DROP_MOVE;
-    Transfer[] transfers = new Transfer[]
-    {TextTransfer.getInstance(),LocalSelectionTransfer.getTransfer()};
-    viewer.addDragSupport(ops, transfers, new LimpetDragListener(viewer));
-  }
-
-  /**
-   * sort out the drop target
-   */
-  private void configureDropSupport()
-  {
-    final int dropOperation = DND.DROP_COPY | DND.DROP_MOVE;
-    final Transfer[] dropTypes =
-    {FileTransfer.getInstance(), TextTransfer.getInstance()};
-    viewer.addDropSupport(dropOperation, dropTypes, new DataManagerDropAdapter(
-        viewer, _store));
-  }
-
-  protected void fillLocalToolBar(IToolBarManager manager)
-  {
-    manager.add(refreshView);
-    manager.add(generateData);
-    manager.add(addFolder);
+    t.printStackTrace();
   }
 
   private void makeActions()
   {
 
     // our operation wrapper needs to be able to get the selection, help it out
-    final info.limpet.ui.data_provider.data.ISelectionProvider provider = new info.limpet.ui.data_provider.data.ISelectionProvider()
-    {
-      public List<IStoreItem> getSelection()
-      {
-        return getSuitableObjects();
-      }
-    };
+    final info.limpet.ui.data_provider.data.ISelectionProvider provider =
+        new info.limpet.ui.data_provider.data.ISelectionProvider()
+        {
+          @Override
+          public List<IStoreItem> getSelection()
+          {
+            return getSuitableObjects();
+          }
+        };
 
     addFolder =
         new OperationWrapper(new AddLayerOperation(), "Add folder", PlatformUI
@@ -439,165 +819,32 @@ public class DataManagerEditor extends EditorPart
 
   }
 
-  public void showMessage(String message)
+  public void refresh()
   {
-    MessageDialog.openInformation(viewer.getControl().getShell(),
-        "Data Manager Editor", message);
-  }
-
-  protected IMenuListener createContextMenuListener()
-  {
-    return new IMenuListener()
+    if (!viewer.getControl().isDisposed())
     {
-      public void menuAboutToShow(IMenuManager menu)
-      {
-        setFocus();
-        editorContextMenuAboutToShow(menu);
-      }
-    };
-  }
-
-  protected void editorContextMenuAboutToShow(IMenuManager menu)
-  {
-    // get any suitable objects from selection
-    List<IStoreItem> selection = getSuitableObjects();
-
-    // include some top level items
-    showThisList(selection, menu, OperationsLibrary.getTopLevel(), _store, _context, null);
-
-    // now the tree of operations
-    menu.add(new Separator());
-
-    // get the list of operations
-    HashMap<String, List<IOperation>> ops =
-        OperationsLibrary.getOperations();
-
-    // and the RCP-specific operations
-    HashMap<String, List<IOperation>> rcpOps =
-        RCPOperationsLibrary.getOperations();
-    ops.putAll(rcpOps);
-
-    // did we find anything?
-    Iterator<String> hIter = ops.keySet().iterator();
-
-    while (hIter.hasNext())
-    {
-      // ok, we're in a menu grouping
-      String name = (String) hIter.next();
-
-      // create a new menu tier
-      MenuManager newM = new MenuManager(name);
-      menu.add(newM);
-
-      // now loop through this set of operations
-      List<IOperation> values = ops.get(name);
-
-      showThisList(selection, newM, values, _store, _context, null);
-    }
-
-    menu.add(new Separator());
-    menu.add(refreshView);
-
-  }
-
-  public static void showThisList(final List<IStoreItem> selection, final IMenuManager newM,
-      final List<IOperation> operations, final IStoreGroup theStore, final IContext context, final Runnable listener)
-  {
-    final int GROUP_NUM = 2;
-    
-    final Iterator<IOperation> oIter = operations.iterator();
-    while (oIter.hasNext())
-    {
-      final IOperation op = (IOperation) oIter.next();
-      final Collection<ICommand> matches =
-          op.actionsFor(selection, theStore, context);
-     
-      IMenuManager thisMenu = newM;
-      
-      // do we have lots of them?
-      if(matches.size() >= GROUP_NUM)
-      {
-        // get a short name for the command
-        final String theName = matches.iterator().next().getDescription();
-        
-        // ok, put them into a submenu
-        thisMenu = new MenuManager(theName);
-        
-        // and add it to the main menu
-        newM.add(thisMenu);
-      }
-
-      final Iterator<ICommand> mIter = matches.iterator();
-      while (mIter.hasNext())
-      {
-        final ICommand thisC = (ICommand) mIter.next();
-        thisMenu.add(new Action(thisC.getName())
-        {
-          @Override
-          public void run()
-          {
-            thisC.execute();
-            
-            // do we have a listener?
-            if (listener != null)
-            {
-              listener.run();
-            }
-          }
-        });
-      }
+      viewer.refresh();
     }
   }
 
-  private List<IStoreItem> getSuitableObjects()
+  private void reload()
   {
-    ArrayList<IStoreItem> matches = new ArrayList<IStoreItem>();
-
-    // ok, find the applicable operations
-    ISelection sel = viewer.getSelection();
-    IStructuredSelection str = (IStructuredSelection) sel;
-    Iterator<?> iter = str.iterator();
-    while (iter.hasNext())
+    if (_store != null)
     {
-      Object object = (Object) iter.next();
-      if (object instanceof IStoreItem)
-      {
-        matches.add((IStoreItem) object);
-      }
-      else if (object instanceof IAdaptable)
-      {
-        IAdaptable ada = (IAdaptable) object;
-        Object match = ada.getAdapter(IStoreItem.class);
-        if (match != null)
-        {
-          matches.add((IStoreItem) match);
-        }
-      }
+      _store.removeChangeListener(_changeListener);
     }
-
-    return matches;
-  }
-
-  protected final IMenuListener getContextMenuListener()
-  {
-    if (_menuListener == null)
+    load(getEditorInput());
+    Display.getDefault().asyncExec(new Runnable()
     {
-      _menuListener = createContextMenuListener();
-    }
-    return _menuListener;
-  }
 
-  private void hookContextMenu()
-  {
-    String id = "#DataManagerEditor";
-    MenuManager menuMgr = new MenuManager(id, id);
-    menuMgr.setRemoveAllWhenShown(true);
-    menuMgr.addMenuListener(getContextMenuListener());
-    Menu menu = menuMgr.createContextMenu(viewer.getControl());
-    viewer.getControl().setMenu(menu);
-    // We shouldn't register menu because we will contribute menus
-    // using separate extension point
-    // getSite().registerContextMenu(menuMgr, viewer);
+      @Override
+      public void run()
+      {
+        viewer.setInput(_store);
+        viewer.refresh();
+      }
+    });
+
   }
 
   @Override
@@ -606,111 +853,9 @@ public class DataManagerEditor extends EditorPart
     viewer.getControl().setFocus();
   }
 
-  @Override
-  public void doSave(IProgressMonitor monitor)
+  public void showMessage(final String message)
   {
-    final IEditorInput input = getEditorInput();
-    // FIXME we will support FileEditorInput, FileStoreEditorInput and
-    // FileRevisionEditorInput
-    if (input instanceof IFileEditorInput)
-    {
-      IFile file = ((IFileEditorInput) input).getFile();
-      doSaveAs(file, monitor);
-    }
-  }
-
-  private void doSaveAs(IFile file, IProgressMonitor monitor)
-  {
-    try
-    {
-      ResourcesPlugin.getWorkspace().removeResourceChangeListener(
-          resourceChangeListener);
-      new XStreamHandler().save(_store, file);
-      _dirty = false;
-      file.refreshLocal(IResource.DEPTH_INFINITE, monitor);
-      firePropertyChange(PROP_DIRTY);
-    }
-    catch (CoreException | IOException e)
-    {
-      log(e);
-    }
-    finally
-    {
-      ResourcesPlugin.getWorkspace().addResourceChangeListener(
-          resourceChangeListener,
-          IResourceChangeEvent.PRE_CLOSE | IResourceChangeEvent.PRE_DELETE
-              | IResourceChangeEvent.POST_CHANGE);
-    }
-  }
-
-  private void log(Throwable t)
-  {
-    Bundle bundle = Platform.getBundle("info.limpet");
-    if (bundle != null)
-    {
-      ILog log = Platform.getLog(bundle);
-      if (log != null)
-      {
-        log.log(new Status(IStatus.WARNING, bundle.getSymbolicName(), t
-            .getMessage(), t));
-        return;
-      }
-    }
-    t.printStackTrace();
-  }
-
-  @Override
-  public void doSaveAs()
-  {
-    final SaveAsDialog dialog = new SaveAsDialog(getEditorSite().getShell());
-    dialog.setTitle("Save As");
-    if (getEditorInput() instanceof IFileEditorInput)
-    {
-      IFileEditorInput input = (IFileEditorInput) getEditorInput();
-      IFile file = input.getFile();
-      dialog.setOriginalFile(file);
-    }
-    dialog.create();
-    dialog.setMessage("Save file to another location.");
-    if (dialog.open() == Window.OK)
-    {
-      final IPath path = dialog.getResult();
-      final IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
-      doSaveAs(file, new NullProgressMonitor());
-      IFileEditorInput input = new FileEditorInput(file);
-      setInput(input);
-      setPartName(input.getName());
-      viewer.refresh();
-    }
-  }
-
-  @Override
-  public void dispose()
-  {
-    super.dispose();
-    ResourcesPlugin.getWorkspace().removeResourceChangeListener(
-        resourceChangeListener);
-    if (_store != null)
-    {
-      _store.removeChangeListener(_changeListener);
-    }
-  }
-
-  public IStoreGroup getStore()
-  {
-    return _store;
-  }
-
-  public IContext getContext()
-  {
-    return _context;
-  }
-
-  public void refresh()
-  {
-    if (!viewer.getControl().isDisposed())
-    {
-      viewer.refresh();
-    }
+    MessageDialog.openInformation(viewer.getControl().getShell(),
+        "Data Manager Editor", message);
   }
 }
