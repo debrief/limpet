@@ -94,11 +94,11 @@ public class TestArithmeticCollections extends TestCase
     assertNull("returned null for out of intersection", tq.interpolateValue(
         420, InterpMethod.Linear));
   }
-  
+
   public void testMathOperatorsUnIndexed()
   {
     // check the unary operations work on non-indexed datasets
-    
+
     final NumberDocumentBuilder nq2 =
         new NumberDocumentBuilder("Some data2", METRE.divide(SECOND).asType(
             Velocity.class), null, null);
@@ -112,34 +112,7 @@ public class TestArithmeticCollections extends TestCase
     selection.add(nq2d);
 
     final StoreGroup store = new StoreGroup("Store");
-    final UnaryQuantityOperation absOp = new UnaryQuantityOperation("Abs")
-    {
-
-      @Override
-      protected boolean appliesTo(final List<IStoreItem> selection)
-      {
-        // check it's numerical
-        return true;
-      }
-
-      @Override
-      public Dataset calculate(final Dataset input)
-      {
-        return Maths.abs(input);
-      }
-
-      @Override
-      protected String getUnaryNameFor(final String name)
-      {
-        return "Absolute value of " + name;
-      }
-
-      @Override
-      protected Unit<?> getUnaryOutputUnit(final Unit<?> first)
-      {
-        return first;
-      }
-    };
+    final UnaryQuantityOperation absOp = new AbsoluteOperator();
     final Collection<ICommand> commands =
         absOp.actionsFor(selection, store, context);
 
@@ -167,6 +140,75 @@ public class TestArithmeticCollections extends TestCase
     assertEquals("value correct", 20d, series.getValueAt(1), 0.001);
     assertEquals("value correct", 40d, series.getValueAt(2), 0.001);
   }
+
+  final private static class ClearOperator extends UnaryQuantityOperation
+  {
+
+    public ClearOperator()
+    {
+      super("Clear units");
+    }
+
+    @Override
+    protected boolean appliesTo(final List<IStoreItem> selection)
+    {
+      return true;
+    }
+
+    @Override
+    public Dataset calculate(final Dataset input)
+    {
+      return input;
+    }
+
+    @Override
+    protected String getUnaryNameFor(final String name)
+    {
+      return "Dimensionless " + name;
+    }
+
+    @Override
+    protected Unit<?> getUnaryOutputUnit(final Unit<?> first)
+    {
+      return Dimensionless.UNIT;
+    }
+  };
+
+
+  
+  final private static class AbsoluteOperator extends UnaryQuantityOperation
+  {
+
+    public AbsoluteOperator()
+    {
+      super("Abs");
+    }
+
+    @Override
+    protected boolean appliesTo(final List<IStoreItem> selection)
+    {
+      // check it's numerical
+      return true;
+    }
+
+    @Override
+    public Dataset calculate(final Dataset input)
+    {
+      return Maths.abs(input);
+    }
+
+    @Override
+    protected String getUnaryNameFor(final String name)
+    {
+      return "Absolute value of " + name;
+    }
+
+    @Override
+    protected Unit<?> getUnaryOutputUnit(final Unit<?> first)
+    {
+      return first;
+    }
+  };
 
   public void testMathOperatorsIndexed()
   {
@@ -204,34 +246,7 @@ public class TestArithmeticCollections extends TestCase
     selection.add(tq2d);
 
     final StoreGroup store = new StoreGroup("Store");
-    final UnaryQuantityOperation absOp = new UnaryQuantityOperation("Abs")
-    {
-
-      @Override
-      protected boolean appliesTo(final List<IStoreItem> selection)
-      {
-        // check it's numerical
-        return true;
-      }
-
-      @Override
-      public Dataset calculate(final Dataset input)
-      {
-        return Maths.abs(input);
-      }
-
-      @Override
-      protected String getUnaryNameFor(final String name)
-      {
-        return "Absolute value of " + name;
-      }
-
-      @Override
-      protected Unit<?> getUnaryOutputUnit(final Unit<?> first)
-      {
-        return first;
-      }
-    };
+    final UnaryQuantityOperation absOp = new AbsoluteOperator();
     final Collection<ICommand> commands =
         absOp.actionsFor(selection, store, context);
 
@@ -272,35 +287,7 @@ public class TestArithmeticCollections extends TestCase
     assertEquals("value correct", 22d, series.getValueAt(2));
 
     // try to clear the units
-    final UnaryQuantityOperation clearU =
-        new UnaryQuantityOperation("Clear units")
-        {
-
-          @Override
-          protected boolean appliesTo(final List<IStoreItem> selection)
-          {
-            return true;
-          }
-
-          @Override
-          public Dataset calculate(final Dataset input)
-          {
-            return input;
-          }
-
-          @Override
-          protected String getUnaryNameFor(final String name)
-          {
-            return "Dimensionless " + name;
-          }
-
-          @Override
-          protected Unit<?> getUnaryOutputUnit(final Unit<?> first)
-          {
-            return Dimensionless.UNIT;
-          }
-        };
-
+    final UnaryQuantityOperation clearU = new ClearOperator();
     assertEquals("previous type:", "[L]/[T]", tq1d.getUnits().getDimension()
         .toString());
 
