@@ -37,37 +37,23 @@ public class AddQuantityOperation extends BinaryQuantityOperation
   public class AddQuantityValues extends BinaryQuantityCommand
   {
     final private boolean doLog;
-
-    public AddQuantityValues(final String name,
-        final List<IStoreItem> selection, final IStoreGroup store,
-        final IContext context, final boolean doLog)
-    {
-      this(name, selection, store, null, context, doLog);
-    }
+    private String outputPrefix;
 
     public AddQuantityValues(final String name,
         final List<IStoreItem> selection, final IStoreGroup destination,
         final IDocument<?> timeProvider, final IContext context,
-        final boolean doLog)
+        final boolean doLog, final String outputPrefix)
     {
       super(name, "Add datasets", destination, false, false, selection,
           timeProvider, context);
       this.doLog = doLog;
+      this.outputPrefix = outputPrefix;
     }
 
     @Override
     protected String getBinaryNameFor(final String name1, final String name2)
     {
-      final String prefix;
-      if(doLog)
-      {
-        prefix = "Logarithmic Sum";
-      }
-      else
-      {
-        prefix = "Sum";
-      }
-      return prefix + " of " + name1 + " + " + name2;
+      return outputPrefix + "Sum of " + name1 + " + " + name2;
     }
 
     @Override
@@ -138,6 +124,8 @@ public class AddQuantityOperation extends BinaryQuantityOperation
       final IStoreGroup destination, final Collection<ICommand> res,
       final IContext context)
   {
+    final IDocument<?> timeProvider = null;
+
     if (hasLogData(selection))
     {
       // ok, we need to offer log and non-log operations
@@ -146,13 +134,13 @@ public class AddQuantityOperation extends BinaryQuantityOperation
       ICommand newC =
           new AddQuantityValues(
               "Logarithmic Add for provided series (indexed)", selection,
-              destination, context, true);
+              destination, timeProvider, context, true, "Log ");
       res.add(newC);
 
       // just offer the log operation
       newC =
           new AddQuantityValues("Power Add for provided series (indexed)",
-              selection, destination, context, false);
+              selection, destination, timeProvider, context, false, "Power ");
       res.add(newC);
 
     }
@@ -162,7 +150,7 @@ public class AddQuantityOperation extends BinaryQuantityOperation
       final ICommand newC =
           new AddQuantityValues(
               "Add numeric values in provided series (indexed)", selection,
-              destination, context, false);
+              destination, timeProvider, context, false, "");
       res.add(newC);
     }
 
@@ -182,13 +170,13 @@ public class AddQuantityOperation extends BinaryQuantityOperation
         ICommand newC =
             new AddQuantityValues(
                 "Logarithmic Add for provided series (interpolated)",
-                selection, destination, longest, context, true);
+                selection, destination, longest, context, true, "Log ");
         res.add(newC);
 
         newC =
             new AddQuantityValues(
                 "Power Add for provided series (interpolated)", selection,
-                destination, longest, context, false);
+                destination, longest, context, false, "Power ");
         res.add(newC);
 
       }
@@ -197,7 +185,7 @@ public class AddQuantityOperation extends BinaryQuantityOperation
         final ICommand newC =
             new AddQuantityValues(
                 "Add numeric values in provided series (interpolated)",
-                selection, destination, longest, context, false);
+                selection, destination, longest, context, false, "");
         res.add(newC);
       }
     }

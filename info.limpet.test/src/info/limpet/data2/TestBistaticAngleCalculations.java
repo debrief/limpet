@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
 
 import org.junit.Test;
@@ -50,6 +51,70 @@ public class TestBistaticAngleCalculations
     assertEquals("singleton", 1, doc.size());
   }
 
+  @Test
+  public void testLogArithmeticIndexed()
+  {
+    List<IStoreItem> selection = new ArrayList<IStoreItem>();
+    IStoreGroup destination = new StoreGroup("dest");
+
+    NumberDocumentBuilder docAb = new NumberDocumentBuilder("doc a", NonSI.DECIBEL, null, SI.SECOND);
+    NumberDocumentBuilder docBb = new NumberDocumentBuilder("doc b", NonSI.DECIBEL, null, SI.SECOND);
+    
+    docAb.add(10d, 23d);
+    docAb.add(20d, 24d);
+    docAb.add(30d, 25d);
+    
+    docBb.add(10d, 33d);
+    docBb.add(22d, 32d);
+    docBb.add(27d, 35d);
+    docBb.add(30d, 36d);
+    
+    final NumberDocument docA = docAb.toDocument();
+    final NumberDocument docB = docBb.toDocument();
+    
+    selection.add(docA);
+    selection.add(docB);
+    
+    IOperation adder = new AddQuantityOperation();
+    List<ICommand> ops = adder.actionsFor(selection, destination, context);
+    assertEquals("only two commands", 2, ops.size());
+    
+    // run the two operations
+    final ICommand logOp = ops.get(0);
+    final ICommand powerOp = ops.get(1);
+    logOp.execute();
+    powerOp.execute();
+    
+    // check they're as expecetd
+    assertTrue("log is first", logOp.getName().startsWith("Log"));
+    assertTrue("power is second", powerOp.getName().startsWith("Power"));
+    
+    System.out.println(docA.toListing());
+    System.out.println(docB.toListing());
+    
+    NumberDocument logRes = (NumberDocument) logOp.getOutputs().get(0);
+    System.out.println(logRes.toListing());
+    
+    NumberDocument powerRes = (NumberDocument) powerOp.getOutputs().get(0);
+    System.out.println(powerRes.toListing());
+    
+    // and now the reverse operation
+    IOperation combinedSubber = new SubtractQuantityOperation();
+    IOperation oldSubber = new SubtractLogQuantityOperation();
+    
+    selection.clear();
+    selection.add(logRes);
+    selection.add(docA);
+    
+    List<ICommand> combinedOps = combinedSubber.actionsFor(selection, destination, context);
+    List<ICommand> oldOps = oldSubber.actionsFor(selection, destination, context);
+    
+    assertEquals("have 4 combined ops", 4, combinedOps.size());
+    assertEquals("have 2 old ops", 2, oldOps.size());
+    
+    
+  }
+  
   @Test
   public void testAddLogData() throws IOException
   {
