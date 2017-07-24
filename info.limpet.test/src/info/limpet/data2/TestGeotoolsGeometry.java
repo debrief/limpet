@@ -960,7 +960,7 @@ public class TestGeotoolsGeometry extends TestCase
     IDocument<?> output = ops.get(0).getOutputs().get(0);
     assertNotNull("output produced", output);
     assertEquals("correct items", 3, output.size());
-    assertNotNull("has indices", output.getIndex());
+    assertNotNull("has indices", output.getIndexIterator());
 
     System.out.println(output.toString());
 
@@ -989,7 +989,7 @@ public class TestGeotoolsGeometry extends TestCase
     output = ops.iterator().next().getOutputs().get(0);
     assertNotNull("output produced", output);
     assertEquals("correct items", 5, output.size());
-    assertNotNull("has indices", output.getIndex());
+    assertNotNull("has indices", output.getIndexIterator());
 
     // ok, let's check how it works for an indexed dataset
     // check output is empty
@@ -1004,7 +1004,7 @@ public class TestGeotoolsGeometry extends TestCase
     output = newOp.getOutputs().get(0);
     assertNotNull("output produced", output);
     assertEquals("correct items", 5, output.size());
-    assertNotNull("has indices", output.getIndex());
+    assertNotNull("has indices", output.getIndexIterator());
 
   }
 

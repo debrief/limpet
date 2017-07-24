@@ -1271,7 +1271,7 @@ public class CollectionComplianceTests
 
     if (iCollection.isIndexed())
     {
-      Iterator<Double> lIter = iCollection.getIndex();
+      Iterator<Double> lIter = iCollection.getIndexIterator();
       Double start = null;
       Double end = null;
       while (lIter.hasNext())
@@ -1316,7 +1316,7 @@ public class CollectionComplianceTests
       // circumstances
       if (iCollection != null && iCollection.isIndexed())
       {
-        Iterator<Double> lIter = iCollection.getIndex();
+        Iterator<Double> lIter = iCollection.getIndexIterator();
         int score = 0;
         while (lIter.hasNext())
         {

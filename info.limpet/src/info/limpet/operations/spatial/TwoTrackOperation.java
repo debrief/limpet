@@ -198,7 +198,7 @@ public abstract class TwoTrackOperation implements IOperation
       final Iterator<Point2D> t2Iter = interp2.getLocationIterator();
 
       // produce a time iterator, if we can.
-      final Iterator<Double> timeIter = times != null ? times.getIndex() : null;
+      final Iterator<Double> timeIter = times != null ? times.getIndexIterator() : null;
 
       // if we can't iterate through a collection, re-use the same value
       final Point2D fixed1 = interp1.size() == 1 ? t1Iter.next() : null;

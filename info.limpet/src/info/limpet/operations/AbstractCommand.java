@@ -429,7 +429,7 @@ public abstract class AbstractCommand implements ICommand
     {
 
       final Iterator<Point2D> lIter = track.getLocationIterator();
-      final Iterator<Double> tIter = track.getIndex();
+      final Iterator<Double> tIter = track.getIndexIterator();
       while (lIter.hasNext())
       {
         final double thisT = tIter.next();
@@ -527,7 +527,7 @@ public abstract class AbstractCommand implements ICommand
     {
 
       final Iterator<Double> lIter = document.getIterator();
-      final Iterator<Double> tIter = document.getIndex();
+      final Iterator<Double> tIter = document.getIndexIterator();
       while (lIter.hasNext())
       {
         final double thisT = tIter.next();

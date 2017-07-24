@@ -407,7 +407,7 @@ public class DopplerShiftBetweenTracksOperation implements IOperation
                 .asType(Frequency.class), this, SampleData.MILLIS);
 
         // and now we can start looping through
-        final Iterator<Double> tIter = times.getIndex();
+        final Iterator<Double> tIter = times.getIndexIterator();
         while (tIter.hasNext())
         {
           final double thisTime = tIter.next();
