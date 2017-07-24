@@ -879,7 +879,7 @@ public class XyPlotView extends CoreAnalysisView
       final boolean isTemporal)
   {
     // must be temporal
-    final Iterator<Double> index = coll.getIndex();
+    final Iterator<Double> index = coll.getIndexIterator();
     final Iterator<Double> values = thisQ.getIterator();
 
     int ctr = 0;

@@ -226,7 +226,7 @@ public class LocationDocument extends Document<Point2D>
     int beforeIndex = -1, afterIndex = -1;
     double beforeTime = 0, afterTime = 0;
 
-    Iterator<Double> tIter = getIndex();
+    Iterator<Double> tIter = getIndexIterator();
     int ctr = 0;
     while (tIter.hasNext())
     {

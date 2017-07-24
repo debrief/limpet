@@ -44,7 +44,7 @@ public interface IDocument<T extends Object> extends IStoreItem
   @UIProperty(name = "Indexed", category = UIProperty.CATEGORY_LABEL)
   public boolean isIndexed();
 
-  public Iterator<Double> getIndex();
+  public Iterator<Double> getIndexIterator();
   
   @UIProperty(name = "IndexUnits", category = UIProperty.CATEGORY_LABEL)
   public Unit<?> getIndexUnits();

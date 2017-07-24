@@ -81,7 +81,7 @@ public class TestPersistence extends TestCase
       assertEquals("same units", speedDoc1.getUUID(), speedDoc2.getUUID());      
       assertEquals("same range", speedDoc1.getRange(), speedDoc2.getRange());
       assertEquals("same first value", speedDoc1.getIterator().next(), speedDoc2.getIterator().next());
-      assertEquals("same first index", speedDoc1.getIndex().next(), speedDoc2.getIndex().next());
+      assertEquals("same first index", speedDoc1.getIndexIterator().next(), speedDoc2.getIndexIterator().next());
       assertEquals("same quantity", speedDoc1.isQuantity(), speedDoc2.isQuantity());
       assertEquals("same indexed", speedDoc1.isIndexed(), speedDoc2.isIndexed());
       assertEquals("same predecessors", speedDoc1.getPrecedent(), speedDoc2.getPrecedent());

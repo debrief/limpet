@@ -229,7 +229,7 @@ public class BistaticAngleOperation implements IOperation
       final Iterator<Point2D> tgtIter = interp_tgt.getLocationIterator();
       final Iterator<Point2D> rxIter = interp_rx.getLocationIterator();
       final Iterator<Double> hdgIter = interp_headings.getIterator();
-      final Iterator<Double> timeIter = times.getIndex();
+      final Iterator<Double> timeIter = times.getIndexIterator();
 
       while (timeIter.hasNext())
       {

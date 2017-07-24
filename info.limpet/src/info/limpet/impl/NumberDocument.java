@@ -22,12 +22,12 @@ import org.eclipse.january.metadata.AxesMetadata;
 
 public class NumberDocument extends Document<Double>
 {
-  private static class DoubleIterator implements Iterator<Double>
+  public static class DoubleIterator implements Iterator<Double>
   {
     private final double[] _data;
     private int _ctr;
 
-    private DoubleIterator(final double[] data)
+    public DoubleIterator(final double[] data)
     {
       _data = data;
       _ctr = 0;

@@ -58,7 +58,7 @@ public class CsvGenerator
     Iterator<Double> indexIterator = null;
     if (collection.isIndexed())
     {
-      indexIterator = collection.getIndex();
+      indexIterator = collection.getIndexIterator();
     }
 
     if (collection instanceof LocationDocument)

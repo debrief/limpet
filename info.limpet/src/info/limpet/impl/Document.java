@@ -12,11 +12,8 @@ import java.util.UUID;
 
 import javax.measure.unit.Unit;
 
-import org.eclipse.january.DatasetException;
-import org.eclipse.january.dataset.DatasetUtils;
-import org.eclipse.january.dataset.IDataset;
-import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.metadata.AxesMetadata;
 
 abstract public class Document<T extends Object> implements IDocument<T>
@@ -316,35 +313,40 @@ abstract public class Document<T extends Object> implements IDocument<T>
 
   }
 
+  public DoubleDataset getIndexValues()
+  {
+    DoubleDataset res;
+
+    if (isIndexed())
+    {
+      final AxesMetadata am = dataset.getFirstMetadata(AxesMetadata.class);
+
+      DoubleDataset dd = (DoubleDataset) am.getAxes()[0];
+      res = dd;
+    }
+    else
+    {
+      throw new IllegalArgumentException("Dataset isn't indexed");
+    }
+
+    return res;
+  }
+
   /*
    * (non-Javadoc)
    * 
    * @see info.limpet.IDocument#getIndices()
    */
   @Override
-  public Iterator<Double> getIndex()
+  public Iterator<Double> getIndexIterator()
   {
-    DoubleIterator res = null;
+    double[] items = getIndexValues().getData();
+    return new DoubleIterator(items);
+  }
 
-    if (isIndexed())
-    {
-      final AxesMetadata am = dataset.getFirstMetadata(AxesMetadata.class);
-
-      ILazyDataset ds = am.getAxes()[0];
-      try
-      {
-        DoubleDataset dd =
-            (DoubleDataset) DatasetUtils.sliceAndConvertLazyDataset(ds);
-        double[] items = dd.getData();
-        res = new DoubleIterator(items);
-      }
-      catch (DatasetException e)
-      {
-        throw new IllegalArgumentException(e);
-      }
-    }
-
-    return res;
+  public double getIndexAt(final int i)
+  {
+    return getIndexValues().getData()[i];
   }
 
   /*
@@ -380,7 +382,6 @@ abstract public class Document<T extends Object> implements IDocument<T>
   {
     dependents.add(command);
   }
-
 
   /*
    * (non-Javadoc)
