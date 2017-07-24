@@ -23,6 +23,7 @@ import javax.measure.unit.SI;
 import junit.framework.TestCase;
 
 import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.metadata.AxesMetadata;
 import org.junit.Test;
 
 public class TestGrids extends TestCase
@@ -222,17 +223,6 @@ public class TestGrids extends TestCase
     // and add the third dataset
     selection.add(ang3.toDocument());
 
-    assertEquals("still empty", 0, gen.actionsFor(selection, store, context)
-        .size());
-
-    // make the third dataset the correct length
-    ang3.add(4 * 10000, Math.sin(4));
-
-    selection.clear();
-    selection.add(ang1.toDocument());
-    selection.add(ang2.toDocument());
-    selection.add(ang3.toDocument());
-
     ops = gen.actionsFor(selection, store, context);
     assertEquals("3 perms created", 6, ops.size());
 
@@ -255,11 +245,14 @@ public class TestGrids extends TestCase
     NumberDocumentBuilder ang2 =
         new NumberDocumentBuilder("ang_2", SampleData.DEGREE_ANGLE, null,
             SI.SECOND);
+    NumberDocumentBuilder ang3_late =
+        new NumberDocumentBuilder("ang_3_late", SampleData.DEGREE_ANGLE, null,
+            SI.SECOND);
     NumberDocumentBuilder other1 =
         new NumberDocumentBuilder("other1", SI.METER, null, SI.SECOND);
 
     selection.add(ang1.toDocument());
-    selection.add(ang2.toDocument());
+    selection.add(ang3_late.toDocument());
     selection.add(other1.toDocument());
 
     assertEquals("still empty", 0, gen.actionsFor(selection, store, context)
@@ -270,14 +263,16 @@ public class TestGrids extends TestCase
     for (int i = 0; i < 5; i++)
     {
       ang1.add(i * 10000, i * 3d);
-      ang2.add(i * 10000, i * 2d);
+      ang2.add(i * 11000, i * 2d);
+      ang3_late.add(1000000 + i * 10000, i * 4d);
 
       if (i < 4)
       {
-        other1.add(i * 10000, Math.sin(i));
+        other1.add(500 + i * 10000, Math.sin(i));
       }
     }
 
+    // check with insufficient data
     selection.clear();
     selection.add(ang1.toDocument());
     selection.add(ang2.toDocument());
@@ -288,19 +283,44 @@ public class TestGrids extends TestCase
     // and add the third dataset
     selection.add(other1.toDocument());
 
-    assertEquals("still empty", 0, gen.actionsFor(selection, store, context)
+    ops = gen.actionsFor(selection, store, context);
+    assertEquals("Perm created", 2, ops.size());
+    
+    // check with non-overlapping datasets
+    selection.clear();
+    selection.add(ang1.toDocument());
+    selection.add(ang3_late.toDocument());
+    selection.add(other1.toDocument());
+
+    List<ICommand> newOps = gen.actionsFor(selection, store, context);
+    assertEquals("still empty", 0, newOps
         .size());
 
-    // make the third dataset the correct length
-    other1.add(4 * 10000, Math.sin(4));
-
+    // check with non-matching indices
     selection.clear();
     selection.add(ang1.toDocument());
     selection.add(ang2.toDocument());
     selection.add(other1.toDocument());
 
-    ops = gen.actionsFor(selection, store, context);
-    assertEquals("Perm created", 2, ops.size());
+    newOps = gen.actionsFor(selection, store, context);
+    assertEquals("operations produced", 2, newOps
+        .size());
+    
+    // ok, check the output
+    ICommand first = newOps.get(0);
+    first.execute();
+    
+    NumberDocument output = (NumberDocument) first.getOutputs().get(0);
+    assertNotNull(output);
+    assertEquals("correct units", SampleData.DEGREE_ANGLE, output.getIndexUnits());
+    
+    // check the indices
+    AxesMetadata am = output.getDataset().getFirstMetadata(AxesMetadata.class);
+    DoubleDataset amOne = (DoubleDataset) am.getAxis(0)[0];
+    DoubleDataset amTwo = (DoubleDataset) am.getAxis(1)[0];
+    
+    assertNotNull("have first axis", amOne);
+    assertNotNull("have second axis", amTwo);
   }
 
   @Test
