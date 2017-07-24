@@ -75,6 +75,7 @@ public class XyPlotView extends CoreAnalysisView
   private Chart chart;
 
   private Action switchAxes;
+  private Action fitToWindow;
 
   public XyPlotView()
   {
@@ -146,6 +147,7 @@ public class XyPlotView extends CoreAnalysisView
     super.contributeToActionBars();
     final IActionBars bars = getViewSite().getActionBars();
     bars.getToolBarManager().add(switchAxes);
+    bars.getToolBarManager().add(fitToWindow);
     bars.getMenuManager().add(switchAxes);
   }
 
@@ -327,6 +329,29 @@ public class XyPlotView extends CoreAnalysisView
     switchAxes.setToolTipText("Switch X and Y axes");
     switchAxes.setImageDescriptor(Activator
         .getImageDescriptor("icons/angle.png"));
+    
+
+    fitToWindow = new Action("Fit to window", SWT.COMMAND)
+    {
+      @Override
+      public void run()
+      {
+        // work through the axes to reset the range
+        IAxis[] xAxes = chart.getAxisSet().getAxes();
+        for(IAxis axis: xAxes)
+        {
+          // ok, do fit
+          axis.adjustRange();
+        }
+        // and re-plot it
+        chart.redraw();
+      }
+    };
+    fitToWindow.setText("Fit to window");
+    fitToWindow.setToolTipText("Resize plot to view all data");
+    fitToWindow.setImageDescriptor(Activator
+        .getImageDescriptor("icons/fit_to_win.png"));
+    
 
   }
 
