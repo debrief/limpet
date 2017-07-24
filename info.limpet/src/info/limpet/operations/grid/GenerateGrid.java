@@ -27,6 +27,7 @@ import javax.measure.unit.Unit;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.Maths;
 import org.eclipse.january.dataset.ObjectDataset;
 import org.eclipse.january.metadata.AxesMetadata;
 import org.eclipse.january.metadata.internal.AxesMetadataImpl;
@@ -62,7 +63,7 @@ public class GenerateGrid implements IOperation
       this.bins = bins;
       this.helper = helper;
     }
-    
+
     @UIProperty(name = "BinSize", category = UIProperty.CATEGORY_CALCULATION,
         min = 1, max = 45)
     public int getAngleBinSize()
@@ -73,11 +74,11 @@ public class GenerateGrid implements IOperation
     public void setAngleBinSize(int val)
     {
       angleBinSize = val;
-      
+
       // ok, fire update
-      this.recalculate(null);         
+      this.recalculate(null);
     }
-    
+
     public int binFor(final double[] bins, final double vOne)
     {
       // find the bin for this value
@@ -137,7 +138,7 @@ public class GenerateGrid implements IOperation
       triplet.axisOne.addDependent(this);
       triplet.axisTwo.addDependent(this);
       triplet.measurements.addDependent(this);
-      
+
       // create the output document
       final Document<?> nd =
           helper.getOutputDocument(this, triplet.measurements.getUnits());
@@ -176,10 +177,22 @@ public class GenerateGrid implements IOperation
       // output dataset
       @SuppressWarnings("unchecked")
       final List<Double>[][] grid = new List[oneBins.length][twoBins.length];
+      
+      // ok, we've got to produce the axis datasets at the same indexes as
+      // the measurement dataset
+      final DoubleDataset mIndex = triplet.measurements.getIndexValues();
+      final DoubleDataset oneIndex = triplet.axisOne.getIndexValues();
+      final DoubleDataset oneValues = (DoubleDataset) triplet.axisOne.getDataset();
+      final DoubleDataset twoIndex = triplet.axisTwo.getIndexValues();
+      final DoubleDataset twoValues = (DoubleDataset) triplet.axisTwo.getDataset();
+      
+      final DoubleDataset oneInterp = (DoubleDataset) Maths.interpolate(oneIndex, oneValues, mIndex, null, null);
+      final DoubleDataset twoInterp = (DoubleDataset) Maths.interpolate(twoIndex, twoValues, mIndex, null, null);
+      
 
       // ok, loop through the data
-      final Iterator<Double> oneIter = triplet.axisOne.getIterator();
-      final Iterator<Double> twoIter = triplet.axisTwo.getIterator();
+      final Iterator<Double> oneIter = new NumberDocument.DoubleIterator(oneInterp.getData());
+      final Iterator<Double> twoIter = new NumberDocument.DoubleIterator(twoInterp.getData());
       final Iterator<Double> valIter = triplet.measurements.getIterator();
 
       while (oneIter.hasNext())
@@ -233,7 +246,7 @@ public class GenerateGrid implements IOperation
     protected void recalculate(final IStoreItem subject)
     {
       performCalc();
-      
+
       // share the good news
       super.getOutputs().get(0).fireDataChanged();
     }
@@ -433,12 +446,17 @@ public class GenerateGrid implements IOperation
   {
     final List<Triplet> res = new ArrayList<Triplet>();
 
-    if (aTests.allEqualLength(selection) && selection.size() == 3)
+    if (selection.size() == 3 && aTests.allEqualIndexed(selection))
     {
       final Map<Unit<?>, ArrayList<NumberDocument>> matches =
           new HashMap<Unit<?>, ArrayList<NumberDocument>>();
 
-      Unit<?> unitA = null;
+      Unit<?> commonIndexUnits = null;
+
+      // we need to keep track of the index ranges,
+      // to ensure there is an overlap
+      double minIndexVal = Double.MIN_VALUE;
+      double maxIndexVal = Double.MAX_VALUE;
 
       // do the binning
       for (final IStoreItem item : selection)
@@ -449,18 +467,25 @@ public class GenerateGrid implements IOperation
 
           // check the index units
           final Unit<?> index = doc.getIndexUnits();
-          if (unitA == null)
+          if (commonIndexUnits == null)
           {
-            unitA = index;
+            commonIndexUnits = index;
           }
           else
           {
-            if (!index.equals(unitA))
+            if (!index.equals(commonIndexUnits))
             {
               return null;
             }
           }
 
+          // ok, it's valid - get the index range
+          double thisMin = doc.getIndexAt(0);
+          double thisMax = doc.getIndexAt(doc.size() - 1);
+          minIndexVal = Math.max(minIndexVal, thisMin);
+          maxIndexVal = Math.min(maxIndexVal, thisMax);
+
+          // now check the units
           final Unit<?> units = doc.getUnits();
 
           ArrayList<NumberDocument> list = matches.get(units);
@@ -474,53 +499,57 @@ public class GenerateGrid implements IOperation
         }
       }
 
-      // ok, do we have enough items
-      if (matches.size() == 1)
+      // check the indices
+      if (minIndexVal < maxIndexVal)
       {
-        // ok, we need to offer all three as the measurement
-        final ArrayList<NumberDocument> list =
-            matches.get(matches.keySet().iterator().next());
-        res.add(tripletFor(list));
 
-        // ok, push the first item to the end
-        list.add(list.remove(0));
-        res.add(tripletFor(list));
-
-        // ok, push the next item to the end
-        list.add(list.remove(0));
-        res.add(tripletFor(list));
-
-      }
-      else if (matches.size() == 2)
-      {
-        final Triplet thisT = new Triplet();
-
-        // ok, it's obvious. find the singleton
-        for (final ArrayList<NumberDocument> thisL : matches.values())
+        // ok, do we have enough items
+        if (matches.size() == 1)
         {
-          if (thisL.size() == 1)
+          // ok, we need to offer all three as the measurement
+          final ArrayList<NumberDocument> list =
+              matches.get(matches.keySet().iterator().next());
+          res.add(tripletFor(list));
+
+          // ok, push the first item to the end
+          list.add(list.remove(0));
+          res.add(tripletFor(list));
+
+          // ok, push the next item to the end
+          list.add(list.remove(0));
+          res.add(tripletFor(list));
+
+        }
+        else if (matches.size() == 2)
+        {
+          final Triplet thisT = new Triplet();
+
+          // ok, it's obvious. find the singleton
+          for (final ArrayList<NumberDocument> thisL : matches.values())
           {
-            // here is it
-            thisT.measurements = thisL.get(0);
+            if (thisL.size() == 1)
+            {
+              // here is it
+              thisT.measurements = thisL.get(0);
+            }
+            else if (thisL.size() == 2)
+            {
+              // here they are
+              thisT.axisOne = thisL.get(0);
+              thisT.axisTwo = thisL.get(1);
+            }
+            else
+            {
+              throw new IllegalArgumentException(
+                  "Unable to organise inputs for gridding operation");
+            }
           }
-          else if (thisL.size() == 2)
-          {
-            // here they are
-            thisT.axisOne = thisL.get(0);
-            thisT.axisTwo = thisL.get(1);
-          }
-          else
-          {
-            throw new IllegalArgumentException(
-                "Unable to organise inputs for gridding operation");
-          }
+
+          res.add(thisT);
         }
 
-        res.add(thisT);
       }
-
     }
-    // see if
 
     return res;
   }
