@@ -359,6 +359,33 @@ public class CollectionComplianceTests
   }
 
   /**
+   * check if there is a singleton in the selection
+   * 
+   * @param selection
+   * @return true/false
+   */
+  public boolean hasSingleton(List<IStoreItem> selection)
+  {
+    boolean res = false;
+    for (int i = 0; i < selection.size(); i++)
+    {
+      IStoreItem thisI = selection.get(i);
+      if (thisI instanceof IDocument)
+      {
+        IDocument<?> thisC = (IDocument<?>) thisI;
+        if(thisC.size() == 1)
+        {
+          // ok, that's enough for us.
+          res = true;
+          break;
+        }
+      }
+    }
+    return res;
+  }
+
+  
+  /**
    * check if the series are all quantity datasets
    * 
    * @param selection

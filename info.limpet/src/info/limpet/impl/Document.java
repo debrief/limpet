@@ -274,11 +274,21 @@ abstract public class Document<T extends Object> implements IDocument<T>
   @UIProperty(name = "Indexed", category = UIProperty.CATEGORY_LABEL)
   public boolean isIndexed()
   {
-    // is there an axis?
-    final AxesMetadata am = dataset.getFirstMetadata(AxesMetadata.class);
+    final boolean res;
+    if (dataset != null)
+    {
+      // is there an axis?
+      final AxesMetadata am = dataset.getFirstMetadata(AxesMetadata.class);
 
-    // is it a time axis?
-    return am != null;
+      // is it a time axis?
+      res = am != null;
+    }
+    else
+    {
+      res = false;
+    }
+    
+    return res;
   }
 
   private static class DoubleIterator implements Iterator<Double>

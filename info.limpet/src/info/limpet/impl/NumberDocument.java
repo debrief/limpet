@@ -258,6 +258,10 @@ public class NumberDocument extends Document<Double>
     qType = unit;
   }
 
+  /** easier support for singletons
+   * 
+   * @param value
+   */
   public void setValue(final double value)
   {
     final DoubleDataset data = (DoubleDataset) getDataset();
