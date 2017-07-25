@@ -41,6 +41,7 @@ import info.limpet.operations.arithmetic.simple.DivideQuantityOperation;
 import info.limpet.operations.arithmetic.simple.MultiplyQuantityOperation;
 import info.limpet.operations.arithmetic.simple.SubtractQuantityOperation;
 import info.limpet.operations.arithmetic.simple.UnitConversionOperation;
+import info.limpet.operations.filter.MaxFilterOperation;
 import info.limpet.operations.grid.GenerateGrid;
 import info.limpet.operations.spatial.BearingBetweenTracksOperation;
 import info.limpet.operations.spatial.DistanceBetweenTracksOperation;
@@ -94,6 +95,7 @@ public class OperationsLibrary
 
   public static final String SPATIAL = "Spatial";
   public static final String ADMINISTRATION = "Administration";
+  public static final String FILTER = "Filter";
   public static final String CONVERSIONS = "Conversions";
   public static final String ARITHMETIC = "Arithmetic";
   public static final String CREATE = "Create";
@@ -108,6 +110,7 @@ public class OperationsLibrary
     res.put(ADMINISTRATION, getAdmin());
     res.put(SPATIAL, getSpatial());
     res.put(CREATE, getCreate());
+    res.put(FILTER, getFilter());
     return res;
   }
 
@@ -361,6 +364,13 @@ public class OperationsLibrary
     return conversions;
   }
 
+  private static List<IOperation> getFilter()
+  {
+    List<IOperation> filter = new ArrayList<IOperation>();
+    filter.add(new MaxFilterOperation());
+    return filter;
+  }
+  
   private static List<IOperation> getCreate()
   {
     List<IOperation> create = new ArrayList<IOperation>();

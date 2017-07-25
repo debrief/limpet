@@ -22,13 +22,14 @@ import info.limpet.IStoreItem;
 import info.limpet.impl.UIProperty;
 import info.limpet.operations.AbstractCommand;
 import info.limpet.operations.CollectionComplianceTests;
+import info.limpet.operations.RangedCommand;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class SimpleMovingAverageOperation implements IOperation
 {
-  public static class SimpleMovingAverageCommand extends AbstractCommand
+  public static class SimpleMovingAverageCommand extends AbstractCommand implements RangedCommand
   {
 
     private int winSize;
@@ -127,6 +128,18 @@ public class SimpleMovingAverageOperation implements IOperation
     // // update the results
     // performCalc(getOutputs());
     // }
+
+    @Override
+    public int getValue()
+    {
+      return getWindowSize();
+    }
+
+    @Override
+    public void setValue(int value)
+    {
+      setWindowSize(value);
+    }
 
     // /**
     // * wrap the actual operation. We're doing this since we need to separate it from the core
