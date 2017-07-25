@@ -19,18 +19,12 @@ import junit.framework.TestCase;
 
 public class TestFilter extends TestCase
 {
+ 
   @Test
   public void testFilterIndexed()
   {
     ArrayList<IStoreItem> selection = new ArrayList<IStoreItem>();
-    MockContext context = new MockContext(){
-
-      @Override
-      public String getInput(String title, String description,
-          String defaultText)
-      {
-        return "6";
-      }};
+    MockContext context = new MockContext();
     StoreGroup store = new StoreGroup("data");
 
     NumberDocumentBuilder builder = new NumberDocumentBuilder("doc 1", SI.METER, null, SI.SECOND);
@@ -47,8 +41,19 @@ public class TestFilter extends TestCase
     
     List<ICommand> oper = new MaxFilterOperation().actionsFor(selection, store, context);
     assertNotNull("operations present", oper);
-    assertEquals("correct operations", 1, oper.size());
+    assertEquals("correct operations", 0, oper.size());
     
+    // ok, give it a singleton
+    NumberDocumentBuilder sBuilder = new NumberDocumentBuilder("singleton", SI.CELSIUS, null, null);
+    sBuilder.add(6d);
+    NumberDocument singleton = sBuilder.toDocument();
+    
+    selection.add(singleton);
+    
+    oper = new MaxFilterOperation().actionsFor(selection, store, context);
+    assertNotNull("operations present", oper);
+    assertEquals("correct operations", 2, oper.size());
+        
     // ok, run it
     oper.get(0).execute();
     
@@ -56,6 +61,18 @@ public class TestFilter extends TestCase
     assertNotNull("have output", nd);
     assertEquals("correct length", 4, nd.size());
     assertEquals("correct units", SI.METER, nd.getUnits());
-    assertEquals("correct index units", SI.SECOND, nd.getIndexUnits());   
+    assertEquals("correct index units", SI.SECOND, nd.getIndexUnits());
+    
+    // have a got at applying the minimum filter
+    singleton.setValue(5d);
+    
+    // ok, run it
+    oper.get(1).execute();
+    
+    nd = (NumberDocument) oper.get(1).getOutputs().get(0);
+    assertNotNull("have output", nd);
+    assertEquals("correct length", 6, nd.size());
+    assertEquals("correct units", SI.METER, nd.getUnits());
+    assertEquals("correct index units", SI.SECOND, nd.getIndexUnits());
   }
 }
