@@ -585,34 +585,34 @@ public class RangeSliderView extends CoreAnalysisView
 
     final List<RangedEntity> toShow = new ArrayList<RangedEntity>();
 
-    if (selection != _currentSelection)
-    {
-      // clear current listeners
-      for (final Figure thisFigure : _entities.values())
-      {
-        // drop this one
-        thisFigure.disconnect();
-
-        // and detach it from its parent
-        thisFigure.detach();
-      }
-
-      // ok, list empty
-      _entities.clear();
-    }
-    else
-    {
-      // ok, we're already showing it
-      return;
-    }
-
-    _currentSelection = selection;
-
     for (final IStoreItem item : selection)
     {
       if (item instanceof RangedEntity)
       {
-        toShow.add((RangedEntity) item);
+        final boolean useIt;
+        // check it looks right
+        if (item instanceof NumberDocument)
+        {
+          NumberDocument doc = (NumberDocument) item;
+          if (doc.size() == 1 && doc.getRange() != null)
+          {
+            // ok, go for it
+            useIt = true;
+          }
+          else
+          {
+            // TODO: include the index hcecking here
+            useIt = false;
+          }
+        }
+        else
+        {
+          useIt = true;
+        }
+        if (useIt)
+        {
+          toShow.add((RangedEntity) item);
+        }
       }
       else if (item instanceof IStoreGroup)
       {
@@ -630,6 +630,31 @@ public class RangeSliderView extends CoreAnalysisView
 
     if (toShow.size() > 0)
     {
+      if (selection != _currentSelection)
+      {
+        // clear current listeners
+        for (final Figure thisFigure : _entities.values())
+        {
+          // drop this one
+          thisFigure.disconnect();
+
+          // and detach it from its parent
+          thisFigure.detach();
+        }
+
+        // ok, list empty
+        _entities.clear();
+      }
+      else
+      {
+        // ok, we're already showing it
+        return;
+      }
+
+      // store the new selection
+      _currentSelection = selection;
+
+      // and show the new data
       showData(toShow);
     }
   }
@@ -697,8 +722,9 @@ public class RangeSliderView extends CoreAnalysisView
           }
           else
           {
-            // TODO: if it has an index, use that as a DateHelper
-            if (doc.isIndexed()
+            boolean allowIndexFilter = false;
+            if (allowIndexFilter
+                && doc.isIndexed()
                 && (doc.getIndexUnits() == SI.SECOND || doc.getIndexUnits() == SampleData.MILLIS))
             {
 
