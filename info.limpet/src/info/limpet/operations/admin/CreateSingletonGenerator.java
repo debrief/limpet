@@ -94,6 +94,9 @@ public class CreateSingletonGenerator implements IOperation
         if (_targetGroup != null)
         {
           _targetGroup.add(newData);
+          
+          // share the good news
+          _targetGroup.fireDataChanged();
         }
         else
         {
