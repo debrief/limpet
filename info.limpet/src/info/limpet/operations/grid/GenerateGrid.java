@@ -347,15 +347,14 @@ public class GenerateGrid implements IOperation
         {
           // ok, we'll do the fancy degree grid
           final String sampleTitle =
-              "Collate 360 deg grid of samples of  " + thisP.measurements;
-          final String meanTitle =
-              "Collate 360 deg grid of calculated means of "
-                  + thisP.measurements;
-
-          // produce the description
-          final String description =
-              "Collate 360 degree grid of " + thisP.measurements + " based on "
+              "Collate 360 degree grid of samples of" + thisP.measurements + " based on "
                   + thisP.axisOne + " and " + thisP.axisTwo;
+          final String meanTitle =
+              "Collate 360 degree grid of mean of " + thisP.measurements + " based on "
+                  + thisP.axisOne + " and " + thisP.axisTwo;
+          
+          // produce the description
+          final String description = "Collate grid from data";
 
           res.add(new GenerateGridCommand(meanTitle, description, destination,
               selection, context, thisP, null, meanHelper));
@@ -367,14 +366,14 @@ public class GenerateGrid implements IOperation
         {
           // produce the title
           final String sampleTitle =
-              "Collate grid of samples of  " + thisP.measurements;
+              "Collate grid of samples of " + thisP.measurements + " based on "
+                  + thisP.axisOne + " and " + thisP.axisTwo;
           final String meanTitle =
-              "Collate grid of calculated means of " + thisP.measurements;
+              "Collate grid of samples of " + thisP.measurements + " based on "
+                  + thisP.axisOne + " and " + thisP.axisTwo;
 
           // produce the description
-          final String description =
-              "Collate grid of " + thisP.measurements + " based on "
-                  + thisP.axisOne + " and " + thisP.axisTwo;
+          final String description = "Collate grid from data";
 
           res.add(new GenerateGridCommand(meanTitle, description, destination,
               selection, context, thisP, null, meanHelper));
