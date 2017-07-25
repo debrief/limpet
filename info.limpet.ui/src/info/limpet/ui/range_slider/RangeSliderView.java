@@ -22,6 +22,7 @@ import info.limpet.IStoreItem;
 import info.limpet.impl.NumberDocument;
 import info.limpet.impl.Range;
 import info.limpet.operations.CollectionComplianceTests;
+import info.limpet.operations.RangedCommand;
 import info.limpet.operations.arithmetic.SimpleMovingAverageOperation.SimpleMovingAverageCommand;
 import info.limpet.ui.Activator;
 import info.limpet.ui.core_view.CoreAnalysisView;
@@ -146,6 +147,93 @@ public class RangeSliderView extends CoreAnalysisView implements
     public int getValue()
     {
       return _myCommand.getWindowSize();
+    }
+
+    @Override
+    public void dataChanged(IStoreItem subject)
+    {
+    }
+
+    @Override
+    public void metadataChanged(IStoreItem subject)
+    {
+    }
+
+    @Override
+    public void collectionDeleted(IStoreItem subject)
+    {
+    }
+
+    @Override
+    public void dropListener()
+    {
+      _myCommand.removeTransientChangeListener(this);
+    }
+
+  }
+  
+  private static class RangedCommandHelper implements RangeHelper, IChangeListener
+  {
+
+    private final RangedCommand _myRCommand;
+    private final ICommand _myCommand;
+    private final int _sliderThumb;
+
+    public RangedCommandHelper(RangedCommand rCommand, ICommand command,  int sliderThumb)
+    {
+      _myRCommand = rCommand;
+      _myCommand = command;
+      _sliderThumb = sliderThumb;
+      _myCommand.addChangeListener(this);
+    }
+
+    @Override
+    public void updatedTo(int val)
+    {
+      _myRCommand.setValue(val);
+      _myRCommand.recalculate(null);
+    }
+
+    @Override
+    public String getMinText()
+    {
+      return "0";
+    }
+
+    @Override
+    public String getMaxText()
+    {
+      return "50";
+    }
+
+    @Override
+    public int getMinVal()
+    {
+      return 0;
+    }
+
+    @Override
+    public int getMaxVal()
+    {
+      return 50 + _sliderThumb;
+    }
+
+    @Override
+    public String getValueText()
+    {
+      return "" + getValue();
+    }
+
+    @Override
+    public String getLabel()
+    {
+      return _myCommand.getName();
+    }
+
+    @Override
+    public int getValue()
+    {
+      return _myRCommand.getValue();
     }
 
     @Override
@@ -540,8 +628,7 @@ public class RangeSliderView extends CoreAnalysisView implements
 
   private void showData(final Object object)
   {
-
-    if (object instanceof SimpleMovingAverageCommand)
+    if (object instanceof RangedCommand)
     {
       if (_myHelper != null)
         if (_myHelper instanceof CommandHelper)
@@ -556,8 +643,9 @@ public class RangeSliderView extends CoreAnalysisView implements
             return;
           }
         }
-      SimpleMovingAverageCommand sam = (SimpleMovingAverageCommand) object;
-      _myHelper = new CommandHelper(sam, slider.getThumb());
+      RangedCommand ranged = (RangedCommand) object;
+      ICommand command = (ICommand) object;
+      _myHelper = new RangedCommandHelper(ranged, command, slider.getThumb());
     }
     else if (object instanceof NumberDocument)
     {
