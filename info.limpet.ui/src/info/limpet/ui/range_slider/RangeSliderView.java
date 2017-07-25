@@ -86,100 +86,16 @@ public class RangeSliderView extends CoreAnalysisView implements
 
   }
 
-  private static class CommandHelper implements RangeHelper, IChangeListener
-  {
-
-    private final SimpleMovingAverageCommand _myCommand;
-    private final int _sliderThumb;
-
-    public CommandHelper(SimpleMovingAverageCommand command, int sliderThumb)
-    {
-      _myCommand = command;
-      _sliderThumb = sliderThumb;
-      _myCommand.addChangeListener(this);
-    }
-
-    @Override
-    public void updatedTo(int val)
-    {
-      _myCommand.setWindowSize(val);
-      _myCommand.recalculate(null);
-
-    }
-
-    @Override
-    public String getMinText()
-    {
-      return "0";
-    }
-
-    @Override
-    public String getMaxText()
-    {
-      return "50";
-    }
-
-    @Override
-    public int getMinVal()
-    {
-      return 0;
-    }
-
-    @Override
-    public int getMaxVal()
-    {
-      return 50 + _sliderThumb;
-    }
-
-    @Override
-    public String getValueText()
-    {
-      return "" + getValue();
-    }
-
-    @Override
-    public String getLabel()
-    {
-      return _myCommand.getName();
-    }
-
-    @Override
-    public int getValue()
-    {
-      return _myCommand.getWindowSize();
-    }
-
-    @Override
-    public void dataChanged(IStoreItem subject)
-    {
-    }
-
-    @Override
-    public void metadataChanged(IStoreItem subject)
-    {
-    }
-
-    @Override
-    public void collectionDeleted(IStoreItem subject)
-    {
-    }
-
-    @Override
-    public void dropListener()
-    {
-      _myCommand.removeTransientChangeListener(this);
-    }
-
-  }
-  
-  private static class RangedCommandHelper implements RangeHelper, IChangeListener
+  private static class RangedCommandHelper implements RangeHelper,
+      IChangeListener
   {
 
     private final RangedCommand _myRCommand;
     private final ICommand _myCommand;
     private final int _sliderThumb;
 
-    public RangedCommandHelper(RangedCommand rCommand, ICommand command,  int sliderThumb)
+    public RangedCommandHelper(RangedCommand rCommand, ICommand command,
+        int sliderThumb)
     {
       _myRCommand = rCommand;
       _myCommand = command;
@@ -607,12 +523,15 @@ public class RangeSliderView extends CoreAnalysisView implements
         showData(currentColl);
       }
     }
-    else if (first instanceof ICommand
-        && first instanceof SimpleMovingAverageCommand)
+    else if (first instanceof RangedCommand)
     {
-      SimpleMovingAverageCommand command = (SimpleMovingAverageCommand) first;
+      RangedCommand command = (RangedCommand) first;
       showData(command);
-
+    }
+    else if (first instanceof IStoreGroup)
+    {
+      IStoreGroup group = (IStoreGroup) first;
+      showData(group);
     }
 
   }
@@ -630,19 +549,18 @@ public class RangeSliderView extends CoreAnalysisView implements
   {
     if (object instanceof RangedCommand)
     {
-      if (_myHelper != null)
-        if (_myHelper instanceof CommandHelper)
+      if (_myHelper != null && _myHelper instanceof RangedCommandHelper)
+      {
+        RangedCommandHelper cHelp = (RangedCommandHelper) _myHelper;
+        if (cHelp._myCommand != object)
         {
-          CommandHelper cHelp = (CommandHelper) _myHelper;
-          if (cHelp._myCommand != object)
-          {
-            dropListener();
-          }
-          else
-          {
-            return;
-          }
+          dropListener();
         }
+        else
+        {
+          return;
+        }
+      }
       RangedCommand ranged = (RangedCommand) object;
       ICommand command = (ICommand) object;
       _myHelper = new RangedCommandHelper(ranged, command, slider.getThumb());
@@ -660,19 +578,16 @@ public class RangeSliderView extends CoreAnalysisView implements
         if (qc.size() > 0)
         {
           // ok, drop the current object
-          if (_myHelper != null)
+          if (_myHelper != null && _myHelper instanceof NumberHelper)
           {
-            if (_myHelper instanceof NumberHelper)
+            NumberHelper cHelp = (NumberHelper) _myHelper;
+            if (cHelp._collection != object)
             {
-              NumberHelper cHelp = (NumberHelper) _myHelper;
-              if (cHelp._collection != object)
-              {
-                dropListener();
-              }
-              else
-              {
-                return;
-              }
+              dropListener();
+            }
+            else
+            {
+              return;
             }
           }
 
@@ -688,19 +603,18 @@ public class RangeSliderView extends CoreAnalysisView implements
         // ok, time data, show the time range
         NumberDocument temp = (NumberDocument) qc;
 
-        if (_myHelper != null)
-          if (_myHelper instanceof DateHelper)
+        if (_myHelper != null && _myHelper instanceof DateHelper)
+        {
+          DateHelper cHelp = (DateHelper) _myHelper;
+          if (cHelp._collection != object)
           {
-            DateHelper cHelp = (DateHelper) _myHelper;
-            if (cHelp._collection != object)
-            {
-              dropListener();
-            }
-            else
-            {
-              return;
-            }
+            dropListener();
           }
+          else
+          {
+            return;
+          }
+        }
 
         // now we need the time range
         // TODO: we need to support indexing the data
@@ -782,6 +696,24 @@ public class RangeSliderView extends CoreAnalysisView implements
         if (coll instanceof SimpleMovingAverageCommand)
         {
           res = true;
+        }
+      }
+      else if (item instanceof IStoreGroup)
+      {
+        // see if all the items are singletons
+        IStoreGroup group = (IStoreGroup) item;
+        res = true;
+        for (IStoreItem t : group)
+        {
+          if (t instanceof NumberDocument)
+          {
+            NumberDocument doc = (NumberDocument) t;
+            if (doc.size() != 1)
+            {
+              res = false;
+              break;
+            }
+          }
         }
       }
     }
