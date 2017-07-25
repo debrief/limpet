@@ -19,17 +19,18 @@ import info.limpet.IContext;
 import info.limpet.IOperation;
 import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
+import info.limpet.impl.Range;
 import info.limpet.impl.UIProperty;
 import info.limpet.operations.AbstractCommand;
 import info.limpet.operations.CollectionComplianceTests;
-import info.limpet.operations.RangedCommand;
+import info.limpet.operations.RangedEntity;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class SimpleMovingAverageOperation implements IOperation
 {
-  public static class SimpleMovingAverageCommand extends AbstractCommand implements RangedCommand
+  public static class SimpleMovingAverageCommand extends AbstractCommand implements RangedEntity
   {
 
     private int winSize;
@@ -130,15 +131,21 @@ public class SimpleMovingAverageOperation implements IOperation
     // }
 
     @Override
-    public int getValue()
+    public double getValue()
     {
       return getWindowSize();
     }
 
     @Override
-    public void setValue(int value)
+    public void setValue(double value)
     {
-      setWindowSize(value);
+      setWindowSize((int) value);
+    }
+
+    @Override
+    public Range getRange()
+    {
+      return new Range(1, 20);
     }
 
     // /**

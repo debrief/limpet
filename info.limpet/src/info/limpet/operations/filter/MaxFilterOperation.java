@@ -21,10 +21,11 @@ import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
 import info.limpet.impl.Document;
 import info.limpet.impl.NumberDocument;
+import info.limpet.impl.Range;
 import info.limpet.impl.UIProperty;
 import info.limpet.operations.AbstractCommand;
 import info.limpet.operations.CollectionComplianceTests;
-import info.limpet.operations.RangedCommand;
+import info.limpet.operations.RangedEntity;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -40,7 +41,7 @@ import org.eclipse.january.metadata.internal.AxesMetadataImpl;
 public class MaxFilterOperation implements IOperation
 {
   public static class FilterCollectionCommand extends AbstractCommand implements
-      RangedCommand
+      RangedEntity
   {
 
     final private FilterOperation operation;
@@ -118,7 +119,7 @@ public class MaxFilterOperation implements IOperation
     }
 
     @Override
-    public int getValue()
+    public double getValue()
     {
       return (int) filterValue.getValue();
     }
@@ -213,9 +214,15 @@ public class MaxFilterOperation implements IOperation
     }
 
     @Override
-    public void setValue(final int value)
+    public void setValue(final double value)
     {
       filterValue.setValue(value);
+    }
+
+    @Override
+    public Range getRange()
+    {
+      return new Range(0, 200);
     }
 
   }
