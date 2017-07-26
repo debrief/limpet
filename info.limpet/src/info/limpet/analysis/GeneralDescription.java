@@ -43,7 +43,7 @@ public abstract class GeneralDescription extends CoreAnalysis
 
   private class MilliFormatter implements INumberFormatter
   {
-    SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss");
+    private SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss");
 
     @Override
     public String format(double value)
@@ -54,7 +54,7 @@ public abstract class GeneralDescription extends CoreAnalysis
 
   private class SecondFormatter implements INumberFormatter
   {
-    SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss");
+    private SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss");
 
     @Override
     public String format(double value)

@@ -38,11 +38,8 @@ import java.util.UUID;
 
 import javax.measure.unit.Unit;
 
-import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.DatasetFactory;
-import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.DoubleDataset;
-import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.Maths;
 import org.eclipse.january.metadata.AxesMetadata;
 
