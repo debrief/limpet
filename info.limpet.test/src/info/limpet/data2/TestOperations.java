@@ -73,6 +73,7 @@ import javax.measure.quantity.Angle;
 import javax.measure.quantity.Dimensionless;
 import javax.measure.quantity.Length;
 import javax.measure.quantity.Velocity;
+import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 
@@ -1376,10 +1377,61 @@ public class TestOperations
     assertEquals("correct size", 1, output.size());
     assertEquals("correct value", 1234.56, output.getValueAt(0), 0.01);
     assertEquals("correct range", new Range(5d,100d), output.getRange());
-    
-    
+    assertEquals("correct units", Dimensionless.UNIT, output.getUnits());
+    assertEquals("no index units", null, output.getIndexUnits());
+    assertFalse("not indexed", output.isIndexed());
+    assertTrue("is quantity", output.isQuantity());
   }
 
+
+  @Test
+  public void testCreateSingletonDecibelGenerator()
+  {
+    StoreGroup store = new SampleData().getData(10);
+    CreateSingletonGenerator generator =
+        new CreateSingletonGenerator("Decibel", NonSI.DECIBEL);
+    assertNotNull("Create Single Generator is not NULL", generator);
+
+    List<IStoreItem> selection = new ArrayList<IStoreItem>();
+    StoreGroup storeGroup = new StoreGroup("Track 1");
+    selection.add(storeGroup);
+
+    IContext mockContext = EasyMock.createMock(MockContext.class);
+
+    Collection<ICommand> singleGeneratorActionFor =
+        generator.actionsFor(selection, store, mockContext);
+    assertEquals("Create location collection size", 1, singleGeneratorActionFor
+        .size());
+    ICommand singleGenCommand = singleGeneratorActionFor.iterator().next();
+
+    final String outName = "new_name";
+    EasyMock.expect(
+        mockContext.getInput("New variable", "Enter name for variable", "new Decibel"))
+        .andReturn(outName).times(1);
+    EasyMock.expect(
+        mockContext.getInput("New variable",
+            "Enter initial value for variable", "100")).andReturn("1234.56")
+        .times(1);
+    EasyMock.expect(
+        mockContext.getInput("New variable",
+            "Enter the range for variable (or cancel to leave un-ranged)", "0:100")).andReturn("5:100")
+        .times(1);
+    EasyMock.replay(mockContext);
+
+    singleGenCommand.execute();
+
+    NumberDocument output = (NumberDocument) singleGenCommand.getOutputs().get(0);
+    assertNotNull(output);
+    assertEquals("correct name", outName, output.getName());
+    assertEquals("correct size", 1, output.size());
+    assertEquals("correct value", 1234.56, output.getValueAt(0), 0.01);
+    assertEquals("correct range", new Range(5d,100d), output.getRange());
+    assertEquals("correct units", NonSI.DECIBEL, output.getUnits());
+    assertEquals("no index units", null, output.getIndexUnits());
+    assertFalse("not indexed", output.isIndexed());
+    assertTrue("is quantity", output.isQuantity());
+  }
+  
   @Test
   public void testCreateLocationAction()
   {
