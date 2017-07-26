@@ -196,16 +196,8 @@ public abstract class CoreAnalysisView extends ViewPart
       // ok, stop listening to the old list
       clearChangeListeners();
 
-      // store the new list
-      curList.addAll(res);
-
-      // now listen to the new list
-      Iterator<IStoreItem> iter = curList.iterator();
-      while (iter.hasNext())
-      {
-        IStoreItem iC = iter.next();
-        iC.addTransientChangeListener(changeListener);
-      }
+      // and start listening to the new ones
+      createChangeListeners(res);
 
       // ok, display them
       display(res);
@@ -214,6 +206,20 @@ public abstract class CoreAnalysisView extends ViewPart
     {
       // ok, nothing to display - clear the graph
       // display(new ArrayList<IStoreItem>());
+    }
+  }
+
+  protected void createChangeListeners(List<IStoreItem> res)
+  {
+    // store the new list
+    curList.addAll(res);
+
+    // now listen to the new list
+    Iterator<IStoreItem> iter = curList.iterator();
+    while (iter.hasNext())
+    {
+      IStoreItem iC = iter.next();
+      iC.addTransientChangeListener(changeListener);
     }
   }
 
