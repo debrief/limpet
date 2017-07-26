@@ -110,6 +110,8 @@ public class DataManagerEditor extends EditorPart
   private static interface ItemProcessor
   {
     public void processThis(LimpetWrapper wrapper);
+
+    public void clicked();
   }
 
   /**
@@ -140,6 +142,9 @@ public class DataManagerEditor extends EditorPart
       if ((e.stateMask & stateMask) != 0 || stateMask == SWT.NONE
           && e.keyCode == keyCode)
       {
+        // ok, fire the generic event
+        processor.clicked();
+
         final StructuredSelection sel =
             (StructuredSelection) provider.getSelection();
         final Iterator<?> sIter = sel.iterator();
@@ -402,6 +407,12 @@ public class DataManagerEditor extends EditorPart
           item.getParent().remove(item);
         }
       }
+
+      @Override
+      public void clicked()
+      {
+        // ignore, we don't use it
+      }
     };
     final ItemProcessor renameAction = new ItemProcessor()
     {
@@ -441,12 +452,37 @@ public class DataManagerEditor extends EditorPart
           }
         }
       }
+      @Override
+      public void clicked()
+      {
+        // ignore, we don't use it
+      }
+
     };
 
+    final ItemProcessor refreshAction = new ItemProcessor()
+    {
+      @Override
+      public void processThis(LimpetWrapper wrapper)
+      {
+        // ignore, we don't use it
+      }
+
+      @Override
+      public void clicked()
+      {
+        // ok, fire the refresh event
+        refreshView.run();
+      }
+      
+    };
+    
     viewer.getControl().addKeyListener(
         new ViewerKeyAdapter(SWT.DEL, 0, viewer, deleteAction));
     viewer.getControl().addKeyListener(
         new ViewerKeyAdapter(SWT.F2, 0, viewer, renameAction));
+    viewer.getControl().addKeyListener(
+        new ViewerKeyAdapter(SWT.F5, 0, viewer, refreshAction));
   }
 
   /**
