@@ -993,7 +993,8 @@ public class TestGeotoolsGeometry extends TestCase
     store.clear();
     assertEquals("store empty", 0, store.size());
 
-    ops.iterator().next().execute();
+    ops.get(0).execute();
+    output = (NumberDocument) ops.get(0).getOutputs().get(0);
 
     assertEquals("store not empty", 1, store.size());
     DoubleDataset dataset = (DoubleDataset) output.getDataset();
@@ -1002,9 +1003,11 @@ public class TestGeotoolsGeometry extends TestCase
     assertEquals("correct lower index", 1100d, indexes.getDouble(0));
     assertEquals("correct lower index", 3300d, indexes.getDouble(indexes.getSize()-1));
     assertEquals("correct upper index", 1100d, output.getIndexAt(0));    
-    assertEquals("correct upper index", 3300d, output.getIndexAt(output.size()-1));    
+    assertEquals("correct upper index", 3300d, output.getIndexAt(output.size()-1)); 
+    
+    ops.get(1).execute();
 
-    output = (NumberDocument) ops.iterator().next().getOutputs().get(0);
+    output = (NumberDocument) ops.get(1).getOutputs().get(0);
     assertNotNull("output produced", output);
     assertEquals("correct items",4, output.size());
     assertNotNull("has indices", output.getIndexIterator());
