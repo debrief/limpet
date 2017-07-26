@@ -855,7 +855,7 @@ public class TestGeotoolsGeometry extends TestCase
     selection.add(loc1.toDocument());
 
     final IStoreGroup store = new StoreGroup("Store");
-    Collection<ICommand> ops =
+    List<ICommand> ops =
         new DistanceBetweenTracksOperation().actionsFor(selection, store,
             context);
     assertEquals("empty collection", 0, ops.size());
@@ -900,9 +900,14 @@ public class TestGeotoolsGeometry extends TestCase
     // check output is empty
     assertEquals("store empty", 0, store.size());
 
-    ops.iterator().next().execute();
+    ops.get(0).execute();
 
     assertEquals("store not empty", 1, store.size());
+    
+    NumberDocument output = (NumberDocument) ops.get(0).getOutputs().get(0);
+    assertNotNull("output produced", output);
+    assertEquals("has units", SI.METER, output.getUnits());
+    assertEquals("no index units", null, output.getIndexUnits());
   }
 
   public void testInterpolatedLocationCalcTemporal()
@@ -960,6 +965,7 @@ public class TestGeotoolsGeometry extends TestCase
         new DistanceBetweenTracksOperation().actionsFor(selection, store,
             context);
     assertEquals("does work collection", 1, ops.size());
+    assertTrue("is interpolated", ops.get(0).getDescription().contains("interpolated"));
 
     // check output is empty
     assertEquals("store empty", 0, store.size());
@@ -967,13 +973,19 @@ public class TestGeotoolsGeometry extends TestCase
     ops.get(0).execute();
 
     assertEquals("store not empty", 1, store.size());
+    
 
     NumberDocument output = (NumberDocument) ops.get(0).getOutputs().get(0);
     assertNotNull("output produced", output);
     assertEquals("correct items", 3, output.size());
     assertNotNull("has indices", output.getIndexIterator());
-
-    System.out.println(output.toString());
+    DoubleDataset dataset = (DoubleDataset) output.getDataset();
+    AxesMetadata am = dataset.getFirstMetadata(AxesMetadata.class);
+    DoubleDataset indexes = (DoubleDataset) am.getAxis(0)[0];
+    assertEquals("correct lower index", 1100d, indexes.getDouble(0));
+    assertEquals("correct lower index", 3300d, indexes.getDouble(indexes.getSize()-1));
+    assertEquals("correct upper index", 1100d, output.getIndexAt(0));    
+    assertEquals("correct upper index", 3300d, output.getIndexAt(output.size()-1));     
 
     // ok, add a couple more entries, so it could be indexed or interpolated
     loc2.add(4400, builder.createPoint(1.4, 4));
@@ -988,6 +1000,7 @@ public class TestGeotoolsGeometry extends TestCase
         new DistanceBetweenTracksOperation().actionsFor(selection, store,
             context);
     assertEquals("does work collection", 1, ops.size());
+    assertTrue("interpolation offered", ops.get(0).getDescription().contains("interpolated"));
 
     // check output is empty
     store.clear();
@@ -997,43 +1010,13 @@ public class TestGeotoolsGeometry extends TestCase
     output = (NumberDocument) ops.get(0).getOutputs().get(0);
 
     assertEquals("store not empty", 1, store.size());
-    DoubleDataset dataset = (DoubleDataset) output.getDataset();
-    AxesMetadata am = dataset.getFirstMetadata(AxesMetadata.class);
-    DoubleDataset indexes = (DoubleDataset) am.getAxis(0)[0];
-    assertEquals("correct lower index", 1100d, indexes.getDouble(0));
-    assertEquals("correct lower index", 3300d, indexes.getDouble(indexes.getSize()-1));
-    assertEquals("correct upper index", 1100d, output.getIndexAt(0));    
-    assertEquals("correct upper index", 3300d, output.getIndexAt(output.size()-1)); 
-    
-    ops.get(1).execute();
-
-    output = (NumberDocument) ops.get(1).getOutputs().get(0);
-    assertNotNull("output produced", output);
-    assertEquals("correct items",4, output.size());
-    assertNotNull("has indices", output.getIndexIterator());
     dataset = (DoubleDataset) output.getDataset();
     am = dataset.getFirstMetadata(AxesMetadata.class);
     indexes = (DoubleDataset) am.getAxis(0)[0];
     assertEquals("correct lower index", 1000d, indexes.getDouble(0));
     assertEquals("correct lower index", 4000d, indexes.getDouble(indexes.getSize()-1));
-    assertEquals("correct upper index", 1000d, output.getIndexAt(0));
-    assertEquals("correct upper index", 4000d, output.getIndexAt(output.size()-1));
-
-    // ok, let's check how it works for an indexed dataset
-    // check output is empty
-    store.clear();
-    assertEquals("store empty", 0, store.size());
-
-    final ICommand newOp = ops.get(0);
-    newOp.execute();
-
-    assertEquals("store not empty", 1, store.size());
-
-    output = (NumberDocument) newOp.getOutputs().get(0);
-    assertNotNull("output produced", output);
-    assertEquals("correct items", 4, output.size());
-    assertNotNull("has indices", output.getIndexIterator());
-
+    assertEquals("correct upper index", 1000d, output.getIndexAt(0));    
+    assertEquals("correct upper index", 4000d, output.getIndexAt(output.size()-1)); 
   }
 
   public void testLocationCalc2D()
