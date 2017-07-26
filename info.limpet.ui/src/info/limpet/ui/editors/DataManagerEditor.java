@@ -110,6 +110,8 @@ public class DataManagerEditor extends EditorPart
   private static interface ItemProcessor
   {
     public void processThis(LimpetWrapper wrapper);
+
+    public void clicked();
   }
 
   /**
@@ -140,6 +142,9 @@ public class DataManagerEditor extends EditorPart
       if ((e.stateMask & stateMask) != 0 || stateMask == SWT.NONE
           && e.keyCode == keyCode)
       {
+        // ok, fire the generic event
+        processor.clicked();
+
         final StructuredSelection sel =
             (StructuredSelection) provider.getSelection();
         final Iterator<?> sIter = sel.iterator();
@@ -378,32 +383,37 @@ public class DataManagerEditor extends EditorPart
 
   private void configureKeys(final TreeViewer viewer)
   {
-    final ItemProcessor deleteAction = new ItemProcessor()
+    viewer.getControl().addKeyListener(
+        new ViewerKeyAdapter(SWT.DEL, 0, viewer, createDeleteAction()));
+    viewer.getControl().addKeyListener(
+        new ViewerKeyAdapter(SWT.F2, 0, viewer, createRenameAction()));
+    viewer.getControl().addKeyListener(
+        new ViewerKeyAdapter(SWT.F5, 0, viewer, createRefreshAction()));
+  }
+
+  private ItemProcessor createRefreshAction()
+  {
+    return new ItemProcessor()
     {
       @Override
-      public void processThis(final LimpetWrapper wrapper)
+      public void processThis(LimpetWrapper wrapper)
       {
-        final Object subject = wrapper.getSubject();
-        if (subject instanceof IDocument<?>)
-        {
-          final IDocument<?> doc = (IDocument<?>) subject;
-          doc.beingDeleted();
-
-          // and detach it from the parent, if it hasn't
-          // already been deleted
-          if (doc.getParent() != null)
-          {
-            doc.getParent().remove(doc);
-          }
-        }
-        else if (subject instanceof IStoreGroup)
-        {
-          final IStoreGroup item = (IStoreGroup) subject;
-          item.getParent().remove(item);
-        }
+        // ignore, we don't use it
       }
+
+      @Override
+      public void clicked()
+      {
+        // ok, fire the refresh event
+        refreshView.run();
+      }
+
     };
-    final ItemProcessor renameAction = new ItemProcessor()
+  }
+
+  private ItemProcessor createRenameAction()
+  {
+    return new ItemProcessor()
     {
       @Override
       public void processThis(final LimpetWrapper wrapper)
@@ -441,12 +451,49 @@ public class DataManagerEditor extends EditorPart
           }
         }
       }
-    };
 
-    viewer.getControl().addKeyListener(
-        new ViewerKeyAdapter(SWT.DEL, 0, viewer, deleteAction));
-    viewer.getControl().addKeyListener(
-        new ViewerKeyAdapter(SWT.F2, 0, viewer, renameAction));
+      @Override
+      public void clicked()
+      {
+        // ignore, we don't use it
+      }
+
+    };
+  }
+
+  private ItemProcessor createDeleteAction()
+  {
+    return new ItemProcessor()
+    {
+      @Override
+      public void processThis(final LimpetWrapper wrapper)
+      {
+        final Object subject = wrapper.getSubject();
+        if (subject instanceof IDocument<?>)
+        {
+          final IDocument<?> doc = (IDocument<?>) subject;
+          doc.beingDeleted();
+
+          // and detach it from the parent, if it hasn't
+          // already been deleted
+          if (doc.getParent() != null)
+          {
+            doc.getParent().remove(doc);
+          }
+        }
+        else if (subject instanceof IStoreGroup)
+        {
+          final IStoreGroup item = (IStoreGroup) subject;
+          item.getParent().remove(item);
+        }
+      }
+
+      @Override
+      public void clicked()
+      {
+        // ignore, we don't use it
+      }
+    };
   }
 
   /**

@@ -28,6 +28,7 @@ import info.limpet.impl.NumberDocumentBuilder;
 import info.limpet.impl.SampleData;
 import info.limpet.impl.StoreGroup;
 import info.limpet.impl.UIProperty;
+import info.limpet.operations.CollectionComplianceTests.TimePeriod;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
@@ -37,11 +38,8 @@ import java.util.UUID;
 
 import javax.measure.unit.Unit;
 
-import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.DatasetFactory;
-import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.DoubleDataset;
-import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.Maths;
 import org.eclipse.january.metadata.AxesMetadata;
 
@@ -151,10 +149,10 @@ public abstract class AbstractCommand implements ICommand
 
     ArrayList<IStoreItem> toDelete2 = new ArrayList<IStoreItem>();
     toDelete2.addAll(getInputs());
-    
+
     // have safe list of inputs, now clear them
     getInputs().clear();
-    
+
     for (final IStoreItem t : toDelete2)
     {
       if (t instanceof Document<?>)
@@ -169,7 +167,7 @@ public abstract class AbstractCommand implements ICommand
         t.removeChangeListener(this);
       }
     }
-    
+
     // finally remove ourselves from parent
     if (getParent() != null)
     {
@@ -378,31 +376,31 @@ public abstract class AbstractCommand implements ICommand
   }
 
   final protected LocationDocument locationsFor(final LocationDocument track1,
-      final Document<?> times)
+      final Document<?> times, final TimePeriod period)
   {
     // ok, get the time values
     final AxesMetadata axis =
         times.getDataset().getFirstMetadata(AxesMetadata.class);
-    final ILazyDataset lazyds = axis.getAxes()[0];
-    DoubleDataset ds = null;
-    try
-    {
-      ds = (DoubleDataset) DatasetUtils.sliceAndConvertLazyDataset(lazyds);
-    }
-    catch (final DatasetException e)
-    {
-      throw new IllegalArgumentException(e);
-    }
+    final DoubleDataset ds = (DoubleDataset) axis.getAxes()[0];
 
     final double[] data = ds.getData();
-    return locationsFor(track1, data);
+    return locationsFor(track1, data, period);
   }
 
   final protected LocationDocument locationsFor(final LocationDocument track,
-      final double[] times)
+      final double[] times, final TimePeriod period)
   {
+    // trim the times to the period
+    final ArrayList<Double> dTimes = new ArrayList<Double>();
+    for (double thisT : times)
+    {
+      if (period.contains(thisT))
+      {
+        dTimes.add(thisT);
+      }
+    }
     final DoubleDataset ds =
-        (DoubleDataset) DatasetFactory.createFromObject(times);
+        (DoubleDataset) DatasetFactory.createFromObject(dTimes);
 
     final Unit<?> indexUnits = times == null ? null : SampleData.MILLIS;
     final LocationDocumentBuilder ldb;
@@ -422,12 +420,14 @@ public abstract class AbstractCommand implements ICommand
       final Point2D pt = track.getLocationIterator().next();
       for (final double t : times)
       {
-        ldb.add(t, pt);
+        if (period.contains(t))
+        {
+          ldb.add(t, pt);
+        }
       }
     }
     else
     {
-
       final Iterator<Point2D> lIter = track.getLocationIterator();
       final Iterator<Double> tIter = track.getIndexIterator();
       while (lIter.hasNext())
@@ -435,9 +435,12 @@ public abstract class AbstractCommand implements ICommand
         final double thisT = tIter.next();
         final Point2D pt = lIter.next();
 
-        latVals.add(pt.getY());
-        longVals.add(pt.getX());
-        timeVals.add(thisT);
+        if (period.contains(thisT))
+        {
+          latVals.add(pt.getY());
+          longVals.add(pt.getX());
+          timeVals.add(thisT);
+        }
       }
 
       final DoubleDataset latDataset =
@@ -460,8 +463,8 @@ public abstract class AbstractCommand implements ICommand
       for (int i = 0; i < ds.getSize(); i++)
       {
         final Point2D pt =
-            track.getCalculator().createPoint(
-                longInterpolated.getDouble(i), latInterpolated.getDouble(i));
+            track.getCalculator().createPoint(longInterpolated.getDouble(i),
+                latInterpolated.getDouble(i));
         ldb.add(ds.getLong(i), pt);
       }
     }
@@ -477,31 +480,30 @@ public abstract class AbstractCommand implements ICommand
   }
 
   final protected NumberDocument numbersFor(final NumberDocument document,
-      final Document<?> times)
+      final Document<?> times, final TimePeriod period)
   {
     // ok, get the time values
     final AxesMetadata axis =
         times.getDataset().getFirstMetadata(AxesMetadata.class);
-    final ILazyDataset lazyds = axis.getAxes()[0];
-    DoubleDataset ds = null;
-    try
-    {
-      ds = (DoubleDataset) DatasetUtils.sliceAndConvertLazyDataset(lazyds);
-    }
-    catch (final DatasetException e)
-    {
-      throw new IllegalArgumentException(e);
-    }
-
+    final DoubleDataset ds = (DoubleDataset) axis.getAxes()[0];
     final double[] data = ds.getData();
-    return numbersFor(document, data);
+    return numbersFor(document, data, period);
   }
 
   final protected NumberDocument numbersFor(final NumberDocument document,
-      final double[] times)
+      final double[] times, final TimePeriod period)
   {
+    // trim the times to the period
+    final ArrayList<Double> dTimes = new ArrayList<Double>();
+    for (double thisT : times)
+    {
+      if (period.contains(thisT))
+      {
+        dTimes.add(thisT);
+      }
+    }
     final DoubleDataset ds =
-        (DoubleDataset) DatasetFactory.createFromObject(times);
+        (DoubleDataset) DatasetFactory.createFromObject(dTimes);
 
     final Unit<?> indexUnits = times == null ? null : SampleData.MILLIS;
     final NumberDocumentBuilder ldb;
@@ -520,7 +522,10 @@ public abstract class AbstractCommand implements ICommand
       final double pt = document.getIterator().next();
       for (final double t : times)
       {
-        ldb.add(t, pt);
+        if(period.contains(t))
+        {
+          ldb.add(t, pt);
+        }
       }
     }
     else
@@ -532,9 +537,12 @@ public abstract class AbstractCommand implements ICommand
       {
         final double thisT = tIter.next();
         final double pt = lIter.next();
-
-        headings.add(pt);
-        timeVals.add(thisT);
+        
+        if (period.contains(thisT))
+        {
+          headings.add(pt);
+          timeVals.add(thisT);
+        }
       }
 
       final DoubleDataset hdgDataset =
