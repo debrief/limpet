@@ -633,9 +633,15 @@ public class RangeSliderView extends CoreAnalysisView
             // ok, go for it
             useIt = true;
           }
+          else if(doc.size() >=2 && doc.getIndexUnits() != null)
+          {
+            // we can use it, if it's an indexed dataset
+            // TODO: allow this to be true,
+            // if we want to allow indexed datasets
+            useIt = false;
+          }
           else
           {
-            // TODO: include the index hcecking here
             useIt = false;
           }
         }
@@ -792,6 +798,8 @@ public class RangeSliderView extends CoreAnalysisView
     }
     else
     {
+      // TODO: sort out if we introduce index filters, 
+      // then remove the next line
       boolean allowIndexFilter = false;
       if (allowIndexFilter
           && doc.isIndexed()
