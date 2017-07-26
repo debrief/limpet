@@ -5,6 +5,12 @@ import java.util.UUID;
 public interface IStoreItem
 {
 	
+  /**
+   * tell listeners that it's about to be deleted
+   * 
+   */
+  public void beingDeleted();
+  
 	/** find the layer that contains this collection (or null if applicable)
 	 * 
 	 * @return parent collection, or null

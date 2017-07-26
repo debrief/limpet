@@ -13,11 +13,7 @@ public interface IDocument<T extends Object> extends IStoreItem
 
   Iterator<T> getIterator();
   
-  /**
-   * tell listeners that it's about to be deleted
-   * 
-   */
-  public void beingDeleted();
+
 
   @UIProperty(name = "Name", category = UIProperty.CATEGORY_LABEL)
   public String getName();

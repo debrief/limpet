@@ -222,7 +222,7 @@ public class DataManagerEditor extends EditorPart
 
   private DataModel _model;
 
-  private final StoreChangeListener _changeListener = new StoreChangeListener()
+  private final StoreChangeListener _storeChangeListener = new StoreChangeListener()
   {
 
     @Override
@@ -234,6 +234,37 @@ public class DataManagerEditor extends EditorPart
 
       // and refresh the UI
       viewer.refresh();
+    }
+  };
+  private final IChangeListener _changeListener = new IChangeListener()
+  {
+
+    private void changed()
+    {
+      // indicate the file is dirty
+      _dirty = true;
+      firePropertyChange(PROP_DIRTY);
+
+      // and refresh the UI
+      viewer.refresh();
+    }
+
+    @Override
+    public void dataChanged(IStoreItem subject)
+    {
+      changed();
+    }
+
+    @Override
+    public void metadataChanged(IStoreItem subject)
+    {
+      changed();
+    }
+
+    @Override
+    public void collectionDeleted(IStoreItem subject)
+    {
+      changed();
     }
   };
 
@@ -469,23 +500,14 @@ public class DataManagerEditor extends EditorPart
       public void processThis(final LimpetWrapper wrapper)
       {
         final Object subject = wrapper.getSubject();
-        if (subject instanceof IDocument<?>)
+        if (subject instanceof IStoreItem)
         {
-          final IDocument<?> doc = (IDocument<?>) subject;
-          doc.beingDeleted();
-
-          // and detach it from the parent, if it hasn't
-          // already been deleted
-          if (doc.getParent() != null)
-          {
-            doc.getParent().remove(doc);
-          }
+          final IStoreItem item = (IStoreItem) subject;
+          item.beingDeleted();
         }
-        else if (subject instanceof IStoreGroup)
-        {
-          final IStoreGroup item = (IStoreGroup) subject;
-          item.getParent().remove(item);
-        }
+        
+        // and share the good news
+        _store.fireDataChanged();
       }
 
       @Override
@@ -570,6 +592,7 @@ public class DataManagerEditor extends EditorPart
         resourceChangeListener);
     if (_store != null)
     {
+      _store.removeChangeListener(_storeChangeListener);
       _store.removeChangeListener(_changeListener);
     }
   }
@@ -808,6 +831,7 @@ public class DataManagerEditor extends EditorPart
       }
 
     }
+    _store.addChangeListener(_storeChangeListener);
     _store.addChangeListener(_changeListener);
   }
 
@@ -879,6 +903,7 @@ public class DataManagerEditor extends EditorPart
   {
     if (_store != null)
     {
+      _store.removeChangeListener(_storeChangeListener);
       _store.removeChangeListener(_changeListener);
     }
     load(getEditorInput());
@@ -892,6 +917,12 @@ public class DataManagerEditor extends EditorPart
         viewer.refresh();
       }
     });
+
+    if (_store != null)
+    {
+      _store.addChangeListener(_storeChangeListener);
+      _store.addChangeListener(_changeListener);
+    }
 
   }
 

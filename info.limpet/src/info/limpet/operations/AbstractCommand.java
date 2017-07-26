@@ -57,6 +57,23 @@ public abstract class AbstractCommand implements ICommand
 
   private IStoreGroup _parent;
 
+  @Override
+  public void beingDeleted()
+  {
+    // ok, detach ourselves from our parent
+    final IStoreGroup parent = this.getParent();
+    if(parent != null)
+    {
+      parent.remove(this);
+    }
+    
+    // delete our children
+    for(final Document<?> doc: outputs)
+    {
+      doc.beingDeleted();
+    }
+  }
+
   /**
    * whether the command should recalculate if its children change
    * 
