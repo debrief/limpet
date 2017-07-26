@@ -79,7 +79,8 @@ public class BistaticAngleOperation implements IOperation
           _timeProvider == null ? null : SampleData.MILLIS;
 
       final String elements =
-          "[" + _transmitter + "] > [" + _target.getName() + "] > [" + _receiver + "]";
+          "[" + _transmitter + "] > [" + _target.getName() + "] > ["
+              + _receiver + "]";
 
       _azimuthBuilder =
           new NumberDocumentBuilder("Azimuth Angle for " + elements,
@@ -216,20 +217,35 @@ public class BistaticAngleOperation implements IOperation
       }
 
       // ok, produce the sets of intepolated positions, at the specified times
+      final Document<?> trimmed_times;
+      if(times instanceof LocationDocument)
+      {
+        trimmed_times = locationsFor((LocationDocument) times,(Document<?>) times, period);
+      }
+      else if(times instanceof NumberDocument)
+      {
+        trimmed_times = numbersFor((NumberDocument) times,(Document<?>) times, period);        
+      }
+      else
+      {
+        trimmed_times = null;
+      }
+      
       final LocationDocument interp_tx =
-          locationsFor(tx_track, (Document<?>) times, period);
+          locationsFor(tx_track, (Document<?>) trimmed_times, period);
       final LocationDocument interp_tgt =
-          locationsFor(tgt_track, (Document<?>) times, period);
+          locationsFor(tgt_track, (Document<?>) trimmed_times, period);
       final LocationDocument interp_rx =
-          locationsFor(rx_track, (Document<?>) times, period);
+          locationsFor(rx_track, (Document<?>) trimmed_times, period);
       final NumberDocument interp_headings =
-          numbersFor(tgt_hdg, (Document<?>) times);
+          numbersFor(tgt_hdg, (Document<?>) times, period);
 
+      // ok, get ready to walk through them
       final Iterator<Point2D> txIter = interp_tx.getLocationIterator();
       final Iterator<Point2D> tgtIter = interp_tgt.getLocationIterator();
       final Iterator<Point2D> rxIter = interp_rx.getLocationIterator();
       final Iterator<Double> hdgIter = interp_headings.getIterator();
-      final Iterator<Double> timeIter = times.getIndexIterator();
+      final Iterator<Double> timeIter = trimmed_times.getIndexIterator();
 
       while (timeIter.hasNext())
       {
