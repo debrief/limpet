@@ -41,16 +41,25 @@ public class IntensityGraphExample {
     final IntensityGraphFigure intensityGraph = new IntensityGraphFigure();
     
     //Create Simulation Data
-    final short[] simuData = new short[DataWidth * DataHeight * 2];
-    final short[] data = new short[DataWidth * DataHeight];
+    final double[] simuData = new double[DataWidth * DataHeight * 2];
+    final double[] data = new double[DataWidth * DataHeight];
     int seed = count++;
     for (int i = 0; i < DataHeight; i++) {
       for (int j = 0; j < DataWidth; j++) {
         int x = j - DataWidth;
         int y = i - DataHeight;
-        int p = (int) Math.sqrt(x * x + y * y);
-        simuData[i * DataWidth + j] = (short) (Math.sin(p * 2 * Math.PI
-            / DataWidth + seed * Math.PI / 100) * 100);
+        final double thisValue;
+        if(Math.abs(i - j) < 40)
+        {
+          thisValue = Double.NaN;
+        }
+        else
+        {
+          int p = (int) Math.sqrt(x * x + y * y);
+          thisValue = 110 + (Math.sin(p * 2 * Math.PI
+              / DataWidth + seed * Math.PI / 100) * 100);
+        }
+        simuData[i * DataWidth + j] = thisValue;
       }
     }
 
