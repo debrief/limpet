@@ -21,20 +21,23 @@ import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
 import info.limpet.impl.NumberDocument;
 import info.limpet.impl.Range;
+import info.limpet.impl.SampleData;
 import info.limpet.operations.CollectionComplianceTests;
-import info.limpet.operations.RangedCommand;
+import info.limpet.operations.RangedEntity;
 import info.limpet.operations.arithmetic.SimpleMovingAverageOperation.SimpleMovingAverageCommand;
-import info.limpet.ui.Activator;
 import info.limpet.ui.core_view.CoreAnalysisView;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.TimeZone;
 
+import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 
-import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -50,222 +53,16 @@ import org.eclipse.swt.widgets.Slider;
  * @author ian
  * 
  */
-public class RangeSliderView extends CoreAnalysisView implements
-    IChangeListener
+public class RangeSliderView extends CoreAnalysisView
 {
 
-  /**
-   * helper class, to embody three types of data we use in range control
-   * 
-   * @author ian
-   * 
-   */
-  private static interface RangeHelper
-  {
-    void updatedTo(int val);
-
-    public String getMinText();
-
-    public String getMaxText();
-
-    public int getMinVal();
-
-    public int getMaxVal();
-
-    public String getValueText();
-
-    String getLabel();
-
-    int getValue();
-
-    /**
-     * stop listening to the subject item
-     * 
-     */
-    void dropListener();
-
-  }
-
-  private static class CommandHelper implements RangeHelper, IChangeListener
-  {
-
-    private final SimpleMovingAverageCommand _myCommand;
-    private final int _sliderThumb;
-
-    public CommandHelper(SimpleMovingAverageCommand command, int sliderThumb)
-    {
-      _myCommand = command;
-      _sliderThumb = sliderThumb;
-      _myCommand.addChangeListener(this);
-    }
-
-    @Override
-    public void updatedTo(int val)
-    {
-      _myCommand.setWindowSize(val);
-      _myCommand.recalculate(null);
-
-    }
-
-    @Override
-    public String getMinText()
-    {
-      return "0";
-    }
-
-    @Override
-    public String getMaxText()
-    {
-      return "50";
-    }
-
-    @Override
-    public int getMinVal()
-    {
-      return 0;
-    }
-
-    @Override
-    public int getMaxVal()
-    {
-      return 50 + _sliderThumb;
-    }
-
-    @Override
-    public String getValueText()
-    {
-      return "" + getValue();
-    }
-
-    @Override
-    public String getLabel()
-    {
-      return _myCommand.getName();
-    }
-
-    @Override
-    public int getValue()
-    {
-      return _myCommand.getWindowSize();
-    }
-
-    @Override
-    public void dataChanged(IStoreItem subject)
-    {
-    }
-
-    @Override
-    public void metadataChanged(IStoreItem subject)
-    {
-    }
-
-    @Override
-    public void collectionDeleted(IStoreItem subject)
-    {
-    }
-
-    @Override
-    public void dropListener()
-    {
-      _myCommand.removeTransientChangeListener(this);
-    }
-
-  }
-  
-  private static class RangedCommandHelper implements RangeHelper, IChangeListener
-  {
-
-    private final RangedCommand _myRCommand;
-    private final ICommand _myCommand;
-    private final int _sliderThumb;
-
-    public RangedCommandHelper(RangedCommand rCommand, ICommand command,  int sliderThumb)
-    {
-      _myRCommand = rCommand;
-      _myCommand = command;
-      _sliderThumb = sliderThumb;
-      _myCommand.addChangeListener(this);
-    }
-
-    @Override
-    public void updatedTo(int val)
-    {
-      _myRCommand.setValue(val);
-      _myRCommand.recalculate(null);
-    }
-
-    @Override
-    public String getMinText()
-    {
-      return "0";
-    }
-
-    @Override
-    public String getMaxText()
-    {
-      return "50";
-    }
-
-    @Override
-    public int getMinVal()
-    {
-      return 0;
-    }
-
-    @Override
-    public int getMaxVal()
-    {
-      return 50 + _sliderThumb;
-    }
-
-    @Override
-    public String getValueText()
-    {
-      return "" + getValue();
-    }
-
-    @Override
-    public String getLabel()
-    {
-      return _myCommand.getName();
-    }
-
-    @Override
-    public int getValue()
-    {
-      return _myRCommand.getValue();
-    }
-
-    @Override
-    public void dataChanged(IStoreItem subject)
-    {
-    }
-
-    @Override
-    public void metadataChanged(IStoreItem subject)
-    {
-    }
-
-    @Override
-    public void collectionDeleted(IStoreItem subject)
-    {
-    }
-
-    @Override
-    public void dropListener()
-    {
-      _myCommand.removeTransientChangeListener(this);
-    }
-
-  }
-
-  private static class DateHelper implements RangeHelper
+  private class DateIndexHelper implements RangeHelper
   {
     private final Long _start;
     private final Long _end;
     private long _current;
     private final SimpleDateFormat sdf;
-    private final int _sliderThumb;
+    private int _sliderThumb;
     private final String _name;
     private final IStoreGroup _group;
     private final NumberDocument _collection;
@@ -274,15 +71,14 @@ public class RangeSliderView extends CoreAnalysisView implements
     // of millis in Integer.MAX_VALUE
     private final float scaleFactor;
 
-    @SuppressWarnings("unused")
-    public DateHelper(Long start, Long end, int sliderThumb, String name,
-        IStoreGroup group, NumberDocument temp)
+    public DateIndexHelper(final Long start, final Long end, final String name,
+        final IStoreGroup group, final NumberDocument doc)
     {
       _start = start;
       _end = end;
 
       // do we have a start time
-      Date gTime = group.getTime();
+      final Date gTime = group.getTime();
       if (gTime != null)
       {
         _current = new Long(gTime.getTime());
@@ -291,7 +87,6 @@ public class RangeSliderView extends CoreAnalysisView implements
       {
         _current = new Long(start);
       }
-      _sliderThumb = sliderThumb;
       _name = name;
       _group = group;
 
@@ -311,7 +106,7 @@ public class RangeSliderView extends CoreAnalysisView implements
 
       sdf = new SimpleDateFormat(DATE_FORMAT);
       sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
-      _collection = temp;
+      _collection = doc;
 
       // do we need to scale the value?
       if (range < Integer.MAX_VALUE)
@@ -320,23 +115,20 @@ public class RangeSliderView extends CoreAnalysisView implements
       }
       else
       {
-        scaleFactor = (float) range / (Integer.MAX_VALUE / 2f);
+        scaleFactor = range / (Integer.MAX_VALUE / 2f);
       }
     }
 
     @Override
-    public void updatedTo(int val)
+    public void dropListener()
     {
-      _current = _start + (long) (val * scaleFactor);
-
-      // and store the value in the group
-      _group.setTime(new Date(_current));
+      // don't worry, we don't need to do anything
     }
 
     @Override
-    public String getMinText()
+    public String getLabel()
     {
-      return sdf.format(_start);
+      return _name;
     }
 
     @Override
@@ -346,470 +138,298 @@ public class RangeSliderView extends CoreAnalysisView implements
     }
 
     @Override
+    public int getMaxVal()
+    {
+      final long range = _end - _start;
+      final float scaledRange = range / scaleFactor;
+      final int maxVal = (int) scaledRange + _sliderThumb;
+      return maxVal;
+    }
+
+    @Override
+    public String getMinText()
+    {
+      return sdf.format(_start);
+    }
+
+    @Override
     public int getMinVal()
     {
       return 0;
     }
 
-    @Override
-    public int getMaxVal()
+    public String getUnits()
     {
-      long range = _end - _start;
-      float scaledRange = range / scaleFactor;
-      int maxVal = (int) scaledRange + _sliderThumb;
-      return maxVal;
-    }
-
-    @Override
-    public String getValueText()
-    {
-      return sdf.format(_current);
-    }
-
-    @Override
-    public String getLabel()
-    {
-      return _name;
+      final Unit<?> units = _collection.getIndexUnits();
+      return units != null ? units.toString() : null;
     }
 
     @Override
     public int getValue()
     {
       // how far along are we?
-      long diff = _current - _start;
+      final long diff = _current - _start;
 
       // and scale it
-      int scaled = (int) (diff / scaleFactor);
+      final int scaled = (int) (diff / scaleFactor);
 
       return scaled;
     }
 
     @Override
-    public void dropListener()
+    public String getValueText()
     {
-      // don't worry, we don't need to do anything
+      final String value = sdf.format(_current);
+      final String res;
+      final String units = getUnits();
+      if (units != null)
+      {
+        res = value + "(" + units + ")";
+      }
+      else
+      {
+        res = value;
+      }
+      return res;
+    }
+
+    @Override
+    public void setSliderThumb(final int val)
+    {
+      _sliderThumb = val;
+    }
+
+    @Override
+    public void updatedTo(final int val)
+    {
+      _current = _start + (long) (val * scaleFactor);
+
+      // and store the value in the group
+      _group.setTime(new Date(_current));
     }
 
   }
 
-  private static class NumberHelper implements RangeHelper, IChangeListener
+  private static class Figure implements Listener
+  {
+    public Label label;
+    public Slider slider;
+    public Label minL;
+    public Label val;
+    public Label maxL;
+    public RangeHelper helper;
+    public Composite holder;
+
+    public void connect()
+    {
+      slider.addListener(SWT.Selection, this);
+    }
+
+    public void detach()
+    {
+      holder.dispose();
+    }
+
+    public void disconnect()
+    {
+      if (slider != null && !slider.isDisposed())
+      {
+        slider.removeListener(SWT.Selection, this);
+      }
+    }
+
+    @Override
+    public void handleEvent(final Event event)
+    {
+      final int curVal = slider.getSelection();
+
+      if (helper != null)
+      {
+        helper.updatedTo(curVal);
+        if (!val.isDisposed())
+        {
+          val.setText(helper.getValueText());
+        }
+      }
+    }
+
+    public void refresh()
+    {
+      val.setText(helper.getValueText());
+      label.setText(helper.getLabel());
+    }
+
+    public void initialise()
+    {
+      // and format them
+      minL.setText(helper.getMinText());
+      maxL.setText(helper.getMaxText());
+      val.setText("   " + helper.getValueText());
+      label.setText(helper.getLabel());
+
+      // use some dummy values, just to get us in the ball park
+      slider.setMinimum(0);
+      slider.setMaximum(10000);
+
+      // now the real limits
+      slider.setMinimum(helper.getMinVal());
+      slider.setMaximum(helper.getMaxVal());
+      slider.setSelection(helper.getValue());
+      slider.setEnabled(true);
+      label.getParent().getParent().layout(true, true);
+      label.getParent().getParent().redraw();
+
+      // store the thumb witdth
+      helper.setSliderThumb(slider.getThumb());
+
+    }
+  }
+
+  private class RangedEntityHelper implements RangeHelper, IChangeListener
   {
 
-    private final Range _rng;
-    private final Unit<?> _units;
-    private int _curVal;
-    private final int _sliderThumb;
-    private final String _name;
-    private final NumberDocument _collection;
+    private final RangedEntity _rangedEntity;
+    private int _sliderThumb;
+    private final Range _range;
 
-    public NumberHelper(Range rng, Unit<?> theUnits, double startVal,
-        int sliderThumb, String name, NumberDocument collection)
+    public RangedEntityHelper(final RangedEntity rCommand)
     {
-      _rng = rng;
-      _units = theUnits;
-      _curVal = (int) startVal;
-      _sliderThumb = sliderThumb;
-      _name = name;
-      _collection = collection;
-      collection.addTransientChangeListener(this);
+      _rangedEntity = rCommand;
+      _rangedEntity.addTransientChangeListener(this);
+      _range = rCommand.getRange();
     }
 
     @Override
-    public void updatedTo(int val)
+    public void collectionDeleted(final IStoreItem subject)
     {
-      _curVal = val;
-
-      // ok, and store it
-      _collection.setValue(val);
+      // ok, we need to die.
+      itemDeleted(subject);
     }
 
     @Override
-    public String getMinText()
+    public void dataChanged(final IStoreItem subject)
     {
-      Number min = _rng.getMinimum();
-      return "" + min;
+      itemChanged(subject);
     }
 
     @Override
-    public String getMaxText()
+    public void dropListener()
     {
-      Number max = _rng.getMaximum();
-      return "" + max;
-    }
-
-    @Override
-    public int getMinVal()
-    {
-      return 0;
-    }
-
-    @Override
-    public int getMaxVal()
-    {
-      Number max = _rng.getMaximum();
-      int maxVal = max.intValue() + _sliderThumb;
-      return maxVal;
-    }
-
-    @Override
-    public String getValueText()
-    {
-      final String unitStr;
-      if (_units != null && _units.toString().length() > 0)
-      {
-        unitStr = _units.toString();
-      }
-      else
-      {
-        unitStr = "n/a";
-      }
-
-      return "" + _curVal + unitStr;
+      _rangedEntity.removeTransientChangeListener(this);
     }
 
     @Override
     public String getLabel()
     {
-      return _name;
+      return _rangedEntity.getName();
+    }
+
+    @Override
+    public String getMaxText()
+    {
+      return "" + _range.getMaximum();
+    }
+
+    @Override
+    public int getMaxVal()
+    {
+      return _sliderThumb + ((Double) _range.getMaximum()).intValue();
+    }
+
+    @Override
+    public String getMinText()
+    {
+      return "" + _range.getMinimum();
+    }
+
+    @Override
+    public int getMinVal()
+    {
+      return ((Double) _range.getMinimum()).intValue();
     }
 
     @Override
     public int getValue()
     {
-      return _curVal;
+      return (int) _rangedEntity.getValue();
     }
 
     @Override
-    public void dataChanged(IStoreItem subject)
+    public String getValueText()
     {
-    }
-
-    @Override
-    public void metadataChanged(IStoreItem subject)
-    {
-    }
-
-    @Override
-    public void collectionDeleted(IStoreItem subject)
-    {
-    }
-
-    @Override
-    public void dropListener()
-    {
-      _collection.removeTransientChangeListener(this);
-    }
-
-  }
-
-  private RangeHelper _myHelper = null;
-
-  private static final String PENDING_TEXT = "     ====== pending  ====== ";
-
-  /**
-   * The ID of the view as specified by the extension.
-   */
-  public static final String ID = "info.limpet.ui.RangeSliderView";
-
-  private Slider slider;
-
-  private Label minL;
-
-  private Label val;
-
-  private Label maxL;
-
-  private Label label;
-
-  /**
-   * The constructor.
-   */
-  public RangeSliderView()
-  {
-    super(ID, "Range Slider");
-  }
-
-  /**
-   * This is a callback that will allow us to create the viewer and initialize it.
-   */
-  public void createPartControl(Composite parent)
-  {
-    makeActions();
-    contributeToActionBars();
-
-    // ok, do the layout
-    Composite holder = new Composite(parent, SWT.NONE);
-    GridLayout gl = new GridLayout(3, false);
-    GridData gd = new GridData(SWT.FILL, SWT.FILL, true, false);
-    holder.setLayoutData(gd);
-    holder.setLayout(gl);
-
-    label = new Label(holder, SWT.NONE);
-    gd = new GridData(SWT.CENTER, SWT.FILL, true, false);
-    gd.horizontalSpan = 3;
-    label.setLayoutData(gd);
-    label.setText(PENDING_TEXT);
-
-    slider = new Slider(holder, SWT.NONE);
-    gd = new GridData(SWT.FILL, SWT.FILL, true, false);
-    gd.horizontalSpan = 3;
-    slider.setLayoutData(gd);
-    slider.addListener(SWT.Selection, new Listener()
-    {
-
-      @Override
-      public void handleEvent(Event event)
+      final String res;
+      if (_rangedEntity instanceof NumberDocument)
       {
-        int curVal = slider.getSelection();
-
-        if (_myHelper != null)
+        final NumberDocument doc = (NumberDocument) _rangedEntity;
+        final Unit<?> units = doc.getUnits();
+        if (units != null && units.toString().length() > 0)
         {
-          _myHelper.updatedTo(curVal);
-          val.setText(_myHelper.getValueText());
-        }
-      }
-    });
-    minL = new Label(holder, SWT.NONE);
-    gd = new GridData(SWT.BEGINNING, SWT.FILL, true, false);
-    minL.setLayoutData(gd);
-    minL.setText("   ==   ");
-
-    val = new Label(holder, SWT.NONE);
-    gd = new GridData(SWT.CENTER, SWT.FILL, true, false);
-    val.setLayoutData(gd);
-    val.setText("   ==   ");
-
-    maxL = new Label(holder, SWT.NONE);
-    gd = new GridData(SWT.END, SWT.FILL, true, false);
-    maxL.setLayoutData(gd);
-    maxL.setText("   ==   ");
-
-    // register as selection listener
-    setupListener();
-  }
-
-  @Override
-  public void display(List<IStoreItem> res)
-  {
-    if (res.size() != 1)
-    {
-      return;
-    }
-
-    IStoreItem first = res.get(0);
-    if (first instanceof IDocument)
-    {
-      IDocument<?> newColl = (IDocument<?>) res.get(0);
-
-      if (newColl instanceof NumberDocument)
-      {
-        NumberDocument currentColl = (NumberDocument) newColl;
-        showData(currentColl);
-      }
-    }
-    else if (first instanceof ICommand
-        && first instanceof SimpleMovingAverageCommand)
-    {
-      SimpleMovingAverageCommand command = (SimpleMovingAverageCommand) first;
-      showData(command);
-
-    }
-
-  }
-
-  protected void dropListener()
-  {
-    if (_myHelper != null)
-    {
-      _myHelper.dropListener();
-      _myHelper = null;
-    }
-  }
-
-  private void showData(final Object object)
-  {
-    if (object instanceof RangedCommand)
-    {
-      if (_myHelper != null)
-        if (_myHelper instanceof CommandHelper)
-        {
-          CommandHelper cHelp = (CommandHelper) _myHelper;
-          if (cHelp._myCommand != object)
-          {
-            dropListener();
-          }
-          else
-          {
-            return;
-          }
-        }
-      RangedCommand ranged = (RangedCommand) object;
-      ICommand command = (ICommand) object;
-      _myHelper = new RangedCommandHelper(ranged, command, slider.getThumb());
-    }
-    else if (object instanceof NumberDocument)
-    {
-      NumberDocument qc = (NumberDocument) object;
-
-      // does it have a range?
-      Range rng = qc.getRange();
-
-      if (rng != null)
-      {
-        Unit<?> theUnits = qc.getUnits();
-        if (qc.size() > 0)
-        {
-          // ok, drop the current object
-          if (_myHelper != null)
-          {
-            if (_myHelper instanceof NumberHelper)
-            {
-              NumberHelper cHelp = (NumberHelper) _myHelper;
-              if (cHelp._collection != object)
-              {
-                dropListener();
-              }
-              else
-              {
-                return;
-              }
-            }
-          }
-
-          int curVal = (int) qc.getValueAt(0);
-
-          _myHelper =
-              new NumberHelper(rng, theUnits, curVal, slider.getThumb(), qc
-                  .getName(), qc);
-        }
-      }
-      else if (qc.isIndexed())
-      {
-        // ok, time data, show the time range
-        NumberDocument temp = (NumberDocument) qc;
-
-        if (_myHelper != null)
-          if (_myHelper instanceof DateHelper)
-          {
-            DateHelper cHelp = (DateHelper) _myHelper;
-            if (cHelp._collection != object)
-            {
-              dropListener();
-            }
-            else
-            {
-              return;
-            }
-          }
-
-        // now we need the time range
-        // TODO: we need to support indexing the data
-        // Long start = temp.getTimes().get(0);
-        // Long end = temp.getTimes().get(temp.getTimes().size() - 1);
-        IStoreGroup parent = findTopParent(temp);
-
-        // just double-check we can fit in the period
-        if (parent != null)
-        {
-          // TODO: reinstate the date helper
-          // _myHelper =
-          // new DateHelper(start, end, slider.getThumb(), temp.getName(),
-          // parent, temp);
+          res = getValue() + " (" + units + ")";
         }
         else
         {
-          Activator.getDefault().getLog().log(
-              new Status(Status.WARNING, Activator.PLUGIN_ID,
-                  "Couldn't find top level group"));
+          res = "" + getValue();
         }
       }
-    }
-
-    if (_myHelper != null)
-    {
-      // and format them
-      minL.setText(_myHelper.getMinText());
-      maxL.setText(_myHelper.getMaxText());
-      val.setText("   " + _myHelper.getValueText());
-      label.setText(_myHelper.getLabel());
-      slider.setMinimum(_myHelper.getMinVal());
-      slider.setMaximum(_myHelper.getMaxVal());
-      slider.setSelection(_myHelper.getValue());
-      slider.setEnabled(true);
-      label.getParent().getParent().layout(true, true);
-      label.getParent().getParent().redraw();
-    }
-    else
-    {
-      slider.setEnabled(false);
-    }
-  }
-
-  @Override
-  public void setFocus()
-  {
-    slider.setFocus();
-  }
-
-  @Override
-  protected boolean appliesToMe(final List<IStoreItem> selection,
-      final CollectionComplianceTests tests)
-  {
-    boolean res = false;
-
-    if (selection.size() == 1)
-    {
-      IStoreItem item = selection.iterator().next();
-      if (item instanceof IDocument)
+      else
       {
-        IDocument<?> coll = (IDocument<?>) item;
-
-        if (coll.isQuantity() && coll.size() == 1)
-        {
-          NumberDocument qc = (NumberDocument) coll;
-          Range range = qc.getRange();
-          res = range != null;
-        }
-        else if (coll.isIndexed() && coll.size() > 0)
-        {
-          res = true;
-        }
+        res = "" + getValue();
       }
-      else if (item instanceof ICommand)
-      {
-        ICommand coll = (ICommand) item;
-
-        if (coll instanceof SimpleMovingAverageCommand)
-        {
-          res = true;
-        }
-      }
+      return res;
     }
-    return res;
+
+    @Override
+    public void metadataChanged(final IStoreItem subject)
+    {
+      itemMetadataChanged(subject);
+    }
+
+    @Override
+    public void setSliderThumb(final int val)
+    {
+      _sliderThumb = val;
+    }
+
+    @Override
+    public void updatedTo(final int val)
+    {
+      _rangedEntity.setValue(val);
+    }
+
   }
 
-  @Override
-  protected String getTextForClipboard()
+  /**
+   * helper class, to embody three types of data we use in range control
+   * 
+   * @author ian
+   * 
+   */
+  private static interface RangeHelper
   {
-    return "Pending";
-  }
+    /**
+     * stop listening to the subject item
+     * 
+     */
+    void dropListener();
 
-  @Override
-  public void dataChanged(IStoreItem subject)
-  {
-    // ok, re=do the update
-    showData(subject);
-  }
+    String getLabel();
 
-  @Override
-  public void collectionDeleted(IStoreItem subject)
-  {
-  }
+    public String getMaxText();
 
-  @Override
-  public void metadataChanged(IStoreItem subject)
-  {
-    dataChanged(subject);
+    public int getMaxVal();
+
+    public String getMinText();
+
+    public int getMinVal();
+
+    int getValue();
+
+    public String getValueText();
+
+    public void setSliderThumb(int val);
+
+    void updatedTo(int val);
+
   }
 
   public static IStoreGroup findTopParent(final IStoreItem subject)
@@ -822,6 +442,392 @@ public class RangeSliderView extends CoreAnalysisView implements
       thisItem = thisItem.getParent();
     }
     return res;
+  }
+
+  final private List<IStoreItem> _currentSelection = new ArrayList<IStoreItem>();
+
+  private Composite _sliderColumn;
+
+  private final Map<RangedEntity, Figure> _entities =
+      new HashMap<RangedEntity, Figure>();
+
+  private static final String PENDING_TEXT = "     ====== pending  ====== ";
+
+  /**
+   * The ID of the view as specified by the extension.
+   */
+  public static final String ID = "info.limpet.ui.RangeSliderView";
+
+  /**
+   * The constructor.
+   */
+  public RangeSliderView()
+  {
+    super(ID, "Range Slider");
+  }
+
+  private Figure addRow(final Composite column, final RangeHelper helper)
+  {
+    final Figure figure = new Figure();
+
+    // store the helper
+    figure.helper = helper;
+
+    // ok, do the layout
+    figure.holder = new Composite(column, SWT.NONE);
+    final GridLayout gl = new GridLayout(3, false);
+    GridData gd = new GridData(SWT.FILL, SWT.FILL, true, false);
+    figure.holder.setLayoutData(gd);
+    figure.holder.setLayout(gl);
+
+    figure.label = new Label(figure.holder, SWT.NONE);
+    gd = new GridData(SWT.CENTER, SWT.FILL, true, false);
+    gd.horizontalSpan = 3;
+    figure.label.setLayoutData(gd);
+    figure.label.setText(PENDING_TEXT);
+
+    figure.slider = new Slider(figure.holder, SWT.NONE);
+    gd = new GridData(SWT.FILL, SWT.FILL, true, false);
+    gd.horizontalSpan = 3;
+    figure.slider.setLayoutData(gd);
+
+    // and connect to the control
+    figure.connect();
+
+    figure.minL = new Label(figure.holder, SWT.NONE);
+    gd = new GridData(SWT.BEGINNING, SWT.FILL, true, false);
+    figure.minL.setLayoutData(gd);
+    figure.minL.setText("   ==   ");
+
+    figure.val = new Label(figure.holder, SWT.NONE);
+    gd = new GridData(SWT.CENTER, SWT.FILL, true, false);
+    figure.val.setLayoutData(gd);
+    figure.val.setText("   ==   ");
+
+    figure.maxL = new Label(figure.holder, SWT.NONE);
+    gd = new GridData(SWT.END, SWT.FILL, true, false);
+    figure.maxL.setLayoutData(gd);
+    figure.maxL.setText("   ==   ");
+
+    return figure;
+  }
+
+  @Override
+  protected boolean appliesToMe(final List<IStoreItem> selection,
+      final CollectionComplianceTests tests)
+  {
+    boolean res = true;
+
+    for (final IStoreItem item : selection)
+    {
+      if (item instanceof IDocument)
+      {
+        final IDocument<?> coll = (IDocument<?>) item;
+
+        if (coll.isQuantity() && coll.size() == 1)
+        {
+          final NumberDocument qc = (NumberDocument) coll;
+          final Range range = qc.getRange();
+          res = range != null;
+        }
+        else if (coll.isIndexed() && coll.size() > 1)
+        {
+          // ok, it's indexed, and we have more than one item in the datsaet
+          res = true;
+        }
+        else
+        {
+          res = false;
+        }
+      }
+      else if (item instanceof ICommand)
+      {
+        final ICommand coll = (ICommand) item;
+
+        if (coll instanceof SimpleMovingAverageCommand)
+        {
+          res = true;
+        }
+        else
+        {
+          res = false;
+        }
+      }
+      else if (item instanceof IStoreGroup)
+      {
+        // see if all the items are singletons
+        final IStoreGroup group = (IStoreGroup) item;
+        res = true;
+        for (final IStoreItem t : group)
+        {
+          if (t instanceof NumberDocument)
+          {
+            final NumberDocument doc = (NumberDocument) t;
+            if (doc.size() != 1)
+            {
+              res = false;
+              break;
+            }
+            else
+            {
+              res = true;
+            }
+          }
+        }
+      }
+    }
+
+    return res;
+  }
+
+  /**
+   * This is a callback that will allow us to create the viewer and initialize it.
+   */
+  @Override
+  public void createPartControl(final Composite parent)
+  {
+    makeActions();
+    contributeToActionBars();
+
+    // register as selection listener
+    setupListener();
+
+    _sliderColumn = new Composite(parent, SWT.NONE);
+    _sliderColumn.setLayout(new GridLayout(1, true));
+
+    // create a row
+    // firstFigure = addRow(_sliderColumn, _myHelper);
+
+  }
+
+  protected void createChangeListeners(List<IStoreItem> res)
+  {
+    // ok, we don't directly listen to the selection,
+    // if it's a group then we listen to the children.
+    // So, leave it to the rest of the range-slider
+    // to configure listeners
+  }
+
+
+  @Override
+  public void display(final List<IStoreItem> selection)
+  {
+    if (selection.size() == 0)
+    {
+      return;
+    }
+
+    final List<RangedEntity> toShow = new ArrayList<RangedEntity>();
+
+    for (final IStoreItem item : selection)
+    {
+      if (item instanceof RangedEntity)
+      {
+        final boolean useIt;
+        // check it looks right
+        if (item instanceof NumberDocument)
+        {
+          NumberDocument doc = (NumberDocument) item;
+          if (doc.size() == 1 && doc.getRange() != null)
+          {
+            // ok, go for it
+            useIt = true;
+          }
+          else if(doc.size() >=2 && doc.getIndexUnits() != null)
+          {
+            // we can use it, if it's an indexed dataset
+            // TODO: allow this to be true,
+            // if we want to allow indexed datasets
+            useIt = false;
+          }
+          else
+          {
+            useIt = false;
+          }
+        }
+        else
+        {
+          useIt = true;
+        }
+        if (useIt)
+        {
+          toShow.add((RangedEntity) item);
+        }
+      }
+      else if (item instanceof IStoreGroup)
+      {
+        final IStoreGroup group = (IStoreGroup) item;
+        
+        // process kids
+        for (final IStoreItem doc : group)
+        {
+          if (doc instanceof RangedEntity)
+          {
+            toShow.add((RangedEntity) doc);
+          }
+        }
+      }
+    }
+
+    if (toShow.size() > 0)
+    {
+      if (selection.equals(_currentSelection))
+      {
+        // ok, we're already showing it
+        return;
+      }
+      else
+      {
+        // ok, clear the sliders
+        clearSliders();
+      }
+
+      // store the new selection. Hmm,
+      // we're storing a clone, so we treat 
+      // the list being extended as a new list
+      // - so the sliders get refreshed
+      _currentSelection.clear();
+      _currentSelection.addAll(selection);
+
+      // and show the new data
+      showData(toShow);
+    }
+  }
+
+  private void clearSliders()
+  {
+    // clear current listeners
+    for (final Figure thisFigure : _entities.values())
+    {
+      // drop this one
+      thisFigure.disconnect();
+
+      // and detach it from its parent
+      thisFigure.detach();
+    }
+
+    // ok, list empty
+    _entities.clear();
+  }
+
+  @Override
+  protected String getTextForClipboard()
+  {
+    return "Pending";
+  }
+
+  private void itemChanged(final IStoreItem subject)
+  {
+    // ok, find the figure
+    final Figure figure = _entities.get(subject);
+
+    if (figure != null)
+    {
+      // ok, get it to repaint itself
+      figure.refresh();
+    }
+  }
+
+  private void itemDeleted(final IStoreItem subject)
+  {
+    // ok, find the figure
+    final Figure figure = _entities.get(subject);
+
+    if (figure != null)
+    {
+      figure.disconnect();
+      figure.detach();
+    }
+  }
+
+  private void itemMetadataChanged(final IStoreItem subject)
+  {
+    itemChanged(subject);
+  }
+
+  @Override
+  public void setFocus()
+  {
+    _sliderColumn.setFocus();
+  }
+
+  private void showData(final List<RangedEntity> items)
+  {
+
+    // ok, loop through them
+    for (final RangedEntity entity : items)
+    {
+      final RangeHelper helper;
+
+      // sort out a helper
+      if (entity instanceof RangedEntity)
+      {
+        final RangedEntity ranged = entity;
+
+        if (ranged instanceof NumberDocument)
+        {
+          final NumberDocument doc = (NumberDocument) ranged;
+          helper = createNumberHelper(ranged, doc);
+        }
+        else
+        {
+          helper = null;
+        }
+
+      }
+      else
+      {
+        helper = null;
+      }
+
+      // did we create one?
+      if (helper != null)
+      {
+        // ok, add this item
+        final Figure figure = addRow(_sliderColumn, helper);
+        
+        // draw the figure
+        figure.initialise();
+
+        // store the figure
+        _entities.put(entity, figure);
+      }
+    }
+  }
+
+  private RangeHelper createNumberHelper(final RangedEntity ranged,
+      final NumberDocument doc)
+  {
+    final RangeHelper helper;
+    if (doc.size() == 1 && doc.getRange() != null)
+    {
+      helper = new RangedEntityHelper(ranged);
+    }
+    else
+    {
+      // TODO: sort out if we introduce index filters, 
+      // then remove the next line
+      boolean allowIndexFilter = false;
+      if (allowIndexFilter
+          && doc.isIndexed()
+          && (doc.getIndexUnits() == SI.SECOND || doc.getIndexUnits() == SampleData.MILLIS))
+      {
+
+        final double start = doc.getIndexAt(0);
+        final double end = doc.getIndexAt(doc.size() - 1);
+        final String name = doc.getName();
+        final IStoreGroup group = findTopParent(doc);
+
+        helper =
+            new DateIndexHelper((long) start, (long) end, name, group,
+                doc);
+      }
+      else
+      {
+        helper = null;
+      }
+    }
+    return helper;
   }
 
 }

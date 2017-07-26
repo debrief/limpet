@@ -1,6 +1,7 @@
 package info.limpet.impl;
 
 import info.limpet.ICommand;
+import info.limpet.operations.RangedEntity;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -20,7 +21,7 @@ import org.eclipse.january.dataset.IndexIterator;
 import org.eclipse.january.dataset.Maths;
 import org.eclipse.january.metadata.AxesMetadata;
 
-public class NumberDocument extends Document<Double>
+public class NumberDocument extends Document<Double> implements RangedEntity
 {
   public static class DoubleIterator implements Iterator<Double>
   {
