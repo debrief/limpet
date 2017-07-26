@@ -657,6 +657,7 @@ public class RangeSliderView extends CoreAnalysisView
       else if (item instanceof IStoreGroup)
       {
         final IStoreGroup group = (IStoreGroup) item;
+        
         // process kids
         for (final IStoreItem doc : group)
         {
@@ -677,18 +678,8 @@ public class RangeSliderView extends CoreAnalysisView
       }
       else
       {
-        // clear current listeners
-        for (final Figure thisFigure : _entities.values())
-        {
-          // drop this one
-          thisFigure.disconnect();
-
-          // and detach it from its parent
-          thisFigure.detach();
-        }
-
-        // ok, list empty
-        _entities.clear();
+        // ok, clear the sliders
+        clearSliders();
       }
 
       // store the new selection. Hmm,
@@ -701,6 +692,22 @@ public class RangeSliderView extends CoreAnalysisView
       // and show the new data
       showData(toShow);
     }
+  }
+
+  private void clearSliders()
+  {
+    // clear current listeners
+    for (final Figure thisFigure : _entities.values())
+    {
+      // drop this one
+      thisFigure.disconnect();
+
+      // and detach it from its parent
+      thisFigure.detach();
+    }
+
+    // ok, list empty
+    _entities.clear();
   }
 
   @Override
