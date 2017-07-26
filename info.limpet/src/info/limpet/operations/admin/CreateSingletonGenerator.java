@@ -21,6 +21,7 @@ import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
 import info.limpet.impl.NumberDocument;
 import info.limpet.impl.NumberDocumentBuilder;
+import info.limpet.impl.Range;
 import info.limpet.impl.StoreGroup;
 import info.limpet.operations.AbstractCommand;
 import info.limpet.operations.CollectionComplianceTests;
@@ -64,28 +65,53 @@ public class CreateSingletonGenerator implements IOperation
     public void execute()
     {
       // get the name
-      String name = "new " + _name;
-      double value;
+      final String def_name = "new " + _name;
 
-      name =
-          getContext().getInput("New variable", "Enter name for variable", "");
+      final String name =
+          getContext().getInput("New variable", "Enter name for variable",
+              def_name);
       if (name == null || name.isEmpty())
       {
         return;
       }
 
-      String str =
+      final String valueStr =
           getContext().getInput("New variable",
-              "Enter initial value for variable", "");
-      if (str == null || str.isEmpty())
+              "Enter initial value for variable", "100");
+      if (valueStr == null || valueStr.isEmpty())
       {
         return;
       }
       try
       {
-        // get the new collection
-        value = Double.parseDouble(str);
+        // extract the value
+        final double value = Double.parseDouble(valueStr);
+
+        // also have a go at the range
+        final String range =
+            getContext().getInput("New variable",
+                "Enter the range for variable (or cancel to leave un-ranged)",
+                "0:100");
+
         NumberDocument newData = generate(name, value, this);
+
+        // do we have a range?
+        if (range != null)
+        {
+          String[] tokens = range.split(":");
+          if (tokens.length == 2)
+          {
+            try
+            {
+              double lower = Double.parseDouble(tokens[0]);
+              double upper = Double.parseDouble(tokens[1]);
+              newData.setRange(new Range(lower, upper));
+            }
+            catch (NumberFormatException ndr)
+            {
+            }
+          }
+        }
 
         // and remember it as an output
         super.addOutput(newData);
@@ -94,7 +120,7 @@ public class CreateSingletonGenerator implements IOperation
         if (_targetGroup != null)
         {
           _targetGroup.add(newData);
-          
+
           // share the good news
           _targetGroup.fireDataChanged();
         }

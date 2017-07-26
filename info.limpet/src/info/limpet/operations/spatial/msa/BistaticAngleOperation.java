@@ -366,13 +366,9 @@ public class BistaticAngleOperation implements IOperation
       // find which ones have heading
       final List<IStoreGroup> tracksWithHeading =
           getSuitableTracks(rawSelection, true);
-
-      // ok, now run through the ones with heading
-      final Iterator<IStoreGroup> cIter = tracksWithHeading.iterator();
-      while (cIter.hasNext())
+      
+      for(final IStoreGroup thisTarget: tracksWithHeading)
       {
-        final IStoreGroup thisTarget = cIter.next();
-
         // ok, get the location
         final LocationDocument targetTrack =
             aTests.getFirstLocation(thisTarget);
@@ -400,14 +396,9 @@ public class BistaticAngleOperation implements IOperation
             // ok, we can create a command for this permutation
 
             // loop through all the tracks, to find the rx/tx
-            final List<LocationDocument> subjects =
-                new ArrayList<LocationDocument>();
-            final Iterator<IStoreItem> lIter = rawSelection.iterator();
-
-            while (lIter.hasNext())
+            List<LocationDocument> subjects = new ArrayList<LocationDocument>();
+            for(final IStoreItem item: rawSelection)
             {
-              final IStoreItem item = lIter.next();
-
               // check it's not us.
               if (!item.equals(thisTarget))
               {

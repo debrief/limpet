@@ -38,5 +38,19 @@ public class Range
 		return _max;
 	}
 
+  @Override
+  public boolean equals(Object obj)
+  {
+    if(obj instanceof Range)
+    {
+      Range other = (Range) obj;
+      return (_min.equals(other._min) && _max.equals(other._max));
+    }
+    else
+    {
+      return false;
+    }
+  }
+
 
 }
