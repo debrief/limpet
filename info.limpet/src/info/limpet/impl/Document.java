@@ -354,6 +354,7 @@ abstract public class Document<T extends Object> implements IDocument<T>
     return new DoubleIterator(items);
   }
 
+  @Override
   public double getIndexAt(final int i)
   {
     return getIndexValues().getData()[i];

@@ -64,4 +64,6 @@ public interface IDocument<T extends Object> extends IStoreItem
   
   void setIndexUnits(Unit<?> units);
 
+  double getIndexAt(int i);
+
 }

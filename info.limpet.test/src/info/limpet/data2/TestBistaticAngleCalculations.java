@@ -329,7 +329,7 @@ public class TestBistaticAngleCalculations
     List<IStoreItem> tx1 = parser.parse(file.getAbsolutePath());
     store.addAll(tx1);
 
-    file = TestCsvParser.getDataFile("multistatics/rx1_stat.csv");
+    file = TestCsvParser.getDataFile("multistatics/rx3_stat.csv");
     assertTrue(file.isFile());
     List<IStoreItem> rx1 = parser.parse(file.getAbsolutePath());
     store.addAll(rx1);
@@ -359,7 +359,9 @@ public class TestBistaticAngleCalculations
     selection.add(rx1.get(0));
 
     actions = generator.actionsFor(selection, store, context);
-    assertEquals("correct actions", 2, actions.size());
+    // note: since rx3 and the SSN both have course, we will get 4 permutations,
+    // since there's a choice of subject vessel
+    assertEquals("correct actions", 4, actions.size());
 
     // check the store contents
     assertEquals("correct datasets", 3, store.size());
