@@ -258,6 +258,31 @@ public class RangeSliderView extends CoreAnalysisView
       val.setText(helper.getValueText());
       label.setText(helper.getLabel());
     }
+
+    public void initialise()
+    {
+      // and format them
+      minL.setText(helper.getMinText());
+      maxL.setText(helper.getMaxText());
+      val.setText("   " + helper.getValueText());
+      label.setText(helper.getLabel());
+
+      // use some dummy values, just to get us in the ball park
+      slider.setMinimum(0);
+      slider.setMaximum(10000);
+
+      // now the real limits
+      slider.setMinimum(helper.getMinVal());
+      slider.setMaximum(helper.getMaxVal());
+      slider.setSelection(helper.getValue());
+      slider.setEnabled(true);
+      label.getParent().getParent().layout(true, true);
+      label.getParent().getParent().redraw();
+
+      // store the thumb witdth
+      helper.setSliderThumb(slider.getThumb());
+
+    }
   }
 
   private class RangedEntityHelper implements RangeHelper, IChangeListener
@@ -419,7 +444,7 @@ public class RangeSliderView extends CoreAnalysisView
     return res;
   }
 
-  private List<IStoreItem> _currentSelection = null;
+  final private List<IStoreItem> _currentSelection = new ArrayList<IStoreItem>();
 
   private Composite _sliderColumn;
 
@@ -575,6 +600,15 @@ public class RangeSliderView extends CoreAnalysisView
 
   }
 
+  protected void createChangeListeners(List<IStoreItem> res)
+  {
+    // ok, we don't directly listen to the selection,
+    // if it's a group then we listen to the children.
+    // So, leave it to the rest of the range-slider
+    // to configure listeners
+  }
+
+
   @Override
   public void display(final List<IStoreItem> selection)
   {
@@ -630,7 +664,12 @@ public class RangeSliderView extends CoreAnalysisView
 
     if (toShow.size() > 0)
     {
-      if (selection != _currentSelection)
+      if (selection.equals(_currentSelection))
+      {
+        // ok, we're already showing it
+        return;
+      }
+      else
       {
         // clear current listeners
         for (final Figure thisFigure : _entities.values())
@@ -645,14 +684,13 @@ public class RangeSliderView extends CoreAnalysisView
         // ok, list empty
         _entities.clear();
       }
-      else
-      {
-        // ok, we're already showing it
-        return;
-      }
 
-      // store the new selection
-      _currentSelection = selection;
+      // store the new selection. Hmm,
+      // we're storing a clone, so we treat 
+      // the list being extended as a new list
+      // - so the sliders get refreshed
+      _currentSelection.clear();
+      _currentSelection.addAll(selection);
 
       // and show the new data
       showData(toShow);
@@ -716,32 +754,7 @@ public class RangeSliderView extends CoreAnalysisView
         if (ranged instanceof NumberDocument)
         {
           final NumberDocument doc = (NumberDocument) ranged;
-          if (doc.size() == 1 && doc.getRange() != null)
-          {
-            helper = new RangedEntityHelper(ranged);
-          }
-          else
-          {
-            boolean allowIndexFilter = false;
-            if (allowIndexFilter
-                && doc.isIndexed()
-                && (doc.getIndexUnits() == SI.SECOND || doc.getIndexUnits() == SampleData.MILLIS))
-            {
-
-              final double start = doc.getIndexAt(0);
-              final double end = doc.getIndexAt(doc.size() - 1);
-              final String name = doc.getName();
-              final IStoreGroup group = findTopParent(doc);
-
-              helper =
-                  new DateIndexHelper((long) start, (long) end, name, group,
-                      doc);
-            }
-            else
-            {
-              helper = null;
-            }
-          }
+          helper = createNumberHelper(ranged, doc);
         }
         else
         {
@@ -754,132 +767,52 @@ public class RangeSliderView extends CoreAnalysisView
         helper = null;
       }
 
+      // did we create one?
       if (helper != null)
       {
         // ok, add this item
         final Figure figure = addRow(_sliderColumn, helper);
-
-        // and format them
-        figure.minL.setText(helper.getMinText());
-        figure.maxL.setText(helper.getMaxText());
-        figure.val.setText("   " + helper.getValueText());
-        figure.label.setText(helper.getLabel());
-
-        // use some dummy values, just to get us in the ball park
-        figure.slider.setMinimum(0);
-        figure.slider.setMaximum(10000);
-
-        // now the real limits
-        figure.slider.setMinimum(helper.getMinVal());
-        figure.slider.setMaximum(helper.getMaxVal());
-        figure.slider.setSelection(helper.getValue());
-        figure.slider.setEnabled(true);
-        figure.label.getParent().getParent().layout(true, true);
-        figure.label.getParent().getParent().redraw();
-
-        // store the thumb witdth
-        helper.setSliderThumb(figure.slider.getThumb());
+        
+        // draw the figure
+        figure.initialise();
 
         // store the figure
         _entities.put(entity, figure);
       }
-
     }
+  }
 
-    // if (object instanceof RangedEntity)
-    // {
-    // if (_myHelper != null && _myHelper instanceof RangedCommandHelper)
-    // {
-    // RangedCommandHelper cHelp = (RangedCommandHelper) _myHelper;
-    // if (cHelp._myCommand != object)
-    // {
-    // dropListener();
-    // }
-    // else
-    // {
-    // return;
-    // }
-    // }
-    // RangedEntity ranged = (RangedEntity) object;
-    // ICommand command = (ICommand) object;
-    // _myHelper =
-    // new RangedCommandHelper(ranged, command, firstFigure.slider
-    // .getThumb());
-    // }
-    // else if (object instanceof NumberDocument)
-    // {
-    // NumberDocument qc = (NumberDocument) object;
-    //
-    // // does it have a range?
-    // Range rng = qc.getRange();
-    //
-    // if (rng != null)
-    // {
-    // Unit<?> theUnits = qc.getUnits();
-    // if (qc.size() > 0)
-    // {
-    // // ok, drop the current object
-    // if (_myHelper != null && _myHelper instanceof NumberHelper)
-    // {
-    // NumberHelper cHelp = (NumberHelper) _myHelper;
-    // if (cHelp._collection != object)
-    // {
-    // dropListener();
-    // }
-    // else
-    // {
-    // return;
-    // }
-    // }
-    //
-    // int curVal = (int) qc.getValueAt(0);
-    //
-    // _myHelper =
-    // new NumberHelper(rng, theUnits, curVal, firstFigure.slider
-    // .getThumb(), qc.getName(), qc);
-    // }
-    // }
-    // else if (qc.isIndexed())
-    // {
-    // // ok, time data, show the time range
-    // NumberDocument temp = (NumberDocument) qc;
-    //
-    // if (_myHelper != null && _myHelper instanceof DateHelper)
-    // {
-    // DateHelper cHelp = (DateHelper) _myHelper;
-    // if (cHelp._collection != object)
-    // {
-    // dropListener();
-    // }
-    // else
-    // {
-    // return;
-    // }
-    // }
-    //
-    // // now we need the time range
-    // // TODO: we need to support indexing the data
-    // // Long start = temp.getTimes().get(0);
-    // // Long end = temp.getTimes().get(temp.getTimes().size() - 1);
-    // IStoreGroup parent = findTopParent(temp);
-    //
-    // // just double-check we can fit in the period
-    // if (parent != null)
-    // {
-    // // TODO: reinstate the date helper
-    // // _myHelper =
-    // // new DateHelper(start, end, slider.getThumb(), temp.getName(),
-    // // parent, temp);
-    // }
-    // else
-    // {
-    // Activator.getDefault().getLog().log(
-    // new Status(Status.WARNING, Activator.PLUGIN_ID,
-    // "Couldn't find top level group"));
-    // }
-    // }
-    // }
+  private RangeHelper createNumberHelper(final RangedEntity ranged,
+      final NumberDocument doc)
+  {
+    final RangeHelper helper;
+    if (doc.size() == 1 && doc.getRange() != null)
+    {
+      helper = new RangedEntityHelper(ranged);
+    }
+    else
+    {
+      boolean allowIndexFilter = false;
+      if (allowIndexFilter
+          && doc.isIndexed()
+          && (doc.getIndexUnits() == SI.SECOND || doc.getIndexUnits() == SampleData.MILLIS))
+      {
 
+        final double start = doc.getIndexAt(0);
+        final double end = doc.getIndexAt(doc.size() - 1);
+        final String name = doc.getName();
+        final IStoreGroup group = findTopParent(doc);
+
+        helper =
+            new DateIndexHelper((long) start, (long) end, name, group,
+                doc);
+      }
+      else
+      {
+        helper = null;
+      }
+    }
+    return helper;
   }
 
 }
