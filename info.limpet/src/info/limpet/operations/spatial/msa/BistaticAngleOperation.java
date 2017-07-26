@@ -217,11 +217,11 @@ public class BistaticAngleOperation implements IOperation
 
       // ok, produce the sets of intepolated positions, at the specified times
       final LocationDocument interp_tx =
-          locationsFor(tx_track, (Document<?>) times);
+          locationsFor(tx_track, (Document<?>) times, period);
       final LocationDocument interp_tgt =
-          locationsFor(tgt_track, (Document<?>) times);
+          locationsFor(tgt_track, (Document<?>) times, period);
       final LocationDocument interp_rx =
-          locationsFor(rx_track, (Document<?>) times);
+          locationsFor(rx_track, (Document<?>) times, period);
       final NumberDocument interp_headings =
           numbersFor(tgt_hdg, (Document<?>) times);
 

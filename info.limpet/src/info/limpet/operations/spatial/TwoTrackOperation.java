@@ -184,8 +184,8 @@ public abstract class TwoTrackOperation implements IOperation
         }
 
         // ok, produce the sets of intepolated positions, at the specified times
-        interp1 = locationsFor(track1, (Document<?>) times);
-        interp2 = locationsFor(track2, (Document<?>) times);
+        interp1 = locationsFor(track1, (Document<?>) times, period);
+        interp2 = locationsFor(track2, (Document<?>) times, period);
       }
       else
       {

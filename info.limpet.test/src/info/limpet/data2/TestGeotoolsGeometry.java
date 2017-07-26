@@ -32,6 +32,7 @@ import info.limpet.impl.SampleData;
 import info.limpet.impl.StoreGroup;
 import info.limpet.operations.AbstractCommand;
 import info.limpet.operations.CollectionComplianceTests;
+import info.limpet.operations.CollectionComplianceTests.TimePeriod;
 import info.limpet.operations.spatial.BearingBetweenTracksOperation;
 import info.limpet.operations.spatial.DistanceBetweenTracksOperation;
 import info.limpet.operations.spatial.DopplerShiftBetweenTracksOperation;
@@ -74,9 +75,9 @@ public class TestGeotoolsGeometry extends TestCase
     }
 
     public LocationDocument getTestLocations(final LocationDocument track,
-        final Document<?> times)
+        final Document<?> times, TimePeriod period)
     {
-      return locationsFor(track, times);
+      return locationsFor(track, times, period);
     }
 
     @Override
@@ -743,9 +744,18 @@ public class TestGeotoolsGeometry extends TestCase
 
     final LocationDocument track = locB.toDocument();
     final Document<?> times = numB.toDocument();
-    final LocationDocument aa =
-        new GetLocationsHelper().getTestLocations(track, times);
+
+    TimePeriod period = new TimePeriod(0d, 15000d);
+    LocationDocument aa =
+        new GetLocationsHelper().getTestLocations(track, times, period);
     assertNotNull("doc created", aa);
+    assertEquals("correct size", 6, aa.size());
+
+    // try it with a trimmed period
+    period = new TimePeriod(1200d, 2100d);
+    aa = new GetLocationsHelper().getTestLocations(track, times, period);
+    assertNotNull("doc created", aa);
+    assertEquals("correct size", 4, aa.size());
   }
 
   public void testGenerateMultipleCourse() throws IOException
@@ -938,8 +948,8 @@ public class TestGeotoolsGeometry extends TestCase
     loc1.add(5000, builder.createPoint(5, 3));
 
     loc2.add(1100, builder.createPoint(2.2, 4));
-    loc2.add(1200, builder.createPoint(2.4, 4));
-    loc2.add(1300, builder.createPoint(2.6, 4));
+    loc2.add(2200, builder.createPoint(2.4, 4));
+    loc2.add(3300, builder.createPoint(2.6, 4));
 
     selection.clear();
     selection.add(loc1.toDocument());
@@ -965,8 +975,8 @@ public class TestGeotoolsGeometry extends TestCase
     System.out.println(output.toString());
 
     // ok, add a couple more entries, so it could be indexed or interpolated
-    loc2.add(1400, builder.createPoint(1.4, 4));
-    loc2.add(1500, builder.createPoint(1.5, 4));
+    loc2.add(4400, builder.createPoint(1.4, 4));
+    loc2.add(5100, builder.createPoint(1.5, 4));
 
     // rebuild the selection
     selection.clear();
@@ -1255,11 +1265,11 @@ public class TestGeotoolsGeometry extends TestCase
     ops.get(0).execute();
 
     assertEquals("store no longer empty", 1, store.size());
-    
+
     // check the output has the time units from the time provider
     NumberDocument output = (NumberDocument) ops.get(0).getOutputs().get(0);
-    assertTrue("does not have index units", output.getIndexUnits() == null);   
-    
+    assertTrue("does not have index units", output.getIndexUnits() == null);
+
     // add some more entries to loc1
     loc1.add(2000, builder.createPoint(4, 3));
     loc1.add(3000, builder.createPoint(4, 3));
@@ -1277,10 +1287,10 @@ public class TestGeotoolsGeometry extends TestCase
     store.clear();
     ops.get(0).execute();
     assertEquals("store has other collection", 1, store.size());
-    
+
     // check that the results object is indexed
     output = (NumberDocument) ops.get(0).getOutputs().get(0);
-    assertTrue("has index units", output.getIndexUnits() != null);   
+    assertTrue("has index units", output.getIndexUnits() != null);
   }
 
   public void testLocationSingletonCalcDistanceNoIndex()
@@ -1334,7 +1344,7 @@ public class TestGeotoolsGeometry extends TestCase
     assertEquals("store no longer empty", 1, store.size());
     NumberDocument output = (NumberDocument) ops.get(0).getOutputs().get(0);
     assertTrue("has no index units", output.getIndexUnits() == null);
-    
+
     // add some more entries to loc1
     loc1.add(builder.createPoint(4, 3));
     loc1.add(builder.createPoint(4, 3));
