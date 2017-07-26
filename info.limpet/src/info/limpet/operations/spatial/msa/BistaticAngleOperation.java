@@ -216,21 +216,10 @@ public class BistaticAngleOperation implements IOperation
         throw new IllegalArgumentException("Unable to find time source dataset");
       }
 
+      // reduce the times data to the correct intervals & period
+      final Document<?> trimmed_times = trimTheTimes(times, period);
+
       // ok, produce the sets of intepolated positions, at the specified times
-      final Document<?> trimmed_times;
-      if(times instanceof LocationDocument)
-      {
-        trimmed_times = locationsFor((LocationDocument) times,(Document<?>) times, period);
-      }
-      else if(times instanceof NumberDocument)
-      {
-        trimmed_times = numbersFor((NumberDocument) times,(Document<?>) times, period);        
-      }
-      else
-      {
-        trimmed_times = null;
-      }
-      
       final LocationDocument interp_tx =
           locationsFor(tx_track, (Document<?>) trimmed_times, period);
       final LocationDocument interp_tgt =
@@ -257,6 +246,27 @@ public class BistaticAngleOperation implements IOperation
         calcAndStore(calc, txP, targetP, rxP, heading, time, _bistaticBuilder,
             _bistaticAspectBuilder, _azimuthBuilder);
       }
+    }
+
+    private Document<?> trimTheTimes(final IDocument<?> times,
+        final TimePeriod period)
+    {
+      final Document<?> trimmed_times;
+      if (times instanceof LocationDocument)
+      {
+        trimmed_times =
+            locationsFor((LocationDocument) times, (Document<?>) times, period);
+      }
+      else if (times instanceof NumberDocument)
+      {
+        trimmed_times =
+            numbersFor((NumberDocument) times, (Document<?>) times, period);
+      }
+      else
+      {
+        trimmed_times = null;
+      }
+      return trimmed_times;
     }
 
     @Override
