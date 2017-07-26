@@ -483,31 +483,30 @@ public abstract class AbstractCommand implements ICommand
   }
 
   final protected NumberDocument numbersFor(final NumberDocument document,
-      final Document<?> times)
+      final Document<?> times, final TimePeriod period)
   {
     // ok, get the time values
     final AxesMetadata axis =
         times.getDataset().getFirstMetadata(AxesMetadata.class);
-    final ILazyDataset lazyds = axis.getAxes()[0];
-    DoubleDataset ds = null;
-    try
-    {
-      ds = (DoubleDataset) DatasetUtils.sliceAndConvertLazyDataset(lazyds);
-    }
-    catch (final DatasetException e)
-    {
-      throw new IllegalArgumentException(e);
-    }
-
+    final DoubleDataset ds = (DoubleDataset) axis.getAxes()[0];
     final double[] data = ds.getData();
-    return numbersFor(document, data);
+    return numbersFor(document, data, period);
   }
 
   final protected NumberDocument numbersFor(final NumberDocument document,
-      final double[] times)
+      final double[] times, final TimePeriod period)
   {
+    // trim the times to the period
+    final ArrayList<Double> dTimes = new ArrayList<Double>();
+    for (double thisT : times)
+    {
+      if (period.contains(thisT))
+      {
+        dTimes.add(thisT);
+      }
+    }
     final DoubleDataset ds =
-        (DoubleDataset) DatasetFactory.createFromObject(times);
+        (DoubleDataset) DatasetFactory.createFromObject(dTimes);
 
     final Unit<?> indexUnits = times == null ? null : SampleData.MILLIS;
     final NumberDocumentBuilder ldb;
@@ -526,7 +525,10 @@ public abstract class AbstractCommand implements ICommand
       final double pt = document.getIterator().next();
       for (final double t : times)
       {
-        ldb.add(t, pt);
+        if(period.contains(t))
+        {
+          ldb.add(t, pt);
+        }
       }
     }
     else
@@ -538,9 +540,12 @@ public abstract class AbstractCommand implements ICommand
       {
         final double thisT = tIter.next();
         final double pt = lIter.next();
-
-        headings.add(pt);
-        timeVals.add(thisT);
+        
+        if (period.contains(thisT))
+        {
+          headings.add(pt);
+          timeVals.add(thisT);
+        }
       }
 
       final DoubleDataset hdgDataset =
