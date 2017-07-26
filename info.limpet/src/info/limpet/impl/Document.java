@@ -87,7 +87,14 @@ abstract public class Document<T extends Object> implements IDocument<T>
    */
   @Override
   public void beingDeleted()
-  {
+  {    
+    // ok, detach ourselves from our parent
+    IStoreGroup parent = this.getParent();
+    if(parent != null)
+    {
+      parent.remove(this);
+    }
+    
     final List<IChangeListener> listeners = new ArrayList<IChangeListener>();
     listeners.addAll(getListeners());
 

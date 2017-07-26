@@ -123,13 +123,13 @@ public class TestCollections extends TestCase
     assertTrue("registered with input", tq1.getDependents().contains(firstC));
 
     // ok, now delete the output
-    store.remove(out);
+    out.beingDeleted();
 
     // ok, check outputs deleted
-    assertEquals("output removed", 0, firstC.getOutputs().size());
+    assertEquals("output cleared", 0, firstC.getOutputs().size());
 
     // and check the inputs were deleted
-    assertEquals("input removed", 0, firstC.getInputs().size());
+    assertEquals("inputs cleared", 0, firstC.getInputs().size());
 
     // check the input contains the output
     assertFalse("not registered with input", tq1.getDependents().contains(
@@ -156,13 +156,13 @@ public class TestCollections extends TestCase
         firstC));
 
     // now try to remove an input
-    store.remove(tq1);
+    tq1.beingDeleted();
 
     // check we're no longer a dependent of the input
     assertFalse("no longer a dependent", tq1.getDependents().contains(firstC));
 
     // what's happened to the command?
-    assertFalse("input should be deleted", firstC.getInputs().contains(tq1));
+    assertFalse("no longer an input", firstC.getInputs().contains(tq1));
 
     // check the
   }
@@ -562,6 +562,13 @@ public class TestCollections extends TestCase
     {
       // TODO Auto-generated method stub
       return false;
+    }
+
+    @Override
+    public void beingDeleted()
+    {
+      // TODO Auto-generated method stub
+      
     }
   }
 

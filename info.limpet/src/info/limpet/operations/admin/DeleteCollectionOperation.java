@@ -19,7 +19,6 @@ import info.limpet.IContext;
 import info.limpet.IOperation;
 import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
-import info.limpet.impl.StoreGroup;
 import info.limpet.operations.AbstractCommand;
 
 import java.util.ArrayList;
@@ -74,24 +73,11 @@ public class DeleteCollectionOperation implements IOperation
 			while (iter.hasNext())
 			{
 				IStoreItem iCollection = iter.next();
-				
-				// do we know the parent?
-				IStoreGroup parent = iCollection.getParent();
-				if (parent != null)
-				{
-					parent.remove(iCollection);
-				}
-				else
-				{
-					// hmm, must be at the top level
-					IStoreGroup store = getStore();
-					if (store instanceof StoreGroup)
-					{
-						StoreGroup mem = (StoreGroup) store;
-						mem.remove(iCollection);
-					}
-				}				
+				iCollection.beingDeleted();
 			}
+			
+			// and trigger a refresh
+			getStore().fireDataChanged();
 		}
 
 		@Override

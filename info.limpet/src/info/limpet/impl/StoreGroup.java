@@ -81,9 +81,9 @@ public class StoreGroup extends ArrayList<IStoreItem> implements IStoreGroup
     {
       IDocument<?> collection = (IDocument<?>) item;
       collection.removeChangeListener(this);
-
-      // ok, also tell it that it's being deleted
-      collection.beingDeleted();
+      
+      // and clear  it's parent
+      collection.setParent(null);
     }
 
     fireModified();
@@ -333,6 +333,23 @@ public class StoreGroup extends ArrayList<IStoreItem> implements IStoreGroup
     if (_timeListeners != null)
     {
       _timeListeners.remove(listener);
+    }
+  }
+
+  @Override
+  public void beingDeleted()
+  {
+    // ok, detach ourselves from our parent
+    final IStoreGroup parent = this.getParent();
+    if(parent != null)
+    {
+      parent.remove(this);
+    }
+    
+    // now tell everyone we're being deleted
+    for(final IChangeListener thisL: _listeners)
+    {
+      thisL.collectionDeleted(this);
     }
   }
 
