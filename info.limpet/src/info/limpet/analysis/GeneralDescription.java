@@ -111,32 +111,36 @@ public abstract class GeneralDescription extends CoreAnalysis
             values.add("" + thisC.getIndexUnits().toString());
           }
 
-          final double lower = thisC.getIndexAt(0);
-          final double upper = thisC.getIndexAt(thisC.size() - 1);
-          final INumberFormatter formatter;
-          if (indexUnits != null)
+          // check it has data
+          if (thisC.size() > 0)
           {
-            // have a go at the index range
-            if (indexUnits.equals(SI.SECOND))
+            final double lower = thisC.getIndexAt(0);
+            final double upper = thisC.getIndexAt(thisC.size() - 1);
+            final INumberFormatter formatter;
+            if (indexUnits != null)
             {
-              formatter = new SecondFormatter();
-            }
-            else if (indexUnits.equals(SampleData.MILLIS))
-            {
-              formatter = new MilliFormatter();
+              // have a go at the index range
+              if (indexUnits.equals(SI.SECOND))
+              {
+                formatter = new SecondFormatter();
+              }
+              else if (indexUnits.equals(SampleData.MILLIS))
+              {
+                formatter = new MilliFormatter();
+              }
+              else
+              {
+                formatter = new NumberFormatter();
+              }
             }
             else
             {
               formatter = new NumberFormatter();
             }
-          }
-          else
-          {
-            formatter = new NumberFormatter();
-          }
 
-          titles.add("Index range");
-          values.add(formatter.format(lower) + "-" + formatter.format(upper));
+            titles.add("Index range");
+            values.add(formatter.format(lower) + "-" + formatter.format(upper));
+          }
         }
       }
     }
