@@ -23,9 +23,11 @@ import org.eclipse.draw2d.LightweightSystem;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.nebula.visualization.widgets.datadefinition.ColorMap;
 import org.eclipse.nebula.visualization.widgets.datadefinition.ColorMap.PredefinedColorMap;
+import org.eclipse.nebula.visualization.widgets.datadefinition.IPrimaryArrayWrapper;
 import org.eclipse.nebula.visualization.widgets.figures.IntensityGraphFigure;
 import org.eclipse.nebula.visualization.xygraph.linearscale.Range;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Canvas;
@@ -42,11 +44,84 @@ public class HeatmapView extends CommonGridView
 {
 
   /**
+   * modified version of ColorMap that shows NaN values as transparent pixels
+   * 
+   * @author Ian
+   * 
+   */
+  private static class NullColorMap extends ColorMap
+  {
+    public NullColorMap(final PredefinedColorMap map, final boolean autoScale,
+        final boolean interpolate)
+    {
+      super(map, autoScale, interpolate);
+    }
+
+    @Override
+    public ImageData drawImage(final IPrimaryArrayWrapper dataArray,
+        final int dataWidth, final int dataHeight, final double max,
+        final double min, final ImageData imageDataIn, final boolean shrink)
+    {
+      final ImageData imageDataOut =
+          super.drawImage(dataArray, dataWidth, dataHeight, max, min,
+              imageDataIn, shrink);
+      if (shrink)
+      {
+        final int height = imageDataOut.height;
+        final int width = imageDataOut.width;
+        // EDIT: added +1 to account for an early rounding problem
+        final int x_ratio = (dataWidth << 16) / width + 1;
+        final int y_ratio = (dataHeight << 16) / height + 1;
+        // int x_ratio = (int)((w1<<16)/w2) ;
+        // int y_ratio = (int)((h1<<16)/h2) ;
+        for (int i = 0; i < height; i++)
+        {
+          for (int j = 0; j < width; j++)
+          {
+            final int x = ((j * x_ratio) >> 16);
+            final int y = ((i * y_ratio) >> 16);
+            final double d = dataArray.get(y * dataWidth + x);
+            if (Double.isNaN(d))
+            {
+              imageDataOut.setAlpha(j, i, 0);
+            }
+            else
+            {
+              imageDataOut.setAlpha(j, i, 255);
+            }
+          }
+        }
+
+      }
+      else
+      {
+        for (int y = 0; y < dataHeight; y++)
+        {
+          for (int x = 0; x < dataWidth; x++)
+          {
+            // the index of the value in the color table array
+            final double d = dataArray.get(y * dataWidth + x);
+            if (Double.isNaN(d))
+            {
+              imageDataOut.setAlpha(x, y, 0);
+            }
+            else
+            {
+              imageDataOut.setAlpha(x, y, 255);
+            }
+          }
+        }
+      }
+      return imageDataOut;
+    }
+  }
+
+  /**
    * The ID of the view as specified by the extension.
    */
   public static final String ID = "info.limpet.ui.HeatMapView";
-
   private IntensityGraphFigure intensityGraph;
+
   private Canvas parentCanvas;
 
   public HeatmapView()
@@ -54,6 +129,7 @@ public class HeatmapView extends CommonGridView
     super(ID, "Heatmap view");
   }
 
+  @Override
   protected void clearChart()
   {
     intensityGraph.setDataArray(new double[]
@@ -107,6 +183,7 @@ public class HeatmapView extends CommonGridView
     parentCanvas.setFocus();
   }
 
+  @Override
   protected void show(final IStoreItem item)
   {
     final NumberDocument thisQ = (NumberDocument) item;
@@ -150,8 +227,8 @@ public class HeatmapView extends CommonGridView
     intensityGraph.setMin(stats.getMin());
     intensityGraph.setDataHeight(DataHeight);
     intensityGraph.setDataWidth(DataWidth);
-    intensityGraph
-        .setColorMap(new ColorMap(PredefinedColorMap.JET, true, true));
+    intensityGraph.setColorMap(new NullColorMap(PredefinedColorMap.JET, true,
+        true));
     intensityGraph.setDataArray(data);
 
     // sort out the axis ranges
@@ -164,6 +241,6 @@ public class HeatmapView extends CommonGridView
 
     // parentCanvas.pack();
     titleLbl.pack();
-  }
+  };
 
 }

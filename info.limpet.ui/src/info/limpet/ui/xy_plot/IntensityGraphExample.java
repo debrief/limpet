@@ -6,6 +6,7 @@ package info.limpet.ui.xy_plot;
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  ******************************************************************************/
+
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -13,9 +14,10 @@ import java.util.concurrent.TimeUnit;
 
 import org.eclipse.draw2d.LightweightSystem;
 import org.eclipse.nebula.visualization.widgets.datadefinition.ColorMap;
-import org.eclipse.nebula.visualization.widgets.datadefinition.ColorMap.PredefinedColorMap;
+import org.eclipse.nebula.visualization.widgets.datadefinition.IPrimaryArrayWrapper;
 import org.eclipse.nebula.visualization.widgets.figures.IntensityGraphFigure;
 import org.eclipse.nebula.visualization.widgets.figures.IntensityGraphFigure.IROIListener;
+import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
@@ -41,16 +43,25 @@ public class IntensityGraphExample {
     final IntensityGraphFigure intensityGraph = new IntensityGraphFigure();
     
     //Create Simulation Data
-    final short[] simuData = new short[DataWidth * DataHeight * 2];
-    final short[] data = new short[DataWidth * DataHeight];
+    final double[] simuData = new double[DataWidth * DataHeight * 2];
+    final double[] data = new double[DataWidth * DataHeight];
     int seed = count++;
     for (int i = 0; i < DataHeight; i++) {
       for (int j = 0; j < DataWidth; j++) {
         int x = j - DataWidth;
         int y = i - DataHeight;
-        int p = (int) Math.sqrt(x * x + y * y);
-        simuData[i * DataWidth + j] = (short) (Math.sin(p * 2 * Math.PI
-            / DataWidth + seed * Math.PI / 100) * 100);
+        final double thisValue;
+        if(Math.abs(i - j) < 40)
+        {
+          thisValue = Double.NaN;
+        }
+        else
+        {
+          int p = (int) Math.sqrt(x * x + y * y);
+          thisValue = 110 + (Math.sin(p * 2 * Math.PI
+              / DataWidth + seed * Math.PI / 100) * 100);
+        }
+        simuData[i * DataWidth + j] = thisValue;
       }
     }
 
@@ -59,7 +70,7 @@ public class IntensityGraphExample {
     intensityGraph.setMin(-100);
     intensityGraph.setDataHeight(DataHeight);
     intensityGraph.setDataWidth(DataWidth);
-    intensityGraph.setColorMap(new ColorMap(PredefinedColorMap.JET, true,true));
+    intensityGraph.setColorMap(new NullColorMap());
     intensityGraph.addROI("ROI 1",  new IROIListener() {
       
       public void roiUpdated(int xIndex, int yIndex, int width, int height) {
@@ -97,4 +108,70 @@ public class IntensityGraphExample {
     scheduler.shutdown();
 
   }
+  
+  private static class NullColorMap extends ColorMap
+  {
+    public NullColorMap()
+    {
+      super(PredefinedColorMap.JET, true, true);
+    }
+
+    @Override
+    public ImageData drawImage(IPrimaryArrayWrapper dataArray, int dataWidth,
+        int dataHeight, double max, double min, ImageData imageDataIn,
+        boolean shrink)
+    {
+      ImageData imageData =
+          super.drawImage(dataArray, dataWidth, dataHeight, max, min,
+              imageDataIn, shrink);
+      if (shrink)
+      {
+        int height = imageData.height;
+        int width = imageData.width;
+        // EDIT: added +1 to account for an early rounding problem
+        int x_ratio = (int) ((dataWidth << 16) / width) + 1;
+        int y_ratio = (int) ((dataHeight << 16) / height) + 1;
+        // int x_ratio = (int)((w1<<16)/w2) ;
+        // int y_ratio = (int)((h1<<16)/h2) ;
+        for (int i = 0; i < height; i++)
+        {
+          for (int j = 0; j < width; j++)
+          {
+            final int x2 = ((j * x_ratio) >> 16);
+            final int y2 = ((i * y_ratio) >> 16);
+            double d = dataArray.get(y2 * dataWidth + x2);
+            if (Double.isNaN(d))
+            {
+              imageData.setAlpha(j, i, 0);
+            }
+            else
+            {
+              imageData.setAlpha(j, i, 255);
+            }
+          }
+        }
+
+      }
+      else
+      {
+        for (int y = 0; y < dataHeight; y++)
+        {
+          for (int x = 0; x < dataWidth; x++)
+          {
+            // the index of the value in the color table array
+            double d = dataArray.get(y * dataWidth + x);
+            if (Double.isNaN(d))
+            {
+              imageData.setAlpha(x, y, 0);
+            }
+            else
+            {
+              imageData.setAlpha(x, y, 255);
+            }
+          }
+        }
+      }
+      return imageData;
+    }
+  };
 }
