@@ -118,12 +118,12 @@ public class IntensityGraphExample {
 
     @Override
     public ImageData drawImage(IPrimaryArrayWrapper dataArray, int dataWidth,
-        int dataHeight, double max, double min, ImageData imageData,
+        int dataHeight, double max, double min, ImageData imageDataIn,
         boolean shrink)
     {
-      imageData =
+      ImageData imageData =
           super.drawImage(dataArray, dataWidth, dataHeight, max, min,
-              imageData, shrink);
+              imageDataIn, shrink);
       if (shrink)
       {
         int height = imageData.height;
@@ -133,13 +133,12 @@ public class IntensityGraphExample {
         int y_ratio = (int) ((dataHeight << 16) / height) + 1;
         // int x_ratio = (int)((w1<<16)/w2) ;
         // int y_ratio = (int)((h1<<16)/h2) ;
-        int x2, y2;
         for (int i = 0; i < height; i++)
         {
           for (int j = 0; j < width; j++)
           {
-            x2 = ((j * x_ratio) >> 16);
-            y2 = ((i * y_ratio) >> 16);
+            final int x2 = ((j * x_ratio) >> 16);
+            final int y2 = ((i * y_ratio) >> 16);
             double d = dataArray.get(y2 * dataWidth + x2);
             if (Double.isNaN(d))
             {

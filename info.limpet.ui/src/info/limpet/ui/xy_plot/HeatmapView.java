@@ -60,35 +60,34 @@ public class HeatmapView extends CommonGridView
     @Override
     public ImageData drawImage(final IPrimaryArrayWrapper dataArray,
         final int dataWidth, final int dataHeight, final double max,
-        final double min, ImageData imageData, final boolean shrink)
+        final double min, final ImageData imageDataIn, final boolean shrink)
     {
-      imageData =
+      final ImageData imageDataOut =
           super.drawImage(dataArray, dataWidth, dataHeight, max, min,
-              imageData, shrink);
+              imageDataIn, shrink);
       if (shrink)
       {
-        final int height = imageData.height;
-        final int width = imageData.width;
+        final int height = imageDataOut.height;
+        final int width = imageDataOut.width;
         // EDIT: added +1 to account for an early rounding problem
         final int x_ratio = (dataWidth << 16) / width + 1;
         final int y_ratio = (dataHeight << 16) / height + 1;
         // int x_ratio = (int)((w1<<16)/w2) ;
         // int y_ratio = (int)((h1<<16)/h2) ;
-        int x2, y2;
         for (int i = 0; i < height; i++)
         {
           for (int j = 0; j < width; j++)
           {
-            x2 = ((j * x_ratio) >> 16);
-            y2 = ((i * y_ratio) >> 16);
-            final double d = dataArray.get(y2 * dataWidth + x2);
+            final int x = ((j * x_ratio) >> 16);
+            final int y = ((i * y_ratio) >> 16);
+            final double d = dataArray.get(y * dataWidth + x);
             if (Double.isNaN(d))
             {
-              imageData.setAlpha(j, i, 0);
+              imageDataOut.setAlpha(j, i, 0);
             }
             else
             {
-              imageData.setAlpha(j, i, 255);
+              imageDataOut.setAlpha(j, i, 255);
             }
           }
         }
@@ -104,16 +103,16 @@ public class HeatmapView extends CommonGridView
             final double d = dataArray.get(y * dataWidth + x);
             if (Double.isNaN(d))
             {
-              imageData.setAlpha(x, y, 0);
+              imageDataOut.setAlpha(x, y, 0);
             }
             else
             {
-              imageData.setAlpha(x, y, 255);
+              imageDataOut.setAlpha(x, y, 255);
             }
           }
         }
       }
-      return imageData;
+      return imageDataOut;
     }
   }
 
