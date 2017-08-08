@@ -4,7 +4,7 @@
 <product name="Limpet" uid="Limpet" id="info.limpet.rcp.product" application="info.limpet.rcp.application" version="1.0.12" useFeatures="true" includeLaunchers="true">
 
    <aboutInfo>
-      <image path="icons/DebriefNGlogoSmall.png"/>
+      <image path="/info.limpet.rcp/icons/48/icon_48.png"/>
       <text>
          %aboutText
       </text>
@@ -38,23 +38,17 @@ openFile
       <linux icon="/info.limpet.product/icon.xpm"/>
       <macosx icon="/info.limpet.product/icon.icns"/>
       <solaris/>
-      <win useIco="false">
-         <ico path="icon.ico"/>
-         <bmp
-            winSmallHigh="/info.limpet.product/icons/16_32.bmp"
-            winSmallLow="/info.limpet.product/icons/16_8.bmp"
-            winMediumHigh="/info.limpet.product/icons/32_32.bmp"
-            winMediumLow="/info.limpet.product/icons/32_8.bmp"
-            winLargeHigh="/info.limpet.product/icons/48_32.bmp"
-            winLargeLow="/info.limpet.product/icons/48_8.bmp"
-            winExtraLargeHigh="/info.limpet.product/icons/256_32.bmp"/>
+      <win useIco="true">
+         <ico path="/info.limpet.product/icon.ico"/>
+         <bmp/>
       </win>
    </launcher>
+
 
    <vm>
       <linux include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7</linux>
       <macos include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7</macos>
-      <windows include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7</windows>
+      <windows include="true">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7</windows>
    </vm>
 
    <license>
