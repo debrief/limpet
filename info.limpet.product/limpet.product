@@ -35,12 +35,19 @@ openFile
       startupMessageRect="0,0,0,0"
       startupForegroundColor="000000" />
    <launcher name="Limpet">
-      <linux icon="icon.xpm"/>
-      <macosx icon="icon.icns"/>
+      <linux icon="/info.limpet.product/icon.xpm"/>
+      <macosx icon="/info.limpet.product/icon.icns"/>
       <solaris/>
-      <win useIco="true">
+      <win useIco="false">
          <ico path="icon.ico"/>
-         <bmp/>
+         <bmp
+            winSmallHigh="/info.limpet.product/icons/16_32.bmp"
+            winSmallLow="/info.limpet.product/icons/16_8.bmp"
+            winMediumHigh="/info.limpet.product/icons/32_32.bmp"
+            winMediumLow="/info.limpet.product/icons/32_8.bmp"
+            winLargeHigh="/info.limpet.product/icons/48_32.bmp"
+            winLargeLow="/info.limpet.product/icons/48_8.bmp"
+            winExtraLargeHigh="/info.limpet.product/icons/256_32.bmp"/>
       </win>
    </launcher>
 
