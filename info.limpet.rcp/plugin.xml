@@ -31,7 +31,7 @@
             <property name="introBrandingImage" value="product:icons/about.jpg"/>
             <property name="introBrandingImageText"
                 value="Limpet"/>
-            <property name="aboutImage" value="icons/DebriefNGlogoSmall.png"/>
+            <property name="aboutImage" value="icons/48/icon_48.png"/>
             <property name="windowImages" value="icons/icon.png,icons/48/icon_48.png"/>
             <property name="startupForegroundColor" value="000000"/>
             <property name="startupMessageRect" value="0,0,0,0"/>

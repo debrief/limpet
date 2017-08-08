@@ -4,7 +4,7 @@
 <product name="Limpet" uid="Limpet" id="info.limpet.rcp.product" application="info.limpet.rcp.application" version="1.0.12" useFeatures="true" includeLaunchers="true">
 
    <aboutInfo>
-      <image path="icons/DebriefNGlogoSmall.png"/>
+      <image path="/info.limpet.rcp/icons/48/icon_48.png"/>
       <text>
          %aboutText
       </text>
@@ -43,6 +43,7 @@ openFile
          <bmp/>
       </win>
    </launcher>
+
 
    <vm>
       <linux include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7</linux>
