@@ -241,7 +241,7 @@ public class Helper2D
             final double thisValue = cont.values[i][j];
             if (!Double.isNaN(thisValue))
             {
-              counter++;
+              counter+= thisValue;
             }
           }
 
@@ -311,6 +311,18 @@ public class Helper2D
             final double value;
             if (count)
             {
+              int ctr = 0;
+              for (final Double t : items)
+              {
+                if (!Double.isNaN(t))
+                {
+                  ctr++;
+                }
+              }
+              value = ctr >= 0 ? ctr : Double.NaN;
+            }
+            else
+            {
               double total = 0;
               int ctr = 0;
               for (final Double t : items)
@@ -322,18 +334,6 @@ public class Helper2D
                 }
               }
               value = total / ctr;
-            }
-            else
-            {
-              int ctr = 0;
-              for (final Double t : items)
-              {
-                if (!Double.isNaN(t))
-                {
-                  ctr++;
-                }
-              }
-              value = ctr >= 0 ? ctr : Double.NaN;
             }
             res.values[i][j] = value;
 
