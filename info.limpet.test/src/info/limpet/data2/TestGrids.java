@@ -12,8 +12,8 @@ import info.limpet.impl.SampleData;
 import info.limpet.impl.StoreGroup;
 import info.limpet.operations.grid.GenerateGrid;
 import info.limpet.operations.grid.GenerateGrid.GenerateGridCommand;
-import info.limpet.ui.xy_plot.Helper2D;
-import info.limpet.ui.xy_plot.Helper2D.HContainer;
+import info.limpet.ui.heatmap.Helper2D;
+import info.limpet.ui.heatmap.Helper2D.HContainer;
 
 import java.util.ArrayList;
 import java.util.List;

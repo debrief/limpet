@@ -4,12 +4,12 @@ import info.limpet.IOperation;
 import info.limpet.IStoreItem;
 import info.limpet.ui.analysis_view.AnalysisView;
 import info.limpet.ui.data_frequency.DataFrequencyView;
+import info.limpet.ui.heatmap.HeatmapView;
 import info.limpet.ui.operations.ShowInNamedView;
 import info.limpet.ui.operations.ShowInStackedChartsOverview;
 import info.limpet.ui.operations.ShowInTacticalOverview;
 import info.limpet.ui.range_slider.RangeSliderView;
 import info.limpet.ui.time_frequency.TimeFrequencyView;
-import info.limpet.ui.xy_plot.HeatmapView;
 import info.limpet.ui.xy_plot.XyPlotView;
 
 import java.util.ArrayList;

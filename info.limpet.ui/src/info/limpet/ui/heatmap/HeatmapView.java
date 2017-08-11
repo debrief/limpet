@@ -12,11 +12,11 @@
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  *****************************************************************************/
-package info.limpet.ui.xy_plot;
+package info.limpet.ui.heatmap;
 
 import info.limpet.IStoreItem;
 import info.limpet.impl.NumberDocument;
-import info.limpet.ui.xy_plot.Helper2D.HContainer;
+import info.limpet.ui.heatmap.Helper2D.HContainer;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.eclipse.draw2d.LightweightSystem;

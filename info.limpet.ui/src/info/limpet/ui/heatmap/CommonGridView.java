@@ -1,4 +1,4 @@
-package info.limpet.ui.xy_plot;
+package info.limpet.ui.heatmap;
 
 import java.util.List;
 

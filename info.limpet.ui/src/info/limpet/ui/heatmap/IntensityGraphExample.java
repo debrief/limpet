@@ -1,4 +1,4 @@
-package info.limpet.ui.xy_plot;
+package info.limpet.ui.heatmap;
 /*******************************************************************************
  * Copyright (c) 2010 Oak Ridge National Laboratory.
  * All rights reserved. This program and the accompanying materials
