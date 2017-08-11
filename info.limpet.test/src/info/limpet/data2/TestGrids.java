@@ -10,10 +10,11 @@ import info.limpet.impl.NumberDocument;
 import info.limpet.impl.NumberDocumentBuilder;
 import info.limpet.impl.SampleData;
 import info.limpet.impl.StoreGroup;
+import info.limpet.operations.CollectionComplianceTests;
 import info.limpet.operations.grid.GenerateGrid;
 import info.limpet.operations.grid.GenerateGrid.GenerateGridCommand;
-import info.limpet.ui.xy_plot.Helper2D;
-import info.limpet.ui.xy_plot.Helper2D.HContainer;
+import info.limpet.ui.heatmap.Helper2D;
+import info.limpet.ui.heatmap.Helper2D.HContainer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -327,6 +328,7 @@ public class TestGrids extends TestCase
   public void testHelper()
   {
     // do the test document
+    final CollectionComplianceTests tests = new CollectionComplianceTests();
     
     GenerateGrid gen = new GenerateGrid();
     StoreGroup store = new StoreGroup("Store");
@@ -337,20 +339,23 @@ public class TestGrids extends TestCase
 
     // ok, create some real docs
     NumberDocumentBuilder ang1 =
-        new NumberDocumentBuilder("ang_1", SampleData.DEGREE_ANGLE, null,
+        new NumberDocumentBuilder("ang_1", SampleData.MILLIS, null,
             SI.SECOND);
     NumberDocumentBuilder ang2 =
-        new NumberDocumentBuilder("ang_2", SampleData.DEGREE_ANGLE, null,
+        new NumberDocumentBuilder("ang_2", SampleData.MILLIS, null,
             SI.SECOND);
     NumberDocumentBuilder other1 =
         new NumberDocumentBuilder("other1", SI.METER, null, SI.SECOND);
+    NumberDocumentBuilder other2 =
+        new NumberDocumentBuilder("other2", SI.METER, null, SI.SECOND);
 
     // put some data into them
-    for (int i = 0; i < 25; i++)
+    for (int i = 0; i < 5; i++)
     {
-      ang1.add(i * 10000, 10d * i);
-      ang2.add(i * 10000, 20d * i);
-      other1.add(i * 10000, 100d * i);
+      ang1.add(i * 10, 10d * i);
+      ang2.add(i * 10, 20d * i);
+      other1.add(i * 10, 100d * i);
+      other2.add(i * 10, 98d * i);
     }
     
     selection.clear();
@@ -375,7 +380,54 @@ public class TestGrids extends TestCase
     assertNotNull("Has row titles", res.rowTitles);
     assertNotNull("Has col titles", res.colTitles);
     assertNotNull("Has data", res.values);
+
+    // ok, try it with two collections
+    selection.clear();
+    selection.add(ang1.toDocument());
+    selection.add(ang2.toDocument());
+    selection.add(other2.toDocument());
+
+    ops = gen.actionsFor(selection, store, context);
+    assertEquals("Perm created", 2, ops.size());
+
+    // ok, now execute it
+    GenerateGridCommand thisOp3 = (GenerateGridCommand) ops.get(0);
+    thisOp3.execute();
+    assertEquals("output produced", 1, thisOp3.getOutputs().size());
+    Document<?> output2 = thisOp3.getOutputs().get(0);
     
+    selection.clear();
+    selection.add(output);
+    selection.add(output2);
+
+    assertTrue("should be applicable", Helper2D.appliesToMe(selection, tests));
+    String title = Helper2D.titleFor(selection);
+    assertNotNull(title);
+    assertEquals("correct title", "Calculated mean of of other1 (m), Calculated mean of of other2 (m)", title);
+
+    HContainer sumRes = Helper2D.convertToMean(selection);
+    assertNotNull("Got object", sumRes);
+    assertNotNull("Has row titles", sumRes.rowTitles);
+    assertNotNull("Has col titles", sumRes.colTitles);
+    assertNotNull("Has data", sumRes.values);
+    
+    // ok, try with two different types of grid
+    // ok, now execute it
+    thisOp3 = (GenerateGridCommand) ops.get(1);
+    thisOp3.execute();
+    assertEquals("output produced", 1, thisOp3.getOutputs().size());
+    Document<?> output3 = thisOp3.getOutputs().get(0);
+    
+    selection.clear();
+    selection.add(output);
+    selection.add(output3);
+    
+    title = Helper2D.titleFor(selection);
+    assertNotNull(title);
+    assertEquals("correct title", "Calculated mean of of other1 (m), Collated samples of of other2 (m)", title);
+    assertFalse("should not be applicable", Helper2D.appliesToMe(selection, tests));
+    ops = gen.actionsFor(selection, store, context);
+    assertEquals("empty operations list", 0, ops.size());
   }
   
 }

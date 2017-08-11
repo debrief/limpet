@@ -12,18 +12,14 @@
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  *****************************************************************************/
-package info.limpet.ui.xy_plot;
+package info.limpet.ui.heatmap;
 
-import info.limpet.IStoreItem;
-import info.limpet.impl.NumberDocument;
-import info.limpet.operations.CollectionComplianceTests;
-import info.limpet.ui.xy_plot.Helper2D.HContainer;
+import info.limpet.ui.heatmap.Helper2D.HContainer;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
@@ -156,18 +152,6 @@ public class TabularView extends CommonGridView
   }
 
   @Override
-  protected boolean appliesToMe(final List<IStoreItem> res,
-      final CollectionComplianceTests tests)
-  {
-    final boolean allNonQuantity = tests.allNonQuantity(res);
-    final boolean allCollections = tests.allCollections(res);
-    final boolean allQuantity = tests.allQuantity(res);
-    final boolean suitableIndex =
-        tests.allEqualIndexed(res) || tests.allNonIndexed(res);
-    return allCollections && suitableIndex && (allQuantity || allNonQuantity);
-  }
-
-  @Override
   protected void clearChart()
   {
     // clear the columns
@@ -179,6 +163,7 @@ public class TabularView extends CommonGridView
     }
 
     table.setInput(null);
+    titleLbl.setText("");
   }
 
   /**
@@ -214,6 +199,9 @@ public class TabularView extends CommonGridView
     makeActions();
     contributeToActionBars();
 
+    getViewSite().getActionBars().getToolBarManager().add(showCount);
+    getViewSite().getActionBars().getMenuManager().add(showCount);
+
     // register as selection listener
     setupListener();
   }
@@ -231,21 +219,8 @@ public class TabularView extends CommonGridView
   }
 
   @Override
-  protected void show(final IStoreItem item)
+  protected void showGrid(final HContainer data, final String indexUnits)
   {
-    final NumberDocument thisQ = (NumberDocument) item;
-
-    clearChart();
-
-    final NumberDocument nd = (NumberDocument) item;
-
-    final String seriesName = thisQ.getName();
-
-    titleLbl.setText(seriesName + " (" + nd.getUnits().toString() + ")");
-
-    // sort out the columns
-    final HContainer data = Helper2D.convert((DoubleDataset) nd.getDataset());
-
     final double[] aIndices = data.colTitles;
 
     // clear the columns
@@ -258,7 +233,7 @@ public class TabularView extends CommonGridView
 
     // ok. the columns
     final TableColumn header = new TableColumn(ctrl, SWT.RIGHT);
-    header.setText(nd.getIndexUnits().toString());
+    header.setText(indexUnits);
 
     for (final double a : aIndices)
     {

@@ -20,10 +20,10 @@ import org.eclipse.ui.IPerspectiveFactory;
 
 import info.limpet.ui.analysis_view.AnalysisView;
 import info.limpet.ui.data_frequency.DataFrequencyView;
+import info.limpet.ui.heatmap.HeatmapView;
+import info.limpet.ui.heatmap.TabularView;
 import info.limpet.ui.range_slider.RangeSliderView;
 import info.limpet.ui.time_frequency.TimeFrequencyView;
-import info.limpet.ui.xy_plot.HeatmapView;
-import info.limpet.ui.xy_plot.TabularView;
 import info.limpet.ui.xy_plot.XyPlotView;
 
 public class Perspective implements IPerspectiveFactory
