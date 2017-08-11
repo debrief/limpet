@@ -807,7 +807,7 @@ public class XyPlotView extends CoreAnalysisView
 
     List<IStoreItem> items = new ArrayList<IStoreItem>();
     items.add(doc);
-    HContainer cont = Helper2D.convert(items);
+    HContainer cont = Helper2D.convertToMean(items);
 
     // loop through the data
     final List<Double> xValues = new ArrayList<Double>();

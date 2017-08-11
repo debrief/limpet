@@ -164,6 +164,9 @@ public class HeatmapView extends CommonGridView
 
     makeActions();
     contributeToActionBars();
+    
+    getViewSite().getActionBars().getToolBarManager().add(showCount);
+    getViewSite().getActionBars().getMenuManager().add(showCount);
 
     // register as selection listener
     setupListener();

@@ -163,7 +163,7 @@ public class Helper2D
     return res;
   }
 
-  public static HContainer convert(final List<IStoreItem> items)
+  public static HContainer convertToMean(final List<IStoreItem> items)
   {
     // sort out the helper
     final ListConverterHelper helper;
@@ -192,7 +192,7 @@ public class Helper2D
         {
           final DoubleListDocument nd = (DoubleListDocument) item;
           final ObjectDataset ds = (ObjectDataset) nd.getDataset();
-          return convert(ds);
+          return convert(ds, false);
         }
       };
     }
@@ -201,11 +201,11 @@ public class Helper2D
       throw new IllegalArgumentException("Unexpected data type");
     }
 
-    return convert(items, helper);
+    return convert(items, helper, false);
   }
 
   public static HContainer convert(final List<IStoreItem> items,
-      final ListConverterHelper helper)
+      final ListConverterHelper helper, final boolean count)
   {
     final List<HContainer> containers = new ArrayList<HContainer>();
     for (final IStoreItem item : items)
@@ -230,31 +230,52 @@ public class Helper2D
     {
       for (int j = 0; j < cols; j++)
       {
-        double runningTotal = 0;
-        double counter = 0;
-
-        // build up the values at this cell
-        for (final HContainer cont : containers)
+        final double value;
+        if(count)
         {
-          final double thisValue = cont.values[i][j];
-          if (!Double.isNaN(thisValue))
+          double counter = 0;
+
+          // build up the values at this cell
+          for (final HContainer cont : containers)
           {
-            runningTotal += thisValue;
-            counter++;
+            final double thisValue = cont.values[i][j];
+            if (!Double.isNaN(thisValue))
+            {
+              counter++;
+            }
           }
+
+          // and the sum
+          value = counter > 0 ? counter : Double.NaN;
         }
+        else
+        {
+          double runningTotal = 0;
+          double counter = 0;
 
-        // and the sum
-        final double mean = runningTotal / counter;
+          // build up the values at this cell
+          for (final HContainer cont : containers)
+          {
+            final double thisValue = cont.values[i][j];
+            if (!Double.isNaN(thisValue))
+            {
+              runningTotal += thisValue;
+              counter++;
+            }
+          }
 
-        res.values[i][j] = mean;
+          // and the sum
+          value = runningTotal / counter;
+        }
+        res.values[i][j] = value;
       }
     }
 
     return res;
   }
 
-  public static HContainer convert(final ObjectDataset dataset)
+  public static HContainer convert(final ObjectDataset dataset,
+      final boolean count)
   {
     final HContainer res = new HContainer();
 
@@ -287,17 +308,35 @@ public class Helper2D
           final List<Double> items = (List<Double>) dataset.get(i, j);
           if (items != null)
           {
-            double total = 0;
-            int ctr = 0;
-            for (final Double t : items)
+            final double value;
+            if (count)
             {
-              if (!Double.isNaN(t))
+              double total = 0;
+              int ctr = 0;
+              for (final Double t : items)
               {
-                total += t;
-                ctr++;
+                if (!Double.isNaN(t))
+                {
+                  total += t;
+                  ctr++;
+                }
               }
+              value = total / ctr;
             }
-            res.values[i][j] = total / ctr;
+            else
+            {
+              int ctr = 0;
+              for (final Double t : items)
+              {
+                if (!Double.isNaN(t))
+                {
+                  ctr++;
+                }
+              }
+              value = ctr >= 0 ? ctr : Double.NaN;
+            }
+            res.values[i][j] = value;
+
           }
           else
           {
@@ -343,7 +382,7 @@ public class Helper2D
     String seriesName = "";
     for (final IStoreItem item : items)
     {
-      if (!seriesName.equals(""))
+      if (!"".equals(seriesName))
       {
         seriesName += ", ";
       }
@@ -361,6 +400,47 @@ public class Helper2D
 
     }
     return seriesName;
+  }
+
+  public static HContainer convertToCount(List<IStoreItem> items)
+  {
+    // sort out the helper
+    final ListConverterHelper helper;
+    final IStoreItem first = items.get(0);
+    if (first instanceof NumberDocument)
+    {
+      helper = new ListConverterHelper()
+      {
+
+        @Override
+        public HContainer convertMe(final IStoreItem item)
+        {
+          final NumberDocument nd = (NumberDocument) item;
+          final DoubleDataset ds = (DoubleDataset) nd.getDataset();
+          return convert(ds);
+        }
+      };
+    }
+    else if (first instanceof DoubleListDocument)
+    {
+      helper = new ListConverterHelper()
+      {
+
+        @Override
+        public HContainer convertMe(final IStoreItem item)
+        {
+          final DoubleListDocument nd = (DoubleListDocument) item;
+          final ObjectDataset ds = (ObjectDataset) nd.getDataset();
+          return convert(ds, true);
+        }
+      };
+    }
+    else
+    {
+      throw new IllegalArgumentException("Unexpected data type");
+    }
+
+    return convert(items, helper, true);
   };
 
 }

@@ -405,7 +405,7 @@ public class TestGrids extends TestCase
     assertNotNull(title);
     assertEquals("correct title", "Calculated mean of of other1 (m), Calculated mean of of other2 (m)", title);
 
-    HContainer sumRes = Helper2D.convert(selection);
+    HContainer sumRes = Helper2D.convertToMean(selection);
     assertNotNull("Got object", sumRes);
     assertNotNull("Has row titles", sumRes.rowTitles);
     assertNotNull("Has col titles", sumRes.colTitles);
