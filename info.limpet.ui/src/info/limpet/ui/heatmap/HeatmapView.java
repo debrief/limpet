@@ -181,7 +181,6 @@ public class HeatmapView extends CommonGridView
     parentCanvas.setFocus();
   }
 
-
   @Override
   protected void showGrid(final HContainer hData, final String indexUnits)
   {
@@ -227,6 +226,5 @@ public class HeatmapView extends CommonGridView
         new Range(hData.colTitles[0],
             hData.colTitles[hData.colTitles.length - 1]));
   }
-
 
 }

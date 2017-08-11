@@ -14,16 +14,12 @@
  *****************************************************************************/
 package info.limpet.ui.heatmap;
 
-import info.limpet.IStoreItem;
-import info.limpet.impl.NumberDocument;
-import info.limpet.operations.CollectionComplianceTests;
 import info.limpet.ui.heatmap.Helper2D.HContainer;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;

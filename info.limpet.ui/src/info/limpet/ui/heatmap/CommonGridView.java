@@ -15,6 +15,11 @@ abstract public class CommonGridView extends CoreAnalysisView
       new CollectionComplianceTests();
   protected Text titleLbl;
 
+  public CommonGridView(final String myId, final String myTitle)
+  {
+    super(myId, myTitle);
+  }
+
   @Override
   protected boolean appliesToMe(final List<IStoreItem> res,
       final CollectionComplianceTests tests)
@@ -22,10 +27,7 @@ abstract public class CommonGridView extends CoreAnalysisView
     return Helper2D.appliesToMe(res, tests);
   }
 
-  public CommonGridView(String myId, String myTitle)
-  {
-    super(myId, myTitle);
-  }
+  abstract void clearChart();
 
   @Override
   public void display(final List<IStoreItem> res)
@@ -51,26 +53,22 @@ abstract public class CommonGridView extends CoreAnalysisView
     }
   }
 
-
   protected void show(final List<IStoreItem> items)
   {
     clearChart();
-    
+
     final String seriesName = Helper2D.titleFor(items);
 
     titleLbl.setText(seriesName);
     titleLbl.pack();
 
     // get the data
-    final HContainer hData =
-        Helper2D.convert(items);
+    final HContainer hData = Helper2D.convert(items);
 
     final String indexUnits = Helper2D.indexUnitsFor(items);
-    
+
     showGrid(hData, indexUnits);
   }
-
-  abstract void clearChart();
 
   abstract protected void showGrid(HContainer data, String indexUnits);
 }
