@@ -16,6 +16,8 @@ package info.limpet.ui.xy_plot;
 
 import info.limpet.IDocument;
 import info.limpet.IStoreItem;
+import info.limpet.impl.Document;
+import info.limpet.impl.DoubleListDocument;
 import info.limpet.impl.LocationDocument;
 import info.limpet.impl.NumberDocument;
 import info.limpet.operations.CollectionComplianceTests;
@@ -23,6 +25,8 @@ import info.limpet.operations.CollectionComplianceTests.TimePeriod;
 import info.limpet.ui.Activator;
 import info.limpet.ui.PlottingHelpers;
 import info.limpet.ui.core_view.CoreAnalysisView;
+import info.limpet.ui.heatmap.Helper2D;
+import info.limpet.ui.heatmap.Helper2D.HContainer;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
@@ -36,8 +40,6 @@ import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 
 import org.eclipse.january.MetadataException;
-import org.eclipse.january.dataset.DoubleDataset;
-import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.metadata.AxesMetadata;
 import org.eclipse.jface.action.Action;
 import org.eclipse.swt.SWT;
@@ -99,23 +101,24 @@ public class XyPlotView extends CoreAnalysisView
   {
     // clear the graph
     final ISeries[] series = chart.getSeriesSet().getSeries();
-    for (final ISeries iSeries: series)
+    for (final ISeries iSeries : series)
     {
       chart.getSeriesSet().deleteSeries(iSeries.getId());
     }
-    
-    /** we keep the zero axis, it's the first y axis.
+
+    /**
+     * we keep the zero axis, it's the first y axis.
      * 
      */
     final int AXIS_TO_KEEP = 0;
-    
+
     // clear the secondary x axes
     final IAxis[] yAxes = chart.getAxisSet().getYAxes();
-    for(final IAxis axis: yAxes)
+    for (final IAxis axis : yAxes)
     {
       // delete all axes except the first
       final int thisId = axis.getId();
-      if(thisId != AXIS_TO_KEEP)
+      if (thisId != AXIS_TO_KEEP)
       {
         chart.getAxisSet().deleteYAxis(thisId);
       }
@@ -329,7 +332,6 @@ public class XyPlotView extends CoreAnalysisView
     switchAxes.setToolTipText("Switch X and Y axes");
     switchAxes.setImageDescriptor(Activator
         .getImageDescriptor("icons/angle.png"));
-    
 
     fitToWindow = new Action("Fit to window", SWT.COMMAND)
     {
@@ -338,7 +340,7 @@ public class XyPlotView extends CoreAnalysisView
       {
         // work through the axes to reset the range
         IAxis[] xAxes = chart.getAxisSet().getAxes();
-        for(IAxis axis: xAxes)
+        for (IAxis axis : xAxes)
         {
           // ok, do fit
           axis.adjustRange();
@@ -351,7 +353,6 @@ public class XyPlotView extends CoreAnalysisView
     fitToWindow.setToolTipText("Resize plot to view all data");
     fitToWindow.setImageDescriptor(Activator
         .getImageDescriptor("icons/fit_to_win.png"));
-    
 
   }
 
@@ -718,13 +719,70 @@ public class XyPlotView extends CoreAnalysisView
     return NewUnits;
   }
 
+  protected static interface TwoDimHelper
+  {
+    List<AxesMetadata> getAxes(IStoreItem item) throws MetadataException;
+
+    Unit<?> getIndexUnits(IStoreItem item);
+
+  }
+
   private void showTwoDim(final IStoreItem item)
   {
-    final NumberDocument thisQ = (NumberDocument) item;
+    final TwoDimHelper helper;
+    if (item instanceof NumberDocument)
+    {
+      helper = new TwoDimHelper()
+      {
+
+        @Override
+        public List<AxesMetadata> getAxes(IStoreItem item)
+            throws MetadataException
+        {
+          NumberDocument nd = (NumberDocument) item;
+          return nd.getDataset().getMetadata(AxesMetadata.class);
+        }
+
+        @Override
+        public Unit<?> getIndexUnits(IStoreItem item)
+        {
+          NumberDocument nd = (NumberDocument) item;
+          return nd.getIndexUnits();
+        }
+
+      };
+    }
+    else if (item instanceof DoubleListDocument)
+    {
+      helper = new TwoDimHelper()
+      {
+
+        @Override
+        public List<AxesMetadata> getAxes(IStoreItem item)
+            throws MetadataException
+        {
+          DoubleListDocument nd = (DoubleListDocument) item;
+          return nd.getDataset().getMetadata(AxesMetadata.class);
+        }
+
+        @Override
+        public Unit<?> getIndexUnits(IStoreItem item)
+        {
+          DoubleListDocument nd = (DoubleListDocument) item;
+          return nd.getIndexUnits();
+        }
+      };
+    }
+    else
+    {
+      throw new IllegalArgumentException("Unexpected item type");
+    }
 
     clearGraph();
 
-    final String seriesName = thisQ.getName();
+    Document<?> doc = (Document<?>) item;
+
+    final String seriesName = item.getName();
     final ILineSeries newSeries =
         (ILineSeries) chart.getSeriesSet().createSeries(SeriesType.LINE,
             seriesName);
@@ -732,7 +790,7 @@ public class XyPlotView extends CoreAnalysisView
     final PlotSymbolType theSym;
     // if it's a singleton, show the symbol
     // markers
-    if (thisQ.size() > 500 || thisQ.size() == 1)
+    if (doc.size() > 500 || doc.size() == 1)
     {
       theSym = PlotSymbolType.NONE;
     }
@@ -746,64 +804,45 @@ public class XyPlotView extends CoreAnalysisView
     newSeries.setSymbolColor(PlottingHelpers.colorFor(seriesName));
 
     // ok, show this 2d dataset
-    final NumberDocument nd = (NumberDocument) item;
 
-    try
+    List<IStoreItem> items = new ArrayList<IStoreItem>();
+    items.add(doc);
+    HContainer cont = Helper2D.convert(items);
+
+    // loop through the data
+    final List<Double> xValues = new ArrayList<Double>();
+    final List<Double> yValues = new ArrayList<Double>();
+
+    // process the data
+    double[] rows = cont.rowTitles;
+    double[] cols = cont.colTitles;
+    double[][] values = cont.values;
+    for (int i = 0; i < rows.length; i++)
     {
-      // sort out the axes
-      final List<AxesMetadata> amList =
-          nd.getDataset().getMetadata(AxesMetadata.class);
-      final AxesMetadata am = amList.get(0);
-      final ILazyDataset[] axes = am.getAxes();
-      if (axes.length == 2)
+      for (int j = 0; j < cols.length; j++)
       {
-        final DoubleDataset aOne = (DoubleDataset) axes[0];
-        final DoubleDataset aTwo = (DoubleDataset) axes[1];
-
-        final double[] aIndices = aOne.getData();
-        final double[] bIndices = aTwo.getData();
-
-        // loop through the data
-        final List<Double> xValues = new ArrayList<Double>();
-        final List<Double> yValues = new ArrayList<Double>();
-
-        final DoubleDataset dataset = (DoubleDataset) nd.getDataset();
-
-        // process the data
-        for (int i = 0; i < aIndices.length; i++)
+        final Double thisVal = values[i][j];
+        if (!thisVal.equals(Double.NaN))
         {
-          for (int j = 0; j < bIndices.length; j++)
-          {
-            final Double thisVal = dataset.get(i, j);
-            if (!thisVal.equals(Double.NaN))
-            {
-              xValues.add(aIndices[i]);
-              yValues.add(bIndices[j]);
-            }
-          }
+          xValues.add(rows[i]);
+          yValues.add(cols[j]);
         }
-
-        final double[] xArr = toArray(xValues);
-        final double[] yArr = toArray(yValues);
-
-        newSeries.setXSeries(xArr);
-        newSeries.setYSeries(yArr);
-
-        chart.getAxisSet().getYAxes()[0].getTitle().setText(
-            "" + nd.getIndexUnits());
-        chart.getAxisSet().getXAxes()[0].getTitle().setText(
-            "" + nd.getIndexUnits());
-
-        // adjust the axis range
-        chart.getAxisSet().adjustRange();
-
       }
     }
-    catch (final MetadataException e)
-    {
-      e.printStackTrace();
-      // ok, just drop out
-    }
+
+    final double[] xArr = toArray(xValues);
+    final double[] yArr = toArray(yValues);
+
+    newSeries.setXSeries(xArr);
+    newSeries.setYSeries(yArr);
+
+    chart.getAxisSet().getYAxes()[0].getTitle().setText(
+        "" + helper.getIndexUnits(item));
+    chart.getAxisSet().getXAxes()[0].getTitle().setText(
+        "" + helper.getIndexUnits(item));
+
+    // adjust the axis range
+    chart.getAxisSet().adjustRange();
   }
 
   private Unit<?> storeIndexedData(final Unit<?> existingUnits,

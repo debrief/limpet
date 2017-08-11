@@ -1,12 +1,13 @@
 package info.limpet.ui.heatmap;
 
-import java.util.List;
-
-import org.eclipse.swt.widgets.Text;
-
 import info.limpet.IStoreItem;
 import info.limpet.operations.CollectionComplianceTests;
 import info.limpet.ui.core_view.CoreAnalysisView;
+import info.limpet.ui.heatmap.Helper2D.HContainer;
+
+import java.util.List;
+
+import org.eclipse.swt.widgets.Text;
 
 abstract public class CommonGridView extends CoreAnalysisView
 {
@@ -18,12 +19,7 @@ abstract public class CommonGridView extends CoreAnalysisView
   protected boolean appliesToMe(final List<IStoreItem> res,
       final CollectionComplianceTests tests)
   {
-    final boolean allNonQuantity = tests.allNonQuantity(res);
-    final boolean allCollections = tests.allCollections(res);
-    final boolean allQuantity = tests.allQuantity(res);
-    final boolean suitableIndex =
-        tests.allEqualIndexed(res) || tests.allNonIndexed(res);
-    return allCollections && suitableIndex && (allQuantity || allNonQuantity);
+    return Helper2D.appliesToMe(res, tests);
   }
 
   public CommonGridView(String myId, String myTitle)
@@ -42,10 +38,10 @@ abstract public class CommonGridView extends CoreAnalysisView
     else
     {
       // check they're all one dim
-      if (aTests.allTwoDim(res) && res.size() == 1)
+      if (aTests.allTwoDim(res) && res.size() >= 1)
       {
-        // ok, it's a single two-dim dataset
-        show(res.get(0));
+        // ok, they're two-dim dataset
+        show(res);
       }
       else
       {
@@ -55,7 +51,26 @@ abstract public class CommonGridView extends CoreAnalysisView
     }
   }
 
-  abstract protected void show(IStoreItem iStoreItem);
+
+  protected void show(final List<IStoreItem> items)
+  {
+    clearChart();
+    
+    final String seriesName = Helper2D.titleFor(items);
+
+    titleLbl.setText(seriesName);
+    titleLbl.pack();
+
+    // get the data
+    final HContainer hData =
+        Helper2D.convert(items);
+
+    final String indexUnits = Helper2D.indexUnitsFor(items);
+    
+    showGrid(hData, indexUnits);
+  }
 
   abstract void clearChart();
+
+  abstract protected void showGrid(HContainer data, String indexUnits);
 }

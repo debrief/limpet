@@ -14,13 +14,10 @@
  *****************************************************************************/
 package info.limpet.ui.heatmap;
 
-import info.limpet.IStoreItem;
-import info.limpet.impl.NumberDocument;
 import info.limpet.ui.heatmap.Helper2D.HContainer;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.eclipse.draw2d.LightweightSystem;
-import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.nebula.visualization.widgets.datadefinition.ColorMap;
 import org.eclipse.nebula.visualization.widgets.datadefinition.ColorMap.PredefinedColorMap;
 import org.eclipse.nebula.visualization.widgets.datadefinition.IPrimaryArrayWrapper;
@@ -134,6 +131,7 @@ public class HeatmapView extends CommonGridView
   {
     intensityGraph.setDataArray(new double[]
     {});
+    titleLbl.setText("");
   }
 
   /**
@@ -183,20 +181,10 @@ public class HeatmapView extends CommonGridView
     parentCanvas.setFocus();
   }
 
+
   @Override
-  protected void show(final IStoreItem item)
+  protected void showGrid(final HContainer hData, final String indexUnits)
   {
-    final NumberDocument thisQ = (NumberDocument) item;
-
-    clearChart();
-
-    final String seriesName = thisQ.getName();
-    titleLbl.setText(seriesName + " (" + thisQ.getUnits().toString() + ")");
-
-    // get the data
-    final HContainer hData =
-        Helper2D.convert((DoubleDataset) thisQ.getDataset());
-
     final int rows = hData.rowTitles.length;
     final int cols = hData.colTitles.length;
 
@@ -238,9 +226,7 @@ public class HeatmapView extends CommonGridView
     intensityGraph.getYAxis().setRange(
         new Range(hData.colTitles[0],
             hData.colTitles[hData.colTitles.length - 1]));
+  }
 
-    // parentCanvas.pack();
-    titleLbl.pack();
-  };
 
 }
