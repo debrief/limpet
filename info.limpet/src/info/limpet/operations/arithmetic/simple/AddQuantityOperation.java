@@ -19,7 +19,7 @@ import info.limpet.IContext;
 import info.limpet.IDocument;
 import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
-import info.limpet.operations.arithmetic.BinaryQuantityOperation;
+import info.limpet.operations.arithmetic.BulkQuantityOperation;
 import info.limpet.operations.arithmetic.InterpolatedMaths;
 import info.limpet.operations.arithmetic.InterpolatedMaths.IOperationPerformer;
 
@@ -29,14 +29,16 @@ import java.util.List;
 import javax.measure.unit.Unit;
 
 import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.Maths;
 
-public class AddQuantityOperation extends BinaryQuantityOperation
+public class AddQuantityOperation extends BulkQuantityOperation
 {
 
-  public class AddQuantityValues extends BinaryQuantityCommand
+  public class AddQuantityValues extends BulkQuantityCommand
   {
-    final private String outputPrefix;
+    final private String outputSuffix;
     final private IOperationPerformer operation;
 
     public AddQuantityValues(final String name,
@@ -46,28 +48,47 @@ public class AddQuantityOperation extends BinaryQuantityOperation
     {
       super(name, "Add datasets", destination, false, false, selection,
           timeProvider, context);
-      this.outputPrefix = outputPrefix;
+      this.outputSuffix = outputPrefix;
       this.operation = operation;
-    }
-
-    @Override
-    protected String getBinaryNameFor(final String name1, final String name2)
-    {
-      return outputPrefix + "Sum of " + name1 + " + " + name2;
-    }
-
-    @Override
-    protected Unit<?> getBinaryOutputUnit(final Unit<?> first,
-        final Unit<?> second)
-    {
-      // addition doesn't modify units, just use first ones
-      return first;
     }
 
     @Override
     protected IOperationPerformer getOperation()
     {
       return operation;
+    }
+
+    @Override
+    protected String getBulkNameFor(List<IStoreItem> items)
+    {
+      String res = "";
+      for (IStoreItem item : items)
+      {
+        if (!"".equals(res))
+        {
+          res += " + ";
+        }
+        res += item.getName();
+      }
+      
+      if(outputSuffix != null && outputSuffix.length() > 0)
+      {
+        res += " (" + outputSuffix + ")";
+      }
+      
+      return res;
+    }
+
+    @Override
+    protected Unit<?> getBulkOutputUnit(List<Unit<?>> units)
+    {
+      return units.get(0);
+    }
+
+    @Override
+    protected DoubleDataset getInitial(int shape)
+    {
+      return DatasetFactory.zeros(shape);
     }
   }
 
@@ -202,8 +223,8 @@ public class AddQuantityOperation extends BinaryQuantityOperation
     final boolean equalDimensions = getATests().allEqualDimensions(selection);
     final boolean equalUnits = getATests().allEqualUnits(selection);
 
-    return twoItems && nonEmpty && allQuantity && suitableLength && equalDimensions
-        && equalUnits;
+    return twoItems && nonEmpty && allQuantity && suitableLength
+        && equalDimensions && equalUnits;
   }
 
 }
