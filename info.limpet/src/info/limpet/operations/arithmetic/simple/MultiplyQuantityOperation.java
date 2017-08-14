@@ -19,7 +19,7 @@ import info.limpet.IContext;
 import info.limpet.IDocument;
 import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
-import info.limpet.operations.arithmetic.BinaryQuantityOperation;
+import info.limpet.operations.arithmetic.BulkQuantityOperation;
 import info.limpet.operations.arithmetic.InterpolatedMaths;
 import info.limpet.operations.arithmetic.InterpolatedMaths.IOperationPerformer;
 
@@ -29,12 +29,14 @@ import java.util.List;
 import javax.measure.unit.Unit;
 
 import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.Maths;
 
-public class MultiplyQuantityOperation extends BinaryQuantityOperation
+public class MultiplyQuantityOperation extends BulkQuantityOperation
 {
 
-  public class MultiplyQuantityValues extends BinaryQuantityCommand
+  public class MultiplyQuantityValues extends BulkQuantityCommand
   {
     public MultiplyQuantityValues(final String name,
         final List<IStoreItem> selection, final IStoreGroup store,
@@ -52,17 +54,32 @@ public class MultiplyQuantityOperation extends BinaryQuantityOperation
     }
 
     @Override
-    protected String getBinaryNameFor(final String name1, final String name2)
+    protected String getBulkNameFor(List<IStoreItem> items)
     {
-      return "Product of " + name1 + " + " + name2;
+      String res = "";
+      for (IStoreItem item : items)
+      {
+        if (!"".equals(res))
+        {
+          res += " * ";
+        }
+        res += item.getName();
+      }
+      
+      return res;
+    }
+
+
+    @Override
+    protected Unit<?> getBulkOutputUnit(List<Unit<?>> units)
+    {
+      return units.get(0);
     }
 
     @Override
-    protected Unit<?> getBinaryOutputUnit(final Unit<?> first,
-        final Unit<?> second)
+    protected DoubleDataset getInitial(int shape)
     {
-      // return product of units
-      return first.times(second);
+      return DatasetFactory.ones(shape);
     }
 
     @Override

@@ -133,60 +133,74 @@ public abstract class BulkQuantityOperation implements IOperation
       boolean doInterp = false;
       Dataset outputIndices = null;
 
-      // loop through the inputs
-      DoubleDataset existingAxis = null;
-
-      for (final IStoreItem item : getInputs())
+      
+      // quick check
+      if(getATests().allEqualIndexedOrSingleton(getInputs()))
       {
-        final NumberDocument doc = (NumberDocument) item;
-
-        final DoubleDataset first = (DoubleDataset) doc.getDataset();
-
-        // look for axes metadata
-        final AxesMetadata axis = first.getFirstMetadata(AxesMetadata.class);
-
-        if (axis != null && axis.getAxes() != null
-            && axis.getAxes().length == 1)
+        doInterp = true;
+        NumberDocument longestDoc = (NumberDocument) getLongestCollection(getInputs());
+        outputIndices = longestDoc.getIndexValues();
+      }
+      else
+      {
+        // we're probably going to be interpolating
+        // loop through the inputs
+        DoubleDataset existingAxis = null;
+        
+        for (final IStoreItem item : getInputs())
         {
-          // ok, is that axis monotonic?
-          final ILazyDataset thisAxis = axis.getAxes()[0];
-          final Monotonicity axis1Mono = Comparisons.findMonotonicity(thisAxis);
+          final NumberDocument doc = (NumberDocument) item;
 
-          if (axis1Mono.equals(Monotonicity.NOT_ORDERED))
+          final DoubleDataset first = (DoubleDataset) doc.getDataset();
+
+          // look for axes metadata
+          final AxesMetadata axis = first.getFirstMetadata(AxesMetadata.class);
+
+          if (axis != null && axis.getAxes() != null
+              && axis.getAxes().length == 1)
           {
-            // ok, not ordered. we can't use it
-            doInterp = false;
+            // ok, is that axis monotonic?
+            final ILazyDataset thisAxis = axis.getAxes()[0];
+            final Monotonicity axis1Mono = Comparisons.findMonotonicity(thisAxis);
 
-            // see if we have a set of output indices we can use
-            outputIndices = findIndexDataset();
-
-            // ok, we're done. we can drop out.
-            break;
-          }
-          else
-          {
-            // do we have an existing axis?
-            if (existingAxis == null)
+            if (axis1Mono.equals(Monotonicity.NOT_ORDERED))
             {
-              existingAxis = (DoubleDataset) thisAxis;
+              // ok, not ordered. we can't use it
+              doInterp = false;
+
+              // see if we have a set of output indices we can use
+              outputIndices = findIndexDataset();
+
+              // ok, we're done. we can drop out.
+              break;
             }
             else
             {
-              // ok, check if they match
-              if (existingAxis.equals(thisAxis))
+              // do we have an existing axis?
+              if (existingAxis == null)
               {
-                // identical indexes, we don't need to intepolate
-                doInterp = false;
-                outputIndices = (Dataset) thisAxis;
+                existingAxis = (DoubleDataset) thisAxis;
               }
               else
               {
-                doInterp = true;
+                // ok, check if they match
+                if (existingAxis.equals(thisAxis) && doInterp)
+                {
+                  // identical indexes, we don't need to intepolate
+                  doInterp = false;
+                  outputIndices = (Dataset) thisAxis;
+                }
+                else
+                {
+                  doInterp = true;
+                }
               }
             }
           }
         }
       }
+
+
 
       // how long it output dataset?
       final int shape;
@@ -283,6 +297,11 @@ public abstract class BulkQuantityOperation implements IOperation
       return res;
     }
 
+    /** we loop through the data, but we need an initial dataset to start from
+     * 
+     * @param shape number of entities to contain
+     * @return
+     */
     abstract protected DoubleDataset getInitial(int shape);
   }
 

@@ -654,7 +654,7 @@ public class TestOperations
 
     // test actions has single item: "Multiply series by constant"
     assertEquals("correct name",
-        "Multiply numeric values in provided series (indexed)", command
+        "Multiply numeric values in provided series (interpolated)", command
             .getName());
 
     // apply action
@@ -663,9 +663,7 @@ public class TestOperations
     // test store has a new item in it
     assertEquals("store not empty", 1, store.size());
 
-    NumberDocument newS =
-        (NumberDocument) store
-            .get("Product of Speed One Time + Floating point factor");
+    NumberDocument newS = (NumberDocument) command.getOutputs().get(0);
 
     // test results is same length as thisSpeed
     assertEquals("correct size", 30, newS.size());
