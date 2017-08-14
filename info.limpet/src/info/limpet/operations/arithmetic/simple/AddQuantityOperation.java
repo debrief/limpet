@@ -214,7 +214,7 @@ public class AddQuantityOperation extends BulkQuantityOperation
   @Override
   protected boolean appliesTo(final List<IStoreItem> selection)
   {
-    final boolean twoItems = selection.size() == 2;
+    final boolean atLeastTwoItems = selection.size() >= 2;
     final boolean nonEmpty = getATests().nonEmpty(selection);
     final boolean allQuantity = getATests().allQuantity(selection);
     final boolean suitableLength =
@@ -223,7 +223,7 @@ public class AddQuantityOperation extends BulkQuantityOperation
     final boolean equalDimensions = getATests().allEqualDimensions(selection);
     final boolean equalUnits = getATests().allEqualUnits(selection);
 
-    return twoItems && nonEmpty && allQuantity && suitableLength
+    return atLeastTwoItems && nonEmpty && allQuantity && suitableLength
         && equalDimensions && equalUnits;
   }
 
