@@ -36,6 +36,7 @@ import org.eclipse.january.dataset.Comparisons.Monotonicity;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.metadata.AxesMetadata;
 
 public abstract class BulkQuantityOperation implements IOperation
@@ -133,6 +134,8 @@ public abstract class BulkQuantityOperation implements IOperation
       Dataset outputIndices = null;
 
       // loop through the inputs
+      DoubleDataset existingAxis = null;
+
       for (final IStoreItem item : getInputs())
       {
         final NumberDocument doc = (NumberDocument) item;
@@ -142,11 +145,12 @@ public abstract class BulkQuantityOperation implements IOperation
         // look for axes metadata
         final AxesMetadata axis = first.getFirstMetadata(AxesMetadata.class);
 
-        if (axis != null)
+        if (axis != null && axis.getAxes() != null
+            && axis.getAxes().length == 1)
         {
           // ok, is that axis monotonic?
-          final Monotonicity axis1Mono =
-              Comparisons.findMonotonicity(axis.getAxes()[0]);
+          final ILazyDataset thisAxis = axis.getAxes()[0];
+          final Monotonicity axis1Mono = Comparisons.findMonotonicity(thisAxis);
 
           if (axis1Mono.equals(Monotonicity.NOT_ORDERED))
           {
@@ -159,14 +163,70 @@ public abstract class BulkQuantityOperation implements IOperation
             // ok, we're done. we can drop out.
             break;
           }
+          else
+          {
+            // do we have an existing axis?
+            if (existingAxis == null)
+            {
+              existingAxis = (DoubleDataset) thisAxis;
+            }
+            else
+            {
+              // ok, check if they match
+              if (existingAxis.equals(thisAxis))
+              {
+                // identical indexes, we don't need to intepolate
+                doInterp = false;
+                outputIndices = (Dataset) thisAxis;
+              }
+              else
+              {
+                doInterp = true;
+              }
+            }
+          }
         }
+      }
+
+      // how long it output dataset?
+      final int shape;
+      if (doInterp)
+      {
+        final NumberDocument longest =
+            (NumberDocument) getLongestIndexedCollection(getInputs());
+        shape = longest.getDataset().getShape()[0];
+
+        if (outputIndices == null)
+        {
+          outputIndices = longest.getIndexValues();
+        }
+      }
+      else
+      {
+        NumberDocument longest =
+            (NumberDocument) getLongestIndexedCollection(getInputs());
+        if(longest == null)
+        {
+          // no, no indexed data
+          longest = (NumberDocument) getLongestCollection(getInputs());
+        }
+        shape = longest.getDataset().getShape()[0];
+
+        if (outputIndices == null && longest.isIndexed())
+        {
+          outputIndices = longest.getIndexValues();
+        }
+
       }
 
       if (doInterp)
       {
         final InterpolatedMaths.IOperationPerformer doAdd = getOperation();
 
-        DoubleDataset current = getInitial();
+        DoubleDataset current = getInitial(shape);
+        // if there are indices, store them
+        assignOutputIndices(current, outputIndices);
+
         for (IStoreItem item : getInputs())
         {
           NumberDocument doc = (NumberDocument) item;
@@ -175,25 +235,31 @@ public abstract class BulkQuantityOperation implements IOperation
           current =
               (DoubleDataset) InterpolatedMaths.performWithInterpolation(
                   current, thisD, null, doAdd);
+
+          // if there are indices, store them
+          assignOutputIndices(current, outputIndices);
         }
-        
+
         res = current;
 
       }
       else if (getATests().allEqualLengthOrSingleton(getInputs()))
       {
-        DoubleDataset current = getInitial();
+
+        DoubleDataset current = getInitial(shape);
+        // if there are indices, store them
+        assignOutputIndices(current, outputIndices);
         for (IStoreItem item : getInputs())
         {
           NumberDocument doc = (NumberDocument) item;
           DoubleDataset thisD = (DoubleDataset) doc.getDataset();
           current =
               (DoubleDataset) getOperation().perform(current, thisD, null);
+
+          // if there are indices, store them
+          assignOutputIndices(current, outputIndices);
         }
 
-        // if there are indices, store them
-        assignOutputIndices(current, outputIndices);
-        
         res = current;
       }
       else
@@ -205,7 +271,7 @@ public abstract class BulkQuantityOperation implements IOperation
       return res;
     }
 
-    abstract protected DoubleDataset getInitial();
+    abstract protected DoubleDataset getInitial(int shape);
   }
 
   public CollectionComplianceTests getATests()
@@ -270,6 +336,31 @@ public abstract class BulkQuantityOperation implements IOperation
    */
   protected abstract boolean appliesTo(List<IStoreItem> selection);
 
+  protected IDocument<?> getLongestCollection(final List<IStoreItem> selection)
+  {
+    // find the longest time series.
+    IDocument<?> longest = null;
+
+    for (final IStoreItem sItem : selection)
+    {
+      if (sItem instanceof IDocument)
+      {
+        final IDocument<?> doc = (IDocument<?>) sItem;
+        if (longest == null)
+        {
+          longest = doc;
+        }
+        else
+        {
+          // store the longest one
+          longest = doc.size() > longest.size() ? doc : longest;
+        }
+      }
+    }
+
+    return longest;
+  }
+
   protected IDocument<?> getLongestIndexedCollection(
       final List<IStoreItem> selection)
   {
@@ -281,14 +372,17 @@ public abstract class BulkQuantityOperation implements IOperation
       if (sItem instanceof IDocument)
       {
         final IDocument<?> doc = (IDocument<?>) sItem;
-        if (doc.isIndexed() || longest == null)
+        if (doc.isIndexed())
         {
-          longest = doc;
-        }
-        else
-        {
-          // store the longest one
-          longest = doc.size() > longest.size() ? doc : longest;
+          if (longest == null)
+          {
+            longest = doc;
+          }
+          else
+          {
+            // store the longest one
+            longest = doc.size() > longest.size() ? doc : longest;
+          }
         }
       }
     }
