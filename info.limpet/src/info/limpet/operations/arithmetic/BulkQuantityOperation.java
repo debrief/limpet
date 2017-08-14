@@ -40,11 +40,10 @@ import org.eclipse.january.metadata.AxesMetadata;
 
 public abstract class BulkQuantityOperation implements IOperation
 {
-  
-  
+
   private final CollectionComplianceTests aTests =
       new CollectionComplianceTests();
-  
+
   /**
    * the command that actually produces data
    * 
@@ -74,8 +73,6 @@ public abstract class BulkQuantityOperation implements IOperation
       this.timeProvider = timeProvider;
     }
 
-
-
     protected String generateName()
     {
       return getBulkNameFor(getInputs());
@@ -97,8 +94,7 @@ public abstract class BulkQuantityOperation implements IOperation
      * @param second
      * @return
      */
-    abstract protected Unit<?>
-        getBulkOutputUnit(List<Unit<?>> units);
+    abstract protected Unit<?> getBulkOutputUnit(List<Unit<?>> units);
 
     /**
      * provide class that can perform required operation
@@ -110,7 +106,7 @@ public abstract class BulkQuantityOperation implements IOperation
     protected Unit<?> getUnits()
     {
       final List<Unit<?>> units = new ArrayList<Unit<?>>();
-      for(IStoreItem input: getInputs())
+      for (IStoreItem input : getInputs())
       {
         final NumberDocument doc = (NumberDocument) input;
         units.add(doc.getUnits());
@@ -132,103 +128,37 @@ public abstract class BulkQuantityOperation implements IOperation
     {
       final IDataset res;
 
-      final DoubleDataset in1 =
-          (DoubleDataset) ((NumberDocument) getInputs().get(0)).getDataset();
-      final DoubleDataset in2 =
-          (DoubleDataset) ((NumberDocument) getInputs().get(1)).getDataset();
-
-      // look for axes metadata
-      final AxesMetadata axis1 = in1.getFirstMetadata(AxesMetadata.class);
-
       // keep track of the indices to use in the output
-      final Dataset outputIndices;
+      boolean doInterp = false;
+      Dataset outputIndices = null;
 
-      AxesMetadata axis2 = null;
-
-      final boolean doInterp;
-
-      if (axis1 != null)
+      // loop through the inputs
+      for (final IStoreItem item : getInputs())
       {
-        // ok, is that axis monotonic?
-        final Monotonicity axis1Mono =
-            Comparisons.findMonotonicity(axis1.getAxes()[0]);
+        final NumberDocument doc = (NumberDocument) item;
 
-        if (axis1Mono.equals(Monotonicity.NOT_ORDERED))
+        final DoubleDataset first = (DoubleDataset) doc.getDataset();
+
+        // look for axes metadata
+        final AxesMetadata axis = first.getFirstMetadata(AxesMetadata.class);
+
+        if (axis != null)
         {
-          // ok, not ordered. we can't use it
-          doInterp = false;
+          // ok, is that axis monotonic?
+          final Monotonicity axis1Mono =
+              Comparisons.findMonotonicity(axis.getAxes()[0]);
 
-          // see if we have a set of output indices we can use
-          outputIndices = findIndexDataset();
-        }
-        else
-        {
-          axis2 = in2.getFirstMetadata(AxesMetadata.class);
-
-          if (axis2 == null || axis2.getAxes() == null
-              || axis2.getAxes().length == 0)
+          if (axis1Mono.equals(Monotonicity.NOT_ORDERED))
           {
-            // the axes don't match. We can't do interp
+            // ok, not ordered. we can't use it
             doInterp = false;
-            // we'll use A indices in the output
-            outputIndices = (Dataset) axis1.getAxes()[0];
+
+            // see if we have a set of output indices we can use
+            outputIndices = findIndexDataset();
+
+            // ok, we're done. we can drop out.
+            break;
           }
-          else
-          {
-            final Monotonicity axis2Mono =
-                Comparisons.findMonotonicity(axis2.getAxes()[0]);
-
-            if (axis1.getAxes()[0].equals(axis2.getAxes()[0]))
-            {
-              // identical indexes, we don't need to intepolate
-              doInterp = false;
-              outputIndices = (Dataset) axis1.getAxes()[0];
-            }
-            else if (axis2Mono.equals(Monotonicity.NOT_ORDERED))
-            {
-              // ok, not ordered. we can't use it
-              throw new IllegalArgumentException(
-                  "Axes must be ordered. Cannot progress");
-            }
-            else
-            {
-              // ok, are they in the same direction?
-              if (axis1Mono.equals(axis2Mono))
-              {
-                // fake index
-                outputIndices = (Dataset) axis1.getAxes()[0];
-
-                // ok, do an interpolated add operation.
-                doInterp = true;
-
-              }
-              else
-              {
-                // wrong directions, can't do
-                doInterp = false;
-                outputIndices = null;
-              }
-            }
-          }
-        }
-      }
-      else
-      {
-        // first dataset doesn't have units. We aren't going to be interpolating.
-        // see if the second axis does have some
-        doInterp = false;
-
-        axis2 = in2.getFirstMetadata(AxesMetadata.class);
-
-        if (axis2 != null && axis2.getAxes() != null
-            && axis2.getAxes().length != 0)
-        {
-          // we'll use A indices in the output
-          outputIndices = (Dataset) axis2.getAxes()[0];
-        }
-        else
-        {
-          outputIndices = null;
         }
       }
 
@@ -236,15 +166,35 @@ public abstract class BulkQuantityOperation implements IOperation
       {
         final InterpolatedMaths.IOperationPerformer doAdd = getOperation();
 
-        // apply our operation to the two datasets
-        res = InterpolatedMaths.performWithInterpolation(in1, in2, null, doAdd);
+        DoubleDataset current = getInitial();
+        for (IStoreItem item : getInputs())
+        {
+          NumberDocument doc = (NumberDocument) item;
+          DoubleDataset thisD = (DoubleDataset) doc.getDataset();
+          // apply our operation to the two datasets
+          current =
+              (DoubleDataset) InterpolatedMaths.performWithInterpolation(
+                  current, thisD, null, doAdd);
+        }
+        
+        res = current;
+
       }
       else if (getATests().allEqualLengthOrSingleton(getInputs()))
       {
-        res = getOperation().perform(in1, in2, null);
+        DoubleDataset current = getInitial();
+        for (IStoreItem item : getInputs())
+        {
+          NumberDocument doc = (NumberDocument) item;
+          DoubleDataset thisD = (DoubleDataset) doc.getDataset();
+          current =
+              (DoubleDataset) getOperation().perform(current, thisD, null);
+        }
 
         // if there are indices, store them
-        assignOutputIndices(res, outputIndices);
+        assignOutputIndices(current, outputIndices);
+        
+        res = current;
       }
       else
       {
@@ -255,10 +205,9 @@ public abstract class BulkQuantityOperation implements IOperation
       return res;
     }
 
-
+    abstract protected DoubleDataset getInitial();
   }
-  
-  
+
   public CollectionComplianceTests getATests()
   {
     return aTests;
@@ -355,7 +304,7 @@ public abstract class BulkQuantityOperation implements IOperation
    */
   protected boolean hasLogData(final List<IStoreItem> selection)
   {
-    return  aTests.isUnitPresent(selection, NonSI.DECIBEL);
+    return aTests.isUnitPresent(selection, NonSI.DECIBEL);
   }
 
 }
