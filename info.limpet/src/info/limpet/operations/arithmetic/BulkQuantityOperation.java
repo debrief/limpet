@@ -231,10 +231,22 @@ public abstract class BulkQuantityOperation implements IOperation
         {
           NumberDocument doc = (NumberDocument) item;
           DoubleDataset thisD = (DoubleDataset) doc.getDataset();
-          // apply our operation to the two datasets
-          current =
-              (DoubleDataset) InterpolatedMaths.performWithInterpolation(
-                  current, thisD, null, doAdd);
+          
+          // hmm, is this a singleton?
+          if(doc.size() == 1)
+          {
+            // if it's just a singleton, we'll add the same value to each 
+            // results value
+            current = (DoubleDataset) doAdd.perform(current,  thisD, null);
+          }
+          else
+          {
+            // apply our operation to the two datasets
+            current =
+                (DoubleDataset) InterpolatedMaths.performWithInterpolation(
+                    current, thisD, null, doAdd);
+          }
+          
 
           // if there are indices, store them
           assignOutputIndices(current, outputIndices);
@@ -288,7 +300,7 @@ public abstract class BulkQuantityOperation implements IOperation
     {
 
       // aah, what about temporal (interpolated) values?
-      final boolean allIndexed = getATests().allEqualIndexed(selection);
+      final boolean allIndexed = getATests().allEqualIndexedOrSingleton(selection);
       final boolean suitableForIndexedInterpolation =
           getATests().suitableForIndexedInterpolation(selection);
       // final boolean hasIndexed = getATests().hasIndexed(selection);
