@@ -95,7 +95,7 @@ public class TestNewStrategy extends TestCase
 
     System.out.println(output);
 
-    assertEquals("correct name", "Sum of Speed One Time + Speed Two Time",
+    assertEquals("correct name", "Speed One Time + Speed Two Time",
         output.getName());
     assertEquals("correct parent", "Destination", output.getParent().getName());
 

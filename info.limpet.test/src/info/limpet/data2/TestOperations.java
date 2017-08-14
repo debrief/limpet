@@ -860,7 +860,7 @@ public class TestOperations
         (NumberDocument) store.get(SampleData.SPEED_TWO);
 
     NumberDocument newS =
-        (NumberDocument) store.get("Sum of Speed One Time + Speed Two Time");
+        (NumberDocument) store.get("Speed One Time + Speed Two Time");
 
     assertNotNull(newS);
     assertEquals("correct size", 10, newS.size());

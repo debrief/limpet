@@ -141,8 +141,7 @@ public class TestArithmeticCollections extends TestCase
 
     assertEquals("new collection created", 1, store.size());
 
-    final IDocument<?> series =
-        (IDocument<?>) store.get("Sum of Some data1 + Some data2");
+    final IDocument<?> series = firstC.getOutputs().get(0);
     assertTrue("non empty", series.size() > 0);
     assertTrue("temporal", series.isIndexed());
     assertTrue("quantity", series.isQuantity());
