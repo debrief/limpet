@@ -199,7 +199,7 @@ public abstract class UnaryQuantityOperation implements IOperation
     }
 
     @Override
-    Unit<?> getUnits()
+    protected Unit<?> getUnits()
     {
       // warning - this is only present to meet the API requirements.
       // Since we over-ride the execute() method, we call our own performCalc() 

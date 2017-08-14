@@ -125,7 +125,7 @@ public abstract class CoreQuantityCommand extends AbstractCommand
    * 
    * @return
    */
-  abstract Unit<?> getUnits();
+  protected abstract Unit<?> getUnits();
  
   public CollectionComplianceTests getATests()
   {
