@@ -198,6 +198,36 @@ public abstract class UnaryQuantityOperation implements IOperation
       }
     }
 
+    @Override
+    Unit<?> getUnits()
+    {
+      // warning - this is only present to meet the API requirements.
+      // Since we over-ride the execute() method, we call our own performCalc() 
+      // operation.
+      
+      throw new IllegalArgumentException("This method should not get called");
+    }
+
+    @Override
+    protected String generateName()
+    {
+      // warning - this is only present to meet the API requirements.
+      // Since we over-ride the execute() method, we call our own performCalc() 
+      // operation.
+      
+      throw new IllegalArgumentException("This method should not get called");
+    }
+
+    @Override
+    protected IDataset performCalc()
+    {
+      // warning - this is only present to meet the API requirements.
+      // Since we over-ride the execute() method, we call our own performCalc() 
+      // operation.
+      
+      throw new IllegalArgumentException("This method should not get called");
+    }
+
   }
 
   private final String _opName;
