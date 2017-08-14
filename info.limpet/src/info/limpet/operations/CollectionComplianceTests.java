@@ -603,6 +603,64 @@ public class CollectionComplianceTests
   }
 
   /**
+   * check if the series all have equal indixes
+   * 
+   * @param selection
+   * @return true/false
+   */
+  public boolean allEqualIndexedOrSingleton(List<IStoreItem> selection)
+  {
+    // are they all temporal?
+    boolean allValid = true;
+    Unit<?> _indexUnits = null;
+
+    for (int i = 0; i < selection.size(); i++)
+    {
+      final IStoreItem thisI = selection.get(i);
+      if (thisI instanceof IDocument)
+      {
+        final IDocument<?> thisC = (IDocument<?>) thisI;
+        final boolean isIndexed = thisC.isIndexed();
+        final boolean isSingleton = thisC.size() == 1;
+        if(isIndexed)
+        {
+          final Unit<?> theseUnits = thisC.getIndexUnits();
+          if (_indexUnits == null)
+          {
+            _indexUnits = theseUnits;
+          }
+          else
+          {
+            if (!theseUnits.equals(_indexUnits))
+            {
+              allValid = false;
+              break;
+            }
+          }
+        }
+        else
+        {
+          // not indexed. is it a singleton?
+          if(!isSingleton)
+          {
+            // no, not a singleton. we can't use it
+            allValid = false;
+            break;
+          }
+        }
+      }
+      else
+      {
+        // oops, no
+        allValid = false;
+        break;
+      }
+    }
+    return allValid;
+  }
+
+
+  /**
    * check if the series are at least one temporal dataset, plus one or more singletons
    * 
    * @param selection

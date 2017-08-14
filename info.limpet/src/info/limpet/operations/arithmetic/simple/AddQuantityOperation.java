@@ -218,7 +218,7 @@ public class AddQuantityOperation extends BulkQuantityOperation
     final boolean nonEmpty = getATests().nonEmpty(selection);
     final boolean allQuantity = getATests().allQuantity(selection);
     final boolean suitableLength =
-        getATests().allEqualIndexed(selection)
+        getATests().allEqualIndexedOrSingleton(selection)
             || getATests().allEqualLengthOrSingleton(selection);
     final boolean equalDimensions = getATests().allEqualDimensions(selection);
     final boolean equalUnits = getATests().allEqualUnits(selection);
