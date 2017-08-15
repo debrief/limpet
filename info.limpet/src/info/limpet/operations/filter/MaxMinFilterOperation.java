@@ -21,11 +21,8 @@ import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
 import info.limpet.impl.Document;
 import info.limpet.impl.NumberDocument;
-import info.limpet.impl.Range;
-import info.limpet.impl.UIProperty;
 import info.limpet.operations.AbstractCommand;
 import info.limpet.operations.CollectionComplianceTests;
-import info.limpet.operations.RangedEntity;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -40,13 +37,12 @@ import org.eclipse.january.metadata.internal.AxesMetadataImpl;
 
 public class MaxMinFilterOperation implements IOperation
 {
-  public static class FilterCollectionCommand extends AbstractCommand implements
-      RangedEntity
+  public static class FilterCollectionCommand extends AbstractCommand
   {
 
     final private FilterOperation operation;
 
-    private final NumberDocument filterValue;
+    final private NumberDocument filterValue;
 
     public FilterCollectionCommand(final String title,
         final List<IStoreItem> selection, final IStoreGroup store,
@@ -108,20 +104,6 @@ public class MaxMinFilterOperation implements IOperation
         getStore().add(out);
         out.fireDataChanged();
       }
-
-    }
-
-    @UIProperty(name = "MaxFilter", category = UIProperty.CATEGORY_CALCULATION,
-        min = 1, max = 200)
-    public int getAngleBinSize()
-    {
-      return (int) filterValue.getValueAt(0);
-    }
-
-    @Override
-    public double getValue()
-    {
-      return (int) filterValue.getValue();
     }
 
     protected String nameFor(final NumberDocument input)
@@ -141,7 +123,7 @@ public class MaxMinFilterOperation implements IOperation
       {
         final NumberDocument thisIn = (NumberDocument) inpIter.next();
         final NumberDocument thisOut = (NumberDocument) outIter.next();
-        
+
         final String outName = thisOut.getName();
 
         final List<Double> vOut = new ArrayList<Double>();
@@ -206,27 +188,6 @@ public class MaxMinFilterOperation implements IOperation
         out.fireDataChanged();
       }
     }
-
-    public void setAngleBinSize(final int val)
-    {
-      filterValue.setValue(val);
-
-      // ok, fire update
-      this.recalculate(null);
-    }
-
-    @Override
-    public void setValue(final double value)
-    {
-      filterValue.setValue(value);
-    }
-
-    @Override
-    public Range getRange()
-    {
-      return new Range(0, 200);
-    }
-
   }
 
   private static interface FilterOperation
