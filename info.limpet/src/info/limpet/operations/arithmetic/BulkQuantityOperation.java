@@ -133,12 +133,12 @@ public abstract class BulkQuantityOperation implements IOperation
       boolean doInterp = false;
       Dataset outputIndices = null;
 
-      
       // quick check
-      if(getATests().allEqualIndexedOrSingleton(getInputs()))
+      if (getATests().allEqualIndexedOrSingleton(getInputs()))
       {
         doInterp = true;
-        NumberDocument longestDoc = (NumberDocument) getLongestCollection(getInputs());
+        NumberDocument longestDoc =
+            (NumberDocument) getLongestCollection(getInputs());
         outputIndices = longestDoc.getIndexValues();
       }
       else
@@ -146,7 +146,7 @@ public abstract class BulkQuantityOperation implements IOperation
         // we're probably going to be interpolating
         // loop through the inputs
         DoubleDataset existingAxis = null;
-        
+
         for (final IStoreItem item : getInputs())
         {
           final NumberDocument doc = (NumberDocument) item;
@@ -161,7 +161,8 @@ public abstract class BulkQuantityOperation implements IOperation
           {
             // ok, is that axis monotonic?
             final ILazyDataset thisAxis = axis.getAxes()[0];
-            final Monotonicity axis1Mono = Comparisons.findMonotonicity(thisAxis);
+            final Monotonicity axis1Mono =
+                Comparisons.findMonotonicity(thisAxis);
 
             if (axis1Mono.equals(Monotonicity.NOT_ORDERED))
             {
@@ -200,9 +201,7 @@ public abstract class BulkQuantityOperation implements IOperation
         }
       }
 
-
-
-      // how long it output dataset?
+      // how long st output dataset?
       final int shape;
       if (doInterp)
       {
@@ -219,7 +218,7 @@ public abstract class BulkQuantityOperation implements IOperation
       {
         NumberDocument longest =
             (NumberDocument) getLongestIndexedCollection(getInputs());
-        if(longest == null)
+        if (longest == null)
         {
           // no, no indexed data
           longest = (NumberDocument) getLongestCollection(getInputs());
@@ -245,13 +244,16 @@ public abstract class BulkQuantityOperation implements IOperation
         {
           NumberDocument doc = (NumberDocument) item;
           DoubleDataset thisD = (DoubleDataset) doc.getDataset();
-          
+
           // hmm, is this a singleton?
-          if(doc.size() == 1)
+          if (doc.size() == 1)
           {
-            // if it's just a singleton, we'll add the same value to each 
+            // if it's just a singleton, we'll add the same value to each
             // results value
-            current = (DoubleDataset) doAdd.perform(current,  thisD, null);
+            current = (DoubleDataset) doAdd.perform(current, thisD, null);
+
+            // if there are indices, store them
+            assignOutputIndices(current, outputIndices);
           }
           else
           {
@@ -260,10 +262,6 @@ public abstract class BulkQuantityOperation implements IOperation
                 (DoubleDataset) InterpolatedMaths.performWithInterpolation(
                     current, thisD, null, doAdd);
           }
-          
-
-          // if there are indices, store them
-          assignOutputIndices(current, outputIndices);
         }
 
         res = current;
@@ -297,9 +295,11 @@ public abstract class BulkQuantityOperation implements IOperation
       return res;
     }
 
-    /** we loop through the data, but we need an initial dataset to start from
+    /**
+     * we loop through the data, but we need an initial dataset to start from
      * 
-     * @param shape number of entities to contain
+     * @param shape
+     *          number of entities to contain
      * @return
      */
     abstract protected DoubleDataset getInitial(int shape);
@@ -319,7 +319,8 @@ public abstract class BulkQuantityOperation implements IOperation
     {
 
       // aah, what about temporal (interpolated) values?
-      final boolean allIndexed = getATests().allEqualIndexedOrSingleton(selection);
+      final boolean allIndexed =
+          getATests().allEqualIndexedOrSingleton(selection);
       final boolean suitableForIndexedInterpolation =
           getATests().suitableForIndexedInterpolation(selection);
       // final boolean hasIndexed = getATests().hasIndexed(selection);
