@@ -170,10 +170,14 @@ public class MaxMinFilterOperation implements IOperation
 
         final DoubleDataset outD;
         final DoubleDataset outIndex;
-        
+
+        // did we find any?
         if (vOut.size() > 0)
         {
+          // yes.
           outD = (DoubleDataset) DatasetFactory.createFromObject(vOut);
+
+          // is this dataset indexed?
           if (iIter != null)
           {
             outIndex = (DoubleDataset) DatasetFactory.createFromObject(iOut);
@@ -185,6 +189,7 @@ public class MaxMinFilterOperation implements IOperation
         }
         else
         {
+          // no, didn't create any. Generate empty list
           final List<Double> dList = new ArrayList<Double>();
           outD = DatasetFactory.createFromList(DoubleDataset.class, dList);
           if (iIter != null)
@@ -198,7 +203,7 @@ public class MaxMinFilterOperation implements IOperation
           }
         }
 
-        // ok, create the output dataset
+        // do we have any index data?
         if (outIndex != null)
         {
           final AxesMetadata am = new AxesMetadataImpl();
@@ -271,16 +276,16 @@ public class MaxMinFilterOperation implements IOperation
     }
 
     @Override
+    public boolean keep(final double value, final double filterValue)
+    {
+      return value <= filterValue;
+    }
+
+    @Override
     public boolean keep(final double index, final double value,
         final double filterValue)
     {
       return keep(value, filterValue);
-    }
-
-    @Override
-    public boolean keep(final double value, final double filterValue)
-    {
-      return value <= filterValue;
     }
 
     @Override
