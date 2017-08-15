@@ -38,7 +38,7 @@ import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.metadata.AxesMetadata;
 import org.eclipse.january.metadata.internal.AxesMetadataImpl;
 
-public class MaxFilterOperation implements IOperation
+public class MaxMinFilterOperation implements IOperation
 {
   public static class FilterCollectionCommand extends AbstractCommand implements
       RangedEntity
@@ -141,6 +141,8 @@ public class MaxFilterOperation implements IOperation
       {
         final NumberDocument thisIn = (NumberDocument) inpIter.next();
         final NumberDocument thisOut = (NumberDocument) outIter.next();
+        
+        final String outName = thisOut.getName();
 
         final List<Double> vOut = new ArrayList<Double>();
         final List<Double> iOut = new ArrayList<Double>();
@@ -184,8 +186,8 @@ public class MaxFilterOperation implements IOperation
         am.setAxis(0, outIndex);
         outD.addMetadata(am);
 
-        // and corret the name
-        outD.setName(nameFor(thisIn));
+        // and provide the existing name
+        outD.setName(outName);
 
         // and store it
         thisOut.setDataset(outD);
