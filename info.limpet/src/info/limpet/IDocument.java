@@ -8,6 +8,8 @@ import java.util.UUID;
 
 import javax.measure.unit.Unit;
 
+import org.eclipse.january.dataset.DoubleDataset;
+
 public interface IDocument<T extends Object> extends IStoreItem
 {
 
@@ -61,5 +63,9 @@ public interface IDocument<T extends Object> extends IStoreItem
   void setIndexUnits(Unit<?> units);
 
   double getIndexAt(int i);
+
+
+
+  DoubleDataset getIndexValues();
 
 }
