@@ -131,17 +131,38 @@ public class MaxMinFilterOperation implements IOperation
 
         // loop through the values
         final Iterator<Double> vIter = thisIn.getIterator();
-        final Iterator<Double> iIter = thisIn.getIndexIterator();
+
+        final Iterator<Double> iIter;
+        if (thisIn.isIndexed())
+        {
+          iIter = thisIn.getIndexIterator();
+        }
+        else
+        {
+          iIter = null;
+        }
 
         while (vIter.hasNext())
         {
-          final double thisV = vIter.next();
-          final double thisI = iIter.next();
+          final double thisValue = vIter.next();
 
-          if (operation.keep(thisI, thisV, this.filterValue.getValue()))
+          if (iIter != null)
           {
-            vOut.add(thisV);
-            iOut.add(thisI);
+            final double thisIndex = iIter.next();
+
+            if (operation.keep(thisIndex, thisValue, this.filterValue
+                .getValue()))
+            {
+              vOut.add(thisValue);
+              iOut.add(thisIndex);
+            }
+          }
+          else
+          {
+            if (operation.keep(thisValue, this.filterValue.getValue()))
+            {
+              vOut.add(thisValue);
+            }
           }
         }
 
@@ -149,24 +170,42 @@ public class MaxMinFilterOperation implements IOperation
 
         final DoubleDataset outD;
         final DoubleDataset outIndex;
+        
         if (vOut.size() > 0)
         {
           outD = (DoubleDataset) DatasetFactory.createFromObject(vOut);
-          outIndex = (DoubleDataset) DatasetFactory.createFromObject(iOut);
+          if (iIter != null)
+          {
+            outIndex = (DoubleDataset) DatasetFactory.createFromObject(iOut);
+          }
+          else
+          {
+            outIndex = null;
+          }
         }
         else
         {
           final List<Double> dList = new ArrayList<Double>();
           outD = DatasetFactory.createFromList(DoubleDataset.class, dList);
-          outIndex = DatasetFactory.createFromList(DoubleDataset.class, dList);
+          if (iIter != null)
+          {
+            outIndex =
+                DatasetFactory.createFromList(DoubleDataset.class, dList);
+          }
+          else
+          {
+            outIndex = null;
+          }
         }
 
         // ok, create the output dataset
-
-        final AxesMetadata am = new AxesMetadataImpl();
-        am.initialize(1);
-        am.setAxis(0, outIndex);
-        outD.addMetadata(am);
+        if (outIndex != null)
+        {
+          final AxesMetadata am = new AxesMetadataImpl();
+          am.initialize(1);
+          am.setAxis(0, outIndex);
+          outD.addMetadata(am);
+        }
 
         // and provide the existing name
         outD.setName(outName);
@@ -193,6 +232,15 @@ public class MaxMinFilterOperation implements IOperation
   private static interface FilterOperation
   {
     String getName();
+
+    /**
+     * should we keep this data value?
+     * 
+     * @param value
+     * @param filterValue
+     * @return
+     */
+    boolean keep(double value, double filterValue);
 
     /**
      * should we keep this data value?
@@ -226,6 +274,12 @@ public class MaxMinFilterOperation implements IOperation
     public boolean keep(final double index, final double value,
         final double filterValue)
     {
+      return keep(value, filterValue);
+    }
+
+    @Override
+    public boolean keep(final double value, final double filterValue)
+    {
       return value <= filterValue;
     }
 
@@ -245,10 +299,16 @@ public class MaxMinFilterOperation implements IOperation
     }
 
     @Override
+    public boolean keep(final double value, final double filterValue)
+    {
+      return value >= filterValue;
+    }
+
+    @Override
     public boolean keep(final double index, final double value,
         final double filterValue)
     {
-      return value >= filterValue;
+      return keep(value, filterValue);
     }
 
     @Override
