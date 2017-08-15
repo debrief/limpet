@@ -28,6 +28,8 @@ import java.util.List;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 
+import org.eclipse.january.dataset.DoubleDataset;
+
 public abstract class GeneralDescription extends CoreAnalysis
 {
 
@@ -89,6 +91,10 @@ public abstract class GeneralDescription extends CoreAnalysis
       {
         IDocument<?> thisC = (IDocument<?>) iter.next();
 
+        // ok, avoid threading issues by extracting some items
+        final DoubleDataset index =
+            thisC.isIndexed() ? thisC.getIndexValues().clone() : null;
+
         titles.add("Collection");
         values.add(thisC.getName());
         titles.add("Size");
@@ -114,32 +120,44 @@ public abstract class GeneralDescription extends CoreAnalysis
           // check it has data
           if (thisC.size() > 0)
           {
-            final double lower = thisC.getIndexAt(0);
-            final double upper = thisC.getIndexAt(thisC.size() - 1);
-            final INumberFormatter formatter;
-            if (indexUnits != null)
+            if (aTests.allOneDim(selection))
             {
-              // have a go at the index range
-              if (indexUnits.equals(SI.SECOND))
+              final double lower = index.get(0);
+              final double upper = index.get(thisC.size() - 1);
+              final INumberFormatter formatter;
+              if (indexUnits != null)
               {
-                formatter = new SecondFormatter();
-              }
-              else if (indexUnits.equals(SampleData.MILLIS))
-              {
-                formatter = new MilliFormatter();
+                // have a go at the index range
+                if (indexUnits.equals(SI.SECOND))
+                {
+                  formatter = new SecondFormatter();
+                }
+                else if (indexUnits.equals(SampleData.MILLIS))
+                {
+                  formatter = new MilliFormatter();
+                }
+                else
+                {
+                  formatter = new NumberFormatter();
+                }
               }
               else
               {
                 formatter = new NumberFormatter();
               }
+
+              titles.add("Index range");
+              values.add(formatter.format(lower) + "-"
+                  + formatter.format(upper));
+            }
+            else if (aTests.allTwoDim(selection))
+            {
+              // ok, ouput the index ranges for the two dimensions
             }
             else
             {
-              formatter = new NumberFormatter();
+              // TODO: we need to output the index ranges for multi-dim datasets
             }
-
-            titles.add("Index range");
-            values.add(formatter.format(lower) + "-" + formatter.format(upper));
           }
         }
       }
