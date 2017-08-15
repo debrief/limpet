@@ -114,6 +114,7 @@ public abstract class CoreQuantityCommand extends AbstractCommand
   {
     if (outputIndices != null)
     {
+      // now insert the new one
       final AxesMetadata am = new AxesMetadataImpl();
       am.initialize(1);
       am.setAxis(0, outputIndices);

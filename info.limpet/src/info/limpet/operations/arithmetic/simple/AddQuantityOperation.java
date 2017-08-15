@@ -70,12 +70,12 @@ public class AddQuantityOperation extends BulkQuantityOperation
         }
         res += item.getName();
       }
-      
-      if(outputSuffix != null && outputSuffix.length() > 0)
+
+      if (outputSuffix != null && outputSuffix.length() > 0)
       {
         res += " (" + outputSuffix + ")";
       }
-      
+
       return res;
     }
 
@@ -127,7 +127,8 @@ public class AddQuantityOperation extends BulkQuantityOperation
     @Override
     public Dataset perform(final Dataset a, final Dataset b, final Dataset o)
     {
-      return Maths.add(a, b, o);
+      final Dataset res = Maths.add(a, b, o);
+      return res;
     }
   };
 

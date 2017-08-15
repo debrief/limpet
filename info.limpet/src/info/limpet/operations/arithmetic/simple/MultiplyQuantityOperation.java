@@ -91,7 +91,8 @@ public class MultiplyQuantityOperation extends BulkQuantityOperation
         public Dataset
             perform(final Dataset a, final Dataset b, final Dataset o)
         {
-          return Maths.multiply(a, b, o);
+          final Dataset res = Maths.multiply(a, b, o);
+          return res;
         }
       };
     }
