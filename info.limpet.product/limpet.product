@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="Limpet" uid="Limpet" id="info.limpet.rcp.product" application="info.limpet.rcp.application" version="1.0.14" useFeatures="true" includeLaunchers="true">
+<product name="Limpet" uid="Limpet" id="info.limpet.rcp.product" application="info.limpet.rcp.application" version="1.0.15" useFeatures="true" includeLaunchers="true">
 
    <aboutInfo>
       <image path="/info.limpet.rcp/icons/48/icon_48.png"/>
