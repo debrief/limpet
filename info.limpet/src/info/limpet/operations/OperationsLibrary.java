@@ -41,7 +41,7 @@ import info.limpet.operations.arithmetic.simple.DivideQuantityOperation;
 import info.limpet.operations.arithmetic.simple.MultiplyQuantityOperation;
 import info.limpet.operations.arithmetic.simple.SubtractQuantityOperation;
 import info.limpet.operations.arithmetic.simple.UnitConversionOperation;
-import info.limpet.operations.filter.MaxFilterOperation;
+import info.limpet.operations.filter.MaxMinFilterOperation;
 import info.limpet.operations.grid.GenerateGrid;
 import info.limpet.operations.spatial.BearingBetweenTracksOperation;
 import info.limpet.operations.spatial.DistanceBetweenTracksOperation;
@@ -367,7 +367,7 @@ public class OperationsLibrary
   private static List<IOperation> getFilter()
   {
     List<IOperation> filter = new ArrayList<IOperation>();
-    filter.add(new MaxFilterOperation());
+    filter.add(new MaxMinFilterOperation());
     return filter;
   }
   
