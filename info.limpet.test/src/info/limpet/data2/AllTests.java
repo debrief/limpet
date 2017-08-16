@@ -32,6 +32,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 import info.limpet.rcp.TestReflectivePropertySource;
+import info.limpet.rcp.TestStackedCharts;
 import junit.framework.TestSuite;
 
 @Suite.SuiteClasses(
@@ -52,8 +53,7 @@ import junit.framework.TestSuite;
   TestOperations.class,
   TestPersistence.class,
   TestReflectivePropertySource.class,
-  TestRepParser.class,
-  TestStackedCharts.class
+  TestRepParser.class
 })
 
 @RunWith(Suite.class)

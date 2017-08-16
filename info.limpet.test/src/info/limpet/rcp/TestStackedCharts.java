@@ -1,4 +1,4 @@
-package info.limpet.data2;
+package info.limpet.rcp;
 
 import info.limpet.IStoreItem;
 import info.limpet.impl.NumberDocument;

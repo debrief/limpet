@@ -8,6 +8,7 @@ import junit.framework.TestSuite;
 @Suite.SuiteClasses(
 { 
 	TestReflectivePropertySource.class,
+	TestStackedCharts.class
 })
 
 @RunWith(Suite.class)
