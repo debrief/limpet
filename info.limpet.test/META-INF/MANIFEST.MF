@@ -15,7 +15,8 @@ Require-Bundle: info.limpet;bundle-version="1.0.0",
  org.eclipse.core.runtime,
  info.limpet.ui,
  org.eclipse.ui.views,
- info.limpet.stackedcharts.model
+ info.limpet.stackedcharts.model,
+ info.limpet.stackedcharts.ui
 Bundle-ClassPath: libs/easymock-3.4.jar,
  .,
  libs/objenesis-2.2.jar
