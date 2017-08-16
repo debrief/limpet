@@ -79,7 +79,7 @@ public abstract class AbstractCommand implements ICommand
    * 
    */
   private boolean dynamic = true;
-  private transient UUID uuid;
+  final private UUID uuid;
   private final transient IContext context;
 
   public AbstractCommand(final String title, final String description,
@@ -95,6 +95,8 @@ public abstract class AbstractCommand implements ICommand
 
     this.inputs = new ArrayList<IStoreItem>();
     this.outputs = new ArrayList<Document<?>>();
+    
+    this.uuid = UUID.randomUUID();
 
     // store any inputs, if we have any
     if (inputs != null)
@@ -376,10 +378,6 @@ public abstract class AbstractCommand implements ICommand
   @Override
   public UUID getUUID()
   {
-    if (uuid == null)
-    {
-      uuid = UUID.randomUUID();
-    }
     return uuid;
   }
 
