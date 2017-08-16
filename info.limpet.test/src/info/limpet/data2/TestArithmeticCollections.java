@@ -28,9 +28,13 @@ import javax.measure.unit.Unit;
 import junit.framework.TestCase;
 
 import org.eclipse.january.DatasetException;
+import org.eclipse.january.MetadataException;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.Maths;
+import org.eclipse.january.metadata.AxesMetadata;
 
 public class TestArithmeticCollections extends TestCase
 {
@@ -104,6 +108,43 @@ public class TestArithmeticCollections extends TestCase
 
   private final IContext context = new MockContext();
 
+  public void testAddQuantityTemporalInterpSample() throws MetadataException
+  {
+    StoreGroup data = new SampleData().getData(20);
+    final List<IStoreItem> selection = new ArrayList<IStoreItem>();
+    selection.add(data.get(SampleData.SPEED_ONE));
+    selection.add(data.get(SampleData.SPEED_TWO));
+    selection.add(data.get(SampleData.SPEED_IRREGULAR2));
+
+    final StoreGroup store = new StoreGroup("data store");
+    final Collection<ICommand> commands =
+        new AddQuantityOperation().actionsFor(selection, store, context);
+    final ICommand firstC = commands.iterator().next();
+    assertNotNull("found command", firstC);
+    firstC.execute();
+    NumberDocument output = (NumberDocument) firstC.getOutputs().get(0);
+    
+    output = (NumberDocument) data.get(output.getName());
+    
+    assertNotNull("found output", output);
+    
+    final int dataLen = output.size();
+    assertEquals("17 items", 17, dataLen);
+    
+    DoubleDataset ds = (DoubleDataset) output.getDataset();
+    List<AxesMetadata> ameta = ds.getMetadata(AxesMetadata.class);
+    assertNotNull("found metadata");
+    assertEquals("one set", 1, ameta.size());
+    AxesMetadata am = ameta.get(0);
+    ILazyDataset[] axes = am.getAxes();
+    assertEquals("one axis", 1, axes.length);
+    DoubleDataset thisD = (DoubleDataset) axes[0];
+    assertEquals("correct length of data", dataLen, thisD.getSize());
+    DoubleDataset indexValues = output.getIndexValues();
+    assertEquals("same length", dataLen, indexValues.getData().length - indexValues.getOffset());
+  }
+
+  
   public void testAddQuantityTemporalInterp()
   {
     final NumberDocumentBuilder tqb1 =
