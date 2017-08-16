@@ -342,6 +342,7 @@ abstract public class Document<T extends Object> implements IDocument<T>
 
   }
 
+  @Override
   public DoubleDataset getIndexValues()
   {
     DoubleDataset res;

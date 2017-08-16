@@ -21,11 +21,8 @@ import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
 import info.limpet.impl.Document;
 import info.limpet.impl.NumberDocument;
-import info.limpet.impl.Range;
-import info.limpet.impl.UIProperty;
 import info.limpet.operations.AbstractCommand;
 import info.limpet.operations.CollectionComplianceTests;
-import info.limpet.operations.RangedEntity;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -38,15 +35,14 @@ import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.metadata.AxesMetadata;
 import org.eclipse.january.metadata.internal.AxesMetadataImpl;
 
-public class MaxFilterOperation implements IOperation
+public class MaxMinFilterOperation implements IOperation
 {
-  public static class FilterCollectionCommand extends AbstractCommand implements
-      RangedEntity
+  public static class FilterCollectionCommand extends AbstractCommand
   {
 
     final private FilterOperation operation;
 
-    private final NumberDocument filterValue;
+    final private NumberDocument filterValue;
 
     public FilterCollectionCommand(final String title,
         final List<IStoreItem> selection, final IStoreGroup store,
@@ -108,20 +104,6 @@ public class MaxFilterOperation implements IOperation
         getStore().add(out);
         out.fireDataChanged();
       }
-
-    }
-
-    @UIProperty(name = "MaxFilter", category = UIProperty.CATEGORY_CALCULATION,
-        min = 1, max = 200)
-    public int getAngleBinSize()
-    {
-      return (int) filterValue.getValueAt(0);
-    }
-
-    @Override
-    public double getValue()
-    {
-      return (int) filterValue.getValue();
     }
 
     protected String nameFor(final NumberDocument input)
@@ -142,22 +124,45 @@ public class MaxFilterOperation implements IOperation
         final NumberDocument thisIn = (NumberDocument) inpIter.next();
         final NumberDocument thisOut = (NumberDocument) outIter.next();
 
+        final String outName = thisOut.getName();
+
         final List<Double> vOut = new ArrayList<Double>();
         final List<Double> iOut = new ArrayList<Double>();
 
         // loop through the values
         final Iterator<Double> vIter = thisIn.getIterator();
-        final Iterator<Double> iIter = thisIn.getIndexIterator();
+
+        final Iterator<Double> iIter;
+        if (thisIn.isIndexed())
+        {
+          iIter = thisIn.getIndexIterator();
+        }
+        else
+        {
+          iIter = null;
+        }
 
         while (vIter.hasNext() && iIter.hasNext())
         {
-          final double thisV = vIter.next();
-          final double thisI = iIter.next();
+          final double thisValue = vIter.next();
 
-          if (operation.keep(thisI, thisV, this.filterValue.getValue()))
+          if (iIter != null)
           {
-            vOut.add(thisV);
-            iOut.add(thisI);
+            final double thisIndex = iIter.next();
+
+            if (operation.keep(thisIndex, thisValue, this.filterValue
+                .getValue()))
+            {
+              vOut.add(thisValue);
+              iOut.add(thisIndex);
+            }
+          }
+          else
+          {
+            if (operation.keep(thisValue, this.filterValue.getValue()))
+            {
+              vOut.add(thisValue);
+            }
           }
         }
 
@@ -165,27 +170,50 @@ public class MaxFilterOperation implements IOperation
 
         final DoubleDataset outD;
         final DoubleDataset outIndex;
+
+        // did we find any?
         if (vOut.size() > 0)
         {
+          // yes.
           outD = (DoubleDataset) DatasetFactory.createFromObject(vOut);
-          outIndex = (DoubleDataset) DatasetFactory.createFromObject(iOut);
+
+          // is this dataset indexed?
+          if (iIter != null)
+          {
+            outIndex = (DoubleDataset) DatasetFactory.createFromObject(iOut);
+          }
+          else
+          {
+            outIndex = null;
+          }
         }
         else
         {
+          // no, didn't create any. Generate empty list
           final List<Double> dList = new ArrayList<Double>();
           outD = DatasetFactory.createFromList(DoubleDataset.class, dList);
-          outIndex = DatasetFactory.createFromList(DoubleDataset.class, dList);
+          if (iIter != null)
+          {
+            outIndex =
+                DatasetFactory.createFromList(DoubleDataset.class, dList);
+          }
+          else
+          {
+            outIndex = null;
+          }
         }
 
-        // ok, create the output dataset
+        // do we have any index data?
+        if (outIndex != null)
+        {
+          final AxesMetadata am = new AxesMetadataImpl();
+          am.initialize(1);
+          am.setAxis(0, outIndex);
+          outD.addMetadata(am);
+        }
 
-        final AxesMetadata am = new AxesMetadataImpl();
-        am.initialize(1);
-        am.setAxis(0, outIndex);
-        outD.addMetadata(am);
-
-        // and corret the name
-        outD.setName(nameFor(thisIn));
+        // and provide the existing name
+        outD.setName(outName);
 
         // and store it
         thisOut.setDataset(outD);
@@ -204,32 +232,20 @@ public class MaxFilterOperation implements IOperation
         out.fireDataChanged();
       }
     }
-
-    public void setAngleBinSize(final int val)
-    {
-      filterValue.setValue(val);
-
-      // ok, fire update
-      this.recalculate(null);
-    }
-
-    @Override
-    public void setValue(final double value)
-    {
-      filterValue.setValue(value);
-    }
-
-    @Override
-    public Range getRange()
-    {
-      return new Range(0, 200);
-    }
-
   }
 
   private static interface FilterOperation
   {
     String getName();
+
+    /**
+     * should we keep this data value?
+     * 
+     * @param value
+     * @param filterValue
+     * @return
+     */
+    boolean keep(double value, double filterValue);
 
     /**
      * should we keep this data value?
@@ -260,10 +276,16 @@ public class MaxFilterOperation implements IOperation
     }
 
     @Override
+    public boolean keep(final double value, final double filterValue)
+    {
+      return value <= filterValue;
+    }
+
+    @Override
     public boolean keep(final double index, final double value,
         final double filterValue)
     {
-      return value <= filterValue;
+      return keep(value, filterValue);
     }
 
     @Override
@@ -282,10 +304,16 @@ public class MaxFilterOperation implements IOperation
     }
 
     @Override
+    public boolean keep(final double value, final double filterValue)
+    {
+      return value >= filterValue;
+    }
+
+    @Override
     public boolean keep(final double index, final double value,
         final double filterValue)
     {
-      return value >= filterValue;
+      return keep(value, filterValue);
     }
 
     @Override
