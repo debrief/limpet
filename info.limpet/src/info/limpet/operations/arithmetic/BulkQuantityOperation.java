@@ -31,19 +31,132 @@ import java.util.List;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.Unit;
 
-import org.eclipse.january.dataset.Comparisons;
-import org.eclipse.january.dataset.Comparisons.Monotonicity;
-import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
-import org.eclipse.january.dataset.ILazyDataset;
-import org.eclipse.january.metadata.AxesMetadata;
 
 public abstract class BulkQuantityOperation implements IOperation
 {
 
   private final CollectionComplianceTests aTests =
       new CollectionComplianceTests();
+
+  /**
+   * signature for helper that can perform our bulk operation
+   * 
+   * @author Ian
+   * 
+   */
+  private static interface PerformOp
+  {
+
+    IDataset perform(final BulkQuantityCommand bulkQuantityCommand,
+        final List<IStoreItem> inputs, final IOperationPerformer operation);
+
+  }
+
+  /**
+   * perform the operation with interpolated values
+   * 
+   * @author Ian
+   * 
+   */
+  private static class PerformInterpolation implements PerformOp
+  {
+
+    @Override
+    public IDataset perform(final BulkQuantityCommand command,
+        List<IStoreItem> inputs, IOperationPerformer operation)
+    {
+
+      final NumberDocument longest =
+          (NumberDocument) getLongestIndexedCollection(inputs);
+      int shape = longest.getDataset().getShape()[0];
+
+      DoubleDataset outputIndices = longest.getIndexValues();
+
+      DoubleDataset current = command.getInitial(shape);
+      // if there are indices, store them
+      command.assignOutputIndices(current, outputIndices);
+
+      for (IStoreItem item : inputs)
+      {
+        NumberDocument doc = (NumberDocument) item;
+        DoubleDataset thisD = (DoubleDataset) doc.getDataset();
+
+        // hmm, is this a singleton?
+        if (doc.size() == 1)
+        {
+          // if it's just a singleton, we'll add the same value to each
+          // results value
+          current = (DoubleDataset) operation.perform(current, thisD, null);
+
+          // if there are indices, store them
+          command.assignOutputIndices(current, outputIndices);
+        }
+        else
+        {
+          // apply our operation to the two datasets
+          current =
+              (DoubleDataset) InterpolatedMaths.performWithInterpolation(
+                  current, thisD, null, operation);
+        }
+      }
+
+      return current;
+    }
+
+  }
+
+  /**
+   * perform the operation with indexed values
+   * 
+   * @author Ian
+   * 
+   */
+  private static class PerformIndexed implements PerformOp
+  {
+
+    @Override
+    public IDataset perform(BulkQuantityCommand command,
+        List<IStoreItem> inputs, IOperationPerformer operation)
+    {
+      NumberDocument longest =
+          (NumberDocument) getLongestIndexedCollection(inputs);
+      if (longest == null)
+      {
+        // no, no indexed data
+        longest = (NumberDocument) getLongestCollection(inputs);
+      }
+      int shape = longest.getDataset().getShape()[0];
+
+      final DoubleDataset outputIndices;
+      if (longest.isIndexed())
+      {
+        outputIndices = longest.getIndexValues();
+      }
+      else
+      {
+        outputIndices = null;
+      }
+
+      DoubleDataset current = command.getInitial(shape);
+      // if there are indices, store them
+      command.assignOutputIndices(current, outputIndices);
+      for (IStoreItem item : inputs)
+      {
+        NumberDocument doc = (NumberDocument) item;
+        DoubleDataset thisD = (DoubleDataset) doc.getDataset();
+        current = (DoubleDataset) operation.perform(current, thisD, null);
+
+        if (outputIndices != null)
+        {
+          // if there are indices, store them
+          command.assignOutputIndices(current, outputIndices);
+        }
+      }
+      return current;
+    }
+  }
 
   /**
    * the command that actually produces data
@@ -53,25 +166,11 @@ public abstract class BulkQuantityOperation implements IOperation
    */
   public abstract class BulkQuantityCommand extends CoreQuantityCommand
   {
-
-    @SuppressWarnings("unused")
-    private final IDocument<?> timeProvider;
-
     public BulkQuantityCommand(final String title, final String description,
         final IStoreGroup store, final boolean canUndo, final boolean canRedo,
         final List<IStoreItem> inputs, final IContext context)
     {
-      this(title, description, store, canUndo, canRedo, inputs, null, context);
-    }
-
-    public BulkQuantityCommand(final String title, final String description,
-        final IStoreGroup store, final boolean canUndo, final boolean canRedo,
-        final List<IStoreItem> inputs, final IDocument<?> timeProvider,
-        final IContext context)
-    {
       super(title, description, store, canUndo, canRedo, inputs, context);
-
-      this.timeProvider = timeProvider;
     }
 
     protected String generateName()
@@ -129,162 +228,27 @@ public abstract class BulkQuantityOperation implements IOperation
     {
       final IDataset res;
 
-      // keep track of the indices to use in the output
-      boolean doInterp = false;
-      Dataset outputIndices = null;
+      // sort out what our data's like
+      final PerformOp performOp;
 
-      // quick check
-      if (getATests().allEqualIndexedOrSingleton(getInputs()))
+      final List<IStoreItem> inputs = getInputs();
+
+      if (getATests().allEqualIndexedOrSingleton(inputs))
       {
-        doInterp = true;
-        NumberDocument longestDoc =
-            (NumberDocument) getLongestCollection(getInputs());
-        outputIndices = longestDoc.getIndexValues();
+        performOp = new PerformInterpolation();
+      }
+      else if (getATests().allEqualLengthOrSingleton(inputs))
+      {
+        performOp = new PerformIndexed();
       }
       else
       {
-        // we're probably going to be interpolating
-        // loop through the inputs
-        DoubleDataset existingAxis = null;
-
-        for (final IStoreItem item : getInputs())
-        {
-          final NumberDocument doc = (NumberDocument) item;
-
-          final DoubleDataset first = (DoubleDataset) doc.getDataset();
-
-          // look for axes metadata
-          final AxesMetadata axis = first.getFirstMetadata(AxesMetadata.class);
-
-          if (axis != null && axis.getAxes() != null
-              && axis.getAxes().length == 1)
-          {
-            // ok, is that axis monotonic?
-            final ILazyDataset thisAxis = axis.getAxes()[0];
-            final Monotonicity axis1Mono =
-                Comparisons.findMonotonicity(thisAxis);
-
-            if (axis1Mono.equals(Monotonicity.NOT_ORDERED))
-            {
-              // ok, not ordered. we can't use it
-              doInterp = false;
-
-              // see if we have a set of output indices we can use
-              outputIndices = findIndexDataset();
-
-              // ok, we're done. we can drop out.
-              break;
-            }
-            else
-            {
-              // do we have an existing axis?
-              if (existingAxis == null)
-              {
-                existingAxis = (DoubleDataset) thisAxis;
-              }
-              else
-              {
-                // ok, check if they match
-                if (existingAxis.equals(thisAxis) && doInterp)
-                {
-                  // identical indexes, we don't need to intepolate
-                  doInterp = false;
-                  outputIndices = (Dataset) thisAxis;
-                }
-                else
-                {
-                  doInterp = true;
-                }
-              }
-            }
-          }
-        }
+        performOp = null;
       }
 
-      // how long st output dataset?
-      final int shape;
-      if (doInterp)
+      if (performOp != null)
       {
-        final NumberDocument longest =
-            (NumberDocument) getLongestIndexedCollection(getInputs());
-        shape = longest.getDataset().getShape()[0];
-
-        if (outputIndices == null)
-        {
-          outputIndices = longest.getIndexValues();
-        }
-      }
-      else
-      {
-        NumberDocument longest =
-            (NumberDocument) getLongestIndexedCollection(getInputs());
-        if (longest == null)
-        {
-          // no, no indexed data
-          longest = (NumberDocument) getLongestCollection(getInputs());
-        }
-        shape = longest.getDataset().getShape()[0];
-
-        if (outputIndices == null && longest.isIndexed())
-        {
-          outputIndices = longest.getIndexValues();
-        }
-
-      }
-
-      if (doInterp)
-      {
-        final InterpolatedMaths.IOperationPerformer doAdd = getOperation();
-
-        DoubleDataset current = getInitial(shape);
-        // if there are indices, store them
-        assignOutputIndices(current, outputIndices);
-
-        for (IStoreItem item : getInputs())
-        {
-          NumberDocument doc = (NumberDocument) item;
-          DoubleDataset thisD = (DoubleDataset) doc.getDataset();
-
-          // hmm, is this a singleton?
-          if (doc.size() == 1)
-          {
-            // if it's just a singleton, we'll add the same value to each
-            // results value
-            current = (DoubleDataset) doAdd.perform(current, thisD, null);
-
-            // if there are indices, store them
-            assignOutputIndices(current, outputIndices);
-          }
-          else
-          {
-            // apply our operation to the two datasets
-            current =
-                (DoubleDataset) InterpolatedMaths.performWithInterpolation(
-                    current, thisD, null, doAdd);
-          }
-        }
-
-        res = current;
-
-      }
-      else if (getATests().allEqualLengthOrSingleton(getInputs()))
-      {
-
-        DoubleDataset current = getInitial(shape);
-        // if there are indices, store them
-        assignOutputIndices(current, outputIndices);
-        for (IStoreItem item : getInputs())
-        {
-          NumberDocument doc = (NumberDocument) item;
-          DoubleDataset thisD = (DoubleDataset) doc.getDataset();
-          current =
-              (DoubleDataset) getOperation().perform(current, thisD, null);
-
-          // if there are indices, store them
-          assignOutputIndices(current, outputIndices);
-        }
-
-        res = current;
+        res = performOp.perform(this, inputs, getOperation());
       }
       else
       {
@@ -368,7 +332,8 @@ public abstract class BulkQuantityOperation implements IOperation
    */
   protected abstract boolean appliesTo(List<IStoreItem> selection);
 
-  protected IDocument<?> getLongestCollection(final List<IStoreItem> selection)
+  protected static IDocument<?> getLongestCollection(
+      final List<IStoreItem> selection)
   {
     // find the longest time series.
     IDocument<?> longest = null;
@@ -393,7 +358,7 @@ public abstract class BulkQuantityOperation implements IOperation
     return longest;
   }
 
-  protected IDocument<?> getLongestIndexedCollection(
+  protected static IDocument<?> getLongestIndexedCollection(
       final List<IStoreItem> selection)
   {
     // find the longest time series.
