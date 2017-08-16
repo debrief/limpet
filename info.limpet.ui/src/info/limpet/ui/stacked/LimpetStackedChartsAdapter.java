@@ -10,6 +10,7 @@ import info.limpet.stackedcharts.model.Dataset;
 import info.limpet.stackedcharts.model.Datum;
 import info.limpet.stackedcharts.model.PlainStyling;
 import info.limpet.stackedcharts.model.ScatterSet;
+import info.limpet.stackedcharts.model.Styling;
 import info.limpet.stackedcharts.model.impl.StackedchartsFactoryImpl;
 import info.limpet.stackedcharts.ui.view.adapter.IStackedDatasetAdapter;
 import info.limpet.stackedcharts.ui.view.adapter.IStackedScatterSetAdapter;
@@ -91,12 +92,19 @@ public class LimpetStackedChartsAdapter implements IStackedDatasetAdapter,
     }
   }
 
-  @SuppressWarnings(
-  {})
+  private Color getRandomColor()
+  {
+    final Random random = new Random();
+    final float h = random.nextFloat();
+    final float s = random.nextFloat();
+    final float b = 0.8f + ((1f - 0.8f) * random.nextFloat());
+    return Color.getHSBColor(h, s, b);
+  }
+
   @Override
   public List<Dataset> convertToDataset(Object data)
   {
-    List<Dataset> res = null;
+    final List<Dataset> res = new ArrayList<Dataset>();
 
     // we should have already checked, but just
     // double-check we can handle it
@@ -107,93 +115,23 @@ public class LimpetStackedChartsAdapter implements IStackedDatasetAdapter,
       // have a look at the type
       final PlainStyling plainS = factory.createPlainStyling();
 
-      Random random = new Random();
-      float h = random.nextFloat();
-      float s = random.nextFloat();
-      float b = 0.8f + ((1f - 0.8f) * random.nextFloat());
-      Color c = Color.getHSBColor(h, s, b);
-      plainS.setColor(c);
+      // give it a color
+      plainS.setColor(getRandomColor());
 
       if (data instanceof DocumentWrapper)
       {
         DocumentWrapper cw = (DocumentWrapper) data;
-        IDocument<?> collection = cw.getDocument();
-        if (collection.isQuantity() && collection.isIndexed())
-        {
-
-          NumberDocument qq = (NumberDocument) collection;
-          final Dataset dataset = factory.createDataset();
-          populateDataset(factory, qq, dataset);
-
-          // ok, register a listener for collection changes
-          @SuppressWarnings("unused")
-          CollectionChangeListener newListener =
-              new CollectionChangeListener(qq, dataset);
-
-          // have we got a results object yet?
-          if (res == null)
-          {
-            res = new ArrayList<Dataset>();
-          }
-
-          // give it some style
-          dataset.setStyling(plainS);
-
-          res.add(dataset);
-        }
+        processDocumentWrapper(res, cw, factory, plainS);
       }
       else if (data instanceof GroupWrapper)
       {
         GroupWrapper groupW = (GroupWrapper) data;
-        IStoreGroup group = groupW.getGroup();
-        Iterator<IStoreItem> cIter = group.iterator();
-        while (cIter.hasNext())
-        {
-          IStoreItem thisI = (IStoreItem) cIter.next();
-          if (thisI instanceof IDocument)
-          {
-            IDocument<?> thisC = (IDocument<?>) thisI;
-            if (thisC.isQuantity() && thisC.isIndexed())
-            {
-              List<Dataset> newItems = convertToDataset(thisC);
-
-              if (newItems != null && newItems.size() > 0)
-              {
-                if (res == null)
-                {
-                  res = new ArrayList<Dataset>();
-                }
-                res.addAll(newItems);
-              }
-            }
-          }
-
-        }
+        processGroupWrapper(res, groupW);
       }
       else if (data instanceof IDocument)
       {
         IDocument<?> coll = (IDocument<?>) data;
-        if (coll.isQuantity() && coll.isIndexed())
-        {
-          Dataset dataset = factory.createDataset();
-          populateDataset(factory, (NumberDocument) coll, dataset);
-
-          // setup the listener
-          NumberDocument tempColl = (NumberDocument) coll;
-          @SuppressWarnings("unused")
-          CollectionChangeListener listener =
-              new CollectionChangeListener(tempColl, dataset);
-
-          // give it some style
-          dataset.setStyling(plainS);
-
-          // collate the results
-          if (res == null)
-          {
-            res = new ArrayList<Dataset>();
-          }
-          res.add(dataset);
-        }
+        processDocument(res, coll, factory, plainS);
       }
       else if (data instanceof List)
       {
@@ -203,10 +141,6 @@ public class LimpetStackedChartsAdapter implements IStackedDatasetAdapter,
           List<Dataset> items = convertToDataset(item);
           if (items != null)
           {
-            if (res == null)
-            {
-              res = new ArrayList<Dataset>();
-            }
             res.addAll(items);
           }
         }
@@ -214,6 +148,74 @@ public class LimpetStackedChartsAdapter implements IStackedDatasetAdapter,
     }
 
     return res;
+  }
+
+  private void processDocument(List<Dataset> res, IDocument<?> coll,
+      StackedchartsFactoryImpl factory, Styling plainS)
+  {
+    if (coll.isQuantity() && coll.isIndexed())
+    {
+      Dataset dataset = factory.createDataset();
+      populateDataset(factory, (NumberDocument) coll, dataset);
+
+      // setup the listener
+      NumberDocument tempColl = (NumberDocument) coll;
+      @SuppressWarnings("unused")
+      CollectionChangeListener listener =
+          new CollectionChangeListener(tempColl, dataset);
+
+      // give it some style
+      dataset.setStyling(plainS);
+
+      // collate the results
+      res.add(dataset);
+    }
+  }
+
+  private void processGroupWrapper(final List<Dataset> res,
+      final GroupWrapper groupW)
+  {
+    final IStoreGroup group = groupW.getGroup();
+    final Iterator<IStoreItem> cIter = group.iterator();
+    while (cIter.hasNext())
+    {
+      final IStoreItem thisI = (IStoreItem) cIter.next();
+      if (thisI instanceof IDocument)
+      {
+        final IDocument<?> thisC = (IDocument<?>) thisI;
+        if (thisC.isQuantity() && thisC.isIndexed())
+        {
+          final List<Dataset> newItems = convertToDataset(thisC);
+
+          if (newItems != null && newItems.size() > 0)
+          {
+            res.addAll(newItems);
+          }
+        }
+      }
+    }
+  }
+
+  private void processDocumentWrapper(List<Dataset> res, DocumentWrapper cw,
+      StackedchartsFactoryImpl factory, Styling plainS)
+  {
+    IDocument<?> collection = cw.getDocument();
+    if (collection.isQuantity() && collection.isIndexed())
+    {
+      NumberDocument qq = (NumberDocument) collection;
+      final Dataset dataset = factory.createDataset();
+      populateDataset(factory, qq, dataset);
+
+      // ok, register a listener for collection changes
+      @SuppressWarnings("unused")
+      CollectionChangeListener newListener =
+          new CollectionChangeListener(qq, dataset);
+
+      // give it some style
+      dataset.setStyling(plainS);
+
+      res.add(dataset);
+    }
   }
 
   @Override
@@ -290,30 +292,26 @@ public class LimpetStackedChartsAdapter implements IStackedDatasetAdapter,
           // check if its' a series of timestampes
           NumberDocument qc = (NumberDocument) collection;
           Unit<?> units = qc.getUnits();
-          if (units.equals(Duration.UNIT))
+          if (units.equals(Duration.UNIT) && qc.size() > 0)
           {
-            // ok, create scatter set
-            if (qc.size() > 0)
+            ScatterSet scatter = factory.createScatterSet();
+            scatter.setName(qc.getName());
+            final Iterator<Double> times = qc.getIndexIterator();
+            while (times.hasNext())
             {
-              ScatterSet scatter = factory.createScatterSet();
-              scatter.setName(qc.getName());
-              final Iterator<Double> times = qc.getIndexIterator();
-              while (times.hasNext())
-              {
-                final double time = times.next();
-                Datum datum = factory.createDatum();
-                datum.setVal(time);
-                scatter.getDatums().add(datum);
-              }
-              // do we have a results store?
-              if (res == null)
-              {
-                res = new ArrayList<ScatterSet>();
-              }
-
-              // ok, store it
-              res.add(scatter);
+              final double time = times.next();
+              Datum datum = factory.createDatum();
+              datum.setVal(time);
+              scatter.getDatums().add(datum);
             }
+            // do we have a results store?
+            if (res == null)
+            {
+              res = new ArrayList<ScatterSet>();
+            }
+
+            // ok, store it
+            res.add(scatter);
           }
         }
 
