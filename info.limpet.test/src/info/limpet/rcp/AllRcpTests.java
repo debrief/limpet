@@ -1,13 +1,13 @@
 package info.limpet.rcp;
 
+import junit.framework.TestSuite;
+
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
-import junit.framework.TestSuite;
-
 @Suite.SuiteClasses(
 { 
-	TestReflectivePropertySource.class,
+	TestReflectivePropertySource.class
 })
 
 @RunWith(Suite.class)

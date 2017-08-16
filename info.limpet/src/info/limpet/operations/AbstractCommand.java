@@ -79,7 +79,7 @@ public abstract class AbstractCommand implements ICommand
    * 
    */
   private boolean dynamic = true;
-  private transient UUID uuid;
+  final private UUID uuid;
   private final transient IContext context;
 
   public AbstractCommand(final String title, final String description,
@@ -95,6 +95,8 @@ public abstract class AbstractCommand implements ICommand
 
     this.inputs = new ArrayList<IStoreItem>();
     this.outputs = new ArrayList<Document<?>>();
+    
+    this.uuid = UUID.randomUUID();
 
     // store any inputs, if we have any
     if (inputs != null)
@@ -376,10 +378,6 @@ public abstract class AbstractCommand implements ICommand
   @Override
   public UUID getUUID()
   {
-    if (uuid == null)
-    {
-      uuid = UUID.randomUUID();
-    }
     return uuid;
   }
 
@@ -447,7 +445,7 @@ public abstract class AbstractCommand implements ICommand
     {
       final Iterator<Point2D> lIter = track.getLocationIterator();
       final Iterator<Double> tIter = track.getIndexIterator();
-      while (lIter.hasNext())
+      while (lIter.hasNext() && tIter.hasNext())
       {
         final double thisT = tIter.next();
         final Point2D pt = lIter.next();
@@ -550,7 +548,7 @@ public abstract class AbstractCommand implements ICommand
 
       final Iterator<Double> lIter = document.getIterator();
       final Iterator<Double> tIter = document.getIndexIterator();
-      while (lIter.hasNext())
+      while (lIter.hasNext() && tIter.hasNext())
       {
         final double thisT = tIter.next();
         final double pt = lIter.next();

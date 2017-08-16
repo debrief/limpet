@@ -50,8 +50,8 @@ import org.eclipse.january.dataset.StringDataset;
 
 public class SampleData
 {
-  public static final Unit<?> MILLIS = SI.MILLI(SI.SECOND)
-      .asType(Duration.class);
+  public static final Unit<?> MILLIS = SI.MILLI(SECOND).asType(
+      Duration.class);
 
   public static final String SPEED_DATA_FOLDER = "Speed data";
   public static final String SPEED_THREE_LONGER = "Speed Three (longer)";
@@ -70,7 +70,7 @@ public class SampleData
   public static final String SPEED_TWO = "Speed Two Time";
   public static final String SPEED_FOUR = "Speed Four Time";
   public static final String SPEED_ONE_RAD = "Speed One Rad Noise time";
-  public static final String RAD_NOISE_LOOKUP = "Radiated Noise Lookup";  
+  public static final String RAD_NOISE_LOOKUP = "Radiated Noise Lookup";
   public static final String TRACK_ONE = "Track One Time";
   public static final String COMPOSITE_ONE = "Composite Track One";
   public static final String TRACK_TWO = "Track Two Time";
@@ -113,6 +113,8 @@ public class SampleData
   public StoreGroup getData(long count)
   {
     final StoreGroup list = new StoreGroup("Sample Data");
+    IContext context = new MockContext();
+    List<IStoreItem> selection = new ArrayList<IStoreItem>();
 
     // // collate our data series
     NumberDocumentBuilder freq1 =
@@ -133,7 +135,7 @@ public class SampleData
     NumberDocumentBuilder speedEarly1 =
         new NumberDocumentBuilder(SPEED_EARLY, METRE.divide(SECOND).asType(
             Velocity.class), null, SampleData.MILLIS);
-    NumberDocumentBuilder speedIrregular =
+    NumberDocumentBuilder speedIrregularB =
         new NumberDocumentBuilder(SPEED_IRREGULAR2, METRE.divide(SECOND)
             .asType(Velocity.class), null, SampleData.MILLIS);
     NumberDocumentBuilder speedSeries4 =
@@ -141,11 +143,10 @@ public class SampleData
             Velocity.class), null, SampleData.MILLIS);
     NumberDocumentBuilder speedRadNoise =
         new NumberDocumentBuilder(SPEED_ONE_RAD, NonSI.DECIBEL, null,
-            SampleData.MILLIS);    
+            SampleData.MILLIS);
     NumberDocumentBuilder radNoiseLookup =
-        new NumberDocumentBuilder(RAD_NOISE_LOOKUP, NonSI.DECIBEL, null,
-            METRE.divide(SECOND).asType(
-                Velocity.class));
+        new NumberDocumentBuilder(RAD_NOISE_LOOKUP, NonSI.DECIBEL, null, METRE
+            .divide(SECOND).asType(Velocity.class));
     NumberDocumentBuilder length1 =
         new NumberDocumentBuilder(LENGTH_ONE, METRE.asType(Length.class), null,
             null);
@@ -181,9 +182,11 @@ public class SampleData
     LocationDocumentBuilder singleLoc2 =
         new LocationDocumentBuilder(SINGLETON_LOC_2, null, null);
     LocationDocumentBuilder track1_2D =
-        new LocationDocumentBuilder(TRACK_2D_ONE, null, SampleData.MILLIS, SI.METER);
+        new LocationDocumentBuilder(TRACK_2D_ONE, null, SampleData.MILLIS,
+            SI.METER);
     LocationDocumentBuilder track2_2D =
-        new LocationDocumentBuilder(TRACK_2D_TWO, null, SampleData.MILLIS, SI.METER);
+        new LocationDocumentBuilder(TRACK_2D_TWO, null, SampleData.MILLIS,
+            SI.METER);
 
     long thisTime = 0;
 
@@ -207,17 +210,17 @@ public class SampleData
       speedSeries1b.add(thisTime, thisSpeedOne);
       speedSeries2b.add(thisTime, 7 + 2 * Math.sin(i));
       speedRadNoise.add(thisTime, thisRadNoise);
-      
+
       // we want the irregular series to only have occasional
       if (i % 3 == 0)
       {
-        speedIrregular.add(thisTime + 500 * 45, 7 + 2 * Math.sin(i + 1));
+        speedIrregularB.add(thisTime + 500 * 45, 7 + 2 * Math.sin(i + 1));
       }
       else
       {
         if (i % 7 > 4)
         {
-          speedIrregular.add(thisTime + 500 * 25 * 2, 7 + 2 * Math.sin(i - 1));
+          speedIrregularB.add(thisTime + 500 * 25 * 2, 7 + 2 * Math.sin(i - 1));
         }
       }
 
@@ -255,18 +258,18 @@ public class SampleData
 
       track1.add(thisTime, p1);
       track2.add(thisTime, p2);
-      
+
       track1_2D.add(thisTime, p1);
       track2_2D.add(thisTime, p2);
     }
 
     // add an extra item to speedSeries3
     speedSeries3.add(thisTime + 12 * 500 * 60, 12d);
-    
+
     // ok, generate the radiated noise lookup table
-    for(int i=0;i<30;i+=5)
+    for (int i = 0; i < 30; i += 5)
     {
-      radNoiseLookup.add(i,Math.pow(i, 2.05));
+      radNoiseLookup.add(i, Math.pow(i, 2.05));
     }
 
     // give the singletons a value
@@ -283,10 +286,11 @@ public class SampleData
 
     final NumberDocument speedSeries1 = speedSeries1b.toDocument();
     final NumberDocument speedSeries2 = speedSeries2b.toDocument();
+    final NumberDocument speedIrregular = speedIrregularB.toDocument();
 
     StoreGroup group1 = new StoreGroup(SPEED_DATA_FOLDER);
     group1.add(speedSeries1);
-    group1.add(speedIrregular.toDocument());
+    group1.add(speedIrregular);
     group1.add(speedEarly1.toDocument());
     group1.add(speedSeries2);
     group1.add(speedRadNoise.toDocument());
@@ -357,10 +361,20 @@ public class SampleData
     // res.addAll(list);
 
     // perform an operation, so we have some audit trail
-    List<IStoreItem> selection = new ArrayList<IStoreItem>();
     selection.add(speedSeries1);
     selection.add(speedSeries2);
-    IContext context = new MockContext();
+    Collection<ICommand> actionsA =
+        new AddQuantityOperation().actionsFor(selection, list, context);
+    Iterator<ICommand> addIterA = actionsA.iterator();
+    // addIter.next();
+    ICommand addActionA = addIterA.next();
+    addActionA.execute();
+
+    // perform an operation, so we have some audit trail
+    selection.clear();
+    selection.add(speedSeries1);
+    selection.add(speedSeries2);
+    selection.add(speedIrregular);
     Collection<ICommand> actions =
         new AddQuantityOperation().actionsFor(selection, list, context);
     Iterator<ICommand> addIter = actions.iterator();

@@ -28,9 +28,13 @@ import javax.measure.unit.Unit;
 import junit.framework.TestCase;
 
 import org.eclipse.january.DatasetException;
+import org.eclipse.january.MetadataException;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.Maths;
+import org.eclipse.january.metadata.AxesMetadata;
 
 public class TestArithmeticCollections extends TestCase
 {
@@ -104,6 +108,43 @@ public class TestArithmeticCollections extends TestCase
 
   private final IContext context = new MockContext();
 
+  public void testAddQuantityTemporalInterpSample() throws MetadataException
+  {
+    StoreGroup data = new SampleData().getData(20);
+    final List<IStoreItem> selection = new ArrayList<IStoreItem>();
+    selection.add(data.get(SampleData.SPEED_ONE));
+    selection.add(data.get(SampleData.SPEED_TWO));
+    selection.add(data.get(SampleData.SPEED_IRREGULAR2));
+
+    final StoreGroup store = new StoreGroup("data store");
+    final Collection<ICommand> commands =
+        new AddQuantityOperation().actionsFor(selection, store, context);
+    final ICommand firstC = commands.iterator().next();
+    assertNotNull("found command", firstC);
+    firstC.execute();
+    NumberDocument output = (NumberDocument) firstC.getOutputs().get(0);
+    
+    output = (NumberDocument) data.get(output.getName());
+    
+    assertNotNull("found output", output);
+    
+    final int dataLen = output.size();
+    assertEquals("17 items", 17, dataLen);
+    
+    DoubleDataset ds = (DoubleDataset) output.getDataset();
+    List<AxesMetadata> ameta = ds.getMetadata(AxesMetadata.class);
+    assertNotNull("found metadata");
+    assertEquals("one set", 1, ameta.size());
+    AxesMetadata am = ameta.get(0);
+    ILazyDataset[] axes = am.getAxes();
+    assertEquals("one axis", 1, axes.length);
+    DoubleDataset thisD = (DoubleDataset) axes[0];
+    assertEquals("correct length of data", dataLen, thisD.getSize());
+    DoubleDataset indexValues = output.getIndexValues();
+    assertEquals("same length", dataLen, indexValues.getData().length - indexValues.getOffset());
+  }
+
+  
   public void testAddQuantityTemporalInterp()
   {
     final NumberDocumentBuilder tqb1 =
@@ -123,12 +164,22 @@ public class TestArithmeticCollections extends TestCase
     tqb2.add(340, 34d);
     tqb2.add(440, 44d);
 
+    final NumberDocumentBuilder tqb3 =
+        new NumberDocumentBuilder("Some data3", METRE.divide(SECOND).asType(
+            Velocity.class), null, SampleData.MILLIS);
+    tqb3.add(120, 12d);
+    tqb3.add(240, 24d);
+    tqb3.add(540, 54d);
+    
+    
     final NumberDocument tq1 = tqb1.toDocument();
     final NumberDocument tq2 = tqb2.toDocument();
+    final NumberDocument tq3 = tqb3.toDocument();
 
     final List<IStoreItem> selection = new ArrayList<IStoreItem>();
     selection.add(tq1);
     selection.add(tq2);
+    selection.add(tq3);
 
     final StoreGroup store = new StoreGroup("data store");
     final Collection<ICommand> commands =
@@ -141,22 +192,22 @@ public class TestArithmeticCollections extends TestCase
 
     assertEquals("new collection created", 1, store.size());
 
-    final IDocument<?> series =
-        (IDocument<?>) store.get("Sum of Some data1 + Some data2");
+    final IDocument<?> series = firstC.getOutputs().get(0);
     assertTrue("non empty", series.size() > 0);
     assertTrue("temporal", series.isIndexed());
     assertTrue("quantity", series.isQuantity());
+    assertEquals("correct name", "Some data1 + Some data2 + Some data3",  series.getName());
 
     final NumberDocument tq = (NumberDocument) series;
 
     assertEquals("is correct length", 5, tq.size());
     assertNull("returned null for out of intersection", tq.interpolateValue(
         100, InterpMethod.Linear));
-    assertEquals("returned correct value", 46d, tq.interpolateValue(230,
+    assertEquals("returned correct value", 69d, tq.interpolateValue(230,
         InterpMethod.Linear), 0.001);
-    assertEquals("returned correct value", 60d, tq.interpolateValue(300,
+    assertEquals("returned correct value", 90d, tq.interpolateValue(300,
         InterpMethod.Linear), 0.001);
-    assertEquals("returned correct value", 80d, tq.interpolateValue(400,
+    assertEquals("returned correct value", 120d, tq.interpolateValue(400,
         InterpMethod.Linear), 0.001);
     assertNull("returned null for out of intersection", tq.interpolateValue(
         420, InterpMethod.Linear));
@@ -659,6 +710,141 @@ public class TestArithmeticCollections extends TestCase
         InterpMethod.Linear), 0.001);
     assertEquals("returned correct value", 40d, tq.interpolateValue(400,
         InterpMethod.Linear), 0.001);
+  }
+
+  public void testAddQuantityTemporalIndexed1()
+  {
+    final NumberDocumentBuilder tqb1 =
+        new NumberDocumentBuilder("Some data1", METRE.divide(SECOND).asType(
+            Velocity.class), null, null);
+    tqb1.add(10d);
+    tqb1.add(23d);
+    tqb1.add(27d);
+    tqb1.add(30d);
+    tqb1.add(32d);
+    tqb1.add(40d);
+  
+    final NumberDocumentBuilder tqb2 =
+        new NumberDocumentBuilder("Some data2", METRE.divide(SECOND).asType(
+            Velocity.class), null, null);
+    tqb2.add(20d);
+    tqb2.add(33d);
+    tqb2.add(37d);
+    tqb2.add(40d);
+    tqb2.add(52d);
+    tqb2.add(60d);
+  
+    final NumberDocumentBuilder tqb3 =
+        new NumberDocumentBuilder("Some data3", METRE.divide(SECOND).asType(
+            Velocity.class), null, null);
+    tqb3.add(20d);
+    tqb3.add(33d);
+    tqb3.add(37d);
+    tqb3.add(40d);
+    tqb3.add(42d);
+    tqb3.add(50d);
+    
+    
+    final NumberDocument tq1 = tqb1.toDocument();
+    final NumberDocument tq2 = tqb2.toDocument();
+    final NumberDocument tq3 = tqb3.toDocument();
+  
+    final List<IStoreItem> selection = new ArrayList<IStoreItem>();
+    selection.add(tq1);
+    selection.add(tq2);
+    selection.add(tq3);
+  
+    final StoreGroup store = new StoreGroup("data store");
+    final Collection<ICommand> commands =
+        new AddQuantityOperation().actionsFor(selection, store, context);
+    final ICommand firstC = commands.iterator().next();
+  
+    assertEquals("store empty", 0, store.size());
+  
+    firstC.execute();
+  
+    assertEquals("new collection created", 1, store.size());
+  
+    final IDocument<?> series = firstC.getOutputs().get(0);
+    assertTrue("non empty", series.size() > 0);
+    assertFalse("temporal", series.isIndexed());
+    assertTrue("quantity", series.isQuantity());
+    assertEquals("correct name", "Some data1 + Some data2 + Some data3",  series.getName());
+  
+    final NumberDocument tq = (NumberDocument) series;
+  
+    assertEquals("is correct length", 6, tq.size());
+    assertEquals("correct value", 50d, tq.getValueAt(0), 0.001);
+    assertEquals("correct value", 89d, tq.getValueAt(1), 0.001);
+    assertEquals("correct value", 101d, tq.getValueAt(2), 0.001);
+    assertEquals("correct value", 110d, tq.getValueAt(3), 0.001);
+    assertEquals("correct value", 126d, tq.getValueAt(4), 0.001);
+    assertEquals("correct value", 150d, tq.getValueAt(5), 0.001);
+  }
+
+  public void testAddQuantityTemporalIndexed2()
+  {
+    final NumberDocumentBuilder tqb1 =
+        new NumberDocumentBuilder("Some data1", METRE.divide(SECOND).asType(
+            Velocity.class), null, null);
+    tqb1.add(10d);
+    tqb1.add(23d);
+    tqb1.add(27d);
+    tqb1.add(30d);
+    tqb1.add(32d);
+    tqb1.add(40d);
+  
+    final NumberDocumentBuilder tqb2 =
+        new NumberDocumentBuilder("Some data2", METRE.divide(SECOND).asType(
+            Velocity.class), null, null);
+    tqb2.add(20d);
+  
+    final NumberDocumentBuilder tqb3 =
+        new NumberDocumentBuilder("Some data3", METRE.divide(SECOND).asType(
+            Velocity.class), null, null);
+    tqb3.add(20d);
+    tqb3.add(33d);
+    tqb3.add(37d);
+    tqb3.add(40d);
+    tqb3.add(42d);
+    tqb3.add(50d);
+    
+    
+    final NumberDocument tq1 = tqb1.toDocument();
+    final NumberDocument tq2 = tqb2.toDocument();
+    final NumberDocument tq3 = tqb3.toDocument();
+  
+    final List<IStoreItem> selection = new ArrayList<IStoreItem>();
+    selection.add(tq1);
+    selection.add(tq2);
+    selection.add(tq3);
+  
+    final StoreGroup store = new StoreGroup("data store");
+    final Collection<ICommand> commands =
+        new AddQuantityOperation().actionsFor(selection, store, context);
+    final ICommand firstC = commands.iterator().next();
+  
+    assertEquals("store empty", 0, store.size());
+  
+    firstC.execute();
+  
+    assertEquals("new collection created", 1, store.size());
+  
+    final IDocument<?> series = firstC.getOutputs().get(0);
+    assertTrue("non empty", series.size() > 0);
+    assertFalse("temporal", series.isIndexed());
+    assertTrue("quantity", series.isQuantity());
+    assertEquals("correct name", "Some data1 + Some data2 + Some data3",  series.getName());
+  
+    final NumberDocument tq = (NumberDocument) series;
+  
+    assertEquals("is correct length", 6, tq.size());
+    assertEquals("correct value", 50d, tq.getValueAt(0), 0.001);
+    assertEquals("correct value", 76d, tq.getValueAt(1), 0.001);
+    assertEquals("correct value", 84d, tq.getValueAt(2), 0.001);
+    assertEquals("correct value", 90d, tq.getValueAt(3), 0.001);
+    assertEquals("correct value", 94d, tq.getValueAt(4), 0.001);
+    assertEquals("correct value", 110d, tq.getValueAt(5), 0.001);
   }
 
 }

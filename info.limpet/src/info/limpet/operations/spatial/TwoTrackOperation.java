@@ -252,7 +252,7 @@ public abstract class TwoTrackOperation implements IOperation
 
         // and the same for time
         final Double time;
-        if (timeIter != null)
+        if (timeIter != null && timeIter.hasNext())
         {
           time = timeIter.next();
         }

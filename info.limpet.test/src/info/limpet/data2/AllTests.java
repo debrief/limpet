@@ -28,30 +28,31 @@
  *****************************************************************************/
 package info.limpet.data2;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-
 import info.limpet.rcp.TestReflectivePropertySource;
 import junit.framework.TestSuite;
 
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+
 @Suite.SuiteClasses(
 { 
-	TestCollections.class,
-	TestArithmeticCollections.class,
-	TestDynamic.class,
-	TestExport.class,
-	TestReflectivePropertySource.class,
-	TestOperations.class,
-	TestAnalysis.class,
-	TestCsvParser.class,
-	TestRepParser.class,
-	TestLocations.class,
-	TestGeotoolsGeometry.class,
-	TestExport.class,
-	TestBistaticAngleCalculations.class,
-	TestPersistence.class,
-	TestGrids.class,
-	TestAdmin.class
+  TestAdmin.class,
+  TestAnalysis.class,
+  TestArithmeticCollections.class,
+  TestBistaticAngleCalculations.class,
+  TestCollectionCompliance.class,
+  TestCollections.class,
+  TestCsvParser.class,
+  TestDynamic.class,
+  TestExport.class,
+  TestExport.class,
+  TestGeotoolsGeometry.class,
+  TestGrids.class,
+  TestLocations.class,
+  TestOperations.class,
+  TestPersistence.class,
+  TestReflectivePropertySource.class,
+  TestRepParser.class
 })
 
 @RunWith(Suite.class)

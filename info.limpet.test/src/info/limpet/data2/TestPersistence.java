@@ -22,6 +22,7 @@ import info.limpet.impl.StoreGroup;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Iterator;
 
 import junit.framework.TestCase;
 
@@ -81,7 +82,15 @@ public class TestPersistence extends TestCase
       assertEquals("same units", speedDoc1.getUUID(), speedDoc2.getUUID());      
       assertEquals("same range", speedDoc1.getRange(), speedDoc2.getRange());
       assertEquals("same first value", speedDoc1.getIterator().next(), speedDoc2.getIterator().next());
-      assertEquals("same first index", speedDoc1.getIndexIterator().next(), speedDoc2.getIndexIterator().next());
+      
+      // note, we have to initialise the index iterators
+      final Iterator<Double> s1IndexIterator = speedDoc1.getIndexIterator();
+      final Iterator<Double> s2IndexIterator = speedDoc2.getIndexIterator();
+      s1IndexIterator.hasNext();
+      s2IndexIterator.hasNext();
+      
+      // ok, they're both pointing at the first element
+      assertEquals("same first index", s1IndexIterator.next(), s2IndexIterator.next());
       assertEquals("same quantity", speedDoc1.isQuantity(), speedDoc2.isQuantity());
       assertEquals("same indexed", speedDoc1.isIndexed(), speedDoc2.isIndexed());
       assertEquals("same predecessors", speedDoc1.getPrecedent(), speedDoc2.getPrecedent());

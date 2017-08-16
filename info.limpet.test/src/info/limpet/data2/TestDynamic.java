@@ -65,8 +65,7 @@ public class TestDynamic extends TestCase
 		assertEquals("new data created", storeSize + 1, store.size());
 
 		// ok, get the new dataset
-		NumberDocument resSeries = (NumberDocument) store
-				.get("Sum of Speed One Time + Speed Two Time");
+		NumberDocument resSeries = (NumberDocument) firstAction.getOutputs().get(0);
 		assertNotNull(resSeries);
 
 		// remember the units
@@ -125,8 +124,7 @@ public class TestDynamic extends TestCase
 		// now check the output changed again
 		events.clear();
 
-		NumberDocument newResSeries = (NumberDocument) store
-				.get("Sum of Speed Two Time + Sum of Speed One Time + Speed Two Time");
+		NumberDocument newResSeries = (NumberDocument) firstAction.getOutputs().get(0);
 		assertNotNull("found new series", newResSeries);
 		newResSeries.addChangeListener(listener);
 

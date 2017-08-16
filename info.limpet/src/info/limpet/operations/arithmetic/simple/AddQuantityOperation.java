@@ -16,10 +16,9 @@ package info.limpet.operations.arithmetic.simple;
 
 import info.limpet.ICommand;
 import info.limpet.IContext;
-import info.limpet.IDocument;
 import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
-import info.limpet.operations.arithmetic.BinaryQuantityOperation;
+import info.limpet.operations.arithmetic.BulkQuantityOperation;
 import info.limpet.operations.arithmetic.InterpolatedMaths;
 import info.limpet.operations.arithmetic.InterpolatedMaths.IOperationPerformer;
 
@@ -29,45 +28,65 @@ import java.util.List;
 import javax.measure.unit.Unit;
 
 import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.Maths;
 
-public class AddQuantityOperation extends BinaryQuantityOperation
+public class AddQuantityOperation extends BulkQuantityOperation
 {
 
-  public class AddQuantityValues extends BinaryQuantityCommand
+  public class AddQuantityValues extends BulkQuantityCommand
   {
-    final private String outputPrefix;
+    final private String outputSuffix;
     final private IOperationPerformer operation;
 
     public AddQuantityValues(final String name,
         final List<IStoreItem> selection, final IStoreGroup destination,
-        final IDocument<?> timeProvider, final IContext context,
-        final String outputPrefix, final IOperationPerformer operation)
+        final IContext context, final String outputPrefix,
+        final IOperationPerformer operation)
     {
-      super(name, "Add datasets", destination, false, false, selection,
-          timeProvider, context);
-      this.outputPrefix = outputPrefix;
+      super(name, "Add datasets", destination, false, false, selection, context);
+      this.outputSuffix = outputPrefix;
       this.operation = operation;
-    }
-
-    @Override
-    protected String getBinaryNameFor(final String name1, final String name2)
-    {
-      return outputPrefix + "Sum of " + name1 + " + " + name2;
-    }
-
-    @Override
-    protected Unit<?> getBinaryOutputUnit(final Unit<?> first,
-        final Unit<?> second)
-    {
-      // addition doesn't modify units, just use first ones
-      return first;
     }
 
     @Override
     protected IOperationPerformer getOperation()
     {
       return operation;
+    }
+
+    @Override
+    protected String getBulkNameFor(List<IStoreItem> items)
+    {
+      String res = "";
+      for (IStoreItem item : items)
+      {
+        if (!"".equals(res))
+        {
+          res += " + ";
+        }
+        res += item.getName();
+      }
+
+      if (outputSuffix != null && outputSuffix.length() > 0)
+      {
+        res += " (" + outputSuffix + ")";
+      }
+
+      return res;
+    }
+
+    @Override
+    protected Unit<?> getBulkOutputUnit(List<Unit<?>> units)
+    {
+      return units.get(0);
+    }
+
+    @Override
+    protected DoubleDataset getInitial(int shape)
+    {
+      return DatasetFactory.zeros(shape);
     }
   }
 
@@ -106,7 +125,8 @@ public class AddQuantityOperation extends BinaryQuantityOperation
     @Override
     public Dataset perform(final Dataset a, final Dataset b, final Dataset o)
     {
-      return Maths.add(a, b, o);
+      final Dataset res = Maths.add(a, b, o);
+      return res;
     }
   };
 
@@ -115,8 +135,6 @@ public class AddQuantityOperation extends BinaryQuantityOperation
       final IStoreGroup destination, final Collection<ICommand> res,
       final IContext context)
   {
-    final IDocument<?> timeProvider = null;
-
     final PowerAdder powerAdder = new PowerAdder();
 
     if (hasLogData(selection))
@@ -128,14 +146,13 @@ public class AddQuantityOperation extends BinaryQuantityOperation
       ICommand newC =
           new AddQuantityValues(
               "Logarithmic Add for provided series (indexed)", selection,
-              destination, timeProvider, context, "Log ", logAdder);
+              destination, context, "Log ", logAdder);
       res.add(newC);
 
       // just offer the log operation
       newC =
           new AddQuantityValues("Power Add for provided series (indexed)",
-              selection, destination, timeProvider, context, "Power ",
-              powerAdder);
+              selection, destination, context, "Power ", powerAdder);
       res.add(newC);
 
     }
@@ -145,7 +162,7 @@ public class AddQuantityOperation extends BinaryQuantityOperation
       final ICommand newC =
           new AddQuantityValues(
               "Add numeric values in provided series (indexed)", selection,
-              destination, timeProvider, context, "", powerAdder);
+              destination, context, "", powerAdder);
       res.add(newC);
     }
 
@@ -156,54 +173,48 @@ public class AddQuantityOperation extends BinaryQuantityOperation
       final IStoreGroup destination, final Collection<ICommand> res,
       final IContext context)
   {
-    final IDocument<?> longest = getLongestIndexedCollection(selection);
+    final PowerAdder powerAdder = new PowerAdder();
 
-    if (longest != null)
+    if (hasLogData(selection))
     {
-      final PowerAdder powerAdder = new PowerAdder();
+      final LogAdder logAdder = new LogAdder();
 
-      if (hasLogData(selection))
-      {
-        final LogAdder logAdder = new LogAdder();
+      ICommand newC =
+          new AddQuantityValues(
+              "Logarithmic Add for provided series (interpolated)", selection,
+              destination, context, "Log ", logAdder);
+      res.add(newC);
 
-        ICommand newC =
-            new AddQuantityValues(
-                "Logarithmic Add for provided series (interpolated)",
-                selection, destination, longest, context, "Log ", logAdder);
-        res.add(newC);
+      newC =
+          new AddQuantityValues("Power Add for provided series (interpolated)",
+              selection, destination, context, "Power ", powerAdder);
+      res.add(newC);
 
-        newC =
-            new AddQuantityValues(
-                "Power Add for provided series (interpolated)", selection,
-                destination, longest, context, "Power ", powerAdder);
-        res.add(newC);
-
-      }
-      else
-      {
-        final ICommand newC =
-            new AddQuantityValues(
-                "Add numeric values in provided series (interpolated)",
-                selection, destination, longest, context, "", powerAdder);
-        res.add(newC);
-      }
+    }
+    else
+    {
+      final ICommand newC =
+          new AddQuantityValues(
+              "Add numeric values in provided series (interpolated)",
+              selection, destination, context, "", powerAdder);
+      res.add(newC);
     }
   }
 
   @Override
   protected boolean appliesTo(final List<IStoreItem> selection)
   {
-    final boolean twoItems = selection.size() == 2;
+    final boolean atLeastTwoItems = selection.size() >= 2;
     final boolean nonEmpty = getATests().nonEmpty(selection);
     final boolean allQuantity = getATests().allQuantity(selection);
     final boolean suitableLength =
-        getATests().allEqualIndexed(selection)
+        getATests().allEqualIndexedOrSingleton(selection)
             || getATests().allEqualLengthOrSingleton(selection);
     final boolean equalDimensions = getATests().allEqualDimensions(selection);
     final boolean equalUnits = getATests().allEqualUnits(selection);
 
-    return twoItems && nonEmpty && allQuantity && suitableLength && equalDimensions
-        && equalUnits;
+    return atLeastTwoItems && nonEmpty && allQuantity && suitableLength
+        && equalDimensions && equalUnits;
   }
 
 }

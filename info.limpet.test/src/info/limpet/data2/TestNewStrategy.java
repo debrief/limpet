@@ -1,6 +1,7 @@
 package info.limpet.data2;
 
 import static javax.measure.unit.SI.METRE;
+import static javax.measure.unit.SI.SECOND;
 import info.limpet.ICommand;
 import info.limpet.IContext;
 import info.limpet.IDocument;
@@ -20,11 +21,13 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.measure.quantity.Length;
+import javax.measure.quantity.Velocity;
 
 import junit.framework.TestCase;
 
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.Slice;
 
 public class TestNewStrategy extends TestCase
 {
@@ -95,8 +98,8 @@ public class TestNewStrategy extends TestCase
 
     System.out.println(output);
 
-    assertEquals("correct name", "Sum of Speed One Time + Speed Two Time",
-        output.getName());
+    assertEquals("correct name", "Speed One Time + Speed Two Time", output
+        .getName());
     assertEquals("correct parent", "Destination", output.getParent().getName());
 
   }
@@ -104,6 +107,45 @@ public class TestNewStrategy extends TestCase
   public void testGenerateSampleData()
   {
     StoreGroup data = new SampleData().getData(10);
-    assertEquals("top level items created", 24, data.size());
+    assertEquals("top level items created", 25, data.size());
+  }
+
+  public void testIterators()
+  {
+    final NumberDocumentBuilder tqb1 =
+        new NumberDocumentBuilder("Some data1", METRE.divide(SECOND).asType(
+            Velocity.class), null, SampleData.MILLIS);
+    tqb1.add(100, 10d);
+    tqb1.add(230, 23d);
+    tqb1.add(270, 27d);
+    tqb1.add(300, 30d);
+    tqb1.add(320, 32d);
+    tqb1.add(400, 40d);
+
+    NumberDocument doc = tqb1.toDocument();
+    Iterator<Double> indIter = doc.getIndexIterator();
+    double sum = 0;
+    while (indIter.hasNext())
+    {
+      sum += indIter.next();
+    }
+
+    assertEquals("correct total", 1620d, sum, 0.001);
+
+    // hmm, check we correcly step through sliced dataset
+    DoubleDataset ds = (DoubleDataset) doc.getDataset();
+
+    // do a slice
+    DoubleDataset sliced = (DoubleDataset) ds.getSliceView(new Slice(2, 4));
+    NumberDocument slicedDoc = new NumberDocument(sliced, null, null);
+
+    indIter = slicedDoc.getIndexIterator();
+    sum = 0;
+    while (indIter.hasNext())
+    {
+      sum += indIter.next();
+    }
+
+    assertEquals("correct total", 570d, sum, 0.001);
   }
 }

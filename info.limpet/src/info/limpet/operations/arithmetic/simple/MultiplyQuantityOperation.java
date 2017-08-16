@@ -16,10 +16,9 @@ package info.limpet.operations.arithmetic.simple;
 
 import info.limpet.ICommand;
 import info.limpet.IContext;
-import info.limpet.IDocument;
 import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
-import info.limpet.operations.arithmetic.BinaryQuantityOperation;
+import info.limpet.operations.arithmetic.BulkQuantityOperation;
 import info.limpet.operations.arithmetic.InterpolatedMaths;
 import info.limpet.operations.arithmetic.InterpolatedMaths.IOperationPerformer;
 
@@ -29,40 +28,49 @@ import java.util.List;
 import javax.measure.unit.Unit;
 
 import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.Maths;
 
-public class MultiplyQuantityOperation extends BinaryQuantityOperation
+public class MultiplyQuantityOperation extends BulkQuantityOperation
 {
 
-  public class MultiplyQuantityValues extends BinaryQuantityCommand
+  public class MultiplyQuantityValues extends BulkQuantityCommand
   {
     public MultiplyQuantityValues(final String name,
-        final List<IStoreItem> selection, final IStoreGroup store,
+        final List<IStoreItem> selection, final IStoreGroup destination,
         final IContext context)
     {
-      this(name, selection, store, null, context);
-    }
-
-    public MultiplyQuantityValues(final String name,
-        final List<IStoreItem> selection, final IStoreGroup destination,
-        final IDocument<?> timeProvider, final IContext context)
-    {
       super(name, "Multiply datasets", destination, false, false, selection,
-          timeProvider, context);
+          context);
     }
 
     @Override
-    protected String getBinaryNameFor(final String name1, final String name2)
+    protected String getBulkNameFor(List<IStoreItem> items)
     {
-      return "Product of " + name1 + " + " + name2;
+      String res = "";
+      for (IStoreItem item : items)
+      {
+        if (!"".equals(res))
+        {
+          res += " * ";
+        }
+        res += item.getName();
+      }
+
+      return res;
     }
 
     @Override
-    protected Unit<?> getBinaryOutputUnit(final Unit<?> first,
-        final Unit<?> second)
+    protected Unit<?> getBulkOutputUnit(List<Unit<?>> units)
     {
-      // return product of units
-      return first.times(second);
+      return units.get(0);
+    }
+
+    @Override
+    protected DoubleDataset getInitial(int shape)
+    {
+      return DatasetFactory.ones(shape);
     }
 
     @Override
@@ -74,7 +82,8 @@ public class MultiplyQuantityOperation extends BinaryQuantityOperation
         public Dataset
             perform(final Dataset a, final Dataset b, final Dataset o)
         {
-          return Maths.multiply(a, b, o);
+          final Dataset res = Maths.multiply(a, b, o);
+          return res;
         }
       };
     }
@@ -97,16 +106,11 @@ public class MultiplyQuantityOperation extends BinaryQuantityOperation
       final IStoreGroup destination, final Collection<ICommand> res,
       final IContext context)
   {
-    final IDocument<?> longest = getLongestIndexedCollection(selection);
-
-    if (longest != null)
-    {
-      final ICommand newC =
-          new MultiplyQuantityValues(
-              "Multiply numeric values in provided series (interpolated)",
-              selection, destination, longest, context);
-      res.add(newC);
-    }
+    final ICommand newC =
+        new MultiplyQuantityValues(
+            "Multiply numeric values in provided series (interpolated)",
+            selection, destination, context);
+    res.add(newC);
   }
 
   @Override

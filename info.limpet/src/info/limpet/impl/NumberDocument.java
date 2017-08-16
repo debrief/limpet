@@ -61,7 +61,6 @@ public class NumberDocument extends Document<Double> implements RangedEntity
     {
       final DoubleDataset ds = (DoubleDataset) dataset;
       return (Double) ds.max();
-
     }
 
     public double mean()
@@ -175,7 +174,8 @@ public class NumberDocument extends Document<Double> implements RangedEntity
 
   public double getValueAt(final int i)
   {
-    return dataset.getDouble(i);
+    DoubleDataset ds = (DoubleDataset) dataset;
+    return dataset.getDouble(ds.getOffset() + i);
   }
 
   public Double interpolateValue(final double i, final InterpMethod linear)
