@@ -50,7 +50,7 @@ import org.eclipse.january.dataset.StringDataset;
 
 public class SampleData
 {
-  public static final Unit<?> MILLIS = SI.MILLI(SI.SECOND).asType(
+  public static final Unit<?> MILLIS = SI.MILLI(SECOND).asType(
       Duration.class);
 
   public static final String SPEED_DATA_FOLDER = "Speed data";
