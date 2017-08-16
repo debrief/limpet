@@ -36,23 +36,24 @@ import junit.framework.TestSuite;
 
 @Suite.SuiteClasses(
 { 
-	TestCollections.class,
-	TestArithmeticCollections.class,
-	TestDynamic.class,
-	TestExport.class,
-	TestReflectivePropertySource.class,
-	TestOperations.class,
-	TestAnalysis.class,
-	TestCsvParser.class,
-	TestRepParser.class,
-	TestLocations.class,
-	TestGeotoolsGeometry.class,
-	TestExport.class,
-	TestBistaticAngleCalculations.class,
-	TestPersistence.class,
-	TestGrids.class,
-	TestAdmin.class,
-	TestStackedCharts.class
+  TestAdmin.class,
+  TestAnalysis.class,
+  TestArithmeticCollections.class,
+  TestBistaticAngleCalculations.class,
+  TestCollectionCompliance.class,
+  TestCollections.class,
+  TestCsvParser.class,
+  TestDynamic.class,
+  TestExport.class,
+  TestExport.class,
+  TestGeotoolsGeometry.class,
+  TestGrids.class,
+  TestLocations.class,
+  TestOperations.class,
+  TestPersistence.class,
+  TestReflectivePropertySource.class,
+  TestRepParser.class,
+  TestStackedCharts.class
 })
 
 @RunWith(Suite.class)
