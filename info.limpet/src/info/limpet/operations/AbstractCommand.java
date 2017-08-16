@@ -445,7 +445,7 @@ public abstract class AbstractCommand implements ICommand
     {
       final Iterator<Point2D> lIter = track.getLocationIterator();
       final Iterator<Double> tIter = track.getIndexIterator();
-      while (lIter.hasNext())
+      while (lIter.hasNext() && tIter.hasNext())
       {
         final double thisT = tIter.next();
         final Point2D pt = lIter.next();
@@ -548,7 +548,7 @@ public abstract class AbstractCommand implements ICommand
 
       final Iterator<Double> lIter = document.getIterator();
       final Iterator<Double> tIter = document.getIndexIterator();
-      while (lIter.hasNext())
+      while (lIter.hasNext() && tIter.hasNext())
       {
         final double thisT = tIter.next();
         final double pt = lIter.next();

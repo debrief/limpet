@@ -149,7 +149,7 @@ public class MaxFilterOperation implements IOperation
         final Iterator<Double> vIter = thisIn.getIterator();
         final Iterator<Double> iIter = thisIn.getIndexIterator();
 
-        while (vIter.hasNext())
+        while (vIter.hasNext() && iIter.hasNext())
         {
           final double thisV = vIter.next();
           final double thisI = iIter.next();
