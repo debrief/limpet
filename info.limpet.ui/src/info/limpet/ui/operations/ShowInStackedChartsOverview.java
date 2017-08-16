@@ -36,6 +36,7 @@ import info.limpet.stackedcharts.model.Orientation;
 import info.limpet.stackedcharts.model.StackedchartsFactory;
 import info.limpet.stackedcharts.ui.view.StackedChartsView;
 import info.limpet.stackedcharts.ui.view.StackedChartsView.ControllableDate;
+import info.limpet.ui.Activator;
 import info.limpet.ui.data_provider.data.DocumentWrapper;
 import info.limpet.ui.range_slider.RangeSliderView;
 import info.limpet.ui.stacked.LimpetStackedChartsAdapter;
@@ -49,6 +50,7 @@ import java.util.List;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 
+import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
@@ -118,103 +120,118 @@ public class ShowInStackedChartsOverview implements IOperation
       String viewId = StackedChartsView.ID;
 
       // create a new instance of the specified view
-      IWorkbenchWindow window =
-          PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-      IWorkbenchPage page = window.getActivePage();
+      StackedChartsView chartView = null;
 
-      try
+      if (PlatformUI.isWorkbenchRunning())
       {
-        page.showView(viewId, secId, IWorkbenchPage.VIEW_ACTIVATE);
-      }
-      catch (PartInitException e)
-      {
-        e.printStackTrace();
-      }
+        IWorkbenchWindow window =
+            PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+        IWorkbenchPage page = window.getActivePage();
 
-      // try to recover the view
-      IViewReference viewRef = page.findViewReference(viewId, secId);
-      if (viewRef != null)
-      {
-        final IViewPart theView = viewRef.getView(true);
-
-        // double check it's what we're after
-        if (theView instanceof StackedChartsView)
+        try
         {
-          final StackedChartsView chartView = (StackedChartsView) theView;
+          page.showView(viewId, secId, IWorkbenchPage.VIEW_ACTIVATE);
+        }
+        catch (PartInitException e)
+        {
+          e.printStackTrace();
+          return;
+        }
 
-          // create the charts set model
-          ChartSet model = createModelFor(this.getInputs());
-
-          if (model != null)
+        // try to recover the view
+        IViewReference viewRef = page.findViewReference(viewId, secId);
+        if (viewRef != null)
+        {
+          final IViewPart theView = viewRef.getView(true);
+          if (theView != null && theView instanceof StackedChartsView)
           {
-            // set follow selection to off
-            // cv.follow(getInputs());
-            chartView.setModel(model);
+            chartView = (StackedChartsView) theView;
+          }
+          else
+          {
+            Activator.getDefault().getLog().log(
+                new Status(Status.ERROR,
+                    "Failed to create Stacked Charts View", null));
+            return;
+          }
+        }
+      }
 
-            // also, see if we can listen to changes in it
-            final IStoreGroup group =
-                RangeSliderView.findTopParent(this.getInputs().get(0));
-            if (group != null)
+      // did we find the chart?
+      if (chartView != null)
+      {
+        // create the charts set model
+        ChartSet model = createModelFor(this.getInputs());
+
+        if (model != null)
+        {
+          // set follow selection to off
+          // cv.follow(getInputs());
+          chartView.setModel(model);
+        }
+
+        final StackedChartsView finalView = chartView;
+
+        // also, see if we can listen to changes in it
+        final IStoreGroup group =
+            RangeSliderView.findTopParent(this.getInputs().get(0));
+        if (group != null)
+        {
+          final PropertyChangeListener listener = new PropertyChangeListener()
+          {
+
+            @Override
+            public void propertyChange(PropertyChangeEvent evt)
             {
-              final PropertyChangeListener listener =
-                  new PropertyChangeListener()
-                  {
+              // ok, update the time now
+              Date newTime = (Date) evt.getNewValue();
+              finalView.updateTime(newTime);
+            }
+          };
+          group.addTimeChangeListener(listener);
 
-                    @Override
-                    public void propertyChange(PropertyChangeEvent evt)
-                    {
-                      // ok, update the time now
-                      Date newTime = (Date) evt.getNewValue();
-                      chartView.updateTime(newTime);
-                    }
-                  };
-              group.addTimeChangeListener(listener);
+          Runnable closer = new Runnable()
+          {
+            @Override
+            public void run()
+            {
+              group.removeTimeChangeListener(listener);
+            }
+          };
+          chartView.addRunOnCloseCallback(closer);
 
-              Runnable closer = new Runnable()
-              {
-                @Override
-                public void run()
-                {
-                  group.removeTimeChangeListener(listener);
-                }
-              };
-              chartView.addRunOnCloseCallback(closer);
+          ControllableDate timeC = new ControllableDate()
+          {
 
-              ControllableDate timeC = new ControllableDate()
-              {
-
-                @Override
-                public void setDate(Date date)
-                {
-                  group.setTime(date);
-                }
-
-                @Override
-                public Date getDate()
-                {
-                  return group.getTime();
-                }
-              };
-              chartView.setDateSupport(timeC);
-
+            @Override
+            public void setDate(Date date)
+            {
+              group.setTime(date);
             }
 
-            // // take a copy of the model
-            // URI resourceURI = URI.createFileURI("/home/ian/tacticalOverview.stackedcharts");
-            // Resource resource = new ResourceSetImpl().createResource(resourceURI);
-            // System.out.println("saving to:" + resourceURI.toFileString());
-            // resource.getContents().add(model);
-            // try
-            // {
-            // resource.save(null);
-            // }
-            // catch (IOException e)
-            // {
-            // e.printStackTrace();
-            // }
-          }
+            @Override
+            public Date getDate()
+            {
+              return group.getTime();
+            }
+          };
+          chartView.setDateSupport(timeC);
 
         }
+
+        // // take a copy of the model
+        // URI resourceURI = URI.createFileURI("/home/ian/tacticalOverview.stackedcharts");
+        // Resource resource = new ResourceSetImpl().createResource(resourceURI);
+        // System.out.println("saving to:" + resourceURI.toFileString());
+        // resource.getContents().add(model);
+        // try
+        // {
+        // resource.save(null);
+        // }
+        // catch (IOException e)
+        // {
+        // e.printStackTrace();
+        // }
       }
     }
 
