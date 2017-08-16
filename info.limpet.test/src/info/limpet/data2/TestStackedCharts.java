@@ -24,23 +24,26 @@ public class TestStackedCharts extends TestCase
   {
     ArrayList<IStoreItem> selection = new ArrayList<IStoreItem>();
     MockContext context = new MockContext();
-    StoreGroup data = new SampleData().getData(10);
-    
-    NumberDocument s_one = (NumberDocument) data.get(SampleData.SPEED_ONE);
+    StoreGroup data = new SampleData().getData(20);
     
     NumberDocument product = (NumberDocument) data.get("Speed One Time + Speed Two Time + Speed two irregular time");
+    assertEquals("17 values", 17, product.size());
+    assertEquals("17 indices", 17, product.getIndexValues().getSize());
     
     assertNotNull(product);
     
-    System.out.println("name:" + product);
-    
+//    selection.add(s_one);
+//    selection.add(s_two);
     selection.add(product);
     ChartSet model = ShowInStackedChartsOverview.createModelFor(selection);
+    assertNotNull(model);
     
     List<ICommand> actions = new ShowInStackedChartsOverview("Show in stacked charts").actionsFor(selection, data, context);
+    assertNotNull("actions returned", actions);
+    assertEquals("has an action", 1, actions.size());
     
-    System.out.println("actions:" + actions);
-    
+    ICommand theAct = actions.get(0);
+    theAct.execute();
   }
 
 }
