@@ -16,7 +16,6 @@ package info.limpet.operations.arithmetic.simple;
 
 import info.limpet.ICommand;
 import info.limpet.IContext;
-import info.limpet.IDocument;
 import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
 import info.limpet.operations.arithmetic.BulkQuantityOperation;
@@ -43,11 +42,10 @@ public class AddQuantityOperation extends BulkQuantityOperation
 
     public AddQuantityValues(final String name,
         final List<IStoreItem> selection, final IStoreGroup destination,
-        final IDocument<?> timeProvider, final IContext context,
-        final String outputPrefix, final IOperationPerformer operation)
+        final IContext context, final String outputPrefix,
+        final IOperationPerformer operation)
     {
-      super(name, "Add datasets", destination, false, false, selection,
-          timeProvider, context);
+      super(name, "Add datasets", destination, false, false, selection, context);
       this.outputSuffix = outputPrefix;
       this.operation = operation;
     }
@@ -137,8 +135,6 @@ public class AddQuantityOperation extends BulkQuantityOperation
       final IStoreGroup destination, final Collection<ICommand> res,
       final IContext context)
   {
-    final IDocument<?> timeProvider = null;
-
     final PowerAdder powerAdder = new PowerAdder();
 
     if (hasLogData(selection))
@@ -150,14 +146,13 @@ public class AddQuantityOperation extends BulkQuantityOperation
       ICommand newC =
           new AddQuantityValues(
               "Logarithmic Add for provided series (indexed)", selection,
-              destination, timeProvider, context, "Log ", logAdder);
+              destination, context, "Log ", logAdder);
       res.add(newC);
 
       // just offer the log operation
       newC =
           new AddQuantityValues("Power Add for provided series (indexed)",
-              selection, destination, timeProvider, context, "Power ",
-              powerAdder);
+              selection, destination, context, "Power ", powerAdder);
       res.add(newC);
 
     }
@@ -167,7 +162,7 @@ public class AddQuantityOperation extends BulkQuantityOperation
       final ICommand newC =
           new AddQuantityValues(
               "Add numeric values in provided series (indexed)", selection,
-              destination, timeProvider, context, "", powerAdder);
+              destination, context, "", powerAdder);
       res.add(newC);
     }
 
@@ -178,37 +173,31 @@ public class AddQuantityOperation extends BulkQuantityOperation
       final IStoreGroup destination, final Collection<ICommand> res,
       final IContext context)
   {
-    final IDocument<?> longest = getLongestIndexedCollection(selection);
+    final PowerAdder powerAdder = new PowerAdder();
 
-    if (longest != null)
+    if (hasLogData(selection))
     {
-      final PowerAdder powerAdder = new PowerAdder();
+      final LogAdder logAdder = new LogAdder();
 
-      if (hasLogData(selection))
-      {
-        final LogAdder logAdder = new LogAdder();
+      ICommand newC =
+          new AddQuantityValues(
+              "Logarithmic Add for provided series (interpolated)", selection,
+              destination, context, "Log ", logAdder);
+      res.add(newC);
 
-        ICommand newC =
-            new AddQuantityValues(
-                "Logarithmic Add for provided series (interpolated)",
-                selection, destination, longest, context, "Log ", logAdder);
-        res.add(newC);
+      newC =
+          new AddQuantityValues("Power Add for provided series (interpolated)",
+              selection, destination, context, "Power ", powerAdder);
+      res.add(newC);
 
-        newC =
-            new AddQuantityValues(
-                "Power Add for provided series (interpolated)", selection,
-                destination, longest, context, "Power ", powerAdder);
-        res.add(newC);
-
-      }
-      else
-      {
-        final ICommand newC =
-            new AddQuantityValues(
-                "Add numeric values in provided series (interpolated)",
-                selection, destination, longest, context, "", powerAdder);
-        res.add(newC);
-      }
+    }
+    else
+    {
+      final ICommand newC =
+          new AddQuantityValues(
+              "Add numeric values in provided series (interpolated)",
+              selection, destination, context, "", powerAdder);
+      res.add(newC);
     }
   }
 

@@ -16,7 +16,6 @@ package info.limpet.operations.arithmetic.simple;
 
 import info.limpet.ICommand;
 import info.limpet.IContext;
-import info.limpet.IDocument;
 import info.limpet.IStoreGroup;
 import info.limpet.IStoreItem;
 import info.limpet.operations.arithmetic.BulkQuantityOperation;
@@ -39,18 +38,11 @@ public class MultiplyQuantityOperation extends BulkQuantityOperation
   public class MultiplyQuantityValues extends BulkQuantityCommand
   {
     public MultiplyQuantityValues(final String name,
-        final List<IStoreItem> selection, final IStoreGroup store,
+        final List<IStoreItem> selection, final IStoreGroup destination,
         final IContext context)
     {
-      this(name, selection, store, null, context);
-    }
-
-    public MultiplyQuantityValues(final String name,
-        final List<IStoreItem> selection, final IStoreGroup destination,
-        final IDocument<?> timeProvider, final IContext context)
-    {
       super(name, "Multiply datasets", destination, false, false, selection,
-          timeProvider, context);
+          context);
     }
 
     @Override
@@ -65,10 +57,9 @@ public class MultiplyQuantityOperation extends BulkQuantityOperation
         }
         res += item.getName();
       }
-      
+
       return res;
     }
-
 
     @Override
     protected Unit<?> getBulkOutputUnit(List<Unit<?>> units)
@@ -115,16 +106,11 @@ public class MultiplyQuantityOperation extends BulkQuantityOperation
       final IStoreGroup destination, final Collection<ICommand> res,
       final IContext context)
   {
-    final IDocument<?> longest = getLongestIndexedCollection(selection);
-
-    if (longest != null)
-    {
-      final ICommand newC =
-          new MultiplyQuantityValues(
-              "Multiply numeric values in provided series (interpolated)",
-              selection, destination, longest, context);
-      res.add(newC);
-    }
+    final ICommand newC =
+        new MultiplyQuantityValues(
+            "Multiply numeric values in provided series (interpolated)",
+            selection, destination, context);
+    res.add(newC);
   }
 
   @Override
