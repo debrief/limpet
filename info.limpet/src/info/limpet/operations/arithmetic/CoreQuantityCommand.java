@@ -178,7 +178,7 @@ public abstract class CoreQuantityCommand extends AbstractCommand
   
   
 
-  private void storeIndexUnits(final NumberDocument output,
+  protected void storeIndexUnits(final NumberDocument output,
       final Unit<?> indexUnits)
   {
     if (output.isIndexed())
