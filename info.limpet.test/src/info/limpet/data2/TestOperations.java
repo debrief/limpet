@@ -873,9 +873,9 @@ public class TestOperations
     assertEquals(firstDifference, speed1firstValue + speed2firstValue, 0);
 
     // test that original series have dependents
-    assertEquals("first series has dependents", 2, speedGood1.getDependents()
+    assertEquals("first series has dependents", 3, speedGood1.getDependents()
         .size());
-    assertEquals("second series has dependents", 1, speedGood2.getDependents()
+    assertEquals("second series has dependents", 2, speedGood2.getDependents()
         .size());
 
     // test that new series has predecessors
@@ -1817,7 +1817,7 @@ public class TestOperations
 
     // how many do we expect to lose? This will be the number of documents deleted,
     // plus any output documents that depend on them
-    int expectedToDelete = 4;
+    int expectedToDelete = 5;
 
     assertEquals("store smaller", storeLen - expectedToDelete, store.size());
     assertEquals("speeds smaller", factorLen - 1, speedParent.size());
