@@ -87,14 +87,14 @@ abstract public class Document<T extends Object> implements IDocument<T>
    */
   @Override
   public void beingDeleted()
-  {    
+  {
     // ok, detach ourselves from our parent
     IStoreGroup parent = this.getParent();
-    if(parent != null)
+    if (parent != null)
     {
       parent.remove(this);
     }
-    
+
     final List<IChangeListener> listeners = new ArrayList<IChangeListener>();
     listeners.addAll(getListeners());
 
@@ -294,25 +294,37 @@ abstract public class Document<T extends Object> implements IDocument<T>
     {
       res = false;
     }
-    
+
     return res;
   }
 
   private static class DoubleIterator implements Iterator<Double>
   {
-    private double[] _data;
+    final private double[] _data;
     private int _ctr;
+    private int _size;
+    private int _offset;
 
-    private DoubleIterator(double[] data)
+    /**
+     * iterate through this set of January doubles
+     * 
+     * @param data
+     *          the dats to move through
+     * @param offset
+     *          the offset to the first item
+     */
+    private DoubleIterator(final double[] data, final int offset, final int size)
     {
       _data = data;
-      _ctr = 0;
+      _ctr = offset;
+      _offset = offset;
+      _size = size;
     }
 
     @Override
     public boolean hasNext()
     {
-      return _ctr < _data.length;
+      return _ctr < _offset + _size;
     }
 
     @Override
@@ -357,14 +369,17 @@ abstract public class Document<T extends Object> implements IDocument<T>
   @Override
   public Iterator<Double> getIndexIterator()
   {
-    double[] items = getIndexValues().getData();
-    return new DoubleIterator(items);
+    final DoubleDataset values = getIndexValues();
+    double[] items = values.getData();
+    return new DoubleIterator(items, values.getOffset(), values.getSize());
   }
 
   @Override
   public double getIndexAt(final int i)
   {
-    return getIndexValues().getData()[i];
+    // hmm, if the dataset has been sliced, we may not be starting at element one.
+    DoubleDataset ds = getIndexValues();
+    return ds.getData()[i + ds.getOffset()];
   }
 
   /*
