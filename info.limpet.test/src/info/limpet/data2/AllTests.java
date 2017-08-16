@@ -45,7 +45,7 @@ import org.junit.runners.Suite;
   TestCsvParser.class,
   TestDynamic.class,
   TestExport.class,
-  TestExport.class,
+  TestFilter.class,
   TestGeotoolsGeometry.class,
   TestGrids.class,
   TestLocations.class,

@@ -142,7 +142,7 @@ public class MaxMinFilterOperation implements IOperation
           iIter = null;
         }
 
-        while (vIter.hasNext() && iIter.hasNext())
+        while (vIter.hasNext() && (iIter == null || iIter.hasNext()))
         {
           final double thisValue = vIter.next();
 
