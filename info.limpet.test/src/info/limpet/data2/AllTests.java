@@ -28,12 +28,11 @@
  *****************************************************************************/
 package info.limpet.data2;
 
+import info.limpet.rcp.TestReflectivePropertySource;
+import junit.framework.TestSuite;
+
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
-
-import info.limpet.rcp.TestReflectivePropertySource;
-import info.limpet.rcp.TestStackedCharts;
-import junit.framework.TestSuite;
 
 @Suite.SuiteClasses(
 { 
