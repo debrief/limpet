@@ -34,10 +34,8 @@ import javax.measure.unit.Dimension;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 
-import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.Dataset;
-import org.eclipse.january.dataset.DatasetUtils;
-import org.eclipse.january.dataset.ILazyDataset;
+import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.metadata.AxesMetadata;
 
 public class CollectionComplianceTests
@@ -216,7 +214,6 @@ public class CollectionComplianceTests
     Long startT = null;
     Long endT = null;
     Unit<?> units = null;
-    
 
     // check they're all 1D
     // see if they're all singletons
@@ -228,14 +225,14 @@ public class CollectionComplianceTests
         if (thisI instanceof Document)
         {
           Document<?> thisC = (Document<?>) thisI;
-          
+
           // check if it's a singleton
-          if(thisC.size() != 1)
+          if (thisC.size() != 1)
           {
             // nope, they can't all be singletons
             allSingleton = false;
           }
-          
+
           if (thisC.isQuantity() || thisC instanceof LocationDocument)
           {
             // note: we only consider it as suitable for interpolation if it
@@ -259,15 +256,15 @@ public class CollectionComplianceTests
                 }
               }
 
-              // NumberDocument nd = (NumberDocument) thisC;
-              AxesMetadata axes =
-                  thisC.getDataset().getFirstMetadata(AxesMetadata.class);
-              ILazyDataset axesDatasetLazy = axes.getAxes()[0];
-              Dataset axesDataset;
-              try
+              // check the axis range, unless it's a singleton. If it's 
+              // a singleton we ignore the index value, and assume it's
+              // persistent across the whole period
+              if (thisC.size() > 1)
               {
-                axesDataset =
-                    DatasetUtils.sliceAndConvertLazyDataset(axesDatasetLazy);
+                // NumberDocument nd = (NumberDocument) thisC;
+                AxesMetadata axes =
+                    thisC.getDataset().getFirstMetadata(AxesMetadata.class);
+                DoubleDataset axesDataset = (DoubleDataset) axes.getAxes()[0];
                 long thisStart = axesDataset.getLong(0);
                 long thisEnd = axesDataset.getLong(axesDataset.getSize() - 1);
 
@@ -285,10 +282,6 @@ public class CollectionComplianceTests
                     break;
                   }
                 }
-              }
-              catch (DatasetException e)
-              {
-                throw new RuntimeException(e);
               }
             }
           }
@@ -312,8 +305,8 @@ public class CollectionComplianceTests
       // two dim
       suitable = false;
     }
-    
-    if(allSingleton)
+
+    if (allSingleton)
     {
       // ok, they're singletons, force an indexed operation
       return false;
@@ -373,7 +366,7 @@ public class CollectionComplianceTests
       if (thisI instanceof IDocument)
       {
         IDocument<?> thisC = (IDocument<?>) thisI;
-        if(thisC.size() == 1)
+        if (thisC.size() == 1)
         {
           // ok, that's enough for us.
           res = true;
@@ -384,7 +377,6 @@ public class CollectionComplianceTests
     return res;
   }
 
-  
   /**
    * check if the series are all quantity datasets
    * 
@@ -516,7 +508,7 @@ public class CollectionComplianceTests
     }
     return allValid;
   }
-  
+
   /**
    * check if the series all have equal indixes
    * 
@@ -622,7 +614,7 @@ public class CollectionComplianceTests
         final IDocument<?> thisC = (IDocument<?>) thisI;
         final boolean isIndexed = thisC.isIndexed();
         final boolean isSingleton = thisC.size() == 1;
-        if(isIndexed)
+        if (isIndexed)
         {
           final Unit<?> theseUnits = thisC.getIndexUnits();
           if (_indexUnits == null)
@@ -641,7 +633,7 @@ public class CollectionComplianceTests
         else
         {
           // not indexed. is it a singleton?
-          if(!isSingleton)
+          if (!isSingleton)
           {
             // no, not a singleton. we can't use it
             allValid = false;
@@ -658,7 +650,6 @@ public class CollectionComplianceTests
     }
     return allValid;
   }
-
 
   /**
    * check if the series are at least one temporal dataset, plus one or more singletons
@@ -1322,7 +1313,8 @@ public class CollectionComplianceTests
 
       // allow for empty value. sometimes our logic allows null objects for some
       // data types
-      if (iCollection != null && iCollection.isIndexed() && iCollection.size() > 1)
+      if (iCollection != null && iCollection.isIndexed()
+          && iCollection.size() > 1)
       {
         TimePeriod hisPeriod = getBoundsFor(iCollection);
 
