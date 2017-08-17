@@ -14,21 +14,18 @@ import java.util.List;
 
 import javax.measure.unit.Unit;
 
-import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.Dataset;
-import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
-import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.metadata.AxesMetadata;
 import org.eclipse.january.metadata.internal.AxesMetadataImpl;
 
 public abstract class CoreQuantityCommand extends AbstractCommand
 {
-  
+
   private final CollectionComplianceTests aTests =
       new CollectionComplianceTests();
-  
+
   public CoreQuantityCommand(final String title, final String description,
       final IStoreGroup store, final boolean canUndo, final boolean canRedo,
       final List<IStoreItem> inputs, final IContext context)
@@ -51,7 +48,6 @@ public abstract class CoreQuantityCommand extends AbstractCommand
       qC.clearQuiet();
     }
   }
-  
 
   /**
    * for binary operations we act on a set of inputs, so, if one has changed then we will
@@ -86,31 +82,21 @@ public abstract class CoreQuantityCommand extends AbstractCommand
       if (doc.size() > 1 && doc.isIndexed())
       {
         final IDataset dataset = doc.getDataset();
-        final AxesMetadata axes =
-            dataset.getFirstMetadata(AxesMetadata.class);
+        final AxesMetadata axes = dataset.getFirstMetadata(AxesMetadata.class);
         if (axes != null)
         {
-          final ILazyDataset am = axes.getAxis(0)[0];
-          try
-          {
-            final DoubleDataset ds1 =
-                (DoubleDataset) DatasetUtils.sliceAndConvertLazyDataset(am);
-            ds = ds1;
-            break;
-          }
-          catch (final DatasetException e)
-          {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-          }
+          final DoubleDataset ds1 = (DoubleDataset) axes.getAxis(0)[0];
+          ds = ds1;
+          break;
         }
       }
     }
 
     return ds;
   }
-  
-  protected void assignOutputIndices(final IDataset output, final Dataset outputIndices)
+
+  protected void assignOutputIndices(final IDataset output,
+      final Dataset outputIndices)
   {
     if (outputIndices != null)
     {
@@ -122,19 +108,20 @@ public abstract class CoreQuantityCommand extends AbstractCommand
     }
   }
 
-  /** what are the units for the resulting data?
+  /**
+   * what are the units for the resulting data?
    * 
    * @return
    */
   protected abstract Unit<?> getUnits();
- 
+
   public CollectionComplianceTests getATests()
   {
     return aTests;
   }
 
-
-  /** what are the units for the index?
+  /**
+   * what are the units for the index?
    * 
    * @return
    */
@@ -175,8 +162,6 @@ public abstract class CoreQuantityCommand extends AbstractCommand
 
     return res;
   }
-  
-  
 
   protected void storeIndexUnits(final NumberDocument output,
       final Unit<?> indexUnits)
@@ -191,16 +176,16 @@ public abstract class CoreQuantityCommand extends AbstractCommand
   {
     // we don't need to do anything
   }
-  
+
   abstract protected String generateName();
-  
-  /** ok, do the calculation
+
+  /**
+   * ok, do the calculation
    * 
    * @return
    */
   abstract protected IDataset performCalc();
 
-  
   @Override
   public void execute()
   {

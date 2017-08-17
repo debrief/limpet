@@ -38,12 +38,8 @@ import java.util.List;
 import javax.measure.quantity.Velocity;
 import javax.measure.unit.Unit;
 
-import org.eclipse.january.DatasetException;
-import org.eclipse.january.dataset.Dataset;
-import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
-import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.ObjectDataset;
 import org.eclipse.january.metadata.AxesMetadata;
 
@@ -170,16 +166,7 @@ public class GenerateCourseAndSpeedOperation implements IOperation
         throw new IllegalArgumentException(
             "Index metadata missing for this dataset");
       }
-      ILazyDataset amdl = am.getAxis(0)[0];
-      Dataset amd = null;
-      try
-      {
-        amd = DatasetUtils.sliceAndConvertLazyDataset(amdl);
-      }
-      catch (DatasetException e)
-      {
-        throw new RuntimeException(e);
-      }
+      DoubleDataset amd = (DoubleDataset) am.getAxis(0)[0];
 
       if (amd == null)
       {
