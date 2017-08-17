@@ -97,6 +97,8 @@ import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.part.FileEditorInput;
 import org.osgi.framework.Bundle;
 
+import com.thoughtworks.xstream.converters.ConversionException;
+
 public class DataManagerEditor extends EditorPart
 {
 
@@ -824,6 +826,14 @@ public class DataManagerEditor extends EditorPart
           // ok, it was empty. generate an empty store
           _store = new StoreGroup("Store");
         }
+      }
+      catch(ConversionException re)
+      {
+        // ok, log the error
+        log(re);
+        
+        // and give us an empty store
+        _store = new StoreGroup("Store");
       }
       catch (IOException | CoreException e)
       {
