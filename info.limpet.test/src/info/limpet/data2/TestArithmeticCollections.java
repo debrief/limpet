@@ -27,10 +27,8 @@ import javax.measure.unit.Unit;
 
 import junit.framework.TestCase;
 
-import org.eclipse.january.DatasetException;
 import org.eclipse.january.MetadataException;
 import org.eclipse.january.dataset.Dataset;
-import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.Maths;
@@ -479,16 +477,8 @@ public class TestArithmeticCollections extends TestCase
     assertTrue("temporal", series.isIndexed());
     assertTrue("quantity", series.isQuantity());
 
-    try
-    {
-      final Dataset oDataset =
-          DatasetUtils.sliceAndConvertLazyDataset(series.getDataset());
-      System.out.println(oDataset.toString(true));
-    }
-    catch (final DatasetException e)
-    {
-      throw new RuntimeException(e);
-    }
+    final DoubleDataset oDataset = (DoubleDataset) series.getDataset();
+    System.out.println(oDataset.toString(true));
 
     // ITemporalQuantityCollection<?> tq = (ITemporalQuantityCollection<?>) series;
 

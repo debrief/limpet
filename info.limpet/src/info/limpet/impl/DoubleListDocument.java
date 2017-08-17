@@ -10,11 +10,7 @@ import java.util.List;
 
 import javax.measure.unit.Unit;
 
-import org.eclipse.january.DatasetException;
-import org.eclipse.january.dataset.Dataset;
-import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.DoubleDataset;
-import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.ObjectDataset;
 import org.eclipse.january.metadata.AxesMetadata;
 
@@ -52,15 +48,8 @@ public class DoubleListDocument extends Document<List<Double>>
     DoubleDataset axisTwo = null;
     if (axesMetadata != null && axesMetadata.getAxes().length > 0)
     {
-      try
-      {
-        axisOne = extractThis(axesMetadata.getAxes()[0]);
-        axisTwo = extractThis(axesMetadata.getAxes()[1]);
-      }
-      catch (DatasetException e)
-      {
-        e.printStackTrace();
-      }
+      axisOne = (DoubleDataset) axesMetadata.getAxes()[0];
+      axisTwo = (DoubleDataset) axesMetadata.getAxes()[1];
     }
 
     res.append(dataset.getName() + "\n");
@@ -108,13 +97,6 @@ public class DoubleListDocument extends Document<List<Double>>
     res.append("\n");
 
     return res.toString();
-  }
-
-  private DoubleDataset extractThis(final ILazyDataset axis)
-      throws DatasetException
-  {
-    Dataset sliceOne = DatasetUtils.sliceAndConvertLazyDataset(axis);
-    return DatasetUtils.cast(DoubleDataset.class, sliceOne);
   }
 
   public Iterator<?> getObjectIterator()

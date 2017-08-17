@@ -5,12 +5,8 @@ import info.limpet.ICommand;
 import java.util.Arrays;
 import java.util.Iterator;
 
-import org.eclipse.january.DatasetException;
-import org.eclipse.january.dataset.Dataset;
-import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
-import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.IndexIterator;
 import org.eclipse.january.dataset.ObjectDataset;
 import org.eclipse.january.dataset.StringDataset;
@@ -55,17 +51,7 @@ public class StringDocument extends Document<String>
     final DoubleDataset axisDataset;
     if (axesMetadata != null && axesMetadata.getAxes().length > 0)
     {
-      DoubleDataset doubleAxis = null;
-      try
-      {
-        ILazyDataset rawAxis = axesMetadata.getAxes()[0];
-        Dataset axis = DatasetUtils.sliceAndConvertLazyDataset(rawAxis);
-        doubleAxis = DatasetUtils.cast(DoubleDataset.class, axis);
-      }
-      catch (DatasetException e)
-      {
-        e.printStackTrace();
-      }
+      DoubleDataset doubleAxis = (DoubleDataset) axesMetadata.getAxes()[0];
       axisDataset = doubleAxis != null ? doubleAxis : null;
     }
     else
