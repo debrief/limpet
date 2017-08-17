@@ -35,11 +35,11 @@ openFile
       startupMessageRect="0,0,0,0"
       startupForegroundColor="000000" />
    <launcher name="Limpet">
-      <linux icon="/info.limpet.product/icon.xpm"/>
-      <macosx icon="/info.limpet.product/icon.icns"/>
+      <linux icon="/icon.xpm"/>
+      <macosx icon="/icon.icns"/>
       <solaris/>
       <win useIco="true">
-         <ico path="/info.limpet.product/icon.ico"/>
+         <ico path="/icon.ico"/>
          <bmp/>
       </win>
    </launcher>
