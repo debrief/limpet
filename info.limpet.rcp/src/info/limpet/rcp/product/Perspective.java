@@ -18,6 +18,7 @@ import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
 
+import info.limpet.stackedcharts.ui.view.StackedChartsView;
 import info.limpet.ui.analysis_view.AnalysisView;
 import info.limpet.ui.data_frequency.DataFrequencyView;
 import info.limpet.ui.heatmap.HeatmapView;
@@ -46,6 +47,8 @@ public class Perspective implements IPerspectiveFactory
     final IFolderLayout topRight =
         layout.createFolder("topRight", IPageLayout.RIGHT, 0.6f, editorArea);
     topRight.addView(AnalysisView.ID);
+    topRight.addPlaceholder("org.eclipse.pde.runtime.LogView");
+    topRight.addPlaceholder(StackedChartsView.ID);
 
     final IFolderLayout underAnalysis =
         layout.createFolder("underAnalysis", IPageLayout.BOTTOM, 0.7f,
@@ -63,6 +66,7 @@ public class Perspective implements IPerspectiveFactory
     // and our view shortcuts
     layout.addShowViewShortcut(IPageLayout.ID_RES_NAV);
     layout.addShowViewShortcut(IPageLayout.ID_PROP_SHEET);
+    layout.addShowViewShortcut("org.eclipse.pde.runtime.LogView");
     layout.addShowViewShortcut(AnalysisView.ID);
     layout.addShowViewShortcut(DataFrequencyView.ID);
     layout.addShowViewShortcut(XyPlotView.ID);
