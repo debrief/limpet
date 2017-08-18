@@ -260,7 +260,7 @@ public abstract class CoreAnalysisView extends ViewPart
    * ensure only the most recent UI update is called
    * 
    */
-  protected EventStack _eventStack = new EventStack(50);
+  protected EventStack _eventStack = new EventStack(150);
 
   /** display this dataset
    * 

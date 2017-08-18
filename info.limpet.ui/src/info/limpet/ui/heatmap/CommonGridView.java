@@ -79,8 +79,6 @@ abstract public class CommonGridView extends CoreAnalysisView
 
   protected void show(final List<IStoreItem> items)
   {
-    clearChart();
-
     final String seriesName = Helper2D.titleFor(items);
 
     titleLbl.setText(seriesName);

@@ -222,6 +222,12 @@ public class TabularView extends CommonGridView
   protected void showGrid(final HContainer data, final String indexUnits)
   {
     final double[] aIndices = data.colTitles;
+    
+    // suspend UI updates
+    table.getControl().setRedraw(false);
+    titleLbl.setRedraw(false);
+    
+    clearChart();
 
     // clear the columns
     final Table ctrl = table.getTable();
@@ -252,5 +258,9 @@ public class TabularView extends CommonGridView
     }
 
     titleLbl.pack();
+    
+    // and allow them again
+    table.getControl().setRedraw(true);
+    titleLbl.setRedraw(true);
   }
 }

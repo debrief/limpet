@@ -708,6 +708,8 @@ public class RangeSliderView extends CoreAnalysisView
 
     // ok, list empty
     _entities.clear();
+    
+    _sliderColumn.pack();
   }
 
   @Override
