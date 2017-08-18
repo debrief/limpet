@@ -129,9 +129,12 @@ public class HeatmapView extends CommonGridView
   @Override
   protected void clearChart()
   {
-    intensityGraph.setDataArray(new double[]
-    {});
-    titleLbl.setText("");
+    if (!titleLbl.isDisposed())
+    {
+      intensityGraph.setDataArray(new double[]
+      {});
+      titleLbl.setText("");
+    }
   }
 
   /**
@@ -164,7 +167,7 @@ public class HeatmapView extends CommonGridView
 
     makeActions();
     contributeToActionBars();
-    
+
     getViewSite().getActionBars().getToolBarManager().add(showCount);
     getViewSite().getActionBars().getMenuManager().add(showCount);
 
@@ -187,6 +190,9 @@ public class HeatmapView extends CommonGridView
   @Override
   protected void showGrid(final HContainer hData, final String indexUnits)
   {
+    // clear the chart first
+    clearChart();
+
     final int rows = hData.rowTitles.length;
     final int cols = hData.colTitles.length;
 

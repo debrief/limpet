@@ -80,25 +80,29 @@ public abstract class BulkQuantityOperation implements IOperation
 
       for (IStoreItem item : inputs)
       {
-        NumberDocument doc = (NumberDocument) item;
-        DoubleDataset thisD = (DoubleDataset) doc.getDataset();
+        final NumberDocument doc = (NumberDocument) item;
 
-        // hmm, is this a singleton?
-        if (doc.size() == 1)
+        if (doc.size() > 0)
         {
-          // if it's just a singleton, we'll add the same value to each
-          // results value
-          current = (DoubleDataset) operation.perform(current, thisD, null);
+          final DoubleDataset thisD = (DoubleDataset) doc.getDataset();
 
-          // if there are indices, store them
-          command.assignOutputIndices(current, outputIndices);
-        }
-        else
-        {
-          // apply our operation to the two datasets
-          current =
-              (DoubleDataset) InterpolatedMaths.performWithInterpolation(
-                  current, thisD, null, operation);
+          // hmm, is this a singleton?
+          if (doc.size() == 1)
+          {
+            // if it's just a singleton, we'll add the same value to each
+            // results value
+            current = (DoubleDataset) operation.perform(current, thisD, null);
+
+            // if there are indices, store them
+            command.assignOutputIndices(current, outputIndices);
+          }
+          else
+          {
+            // apply our operation to the two datasets
+            current =
+                (DoubleDataset) InterpolatedMaths.performWithInterpolation(
+                    current, thisD, null, operation);
+          }
         }
       }
 

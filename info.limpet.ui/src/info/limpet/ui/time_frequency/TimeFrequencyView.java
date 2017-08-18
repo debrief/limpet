@@ -87,7 +87,7 @@ public class TimeFrequencyView extends CoreAnalysisView
   }
 
   @Override
-  public void display(List<IStoreItem> res)
+  protected void doDisplay(final List<IStoreItem> res)
   {
     if (getATests().allEqualIndexed(res))
     {

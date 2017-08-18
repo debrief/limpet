@@ -253,12 +253,6 @@ public class RangeSliderView extends CoreAnalysisView
       }
     }
 
-    public void refresh()
-    {
-      val.setText(helper.getValueText());
-      label.setText(helper.getLabel());
-    }
-
     public void initialise()
     {
       // and format them
@@ -281,7 +275,12 @@ public class RangeSliderView extends CoreAnalysisView
 
       // store the thumb witdth
       helper.setSliderThumb(slider.getThumb());
+    }
 
+    public void refresh()
+    {
+      val.setText(helper.getValueText());
+      label.setText(helper.getLabel());
     }
   }
 
@@ -444,8 +443,6 @@ public class RangeSliderView extends CoreAnalysisView
     return res;
   }
 
-  final private List<IStoreItem> _currentSelection = new ArrayList<IStoreItem>();
-
   private Composite _sliderColumn;
 
   private final Map<RangedEntity, Figure> _entities =
@@ -580,6 +577,66 @@ public class RangeSliderView extends CoreAnalysisView
     return res;
   }
 
+  private void clearSliders()
+  {
+    // clear current listeners
+    for (final Figure thisFigure : _entities.values())
+    {
+      // drop this one
+      thisFigure.disconnect();
+
+      // and detach it from its parent
+      thisFigure.detach();
+    }
+
+    // ok, list empty
+    _entities.clear();
+  }
+
+  @Override
+  protected void createChangeListeners(final List<IStoreItem> res)
+  {
+    // ok, we don't directly listen to the selection,
+    // if it's a group then we listen to the children.
+    // So, leave it to the rest of the range-slider
+    // to configure listeners
+  }
+
+  @SuppressWarnings("unused")
+  private RangeHelper createNumberHelper(final RangedEntity ranged,
+      final NumberDocument doc)
+  {
+    final RangeHelper helper;
+    if (doc.size() == 1 && doc.getRange() != null)
+    {
+      helper = new RangedEntityHelper(ranged);
+    }
+    else
+    {
+      // TODO: sort out if we introduce index filters,
+      // then remove the next line
+      final boolean allowIndexFilter = false;
+      if (allowIndexFilter
+          && doc.isIndexed()
+          && (doc.getIndexUnits() == SI.SECOND || doc.getIndexUnits() == SampleData.MILLIS))
+      {
+
+        final double start = doc.getIndexAt(0);
+        final double end = doc.getIndexAt(doc.size() - 1);
+        final String name = doc.getName();
+        final IStoreGroup group = findTopParent(doc);
+
+        helper =
+            new DateIndexHelper((long) start, (long) end, name, group, doc);
+      }
+      else
+      {
+        helper = null;
+      }
+    }
+    return helper;
+  }
+
   /**
    * This is a callback that will allow us to create the viewer and initialize it.
    */
@@ -600,17 +657,8 @@ public class RangeSliderView extends CoreAnalysisView
 
   }
 
-  protected void createChangeListeners(List<IStoreItem> res)
-  {
-    // ok, we don't directly listen to the selection,
-    // if it's a group then we listen to the children.
-    // So, leave it to the rest of the range-slider
-    // to configure listeners
-  }
-
-
   @Override
-  public void display(final List<IStoreItem> selection)
+  protected void doDisplay(final List<IStoreItem> selection)
   {
     if (selection.size() == 0)
     {
@@ -627,13 +675,13 @@ public class RangeSliderView extends CoreAnalysisView
         // check it looks right
         if (item instanceof NumberDocument)
         {
-          NumberDocument doc = (NumberDocument) item;
+          final NumberDocument doc = (NumberDocument) item;
           if (doc.size() == 1 && doc.getRange() != null)
           {
             // ok, go for it
             useIt = true;
           }
-          else if(doc.size() >=2 && doc.getIndexUnits() != null)
+          else if (doc.size() >= 2 && doc.getIndexUnits() != null)
           {
             // we can use it, if it's an indexed dataset
             // TODO: allow this to be true,
@@ -657,7 +705,7 @@ public class RangeSliderView extends CoreAnalysisView
       else if (item instanceof IStoreGroup)
       {
         final IStoreGroup group = (IStoreGroup) item;
-        
+
         // process kids
         for (final IStoreItem doc : group)
         {
@@ -671,43 +719,12 @@ public class RangeSliderView extends CoreAnalysisView
 
     if (toShow.size() > 0)
     {
-      if (selection.equals(_currentSelection))
-      {
-        // ok, we're already showing it
-        return;
-      }
-      else
-      {
-        // ok, clear the sliders
-        clearSliders();
-      }
-
-      // store the new selection. Hmm,
-      // we're storing a clone, so we treat 
-      // the list being extended as a new list
-      // - so the sliders get refreshed
-      _currentSelection.clear();
-      _currentSelection.addAll(selection);
+      // ok, clear the sliders
+      clearSliders();
 
       // and show the new data
       showData(toShow);
     }
-  }
-
-  private void clearSliders()
-  {
-    // clear current listeners
-    for (final Figure thisFigure : _entities.values())
-    {
-      // drop this one
-      thisFigure.disconnect();
-
-      // and detach it from its parent
-      thisFigure.detach();
-    }
-
-    // ok, list empty
-    _entities.clear();
   }
 
   @Override
@@ -785,7 +802,7 @@ public class RangeSliderView extends CoreAnalysisView
       {
         // ok, add this item
         final Figure figure = addRow(_sliderColumn, helper);
-        
+
         // draw the figure
         figure.initialise();
 
@@ -793,41 +810,6 @@ public class RangeSliderView extends CoreAnalysisView
         _entities.put(entity, figure);
       }
     }
-  }
-
-  private RangeHelper createNumberHelper(final RangedEntity ranged,
-      final NumberDocument doc)
-  {
-    final RangeHelper helper;
-    if (doc.size() == 1 && doc.getRange() != null)
-    {
-      helper = new RangedEntityHelper(ranged);
-    }
-    else
-    {
-      // TODO: sort out if we introduce index filters, 
-      // then remove the next line
-      boolean allowIndexFilter = false;
-      if (allowIndexFilter
-          && doc.isIndexed()
-          && (doc.getIndexUnits() == SI.SECOND || doc.getIndexUnits() == SampleData.MILLIS))
-      {
-
-        final double start = doc.getIndexAt(0);
-        final double end = doc.getIndexAt(doc.size() - 1);
-        final String name = doc.getName();
-        final IStoreGroup group = findTopParent(doc);
-
-        helper =
-            new DateIndexHelper((long) start, (long) end, name, group,
-                doc);
-      }
-      else
-      {
-        helper = null;
-      }
-    }
-    return helper;
   }
 
 }

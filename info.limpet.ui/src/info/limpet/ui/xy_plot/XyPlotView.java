@@ -208,14 +208,21 @@ public class XyPlotView extends CoreAnalysisView
   }
 
   @Override
-  public void display(final List<IStoreItem> res)
+  protected void doDisplay(final List<IStoreItem> res)
   {
+    if(chart.isDisposed())
+    {
+      return;
+    }
+    
     if (res.size() == 0)
     {
       chart.setVisible(false);
     }
     else
     {
+      chart.setRedraw(false);
+
       // check they're all one dim
       if (aTests.allOneDim(res))
       {
@@ -226,6 +233,8 @@ public class XyPlotView extends CoreAnalysisView
         // ok, it's a single two-dim dataset
         showTwoDim(res.get(0));
       }
+      
+      chart.setRedraw(true);
     }
   }
 
