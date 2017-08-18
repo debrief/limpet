@@ -689,8 +689,6 @@ public class RangeSliderView extends CoreAnalysisView
 
     // ok, list empty
     _entities.clear();
-
-    _sliderColumn.pack(true);
   }
 
   @Override
@@ -774,9 +772,6 @@ public class RangeSliderView extends CoreAnalysisView
 
         // store the figure
         _entities.put(entity, figure);
-
-        figure.holder.pack();
-        _sliderColumn.pack();
       }
     }
   }
