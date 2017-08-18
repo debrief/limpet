@@ -610,7 +610,7 @@ public class RangeSliderView extends CoreAnalysisView
 
 
   @Override
-  public void display(final List<IStoreItem> selection)
+  protected void doDisplay(final List<IStoreItem> selection)
   {
     if (selection.size() == 0)
     {

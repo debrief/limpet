@@ -208,7 +208,7 @@ public class XyPlotView extends CoreAnalysisView
   }
 
   @Override
-  public void display(final List<IStoreItem> res)
+  protected void doDisplay(final List<IStoreItem> res)
   {
     if (res.size() == 0)
     {

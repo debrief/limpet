@@ -18,6 +18,7 @@ import info.limpet.IChangeListener;
 import info.limpet.IStoreItem;
 import info.limpet.operations.CollectionComplianceTests;
 import info.limpet.ui.Activator;
+import info.limpet.ui.EventStack;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -55,7 +56,8 @@ public abstract class CoreAnalysisView extends ViewPart
   private transient Action followSelection;
   private transient ISelectionListener selListener;
   private transient final CollectionComplianceTests aTests;
-  private transient final List<IStoreItem> curList = new ArrayList<IStoreItem>();
+  private transient final List<IStoreItem> curList =
+      new ArrayList<IStoreItem>();
   private transient IChangeListener changeListener;
   private final String _myId;
   private final String _myTitle;
@@ -137,7 +139,7 @@ public abstract class CoreAnalysisView extends ViewPart
 
   protected void newSelection(ISelection selection)
   {
-    if(selection == _curSelection)
+    if (selection == _curSelection)
     {
       return;
     }
@@ -145,7 +147,7 @@ public abstract class CoreAnalysisView extends ViewPart
     {
       _curSelection = selection;
     }
-    
+
     List<IStoreItem> res = new ArrayList<IStoreItem>();
     if (selection instanceof StructuredSelection)
     {
@@ -255,11 +257,36 @@ public abstract class CoreAnalysisView extends ViewPart
       CollectionComplianceTests aTests2);
 
   /**
+   * ensure only the most recent UI update is called
+   * 
+   */
+  protected EventStack _eventStack = new EventStack(50);
+
+  /** display this dataset
+   * 
+   * @param res
+   */
+  public void display(final List<IStoreItem> res)
+  {
+    // create the runnable that stores the update
+    final Runnable runme = new Runnable()
+    {
+      public void run()
+      {
+         doDisplay(res);
+      }
+    };
+
+    // put the event on the top of the stack
+    _eventStack.addEvent(runme);
+  }
+
+  /**
    * show this set of collections
    * 
    * @param res
    */
-  public abstract void display(List<IStoreItem> res);
+  protected abstract void doDisplay(List<IStoreItem> res);
 
   protected void fillLocalPullDown(IMenuManager manager)
   {

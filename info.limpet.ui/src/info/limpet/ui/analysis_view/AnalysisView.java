@@ -73,8 +73,8 @@ public class AnalysisView extends CoreAnalysisView
 		return output.toString();
 	}
 
-	@Override
-	public void display(List<IStoreItem> res)
+  @Override
+  protected void doDisplay(final List<IStoreItem> res)
 	{
 		// clear the output
 		final ArrayList<ArrayList<String>> resList = new ArrayList<ArrayList<String>>();

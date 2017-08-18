@@ -51,7 +51,7 @@ abstract public class CommonGridView extends CoreAnalysisView
   abstract protected void clearChart();
 
   @Override
-  public void display(final List<IStoreItem> res)
+  protected void doDisplay(List<IStoreItem> res)
   {
     // anything selected?
     if (res.size() == 0)
