@@ -100,7 +100,7 @@ public class EventStack
     _delay = delay;
     if (delay <= 0)
     {
-      throw new RuntimeException("Delay has to be positive");
+      throw new IllegalArgumentException("Delay has to be positive");
     }
   }
 
@@ -108,7 +108,7 @@ public class EventStack
   {
     if (event == null)
     {
-      throw new RuntimeException("Event cannot be null");
+      throw new IllegalArgumentException("Event cannot be null");
     }
     getEventRunner().setNextEvent(event);
   }
