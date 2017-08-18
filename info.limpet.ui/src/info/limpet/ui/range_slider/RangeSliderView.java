@@ -281,7 +281,6 @@ public class RangeSliderView extends CoreAnalysisView
 
       // store the thumb witdth
       helper.setSliderThumb(slider.getThumb());
-
     }
   }
 
@@ -443,8 +442,6 @@ public class RangeSliderView extends CoreAnalysisView
     }
     return res;
   }
-
-  final private List<IStoreItem> _currentSelection = new ArrayList<IStoreItem>();
 
   private Composite _sliderColumn;
 
@@ -608,7 +605,6 @@ public class RangeSliderView extends CoreAnalysisView
     // to configure listeners
   }
 
-
   @Override
   protected void doDisplay(final List<IStoreItem> selection)
   {
@@ -633,7 +629,7 @@ public class RangeSliderView extends CoreAnalysisView
             // ok, go for it
             useIt = true;
           }
-          else if(doc.size() >=2 && doc.getIndexUnits() != null)
+          else if (doc.size() >= 2 && doc.getIndexUnits() != null)
           {
             // we can use it, if it's an indexed dataset
             // TODO: allow this to be true,
@@ -657,7 +653,7 @@ public class RangeSliderView extends CoreAnalysisView
       else if (item instanceof IStoreGroup)
       {
         final IStoreGroup group = (IStoreGroup) item;
-        
+
         // process kids
         for (final IStoreItem doc : group)
         {
@@ -671,23 +667,8 @@ public class RangeSliderView extends CoreAnalysisView
 
     if (toShow.size() > 0)
     {
-      if (selection.equals(_currentSelection))
-      {
-        // ok, we're already showing it
-        return;
-      }
-      else
-      {
-        // ok, clear the sliders
-        clearSliders();
-      }
-
-      // store the new selection. Hmm,
-      // we're storing a clone, so we treat 
-      // the list being extended as a new list
-      // - so the sliders get refreshed
-      _currentSelection.clear();
-      _currentSelection.addAll(selection);
+      // ok, clear the sliders
+      clearSliders();
 
       // and show the new data
       showData(toShow);
@@ -708,8 +689,8 @@ public class RangeSliderView extends CoreAnalysisView
 
     // ok, list empty
     _entities.clear();
-    
-    _sliderColumn.pack();
+
+    _sliderColumn.pack(true);
   }
 
   @Override
@@ -787,12 +768,15 @@ public class RangeSliderView extends CoreAnalysisView
       {
         // ok, add this item
         final Figure figure = addRow(_sliderColumn, helper);
-        
+
         // draw the figure
         figure.initialise();
 
         // store the figure
         _entities.put(entity, figure);
+
+        figure.holder.pack();
+        _sliderColumn.pack();
       }
     }
   }
@@ -807,7 +791,7 @@ public class RangeSliderView extends CoreAnalysisView
     }
     else
     {
-      // TODO: sort out if we introduce index filters, 
+      // TODO: sort out if we introduce index filters,
       // then remove the next line
       boolean allowIndexFilter = false;
       if (allowIndexFilter
@@ -821,8 +805,7 @@ public class RangeSliderView extends CoreAnalysisView
         final IStoreGroup group = findTopParent(doc);
 
         helper =
-            new DateIndexHelper((long) start, (long) end, name, group,
-                doc);
+            new DateIndexHelper((long) start, (long) end, name, group, doc);
       }
       else
       {
