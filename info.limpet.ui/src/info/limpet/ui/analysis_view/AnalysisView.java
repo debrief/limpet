@@ -40,132 +40,134 @@ import org.eclipse.swt.widgets.Composite;
 public class AnalysisView extends CoreAnalysisView
 {
 
-	/**
-	 * The ID of the view as specified by the extension.
-	 */
-	public static final String ID = "info.limpet.ui.AnalysisView";
+  /**
+   * The ID of the view as specified by the extension.
+   */
+  public static final String ID = "info.limpet.ui.AnalysisView";
 
-	private transient TableViewer viewer;
+  private transient TableViewer viewer;
 
-	public AnalysisView()
-	{
-		super(ID, "Analysis");
-	}
+  public AnalysisView()
+  {
+    super(ID, "Analysis");
+  }
 
-	@Override
-	protected String getTextForClipboard()
-	{
-		StringBuffer output = new StringBuffer();
-		@SuppressWarnings("unchecked")
-		ArrayList<ArrayList<String>> list = (ArrayList<ArrayList<String>>) viewer
-				.getInput();
-		String separator = System.getProperty("line.separator");
-		Iterator<ArrayList<String>> iter = list.iterator();
-		while (iter.hasNext())
-		{
-			ArrayList<java.lang.String> arrayList = (ArrayList<java.lang.String>) iter
-					.next();
-			output.append(arrayList.get(0));
-			output.append(", ");
-			output.append(arrayList.get(1));
-			output.append(separator);
-		}
-		return output.toString();
-	}
+  @Override
+  protected boolean appliesToMe(final List<IStoreItem> res,
+      final CollectionComplianceTests tests)
+  {
+    return true;
+  }
+
+  /**
+   * This is a callback that will allow us to create the viewer and initialize it.
+   */
+  @Override
+  public void createPartControl(final Composite parent)
+  {
+    viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+    viewer.setContentProvider(ArrayContentProvider.getInstance());
+    viewer.setLabelProvider(new LabelProvider());
+    viewer.setInput(null);
+    viewer.getTable().setHeaderVisible(true);
+
+    makeActions();
+    contributeToActionBars();
+
+    // define the two columns
+    final TableViewerColumn colTitle = new TableViewerColumn(viewer, SWT.NONE);
+    colTitle.getColumn().setWidth(150);
+    colTitle.getColumn().setText("Title");
+    colTitle.setLabelProvider(new ColumnLabelProvider()
+    {
+      @SuppressWarnings("unchecked")
+      @Override
+      public String getText(final Object element)
+      {
+        final ArrayList<String> p = (ArrayList<String>) element;
+        return p.get(0);
+      }
+    });
+
+    final TableViewerColumn colValue = new TableViewerColumn(viewer, SWT.NONE);
+    colValue.getColumn().setWidth(200);
+    colValue.getColumn().setText("Value");
+    colValue.setLabelProvider(new ColumnLabelProvider()
+    {
+      @SuppressWarnings("unchecked")
+      @Override
+      public String getText(final Object element)
+      {
+        final ArrayList<String> p = (ArrayList<String>) element;
+        return p.get(1);
+      }
+    });
+
+    setupListener();
+  }
 
   @Override
   protected void doDisplay(final List<IStoreItem> res)
-	{
-    if(viewer.getControl().isDisposed())
+  {
+    if (viewer.getControl().isDisposed())
     {
       return;
     }
-    
-		// clear the output
-		final ArrayList<ArrayList<String>> resList = new ArrayList<ArrayList<String>>();
 
-		AnalysisLibrary ana = new AnalysisLibrary()
-		{
+    // clear the output
+    final ArrayList<ArrayList<String>> resList =
+        new ArrayList<ArrayList<String>>();
 
-			@Override
-			protected void presentResults(List<String> titles, List<String> values)
-			{
-				// produce two column list
-				Iterator<String> tIter = titles.iterator();
-				Iterator<String> vIter = values.iterator();
-				while (tIter.hasNext())
-				{
-					ArrayList<String> thisRow = new ArrayList<String>();
-					thisRow.add(tIter.next());
-					thisRow.add(vIter.next());
+    final AnalysisLibrary ana = new AnalysisLibrary()
+    {
 
-					resList.add(thisRow);
-				}
-			}
-		};
-		ana.analyse(res);
-		viewer.setInput(resList);
-	}
+      @Override
+      protected void presentResults(final List<String> titles,
+          final List<String> values)
+      {
+        // produce two column list
+        final Iterator<String> tIter = titles.iterator();
+        final Iterator<String> vIter = values.iterator();
+        while (tIter.hasNext())
+        {
+          final ArrayList<String> thisRow = new ArrayList<String>();
+          thisRow.add(tIter.next());
+          thisRow.add(vIter.next());
 
-	/**
-	 * This is a callback that will allow us to create the viewer and initialize
-	 * it.
-	 */
-	public void createPartControl(Composite parent)
-	{
-		viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
-		viewer.setContentProvider(ArrayContentProvider.getInstance());
-		viewer.setLabelProvider(new LabelProvider());
-		viewer.setInput(null);
-		viewer.getTable().setHeaderVisible(true);
+          resList.add(thisRow);
+        }
+      }
+    };
+    ana.analyse(res);
+    viewer.setInput(resList);
+  }
 
-		makeActions();
-		contributeToActionBars();
+  @Override
+  protected String getTextForClipboard()
+  {
+    final StringBuffer output = new StringBuffer();
+    @SuppressWarnings("unchecked")
+    final ArrayList<ArrayList<String>> list =
+        (ArrayList<ArrayList<String>>) viewer.getInput();
+    final String separator = System.getProperty("line.separator");
+    final Iterator<ArrayList<String>> iter = list.iterator();
+    while (iter.hasNext())
+    {
+      final ArrayList<java.lang.String> arrayList = iter.next();
+      output.append(arrayList.get(0));
+      output.append(", ");
+      output.append(arrayList.get(1));
+      output.append(separator);
+    }
+    return output.toString();
+  }
 
-		// define the two columns
-		TableViewerColumn colTitle = new TableViewerColumn(viewer, SWT.NONE);
-		colTitle.getColumn().setWidth(150);
-		colTitle.getColumn().setText("Title");
-		colTitle.setLabelProvider(new ColumnLabelProvider()
-		{
-			@SuppressWarnings("unchecked")
-			@Override
-			public String getText(Object element)
-			{
-				ArrayList<String> p = (ArrayList<String>) element;
-				return p.get(0);
-			}
-		});
-
-		TableViewerColumn colValue = new TableViewerColumn(viewer, SWT.NONE);
-		colValue.getColumn().setWidth(200);
-		colValue.getColumn().setText("Value");
-		colValue.setLabelProvider(new ColumnLabelProvider()
-		{
-			@SuppressWarnings("unchecked")
-			@Override
-			public String getText(Object element)
-			{
-				ArrayList<String> p = (ArrayList<String>) element;
-				return p.get(1);
-			}
-		});
-
-		setupListener();
-	}
-
-	/**
-	 * Passing the focus request to the viewer's control.
-	 */
-	public void setFocus()
-	{
-		viewer.getControl().setFocus();
-	}
-
-	@Override
-	protected boolean appliesToMe(List<IStoreItem> res,
-			CollectionComplianceTests tests)
-	{
-		return true;
-	}
+  /**
+   * Passing the focus request to the viewer's control.
+   */
+  @Override
+  public void setFocus()
+  {
+    viewer.getControl().setFocus();
+  }
 }
