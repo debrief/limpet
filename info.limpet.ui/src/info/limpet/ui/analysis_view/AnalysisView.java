@@ -76,6 +76,11 @@ public class AnalysisView extends CoreAnalysisView
   @Override
   protected void doDisplay(final List<IStoreItem> res)
 	{
+    if(viewer.getControl().isDisposed())
+    {
+      return;
+    }
+    
 		// clear the output
 		final ArrayList<ArrayList<String>> resList = new ArrayList<ArrayList<String>>();
 

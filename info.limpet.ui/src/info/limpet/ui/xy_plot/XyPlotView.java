@@ -210,6 +210,11 @@ public class XyPlotView extends CoreAnalysisView
   @Override
   protected void doDisplay(final List<IStoreItem> res)
   {
+    if(chart.isDisposed())
+    {
+      return;
+    }
+    
     if (res.size() == 0)
     {
       chart.setVisible(false);
