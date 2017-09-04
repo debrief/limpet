@@ -222,6 +222,10 @@ public class XyPlotView extends CoreAnalysisView
     else
     {
       chart.setRedraw(false);
+      
+      // tidying - clear the symbol counter, so there's
+      // a chance that datasets will keep their symbol
+      symbolCtr = 0;
 
       // check they're all one dim
       if (aTests.allOneDim(res))
@@ -932,7 +936,9 @@ public class XyPlotView extends CoreAnalysisView
     }
     else
     {
-      newSeries.setSymbolType(PlotSymbolType.CROSS);
+      newSeries.setSymbolType(getNextSymbolType());
+      newSeries.setSymbolColor(PlottingHelpers.colorFor(newSeries.getId()));
+
     }
 
     // and the x axis title
@@ -945,7 +951,30 @@ public class XyPlotView extends CoreAnalysisView
 
     return newUnits;
   }
-
+  
+  /** counter, to check we're giving a different symbol for each dataset
+   * 
+   */
+  static int symbolCtr = 0;
+  
+  /** utility method, to keep returning a different symbol
+   * 
+   * @return
+   */
+  private PlotSymbolType getNextSymbolType()
+  {
+    PlotSymbolType[] list = new PlotSymbolType[]{
+        PlotSymbolType.CIRCLE,
+        PlotSymbolType.SQUARE,
+        PlotSymbolType.DIAMOND,
+        PlotSymbolType.TRIANGLE,
+        PlotSymbolType.INVERTED_TRIANGLE,
+        PlotSymbolType.CROSS,
+        PlotSymbolType.PLUS};
+    
+    return list[++symbolCtr % list.length];
+  }
+  
   private void storeListOfIndexedData(final IDocument<?> coll,
       final NumberDocument thisQ, final Unit<?> indexUnits,
       final Date[] xTimeData, final double[] xData, final double[] yData,
