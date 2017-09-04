@@ -65,19 +65,33 @@ import org.swtchart.ext.InteractiveChart;
 public class XyPlotView extends CoreAnalysisView
 {
 
-  private static final int MAX_SIZE = 10000;
+  protected static interface TwoDimHelper
+  {
+    List<AxesMetadata> getAxes(IStoreItem item) throws MetadataException;
 
+    Unit<?> getIndexUnits(IStoreItem item);
+
+  }
+
+  private static final int MAX_SIZE = 10000;
   /**
    * The ID of the view as specified by the extension.
    */
   public static final String ID = "info.limpet.ui.XyPlotView";
+
   private final CollectionComplianceTests aTests =
       new CollectionComplianceTests();
 
   private Chart chart;
-
   private Action switchAxes;
+
   private Action fitToWindow;
+
+  /**
+   * counter, to check we're giving a different symbol for each dataset
+   * 
+   */
+  private int symbolCtr = 0;
 
   public XyPlotView()
   {
@@ -210,11 +224,11 @@ public class XyPlotView extends CoreAnalysisView
   @Override
   protected void doDisplay(final List<IStoreItem> res)
   {
-    if(chart.isDisposed())
+    if (chart.isDisposed())
     {
       return;
     }
-    
+
     if (res.size() == 0)
     {
       chart.setVisible(false);
@@ -222,7 +236,7 @@ public class XyPlotView extends CoreAnalysisView
     else
     {
       chart.setRedraw(false);
-      
+
       // tidying - clear the symbol counter, so there's
       // a chance that datasets will keep their symbol
       symbolCtr = 0;
@@ -237,9 +251,25 @@ public class XyPlotView extends CoreAnalysisView
         // ok, it's a single two-dim dataset
         showTwoDim(res.get(0));
       }
-      
+
       chart.setRedraw(true);
     }
+  }
+
+  /**
+   * utility method, to keep returning a different symbol
+   * 
+   * @return
+   */
+  private PlotSymbolType getNextSymbolType()
+  {
+    final PlotSymbolType[] list =
+        new PlotSymbolType[]
+        {PlotSymbolType.CIRCLE, PlotSymbolType.SQUARE, PlotSymbolType.DIAMOND,
+            PlotSymbolType.TRIANGLE, PlotSymbolType.INVERTED_TRIANGLE,
+            PlotSymbolType.CROSS, PlotSymbolType.PLUS};
+
+    return list[++symbolCtr % list.length];
   }
 
   @Override
@@ -352,8 +382,8 @@ public class XyPlotView extends CoreAnalysisView
       public void run()
       {
         // work through the axes to reset the range
-        IAxis[] xAxes = chart.getAxisSet().getAxes();
-        for (IAxis axis : xAxes)
+        final IAxis[] xAxes = chart.getAxisSet().getAxes();
+        for (final IAxis axis : xAxes)
         {
           // ok, do fit
           axis.adjustRange();
@@ -732,14 +762,6 @@ public class XyPlotView extends CoreAnalysisView
     return NewUnits;
   }
 
-  protected static interface TwoDimHelper
-  {
-    List<AxesMetadata> getAxes(IStoreItem item) throws MetadataException;
-
-    Unit<?> getIndexUnits(IStoreItem item);
-
-  }
-
   private void showTwoDim(final IStoreItem item)
   {
     final TwoDimHelper helper;
@@ -749,17 +771,17 @@ public class XyPlotView extends CoreAnalysisView
       {
 
         @Override
-        public List<AxesMetadata> getAxes(IStoreItem item)
+        public List<AxesMetadata> getAxes(final IStoreItem item)
             throws MetadataException
         {
-          NumberDocument nd = (NumberDocument) item;
+          final NumberDocument nd = (NumberDocument) item;
           return nd.getDataset().getMetadata(AxesMetadata.class);
         }
 
         @Override
-        public Unit<?> getIndexUnits(IStoreItem item)
+        public Unit<?> getIndexUnits(final IStoreItem item)
         {
-          NumberDocument nd = (NumberDocument) item;
+          final NumberDocument nd = (NumberDocument) item;
           return nd.getIndexUnits();
         }
 
@@ -771,17 +793,17 @@ public class XyPlotView extends CoreAnalysisView
       {
 
         @Override
-        public List<AxesMetadata> getAxes(IStoreItem item)
+        public List<AxesMetadata> getAxes(final IStoreItem item)
             throws MetadataException
         {
-          DoubleListDocument nd = (DoubleListDocument) item;
+          final DoubleListDocument nd = (DoubleListDocument) item;
           return nd.getDataset().getMetadata(AxesMetadata.class);
         }
 
         @Override
-        public Unit<?> getIndexUnits(IStoreItem item)
+        public Unit<?> getIndexUnits(final IStoreItem item)
         {
-          DoubleListDocument nd = (DoubleListDocument) item;
+          final DoubleListDocument nd = (DoubleListDocument) item;
           return nd.getIndexUnits();
         }
       };
@@ -793,7 +815,7 @@ public class XyPlotView extends CoreAnalysisView
 
     clearGraph();
 
-    Document<?> doc = (Document<?>) item;
+    final Document<?> doc = (Document<?>) item;
 
     final String seriesName = item.getName();
     final ILineSeries newSeries =
@@ -818,18 +840,18 @@ public class XyPlotView extends CoreAnalysisView
 
     // ok, show this 2d dataset
 
-    List<IStoreItem> items = new ArrayList<IStoreItem>();
+    final List<IStoreItem> items = new ArrayList<IStoreItem>();
     items.add(doc);
-    HContainer cont = Helper2D.convertToMean(items);
+    final HContainer cont = Helper2D.convertToMean(items);
 
     // loop through the data
     final List<Double> xValues = new ArrayList<Double>();
     final List<Double> yValues = new ArrayList<Double>();
 
     // process the data
-    double[] rows = cont.rowTitles;
-    double[] cols = cont.colTitles;
-    double[][] values = cont.values;
+    final double[] rows = cont.rowTitles;
+    final double[] cols = cont.colTitles;
+    final double[][] values = cont.values;
     for (int i = 0; i < rows.length; i++)
     {
       for (int j = 0; j < cols.length; j++)
@@ -951,30 +973,7 @@ public class XyPlotView extends CoreAnalysisView
 
     return newUnits;
   }
-  
-  /** counter, to check we're giving a different symbol for each dataset
-   * 
-   */
-  static int symbolCtr = 0;
-  
-  /** utility method, to keep returning a different symbol
-   * 
-   * @return
-   */
-  private PlotSymbolType getNextSymbolType()
-  {
-    PlotSymbolType[] list = new PlotSymbolType[]{
-        PlotSymbolType.CIRCLE,
-        PlotSymbolType.SQUARE,
-        PlotSymbolType.DIAMOND,
-        PlotSymbolType.TRIANGLE,
-        PlotSymbolType.INVERTED_TRIANGLE,
-        PlotSymbolType.CROSS,
-        PlotSymbolType.PLUS};
-    
-    return list[++symbolCtr % list.length];
-  }
-  
+
   private void storeListOfIndexedData(final IDocument<?> coll,
       final NumberDocument thisQ, final Unit<?> indexUnits,
       final Date[] xTimeData, final double[] xData, final double[] yData,
