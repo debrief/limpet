@@ -708,7 +708,7 @@ public class XyPlotView extends CoreAnalysisView
 
     // if it's a monster line, we won't plot
     // markers
-    if (thisQ.size() > 90)
+    if (thisQ.size() > 150)
     {
       newSeries.setSymbolType(PlotSymbolType.NONE);
       newSeries.setLineWidth(2);
@@ -925,7 +925,7 @@ public class XyPlotView extends CoreAnalysisView
 
     // if it's a monster line, we won't plot
     // markers
-    if (thisQ.size() > 90)
+    if (thisQ.size() > 150)
     {
       newSeries.setSymbolType(PlotSymbolType.NONE);
       newSeries.setLineWidth(2);
