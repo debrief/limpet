@@ -1625,7 +1625,7 @@ public class TestOperations
     HashMap<String, List<IOperation>> ops = OperationsLibrary.getOperations();
 
     List<IOperation> create = ops.get(OperationsLibrary.CREATE);
-    assertEquals("Creation size", 7, create.size());
+    assertEquals("Creation size", 8, create.size());
     // Administrator Operations.
 
     List<IOperation> adminOperations =
