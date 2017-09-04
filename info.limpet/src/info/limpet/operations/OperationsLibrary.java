@@ -39,6 +39,7 @@ import info.limpet.operations.arithmetic.UnaryQuantityOperation;
 import info.limpet.operations.arithmetic.simple.AddQuantityOperation;
 import info.limpet.operations.arithmetic.simple.DivideQuantityOperation;
 import info.limpet.operations.arithmetic.simple.MultiplyQuantityOperation;
+import info.limpet.operations.arithmetic.simple.RateOfChangeOperation;
 import info.limpet.operations.arithmetic.simple.SubtractQuantityOperation;
 import info.limpet.operations.arithmetic.simple.UnitConversionOperation;
 import info.limpet.operations.filter.MaxMinFilterOperation;
@@ -54,6 +55,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.measure.quantity.Duration;
 import javax.measure.quantity.Angle;
 import javax.measure.quantity.Dimensionless;
 import javax.measure.quantity.Frequency;
@@ -171,6 +173,7 @@ public class OperationsLibrary
     arithmetic.add(new SubtractQuantityOperation());
     arithmetic.add(new DivideQuantityOperation());
     arithmetic.add(new SimpleMovingAverageOperation(3));
+    arithmetic.add(new RateOfChangeOperation());
 
     // also our generic maths operators
     arithmetic.add(new UnaryQuantityOperation("Abs")
@@ -390,6 +393,8 @@ public class OperationsLibrary
 
     create.add(new CreateSingletonGenerator("course (degs)",
         SampleData.DEGREE_ANGLE.asType(Angle.class)));
+    create.add(new CreateSingletonGenerator("time (secs)",
+        SI.SECOND.asType(Duration.class)));
     // create.add(new CreateLocationAction());
     create.add(new GenerateGrid());
 
