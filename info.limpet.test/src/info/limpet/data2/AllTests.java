@@ -39,6 +39,7 @@ import org.junit.runners.Suite;
   TestAdmin.class,
   TestAnalysis.class,
   TestArithmeticCollections.class,
+  TestArithmeticCollections2.class,
   TestBistaticAngleCalculations.class,
   TestCollectionCompliance.class,
   TestCollections.class,
