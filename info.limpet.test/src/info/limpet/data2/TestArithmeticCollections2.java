@@ -16,13 +16,11 @@ import java.util.List;
 
 import javax.measure.unit.SI;
 
-import org.eclipse.january.dataset.DoubleDataset;
-
 import junit.framework.TestCase;
 
 public class TestArithmeticCollections2 extends TestCase
 {
-  final IContext context = new MockContext();
+  final private IContext context = new MockContext();
 
   public void testRateOfChangeAppliesTo()
   {
