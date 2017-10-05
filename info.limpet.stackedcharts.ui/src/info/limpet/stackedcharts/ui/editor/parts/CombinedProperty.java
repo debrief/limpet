@@ -3,6 +3,7 @@ package info.limpet.stackedcharts.ui.editor.parts;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
 import org.eclipse.emf.edit.provider.IItemPropertyDescriptor;
 import org.eclipse.emf.edit.provider.IItemPropertySource;
@@ -11,6 +12,8 @@ import org.eclipse.emf.edit.ui.provider.PropertyDescriptor;
 import org.eclipse.emf.edit.ui.provider.PropertySource;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
+
+import info.limpet.stackedcharts.ui.editor.StackedchartsEditControl.CommandStackReadyComposedAdapterFactory;
 
 class CombinedProperty implements IPropertySource
 {
@@ -21,33 +24,34 @@ class CombinedProperty implements IPropertySource
   final private IPropertySource childPropertySource;
   final private IItemPropertySource childItemPropertySource;
   final private String childName;
-  static final private ComposedAdapterFactory adapterFactory =
-      createAdapterFactory();
+  final private ComposedAdapterFactory adapterFactory;
 
   public CombinedProperty(final Object parent, final Object child,
-      final String childName)
+      final String childName, EditingDomain editingDomain)
   {
     this.parentObject = parent;
     this.childObject = child;
     this.childName = childName;
+    this.adapterFactory = createAdapterFactory(editingDomain);
 
-    parentItemPropertySource =
-        (IItemPropertySource) adapterFactory.adapt(parent,
-            IItemPropertySource.class);
+    parentItemPropertySource = (IItemPropertySource) adapterFactory.adapt(
+        parent, IItemPropertySource.class);
     parentPropertySource = new PropertySource(parent, parentItemPropertySource);
 
-    childItemPropertySource =
-        (IItemPropertySource) adapterFactory.adapt(child,
-            IItemPropertySource.class);
+    childItemPropertySource = (IItemPropertySource) adapterFactory.adapt(child,
+        IItemPropertySource.class);
     childPropertySource = new PropertySource(child, childItemPropertySource);
 
   }
 
-  private static ComposedAdapterFactory createAdapterFactory()
+  private ComposedAdapterFactory createAdapterFactory(
+      EditingDomain editingDomain)
   {
-    final ComposedAdapterFactory factory =
-        new ComposedAdapterFactory(
+    final CommandStackReadyComposedAdapterFactory factory =
+        new CommandStackReadyComposedAdapterFactory(
             ComposedAdapterFactory.Descriptor.Registry.INSTANCE);
+    // provide the editing domain in order to support Undo/Redo operations
+    factory.setEditingDomain(editingDomain);
     factory.addAdapterFactory(new ReflectiveItemProviderAdapterFactory());
 
     return factory;
@@ -55,8 +59,8 @@ class CombinedProperty implements IPropertySource
 
   private IPropertySource getSourceById(Object id)
   {
-    IPropertyDescriptor[] propertyDescriptors =
-        childPropertySource.getPropertyDescriptors();
+    IPropertyDescriptor[] propertyDescriptors = childPropertySource
+        .getPropertyDescriptors();
     for (IPropertyDescriptor iPropertyDescriptor : propertyDescriptors)
     {
       if (iPropertyDescriptor.getId().equals(id))
@@ -93,7 +97,8 @@ class CombinedProperty implements IPropertySource
     return getSourceById(id).getPropertyValue(id);
   }
 
-  /** utility class to add all properties to supplied list
+  /**
+   * utility class to add all properties to supplied list
    * 
    * @param result
    * @param object
@@ -125,7 +130,7 @@ class CombinedProperty implements IPropertySource
 
     // ok, start with the main properties
     storeProperties(result, parentObject, parentItemPropertySource, "Core");
-    
+
     // and now the child ones (probably style related)
     storeProperties(result, childObject, childItemPropertySource, childName);
 

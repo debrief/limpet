@@ -8,6 +8,7 @@ import info.limpet.stackedcharts.model.Orientation;
 import info.limpet.stackedcharts.model.StackedchartsPackage;
 import info.limpet.stackedcharts.model.Styling;
 import info.limpet.stackedcharts.ui.editor.StackedchartsImages;
+import info.limpet.stackedcharts.ui.editor.StackedchartsEditControl.EmfAwareViewer;
 import info.limpet.stackedcharts.ui.editor.commands.DeleteDatasetsFromAxisCommand;
 import info.limpet.stackedcharts.ui.editor.figures.DatasetFigure;
 import info.limpet.stackedcharts.ui.editor.figures.DirectionalShape;
@@ -51,9 +52,8 @@ public class DatasetEditPart extends AbstractGraphicalEditPart implements
     contentPane = new DatasetFigure();
     figure.add(contentPane);
 
-    Button button =
-        new Button(StackedchartsImages
-            .getImage(StackedchartsImages.DESC_DELETE));
+    Button button = new Button(StackedchartsImages.getImage(
+        StackedchartsImages.DESC_DELETE));
     button.setToolTip(new Label("Remove the dataset from this axis"));
     button.addActionListener(this);
     figure.add(button);
@@ -71,7 +71,6 @@ public class DatasetEditPart extends AbstractGraphicalEditPart implements
   {
     return contentPane;
   }
-  
 
   @Override
   public IPropertySource getPropertySource()
@@ -80,7 +79,8 @@ public class DatasetEditPart extends AbstractGraphicalEditPart implements
     final Styling axisType = getDataset().getStyling();
 
     // Proxy two objects in to one
-    return new CombinedProperty(axis, axisType, "Styling");
+    return new CombinedProperty(axis, axisType, "Styling",
+        ((EmfAwareViewer) getViewer()).getEditingDomain());
   }
 
   @Override
@@ -94,8 +94,8 @@ public class DatasetEditPart extends AbstractGraphicalEditPart implements
       {
         Dataset dataset = (Dataset) getHost().getModel();
         DependentAxis parent = (DependentAxis) getHost().getParent().getModel();
-        DeleteDatasetsFromAxisCommand cmd =
-            new DeleteDatasetsFromAxisCommand(parent, dataset);
+        DeleteDatasetsFromAxisCommand cmd = new DeleteDatasetsFromAxisCommand(
+            parent, dataset);
         return cmd;
       }
     });
@@ -120,8 +120,8 @@ public class DatasetEditPart extends AbstractGraphicalEditPart implements
   {
     contentPane.setName(getDataset().getName());
 
-    ChartSet parent =
-        ((Chart) getParent().getParent().getParent().getModel()).getParent();
+    ChartSet parent = ((Chart) getParent().getParent().getParent().getModel())
+        .getParent();
 
     boolean horizontal = parent.getOrientation() == Orientation.HORIZONTAL;
     ((DirectionalShape) getFigure()).setVertical(!horizontal);

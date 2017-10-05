@@ -6,6 +6,7 @@ import info.limpet.stackedcharts.model.ChartSet;
 import info.limpet.stackedcharts.model.DependentAxis;
 import info.limpet.stackedcharts.model.Orientation;
 import info.limpet.stackedcharts.model.StackedchartsPackage;
+import info.limpet.stackedcharts.ui.editor.StackedchartsEditControl.EmfAwareViewer;
 import info.limpet.stackedcharts.ui.editor.commands.DeleteAxisFromChartCommand;
 import info.limpet.stackedcharts.ui.editor.figures.ArrowFigure;
 import info.limpet.stackedcharts.ui.editor.figures.AxisNameFigure;
@@ -245,7 +246,8 @@ public class AxisEditPart extends AbstractGraphicalEditPart implements
     final AxisType axisType = getAxis().getAxisType();
 
     // Proxy two objects in to one
-    return new CombinedProperty(axis, axisType, "Axis type");
+    return new CombinedProperty(axis, axisType, "Axis type",
+        ((EmfAwareViewer) getViewer()).getEditingDomain());
   }
 
 }

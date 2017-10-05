@@ -1,31 +1,24 @@
 package info.limpet.stackedcharts.ui.editor;
 
-import info.limpet.stackedcharts.model.ChartSet;
-import info.limpet.stackedcharts.ui.editor.drop.DatasetToAxisDropTargetListener;
-import info.limpet.stackedcharts.ui.editor.drop.DatasetToAxisLandingDropTargetListener;
-import info.limpet.stackedcharts.ui.editor.drop.DatasetToChartDropTargetListener;
-import info.limpet.stackedcharts.ui.editor.drop.ProxyDropTargetListener;
-import info.limpet.stackedcharts.ui.editor.drop.ScatterSetToScatterSetContainerTargetListener;
-import info.limpet.stackedcharts.ui.editor.parts.IPropertySourceProvider;
-import info.limpet.stackedcharts.ui.editor.parts.StackedChartsEditPartFactory;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EventObject;
 import java.util.List;
 
 import org.eclipse.draw2d.ColorConstants;
-import org.eclipse.emf.common.command.BasicCommandStack;
+import org.eclipse.emf.common.command.CommandStackListener;
 import org.eclipse.emf.ecore.provider.EcoreItemProviderAdapterFactory;
 import org.eclipse.emf.edit.domain.AdapterFactoryEditingDomain;
+import org.eclipse.emf.edit.domain.EditingDomain;
+import org.eclipse.emf.edit.domain.IEditingDomainProvider;
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
+import org.eclipse.emf.edit.provider.ComposedAdapterFactory.Descriptor.Registry;
 import org.eclipse.emf.edit.provider.ReflectiveItemProviderAdapterFactory;
 import org.eclipse.emf.edit.provider.resource.ResourceItemProviderAdapterFactory;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryContentProvider;
 import org.eclipse.emf.edit.ui.view.ExtendedPropertySheetPage;
 import org.eclipse.gef.EditDomain;
 import org.eclipse.gef.GraphicalViewer;
-import org.eclipse.gef.commands.CommandStackListener;
 import org.eclipse.gef.editparts.AbstractEditPart;
 import org.eclipse.gef.ui.actions.RedoAction;
 import org.eclipse.gef.ui.actions.UndoAction;
@@ -39,17 +32,66 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.views.properties.IPropertySheetPage;
 import org.eclipse.ui.views.properties.IPropertySource;
+import org.eclipse.ui.views.properties.PropertySheetPage;
+
+import info.limpet.stackedcharts.model.ChartSet;
+import info.limpet.stackedcharts.ui.editor.drop.DatasetToAxisDropTargetListener;
+import info.limpet.stackedcharts.ui.editor.drop.DatasetToAxisLandingDropTargetListener;
+import info.limpet.stackedcharts.ui.editor.drop.DatasetToChartDropTargetListener;
+import info.limpet.stackedcharts.ui.editor.drop.ProxyDropTargetListener;
+import info.limpet.stackedcharts.ui.editor.drop.ScatterSetToScatterSetContainerTargetListener;
+import info.limpet.stackedcharts.ui.editor.parts.IPropertySourceProvider;
+import info.limpet.stackedcharts.ui.editor.parts.StackedChartsEditPartFactory;
+import info.limpet.stackedcharts.ui.emfgefstack.EmfGefCommandStack;
 
 public class StackedchartsEditControl extends Composite
 {
 
-  private final EditDomain editDomain;
+  /**
+   * Provides seamless integration with the Generic EMF property editors (in the property sheet
+   * page).
+   */
+  public class EmfAwareViewer extends ScrollingGraphicalViewer
+  {
+    public EditingDomain getEditingDomain()
+    {
+      return emfEditingDomain;
+    }
+  }
+
+  /**
+   * A {@link ComposedAdapterFactory}, which can supply {@link EditingDomain} in order to support
+   * Undo/Redo operations.
+   */
+  public static class CommandStackReadyComposedAdapterFactory extends
+      ComposedAdapterFactory implements IEditingDomainProvider
+  {
+
+    private EditingDomain editingDomain;
+
+    public CommandStackReadyComposedAdapterFactory(Registry instance)
+    {
+      super(instance);
+    }
+
+    @Override
+    public EditingDomain getEditingDomain()
+    {
+      return editingDomain;
+    }
+
+    public void setEditingDomain(EditingDomain editingDomain)
+    {
+      this.editingDomain = editingDomain;
+    }
+
+  }
+
   private final GraphicalViewer viewer;
 
   protected AdapterFactoryEditingDomain emfEditingDomain;
-  private ComposedAdapterFactory adapterFactory;
+  private CommandStackReadyComposedAdapterFactory adapterFactory;
   private ExtendedPropertySheetPage propertySheetPage;
 
   public StackedchartsEditControl(Composite parent)
@@ -58,9 +100,15 @@ public class StackedchartsEditControl extends Composite
 
     setLayout(new FillLayout());
 
-    editDomain = new EditDomain();
+    EditDomain editDomain = new EditDomain();
 
-    viewer = new ScrollingGraphicalViewer();
+    // create EMF-GEF 'bridging' command stack
+    EmfGefCommandStack commandStack = new EmfGefCommandStack();
+
+    // Use the proper GEF command stack
+    editDomain.setCommandStack(commandStack.getWrappedGefCommandStack());
+
+    viewer = new EmfAwareViewer();
 
     // connect external Drop support
     // add Dataset to Axis
@@ -69,8 +117,7 @@ public class StackedchartsEditControl extends Composite
         new DatasetToAxisDropTargetListener(viewer),
         new DatasetToAxisLandingDropTargetListener(viewer),
         new ScatterSetToScatterSetContainerTargetListener(viewer),
-        new DatasetToChartDropTargetListener(viewer)
-        ));
+        new DatasetToChartDropTargetListener(viewer)));
 
     viewer.createControl(this);
     editDomain.addViewer(viewer);
@@ -80,23 +127,23 @@ public class StackedchartsEditControl extends Composite
     viewer.setEditPartFactory(new StackedChartsEditPartFactory());
 
     // emf edit domain
-    adapterFactory =
-        new ComposedAdapterFactory(
-            ComposedAdapterFactory.Descriptor.Registry.INSTANCE);
-    BasicCommandStack commandStack = new BasicCommandStack();
+    adapterFactory = new CommandStackReadyComposedAdapterFactory(
+        ComposedAdapterFactory.Descriptor.Registry.INSTANCE);
     adapterFactory.addAdapterFactory(new ResourceItemProviderAdapterFactory());
     adapterFactory.addAdapterFactory(new EcoreItemProviderAdapterFactory());
-    adapterFactory
-        .addAdapterFactory(new ReflectiveItemProviderAdapterFactory());
-    emfEditingDomain =
-        new AdapterFactoryEditingDomain(adapterFactory, commandStack);
+    adapterFactory.addAdapterFactory(
+        new ReflectiveItemProviderAdapterFactory());
+    emfEditingDomain = new AdapterFactoryEditingDomain(adapterFactory,
+        commandStack);
+
+    adapterFactory.setEditingDomain(emfEditingDomain);
 
   }
 
   /**
    * This accesses a cached version of the property sheet.
    */
-  public IPropertySheetPage getPropertySheetPage()
+  public PropertySheetPage getPropertySheetPage()
   {
     if (propertySheetPage == null)
     {
@@ -108,9 +155,9 @@ public class StackedchartsEditControl extends Composite
           StackedchartsEditControl.this.setSelectionToViewer(selection);
         }
       };
-      propertySheetPage
-          .setPropertySourceProvider(new AdapterFactoryContentProvider(
-              adapterFactory));
+      propertySheetPage.setPropertySourceProvider(
+          new AdapterFactoryContentProvider(adapterFactory));
+
     }
 
     return propertySheetPage;
@@ -134,11 +181,12 @@ public class StackedchartsEditControl extends Composite
         if (object instanceof AbstractEditPart)
         {
           AbstractEditPart abstractEditPart = (AbstractEditPart) object;
-          if(abstractEditPart instanceof IPropertySourceProvider)
+          if (abstractEditPart instanceof IPropertySourceProvider)
           {
-            IPropertySourceProvider mergeModelProvider = (IPropertySourceProvider) abstractEditPart; 
+            IPropertySourceProvider mergeModelProvider =
+                (IPropertySourceProvider) abstractEditPart;
             IPropertySource merged = mergeModelProvider.getPropertySource();
-            if(merged==null)
+            if (merged == null)
             {
               emfObj.add(abstractEditPart.getModel());
             }
@@ -170,8 +218,8 @@ public class StackedchartsEditControl extends Composite
 
           if (viewer != null)
           {
-            viewer
-                .setSelection(new StructuredSelection(theSelection.toArray()));
+            viewer.setSelection(new StructuredSelection(theSelection
+                .toArray()));
           }
         }
       };
@@ -195,14 +243,34 @@ public class StackedchartsEditControl extends Composite
     IActionBars actionBars = view.getViewSite().getActionBars();
     IToolBarManager toolBarManager = actionBars.getToolBarManager();
 
-    final UndoAction undoAction = new UndoAction(view);
+    final UndoAction undoAction = new UndoAction(view)
+    {
+      @Override
+      public void run()
+      {
+        super.run();
+        getPropertySheetPage().refresh();
+      }
+    };
+
     toolBarManager.add(undoAction);
-    undoAction.setImageDescriptor(Activator.imageDescriptorFromPlugin(Activator.PLUGIN_ID, "icons/undo.png"));
-    final RedoAction redoAction = new RedoAction(view);
-    redoAction.setImageDescriptor(Activator.imageDescriptorFromPlugin(Activator.PLUGIN_ID, "icons/redo.png"));
+    undoAction.setImageDescriptor(Activator.imageDescriptorFromPlugin(
+        Activator.PLUGIN_ID, "icons/undo.png"));
+    final RedoAction redoAction = new RedoAction(view)
+    {
+      @Override
+      public void run()
+      {
+        super.run();
+        getPropertySheetPage().refresh();
+      }
+    };
+
+    redoAction.setImageDescriptor(Activator.imageDescriptorFromPlugin(
+        Activator.PLUGIN_ID, "icons/redo.png"));
     toolBarManager.add(redoAction);
 
-    viewer.getEditDomain().getCommandStack().addCommandStackListener(
+    emfEditingDomain.getCommandStack().addCommandStackListener(
         new CommandStackListener()
         {
 
